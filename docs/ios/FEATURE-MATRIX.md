@@ -10,18 +10,18 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
 | Home (konfigurierbare Sektionen) | 4 | todo | Queue, Inbox, Downloads, … |
-| Queue | 5 | todo | P0 |
+| Queue | 5 | wip | JSON persistence |
 | Inbox | 4 | todo | Neue Episoden |
 | Episodes (Alle) | 4 | todo | |
-| Downloads-Liste | 5 | todo | P0, gleichrangig Streaming |
+| Downloads-Liste | 5 | wip | P0, local file downloads |
 | History | 3 | todo | |
 | Favorites | 3 | todo | |
-| Subscriptions | 5 | todo | Grid/Liste, Tags später |
-| Add podcast | 5 | todo | URL + Discovery |
+| Subscriptions | 5 | wip | List + subscribe sheet |
+| Add podcast | 5 | wip | URL + Discovery |
 | Search (Bibliothek) | 4 | todo | |
 | Statistics | 2 | todo | P3 |
-| Bottom nav / Drawer-Analog | 4 | todo | SwiftUI Tabs |
-| Miniplayer + Full Player | 5 | todo | AVFoundation / Now Playing |
+| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs |
+| Miniplayer + Full Player | 5 | wip | Mini player only |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
 | Settings | 5 | todo | Basis in P0 |
 
@@ -29,10 +29,10 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Subscribe / Unsubscribe (URL) | 5 | todo | |
+| Subscribe / Unsubscribe (URL) | 5 | wip | Subscribe-by-URL skeleton |
 | OPML Import/Export | 5 | todo | KMP-Kandidat |
-| Feed aktualisieren | 5 | todo | |
-| Episodenliste / Feed-Seite | 5 | todo | |
+| Feed aktualisieren | 5 | wip | Fetch + parse on subscribe |
+| Episodenliste / Feed-Seite | 5 | wip | |
 | Archive / restore | 3 | todo | |
 | Tags / Folders | 3 | todo | |
 | Per-feed settings | 4 | todo | Auto-DL, Speed, Skip Intro |
@@ -45,14 +45,14 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Stream playback | 5 | todo | P0 |
+| Stream playback | 5 | wip | AVPlayer skeleton |
 | Lockscreen / Now Playing | 5 | todo | |
-| Variable speed | 5 | todo | |
+| Variable speed | 5 | wip | Mini player rate menu |
 | Sleep timer (Basis) | 5 | todo | |
 | Fortschritt speichern / fortsetzen | 5 | todo | |
 | Mark played / unplayed | 5 | todo | |
-| Continuous playback (Queue) | 5 | todo | |
-| FF / Rewind deltas | 4 | todo | |
+| Continuous playback (Queue) | 5 | todo | Queue tab exists |
+| FF / Rewind deltas | 4 | wip | ±30s in mini player |
 | Skip silence | 2 | todo | P3, iOS-API-abhängig |
 | Volume adaptation | 2 | todo | P3 |
 | Chapters | 4 | todo | Feed + Media-Tags |
@@ -65,8 +65,8 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Manual download / delete | 5 | todo | P0, gleich Streaming |
-| Offline Wiedergabe | 5 | todo | |
+| Manual download / delete | 5 | wip | P0, Documents/downloads |
+| Offline Wiedergabe | 5 | wip | Play from local file |
 | Speicherverwaltung / Cache-Limit | 5 | todo | |
 | Auto-download (global + Regeln) | 4 | todo | Regeln in KMP |
 | Per-feed auto-download | 4 | todo | |
@@ -79,7 +79,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Add by RSS URL | 5 | todo | |
+| Add by RSS URL | 5 | wip | |
 | Apple Podcasts / iTunes Search | 4 | todo | KMP-Client |
 | Podcast Index | 4 | todo | |
 | fyyd | 3 | todo | |

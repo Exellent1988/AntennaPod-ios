@@ -1,25 +1,39 @@
 # ios/ — AntennaPod for iOS
 
-Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URLSession; persistence native (GRDB or SQLite.swift). Shared logic comes from `shared/kmp` (XCFramework).
+Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URLSession; persistence in-memory for now (SQLite later). Shared KMP parser is validated in `shared/kmp`; the iOS app currently uses a Foundation `XMLParser` fallback with the same golden fixtures in mind. Wiring the XCFramework into the app is the next integration step.
 
-## Status (Phase 0)
+## Status (Phase 1 skeleton)
 
-Scaffold only: placeholder SwiftUI sources and CI that builds the KMP iOS framework on macOS. Full Xcode app target (subscribe → stream/download) follows in Phase 1.
+- Subscribe by feed URL
+- Episode list
+- Stream playback (AVPlayer, speed, ±30s)
+- Offline download to Documents/downloads
+- Queue tab (in-memory)
 
 ## Layout
 
 ```
 ios/
 ├── README.md
+├── project.yml              # XcodeGen
 └── AntennaPod/
     ├── AntennaPodApp.swift
-    └── ContentView.swift
+    ├── App/RootTabView.swift
+    ├── Data/…               # store, repository, playback, download, parsers
+    └── Features/…           # subscriptions, add feed, player, downloads, queue
 ```
 
-## Local setup (Phase 1+)
+## Local setup (Mac)
 
-1. Build the shared framework on a Mac: `./gradlew -p shared/kmp linkDebugFrameworkIosSimulatorArm64`
-2. Open / create the Xcode project under `ios/` and link `AntennaPodShared.framework`
-3. Run on Simulator
+```bash
+brew install xcodegen
+./gradlew -p shared/kmp linkDebugFrameworkIosSimulatorArm64   # optional until linked
+cd ios && xcodegen generate
+open AntennaPod.xcodeproj
+```
 
 See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
+
+## Persistence
+
+Subscriptions and queue are stored as JSON under Application Support (`PodcastPersistence`). Downloads remain files under Documents/downloads. GRDB/SQLite aligned with AntennaPod schema comes later.

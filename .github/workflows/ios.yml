@@ -36,7 +36,25 @@ jobs:
           key: shared-kmp-ios-${{ hashFiles('shared/kmp/**/*.gradle*', 'gradle/wrapper/gradle-wrapper.properties') }}
       - name: Link iOS Simulator framework
         run: ./gradlew -p shared/kmp linkDebugFrameworkIosSimulatorArm64
-      - name: Verify SwiftUI scaffold
+
+  ios-app:
+    name: "iOS App"
+    runs-on: macos-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        working-directory: ios
+        run: xcodegen generate
+      - name: Build iOS app (Simulator)
+        working-directory: ios
         run: |
-          test -f ios/AntennaPod/AntennaPodApp.swift
-          test -f ios/AntennaPod/ContentView.swift
+          xcodebuild \
+            -project AntennaPod.xcodeproj \
+            -scheme AntennaPod \
+            -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            build
