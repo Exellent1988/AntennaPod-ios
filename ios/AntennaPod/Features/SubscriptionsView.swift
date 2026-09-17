@@ -24,6 +24,21 @@ struct SubscriptionsView: View {
                                     .foregroundStyle(.secondary)
                             }
                         }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                store.unsubscribe(feed)
+                            } label: {
+                                Label("Unsubscribe", systemImage: "trash")
+                            }
+                        }
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                Task { await store.refresh(feed) }
+                            } label: {
+                                Label("Refresh", systemImage: "arrow.clockwise")
+                            }
+                            .tint(.blue)
+                        }
                     }
                 }
             }

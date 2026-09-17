@@ -33,3 +33,7 @@ open AntennaPod.xcodeproj
 ```
 
 See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
+
+## Persistence
+
+Subscriptions and queue are stored as JSON under Application Support (`PodcastPersistence`). Downloads remain files under Documents/downloads. GRDB/SQLite aligned with AntennaPod schema comes later.

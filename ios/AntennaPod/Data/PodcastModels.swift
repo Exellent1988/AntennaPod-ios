@@ -1,6 +1,6 @@
 import Foundation
 
-struct PodcastEpisode: Identifiable, Hashable {
+struct PodcastEpisode: Identifiable, Hashable, Codable {
     let id: String
     var title: String
     var link: String?
@@ -11,7 +11,7 @@ struct PodcastEpisode: Identifiable, Hashable {
     var transcriptUrl: String?
 }
 
-struct PodcastFeed: Identifiable, Hashable {
+struct PodcastFeed: Identifiable, Hashable, Codable {
     let id: UUID
     var title: String
     var feedUrl: String

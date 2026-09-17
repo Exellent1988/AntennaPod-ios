@@ -171,8 +171,8 @@ Nur wenn stabil: Android hängt schrittweise von `shared/kmp` ab statt von lokal
 2. Repo-Ordner `shared/kmp`, `shared/specs`, `ios/` + README/Merge-Playbook ✅
 3. KMP-Model + Golden Feed-Tests ✅ (RSS/Atom Basisparser + 5 Fixtures)
 4. iOS-App: subscribe-by-URL → play **und** download ✅ (SwiftUI skeleton; KMP-Framework-Anbindung folgt)
-5. Queue + Persistenz (Queue in-memory ✅; Persistenz folgt)
-6. Danach P1 nach Matrix (inkl. gpodder Sync)
+5. Queue + Persistenz ✅ (JSON unter Application Support; SQLite/GRDB später)
+6. Danach P1 nach Matrix (inkl. gpodder Sync); KMP-XCFramework in die iOS-App verdrahten
 
 ## Entschiedene Gewichtung
 
