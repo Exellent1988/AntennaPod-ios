@@ -26,7 +26,7 @@ object FeedParser {
         val feed = Feed(
             type = Feed.TYPE_RSS2,
             title = textOrNull(channel, "title"),
-            description = textOrNull(channel, "description"),
+            descriptionText = textOrNull(channel, "description"),
             link = firstNonBlank(
                 channelChildren(channel, "link").firstOrNull { it.attr("href").isBlank() }?.ownText()?.trim(),
                 textOrNull(channel, "link"),
@@ -44,7 +44,7 @@ object FeedParser {
     private fun parseRssItem(itemElement: Element, feedImageUrl: String?): FeedItem {
         val item = FeedItem(
             title = textOrNull(itemElement, "title"),
-            description = textOrNull(itemElement, "description"),
+            descriptionText = textOrNull(itemElement, "description"),
             link = textOrNull(itemElement, "link"),
             itemIdentifier = textOrNull(itemElement, "guid") ?: textOrNull(itemElement, "link"),
             pubDateEpochMs = FeedDateParser.parseToEpochMs(textOrNull(itemElement, "pubDate")),
@@ -65,7 +65,7 @@ object FeedParser {
         val feed = Feed(
             type = Feed.TYPE_ATOM1,
             title = textOrNull(feedElement, "title"),
-            description = textOrNull(feedElement, "subtitle") ?: textOrNull(feedElement, "summary"),
+            descriptionText = textOrNull(feedElement, "subtitle") ?: textOrNull(feedElement, "summary"),
             feedIdentifier = textOrNull(feedElement, "id"),
             link = atomLinkHref(feedElement, "alternate") ?: atomLinkHref(feedElement, null),
             imageUrl = textOrNull(feedElement, "logo") ?: textOrNull(feedElement, "icon"),
@@ -87,7 +87,7 @@ object FeedParser {
     private fun parseAtomEntry(entry: Element, feedImageUrl: String?): FeedItem {
         val item = FeedItem(
             title = textOrNull(entry, "title"),
-            description = textOrNull(entry, "summary") ?: textOrNull(entry, "content"),
+            descriptionText = textOrNull(entry, "summary") ?: textOrNull(entry, "content"),
             itemIdentifier = textOrNull(entry, "id"),
             link = atomLinkHref(entry, "alternate") ?: atomLinkHref(entry, null),
             pubDateEpochMs = FeedDateParser.parseToEpochMs(

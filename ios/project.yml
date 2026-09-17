@@ -1,0 +1,23 @@
+name: AntennaPod
+options:
+  bundleIdPrefix: de.danoeh
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  SWIFT_VERSION: "5.0"
+  TARGETED_DEVICE_FAMILY: "1,2"
+targets:
+  AntennaPod:
+    type: application
+    platform: iOS
+    sources:
+      - path: AntennaPod
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: de.danoeh.antennapod.ios
+      PRODUCT_NAME: AntennaPod
+      INFOPLIST_FILE: AntennaPod/Info.plist
+      GENERATE_INFOPLIST_FILE: YES
+      INFOPLIST_KEY_CFBundleDisplayName: AntennaPod
+      INFOPLIST_KEY_UILaunchScreen_Generation: YES
+      ENABLE_PREVIEWS: YES

@@ -6,7 +6,7 @@ data class Feed(
     var customTitle: String? = null,
     var feedIdentifier: String? = null,
     var link: String? = null,
-    var description: String? = null,
+    var descriptionText: String? = null,
     var language: String? = null,
     var author: String? = null,
     var imageUrl: String? = null,

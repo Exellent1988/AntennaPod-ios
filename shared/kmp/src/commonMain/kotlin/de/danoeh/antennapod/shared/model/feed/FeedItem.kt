@@ -3,7 +3,7 @@ package de.danoeh.antennapod.shared.model.feed
 data class FeedItem(
     var itemIdentifier: String? = null,
     var title: String? = null,
-    var description: String? = null,
+    var descriptionText: String? = null,
     var link: String? = null,
     var pubDateEpochMs: Long? = null,
     var media: FeedMedia? = null,

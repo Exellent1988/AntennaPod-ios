@@ -10,10 +10,10 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
 | Home (konfigurierbare Sektionen) | 4 | todo | Queue, Inbox, Downloads, … |
-| Queue | 5 | todo | P0 |
+| Queue | 5 | wip | In-memory on iOS skeleton |
 | Inbox | 4 | todo | Neue Episoden |
 | Episodes (Alle) | 4 | todo | |
-| Downloads-Liste | 5 | todo | P0, gleichrangig Streaming |
+| Downloads-Liste | 5 | wip | P0, local file downloads |
 | History | 3 | todo | |
 | Favorites | 3 | todo | |
 | Subscriptions | 5 | todo | Grid/Liste, Tags später |
