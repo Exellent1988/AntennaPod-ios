@@ -14,4 +14,5 @@ shared/specs/
 
 - Fixtures hier hinzufügen, nicht nur unter `parser/feed/src/test/resources/` duplizieren ohne Verweis
 - Erwartete Parser-Ergebnisse als JSON/Snapshot neben der Fixture oder in KMP-Tests dokumentieren
+- JVM-Golden-Tests: `shared/kmp` → `GoldenFeedParserTest` liest diese Dateien
 - Schema-/Migrationsverträge für Persistenz kommen später unter `shared/specs/schema/`
