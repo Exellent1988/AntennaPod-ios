@@ -21,6 +21,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation("com.fleeksoft.ksoup:ksoup:0.2.6")
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
