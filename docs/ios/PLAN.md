@@ -167,9 +167,9 @@ Nur wenn stabil: Android hängt schrittweise von `shared/kmp` ab statt von lokal
 
 ## Erste konkrete Lieferungen (Reihenfolge)
 
-1. Feature-Matrix + Gewichte in `docs/ios/`
-2. Repo-Ordner `shared/kmp`, `shared/specs`, `ios/` + README/Merge-Playbook
-3. KMP-Model + 5–10 Golden Feed-Tests
+1. Feature-Matrix + Gewichte in `docs/ios/` ✅
+2. Repo-Ordner `shared/kmp`, `shared/specs`, `ios/` + README/Merge-Playbook ✅
+3. KMP-Model + Golden Feed-Tests ✅ (RSS/Atom Basisparser + 5 Fixtures)
 4. iOS-App: subscribe-by-URL → play **und** download
 5. Queue + Persistenz
 6. Danach P1 nach Matrix (inkl. gpodder Sync)
