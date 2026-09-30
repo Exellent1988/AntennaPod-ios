@@ -50,9 +50,18 @@ Feature-Arbeit immer auf Branches vom aktuellen `develop`, z. B. `cursor/…`.
 |----------|--------|
 | Bestehende Android-Workflows | Unverändert; Upstream-Parität |
 | `shared-kmp.yml` | KMP `commonTest` / Compile auf Linux |
-| `ios.yml` | macOS-Runner: XCFramework-Anbindung + `xcodebuild` (wenn Xcode-Projekt vorhanden) |
+| `ios.yml` | macOS-Runner: XCFramework + XcodeGen/`xcodebuild` |
 
 Ein grünes `:app:assembleDebug` ist die Merge-Gate für Android. iOS/KMP-Rot blockiert Upstream-Sync nicht, blockiert aber iOS-Feature-Merges.
+
+### Fork-Anpassungen an Upstream-Bot-Workflows
+
+Dieser Fork hat kein `master` und kein `ANTENNAPOD_BOT_PAT`. Deshalb:
+
+- `assign-milestone.yml` checkt `develop` aus und nutzt `GITHUB_TOKEN`
+- `close-if-no-reply.yml` nutzt `GITHUB_TOKEN` statt Bot-PAT
+
+Weitere Upstream-Issue-Bots (`issue-opened`, …) brauchen den PAT weiterhin; Issues sind im Fork oft deaktiviert.
 
 ## Checkliste vor Upstream-Merge-PR in den Fork
 
