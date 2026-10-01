@@ -342,7 +342,7 @@ struct FeedDetailView: View {
                 } label: {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
-                .accessibilityLabel("Sort episodes")
+                .accessibilityLabel(String(localized: "Sort episodes"))
             }
             ToolbarItem(placement: .primaryAction) {
                 HStack(spacing: 12) {
@@ -363,7 +363,7 @@ struct FeedDetailView: View {
                         ) {
                             Image(systemName: "square.and.arrow.up")
                         }
-                        .accessibilityLabel("Share podcast")
+                        .accessibilityLabel(String(localized: "Share podcast"))
                     }
                     Menu {
                         if let url = liveFeed.websiteURL {
@@ -404,7 +404,7 @@ struct FeedDetailView: View {
                             Label("Add all to queue", systemImage: "text.append")
                         }
                         .disabled(enqueueAllFromFeedCandidatesCount == 0)
-                        .accessibilityHint("Appends feed episodes not already queued")
+                        .accessibilityHint(String(localized: "Appends feed episodes not already queued"))
 
                         Button(role: .destructive) {
                             showUnsubscribeConfirm = true
@@ -419,7 +419,7 @@ struct FeedDetailView: View {
                     } label: {
                         Image(systemName: "gearshape")
                     }
-                    .accessibilityLabel("Podcast settings")
+                    .accessibilityLabel(String(localized: "Podcast settings"))
                 }
             }
         }

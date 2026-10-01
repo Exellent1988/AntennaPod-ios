@@ -225,7 +225,7 @@ struct FavoritesView: View {
                 } label: {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
-                .accessibilityLabel("Sort favorites")
+                .accessibilityLabel(String(localized: "Sort favorites"))
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
@@ -235,7 +235,7 @@ struct FavoritesView: View {
                         Label("Add all to queue", systemImage: "text.append")
                     }
                     .disabled(enqueueAllFavoritesCandidatesCount == 0)
-                    .accessibilityHint("Appends favorite episodes not already queued")
+                    .accessibilityHint(String(localized: "Appends favorite episodes not already queued"))
 
                     Button(role: .destructive) {
                         showClearFavoritesConfirm = true

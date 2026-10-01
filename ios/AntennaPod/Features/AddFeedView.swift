@@ -191,7 +191,7 @@ struct AddFeedView: View {
                                 .foregroundStyle(.secondary)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Clear search")
+                        .accessibilityLabel(String(localized: "Clear search"))
                     }
                 }
             }
@@ -280,7 +280,7 @@ struct AddFeedView: View {
                                     .foregroundStyle(.secondary)
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel("Clear search")
+                            .accessibilityLabel(String(localized: "Clear search"))
                         }
                     }
                 }
@@ -575,7 +575,7 @@ struct AddFeedView: View {
                                 .foregroundStyle(.secondary)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Clear search")
+                        .accessibilityLabel(String(localized: "Clear search"))
                     }
                 }
             }

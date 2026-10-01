@@ -248,7 +248,7 @@ struct HistoryView: View {
                 } label: {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
-                .accessibilityLabel("Sort history")
+                .accessibilityLabel(String(localized: "Sort history"))
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
@@ -258,7 +258,7 @@ struct HistoryView: View {
                         Label("Add all to queue", systemImage: "text.append")
                     }
                     .disabled(enqueueAllHistoryCandidatesCount == 0)
-                    .accessibilityHint("Appends history episodes not already queued")
+                    .accessibilityHint(String(localized: "Appends history episodes not already queued"))
 
                     Button(role: .destructive) {
                         showClearHistoryConfirm = true

@@ -21,7 +21,7 @@ struct EpisodeVideoSurface: UIViewRepresentable {
         view.playerLayer.videoGravity = .resizeAspect
         view.backgroundColor = .black
         view.isAccessibilityElement = true
-        view.accessibilityLabel = "Video"
+        view.accessibilityLabel = String(localized: "Video")
         context.coordinator.bind(session: pictureInPicture, host: view)
         return view
     }

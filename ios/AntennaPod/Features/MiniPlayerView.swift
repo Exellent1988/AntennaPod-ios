@@ -54,7 +54,7 @@ struct MiniPlayerView: View {
                     } label: {
                         Image(systemName: AppSettings.skipSystemImage(forward: false, seconds: settings.rewindSeconds))
                     }
-                    .accessibilityLabel("Rewind \(settings.rewindSeconds) seconds")
+                    .accessibilityLabel(String(localized: "Rewind \(settings.rewindSeconds) seconds"))
                     Button {
                         playback.togglePlayPause()
                     } label: {
@@ -66,7 +66,7 @@ struct MiniPlayerView: View {
                     } label: {
                         Image(systemName: AppSettings.skipSystemImage(forward: true, seconds: settings.fastForwardSeconds))
                     }
-                    .accessibilityLabel("Forward \(settings.fastForwardSeconds) seconds")
+                    .accessibilityLabel(String(localized: "Forward \(settings.fastForwardSeconds) seconds"))
                     sleepTimerMenu
                     Menu {
                         ForEach(AppSettings.speedPresets, id: \.self) { speed in
@@ -217,7 +217,7 @@ struct MiniPlayerView: View {
         .font(.caption2)
         .foregroundStyle(.tertiary)
         .labelStyle(.titleAndIcon)
-        .accessibilityLabel(playback.isPlayingFromLocalFile ? "Playing from download" : "Streaming")
+        .accessibilityLabel(playback.isPlayingFromLocalFile ? String(localized: "Playing from download") : String(localized: "Streaming"))
     }
 
     private var timeLabel: String {

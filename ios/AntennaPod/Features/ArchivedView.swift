@@ -222,7 +222,7 @@ struct ArchivedView: View {
                 } label: {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
-                .accessibilityLabel("Sort archived")
+                .accessibilityLabel(String(localized: "Sort archived"))
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
@@ -232,7 +232,7 @@ struct ArchivedView: View {
                         Label("Add all to queue", systemImage: "text.append")
                     }
                     .disabled(enqueueAllArchivedCandidatesCount == 0)
-                    .accessibilityHint("Appends archived episodes not already queued")
+                    .accessibilityHint(String(localized: "Appends archived episodes not already queued"))
 
                     Button {
                         showRestoreAllConfirm = true

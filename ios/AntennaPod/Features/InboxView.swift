@@ -220,7 +220,7 @@ struct InboxView: View {
                     } label: {
                         Label("Sort", systemImage: "arrow.up.arrow.down")
                     }
-                    .accessibilityLabel("Sort inbox")
+                    .accessibilityLabel(String(localized: "Sort inbox"))
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
@@ -230,7 +230,7 @@ struct InboxView: View {
                             Label("Add all to queue", systemImage: "text.append")
                         }
                         .disabled(enqueueAllInboxCandidatesCount == 0)
-                        .accessibilityHint("Appends Inbox episodes not already queued")
+                        .accessibilityHint(String(localized: "Appends Inbox episodes not already queued"))
 
                         Button {
                             showMarkAllPlayedConfirm = true

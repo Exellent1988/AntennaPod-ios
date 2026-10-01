@@ -12874,6 +12874,397 @@
           }
         }
       }
+    },
+    "Adjusts playback position": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjusts playback position"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passt die Wiedergabeposition an"
+          }
+        }
+      }
+    },
+    "Hides the video surface and shows artwork instead. Lockscreen stays audio.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hides the video surface and shows artwork instead. Lockscreen stays audio."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blendet die Videofläche aus und zeigt stattdessen das Cover. Sperrbildschirm bleibt Audio."
+          }
+        }
+      }
+    },
+    "Local notifications only; no push server.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local notifications only; no push server."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur lokale Benachrichtigungen; kein Push-Server."
+          }
+        }
+      }
+    },
+    "Local notifications when a download fails.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local notifications when a download fails."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Benachrichtigungen, wenn ein Download fehlschlägt."
+          }
+        }
+      }
+    },
+    "Local notifications when gpodder or Nextcloud sync fails.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local notifications when gpodder or Nextcloud sync fails."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Benachrichtigungen, wenn die gpodder- oder Nextcloud-Sync fehlschlägt."
+          }
+        }
+      }
+    },
+    "May show a review prompt after ten mark-played events once per install.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "May show a review prompt after ten mark-played events once per install."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kann nach zehn Als-gespielt-Ereignissen einmal pro Installation eine Bewertungsabfrage zeigen."
+          }
+        }
+      }
+    },
+    "Optimizes the audio session for speech. Not Android loudness gain.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optimizes the audio session for speech. Not Android loudness gain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optimiert die Audio-Session für Sprache. Kein Android-Loudness-Gewinn."
+          }
+        }
+      }
+    },
+    "Preference only; not applied on stock AVPlayer in this beta.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preference only; not applied on stock AVPlayer in this beta."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Einstellung; in dieser Beta nicht auf stock AVPlayer angewendet."
+          }
+        }
+      }
+    },
+    "Prevents idle lock while audio or video is actively playing. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prevents idle lock while audio or video is actively playing. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verhindert die Idle-Sperre, während Audio oder Video aktiv spielt. Standard aus."
+          }
+        }
+      }
+    },
+    "Removes the offline file when marked played; favorites are kept.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the offline file when marked played; favorites are kept."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt die Offline-Datei, wenn als gespielt markiert; Favoriten bleiben erhalten."
+          }
+        }
+      }
+    },
+    "Seconds before end that count as played when leaving. Off marks only on natural end. Default 30.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seconds before end that count as played when leaving. Off marks only on natural end. Default 30."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sekunden vor dem Ende, die beim Verlassen als gespielt gelten. Aus markiert nur am natürlichen Ende. Standard 30."
+          }
+        }
+      }
+    },
+    "Seconds to seek back when resuming after a pause of at least 1 second. Off disables. Default 2.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seconds to seek back when resuming after a pause of at least 1 second. Off disables. Default 2."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sekunden zum Zurückspulen beim Fortsetzen nach einer Pause von mindestens 1 Sekunde. Aus deaktiviert. Standard 2."
+          }
+        }
+      }
+    },
+    "Seeks playback to this time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks playback to this time"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt die Wiedergabe zu dieser Zeit"
+          }
+        }
+      }
+    },
+    "When on, auto-download skips cellular networks.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, auto-download skips cellular networks."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, überspringt Auto-Download Mobilfunknetze."
+          }
+        }
+      }
+    },
+    "When on, finishing an episode auto-plays the next Queue item. Default on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, finishing an episode auto-plays the next Queue item. Default on."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, spielt das Beenden einer Episode automatisch den nächsten Warteschlangen-Eintrag. Standard an."
+          }
+        }
+      }
+    },
+    "When on, network streaming is blocked on cellular; local files still play.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, network streaming is blocked on cellular; local files still play."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, ist Netzwerk-Streaming im Mobilfunk gesperrt; lokale Dateien spielen weiter."
+          }
+        }
+      }
+    },
+    "When on, player time labels show time left instead of total duration. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, player time labels show time left instead of total duration. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, zeigen Player-Zeitangaben die Restzeit statt der Gesamtdauer. Standard aus."
+          }
+        }
+      }
+    },
+    "When on, user downloads are refused on cellular.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, user downloads are refused on cellular."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, werden manuelle Downloads im Mobilfunk abgelehnt."
+          }
+        }
+      }
+    },
+    "Video": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Video"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Video"
+          }
+        }
+      }
+    },
+    "Rewind %lld seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rewind %lld seconds"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um %lld Sekunden zurückspulen"
+          }
+        }
+      }
+    },
+    "Forward %lld seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forward %lld seconds"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um %lld Sekunden vorspulen"
+          }
+        }
+      }
+    },
+    "Chapter %@, %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter %@, %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel %@, %@"
+          }
+        }
+      }
+    },
+    "Open %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ öffnen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

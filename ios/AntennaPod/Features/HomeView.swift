@@ -688,7 +688,7 @@ struct HomeView: View {
                                 Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .relative)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
-                                    .accessibilityLabel("Newest episode")
+                                    .accessibilityLabel(String(localized: "Newest episode"))
                             }
                         }
                     }
@@ -763,7 +763,7 @@ struct HomeView: View {
                     .foregroundStyle(.tertiary)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Open \(title)")
+            .accessibilityLabel(String(localized: "Open \(title)"))
         }
     }
 

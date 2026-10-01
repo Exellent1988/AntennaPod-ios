@@ -256,7 +256,7 @@ struct AllEpisodesView: View {
                 } label: {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
-                .accessibilityLabel("Sort all episodes")
+                .accessibilityLabel(String(localized: "Sort all episodes"))
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
@@ -266,7 +266,7 @@ struct AllEpisodesView: View {
                         Label("Add all to queue", systemImage: "text.append")
                     }
                     .disabled(enqueueAllEpisodesCandidatesCount == 0)
-                    .accessibilityHint("Appends All Episodes not already queued (newest 500 soft cap)")
+                    .accessibilityHint(String(localized: "Appends All Episodes not already queued (newest 500 soft cap)"))
                 } label: {
                     Label("Episodes actions", systemImage: "ellipsis.circle")
                 }

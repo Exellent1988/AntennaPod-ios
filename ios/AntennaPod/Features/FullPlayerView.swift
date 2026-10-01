@@ -383,7 +383,7 @@ struct FullPlayerView: View {
                         }
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Chapter \(chapter.title), \(format(chapter.startTimeSeconds))")
+                    .accessibilityLabel(String(localized: "Chapter \(chapter.title), \(format(chapter.startTimeSeconds))"))
                     .accessibilityAddTraits(index == currentChapterIndex ? .isSelected : [])
                 }
             }
@@ -462,7 +462,7 @@ struct FullPlayerView: View {
             Toggle(isOn: $settings.playVideoAsAudioOnly) {
                 Label("Play video as audio only", systemImage: "speaker.wave.2")
             }
-            .accessibilityHint("Hides the video surface and shows artwork instead. Lockscreen stays audio.")
+            .accessibilityHint(String(localized: "Hides the video surface and shows artwork instead. Lockscreen stays audio."))
         }
     }
 
@@ -546,7 +546,7 @@ struct FullPlayerView: View {
             )
             .accessibilityLabel(String(localized: "Playback position"))
             .accessibilityValue(format(displayPosition))
-            .accessibilityHint("Adjusts playback position")
+            .accessibilityHint(String(localized: "Adjusts playback position"))
             HStack {
                 Button {
                     showJumpToPosition = true
@@ -642,7 +642,7 @@ struct FullPlayerView: View {
                 Image(systemName: AppSettings.skipSystemImage(forward: false, seconds: settings.rewindSeconds))
                     .font(.title2)
             }
-            .accessibilityLabel("Rewind \(settings.rewindSeconds) seconds")
+            .accessibilityLabel(String(localized: "Rewind \(settings.rewindSeconds) seconds"))
 
             Button {
                 playback.togglePlayPause()
@@ -658,7 +658,7 @@ struct FullPlayerView: View {
                 Image(systemName: AppSettings.skipSystemImage(forward: true, seconds: settings.fastForwardSeconds))
                     .font(.title2)
             }
-            .accessibilityLabel("Forward \(settings.fastForwardSeconds) seconds")
+            .accessibilityLabel(String(localized: "Forward \(settings.fastForwardSeconds) seconds"))
 
             speedMenu
         }

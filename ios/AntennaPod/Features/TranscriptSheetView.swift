@@ -100,7 +100,7 @@ struct TranscriptSheetView: View {
                             .accessibilityLabel(
                                 "\(cue.speaker.map { $0 + ", " } ?? "")\(cue.text), \(format(cue.startTimeSeconds))"
                             )
-                            .accessibilityHint("Seeks playback to this time")
+                            .accessibilityHint(String(localized: "Seeks playback to this time"))
                             .accessibilityAddTraits(index == currentCueIndex ? .isSelected : [])
                         }
                     }

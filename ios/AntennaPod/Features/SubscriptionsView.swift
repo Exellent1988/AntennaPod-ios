@@ -328,7 +328,7 @@ struct SubscriptionsView: View {
                         }
                     }
                     .disabled(store.isLoading || store.feeds.isEmpty)
-                    .accessibilityLabel("Refresh all")
+                    .accessibilityLabel(String(localized: "Refresh all"))
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -350,7 +350,7 @@ struct SubscriptionsView: View {
                     } label: {
                         Image(systemName: "arrow.up.arrow.down.square")
                     }
-                    .accessibilityLabel("Import or export OPML")
+                    .accessibilityLabel(String(localized: "Import or export OPML"))
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
@@ -365,7 +365,7 @@ struct SubscriptionsView: View {
                     } label: {
                         Label("Sort", systemImage: "arrow.up.arrow.down")
                     }
-                    .accessibilityLabel("Sort subscriptions")
+                    .accessibilityLabel(String(localized: "Sort subscriptions"))
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink {

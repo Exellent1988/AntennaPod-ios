@@ -606,7 +606,7 @@ struct SettingsView: View {
     private var queueSettingsSection: some View {
         Section("Queue") {
             Toggle("Lock queue", isOn: $settings.queueLocked)
-                .accessibilityHint("When on, disables Queue drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off.")
+                .accessibilityHint(String(localized: "When on, disables Queue drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off."))
             Text("When on, the Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Move playing to top, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -718,49 +718,49 @@ struct SettingsView: View {
             }
             if matchesPlaybackVideoAudio {
                 Toggle("Play video as audio only", isOn: $settings.playVideoAsAudioOnly)
-                    .accessibilityHint("Hides the video surface and shows artwork instead. Lockscreen stays audio.")
+                    .accessibilityHint(String(localized: "Hides the video surface and shows artwork instead. Lockscreen stays audio."))
                 Text("When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             if matchesPlaybackVolume {
                 Toggle("Volume adaptation", isOn: $settings.volumeAdaptationEnabled)
-                    .accessibilityHint("Optimizes the audio session for speech. Not Android loudness gain.")
+                    .accessibilityHint(String(localized: "Optimizes the audio session for speech. Not Android loudness gain."))
                 Text("Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             if matchesPlaybackSkipSilence {
                 Toggle("Skip silence", isOn: $settings.skipSilenceEnabled)
-                    .accessibilityHint("Preference only; not applied on stock AVPlayer in this beta.")
+                    .accessibilityHint(String(localized: "Preference only; not applied on stock AVPlayer in this beta."))
                 Text("Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             if matchesPlaybackStereo {
                 Toggle("Stereo to mono", isOn: $settings.stereoToMonoEnabled)
-                    .accessibilityHint("Best-effort mono output via AVAudioSession preferred channels. Route-dependent. Default off.")
+                    .accessibilityHint(String(localized: "Best-effort mono output via AVAudioSession preferred channels. Route-dependent. Default off."))
                 Text("When on, requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)` (restores up to 2 when off). **Best-effort** — the system may ignore this depending on the route (built-in speaker, Bluetooth, CarPlay, etc.). Keeps stock `AVPlayer` (video surface, PiP, Now Playing). Not Android ExoPlayer stereo→mono remix. Default off.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             if matchesPlaybackKeepScreen {
                 Toggle("Keep screen on", isOn: $settings.keepScreenOnWhilePlaying)
-                    .accessibilityHint("Prevents idle lock while audio or video is actively playing. Default off.")
+                    .accessibilityHint(String(localized: "Prevents idle lock while audio or video is actively playing. Default off."))
                 Text("When on, disables the idle timer while playback is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             if matchesPlaybackContinuous {
                 Toggle("Continuous playback", isOn: $settings.continuousPlaybackEnabled)
-                    .accessibilityHint("When on, finishing an episode auto-plays the next Queue item. Default on.")
+                    .accessibilityHint(String(localized: "When on, finishing an episode auto-plays the next Queue item. Default on."))
                 Text("When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             if matchesPlaybackRemaining {
                 Toggle("Show remaining time", isOn: $settings.showRemainingTime)
-                    .accessibilityHint("When on, player time labels show time left instead of total duration. Default off.")
+                    .accessibilityHint(String(localized: "When on, player time labels show time left instead of total duration. Default off."))
                 Text("When on, the mini and full player show remaining time (−m:ss) on the right instead of total duration. Left stays current position. Tap the full-player duration/remaining label to toggle. Default off.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -771,7 +771,7 @@ struct SettingsView: View {
                         Text(AppSettings.rewindAfterPauseLabel(secs)).tag(secs)
                     }
                 }
-                .accessibilityHint("Seconds to seek back when resuming after a pause of at least 1 second. Off disables. Default 2.")
+                .accessibilityHint(String(localized: "Seconds to seek back when resuming after a pause of at least 1 second. Off disables. Default 2."))
                 Text("When resuming after a pause of at least 1 second, seek backward by this many seconds so you do not lose context. Off (0) disables. Does not apply on first start / cold play from a row — only after an actual pause of the current item. Fixed amount (honest beta; not Android’s elapsed-time tiers). Default 2.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -782,7 +782,7 @@ struct SettingsView: View {
                         Text(AppSettings.smartMarkAsPlayedLabel(secs)).tag(secs)
                     }
                 }
-                .accessibilityHint("Seconds before end that count as played when leaving. Off marks only on natural end. Default 30.")
+                .accessibilityHint(String(localized: "Seconds before end that count as played when leaving. Off marks only on natural end. Default 30."))
                 Text("Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -864,11 +864,11 @@ struct SettingsView: View {
     private var networkDownloadsSection: some View {
         Section {
             Toggle(String(localized: "Auto-download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.autoDownloadWifiOnly))
-                .accessibilityHint("When on, auto-download skips cellular networks.")
+                .accessibilityHint(String(localized: "When on, auto-download skips cellular networks."))
             Toggle(String(localized: "Manual download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.manualDownloadWifiOnly))
-                .accessibilityHint("When on, user downloads are refused on cellular.")
+                .accessibilityHint(String(localized: "When on, user downloads are refused on cellular."))
             Toggle(String(localized: "Stream Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.streamWifiOnly))
-                .accessibilityHint("When on, network streaming is blocked on cellular; local files still play.")
+                .accessibilityHint(String(localized: "When on, network streaming is blocked on cellular; local files still play."))
             if parental.isEnabled && parental.lockNetworkDownloadsSettings && parental.isLocked {
                 Text("Network / Downloads settings are locked. Enter the parental PIN to change these toggles.")
                     .font(.caption)
@@ -924,13 +924,13 @@ struct SettingsView: View {
     private var notificationsSection: some View {
         Section {
             Toggle("Notify on new episodes", isOn: $settings.notifyOnNewEpisodes)
-                .accessibilityHint("Local notifications only; no push server.")
+                .accessibilityHint(String(localized: "Local notifications only; no push server."))
             Toggle("Notify on download errors", isOn: $settings.notifyOnDownloadErrors)
-                .accessibilityHint("Local notifications when a download fails.")
+                .accessibilityHint(String(localized: "Local notifications when a download fails."))
             Toggle("Notify on sync errors", isOn: $settings.notifyOnSyncErrors)
-                .accessibilityHint("Local notifications when gpodder or Nextcloud sync fails.")
+                .accessibilityHint(String(localized: "Local notifications when gpodder or Nextcloud sync fails."))
             Toggle("Notify when sleep timer ends", isOn: $settings.notifyOnSleepTimerEnd)
-                .accessibilityHint("Local notification and haptic when the sleep timer pauses or stops playback.")
+                .accessibilityHint(String(localized: "Local notification and haptic when the sleep timer pauses or stops playback."))
             LabeledContent("Permission") {
                 Text(notificationAuthLabel)
                     .foregroundStyle(.secondary)
@@ -1005,7 +1005,7 @@ struct SettingsView: View {
     private var storageSection: some View {
         Section {
             Toggle("Delete episode after playing", isOn: $settings.autoDeleteAfterPlaying)
-                .accessibilityHint("Removes the offline file when marked played; favorites are kept.")
+                .accessibilityHint(String(localized: "Removes the offline file when marked played; favorites are kept."))
             Text(autoDeleteHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -1165,7 +1165,7 @@ struct SettingsView: View {
     private var appStoreRatingSection: some View {
         Section {
             Toggle("Ask for App Store rating", isOn: $settings.askForAppStoreRating)
-                .accessibilityHint("May show a review prompt after ten mark-played events once per install.")
+                .accessibilityHint(String(localized: "May show a review prompt after ten mark-played events once per install."))
             LabeledContent("Mark-played count") {
                 Text("\(RatingPromptCoordinator.successfulMarkPlayedCount)/\(RatingPromptCoordinator.threshold)")
                     .foregroundStyle(.secondary)

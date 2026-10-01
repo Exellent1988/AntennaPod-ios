@@ -326,7 +326,7 @@ struct DownloadsView: View {
                     } label: {
                         Label("Sort", systemImage: "arrow.up.arrow.down")
                     }
-                    .accessibilityLabel("Sort downloads")
+                    .accessibilityLabel(String(localized: "Sort downloads"))
                 }
                 ToolbarItem(placement: .status) {
                     if !downloads.downloads.isEmpty, downloads.storageUsage.fileCount > 0 {
@@ -345,7 +345,7 @@ struct DownloadsView: View {
                     } label: {
                         Label("Errors", systemImage: "exclamationmark.bubble")
                     }
-                    .accessibilityLabel("Download errors")
+                    .accessibilityLabel(String(localized: "Download errors"))
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
@@ -355,7 +355,7 @@ struct DownloadsView: View {
                             Label("Add all to queue", systemImage: "text.append")
                         }
                         .disabled(enqueueAllDownloadsCandidatesCount == 0)
-                        .accessibilityHint("Appends downloaded episodes not already queued")
+                        .accessibilityHint(String(localized: "Appends downloaded episodes not already queued"))
 
                         Button(role: .destructive) {
                             showDeletePlayedConfirm = true
