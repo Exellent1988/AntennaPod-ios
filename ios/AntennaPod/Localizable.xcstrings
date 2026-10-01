@@ -8602,6 +8602,40 @@
           }
         }
       }
+    },
+    "Marks this episode as played": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks this episode as played"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert diese Episode als gehört"
+          }
+        }
+      }
+    },
+    "Marks this episode as unplayed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks this episode as unplayed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert diese Episode als ungehört"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

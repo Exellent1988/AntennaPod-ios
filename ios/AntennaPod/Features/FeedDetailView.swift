@@ -474,6 +474,11 @@ struct EpisodeRow: View {
                         ? String(localized: "Mark unplayed")
                         : String(localized: "Mark played")
                 )
+                .accessibilityHint(
+                    state.isPlayed
+                        ? String(localized: "Marks this episode as unplayed")
+                        : String(localized: "Marks this episode as played")
+                )
 
                 Button {
                     store.toggleFavorite(episode.id)

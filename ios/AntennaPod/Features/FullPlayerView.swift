@@ -714,6 +714,11 @@ struct FullPlayerView: View {
                     ? String(localized: "Mark unplayed")
                     : String(localized: "Mark played")
             )
+            .accessibilityHint(
+                played
+                    ? String(localized: "Marks this episode as unplayed")
+                    : String(localized: "Marks this episode as played")
+            )
 
             Button {
                 store.toggleFavorite(episode.id)
