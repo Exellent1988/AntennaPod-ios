@@ -155,6 +155,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Favoriten: Suche (Titel / Feed) | ☐ Favorites: search (title / feed) |
 | ☐ Favoriten: Sortierung (Neueste / Älteste; favoritedAt; persistiert) | ☐ Favorites: sort (Newest / Oldest; favoritedAt; persisted) |
 | ☐ Favoriten: Favoriten leeren (Bestätigung) | ☐ Favorites: Clear favorites (confirm) |
+| ☐ Favoriten: Verbleibende Zeit (Info-Leiste; sortierte+gefilterte Liste; ~ bei unbekannten Dauern; nicht Clear-Katalog) | ☐ Favorites: remaining time (info bar; visible sort+search list; ~ when unknowns; not Clear catalog) |
 | ☐ Archive / Restore (Listen + Full Player; `archived.json`) | ☐ Archive / restore (lists + Full Player; `archived.json`) |
 | ☐ Archiviert: Suche (Titel / Feed) | ☐ Archived: search (title / feed) |
 | ☐ Archiviert: Sortierung (Neueste / Älteste; archivedAt; persistiert) | ☐ Archived: sort (Newest / Oldest; archivedAt; persisted) |
@@ -228,6 +229,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Downloads remaining time: info bar under chips — sum `max(0, duration − position)` over **visible** chip+search list (**not** full offline catalog / tab badge); unknown durations omitted (`~`); live position for current episode; wall-clock (no speed); EN/DE a11y.
 - Inbox remaining time: Info-Leiste — Summe `max(0, Dauer − Position)` über **sichtbare** sortierte Inbox-Liste; unbekannte Dauern ausgelassen (`~`); live Position für aktuelle Episode; Wanduhr (kein Speed); **ausgeblendet bei Bibliothekssuche** (nicht Tab-Badge über Library-Hits); EN/DE a11y.
   Inbox remaining time: info bar — sum `max(0, duration − position)` over **visible** sorted Inbox list; unknown durations omitted (`~`); live position for current episode; wall-clock (no speed); **hidden during library search** (not tab-badge totals over library hits); EN/DE a11y.
+- Favorites remaining time: Info-Leiste — Summe `max(0, Dauer − Position)` über **sichtbare** Sort+Suche-Liste (**nicht** voller Favoriten-Katalog / Clear-Count); unbekannte Dauern ausgelassen (`~`); live Position für aktuelle Episode; Wanduhr (kein Speed); EN/DE a11y.
+  Favorites remaining time: info bar — sum `max(0, duration − position)` over **visible** sort+search list (**not** full favorites catalog / Clear count); unknown durations omitted (`~`); live position for current episode; wall-clock (no speed); EN/DE a11y.
 - Add from Clipboard: nur wenn Zwischenablage eine getrimmte http(s)-URL mit Host hält (erste Zeile); Toolbar + URL-Tab in Add podcast; öffnet bestehende Preview → Confirm Subscribe; **kein** Auto-Abo beim Start; **kein** OPML aus Zwischenablage.
   Add from Clipboard: only when the clipboard holds a trimmed http(s) URL with a host (first line); toolbar + URL tab in Add podcast; opens existing preview → Confirm Subscribe; **no** auto-subscribe on launch; **no** OPML from clipboard.
 - Queue lock: Toolbar Lock/Unlock (`lock.fill` / `lock.open`) + Settings → Queue Toggle; persistiert `AppSettings.queueLocked` (Default aus). Gesperrt = kein Edit/Ziehen-Reorder und kein Move to top/bottom; **Einreihen / Play Next / Remove / Archive-Swipe / Clear queue bleiben** (nur Reihenfolge-Sperre, wie Android `prefQueueLocked`).

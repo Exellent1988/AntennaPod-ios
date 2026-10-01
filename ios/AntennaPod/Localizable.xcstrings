@@ -1735,6 +1735,24 @@
         }
       }
     },
+    "Favorites remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Favorites info bar (episode count + remaining duration).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorites remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Favoritenzeit %@"
+          }
+        }
+      }
+    },
     "Feed actions": {
       "extractionState": "manual",
       "localizations": {
