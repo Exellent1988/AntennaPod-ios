@@ -122,7 +122,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Archiviert: Suche (Titel / Feed) | ☐ Archived: search (title / feed) |
 | ☐ Archiviert: Alle wiederherstellen (Bestätigung) | ☐ Archived: Restore all (confirm) |
 | ☐ Library search (lokal) | ☐ Library search (local) |
-| ☐ Share Podcast / Episode | ☐ Share podcast / episode |
+| ☐ Share Podcast / Episode (Player, Shownotes, EpisodeRow; URL: link→enclosure→feed; kein Deep-Link) | ☐ Share podcast / episode (Player, Shownotes, EpisodeRow; URL: link→enclosure→feed; no deep link) |
 | ☐ Feed-Detail: Feed-URL kopieren (Zwischenablage; local-folder disabled) | ☐ Feed detail: Copy feed URL (pasteboard; local-folder disabled) |
 
 ---

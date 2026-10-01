@@ -44,7 +44,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Favorites / starred episodes (Subscriptions → Library → Favorites; optional Home preview via Home layout; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; `.searchable` title/feed filter with debounce; toolbar Clear favorites with confirm on full list; auto-delete skips favorites)
 - Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived with `.searchable` + toolbar Restore all confirm on full list; bulk Archive all + Mark all as played in Inbox)
 - Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500 then All/Unplayed/Downloaded chips + searchable title/feed; EpisodeRow actions; swipe Archive + Mark played/unplayed; filter persisted in AppSettings)
-- Share podcast / episode (FeedDetail toolbar share feed URL; ⋯ **Copy feed URL** to pasteboard + Copied alert; local-folder disabled; EpisodeRow ShareLink / context menu / FeedDetail swipe; full player; prefer page link else enclosure)
+- Share podcast / episode (system share sheet; episode URL: page link → enclosure → feed site/RSS; `Title — Podcast` message; full player + Shownotes toolbar + EpisodeRow / swipe / context; FeedDetail podcast share + Copy feed URL; no AntennaPod deep link / no gPodder fake share)
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; Queue/Downloads/Favorites/History/Archived title/feed; Feed detail episode title; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (EpisodeRow button/context, Feed leading swipe, Full player, All Episodes leading swipe via `togglePlayed`; Smart mark Off/15/30/60/120 default 30; Inbox + Feed detail Mark all as played with confirm)
@@ -298,7 +298,18 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 
 ## Share
 
-Share an **episode** (title + URL) or a **podcast** (title + feed URL) via the system share sheet (`ShareLink` / `UIActivityViewController`). Episode URL prefers the item page/`link`, then the enclosure/`downloadUrl`. **Feed detail** toolbar shares the feed URL; the ⋯ **Feed actions** menu also offers **Copy feed URL**, which writes `feed.feedUrl` to `UIPasteboard.general` and shows a brief **Copied** alert (plus success haptic). **Local-folder feeds** (`local-folder://`) disable Copy — there is no network RSS URL to paste (same honesty as Share omitting them). Episode rows expose Share as a button and in the context menu (Feed detail also offers a trailing swipe Share). The **full player** secondary actions include Share when a URL is available. No cloud / social deep links beyond the system sheet.
+Share an **episode** or a **podcast** via the **system share sheet** only (`ShareLink` / `UIActivityViewController`). There is **no AntennaPod deep link**, no in-app social posting, and **no fake gPodder share** — recipients get a real title + URL they can open in a browser or player.
+
+**Episode payload:** subject = episode title; message = `Title — Podcast` when the feed title is known (else title alone). **URL precedence** (first network URL wins; never invents a URL):
+
+1. Episode page / `link`
+2. Media enclosure / `downloadUrl`
+3. Feed homepage / `siteLink`
+4. Feed RSS / `feedUrl`
+
+`file://` and `local-folder://` URLs are omitted. Share is **hidden or disabled** when nothing shareable is available. **Share with playback position** is not in this beta.
+
+**Entry points:** full player secondary Share; **Shownotes** sheet toolbar; EpisodeRow button + context menu; Feed detail trailing swipe Share. **Feed detail** toolbar shares the **podcast** (title + feed URL); the ⋯ **Feed actions** menu also offers **Copy feed URL** (`UIPasteboard.general` + brief **Copied** alert / haptic). Local-folder feeds disable Copy / podcast Share — no network RSS URL.
 
 ## Full player
 

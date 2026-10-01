@@ -167,7 +167,7 @@ struct FullPlayerView: View {
         }
         .sheet(isPresented: $showDescription) {
             if let episode = resolvedEpisode ?? episode {
-                EpisodeDescriptionSheetView(episode: episode)
+                EpisodeDescriptionSheetView(episode: episode, feedTitle: feed?.title)
             }
         }
         .alert(
@@ -729,15 +729,16 @@ struct FullPlayerView: View {
                         : String(localized: "Download")
             )
 
-            if let url = episode.shareURL {
+            if let url = episode.shareURL(feed: feed) {
                 ShareLink(
                     item: url,
                     subject: Text(episode.title),
-                    message: Text(episode.title)
+                    message: Text(episode.shareMessage(feedTitle: feed?.title))
                 ) {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
-                .accessibilityLabel(String(localized: "Share"))
+                .accessibilityLabel(String(localized: "Share episode"))
+                .accessibilityHint(String(localized: "Opens the system share sheet with the episode title and link"))
             }
         }
         .buttonStyle(.bordered)

@@ -142,15 +142,16 @@ struct FeedDetailView: View {
                                     Label("Queue", systemImage: "text.append")
                                 }
                                 .tint(.purple)
-                                if let url = episode.shareURL {
+                                if let url = episode.shareURL(feed: liveFeed) {
                                     ShareLink(
                                         item: url,
                                         subject: Text(episode.title),
-                                        message: Text(episode.title)
+                                        message: Text(episode.shareMessage(feedTitle: liveFeed.title))
                                     ) {
                                         Label("Share", systemImage: "square.and.arrow.up")
                                     }
                                     .tint(.indigo)
+                                    .accessibilityLabel(String(localized: "Share episode"))
                                 }
                             }
                     }
@@ -507,14 +508,15 @@ struct EpisodeRow: View {
         .padding(.vertical, 4)
         .opacity(store.isArchived(episode.id) ? 0.55 : 1)
         .contextMenu {
-            if let url = episode.shareURL {
+            if let url = episodeShareURL {
                 ShareLink(
                     item: url,
                     subject: Text(episode.title),
-                    message: Text(episode.title)
+                    message: Text(episodeShareMessage)
                 ) {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
+                .accessibilityLabel(String(localized: "Share episode"))
             }
             Button {
                 store.toggleFavorite(episode.id)
@@ -557,29 +559,43 @@ struct EpisodeRow: View {
             }
         }
         .sheet(isPresented: $showDescription) {
-            EpisodeDescriptionSheetView(episode: episode)
+            EpisodeDescriptionSheetView(episode: episode, feedTitle: feedTitle)
         }
+    }
+
+    private var resolvedFeed: PodcastFeed? {
+        store.feed(containingEpisodeId: episode.id)
+    }
+
+    private var episodeShareURL: URL? {
+        episode.shareURL(feed: resolvedFeed)
+    }
+
+    private var episodeShareMessage: String {
+        episode.shareMessage(feedTitle: feedTitle.isEmpty ? resolvedFeed?.title : feedTitle)
     }
 
     @ViewBuilder
     private var episodeShareControl: some View {
-        if let url = episode.shareURL {
+        if let url = episodeShareURL {
             ShareLink(
                 item: url,
                 subject: Text(episode.title),
-                message: Text(episode.title)
+                message: Text(episodeShareMessage)
             ) {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
             .buttonStyle(.bordered)
-            .accessibilityLabel(String(localized: "Share"))
+            .accessibilityLabel(String(localized: "Share episode"))
+            .accessibilityHint(String(localized: "Opens the system share sheet with the episode title and link"))
         } else {
             Button {} label: {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
             .buttonStyle(.bordered)
             .disabled(true)
-            .accessibilityLabel(String(localized: "Share"))
+            .accessibilityLabel(String(localized: "Share episode"))
+            .accessibilityHint(String(localized: "No shareable link for this episode"))
         }
     }
 
