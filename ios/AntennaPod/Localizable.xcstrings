@@ -14739,6 +14739,78 @@
         }
       },
       "comment": "Alert message after copying podcast:guid."
+    },
+    "People": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "People"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mitwirkende"
+          }
+        }
+      },
+      "comment": "Section title for podcast:person list on Feed detail / description / shownotes. Hidden when none."
+    },
+    "Showing first 20 people from the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first 20 people from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es werden die ersten 20 Personen aus dem Feed angezeigt."
+          }
+        }
+      },
+      "comment": "Honesty footnote when podcast:person list is truncated to the first 20."
+    },
+    "Opens this person’s link in the system browser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens this person’s link in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den Link dieser Person im Systembrowser"
+          }
+        }
+      },
+      "comment": "VoiceOver hint when podcast:person has an http(s) href."
+    },
+    "Person %@, role %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person %@, role %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person %@, Rolle %@"
+          }
+        }
+      },
+      "comment": "VoiceOver label for a podcast:person with name and role. Unused if Swift stores interpolated key."
     }
   },
   "version": "1.0"

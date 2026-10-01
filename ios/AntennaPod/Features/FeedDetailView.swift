@@ -59,6 +59,11 @@ struct FeedDetailView: View {
         liveFeed.displayCategories
     }
 
+    /// Channel podcast:person when the feed provided them — empty → hide (never invent people).
+    private var displayPeople: [PodcastPerson] {
+        liveFeed.displayPeople
+    }
+
     /// Podcast Index `podcast:guid` when the feed provided it — hide when missing (never invent).
     private var displayPodcastGuid: String? {
         liveFeed.displayPodcastGuid
@@ -290,6 +295,13 @@ struct FeedDetailView: View {
                         .accessibilityLabel(
                             String(localized: "Categories \(displayCategories.joined(separator: ", "))")
                         )
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:person — name + role when set; http(s) href → system browser; hide when none.
+            if !displayPeople.isEmpty {
+                Section {
+                    PodcastPeopleListView(people: displayPeople)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }

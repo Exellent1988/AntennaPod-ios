@@ -34,6 +34,15 @@ struct EpisodeDescriptionSheetView: View {
         !plainDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    /// Item podcast:person when the feed provided them — empty → hide (never invent).
+    private var displayPeople: [PodcastPerson] {
+        episode.displayPeople
+    }
+
+    private var hasPeople: Bool {
+        !displayPeople.isEmpty
+    }
+
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
     private var paragraphs: [String] {
         let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -100,12 +109,17 @@ struct EpisodeDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty {
+                if plainDescription.isEmpty && !hasPeople {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "doc.text",
                         description: Text("This episode has no shownotes in the feed.")
                     )
+                } else if plainDescription.isEmpty {
+                    ScrollView {
+                        PodcastPeopleListView(people: displayPeople)
+                            .padding()
+                    }
                 } else {
                     shownotesContent
                         .searchable(text: $searchText, prompt: "Search shownotes")
@@ -217,6 +231,9 @@ struct EpisodeDescriptionSheetView: View {
         } else if isFiltering {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 16) {
+                    if hasPeople {
+                        PodcastPeopleListView(people: displayPeople)
+                    }
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
                             .font(.body)
@@ -229,11 +246,16 @@ struct EpisodeDescriptionSheetView: View {
             }
         } else {
             ScrollView {
-                Text(plainDescription)
-                    .font(.body)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .textSelection(.enabled)
-                    .padding()
+                VStack(alignment: .leading, spacing: 16) {
+                    if hasPeople {
+                        PodcastPeopleListView(people: displayPeople)
+                    }
+                    Text(plainDescription)
+                        .font(.body)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .textSelection(.enabled)
+                }
+                .padding()
             }
         }
     }

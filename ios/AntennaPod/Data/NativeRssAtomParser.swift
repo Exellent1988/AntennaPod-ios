@@ -39,6 +39,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var capturingLocked = false
     /// Channel podcast:guid — feed-provided UUIDv5 only; never invent / never generate from feed URL.
     private var podcastGuid: String?
+    /// Channel podcast:person — feed-provided only; never invent people or default role/group.
+    private var channelPeople: [PodcastPerson] = []
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -71,6 +73,14 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itemEpisodeType: String?
     /// Item itunes:explicit override; nil = inherit channel (or false when channel unmarked).
     private var itemExplicitOverride: Bool?
+    /// Item podcast:person — feed-provided only; never invent.
+    private var itemPeople: [PodcastPerson] = []
+    /// Capturing podcast:person element text (name) + pending attributes.
+    private var capturingPerson = false
+    private var pendingPersonRole: String?
+    private var pendingPersonGroup: String?
+    private var pendingPersonHref: String?
+    private var pendingPersonImg: String?
     private var elementStack: [String] = []
 
     init(data: Data) {
@@ -109,6 +119,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             isLocked: feedIsLocked,
             lockedOwner: lockedOwnerAttr,
             podcastGuid: podcastGuid,
+            people: channelPeople,
             episodes: episodes
         )
     }
@@ -155,6 +166,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemEpisodeNumber = nil
             itemEpisodeType = nil
             itemExplicitOverride = nil
+            itemPeople = []
             if local.lowercased() == "entry", let href = attributeDict["href"] {
                 itemLink = href
             }
@@ -284,6 +296,14 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     )
                 )
             }
+        case "person":
+            // Podcast Index: <podcast:person role="…" group="…" href="…" img="…">Name</podcast:person>
+            // Channel and/or item. Name required; role/group/href/img optional — never invent people or default role/group.
+            capturingPerson = true
+            pendingPersonRole = Self.nonEmptyAttr(attributeDict["role"] ?? attributeDict["Role"])
+            pendingPersonGroup = Self.nonEmptyAttr(attributeDict["group"] ?? attributeDict["Group"])
+            pendingPersonHref = Self.nonEmptyAttr(attributeDict["href"] ?? attributeDict["url"])
+            pendingPersonImg = Self.nonEmptyAttr(attributeDict["img"] ?? attributeDict["image"])
         default:
             break
         }
@@ -357,6 +377,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 if let flagged = ItunesExplicitParsing.parse(text) {
                     itemExplicitOverride = flagged
                 }
+            case "person":
+                finishPerson(text: text, intoItem: true)
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
@@ -376,7 +398,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     seasonNumber: itemSeasonNumber,
                     episodeNumber: itemEpisodeNumber,
                     episodeType: itemEpisodeType,
-                    isExplicit: itemExplicitOverride ?? feedIsExplicit
+                    isExplicit: itemExplicitOverride ?? feedIsExplicit,
+                    people: itemPeople
                 )
                 episodes.append(episode)
                 inItem = false
@@ -450,6 +473,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 if podcastGuid == nil, !text.isEmpty {
                     podcastGuid = text
                 }
+            case "person":
+                finishPerson(text: text, intoItem: false)
             case "id":
                 break
             default:
@@ -464,6 +489,33 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         currentElement = elementStack.last ?? ""
     }
 
+
+    /// Finish a podcast:person element — append when name non-empty; never invent.
+    private func finishPerson(text: String, intoItem: Bool) {
+        defer {
+            capturingPerson = false
+            pendingPersonRole = nil
+            pendingPersonGroup = nil
+            pendingPersonHref = nil
+            pendingPersonImg = nil
+        }
+        guard capturingPerson else { return }
+        let name = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { return }
+        let person = PodcastPerson(
+            name: name,
+            role: pendingPersonRole,
+            group: pendingPersonGroup,
+            href: pendingPersonHref,
+            img: pendingPersonImg
+        )
+        if intoItem {
+            itemPeople.append(person)
+        } else {
+            channelPeople.append(person)
+        }
+    }
+
     private func localName(_ name: String) -> String {
         if let index = name.lastIndex(of: ":") {
             return String(name[name.index(after: index)...])
@@ -473,6 +525,14 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
 }
 
 extension XMLFeedParser {
+
+    /// Trimmed non-empty attribute value, or nil.
+    fileprivate static func nonEmptyAttr(_ raw: String?) -> String? {
+        guard let raw else { return nil }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     /// Non-empty author preference: itunes/RSS author text → Atom name → managingEditor.
     /// Returns nil when none present (UI hides; never invents).
     fileprivate static func preferredAuthor(

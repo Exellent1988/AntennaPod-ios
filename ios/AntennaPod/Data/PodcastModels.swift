@@ -17,6 +17,87 @@ struct PodcastChapter: Identifiable, Hashable, Codable {
     }
 }
 
+
+/// Podcast Index `podcast:person` — feed-provided credits only (never invent people).
+/// Name is element text; optional `role` / `group` / `href` / `img` attributes when set.
+/// Spec defaults (host/cast) are **not** assumed here — UI shows role only when the feed set it.
+struct PodcastPerson: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields (names can repeat).
+    var id: String { "\(name)|\(role ?? "")|\(group ?? "")|\(href ?? "")|\(img ?? "")" }
+    var name: String
+    /// Optional `role` attribute as provided (e.g. host, guest). Nil when absent — never invent "host".
+    var role: String?
+    /// Optional `group` attribute as provided (e.g. cast, writing). Nil when absent — never invent "cast".
+    var group: String?
+    /// Optional profile / homepage URL string from `href`.
+    var href: String?
+    /// Optional avatar URL string from `img` (v1 UI may omit remote fetch).
+    var img: String?
+
+    init(name: String, role: String? = nil, group: String? = nil, href: String? = nil, img: String? = nil) {
+        self.name = name
+        self.role = role
+        self.group = group
+        self.href = href
+        self.img = img
+    }
+
+    /// Trimmed non-empty name. Nil when blank.
+    var displayName: String? {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty role when the feed set `role`. Hidden when missing — never invent.
+    var displayRole: String? {
+        guard let role else { return nil }
+        let trimmed = role.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) profile URL from feed `href` only. Nil when missing / non-http(s).
+    var profileURL: URL? {
+        guard let href else { return nil }
+        let trimmed = href.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return url
+    }
+}
+
+/// Display helpers for `podcast:person` lists (channel or item). Feed-provided only.
+enum PodcastPeopleDisplay {
+    /// Soft UI cap — show first N, honesty footnote when more exist in the feed.
+    static let displayCap = 20
+
+    /// Non-empty named people in feed order (no invented entries).
+    static func valid(_ people: [PodcastPerson]) -> [PodcastPerson] {
+        people.compactMap { person in
+            guard let name = person.displayName else { return nil }
+            return PodcastPerson(
+                name: name,
+                role: person.displayRole,
+                group: person.group.flatMap { g in
+                    let t = g.trimmingCharacters(in: .whitespacesAndNewlines)
+                    return t.isEmpty ? nil : t
+                },
+                href: person.href,
+                img: person.img
+            )
+        }
+    }
+
+    /// First `displayCap` people + whether the feed listed more.
+    static func capped(_ people: [PodcastPerson]) -> (shown: [PodcastPerson], truncated: Bool) {
+        let list = valid(people)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+}
+
 struct PodcastEpisode: Identifiable, Hashable, Codable {
     let id: String
     var title: String
@@ -47,6 +128,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// `itunes:explicit` yes/true/explicit on the item (or inherited from channel when item omits it).
     /// `false` when missing, clean/no/false, or unknown — never invent; UI hides badge unless true.
     var isExplicit: Bool
+    /// Item-level Podcast Index `podcast:person` entries when the feed provides them.
+    /// Empty when absent — never invent people; UI hides when empty.
+    var people: [PodcastPerson]
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -96,7 +180,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         seasonNumber: Int? = nil,
         episodeNumber: Int? = nil,
         episodeType: String? = nil,
-        isExplicit: Bool = false
+        isExplicit: Bool = false,
+        people: [PodcastPerson] = []
     ) {
         self.id = id
         self.title = title
@@ -115,6 +200,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.episodeNumber = episodeNumber
         self.episodeType = episodeType
         self.isExplicit = isExplicit
+        self.people = people
     }
 
     init(from decoder: Decoder) throws {
@@ -136,6 +222,12 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         episodeNumber = try c.decodeIfPresent(Int.self, forKey: .episodeNumber)
         episodeType = try c.decodeIfPresent(String.self, forKey: .episodeType)
         isExplicit = try c.decodeIfPresent(Bool.self, forKey: .isExplicit) ?? false
+        people = try c.decodeIfPresent([PodcastPerson].self, forKey: .people) ?? []
+    }
+
+    /// Non-empty named item-level `podcast:person` entries (hide when empty — never invent).
+    var displayPeople: [PodcastPerson] {
+        PodcastPeopleDisplay.valid(people)
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).
@@ -229,6 +321,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Nil or blank when absent — **never invent** / never generate from feed URL; display/copy only (not subscription primary key).
     /// Distinct from per-episode RSS `guid` / Atom `id`.
     var podcastGuid: String?
+    /// Channel-level Podcast Index `podcast:person` entries when the feed provides them.
+    /// Empty when absent — never invent people; UI hides when empty.
+    var people: [PodcastPerson]
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -301,6 +396,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// Non-empty named channel-level `podcast:person` entries (hide when empty — never invent).
+    var displayPeople: [PodcastPerson] {
+        PodcastPeopleDisplay.valid(people)
+    }
+
     init(
         id: UUID,
         title: String,
@@ -317,6 +417,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         isLocked: Bool = false,
         lockedOwner: String? = nil,
         podcastGuid: String? = nil,
+        people: [PodcastPerson] = [],
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -334,6 +435,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.isLocked = isLocked
         self.lockedOwner = lockedOwner
         self.podcastGuid = podcastGuid
+        self.people = people
         self.episodes = episodes
     }
 
@@ -354,11 +456,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         isLocked = try c.decodeIfPresent(Bool.self, forKey: .isLocked) ?? false
         lockedOwner = try c.decodeIfPresent(String.self, forKey: .lockedOwner)
         podcastGuid = try c.decodeIfPresent(String.self, forKey: .podcastGuid)
+        people = try c.decodeIfPresent([PodcastPerson].self, forKey: .people) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, episodes
     }
 }
 
