@@ -305,7 +305,7 @@ struct SettingsView: View {
 
     private var autoDeleteHelpText: String {
         if settings.autoDeleteAfterPlaying {
-            return "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item; favorites/starred are not implemented yet."
+            return "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item, and skips favorited / starred episodes."
         }
         return "When enabled, offline files are removed after an episode is marked played. Episode metadata and played status are kept."
     }

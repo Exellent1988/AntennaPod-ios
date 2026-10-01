@@ -16,6 +16,10 @@ final class PodcastStore: ObservableObject {
     @Published var feedSettingsById: [UUID: FeedSettings] = [:] {
         didSet { PodcastPersistence.saveFeedSettings(feedSettingsById) }
     }
+    /// Episode id → favorited-at epoch ms (`favorites.json` side map).
+    @Published var favoriteAtById: [String: Int64] = [:] {
+        didSet { PodcastPersistence.saveFavorites(favoriteAtById) }
+    }
     @Published var isLoading = false
     @Published var lastError: String?
     @Published var opmlImport = OpmlImportState()
@@ -37,6 +41,7 @@ final class PodcastStore: ObservableObject {
         queue = PodcastPersistence.loadQueue()
         playbackStates = PodcastPersistence.loadPlaybackStates()
         feedSettingsById = PodcastPersistence.loadFeedSettings()
+        favoriteAtById = PodcastPersistence.loadFavorites()
     }
 
     func subscribe(feedUrl: String) async {
@@ -64,6 +69,7 @@ final class PodcastStore: ObservableObject {
         queue.removeAll { ids.contains($0.id) }
         for id in ids {
             playbackStates.removeValue(forKey: id)
+            favoriteAtById.removeValue(forKey: id)
         }
     }
 
@@ -245,6 +251,10 @@ final class PodcastStore: ObservableObject {
 
     private func enqueueAutoDeleteAfterPlaying(_ episodeId: String) {
         guard settings?.autoDeleteAfterPlaying == true else { return }
+        guard !isFavorite(episodeId) else {
+            pendingAutoDeleteIds.remove(episodeId)
+            return
+        }
         // Don't delete the file while AVPlayer is still using that local URL.
         if playback?.shouldBlockAutoDelete(for: episodeId) == true {
             pendingAutoDeleteIds.insert(episodeId)
@@ -255,6 +265,8 @@ final class PodcastStore: ObservableObject {
 
     private func performAutoDeleteAfterPlaying(_ episodeId: String) {
         guard settings?.autoDeleteAfterPlaying == true else { return }
+        // Favorited / starred episodes keep their offline file.
+        guard !isFavorite(episodeId) else { return }
         guard let downloads else { return }
         let episode: PodcastEpisode?
         if let item = downloads.downloads.first(where: { $0.id == episodeId }) {
@@ -305,6 +317,61 @@ final class PodcastStore: ObservableObject {
             if l != r { return l > r }
             return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
         }
+    }
+
+
+    // MARK: - Favorites (starred)
+
+    func isFavorite(_ episodeId: String) -> Bool {
+        favoriteAtById[episodeId] != nil
+    }
+
+    func toggleFavorite(_ episodeId: String) {
+        if isFavorite(episodeId) {
+            favoriteAtById.removeValue(forKey: episodeId)
+            // No auto-delete on unfavorite; user already marked played earlier if applicable.
+        } else {
+            favoriteAtById[episodeId] = Int64(Date().timeIntervalSince1970 * 1000)
+            // Starred while a delete was deferred — cancel it.
+            pendingAutoDeleteIds.remove(episodeId)
+        }
+    }
+
+    /// Starred episodes across feeds, newest favorited first.
+    var favoriteEpisodes: [FavoriteEpisode] {
+        var items: [FavoriteEpisode] = []
+        for feed in feeds {
+            for episode in feed.episodes {
+                guard let at = favoriteAtById[episode.id] else { continue }
+                items.append(
+                    FavoriteEpisode(
+                        episode: episode,
+                        feedTitle: feed.title,
+                        favoritedAtEpochMs: at
+                    )
+                )
+            }
+        }
+        // Queue-only copies that were starred (rare).
+        let knownIds = Set(items.map(\.id))
+        for episode in queue where !knownIds.contains(episode.id) {
+            guard let at = favoriteAtById[episode.id] else { continue }
+            let title = feed(containingEpisodeId: episode.id)?.title ?? ""
+            items.append(
+                FavoriteEpisode(
+                    episode: episode,
+                    feedTitle: title,
+                    favoritedAtEpochMs: at
+                )
+            )
+        }
+        items.sort { lhs, rhs in
+            if lhs.favoritedAtEpochMs != rhs.favoritedAtEpochMs {
+                return lhs.favoritedAtEpochMs > rhs.favoritedAtEpochMs
+            }
+            return lhs.episode.title.localizedCaseInsensitiveCompare(rhs.episode.title) == .orderedAscending
+        }
+        return items
     }
 
     // MARK: - History (played / in-progress)

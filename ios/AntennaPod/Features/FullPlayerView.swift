@@ -356,6 +356,7 @@ struct FullPlayerView: View {
 
     private func secondaryActions(episode: PodcastEpisode) -> some View {
         let played = store.isPlayed(episode.id)
+        let favorited = store.isFavorite(episode.id)
         return HStack(spacing: 16) {
             Button {
                 store.togglePlayed(episode.id)
@@ -365,6 +366,16 @@ struct FullPlayerView: View {
                     systemImage: played ? "circle" : "checkmark.circle"
                 )
             }
+
+            Button {
+                store.toggleFavorite(episode.id)
+            } label: {
+                Label(
+                    favorited ? "Unfavorite" : "Favorite",
+                    systemImage: favorited ? "star.fill" : "star"
+                )
+            }
+            .tint(favorited ? .yellow : nil)
 
             Button {
                 store.enqueue(episode)

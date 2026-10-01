@@ -60,6 +60,11 @@ struct EpisodeRow: View {
                 Text(episode.title)
                     .font(.headline)
                 Spacer(minLength: 8)
+                if store.isFavorite(episode.id) {
+                    Image(systemName: "star.fill")
+                        .foregroundStyle(.yellow)
+                        .accessibilityLabel("Favorite")
+                }
                 if state.isPlayed {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(.secondary)
@@ -124,6 +129,17 @@ struct EpisodeRow: View {
                     )
                 }
                 .buttonStyle(.bordered)
+
+                Button {
+                    store.toggleFavorite(episode.id)
+                } label: {
+                    Label(
+                        store.isFavorite(episode.id) ? "Unfavorite" : "Favorite",
+                        systemImage: store.isFavorite(episode.id) ? "star.fill" : "star"
+                    )
+                }
+                .buttonStyle(.bordered)
+                .tint(store.isFavorite(episode.id) ? .yellow : nil)
             }
             .labelStyle(.iconOnly)
         }

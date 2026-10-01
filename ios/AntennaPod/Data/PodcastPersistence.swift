@@ -14,6 +14,7 @@ enum PodcastPersistence {
     private static var downloadsURL: URL { directory.appendingPathComponent("downloads.json") }
     private static var pendingDownloadsURL: URL { directory.appendingPathComponent("pending-downloads.json") }
     private static var feedSettingsURL: URL { directory.appendingPathComponent("feed-settings.json") }
+    private static var favoritesURL: URL { directory.appendingPathComponent("favorites.json") }
 
     static func loadFeeds() -> [PodcastFeed] {
         decode(feedsURL) ?? []
@@ -72,6 +73,15 @@ enum PodcastPersistence {
     static func saveFeedSettings(_ map: [UUID: FeedSettings]) {
         let raw = Dictionary(uniqueKeysWithValues: map.map { ($0.key.uuidString, $0.value) })
         encode(raw, to: feedSettingsURL)
+    }
+
+    /// Episode id → favorited-at epoch ms (side map; survives playback.json clears).
+    static func loadFavorites() -> [String: Int64] {
+        decode(favoritesURL) ?? [:]
+    }
+
+    static func saveFavorites(_ map: [String: Int64]) {
+        encode(map, to: favoritesURL)
     }
 
     private static func decode<T: Decodable>(_ url: URL) -> T? {

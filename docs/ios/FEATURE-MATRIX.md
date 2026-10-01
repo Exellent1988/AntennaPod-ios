@@ -15,12 +15,12 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Episodes (Alle) | 4 | todo | |
 | Downloads-Liste | 5 | wip | P0, local files + persisted catalog |
 | History | 3 | done | Played / in-progress across feeds, newest `lastPlayedAt` first; Subscriptions → Library → History; swipe remove / mark unplayed; tap via EpisodeRow |
-| Favorites | 3 | todo | |
+| Favorites | 3 | done | Starred episode ids in `favorites.json` side map; star toggle on EpisodeRow + full player; Subscriptions → Library → Favorites (newest first); swipe unfavorite; auto-delete skips favorited downloads |
 | Subscriptions | 5 | wip | List + subscribe sheet |
 | Add podcast | 5 | wip | URL + Apple Podcasts search (Subscribe reuses feed URL pipeline) |
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
 | Statistics | 2 | todo | P3 |
-| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → History), Queue, Downloads, Settings |
+| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Favorites / History), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
 | Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + auto-delete after play + new-episode notifications (P0/P1); more prefs later |
@@ -71,7 +71,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Speicherverwaltung / Cache-Limit | 5 | done | UserDefaults byte budget (unlimited / 1 / 5 / 10 GB / custom MB); usage in Settings; eviction: played oldest-mtime first then unplayed LRU; after DL + Settings open + launch; Clear downloads |
 | Auto-download (global + Regeln) | 4 | done | Global toggle + per-feed cap (1/2/3/5) + per-feed Use global/Always/Never; enqueue after refresh via DownloadService; Wi‑Fi-only via NWPathMonitor; storage eviction unchanged. Full Android-style filter rules → KMP later |
 | Per-feed auto-download | 4 | done | Use global / Always / Never on feed settings sheet; Always enqueues even when global off; Never skips; cap + Wi‑Fi-only still global |
-| Auto-delete after play | 4 | done | Global Settings toggle (default off); on mark played (manual or playback finished / continuous auto-next) deletes local file via DownloadService; keeps episode row + played status; defers while that local file is still the active player item; favorites/starred n/a yet |
+| Auto-delete after play | 4 | done | Global Settings toggle (default off); on mark played (manual or playback finished / continuous auto-next) deletes local file via DownloadService; keeps episode row + played status; defers while that local file is still the active player item; **skips favorited / starred** episodes |
 | Mobile/Wi‑Fi Policy | 4 | wip | Auto-download Wi‑Fi/Ethernet-only via NWPathMonitor; manual downloads still allow cellular; broader cellular prefs later |
 | Background downloads | 5 | done | `URLSessionConfiguration.background`; AppDelegate `handleEventsForBackgroundURLSession`; task↔episode in `pending-downloads.json` |
 | Download log / errors | 3 | todo | lastError surfaced in UI |
@@ -104,7 +104,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Theme light/dark/auto | 5 | done | UserDefaults; `preferredColorScheme` system/light/dark |
 | Default playback speed | 5 | done | UserDefaults; applied on fresh episode start; mini-player marks Default |
 | Prefer stream vs download | 5 | done | UserDefaults; Prefer download / Prefer stream / Automatic; honored in `PlaybackService.play` |
-| Auto-delete after play | 4 | done | UserDefaults; deletes download file after mark played; defers while local file is active player item |
+| Auto-delete after play | 4 | done | UserDefaults; deletes download file after mark played; defers while local file is active player item; skips favorites |
 | FF/Rewind seconds | 4 | done | UserDefaults `rewindSeconds` / `fastForwardSeconds`; presets 5–60; wired to players + MPRemoteCommandCenter |
 | Skip intro / Skip outro | 3 | done | UserDefaults `skipIntroSeconds` / `skipOutroSeconds`; presets 0/5/10/15/30/60 (0=off); PlaybackService seeks intro on fresh start; outro once/session → finished + queue next; global only (per-feed later) |
 | Refresh interval | 4 | done | UserDefaults presets: manual / 1h / 4h / 12h / 24h; due-check on launch + foreground → `refreshAllFeeds()`; BGAppRefreshTask stubbed (no `fetch` in Info.plist) |

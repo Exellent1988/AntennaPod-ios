@@ -161,6 +161,14 @@ struct HistoryEpisode: Identifiable, Hashable {
     let lastPlayedAtEpochMs: Int64
 }
 
+/// Episode row for Favorites (starred), newest favorited first.
+struct FavoriteEpisode: Identifiable, Hashable {
+    var id: String { episode.id }
+    let episode: PodcastEpisode
+    let feedTitle: String
+    let favoritedAtEpochMs: Int64
+}
+
 enum ChapterIndexing {
     /// Index of the chapter active at `positionSeconds`, or `nil` if before the first chapter / empty.
     static func currentIndex(in chapters: [PodcastChapter], at positionSeconds: Double) -> Int? {

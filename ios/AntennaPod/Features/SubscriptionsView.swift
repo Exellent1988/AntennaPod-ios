@@ -17,6 +17,11 @@ struct SubscriptionsView: View {
             List {
                 Section("Library") {
                     NavigationLink {
+                        FavoritesView()
+                    } label: {
+                        Label("Favorites", systemImage: "star")
+                    }
+                    NavigationLink {
                         HistoryView()
                     } label: {
                         Label("History", systemImage: "clock.arrow.circlepath")
