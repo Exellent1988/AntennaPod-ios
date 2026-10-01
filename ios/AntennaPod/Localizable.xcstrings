@@ -9078,6 +9078,125 @@
           }
         }
       }
+    },
+    "Keep updated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep updated"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert halten"
+          }
+        }
+      }
+    },
+    "Use global": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global verwenden"
+          }
+        }
+      }
+    },
+    "Always": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Always"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Immer"
+          }
+        }
+      }
+    },
+    "Included in Refresh all and automatic Keep updated refresh (Subscriptions toolbar, Home/Inbox pull-to-refresh, launch/foreground interval). “Always” matches Use global until a global exclude exists.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Included in Refresh all and automatic Keep updated refresh (Subscriptions toolbar, Home/Inbox pull-to-refresh, launch/foreground interval). “Always” matches Use global until a global exclude exists."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enthalten bei „Alle aktualisieren“ und automatischer Aktualisierung (Abonnements-Symbolleiste, Home/Posteingang Zum Aktualisieren ziehen, Start/Vordergrund-Intervall). „Immer“ entspricht vorerst „Global verwenden“, bis es eine globale Ausschlussliste gibt."
+          }
+        }
+      }
+    },
+    "Skipped by Refresh all and automatic Keep updated refresh. You can still refresh this podcast alone from Subscriptions (swipe) or Feed detail.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skipped by Refresh all and automatic Keep updated refresh. You can still refresh this podcast alone from Subscriptions (swipe) or Feed detail."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird von „Alle aktualisieren“ und der automatischen Aktualisierung übersprungen. Du kannst diesen Podcast weiterhin einzeln unter Abonnements (wischen) oder in der Feed-Ansicht aktualisieren."
+          }
+        }
+      }
+    },
+    "When Never, Refresh all and automatic refresh skip this podcast. Manual single-podcast refresh still works.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When Never, Refresh all and automatic refresh skip this podcast. Manual single-podcast refresh still works."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bei „Nie“ überspringen „Alle aktualisieren“ und die automatische Aktualisierung diesen Podcast. Manuelles Aktualisieren einzelner Podcasts funktioniert weiterhin."
+          }
+        }
+      }
+    },
+    "Refresh all (Subscriptions) and automatic Keep updated refresh respect Never. Manual single-podcast refresh still works.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh all (Subscriptions) and automatic Keep updated refresh respect Never. Manual single-podcast refresh still works."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Alle aktualisieren“ (Abonnements) und die automatische Aktualisierung respektieren „Nie“. Manuelles Aktualisieren einzelner Podcasts funktioniert weiterhin."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

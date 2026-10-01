@@ -178,6 +178,7 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` s
 - Full player: Chapters / Transcript / Shownotes sheet titles + loading / unavailable / empty copy
 - Local notifications: Download failed, Sync failed, “N new episodes”
 - Settings footnotes / help captions: Playback (speed, skip, video-as-audio, volume adaptation, skip silence, Stereo to mono, keep screen on, continuous playback, playback source), Feeds / Keep updated, Auto-download, Network / Downloads, Notifications, Downloads / Storage, Discovery, Sync provider blurbs, Backup help + media captions, Home layout footer, App Store rating / Siri / Widget / Watch / CarPlay notes
+- Per-feed settings Keep updated: picker title / Use global·Always·Never / help captions + Refresh-all footer (EN/DE); VoiceOver label/value/hint on the Keep updated picker
 - Parental controls detail: enable/options help, PIN sheet copy, lock status, common PIN errors
 - Statistics + Echo (Year in Review): navigation titles (already), empty states, totals/year section headers, row labels (played / in progress / listening time / favorites), top-podcasts footers, approximation footnotes, duration units (`%lldh %lldm` / Min. / s), feed subtitles, Echo ShareLink text
 - Homescreen Widget UI: configuration display name + description, Continue listening label, empty “Open AntennaPod to continue”, placeholder episode/podcast titles (`AntennaPodWidget/Localizable.xcstrings`)
@@ -195,6 +196,7 @@ VoiceOver-oriented polish on the existing beta UI (not a full accessibility audi
 - **Mini + full player** — play/pause, rewind/forward (interval seconds), speed (tap cycles presets; long-press full menu), sleep timer (VoiceOver **Sleep timer, N minutes remaining** / end of episode when active), and scrubber / progress (value + hint). Secondary full-player actions labeled like EpisodeRow; **Queue actions** menu is state-aware (In queue / Not in queue + Add/Remove / Play Next).
 - **Main tabs** — VoiceOver names from `Label` titles in `RootTabView` (String Catalog en+de).
 - **Settings toggles** — bindings unchanged; short `accessibilityHint` on playback / network / notification / storage / rating toggles where the on-screen caption is long.
+- **Per-feed Keep updated** — picker VoiceOver label/value/hint (Never → Refresh all / automatic refresh skip; manual single-podcast refresh still OK).
 
 Honest limits: not every screen/control audited; no custom rotor / reduce-motion work in this pass.
 
@@ -527,7 +529,7 @@ Wi‑Fi / Ethernet satisfy the gate; cellular does not. Turn a toggle off to all
 Feed detail → **gear** opens a sheet with overrides:
 
 - **Auto-download** — Use global / Always / Never; Always/Never beat the global Settings toggle; episode cap and Network / Downloads Wi‑Fi-only stay global.
-- **Keep updated** — Never excludes the podcast from refresh-all; Use global / Always both refresh with the others.
+- **Keep updated** — Use global / Always / Never (default Use global). **Never** excludes the podcast from `refreshAllFeeds` (Subscriptions toolbar **Refresh all**, Home/Inbox pull-to-refresh, launch/foreground Keep updated interval). Use global / Always both refresh with the others. Manual single-podcast refresh (Subscriptions swipe / Feed detail) still works. EN/DE + VoiceOver on the picker; section footer notes Refresh all respects Never.
 - **New episodes** — Use global / Inbox only / Add to Queue (Queue+download stays a global Settings choice).
 - **Notify on new episodes** — Use global / Always / Never; Always/Never beat the global notification toggle (system permission still required).
 - **Skip intro / Skip outro** — Use global / Off / 5 / 10 / 15 / 30 / 60 seconds (`nil` in the side map = Use global; explicit `0` = Off for this podcast). Same presets as Settings → Playback.

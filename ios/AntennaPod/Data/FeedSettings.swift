@@ -10,9 +10,9 @@ enum PerFeedOverride: String, CaseIterable, Identifiable, Codable, Hashable {
 
     var label: String {
         switch self {
-        case .useGlobal: return "Use global"
-        case .always: return "Always"
-        case .never: return "Never"
+        case .useGlobal: return String(localized: "Use global")
+        case .always: return String(localized: "Always")
+        case .never: return String(localized: "Never")
         }
     }
 }

@@ -170,6 +170,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Theme light/dark/system | ☐ Theme light/dark/system |
 | ☐ Notify new episodes (lokal, kein Push) | ☐ Notify new episodes (local, no push) |
 | ☐ Per-feed settings (auto-DL / keep / notify / tags) | ☐ Per-feed settings (auto-DL / keep / notify / tags) |
+| ☐ Per-feed Keep updated → Never: Refresh all überspringt; Einzel-Refresh OK | ☐ Per-feed Keep updated → Never: Refresh all skips; single-feed refresh OK |
 | ☐ Feed refresh interval / Keep updated | ☐ Feed refresh interval / Keep updated |
 | ☐ New-episode action (Inbox / Queue) | ☐ New-episode action (Inbox / Queue) |
 | ☐ Siri / Shortcuts lite (`antennapod://…`) | ☐ Siri / Shortcuts lite (`antennapod://…`) |
