@@ -133,10 +133,11 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Feed-Detail: Episoden-Sortierung (Neueste / Älteste zuerst) | ☐ Feed detail: episode sort (Newest / Oldest first) |
 | ☐ Feed-Detail: Suche (Episodentitel) | ☐ Feed detail: search (episode title) |
 | ☐ Feed-Detail: Filterchips Alle / Ungehört / Gehört (persistiert; Bulk bleibt full-feed) | ☐ Feed detail: filter chips All / Unplayed / Played (persisted; bulk stays full-feed) |
-| ☐ Library: Episodes (Filter All / Ungehört / Heruntergeladen / Favoriten) / History / Favorites / Archived / Statistics / Echo | ☐ Library: Episodes (filter All / Unplayed / Downloaded / Favorites) / History / Favorites / Archived / Statistics / Echo |
+| ☐ Library: Episodes (Filter All / Ungehört / Heruntergeladen / Favoriten) / History / Favorites / Archived / Statistics (Zeitraum Woche/Monat/Jahr/Gesamt) / Echo (gleicher Zeitraum) | ☐ Library: Episodes (filter All / Unplayed / Downloaded / Favorites) / History / Favorites / Archived / Statistics (time range Week/Month/Year/All) / Echo (same range) |
 | ☐ History: Verlauf leeren (Bestätigung) | ☐ History: Clear history (confirm) |
 | ☐ History: Suche (Titel / Feed) | ☐ History: search (title / feed) |
 | ☐ History: Sortierung (Neueste / Älteste; lastPlayedAt sonst updatedAt; persistiert) | ☐ History: sort (Newest / Oldest; lastPlayedAt else updatedAt; persisted) |
+| ☐ Statistics/Echo: Zeitraum Diese Woche / Dieser Monat / Dieses Jahr / Gesamte Zeit (persistiert; lastPlayedAt sonst updatedAt; grobe Episoden-Stempel) | ☐ Statistics/Echo: time range This week / This month / This year / All time (persisted; lastPlayedAt else updatedAt; coarse episode stamps) |
 | ☐ Favoriten (Stern; Full Player + EpisodeRow; VoiceOver Add/Remove) | ☐ Favorites (star; Full Player + EpisodeRow; VoiceOver Add/Remove) |
 | ☐ Favoriten: Suche (Titel / Feed) | ☐ Favorites: search (title / feed) |
 | ☐ Favoriten: Sortierung (Neueste / Älteste; favoritedAt; persistiert) | ☐ Favorites: sort (Newest / Oldest; favoritedAt; persisted) |

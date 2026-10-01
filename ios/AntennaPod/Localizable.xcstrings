@@ -10064,6 +10064,550 @@
           }
         }
       }
+    },
+    "This week": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This week"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Woche"
+          }
+        }
+      }
+    },
+    "This month": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This month"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Monat"
+          }
+        }
+      }
+    },
+    "This year": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This year"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Jahr"
+          }
+        }
+      }
+    },
+    "All time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All time"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesamte Zeit"
+          }
+        }
+      }
+    },
+    "Week": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Week"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Woche"
+          }
+        }
+      }
+    },
+    "Month": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Month"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monat"
+          }
+        }
+      }
+    },
+    "Time range": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time range"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeitraum"
+          }
+        }
+      }
+    },
+    "Statistics time range": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistics time range"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistik-Zeitraum"
+          }
+        }
+      }
+    },
+    "Period": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Period"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeitraum"
+          }
+        }
+      }
+    },
+    "No statistics in this range": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No statistics in this range"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Statistiken in diesem Zeitraum"
+          }
+        }
+      }
+    },
+    "No played or in-progress episodes with a last-played timestamp in this range. Try All time or another period.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No played or in-progress episodes with a last-played timestamp in this range. Try All time or another period."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine gehörten oder begonnenen Episoden mit Last-Played-Zeitstempel in diesem Zeitraum. Versuche „Gesamte Zeit“ oder einen anderen Zeitraum."
+          }
+        }
+      }
+    },
+    "All saved playback progress. Calendar follows the device.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All saved playback progress. Calendar follows the device."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesamter gespeicherter Wiedergabefortschritt. Kalender folgt dem Gerät."
+          }
+        }
+      }
+    },
+    "Filtered by lastPlayedAt (else updatedAt) in the selected device-calendar period.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtered by lastPlayedAt (else updatedAt) in the selected device-calendar period."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gefiltert nach lastPlayedAt (sonst updatedAt) im gewählten Gerätekalender-Zeitraum."
+          }
+        }
+      }
+    },
+    "Approximate: played episodes use saved duration (position is cleared when marked played); in-progress use saved position. Does not count rewinds, playback speed, or re-listens. Derived from playback.json — no separate cumulative counter. Time range uses lastPlayedAt (else updatedAt) — episode-level stamps, not per-session listen windows.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approximate: played episodes use saved duration (position is cleared when marked played); in-progress use saved position. Does not count rewinds, playback speed, or re-listens. Derived from playback.json — no separate cumulative counter. Time range uses lastPlayedAt (else updatedAt) — episode-level stamps, not per-session listen windows."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Näherung: Gehörte Episoden nutzen die gespeicherte Dauer (Position wird beim Als gehört markieren gelöscht); begonnene nutzen die gespeicherte Position. Zählt keine Rückspulungen, Wiedergabegeschwindigkeit oder erneutes Hören. Aus playback.json — kein separater Summenzähler. Zeitraum nutzt lastPlayedAt (sonst updatedAt) — Episoden-Zeitstempel, keine Sitzungsfenster."
+          }
+        }
+      }
+    },
+    "Your week in podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your week in podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Woche in Podcasts"
+          }
+        }
+      }
+    },
+    "Your month in podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your month in podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein Monat in Podcasts"
+          }
+        }
+      }
+    },
+    "Your podcasts — all time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your podcasts — all time"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Podcasts — gesamte Zeit"
+          }
+        }
+      }
+    },
+    "Favorites this week": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorites this week"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten diese Woche"
+          }
+        }
+      }
+    },
+    "Favorites this month": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorites this month"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten diesen Monat"
+          }
+        }
+      }
+    },
+    "No Echo yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Echo yet"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch kein Echo"
+          }
+        }
+      }
+    },
+    "No Echo in this range": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Echo in this range"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Echo in diesem Zeitraum"
+          }
+        }
+      }
+    },
+    "Play episodes and mark them played. Echo uses the same approximate playback data as Statistics.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play episodes and mark them played. Echo uses the same approximate playback data as Statistics."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spiele Episoden ab und markiere sie als gehört. Echo nutzt dieselben Näherungsdaten wie Statistiken."
+          }
+        }
+      }
+    },
+    "No played episodes with a last-played timestamp in this range. Try All time or another period. Echo uses the same approximate playback data as Statistics.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No played episodes with a last-played timestamp in this range. Try All time or another period. Echo uses the same approximate playback data as Statistics."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine gehörten Episoden mit Last-Played-Zeitstempel in diesem Zeitraum. Versuche „Gesamte Zeit“ oder einen anderen Zeitraum. Echo nutzt dieselben Näherungsdaten wie Statistiken."
+          }
+        }
+      }
+    },
+    "Approximate: played episodes use lastPlayedAt (else updatedAt) and saved duration from playback.json — same limits as Statistics. Does not count rewinds, playback speed, or re-listens. Time range follows the device calendar; stamps are episode-level, not per-session.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approximate: played episodes use lastPlayedAt (else updatedAt) and saved duration from playback.json — same limits as Statistics. Does not count rewinds, playback speed, or re-listens. Time range follows the device calendar; stamps are episode-level, not per-session."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Näherung: Gehörte Episoden nutzen lastPlayedAt (sonst updatedAt) und gespeicherte Dauer aus playback.json — gleiche Grenzen wie Statistiken. Zählt keine Rückspulungen, Wiedergabegeschwindigkeit oder erneutes Hören. Zeitraum folgt dem Gerätekalender; Zeitstempel sind episodenbezogen, keine Sitzungen."
+          }
+        }
+      }
+    },
+    "All saved played episodes and favorites. Calendar follows the device.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All saved played episodes and favorites. Calendar follows the device."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle gespeicherten gehörten Episoden und Favoriten. Kalender folgt dem Gerät."
+          }
+        }
+      }
+    },
+    "Filtered by lastPlayedAt (else updatedAt) / favoritedAt in the selected device-calendar period. Shared with Statistics.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtered by lastPlayedAt (else updatedAt) / favoritedAt in the selected device-calendar period. Shared with Statistics."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gefiltert nach lastPlayedAt (sonst updatedAt) / favoritedAt im gewählten Gerätekalender-Zeitraum. Geteilt mit Statistiken."
+          }
+        }
+      }
+    },
+    "AntennaPod Echo — This week": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Echo — This week"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Echo — Diese Woche"
+          }
+        }
+      }
+    },
+    "AntennaPod Echo — This month": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Echo — This month"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Echo — Dieser Monat"
+          }
+        }
+      }
+    },
+    "AntennaPod Echo — All time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Echo — All time"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Echo — Gesamte Zeit"
+          }
+        }
+      }
+    },
+    "Favorites this week: %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorites this week: %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten diese Woche: %lld"
+          }
+        }
+      }
+    },
+    "Favorites this month: %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorites this month: %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten diesen Monat: %lld"
+          }
+        }
+      }
+    },
+    "Favorites: %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorites: %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten: %lld"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

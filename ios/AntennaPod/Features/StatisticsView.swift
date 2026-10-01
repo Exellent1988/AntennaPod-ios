@@ -2,18 +2,46 @@ import SwiftUI
 
 struct StatisticsView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var settings: AppSettings
 
     private var stats: ListeningStatistics {
-        store.listeningStatistics
+        store.listeningStatistics(in: settings.statisticsTimeRange)
+    }
+
+    /// Unfiltered total — distinguishes “no data ever” from “none in this range”.
+    private var allTimeStats: ListeningStatistics {
+        store.listeningStatistics(in: .allTime)
     }
 
     var body: some View {
         List {
+            Section {
+                Picker(selection: $settings.statisticsTimeRange) {
+                    ForEach(StatisticsTimeRange.allCases) { range in
+                        Text(range.shortLabel).tag(range)
+                    }
+                } label: {
+                    Text("Time range")
+                }
+                .pickerStyle(.segmented)
+                .accessibilityLabel(String(localized: "Statistics time range"))
+                .accessibilityValue(settings.statisticsTimeRange.label)
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            } footer: {
+                Text(Self.rangeFootnote(for: settings.statisticsTimeRange))
+            }
+
             if stats.isEmpty {
                 ContentUnavailableView(
-                    "No statistics yet",
+                    allTimeStats.isEmpty
+                        ? String(localized: "No statistics yet")
+                        : String(localized: "No statistics in this range"),
                     systemImage: "chart.bar",
-                    description: Text("Play episodes or mark them played. Totals are derived from saved playback progress.")
+                    description: Text(
+                        allTimeStats.isEmpty
+                            ? String(localized: "Play episodes or mark them played. Totals are derived from saved playback progress.")
+                            : String(localized: "No played or in-progress episodes with a last-played timestamp in this range. Try All time or another period.")
+                    )
                 )
             } else {
                 Section {
@@ -72,7 +100,16 @@ struct StatisticsView: View {
     }
 
     private static var approximationFootnote: String {
-        String(localized: "Approximate: played episodes use saved duration (position is cleared when marked played); in-progress use saved position. Does not count rewinds, playback speed, or re-listens. Derived from playback.json — no separate cumulative counter.")
+        String(localized: "Approximate: played episodes use saved duration (position is cleared when marked played); in-progress use saved position. Does not count rewinds, playback speed, or re-listens. Derived from playback.json — no separate cumulative counter. Time range uses lastPlayedAt (else updatedAt) — episode-level stamps, not per-session listen windows.")
+    }
+
+    private static func rangeFootnote(for range: StatisticsTimeRange) -> String {
+        switch range {
+        case .allTime:
+            return String(localized: "All saved playback progress. Calendar follows the device.")
+        case .thisWeek, .thisMonth, .thisYear:
+            return String(localized: "Filtered by lastPlayedAt (else updatedAt) in the selected device-calendar period.")
+        }
     }
 
     private static func feedSubtitle(_ feed: FeedListeningStats) -> String {

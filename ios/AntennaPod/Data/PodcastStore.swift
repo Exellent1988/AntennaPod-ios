@@ -808,11 +808,23 @@ final class PodcastStore: ObservableObject {
     // MARK: - Statistics (from playback.json)
 
     /// Totals + per-feed top list derived from saved playback state (honest approximation).
-    var listeningStatistics: ListeningStatistics {
+    /// Optional `range` filters by `lastPlayedAtEpochMs` else `updatedAtEpochMs` (device calendar).
+    /// Coarse episode-level stamps — not per-session listen windows; older rows may only have `updatedAt`.
+    func listeningStatistics(
+        in range: StatisticsTimeRange = .allTime,
+        calendar: Calendar = .current,
+        now: Date = Date()
+    ) -> ListeningStatistics {
         var played = 0
         var inProgress = 0
         var totalSeconds: Double = 0
         var perFeed: [UUID: (title: String, played: Int, inProgress: Int, seconds: Double)] = [:]
+
+        func include(_ state: EpisodePlaybackState) -> Bool {
+            guard ListeningTimeEstimate.hasMeaningfulData(state) else { return false }
+            let stamp = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
+            return range.contains(epochMs: stamp, calendar: calendar, now: now)
+        }
 
         for feed in feeds {
             var feedPlayed = 0
@@ -820,7 +832,7 @@ final class PodcastStore: ObservableObject {
             var feedSeconds: Double = 0
             for episode in feed.episodes {
                 let state = playbackState(for: episode.id)
-                guard ListeningTimeEstimate.hasMeaningfulData(state) else { continue }
+                guard include(state) else { continue }
                 let secs = ListeningTimeEstimate.seconds(for: state)
                 if state.isPlayed {
                     played += 1
@@ -841,7 +853,7 @@ final class PodcastStore: ObservableObject {
         let knownEpisodeIds = Set(feeds.flatMap { $0.episodes.map(\.id) })
         for episode in queue where !knownEpisodeIds.contains(episode.id) {
             let state = playbackState(for: episode.id)
-            guard ListeningTimeEstimate.hasMeaningfulData(state) else { continue }
+            guard include(state) else { continue }
             let secs = ListeningTimeEstimate.seconds(for: state)
             if state.isPlayed {
                 played += 1
@@ -890,25 +902,22 @@ final class PodcastStore: ObservableObject {
 
     // MARK: - Echo (Year in Review)
 
-    /// Calendar-year listening summary from `playback.json` + `favorites.json`.
-    /// Uses the device calendar (Europe/Berlin when the device is set that way).
-    /// Played episodes counted when `isPlayed` and `lastPlayedAt` (else `updatedAt`) falls in `year`.
+    /// Listening summary from `playback.json` + `favorites.json`, filtered by `StatisticsTimeRange`.
+    /// Default `.thisYear` preserves prior Year-in-Review behavior (device calendar).
+    /// Played episodes counted when `isPlayed` and `lastPlayedAt` (else `updatedAt`) falls in range.
+    /// Favorites “in range” use `favoritedAt` from `favorites.json`. Coarse stamps — not per-session.
     func echoYearSummary(
-        for year: Int? = nil,
-        calendar: Calendar = .current
+        in range: StatisticsTimeRange = .thisYear,
+        calendar: Calendar = .current,
+        now: Date = Date()
     ) -> EchoYearSummary {
-        let resolvedYear = year ?? calendar.component(.year, from: Date())
-        guard
-            let start = calendar.date(from: DateComponents(year: resolvedYear, month: 1, day: 1)),
-            let end = calendar.date(from: DateComponents(year: resolvedYear + 1, month: 1, day: 1))
-        else {
-            return .empty(year: resolvedYear)
-        }
-        let startMs = Int64(start.timeIntervalSince1970 * 1000)
-        let endMs = Int64(end.timeIntervalSince1970 * 1000)
+        let resolvedYear = calendar.component(.year, from: now)
+        // Keep a year value for UI / Share when range is This year; otherwise still report current year label context.
+        let bounds = range.epochRangeMs(calendar: calendar, now: now)
 
-        func inYear(_ epochMs: Int64) -> Bool {
-            epochMs >= startMs && epochMs < endMs
+        func inRange(_ epochMs: Int64) -> Bool {
+            guard let bounds else { return true }
+            return epochMs >= bounds.startMs && epochMs < bounds.endMs
         }
 
         var played = 0
@@ -919,7 +928,7 @@ final class PodcastStore: ObservableObject {
             let state = playbackState(for: episodeId)
             guard state.isPlayed else { return }
             let lastPlayed = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
-            guard inYear(lastPlayed) else { return }
+            guard inRange(lastPlayed) else { return }
             played += 1
             let secs = ListeningTimeEstimate.seconds(for: state)
             totalSeconds += secs
@@ -963,10 +972,10 @@ final class PodcastStore: ObservableObject {
             return lhs.feedTitle.localizedCaseInsensitiveCompare(rhs.feedTitle) == .orderedAscending
         }
 
-        var favoritesThisYear = 0
+        var favoritesInRange = 0
         for (_, favoritedAt) in favoriteAtById {
-            if inYear(favoritedAt) {
-                favoritesThisYear += 1
+            if inRange(favoritedAt) {
+                favoritesInRange += 1
             }
         }
 
@@ -975,7 +984,7 @@ final class PodcastStore: ObservableObject {
             playedEpisodeCount: played,
             approximateListenedSeconds: totalSeconds,
             topPodcasts: Array(top.prefix(10)),
-            favoritesCountThisYear: favoritesThisYear,
+            favoritesCountThisYear: favoritesInRange,
             favoritesTotalCount: favoriteAtById.count
         )
     }

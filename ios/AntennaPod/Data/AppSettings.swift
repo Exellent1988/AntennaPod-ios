@@ -467,7 +467,79 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, Inbox sort, Downloads sort, History sort, Favorites sort, Archived sort, All Episodes filter chips, Downloads filter chips, Feed detail episode filter chips, Queue filter chips, queue lock).
+
+/// Time range for Statistics / Echo aggregations (device calendar; default All time).
+/// Filters by `lastPlayedAtEpochMs` else `updatedAtEpochMs` — coarse episode-level stamps, not per-session listen windows.
+enum StatisticsTimeRange: String, CaseIterable, Identifiable {
+    case thisWeek
+    case thisMonth
+    case thisYear
+    case allTime
+
+    var id: String { rawValue }
+
+    /// Short label for segmented control / chips.
+    var label: String {
+        switch self {
+        case .thisWeek: return String(localized: "This week")
+        case .thisMonth: return String(localized: "This month")
+        case .thisYear: return String(localized: "This year")
+        case .allTime: return String(localized: "All time")
+        }
+    }
+
+    /// Compact label when space is tight (segmented).
+    var shortLabel: String {
+        switch self {
+        case .thisWeek: return String(localized: "Week")
+        case .thisMonth: return String(localized: "Month")
+        case .thisYear: return String(localized: "Year")
+        case .allTime: return String(localized: "All")
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .thisWeek: return "calendar"
+        case .thisMonth: return "calendar"
+        case .thisYear: return "calendar"
+        case .allTime: return "infinity"
+        }
+    }
+
+    /// Inclusive start / exclusive end epoch ms for the selected calendar unit containing `now`.
+    /// `nil` means no lower/upper bound (All time).
+    func epochRangeMs(calendar: Calendar = .current, now: Date = Date()) -> (startMs: Int64, endMs: Int64)? {
+        let component: Calendar.Component
+        switch self {
+        case .allTime:
+            return nil
+        case .thisWeek:
+            component = .weekOfYear
+        case .thisMonth:
+            component = .month
+        case .thisYear:
+            component = .year
+        }
+        guard let interval = calendar.dateInterval(of: component, for: now) else {
+            return nil
+        }
+        let startMs = Int64(interval.start.timeIntervalSince1970 * 1000)
+        let endMs = Int64(interval.end.timeIntervalSince1970 * 1000)
+        return (startMs, endMs)
+    }
+
+    /// Whether an episode-level timestamp falls in this range.
+    func contains(epochMs: Int64, calendar: Calendar = .current, now: Date = Date()) -> Bool {
+        guard let bounds = epochRangeMs(calendar: calendar, now: now) else {
+            return true
+        }
+        return epochMs >= bounds.startMs && epochMs < bounds.endMs
+    }
+}
+
+
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, Inbox sort, Downloads sort, History sort, Favorites sort, Archived sort, All Episodes filter chips, Downloads filter chips, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -551,6 +623,7 @@ final class AppSettings: ObservableObject {
         static let allEpisodesFilter = "settings.allEpisodesFilter"
         static let queueLocked = "settings.queueLocked"
         static let queueFilter = "settings.queueFilter"
+        static let statisticsTimeRange = "settings.statisticsTimeRange"
     }
 
     private enum Kind: String {
@@ -920,6 +993,16 @@ final class AppSettings: ObservableObject {
         }
     }
 
+
+    /// Statistics / Echo time range: This week / This month / This year / All time (default).
+    /// Filters aggregations by `lastPlayedAt` (else `updatedAt`) within the device-calendar unit.
+    /// Shared by Statistics and Echo; persisted + backup. Coarse episode stamps — not per-session listen windows.
+    @Published var statisticsTimeRange: StatisticsTimeRange {
+        didSet {
+            UserDefaults.standard.set(statisticsTimeRange.rawValue, forKey: Keys.statisticsTimeRange)
+        }
+    }
+
     /// Visible sections in display order (hidden filtered out).
     var visibleHomeSections: [HomeSectionId] {
         homeSectionOrder.filter { !homeHiddenSections.contains($0) }
@@ -1134,6 +1217,9 @@ final class AppSettings: ObservableObject {
         let queueFilterRaw = UserDefaults.standard.string(forKey: Keys.queueFilter)
             ?? QueueFilter.all.rawValue
         queueFilter = QueueFilter(rawValue: queueFilterRaw) ?? .all
+        let statsRangeRaw = UserDefaults.standard.string(forKey: Keys.statisticsTimeRange)
+            ?? StatisticsTimeRange.allTime.rawValue
+        statisticsTimeRange = StatisticsTimeRange(rawValue: statsRangeRaw) ?? .allTime
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh
@@ -1353,7 +1439,8 @@ final class AppSettings: ObservableObject {
             archivedSort: archivedSort.rawValue,
             allEpisodesFilter: allEpisodesFilter.rawValue,
             queueLocked: queueLocked,
-            queueFilter: queueFilter.rawValue
+            queueFilter: queueFilter.rawValue,
+            statisticsTimeRange: statisticsTimeRange.rawValue
         )
     }
 
@@ -1476,6 +1563,9 @@ final class AppSettings: ObservableObject {
         if let queueFilterRaw = snap.queueFilter {
             queueFilter = QueueFilter(rawValue: queueFilterRaw) ?? .all
         }
+        if let statsRangeRaw = snap.statisticsTimeRange {
+            statisticsTimeRange = StatisticsTimeRange(rawValue: statsRangeRaw) ?? .allTime
+        }
     }
 }
 
@@ -1552,4 +1642,6 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var queueLocked: Bool? = false
     /// Absent in older backups → all (default).
     var queueFilter: String? = nil
+    /// Absent in older backups → allTime (default).
+    var statisticsTimeRange: String? = nil
 }

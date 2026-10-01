@@ -2,26 +2,53 @@ import SwiftUI
 
 struct EchoView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var settings: AppSettings
 
     private var summary: EchoYearSummary {
-        store.echoYearSummary()
+        store.echoYearSummary(in: settings.statisticsTimeRange)
+    }
+
+    /// Unfiltered year-style check for empty-vs-out-of-range messaging uses all-time played.
+    private var allTimeSummary: EchoYearSummary {
+        store.echoYearSummary(in: .allTime)
     }
 
     var body: some View {
         List {
+            Section {
+                Picker(selection: $settings.statisticsTimeRange) {
+                    ForEach(StatisticsTimeRange.allCases) { range in
+                        Text(range.shortLabel).tag(range)
+                    }
+                } label: {
+                    Text("Time range")
+                }
+                .pickerStyle(.segmented)
+                .accessibilityLabel(String(localized: "Statistics time range"))
+                .accessibilityValue(settings.statisticsTimeRange.label)
+                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            } footer: {
+                Text(Self.rangeFootnote(for: settings.statisticsTimeRange))
+            }
+
             if summary.isEmpty {
                 ContentUnavailableView(
-                    String(localized: "No Echo for \(summary.year) yet"),
+                    emptyTitle,
                     systemImage: "sparkles.rectangle.stack",
-                    description: Text(
-                        "Play episodes and mark them played this calendar year. Echo uses the same approximate playback data as Statistics."
-                    )
+                    description: Text(emptyDescription)
                 )
             } else {
                 Section {
-                    LabeledContent("Year") {
-                        Text("\(summary.year)")
-                            .foregroundStyle(.secondary)
+                    if settings.statisticsTimeRange == .thisYear {
+                        LabeledContent("Year") {
+                            Text("\(summary.year)")
+                                .foregroundStyle(.secondary)
+                        }
+                    } else {
+                        LabeledContent("Period") {
+                            Text(settings.statisticsTimeRange.label)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                     LabeledContent("Played episodes") {
                         Text("\(summary.playedEpisodeCount)")
@@ -32,7 +59,7 @@ struct EchoView: View {
                             .foregroundStyle(.secondary)
                     }
                     if summary.favoritesCountThisYear > 0 || summary.favoritesTotalCount > 0 {
-                        LabeledContent("Favorites this year") {
+                        LabeledContent(favoritesInRangeLabel) {
                             Text("\(summary.favoritesCountThisYear)")
                                 .foregroundStyle(.secondary)
                         }
@@ -44,7 +71,7 @@ struct EchoView: View {
                         }
                     }
                 } header: {
-                    Text("Your \(summary.year) in podcasts")
+                    Text(sectionHeader)
                 } footer: {
                     Text(Self.approximationFootnote)
                 }
@@ -84,7 +111,7 @@ struct EchoView: View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 if !summary.isEmpty {
-                    ShareLink(item: Self.shareText(for: summary)) {
+                    ShareLink(item: Self.shareText(for: summary, range: settings.statisticsTimeRange)) {
                         Label("Share", systemImage: "square.and.arrow.up")
                     }
                 }
@@ -92,23 +119,97 @@ struct EchoView: View {
         }
     }
 
+    private var sectionHeader: String {
+        switch settings.statisticsTimeRange {
+        case .thisWeek:
+            return String(localized: "Your week in podcasts")
+        case .thisMonth:
+            return String(localized: "Your month in podcasts")
+        case .thisYear:
+            return String(localized: "Your \(summary.year) in podcasts")
+        case .allTime:
+            return String(localized: "Your podcasts — all time")
+        }
+    }
+
+    private var favoritesInRangeLabel: String {
+        switch settings.statisticsTimeRange {
+        case .thisWeek:
+            return String(localized: "Favorites this week")
+        case .thisMonth:
+            return String(localized: "Favorites this month")
+        case .thisYear:
+            return String(localized: "Favorites this year")
+        case .allTime:
+            return String(localized: "Favorites")
+        }
+    }
+
+    private var emptyTitle: String {
+        if allTimeSummary.isEmpty {
+            if settings.statisticsTimeRange == .thisYear {
+                return String(localized: "No Echo for \(summary.year) yet")
+            }
+            return String(localized: "No Echo yet")
+        }
+        return String(localized: "No Echo in this range")
+    }
+
+    private var emptyDescription: String {
+        if allTimeSummary.isEmpty {
+            return String(localized: "Play episodes and mark them played. Echo uses the same approximate playback data as Statistics.")
+        }
+        return String(localized: "No played episodes with a last-played timestamp in this range. Try All time or another period. Echo uses the same approximate playback data as Statistics.")
+    }
+
     private static var approximationFootnote: String {
-        String(localized: "Approximate: played episodes this year use lastPlayedAt (else updatedAt) and saved duration from playback.json — same limits as Statistics. Does not count rewinds, playback speed, or re-listens. Calendar year follows the device calendar.")
+        String(localized: "Approximate: played episodes use lastPlayedAt (else updatedAt) and saved duration from playback.json — same limits as Statistics. Does not count rewinds, playback speed, or re-listens. Time range follows the device calendar; stamps are episode-level, not per-session.")
+    }
+
+    private static func rangeFootnote(for range: StatisticsTimeRange) -> String {
+        switch range {
+        case .allTime:
+            return String(localized: "All saved played episodes and favorites. Calendar follows the device.")
+        case .thisWeek, .thisMonth, .thisYear:
+            return String(localized: "Filtered by lastPlayedAt (else updatedAt) / favoritedAt in the selected device-calendar period. Shared with Statistics.")
+        }
     }
 
     private static func feedSubtitle(_ feed: EchoFeedStats) -> String {
         String(localized: "\(feed.playedEpisodeCount) played")
     }
 
-    static func shareText(for summary: EchoYearSummary) -> String {
+    static func shareText(for summary: EchoYearSummary, range: StatisticsTimeRange) -> String {
+        let title: String
+        switch range {
+        case .thisYear:
+            title = String(localized: "AntennaPod Echo \(summary.year)")
+        case .thisWeek:
+            title = String(localized: "AntennaPod Echo — This week")
+        case .thisMonth:
+            title = String(localized: "AntennaPod Echo — This month")
+        case .allTime:
+            title = String(localized: "AntennaPod Echo — All time")
+        }
         var lines: [String] = [
-            String(localized: "AntennaPod Echo \(summary.year)"),
+            title,
             "",
             String(localized: "Played episodes: \(summary.playedEpisodeCount)"),
             String(localized: "Approx. listening time: \(StatisticsView.formatDuration(summary.approximateListenedSeconds))"),
         ]
         if summary.favoritesCountThisYear > 0 || summary.favoritesTotalCount > 0 {
-            lines.append(String(localized: "Favorites this year: \(summary.favoritesCountThisYear)"))
+            let favLabel: String
+            switch range {
+            case .thisWeek:
+                favLabel = String(localized: "Favorites this week: \(summary.favoritesCountThisYear)")
+            case .thisMonth:
+                favLabel = String(localized: "Favorites this month: \(summary.favoritesCountThisYear)")
+            case .thisYear:
+                favLabel = String(localized: "Favorites this year: \(summary.favoritesCountThisYear)")
+            case .allTime:
+                favLabel = String(localized: "Favorites: \(summary.favoritesCountThisYear)")
+            }
+            lines.append(favLabel)
             if summary.favoritesTotalCount != summary.favoritesCountThisYear {
                 lines.append(String(localized: "Favorites total: \(summary.favoritesTotalCount)"))
             }
