@@ -667,6 +667,14 @@ struct FullPlayerView: View {
         let favorited = store.isFavorite(episode.id)
         return HStack(spacing: 16) {
             Button {
+                playback.playFromBeginning()
+            } label: {
+                Label("Play from beginning", systemImage: "backward.end.fill")
+            }
+            .accessibilityLabel(String(localized: "Play from beginning"))
+            .accessibilityHint(String(localized: "Seeks to the start of this episode and plays"))
+
+            Button {
                 store.togglePlayed(episode.id)
             } label: {
                 Label(

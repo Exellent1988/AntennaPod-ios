@@ -47,6 +47,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Play/Pause, Rewind/FF (Settings-Intervalle) | ☐ Play/Pause, rewind/FF (Settings intervals) |
 | ☐ Scrubber / Seek | ☐ Scrubber / seek |
 | ☐ Jump to position (Full: mm:ss / Min+Sek → Seek; disabled ohne Dauer) | ☐ Jump to position (Full: mm:ss / min+sec → seek; disabled without duration) |
+| ☐ Play from beginning (Full secondary: Seek 0 + Play; EpisodeRow Kontext; kein Unplayed-Flag) | ☐ Play from beginning (Full secondary: seek 0 + play; EpisodeRow context; no unplayed flag) |
 | ☐ Geschwindigkeit Tippen = nächste Preset (0.8…2.0 Wrap); Long-Press = Menü; Default aus Settings | ☐ Speed tap = next preset (0.8…2.0 wrap); long-press = menu; default from Settings |
 | ☐ Sleep timer (Uhr / Ende der Episode / Custom… 1–180 Min.) | ☐ Sleep timer (clock / end of episode / Custom… 1–180 min) |
 | ☐ Chapters tippen → Seek (wenn im Feed) | ☐ Chapters tap → seek (when in feed) |

@@ -8007,6 +8007,57 @@
           }
         }
       }
+    },
+    "Play from beginning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play from beginning"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von vorne abspielen"
+          }
+        }
+      }
+    },
+    "Seeks to the start of this episode and plays": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks to the start of this episode and plays"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt zum Anfang dieser Episode und spielt ab"
+          }
+        }
+      }
+    },
+    "Loads this episode from the start and plays": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loads this episode from the start and plays"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt diese Episode vom Anfang und spielt ab"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

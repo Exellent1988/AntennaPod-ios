@@ -102,8 +102,10 @@ final class PlaybackService: ObservableObject {
 
     /// Starts or switches playback. Returns `false` when streaming is blocked by Wi‑Fi-only policy
     /// (current player left unchanged; `lastError` set for UI).
+    /// - Parameter fromBeginning: When `true`, start at position 0 (ignore saved resume) and do **not**
+    ///   apply skip-intro — user asked for the literal start. Does not flip played/unplayed flags.
     @discardableResult
-    func play(episode: PodcastEpisode, fileURL: URL? = nil) -> Bool {
+    func play(episode: PodcastEpisode, fileURL: URL? = nil, fromBeginning: Bool = false) -> Bool {
         guard let url = resolvePlaybackURL(for: episode, preferredFileURL: fileURL) else {
             return false
         }
@@ -150,7 +152,7 @@ final class PlaybackService: ObservableObject {
         // Cold play / episode (re)start is not a pause-resume — do not rewind-after-pause.
         pausedAt = nil
 
-        let resumeAt = resumePosition(for: episode.id)
+        let resumeAt = fromBeginning ? 0 : resumePosition(for: episode.id)
         if resumeAt > 1 {
             let time = CMTime(seconds: resumeAt, preferredTimescale: 600)
             newPlayer.seek(to: time) { [weak self] finished in
@@ -161,6 +163,9 @@ final class PlaybackService: ObservableObject {
                 }
             }
             positionSeconds = resumeAt
+        } else if fromBeginning {
+            // Explicit play-from-beginning: absolute 0, no skip-intro.
+            positionSeconds = 0
         } else {
             // Fresh start (position ≈ 0): skip intro once when configured (feed override else global).
             let intro = Double(resolvedSkipIntroSeconds(for: episode))
@@ -277,6 +282,35 @@ final class PlaybackService: ObservableObject {
         positionSeconds = capped
         persistProgress(force: true)
         updateNowPlayingInfo(force: true)
+    }
+
+    /// Restart the **currently loaded** episode at position 0 and continue/start playback.
+    /// If already playing → seek to 0 and keep playing. If paused → seek to 0 and play.
+    /// Progress is persisted via `seek` / `saveProgress` only — does **not** flip played/unplayed.
+    func playFromBeginning() {
+        guard currentEpisode != nil, player != nil else { return }
+        seek(toSeconds: 0)
+        // Intentional restart — do not apply rewind-after-pause on the ensuing play.
+        pausedAt = nil
+        guard let player, !isPlaying else { return }
+        activateSession()
+        player.play()
+        player.rate = rate
+        isPlaying = true
+        resumeSleepTimerIfNeeded()
+        updateNowPlayingInfo(force: true)
+        applyIdleTimerPolicy()
+    }
+
+    /// Load/start `episode` at position 0 and play. If it is already the current item, seeks in place
+    /// (no player teardown). Otherwise uses `play(..., fromBeginning: true)`.
+    @discardableResult
+    func playFromBeginning(episode: PodcastEpisode, fileURL: URL? = nil) -> Bool {
+        if currentEpisode?.id == episode.id, player != nil {
+            playFromBeginning()
+            return true
+        }
+        return play(episode: episode, fileURL: fileURL, fromBeginning: true)
     }
 
     // MARK: - Sleep timer

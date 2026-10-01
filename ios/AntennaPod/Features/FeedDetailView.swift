@@ -508,6 +508,14 @@ struct EpisodeRow: View {
         .padding(.vertical, 4)
         .opacity(store.isArchived(episode.id) ? 0.55 : 1)
         .contextMenu {
+            Button {
+                playback.playFromBeginning(episode: episode)
+            } label: {
+                Label("Play from beginning", systemImage: "backward.end.fill")
+            }
+            .accessibilityLabel(String(localized: "Play from beginning"))
+            .accessibilityHint(String(localized: "Loads this episode from the start and plays"))
+
             if let url = episodeShareURL {
                 ShareLink(
                     item: url,

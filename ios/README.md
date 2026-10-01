@@ -12,7 +12,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Online feed preview (before subscribe: discovery rows + Feed URL → Preview via FeedRepository; episode count + first titles; Confirm Subscribe / Cancel; already subscribed → Open feed)
 - Episode list
 - Stream playback (AVPlayer, speed tap-cycle presets + long-press menu, configurable skip intervals)
-- Full player sheet (artwork or video surface, scrubber, **Jump to position** (mm:ss / min+sec → seek), **Previous/Next chapter** when chapters exist, transport, **Shownotes** (plain text / HTML stripped); tap mini player to open; **Open podcast** → dismiss → Subscriptions Feed detail; orphan → disabled / unavailable alert; mini ⋯ menu same)
+- Full player sheet (artwork or video surface, scrubber, **Jump to position** (mm:ss / min+sec → seek), **Play from beginning** (seek to 0 + play), **Previous/Next chapter** when chapters exist, transport, **Shownotes** (plain text / HTML stripped); tap mini player to open; **Open podcast** → dismiss → Subscriptions Feed detail; orphan → disabled / unavailable alert; mini ⋯ menu same)
 - Video player (beta lite; MIME video/* or mp4/m4v/mov/webm → AVPlayerLayer in full player; PiP beta lite)
 - Video → audio only (Settings + full-player toggle; default off; Lockscreen stays audio)
 - Volume adaptation (Settings; default off; iOS AVAudioSession spokenAudio / speech optimize — not Android loudness gain)
@@ -313,9 +313,11 @@ Share an **episode** or a **podcast** via the **system share sheet** only (`Shar
 
 ## Full player
 
-Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed (**tap** cycles `0.8 / 1.0 / 1.1 / 1.2 / 1.3 / 1.5 / 2.0`, wrap; **long-press** keeps the full preset menu — same on mini player), sleep timer (same presets + Custom… 1–180 min as mini), plus mark played / favorite / queue / download / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
+Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed (**tap** cycles `0.8 / 1.0 / 1.1 / 1.2 / 1.3 / 1.5 / 2.0`, wrap; **long-press** keeps the full preset menu — same on mini player), sleep timer (same presets + Custom… 1–180 min as mini), plus **Play from beginning** / mark played / favorite / queue / download / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
 
 **Jump to position:** tap the left (current) time under the scrubber to open a medium sheet. Enter **mm:ss** / **h:mm:ss** (or a plain seconds integer) in the TextField, or use **minutes** + **seconds** steppers; **Jump** parses, clamps to `[0, duration]`, and calls `PlaybackService.seek(toSeconds:)`. Disabled when there is no episode or duration is unknown / zero.
+
+**Play from beginning:** full-player secondary action restarts the **currently loaded** episode with a **seek to 0** on the same `AVPlayer` item (not a separate stream / re-download). If already playing → seek to 0 and keep playing; if paused → seek to 0 and play. Progress is persisted via existing `seek` → `saveProgress` only — it does **not** flip played/unplayed. EpisodeRow **context menu** offers the same for any list episode (`playFromBeginning(episode:)`): if that episode is current, seeks in place; otherwise loads it at position **0** (ignores saved resume; skip-intro is not applied on this explicit path). Hidden when the full player has nothing loaded.
 
 ## Playback speed preset cycle
 
