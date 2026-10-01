@@ -659,6 +659,14 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Remove every starred id from `favorites.json` (same as per-row Unfavorite).
+    /// Clears the whole `favoriteAtById` side map; does not delete downloads, archive,
+    /// mark played, or clear the queue. No auto-delete on unfavorite. Persists via didSet.
+    func clearFavorites() {
+        guard !favoriteAtById.isEmpty else { return }
+        favoriteAtById = [:]
+    }
+
     /// Starred episodes across feeds, newest favorited first.
     var favoriteEpisodes: [FavoriteEpisode] {
         var items: [FavoriteEpisode] = []

@@ -100,6 +100,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Library: Episodes (Filter All / Ungehört / Heruntergeladen) / History / Favorites / Archived / Statistics / Echo | ☐ Library: Episodes (filter All / Unplayed / Downloaded) / History / Favorites / Archived / Statistics / Echo |
 | ☐ History: Verlauf leeren (Bestätigung) | ☐ History: Clear history (confirm) |
 | ☐ Favoriten (Stern) | ☐ Favorites (star) |
+| ☐ Favoriten: Favoriten leeren (Bestätigung) | ☐ Favorites: Clear favorites (confirm) |
 | ☐ Archive / Restore | ☐ Archive / restore |
 | ☐ Library search (lokal) | ☐ Library search (local) |
 | ☐ Share Podcast / Episode | ☐ Share podcast / episode |

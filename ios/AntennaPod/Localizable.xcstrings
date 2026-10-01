@@ -4471,6 +4471,74 @@
           }
         }
       }
+    },
+    "Clear favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten leeren"
+          }
+        }
+      }
+    },
+    "Clear favorites?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear favorites?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten leeren?"
+          }
+        }
+      }
+    },
+    "Favorites actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorites actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten-Aktionen"
+          }
+        }
+      }
+    },
+    "Removes %lld episodes from favorites. Does not delete downloads, archive, mark played, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld episodes from favorites. Does not delete downloads, archive, mark played, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld Episoden aus den Favoriten. Löscht keine Downloads, archiviert nicht, markiert nicht als gehört und leert die Warteschlange nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

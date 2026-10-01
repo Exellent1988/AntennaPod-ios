@@ -3,6 +3,8 @@ import SwiftUI
 struct FavoritesView: View {
     @EnvironmentObject private var store: PodcastStore
 
+    @State private var showClearFavoritesConfirm = false
+
     private var items: [FavoriteEpisode] {
         store.favoriteEpisodes
     }
@@ -43,5 +45,32 @@ struct FavoritesView: View {
         }
         .navigationTitle("Favorites")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button(role: .destructive) {
+                        showClearFavoritesConfirm = true
+                    } label: {
+                        Label("Clear favorites", systemImage: "trash")
+                    }
+                    .disabled(items.isEmpty)
+                } label: {
+                    Label("Favorites actions", systemImage: "ellipsis.circle")
+                }
+                .disabled(items.isEmpty)
+            }
+        }
+        .confirmationDialog(
+            "Clear favorites?",
+            isPresented: $showClearFavoritesConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Clear favorites", role: .destructive) {
+                store.clearFavorites()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Removes \(items.count) episodes from favorites. Does not delete downloads, archive, mark played, or clear the queue.")
+        }
     }
 }
