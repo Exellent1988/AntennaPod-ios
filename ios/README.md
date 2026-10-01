@@ -10,6 +10,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - fyyd discovery (Add sheet tab; public fyyd.de search API, no key; debounced; Preview → Subscribe via feed URL)
 - Top lists / Quick discovery (Apple iTunes RSS charts; Home preview + Subscriptions → Discover; country in Settings; pull-to-refresh; Subscribe via feed URL)
 - Online feed preview (before subscribe: discovery rows + Feed URL → Preview via FeedRepository; episode count + first titles; Confirm Subscribe / Cancel; already subscribed → Open feed)
+- Add from Clipboard (beta; Add podcast toolbar + URL tab when pasteboard holds trimmed http(s) URL with host; opens same Preview → Confirm Subscribe; no auto-subscribe; not OPML clipboard)
 - Episode list
 - Stream playback (AVPlayer, speed tap-cycle presets + long-press menu, configurable skip intervals)
 - Full player sheet (artwork or video surface, scrubber, **Jump to position** (mm:ss / min+sec → seek), **Play from beginning** (seek to 0 + play), **Previous/Next chapter** when chapters exist, **current chapter title** (mini + full), transport, **Shownotes** (plain text / HTML stripped); secondary **Download / Cancel download / Delete download** via `DownloadService` (hidden for local-folder `file://`; no single-delete confirm — matches Downloads swipe; manual Wi‑Fi gate); tap mini player to open; **Open podcast** → dismiss → Subscriptions Feed detail; orphan → disabled / unavailable alert; mini ⋯ menu same)
@@ -175,7 +176,7 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` s
 
 - Tab bar + main navigation titles: Home, Inbox, Subscriptions, Queue, Downloads, Settings (+ About, Favorites, History, Archived, Episodes, Discover, Download errors, Home layout, Add podcast, Transcript)
 - Settings section headers: Appearance, Home, Playback, Library, Privacy, About, Backup, Sync, Feeds / Keep updated, Auto-download, Network / Downloads, Notifications, Downloads / Storage, Discovery, App Store, Siri / Shortcuts, Homescreen widget, Apple Watch, CarPlay, Import / Export
-- Discovery chrome: Add segmented modes (Apple / Index / fyyd / URL / Folder), search placeholders, empty/API-key states, Results / Feed URL / charts loading + help, OPML import/export labels, Preview/Open row actions
+- Discovery chrome: Add segmented modes (Apple / Index / fyyd / URL / Folder), **Add from Clipboard** (when pasteboard has http(s) URL), search placeholders, empty/API-key states, Results / Feed URL / charts loading + help, OPML import/export labels, Preview/Open row actions
 - Primary actions: Play, Pause, Resume, Download, Download all, Subscribe / Confirm Subscribe, Cancel, Save, Delete, Remove, Archive, Mark played / unplayed, Mark all as played, Sort / Sort subscriptions / Sort episodes / Sort inbox / Sort downloads / Sort history / Sort favorites / Sort archived / Alphabetical A–Z / Newest first / Oldest first, common empty-state titles + main-tab and library empty descriptions (History / Favorites / Archived / Episodes / Tags filters)
 - Home section labels (layout toggles + Home headers): Continue listening, New / Inbox, Queue, Discover, Recently updated, Favorites; Home search prompt + empty (Search home / No matching home items); Settings search prompt + empty (Search settings / No matching settings)
 - Backup / Sync: section labels, primary Backup buttons, Sync form field labels (Host / Username / Password / Device / Login / Sync now), notification toggles
@@ -634,6 +635,8 @@ Settings → **Notifications → Notify on sync errors** (default on) shares tha
 Add podcast sheet (**Subscriptions → +**) has four segments: **Apple**, **Index**, **fyyd**, and **URL**.
 
 **Feed URL / Add by RSS** — Add podcast → **URL** tab: paste an RSS/Atom feed URL → **Preview feed** → Confirm Subscribe (same Preview pipeline as discovery). Already subscribed → **Open feed**.
+
+**Add from Clipboard** — when the pasteboard holds a trimmed **http**/**https** URL with a host (first non-empty line only), Add podcast shows **Add from Clipboard** (toolbar on any Add mode + URL-tab section with the detected URL). Tap opens the **same** online Preview → Confirm Subscribe path (`FeedPreviewRequest` / `FeedRepository`); does **not** subscribe on launch or without a tap. Not OPML-from-clipboard. Non-http(s) pasteboard text hides the action. Preview/load errors surface on the Preview screen as usual.
 
 **Online feed preview** — discovering a podcast (search / charts) or tapping **Preview** on the Feed URL tab opens a Preview screen that fetches and parses the RSS/Atom via `FeedRepository` (same parser as subscribe). Shows title, author/artwork when known (discovery hints + feed image), episode count, and the first **10** episode titles. **Confirm Subscribe** runs `PodcastStore.subscribe(feedUrl:)`; **Cancel** goes back. If the feed URL is already in the library, the primary action is **Open feed** (pushes `FeedDetailView`) instead of Subscribe. Discovery rows are no longer fire-and-forget Subscribe.
 

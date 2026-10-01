@@ -10968,6 +10968,91 @@
           }
         }
       }
+    },
+    "Add from Clipboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add from Clipboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus Zwischenablage hinzufügen"
+          }
+        }
+      }
+    },
+    "Opens a preview for the feed URL on the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a preview for the feed URL on the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet eine Vorschau für die Feed-URL in der Zwischenablage"
+          }
+        }
+      }
+    },
+    "Clipboard feed URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clipboard feed URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-URL aus der Zwischenablage"
+          }
+        }
+      }
+    },
+    "Uses the http(s) URL currently on the pasteboard. Opens Preview — does not subscribe until you confirm.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uses the http(s) URL currently on the pasteboard. Opens Preview — does not subscribe until you confirm."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwendet die aktuelle http(s)-URL in der Zwischenablage. Öffnet die Vorschau — abonniert erst nach Bestätigung."
+          }
+        }
+      }
+    },
+    "Paste an RSS/Atom podcast feed URL, or use Apple / Index / fyyd search. Preview fetches the feed before you confirm subscribe. When the pasteboard holds an http(s) URL, use Add from Clipboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste an RSS/Atom podcast feed URL, or use Apple / Index / fyyd search. Preview fetches the feed before you confirm subscribe. When the pasteboard holds an http(s) URL, use Add from Clipboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge eine RSS/Atom-Podcast-Feed-URL ein, oder nutze Apple- / Index- / fyyd-Suche. Vorschau lädt den Feed, bevor du das Abonnement bestätigst. Liegt eine http(s)-URL in der Zwischenablage, nutze „Aus Zwischenablage hinzufügen“."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

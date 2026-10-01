@@ -1,7 +1,8 @@
 import SwiftUI
+import UIKit
 import UniformTypeIdentifiers
 
-/// Add podcast: Apple Podcasts / Podcast Index / fyyd search + preview-by-URL (confirm subscribe).
+/// Add podcast: Apple Podcasts / Podcast Index / fyyd search + preview-by-URL (confirm subscribe) + Add from Clipboard.
 struct AddFeedView: View {
     @EnvironmentObject private var store: PodcastStore
     @Environment(\.dismiss) private var dismiss
@@ -36,6 +37,9 @@ struct AddFeedView: View {
     @State private var fyydSearchTask: Task<Void, Never>?
 
     @State private var previewRequest: FeedPreviewRequest?
+    /// Trimmed http(s) URL from the pasteboard when it looks plausible; nil hides the action.
+    @State private var clipboardFeedURL: String?
+    @Environment(\.scenePhase) private var scenePhase
 
     // Local folder
     @State private var showFolderPicker = false
@@ -108,6 +112,17 @@ struct AddFeedView: View {
                         dismiss()
                     }
                 }
+                if let clipboardFeedURL {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button {
+                            addFromClipboard(clipboardFeedURL)
+                        } label: {
+                            Label("Add from Clipboard", systemImage: "doc.on.clipboard")
+                        }
+                        .accessibilityLabel(String(localized: "Add from Clipboard"))
+                        .accessibilityHint(String(localized: "Opens a preview for the feed URL on the pasteboard"))
+                    }
+                }
                 if mode == .url {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Preview") {
@@ -130,11 +145,20 @@ struct AddFeedView: View {
                 if newMode == .podcastIndex {
                     indexHasKeys = PodcastIndexKeychain.hasCredentials
                 }
+                refreshClipboardFeedURL()
             }
             .onDisappear {
                 appleSearchTask?.cancel()
                 indexSearchTask?.cancel()
                 fyydSearchTask?.cancel()
+            }
+            .onAppear {
+                refreshClipboardFeedURL()
+            }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active {
+                    refreshClipboardFeedURL()
+                }
             }
         }
     }
@@ -320,6 +344,23 @@ struct AddFeedView: View {
                     .autocorrectionDisabled()
                     .focused($urlFocused)
             }
+            if let clipboardFeedURL {
+                Section {
+                    Button {
+                        addFromClipboard(clipboardFeedURL)
+                    } label: {
+                        Label("Add from Clipboard", systemImage: "doc.on.clipboard")
+                    }
+                    .accessibilityHint(String(localized: "Opens a preview for the feed URL on the pasteboard"))
+                    Text(clipboardFeedURL)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .textSelection(.enabled)
+                        .accessibilityLabel(String(localized: "Clipboard feed URL"))
+                } footer: {
+                    Text("Uses the http(s) URL currently on the pasteboard. Opens Preview — does not subscribe until you confirm.")
+                }
+            }
             Section {
                 Button("Preview feed") {
                     openURLPreview()
@@ -327,12 +368,13 @@ struct AddFeedView: View {
                 .disabled(urlText.trimmingCharacters(in: .whitespacesAndNewlines).count < 8)
             }
             Section {
-                Text("Paste an RSS/Atom podcast feed URL, or use Apple / Index / fyyd search. Preview fetches the feed before you confirm subscribe.")
+                Text("Paste an RSS/Atom podcast feed URL, or use Apple / Index / fyyd search. Preview fetches the feed before you confirm subscribe. When the pasteboard holds an http(s) URL, use Add from Clipboard.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
         }
         .onAppear {
+            refreshClipboardFeedURL()
             if mode == .url {
                 urlFocused = true
             }
@@ -634,6 +676,46 @@ struct AddFeedView: View {
             fyydDidSearch = true
             fyydSearchError = error.localizedDescription
         }
+    }
+
+    // MARK: - Clipboard
+
+    /// Refresh pasteboard detection. Only http/https with a host; trimmed; first line only.
+    /// Does **not** auto-subscribe — the action stays user-initiated.
+    private func refreshClipboardFeedURL() {
+        clipboardFeedURL = Self.plausibleFeedURL(from: UIPasteboard.general.string)
+    }
+
+    /// True when the string looks like a network feed URL the existing Preview path can try.
+    static func plausibleFeedURL(from pasteboardString: String?) -> String? {
+        guard let raw = pasteboardString else { return nil }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        let firstLine = trimmed
+            .split(whereSeparator: \.isNewline)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .first(where: { !$0.isEmpty }) ?? trimmed
+        guard let url = URL(string: firstLine),
+              let scheme = url.scheme?.lowercased(),
+              scheme == "http" || scheme == "https",
+              let host = url.host,
+              !host.isEmpty
+        else {
+            return nil
+        }
+        return firstLine
+    }
+
+    /// Fill the URL field and open the same Preview → Confirm Subscribe path as manual URL entry.
+    private func addFromClipboard(_ feedURL: String) {
+        let trimmed = feedURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard Self.plausibleFeedURL(from: trimmed) != nil else {
+            refreshClipboardFeedURL()
+            return
+        }
+        mode = .url
+        urlText = trimmed
+        previewRequest = FeedPreviewRequest(feedUrl: trimmed)
     }
 
     // MARK: - Preview

@@ -23,6 +23,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | DE | EN |
 |----|----|
 | ☐ Feed-URL abonnieren (Add → URL) | ☐ Subscribe via feed URL |
+| ☐ Aus Zwischenablage hinzufügen (http(s); Vorschau; kein Auto-Abo) | ☐ Add from Clipboard (http(s); Preview; no auto-subscribe) |
 | ☐ Online-Vorschau → Confirm Subscribe | ☐ Online feed preview → Confirm Subscribe |
 | ☐ Discovery: Apple Podcasts / iTunes Search | ☐ Discovery: Apple Podcasts / iTunes Search |
 | ☐ Discovery: Podcast Index (API-Key in Settings) | ☐ Discovery: Podcast Index (API keys in Settings) |
@@ -220,6 +221,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 - Queue remaining time: Info-Leiste unter Chips — Summe `max(0, Dauer − Position)` über **sichtbare** Chip+Suche-Liste; unbekannte Dauern ausgelassen (`~`); live Position für aktuelle Episode; Wanduhr (kein Speed); EN/DE a11y.
   Queue remaining time: info bar under chips — sum `max(0, duration − position)` over **visible** chip+search list; unknown durations omitted (`~`); live position for current episode; wall-clock (no speed); EN/DE a11y.
 - Downloads remaining time: Info-Leiste unter Chips — Summe `max(0, Dauer − Position)` über **sichtbare** Chip+Suche-Liste (**nicht** voller Offline-Katalog / Tab-Badge); unbekannte Dauern ausgelassen (`~`); live Position für aktuelle Episode; Wanduhr (kein Speed); EN/DE a11y.
+- Add from Clipboard: nur wenn Zwischenablage eine getrimmte http(s)-URL mit Host hält (erste Zeile); Toolbar + URL-Tab in Add podcast; öffnet bestehende Preview → Confirm Subscribe; **kein** Auto-Abo beim Start; **kein** OPML aus Zwischenablage.
   Downloads remaining time: info bar under chips — sum `max(0, duration − position)` over **visible** chip+search list (**not** full offline catalog / tab badge); unknown durations omitted (`~`); live position for current episode; wall-clock (no speed); EN/DE a11y.
 - Queue lock: Toolbar Lock/Unlock (`lock.fill` / `lock.open`) + Settings → Queue Toggle; persistiert `AppSettings.queueLocked` (Default aus). Gesperrt = kein Edit/Ziehen-Reorder und kein Move to top/bottom; **Einreihen / Play Next / Remove / Archive-Swipe / Clear queue bleiben** (nur Reihenfolge-Sperre, wie Android `prefQueueLocked`).
   Queue lock: toolbar Lock/Unlock (`lock.fill` / `lock.open`) + Settings → Queue toggle; persists `AppSettings.queueLocked` (default off). Locked = no Edit/drag reorder and no Move to top/bottom; **enqueue / Play Next / Remove / Archive swipe / Clear queue still work** (reorder lock only, mirrors Android `prefQueueLocked`).
