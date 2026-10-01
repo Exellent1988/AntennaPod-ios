@@ -229,6 +229,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Lock Add/Discover (+ optional Network) | ☐ Lock Add/Discover (+ optional Network) |
 | ☐ Appearance Theme System/Hell/Dunkel (`preferredColorScheme`; Backup) | ☐ Appearance Theme System/Light/Dark (`preferredColorScheme`; backup) |
 | ☐ Settings: Suche (Titel / Fußnoten; leere Abschnitte aus; NavigationLinks bleiben) | ☐ Settings: search (titles / footnotes; empty sections hide; NavigationLinks stay) |
+| ☐ Home-Layout: Suche (Abschnitts-Label; Debounce; leer bei keinen Treffern; nur vorhandene Labels; Toggle bleibt; kein Drag-Reorder während Filter; Reset = volles Layout) | ☐ Home layout search (section label; debounce; empty when no matches; existing labels only; toggle stays; no drag reorder while filtering; Reset = full layout) |
 | ☐ Notify new episodes (default aus; lokal; ein Banner; kein Push) | ☐ Notify new episodes (default off; local; one banner; no push) |
 | ☐ Per-feed settings (auto-DL / keep / notify / tags; Speed Use global·Presets + Custom… 0,50–3,00×) | ☐ Per-feed settings (auto-DL / keep / notify / tags; Speed Use global·presets + Custom… 0.50–3.00×) |
 | ☐ Per-feed Keep updated → Never: Refresh all überspringt; Einzel-Refresh OK | ☐ Per-feed Keep updated → Never: Refresh all skips; single-feed refresh OK |

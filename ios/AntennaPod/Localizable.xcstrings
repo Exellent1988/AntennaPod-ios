@@ -14268,6 +14268,142 @@
           }
         }
       }
+    },
+    "Search sections": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search sections"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abschnitte durchsuchen"
+          }
+        }
+      }
+    },
+    "No matching sections": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No matching sections"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine passenden Abschnitte"
+          }
+        }
+      }
+    },
+    "No Home layout sections match your search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Home layout sections match your search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Startseiten-Layout-Abschnitte passen zu deiner Suche."
+          }
+        }
+      }
+    },
+    "Shows or hides this section on the Home tab": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shows or hides this section on the Home tab"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blendet diesen Abschnitt auf dem Home-Tab ein oder aus"
+          }
+        }
+      }
+    },
+    "Restores the full default Home section order and visibility, not only the filtered list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restores the full default Home section order and visibility, not only the filtered list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stellt die vollständige Standard-Reihenfolge und Sichtbarkeit der Home-Abschnitte wieder her, nicht nur die gefilterte Liste"
+          }
+        }
+      }
+    },
+    "Enables drag reorder of Home sections": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enables drag reorder of Home sections"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiviert das Ziehen zum Neuordnen der Home-Abschnitte"
+          }
+        }
+      }
+    },
+    "Drag reorder is unavailable while searching; clear the search to reorder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag reorder is unavailable while searching; clear the search to reorder"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziehen zum Neuordnen ist während der Suche nicht verfügbar; leere die Suche zum Neuordnen"
+          }
+        }
+      }
+    },
+    "Toggle visibility on matching rows. Drag reorder is off while searching (filtered positions would not match the full layout). Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites is off by default.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle visibility on matching rows. Drag reorder is off while searching (filtered positions would not match the full layout). Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites is off by default."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichtbarkeit auf passenden Zeilen umschalten. Ziehen zum Neuordnen ist während der Suche aus (gefilterte Positionen würden nicht zum vollständigen Layout passen). Leere optionale Abschnitte (Weiterhören, Posteingang, Warteschlange, Zuletzt aktualisiert, Favoriten) bleiben auf Home ausgeblendet, wenn sie keine Einträge haben. Entdecken zeigt bei Aktivierung immer die Charts-Vorschau. Favoriten ist standardmäßig aus."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
