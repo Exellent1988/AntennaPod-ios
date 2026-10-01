@@ -4,11 +4,36 @@ struct DownloadedEpisode: Identifiable, Hashable, Codable {
     let episode: PodcastEpisode
     /// File name under `DownloadService.downloadsDirectory` (not an absolute path).
     let fileName: String
+    /// Wall-clock when the offline file finished downloading (ms since epoch).
+    /// Absent in older `downloads.json` rows; may be backfilled from file creation/mtime once.
+    var downloadedAtEpochMs: Int64?
+
+    init(episode: PodcastEpisode, fileName: String, downloadedAtEpochMs: Int64? = nil) {
+        self.episode = episode
+        self.fileName = fileName
+        self.downloadedAtEpochMs = downloadedAtEpochMs
+    }
 
     var id: String { episode.id }
 
     var localFileURL: URL {
         DownloadService.downloadsDirectory.appendingPathComponent(fileName)
+    }
+
+    /// Downloads list sort key: prefer stored download completion, else episode `pubDateEpochMs`.
+    var downloadsSortEpochMs: Int64? {
+        downloadedAtEpochMs ?? episode.pubDateEpochMs
+    }
+
+    /// Best-effort proxy from the offline file (creation, else content modification).
+    func fileDownloadProxyEpochMs() -> Int64? {
+        let values = try? localFileURL.resourceValues(forKeys: [
+            .creationDateKey, .contentModificationDateKey
+        ])
+        guard let date = values?.creationDate ?? values?.contentModificationDate else {
+            return nil
+        }
+        return Int64(date.timeIntervalSince1970 * 1000)
     }
 }
 
@@ -404,7 +429,12 @@ final class DownloadService: ObservableObject {
     // MARK: - Delegate callbacks (from DownloadSessionDelegate)
 
     fileprivate func handleMovedDownload(taskIdentifier: Int, fileName: String, episode: PodcastEpisode) {
-        let item = DownloadedEpisode(episode: episode, fileName: fileName)
+        let completedAt = Int64(Date().timeIntervalSince1970 * 1000)
+        let item = DownloadedEpisode(
+            episode: episode,
+            fileName: fileName,
+            downloadedAtEpochMs: completedAt
+        )
         downloads.removeAll { $0.id == item.id }
         downloads.append(item)
         persistCompleted()
@@ -505,10 +535,19 @@ final class DownloadService: ObservableObject {
 
     private func reloadFromDisk() {
         let catalog = PodcastPersistence.loadDownloadedEpisodes()
-        downloads = catalog.filter {
+        var next = catalog.filter {
             FileManager.default.fileExists(atPath: $0.localFileURL.path)
         }
-        if downloads.count != catalog.count {
+        // Older catalogs lack `downloadedAtEpochMs`; backfill once from file dates when possible.
+        var backfilled = false
+        for i in next.indices where next[i].downloadedAtEpochMs == nil {
+            if let proxy = next[i].fileDownloadProxyEpochMs() {
+                next[i].downloadedAtEpochMs = proxy
+                backfilled = true
+            }
+        }
+        downloads = next
+        if downloads.count != catalog.count || backfilled {
             persistCompleted()
         }
 

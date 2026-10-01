@@ -100,6 +100,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Network / Downloads Wi‑Fi-only Gates | ☐ Network / Downloads Wi‑Fi-only gates |
 | ☐ Download-Fehlerbanner + Log | ☐ Download error banner + log |
 | ☐ Downloads: Suche (Titel / Feed) | ☐ Downloads: search (title / feed) |
+| ☐ Downloads: Sortierung (Neueste / Älteste; Download-Zeit sonst pubDate; persistiert) | ☐ Downloads: sort (Newest / Oldest; download time else pubDate; persisted) |
 | ☐ Downloads: Swipes (Play Next / Queue / Delete) | ☐ Downloads: swipes (Play Next / Add to queue / Delete) |
 | ☐ Downloads: Gehörte löschen (Bestätigung; Favoriten überspringen) | ☐ Downloads: Delete played (confirm; skip favorites) |
 

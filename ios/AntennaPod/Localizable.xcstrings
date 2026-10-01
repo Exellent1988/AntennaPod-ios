@@ -8976,6 +8976,23 @@
           }
         }
       }
+    },
+    "Sort downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort downloads"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads sortieren"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

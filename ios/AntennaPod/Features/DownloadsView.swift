@@ -4,6 +4,7 @@ struct DownloadsView: View {
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var settings: AppSettings
 
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -13,14 +14,33 @@ struct DownloadsView: View {
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
     /// Visible downloaded episodes; empty query shows the full catalog.
+    /// Sorted by `AppSettings.downloadsSort`: prefer `downloadedAtEpochMs`, else `pubDateEpochMs`.
     private var filteredDownloads: [DownloadedEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base = downloads.downloads
-        if q.isEmpty { return base }
-        return base.filter { item in
-            if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
-            let feedTitle = store.feed(containingEpisodeId: item.episode.id)?.title ?? ""
-            return feedTitle.localizedCaseInsensitiveContains(q)
+        let filtered: [DownloadedEpisode]
+        if q.isEmpty {
+            filtered = base
+        } else {
+            filtered = base.filter { item in
+                if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+                let feedTitle = store.feed(containingEpisodeId: item.episode.id)?.title ?? ""
+                return feedTitle.localizedCaseInsensitiveContains(q)
+            }
+        }
+        return filtered.sorted { lhs, rhs in
+            switch settings.downloadsSort {
+            case .newestFirst:
+                let l = lhs.downloadsSortEpochMs ?? Int64.min
+                let r = rhs.downloadsSortEpochMs ?? Int64.min
+                if l != r { return l > r }
+                return lhs.episode.id < rhs.episode.id
+            case .oldestFirst:
+                let l = lhs.downloadsSortEpochMs ?? Int64.max
+                let r = rhs.downloadsSortEpochMs ?? Int64.max
+                if l != r { return l < r }
+                return lhs.episode.id < rhs.episode.id
+            }
         }
     }
 
@@ -130,6 +150,21 @@ struct DownloadsView: View {
                 debounceTask?.cancel()
             }
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        Picker(selection: $settings.downloadsSort) {
+                            ForEach(DownloadsSort.allCases) { sort in
+                                Label(sort.label, systemImage: sort.systemImage)
+                                    .tag(sort)
+                            }
+                        } label: {
+                            Text("Sort")
+                        }
+                    } label: {
+                        Label("Sort", systemImage: "arrow.up.arrow.down")
+                    }
+                    .accessibilityLabel("Sort downloads")
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
                         DownloadErrorsView()
