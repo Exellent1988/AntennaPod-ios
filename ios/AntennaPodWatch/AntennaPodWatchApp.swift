@@ -50,7 +50,7 @@ final class WatchContinueModel: NSObject, ObservableObject {
 
         guard WCSession.isSupported() else {
             WKApplication.shared().openSystemURL(url)
-            statusMessage = "Opening iPhone…"
+            statusMessage = String(localized: "Opening iPhone…")
             return
         }
 
@@ -58,7 +58,7 @@ final class WatchContinueModel: NSObject, ObservableObject {
         if session.activationState == .activated, session.isReachable {
             session.sendMessage(payload, replyHandler: { [weak self] _ in
                 Task { @MainActor in
-                    self?.statusMessage = "Playing on iPhone"
+                    self?.statusMessage = String(localized: "Playing on iPhone")
                 }
             }, errorHandler: { [weak self] _ in
                 Task { @MainActor in
@@ -76,7 +76,7 @@ final class WatchContinueModel: NSObject, ObservableObject {
         if WCSession.isSupported(), WCSession.default.activationState == .activated {
             WCSession.default.transferUserInfo(payload)
         }
-        statusMessage = "Opening iPhone…"
+        statusMessage = String(localized: "Opening iPhone…")
     }
 }
 

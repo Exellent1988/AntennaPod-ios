@@ -27,7 +27,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch; Feed detail **Download all** for unplayed/not-archived/not-downloaded, newest 50 soft cap)
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder; `.searchable` title/feed filter with debounce; reorder disabled while filtering; toolbar Clear queue with confirm)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
-- German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings headers + footnotes/help captions, parental detail, Statistics + Echo, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript — **partial**, not full i18n)
+- German localization (beta; main `Localizable.xcstrings` en+de + per-target Widget/Watch catalogs; tabs/nav, Settings headers + footnotes/help captions, parental detail, Statistics + Echo, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript, Homescreen Widget + Apple Watch UI — **partial**, not full i18n)
 - Accessibility / VoiceOver (beta polish; EpisodeRow combined labels + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
 - Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Play Next + Add to queue; toolbar menu Archive all + Mark all as played with confirm)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first; toolbar Clear history with confirm)
@@ -82,8 +82,8 @@ ios/
 ├── README.md
 ├── project.yml              # XcodeGen (app + AntennaPodWidget + AntennaPodWatch)
 ├── Shared/                  # App Group Continue-listening snapshot (app + widget + watch keys)
-├── AntennaPodWidget/        # WidgetKit extension (Continue listening)
-├── AntennaPodWatch/         # watchOS companion (Continue listening + Play on iPhone)
+├── AntennaPodWidget/        # WidgetKit extension (Continue listening + Localizable.xcstrings en+de)
+├── AntennaPodWatch/         # watchOS companion (Continue listening + Play on iPhone + Localizable.xcstrings en+de)
 └── AntennaPod/
     ├── AntennaPodApp.swift
     ├── AntennaPod.entitlements   # App Group
@@ -145,7 +145,7 @@ Default order: Discover → Continue → Inbox → Queue → Recently updated �
 
 ## Localization (German, beta / partial)
 
-Development language remains **English** (`developmentRegion: en`). `ios/project.yml` `knownRegions` includes `en`, `de`, and `Base`. User-visible copy lives in **`ios/AntennaPod/Localizable.xcstrings`** (String Catalog; en source + de).
+Development language remains **English** (`developmentRegion: en`). `ios/project.yml` `knownRegions` includes `en`, `de`, and `Base`. User-visible copy lives in **`ios/AntennaPod/Localizable.xcstrings`** (main app String Catalog; en source + de), plus per-target catalogs **`ios/AntennaPodWidget/Localizable.xcstrings`** and **`ios/AntennaPodWatch/Localizable.xcstrings`** (duplicated minimal keys; not shared with the main catalog).
 
 SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` string literals resolve via `LocalizedStringKey`. Plain `String` surfaces that need a lookup use `String(localized:)` (e.g. Settings/Backup/Parental help captions, `HomeSectionId.label`, Add-mode / discovery ternaries, notification titles, charts help format string, Parental PIN Save/Unlock defaults).
 
@@ -163,8 +163,12 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` s
 - Settings footnotes / help captions: Playback (speed, skip, video-as-audio, volume adaptation, skip silence, keep screen on, continuous playback, playback source), Feeds / Keep updated, Auto-download, Network / Downloads, Notifications, Downloads / Storage, Discovery, Sync provider blurbs, Backup help + media captions, Home layout footer, App Store rating / Siri / Widget / Watch / CarPlay notes
 - Parental controls detail: enable/options help, PIN sheet copy, lock status, common PIN errors
 - Statistics + Echo (Year in Review): navigation titles (already), empty states, totals/year section headers, row labels (played / in progress / listening time / favorites), top-podcasts footers, approximation footnotes, duration units (`%lldh %lldm` / Min. / s), feed subtitles, Echo ShareLink text
+- Homescreen Widget UI: configuration display name + description, Continue listening label, empty “Open AntennaPod to continue”, placeholder episode/podcast titles (`AntennaPodWidget/Localizable.xcstrings`)
+- Apple Watch companion UI: Continue listening, Play / Open on iPhone, empty state, status (“Opening…” / “Playing…”), honest-limits footnote (`AntennaPodWatch/Localizable.xcstrings`)
 
-**Still English (honest):** Widget / Watch UI (separate targets — no shared String Catalog; leave English to avoid App Group build breakage), OS/`localizedDescription` network errors, and many secondary accessibility hints. Regenerating XcodeGen on a Mac picks up the catalog + regions; device/simulator language German shows translated keys when present.
+**Widget / Watch (per-target catalogs):** Separate `Localizable.xcstrings` under `AntennaPodWidget/` (5 keys) and `AntennaPodWatch/` (8 keys) — EN source + DE. Intentionally **duplicated** minimal keys (not the main app catalog) so App Group / multi-target wiring stays simple; XcodeGen already compiles each target’s sources folder (no `project.yml` source change). SwiftUI `Text`/`Label`/`navigationTitle` / WidgetKit `configurationDisplayName`/`description` resolve via catalog; Watch status strings use `String(localized:)`.
+
+**Still English (honest):** OS/`localizedDescription` network errors, many secondary accessibility hints, and DEBUG preview sample episode titles. Regenerating XcodeGen on a Mac picks up catalogs + regions; device/simulator language German shows translated keys when present.
 
 ## Accessibility (VoiceOver, beta polish)
 
@@ -237,6 +241,7 @@ Honest empty state when little/no year data. Footnote: approximate — same limi
 - **Writer:** main app (`PodcastStore.publishWidgetSnapshot` / `WidgetSnapshotPublisher`) updates the snapshot when playback starts/stops, queue changes, or progress / mark-played changes. Prefers the **current player episode**, else the top Home Continue-listening item.
 - **Tap:** `antennapod://play` → `PlaybackDeepLinkRouter` (same as Siri lite).
 - **Empty:** “Open AntennaPod to continue”.
+- **Localization:** `AntennaPodWidget/Localizable.xcstrings` (en+de; per-target, not shared with main app).
 - **Honest limits:** snapshot **may be stale** (not live Now Playing); **no scrubber / transport** on the widget; requires App Group entitlement + codesigning for the extension to install; add the widget manually from the home screen.
 
 Shared Codable helpers live in `ios/Shared/WidgetContinueSnapshot.swift` (compiled into app, widget, and Watch targets).
@@ -248,6 +253,7 @@ Shared Codable helpers live in `ios/Shared/WidgetContinueSnapshot.swift` (compil
 - **Snapshot source:** same Codable payload / key as the Homescreen Widget (`group.de.danoeh.antennapod.ios` / `widget.continueListening.snapshot.v1`). Because App Group containers are **per-device**, the iPhone pushes snapshot bytes to the Watch via **Watch Connectivity** `updateApplicationContext` (`WatchCompanionBridge` on save / activate). Watch also tries App Group `UserDefaults` as a local fallback (usually empty).
 - **Play / Open on iPhone:** Watch Connectivity `sendMessage` / `transferUserInfo` with action `play` → iPhone `PlaybackDeepLinkRouter` (`antennapod://play`). Best-effort fallback: `WKApplication.openSystemURL(antennapod://play)` (custom schemes are less reliable than WC).
 - **Empty:** “Open AntennaPod on iPhone to continue”.
+- **Localization:** `AntennaPodWatch/Localizable.xcstrings` (en+de; per-target, not shared with main app).
 - **Honest limits:** **no** independent Watch audio playback, **no** download management, **no** full queue UI. When the phone is already playing, use **system Now Playing** controls on the Watch. Snapshot may be stale until WC delivers. Requires Dev Team + App Group capability for device install.
 
 ## Swipe actions

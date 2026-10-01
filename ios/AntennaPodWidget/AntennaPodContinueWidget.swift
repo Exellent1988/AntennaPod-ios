@@ -29,8 +29,8 @@ struct ContinueListeningProvider: TimelineProvider {
             date: Date(),
             snapshot: WidgetContinueSnapshot(
                 episodeId: "placeholder",
-                episodeTitle: "Episode title",
-                feedTitle: "Podcast name",
+                episodeTitle: String(localized: "Episode title"),
+                feedTitle: String(localized: "Podcast name"),
                 updatedAtEpochMs: 0
             )
         )
