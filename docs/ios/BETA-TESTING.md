@@ -122,6 +122,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Inbox: Alle als gehört markieren (Bestätigung) | ☐ Inbox: Mark all as played (confirm) |
 | ☐ Inbox: Sortierung (Neueste / Älteste zuerst; persistiert) | ☐ Inbox: sort (Newest / Oldest first; persisted) |
 | ☐ Inbox: Tab-Badge (Anzahl Inbox-Episoden; 0 ausgeblendet; System-VoiceOver) | ☐ Inbox: tab badge (inbox episode count; hide when 0; system VoiceOver) |
+| ☐ Queue: Tab-Badge (volle Warteschlangen-Länge; nicht Chip/Suche-Filter; 0 ausgeblendet; System-VoiceOver) | ☐ Queue: tab badge (full queue length; not chip/search filter; hide when 0; system VoiceOver) |
 | ☐ Queue: Remove, Archive, Reorder; Full-Player Add/Remove-Toggle | ☐ Queue: remove, archive, reorder; Full Player Add/Remove toggle |
 | ☐ Queue: Warteschlange leeren (Bestätigung) | ☐ Queue: Clear queue (confirm) |
 | ☐ Queue: Suche (Titel / Feed; kein Reorder während Filter) | ☐ Queue: search (title / feed; no reorder while filtering) |

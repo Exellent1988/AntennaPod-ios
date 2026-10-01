@@ -39,6 +39,9 @@ struct RootTabView: View {
                     Label("Queue", systemImage: "list.bullet")
                 }
                 .tag(RootTab.queue)
+                // Full persisted queue (`PodcastStore.queue`), not chip/search filtered view.
+                // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
+                .badge(store.queue.count)
             DownloadsView()
                 .tabItem {
                     Label("Downloads", systemImage: "arrow.down.circle")
