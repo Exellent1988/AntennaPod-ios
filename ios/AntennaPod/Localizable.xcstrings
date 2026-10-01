@@ -375,23 +375,6 @@
         }
       }
     },
-    "Apple Watch (beta lite): Continue listening shows episode title + podcast from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apple Watch (beta lite): Continue listening shows episode title + podcast from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apple Watch (Beta lite): Weiterhören zeigt Episodentitel + Podcast aus demselben Snapshot wie das Homescreen-Widget (iPhone pusht per Watch Connectivity; App Group group.de.danoeh.antennapod.ios). Play / Auf iPhone öffnen steuert antennapod://play auf dem Companion. Keine eigenständige Watch-Wiedergabe, Downloads oder Warteschlange — bei laufender Wiedergabe System-Now-Playing auf der Watch nutzen. Braucht AntennaPodWatch-Target, Dev Team und App Group auf dem Mac."
-          }
-        }
-      }
-    },
     "Archive": {
       "extractionState": "manual",
       "localizations": {
@@ -2073,23 +2056,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homescreen-Widget"
-          }
-        }
-      }
-    },
-    "Homescreen widget (beta lite): Continue listening shows episode title + podcast from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Homescreen widget (beta lite): Continue listening shows episode title + podcast from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios)."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Homescreen-Widget (Beta lite): Weiterhören zeigt Episodentitel + Podcast aus einem App-Group-Snapshot. Tippen öffnet antennapod://play. Snapshot kann veraltet sein; kein Live-Scrubber. Widget vom iOS-Homescreen hinzufügen nach Build mit AntennaPodWidget-Extension (App Group group.de.danoeh.antennapod.ios)."
           }
         }
       }
@@ -12717,6 +12683,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Die Verbleibende Zeit in der Bibliothekssuche gilt nur für passende Episoden-Treffer, nicht für Podcast-Treffer oder die gesamte Bibliothek"
+          }
+        }
+      }
+    },
+    "Homescreen widget (beta lite): Continue listening shows episode title + podcast + remaining time (wall-clock max(0, duration − position) when duration known; ~ when unknown) from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homescreen widget (beta lite): Continue listening shows episode title + podcast + remaining time (wall-clock max(0, duration − position) when duration known; ~ when unknown) from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homescreen-Widget (Beta lite): Weiterhören zeigt Episodentitel + Podcast + Restzeit (Wanduhr max(0, Dauer − Position) bei bekannter Dauer; ~ wenn unbekannt) aus einem App-Group-Snapshot. Tippen öffnet antennapod://play. Snapshot kann veraltet sein; kein Live-Scrubber. Widget vom iOS-Homescreen hinzufügen nach Build mit AntennaPodWidget-Extension (App Group group.de.danoeh.antennapod.ios)."
+          }
+        }
+      }
+    },
+    "Apple Watch (beta lite): Continue listening shows episode title + podcast + remaining time from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Watch (beta lite): Continue listening shows episode title + podcast + remaining time from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Watch (Beta lite): Weiterhören zeigt Episodentitel + Podcast + Restzeit aus demselben Snapshot wie das Homescreen-Widget (iPhone pusht per Watch Connectivity; App Group group.de.danoeh.antennapod.ios). Play / Auf iPhone öffnen steuert antennapod://play auf dem Companion. Keine eigenständige Watch-Wiedergabe, Downloads oder Warteschlange — bei laufender Wiedergabe System-Now-Playing auf der Watch nutzen. Braucht AntennaPodWatch-Target, Dev Team und App Group auf dem Mac."
           }
         }
       }

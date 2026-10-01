@@ -707,21 +707,78 @@ final class PodcastStore: ObservableObject {
         }
     }
 
-    /// Write Continue-listening snapshot to the App Group for the homescreen widget.
+    /// Write Continue-listening snapshot to the App Group for the homescreen widget / Watch.
     /// Prefers the current player episode when set; else the top continue-listening item.
+    /// Position + duration come from the same publish moment as title/feed (may be stale;
+    /// wall-clock remaining = max(0, duration − position) when duration known).
     func publishWidgetSnapshot() {
         let current = playback?.currentEpisode
         let cont = continueListeningEpisodes.first
+
+        var currentPosition: Double? = nil
+        var currentDuration: Double? = nil
+        if let current {
+            if let playback, playback.currentEpisode?.id == current.id {
+                let livePos = playback.positionSeconds
+                currentPosition = livePos.isFinite ? max(0, livePos) : 0
+                let liveDur = playback.durationSeconds
+                if liveDur.isFinite, liveDur > 0 {
+                    currentDuration = liveDur
+                }
+            }
+            if currentDuration == nil {
+                currentDuration = knownDurationSeconds(for: current)
+            }
+            if currentPosition == nil {
+                currentPosition = max(0, positionSeconds(for: current.id))
+            }
+        }
+
+        var continuePosition: Double? = nil
+        var continueDuration: Double? = nil
+        if let cont {
+            continuePosition = max(0, positionSeconds(for: cont.episode.id))
+            continueDuration = knownDurationSeconds(for: cont.episode)
+            // Live player wins when the continue top item is also current.
+            if let playback, playback.currentEpisode?.id == cont.episode.id {
+                let livePos = playback.positionSeconds
+                continuePosition = livePos.isFinite ? max(0, livePos) : continuePosition
+                let liveDur = playback.durationSeconds
+                if liveDur.isFinite, liveDur > 0 {
+                    continueDuration = liveDur
+                }
+            }
+        }
+
         WidgetSnapshotPublisher.publish(
             currentEpisodeId: current?.id,
             currentEpisodeTitle: current?.title,
             currentFeedTitle: current.flatMap { feed(containingEpisodeId: $0.id)?.title },
+            currentPositionSeconds: currentPosition,
+            currentDurationSeconds: currentDuration,
             continueEpisodeId: cont?.episode.id,
             continueEpisodeTitle: cont?.episode.title,
-            continueFeedTitle: cont?.feedTitle
+            continueFeedTitle: cont?.feedTitle,
+            continuePositionSeconds: continuePosition,
+            continueDurationSeconds: continueDuration
         )
         // Keep Apple Watch Continue-listening in sync (WC applicationContext).
         WatchCompanionBridge.shared.pushCurrentSnapshot()
+    }
+
+    /// Prefer live player duration when this episode is current; else feed `itunes:duration` /
+    /// media; else saved playback duration. Never invents a length. Used by widget snapshot.
+    private func knownDurationSeconds(for episode: PodcastEpisode) -> Double? {
+        if let playback, playback.currentEpisode?.id == episode.id {
+            let live = playback.durationSeconds
+            if live.isFinite, live > 0 { return live }
+        }
+        if episode.hasKnownDuration {
+            return episode.durationSeconds
+        }
+        let saved = playbackState(for: episode.id).durationSeconds
+        if saved.isFinite, saved > 0 { return saved }
+        return nil
     }
 
     /// Subscriptions ordered by newest episode `pubDateEpochMs` (proxy for recently updated).

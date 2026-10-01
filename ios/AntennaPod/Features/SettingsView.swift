@@ -254,10 +254,10 @@ struct SettingsView: View {
                 if matchesSearch("Siri / Shortcuts", "Siri / Shortcuts (lite): Play/Pause, Skip forward, Skip back. Also open via URL schemes: antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents open the app and control playback when an episode is already loaded. Not background-only without App Groups.") {
                     siriShortcutsSection
                 }
-                if matchesSearch("Homescreen widget", "Homescreen widget (beta lite): Continue listening shows episode title + podcast from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).") {
+                if matchesSearch("Homescreen widget", "Homescreen widget (beta lite): Continue listening shows episode title + podcast + remaining time (wall-clock max(0, duration − position) when duration known; ~ when unknown) from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).") {
                     homescreenWidgetSection
                 }
-                if matchesSearch("Apple Watch", "Apple Watch (beta lite): Continue listening shows episode title + podcast from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.") {
+                if matchesSearch("Apple Watch", "Apple Watch (beta lite): Continue listening shows episode title + podcast + remaining time from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.") {
                     appleWatchSection
                 }
                 if matchesSearch("CarPlay", "CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).") {
@@ -1188,7 +1188,7 @@ struct SettingsView: View {
     @ViewBuilder
     private var homescreenWidgetSection: some View {
         Section {
-            Text("Homescreen widget (beta lite): Continue listening shows episode title + podcast from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).")
+            Text("Homescreen widget (beta lite): Continue listening shows episode title + podcast + remaining time (wall-clock max(0, duration − position) when duration known; ~ when unknown) from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         } header: {
@@ -1200,7 +1200,7 @@ struct SettingsView: View {
     @ViewBuilder
     private var appleWatchSection: some View {
         Section {
-            Text("Apple Watch (beta lite): Continue listening shows episode title + podcast from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.")
+            Text("Apple Watch (beta lite): Continue listening shows episode title + podcast + remaining time from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         } header: {

@@ -31,7 +31,9 @@ struct ContinueListeningProvider: TimelineProvider {
                 episodeId: "placeholder",
                 episodeTitle: String(localized: "Episode title"),
                 feedTitle: String(localized: "Podcast name"),
-                updatedAtEpochMs: 0
+                updatedAtEpochMs: 0,
+                positionSeconds: 600,
+                durationSeconds: 3600
             )
         )
     }
@@ -69,6 +71,16 @@ struct ContinueListeningWidgetView: View {
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
                     }
+                    // Single Continue episode remaining (same snapshot as title/feed; may be stale).
+                    // Known duration → wall-clock max(0, duration − position); unknown → "~"; hide only when no episode.
+                    if let remaining = WidgetRemainingTime.remainingLabel(for: snap) {
+                        Text(remaining)
+                            .font(.caption2.weight(.medium))
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                            .lineLimit(1)
+                            .accessibilityLabel(WidgetRemainingTime.remainingAccessibilityLabel(for: snap))
+                    }
                     Spacer(minLength: 0)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -100,7 +112,9 @@ struct ContinueListeningWidgetView_Previews: PreviewProvider {
                     episodeId: "1",
                     episodeTitle: "Sample episode about widgets",
                     feedTitle: "AntennaPod Talk",
-                    updatedAtEpochMs: 0
+                    updatedAtEpochMs: 0,
+                    positionSeconds: 900,
+                    durationSeconds: 3600
                 )
             )
         )

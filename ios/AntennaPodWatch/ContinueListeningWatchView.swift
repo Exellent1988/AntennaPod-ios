@@ -22,6 +22,14 @@ struct ContinueListeningWatchView: View {
                             .foregroundStyle(.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
+                    // Same Continue snapshot remaining as Homescreen Widget (may be stale).
+                    if let remaining = WidgetRemainingTime.remainingLabel(for: snap) {
+                        Text(remaining)
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                            .accessibilityLabel(WidgetRemainingTime.remainingAccessibilityLabel(for: snap))
+                    }
                     Button {
                         model.playOnPhone()
                     } label: {
