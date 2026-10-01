@@ -24,7 +24,7 @@ struct SubscriptionsView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
-    /// Client-side list order after search/tag filters (no drag-reorder of subscriptions).
+    /// Client-side list order after search/category/language/tag filters (no drag-reorder of subscriptions).
     /// Author / language: A–Z by feed-provided `displayAuthor` / `displayLanguage`; missing values last; title tiebreak.
     /// Most unplayed: descending per-feed unplayed count (`!isPlayed && !isArchived`, same as badges /
     /// Inbox / `unplayedCountsByFeedId`); equal counts → title A–Z tiebreak.
@@ -123,9 +123,38 @@ struct SubscriptionsView: View {
         return base.filter { categoryFilter.matches($0) }
     }
 
-    /// Search → category → tag (AND). Remaining-time / unplayed bars use this visible set.
-    private var tagFilteredFeeds: [PodcastFeed] {
+    /// Bound language chip from `AppSettings` (empty = All). Library language codes only — never invent.
+    private var languageFilter: SubscriptionLanguageFilter {
+        SubscriptionLanguageFilter.fromStorage(settings.subscriptionsLanguageFilter)
+    }
+
+    private var isLanguageFiltering: Bool {
+        if case .language = languageFilter { return true }
+        return false
+    }
+
+    /// Unique feed-provided language codes present on stored feeds (after refresh). Empty → hide language chips.
+    /// Sorted by localized display name (A–Z); codes kept for storage / match.
+    private var libraryLanguages: [String] {
+        let codes = store.feeds.compactMap(\.languageCode)
+        let unique = FeedTags.uniqueSorted(codes)
+        return unique.sorted {
+            FeedLanguageFormatting.displayName(for: $0)
+                .localizedCaseInsensitiveCompare(FeedLanguageFormatting.displayName(for: $1))
+                == .orderedAscending
+        }
+    }
+
+    /// Search → category → language (AND). Feeds with empty language never match a specific language chip.
+    private var languageFilteredFeeds: [PodcastFeed] {
         let base = categoryFilteredFeeds
+        guard isLanguageFiltering else { return base }
+        return base.filter { languageFilter.matches($0) }
+    }
+
+    /// Search → category → language → tag (AND). Remaining-time / unplayed bars use this visible set.
+    private var tagFilteredFeeds: [PodcastFeed] {
+        let base = languageFilteredFeeds
         switch tagFilter {
         case .all:
             return base
@@ -139,21 +168,21 @@ struct SubscriptionsView: View {
     }
 
     /// Sections when grouping is on and filter is All (multi-tag feeds appear under each tag).
-    /// Feeds within each section follow `subscriptionsSort` (inherited from `categoryFilteredFeeds`).
+    /// Feeds within each section follow `subscriptionsSort` (inherited from `languageFilteredFeeds`).
     private var groupedSections: [(title: String, feeds: [PodcastFeed])] {
         guard tagFilter == .all, groupByTag, !store.allTags.isEmpty else {
             return [("Podcasts", tagFilteredFeeds)]
         }
         var sections: [(title: String, feeds: [PodcastFeed])] = []
         for tag in store.allTags {
-            let feeds = categoryFilteredFeeds.filter { feed in
+            let feeds = languageFilteredFeeds.filter { feed in
                 store.tags(for: feed.id).contains(where: { FeedTags.equal($0, tag) })
             }
             if !feeds.isEmpty {
                 sections.append((tag, feeds))
             }
         }
-        let untagged = categoryFilteredFeeds.filter { store.tags(for: $0.id).isEmpty }
+        let untagged = languageFilteredFeeds.filter { store.tags(for: $0.id).isEmpty }
         if !untagged.isEmpty {
             sections.append(("Untagged", untagged))
         }
@@ -175,6 +204,12 @@ struct SubscriptionsView: View {
         return chips
     }
 
+    private var languageFilterChips: [SubscriptionLanguageFilter] {
+        var chips: [SubscriptionLanguageFilter] = [.all]
+        chips.append(contentsOf: libraryLanguages.map { .language($0) })
+        return chips
+    }
+
     /// Single-pass map from `PodcastStore.unplayedRemainingByFeedId()` (missing = 0 /
     /// no remaining). Supplies both per-row unplayed **badge** counts and **per-feed remaining**.
     /// Touches live `PlaybackService` so remaining refreshes while listening (store reads the
@@ -187,7 +222,7 @@ struct SubscriptionsView: View {
     }
 
     /// AntennaPod-like info bar: unplayed count + remaining over unplayed episodes of
-    /// **visible** subscriptions (search + category + tag). Built by summing per-feed summaries from
+    /// **visible** subscriptions (search + category + language + tag). Built by summing per-feed summaries from
     /// `unplayedRemainingByFeedId` over **unique** `tagFilteredFeeds` (multi-tag Group by tag
     /// does not double-count). Same `!isPlayed && !isArchived` definition as per-row badges /
     /// Inbox / per-feed row remaining. Full stored feed catalogs — **not** the All Episodes
@@ -207,8 +242,8 @@ struct SubscriptionsView: View {
         if unknown > 0 {
             parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
         }
-        if isSearchFiltering || isCategoryFiltering || tagFilter != .all {
-            parts.append(String(localized: "Subscriptions remaining time covers visible podcasts only (search, tag, or category filter), not the full library"))
+        if isSearchFiltering || isCategoryFiltering || isLanguageFiltering || tagFilter != .all {
+            parts.append(String(localized: "Subscriptions remaining time covers visible podcasts only (search, tag, category, or language filter), not the full library"))
         }
         return parts.joined(separator: ". ")
     }
@@ -324,6 +359,28 @@ struct SubscriptionsView: View {
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                     } header: {
                         Text("Categories")
+                    }
+                }
+
+                if !store.feeds.isEmpty, !libraryLanguages.isEmpty || isLanguageFiltering {
+                    Section {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(languageFilterChips) { chip in
+                                    TagFilterChip(
+                                        title: chip.label,
+                                        selected: languageFilter == chip,
+                                        accessibilityHint: String(localized: "Filters the Subscriptions list by language")
+                                    ) {
+                                        settings.subscriptionsLanguageFilter = chip.storageValue
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    } header: {
+                        Text("Languages")
                     }
                 }
 
@@ -521,6 +578,11 @@ struct SubscriptionsView: View {
                    !libraryCategories.contains(where: { FeedTags.equal($0, name) }) {
                     settings.subscriptionsCategoryFilter = ""
                 }
+                // Drop language filter if that language code is no longer present on any stored feed.
+                if case .language(let code) = languageFilter,
+                   !libraryLanguages.contains(where: { FeedTags.equal($0, code) }) {
+                    settings.subscriptionsLanguageFilter = ""
+                }
             }
             .onAppear {
                 consumePendingFeedOpenIfNeeded()
@@ -604,13 +666,16 @@ struct SubscriptionsView: View {
         }
     }
 
-    /// Prefer search copy, then category, then tag — honest about which filter emptied the list.
+    /// Prefer search copy, then category, then language, then tag — honest about which filter emptied the list.
     private var subscriptionsEmptyFilterMessage: String {
         if isSearchFiltering {
             return String(localized: "No subscriptions match your search.")
         }
         if isCategoryFiltering {
             return String(localized: "No subscriptions match this category filter.")
+        }
+        if isLanguageFiltering {
+            return String(localized: "No subscriptions match this language filter.")
         }
         return String(localized: "No subscriptions match this tag filter.")
     }

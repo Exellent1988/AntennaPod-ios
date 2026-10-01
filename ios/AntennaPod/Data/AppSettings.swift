@@ -602,7 +602,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History size limit, Favorites sort, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History size limit, Favorites sort, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -677,6 +677,7 @@ final class AppSettings: ObservableObject {
         static let homeHiddenSections = "settings.home.hiddenSections"
         static let subscriptionsSort = "settings.subscriptionsSort"
         static let subscriptionsCategoryFilter = "settings.subscriptionsCategoryFilter"
+        static let subscriptionsLanguageFilter = "settings.subscriptionsLanguageFilter"
         static let feedEpisodeSort = "settings.feedEpisodeSort"
         static let feedEpisodeFilter = "settings.feedEpisodeFilter"
         static let inboxSort = "settings.inboxSort"
@@ -969,10 +970,19 @@ final class AppSettings: ObservableObject {
 
     /// Subscriptions category chip filter. Empty string = All; otherwise a feed `itunes:category` text
     /// present in the library (case-insensitive). Default All. Persisted (+ backup). Feeds with empty
-    /// categories never match a specific chip. Applied after search, before tag filter.
+    /// categories never match a specific chip. Applied after search, before language / tag filter.
     @Published var subscriptionsCategoryFilter: String {
         didSet {
             UserDefaults.standard.set(subscriptionsCategoryFilter, forKey: Keys.subscriptionsCategoryFilter)
+        }
+    }
+
+    /// Subscriptions language chip filter. Empty string = All; otherwise a feed-provided language code
+    /// present in the library (case-insensitive). Default All. Persisted (+ backup). Feeds with empty
+    /// language never match a specific chip. Applied after search → category, before tag filter.
+    @Published var subscriptionsLanguageFilter: String {
+        didSet {
+            UserDefaults.standard.set(subscriptionsLanguageFilter, forKey: Keys.subscriptionsLanguageFilter)
         }
     }
 
@@ -1302,6 +1312,8 @@ final class AppSettings: ObservableObject {
         subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
         let catFilterRaw = UserDefaults.standard.string(forKey: Keys.subscriptionsCategoryFilter) ?? ""
         subscriptionsCategoryFilter = SubscriptionCategoryFilter.fromStorage(catFilterRaw).storageValue
+        let langFilterRaw = UserDefaults.standard.string(forKey: Keys.subscriptionsLanguageFilter) ?? ""
+        subscriptionsLanguageFilter = SubscriptionLanguageFilter.fromStorage(langFilterRaw).storageValue
         let feedEpSortRaw = UserDefaults.standard.string(forKey: Keys.feedEpisodeSort)
             ?? FeedEpisodeSort.newestFirst.rawValue
         feedEpisodeSort = FeedEpisodeSort(rawValue: feedEpSortRaw) ?? .newestFirst
@@ -1558,6 +1570,7 @@ final class AppSettings: ObservableObject {
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
             subscriptionsSort: subscriptionsSort.rawValue,
             subscriptionsCategoryFilter: subscriptionsCategoryFilter,
+            subscriptionsLanguageFilter: subscriptionsLanguageFilter,
             feedEpisodeSort: feedEpisodeSort.rawValue,
             feedEpisodeFilter: feedEpisodeFilter.rawValue,
             inboxSort: inboxSort.rawValue,
@@ -1670,6 +1683,9 @@ final class AppSettings: ObservableObject {
         if let catRaw = snap.subscriptionsCategoryFilter {
             subscriptionsCategoryFilter = SubscriptionCategoryFilter.fromStorage(catRaw).storageValue
         }
+        if let langRaw = snap.subscriptionsLanguageFilter {
+            subscriptionsLanguageFilter = SubscriptionLanguageFilter.fromStorage(langRaw).storageValue
+        }
         if let feedEpSortRaw = snap.feedEpisodeSort {
             feedEpisodeSort = FeedEpisodeSort(rawValue: feedEpSortRaw) ?? .newestFirst
         }
@@ -1768,6 +1784,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var subscriptionsSort: String? = nil
     /// Absent in older backups → All (empty). Feed category text or empty for All.
     var subscriptionsCategoryFilter: String? = nil
+    /// Absent in older backups → All (empty). Feed language code or empty for All.
+    var subscriptionsLanguageFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var feedEpisodeSort: String? = nil
     /// Absent in older backups → all (default).

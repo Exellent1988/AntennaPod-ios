@@ -15835,24 +15835,6 @@
       },
       "comment": "VoiceOver hint for Subscriptions tag filter chips."
     },
-    "Subscriptions remaining time covers visible podcasts only (search, tag, or category filter), not the full library": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subscriptions remaining time covers visible podcasts only (search, tag, or category filter), not the full library"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die Verbleibende Zeit in Abonnements gilt nur für sichtbare Podcasts (Suche, Tag- oder Kategorie-Filter), nicht für die gesamte Bibliothek"
-          }
-        }
-      },
-      "comment": "VoiceOver honesty when Subscriptions search, tag, or category filter narrows visible podcasts for the remaining-time sum."
-    },
     "Live": {
       "extractionState": "manual",
       "localizations": {
@@ -16913,6 +16895,78 @@
           }
         }
       }
+    },
+    "Subscriptions remaining time covers visible podcasts only (search, tag, category, or language filter), not the full library": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions remaining time covers visible podcasts only (search, tag, category, or language filter), not the full library"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Verbleibende Zeit in Abonnements gilt nur für sichtbare Podcasts (Suche, Tag-, Kategorie- oder Sprach-Filter), nicht für die gesamte Bibliothek"
+          }
+        }
+      },
+      "comment": "VoiceOver honesty when Subscriptions search, tag, category, or language filter narrows visible podcasts for the remaining-time sum."
+    },
+    "Languages": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Languages"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachen"
+          }
+        }
+      },
+      "comment": "Subscriptions list section header for language filter chips (library languages only)."
+    },
+    "No subscriptions match this language filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match this language filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu diesem Sprach-Filter."
+          }
+        }
+      },
+      "comment": "Empty state when Subscriptions language chip (not search/category/tag) yields no feeds."
+    },
+    "Filters the Subscriptions list by language": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Subscriptions list by language"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Abonnementliste nach Sprache"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Subscriptions language filter chips."
     }
   },
   "version": "1.0"
