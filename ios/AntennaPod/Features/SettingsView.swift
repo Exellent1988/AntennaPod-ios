@@ -80,6 +80,19 @@ struct SettingsView: View {
                     Text("New episodes start at this speed. You can still change speed in the mini player.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Picker("Rewind", selection: $settings.rewindSeconds) {
+                        ForEach(AppSettings.skipIntervalPresets, id: \.self) { secs in
+                            Text("\(secs) seconds").tag(secs)
+                        }
+                    }
+                    Picker("Fast-forward", selection: $settings.fastForwardSeconds) {
+                        ForEach(AppSettings.skipIntervalPresets, id: \.self) { secs in
+                            Text("\(secs) seconds").tag(secs)
+                        }
+                    }
+                    Text("Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward).")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     Picker("Playback source", selection: $settings.playbackSourcePreference) {
                         ForEach(PlaybackSourcePreference.allCases) { pref in
                             Text(pref.label).tag(pref)

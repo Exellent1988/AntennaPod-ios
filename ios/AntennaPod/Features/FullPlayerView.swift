@@ -261,12 +261,12 @@ struct FullPlayerView: View {
         HStack(spacing: 28) {
             sleepTimerMenu
             Button {
-                playback.seek(bySeconds: -PlaybackService.skipDeltaSeconds)
+                playback.seek(bySeconds: -playback.rewindSeconds)
             } label: {
-                Image(systemName: "gobackward.30")
+                Image(systemName: AppSettings.skipSystemImage(forward: false, seconds: settings.rewindSeconds))
                     .font(.title2)
             }
-            .accessibilityLabel("Rewind 30 seconds")
+            .accessibilityLabel("Rewind \(settings.rewindSeconds) seconds")
 
             Button {
                 playback.togglePlayPause()
@@ -277,12 +277,12 @@ struct FullPlayerView: View {
             .accessibilityLabel(playback.isPlaying ? "Pause" : "Play")
 
             Button {
-                playback.seek(bySeconds: PlaybackService.skipDeltaSeconds)
+                playback.seek(bySeconds: playback.fastForwardSeconds)
             } label: {
-                Image(systemName: "goforward.30")
+                Image(systemName: AppSettings.skipSystemImage(forward: true, seconds: settings.fastForwardSeconds))
                     .font(.title2)
             }
-            .accessibilityLabel("Forward 30 seconds")
+            .accessibilityLabel("Forward \(settings.fastForwardSeconds) seconds")
 
             speedMenu
         }

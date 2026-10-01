@@ -20,8 +20,6 @@ final class PlaybackService: ObservableObject {
     static let fadeThresholdSeconds: Double = 10
 
     static let clockPresetsMinutes: [Int] = [5, 10, 15, 30, 45, 60]
-    /// Match mini player skip buttons.
-    static let skipDeltaSeconds: Double = 30
     /// Throttle lock-screen elapsed updates (system interpolates via rate + timestamp).
     private static let nowPlayingUpdateIntervalSeconds: Double = 5
 
@@ -44,6 +42,16 @@ final class PlaybackService: ObservableObject {
     weak var downloads: DownloadService?
     /// Bound for default playback speed on new episode starts.
     weak var settings: AppSettings?
+
+    /// Rewind interval from Settings (AntennaPod default 10s).
+    var rewindSeconds: Double {
+        Double(settings?.rewindSeconds ?? AppSettings.defaultRewindSeconds)
+    }
+
+    /// Fast-forward interval from Settings (AntennaPod default 30s).
+    var fastForwardSeconds: Double {
+        Double(settings?.fastForwardSeconds ?? AppSettings.defaultFastForwardSeconds)
+    }
 
     private var player: AVPlayer?
     private var timeObserver: Any?
@@ -673,22 +681,24 @@ final class PlaybackService: ObservableObject {
         }
 
         center.skipForwardCommand.isEnabled = true
-        center.skipForwardCommand.preferredIntervals = [NSNumber(value: Self.skipDeltaSeconds)]
         center.skipForwardCommand.addTarget { [weak self] _ in
             Task { @MainActor in
-                self?.seek(bySeconds: Self.skipDeltaSeconds)
+                guard let self else { return }
+                self.seek(bySeconds: self.fastForwardSeconds)
             }
             return .success
         }
 
         center.skipBackwardCommand.isEnabled = true
-        center.skipBackwardCommand.preferredIntervals = [NSNumber(value: Self.skipDeltaSeconds)]
         center.skipBackwardCommand.addTarget { [weak self] _ in
             Task { @MainActor in
-                self?.seek(bySeconds: -Self.skipDeltaSeconds)
+                guard let self else { return }
+                self.seek(bySeconds: -self.rewindSeconds)
             }
             return .success
         }
+
+        applyRemoteSkipIntervals()
 
         center.changePlaybackPositionCommand.isEnabled = true
         center.changePlaybackPositionCommand.addTarget { [weak self] event in
@@ -703,6 +713,13 @@ final class PlaybackService: ObservableObject {
         }
     }
 
+    /// Refresh Lockscreen / Control Center skip button intervals from `AppSettings`.
+    func applyRemoteSkipIntervals() {
+        let center = MPRemoteCommandCenter.shared()
+        center.skipForwardCommand.preferredIntervals = [NSNumber(value: fastForwardSeconds)]
+        center.skipBackwardCommand.preferredIntervals = [NSNumber(value: rewindSeconds)]
+    }
+
     private func updateNowPlayingInfo(force: Bool) {
         guard currentEpisode != nil else {
             clearNowPlayingInfo()
@@ -713,6 +730,7 @@ final class PlaybackService: ObservableObject {
             return
         }
         lastNowPlayingUpdateAt = now
+        applyRemoteSkipIntervals()
 
         guard let episode = currentEpisode else { return }
         let feed = store?.feed(containingEpisodeId: episode.id)

@@ -159,11 +159,28 @@ enum PlaybackSourcePreference: String, CaseIterable, Identifiable {
     }
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source, auto-delete).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source, auto-delete, skip intervals).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
+    /// Common AntennaPod-style skip presets (Settings pickers + player buttons).
+    static let skipIntervalPresets: [Int] = [5, 10, 15, 20, 30, 60]
+    /// Android `prefRewindSecs` default.
+    static let defaultRewindSeconds: Int = 10
+    /// Android `prefFastForwardSecs` default.
+    static let defaultFastForwardSeconds: Int = 30
     static let customStorageMBRange = 50...100_000
+
+    /// SF Symbol for skip buttons (`gobackward.10`, `goforward.30`, …). Falls back to unnumbered glyph when no preset icon exists (e.g. 20s).
+    static func skipSystemImage(forward: Bool, seconds: Int) -> String {
+        let base = forward ? "goforward" : "gobackward"
+        switch seconds {
+        case 5, 10, 15, 30, 45, 60, 75, 90:
+            return "\(base).\(seconds)"
+        default:
+            return base
+        }
+    }
 
     private enum Keys {
         static let theme = "settings.theme"
@@ -177,6 +194,8 @@ final class AppSettings: ObservableObject {
         static let autoDownloadWifiOnly = "settings.autoDownload.wifiOnly"
         static let playbackSourcePreference = "settings.playbackSourcePreference"
         static let autoDeleteAfterPlaying = "settings.autoDelete.afterPlaying"
+        static let rewindSeconds = "settings.rewindSeconds"
+        static let fastForwardSeconds = "settings.fastForwardSeconds"
     }
 
     private enum Kind: String {
@@ -258,6 +277,20 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Seconds to jump backward on rewind / skip-back (Android `prefRewindSecs`, default 10).
+    @Published var rewindSeconds: Int {
+        didSet {
+            UserDefaults.standard.set(rewindSeconds, forKey: Keys.rewindSeconds)
+        }
+    }
+
+    /// Seconds to jump forward on fast-forward / skip-forward (Android `prefFastForwardSecs`, default 30).
+    @Published var fastForwardSeconds: Int {
+        didSet {
+            UserDefaults.standard.set(fastForwardSeconds, forKey: Keys.fastForwardSeconds)
+        }
+    }
+
     init() {
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
@@ -298,6 +331,14 @@ final class AppSettings: ObservableObject {
         } else {
             autoDeleteAfterPlaying = false
         }
+        rewindSeconds = Self.loadSkipSeconds(
+            key: Keys.rewindSeconds,
+            defaultValue: Self.defaultRewindSeconds
+        )
+        fastForwardSeconds = Self.loadSkipSeconds(
+            key: Keys.fastForwardSeconds,
+            defaultValue: Self.defaultFastForwardSeconds
+        )
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh
@@ -331,6 +372,14 @@ final class AppSettings: ObservableObject {
             UserDefaults.standard.set(Kind.customMegabytes.rawValue, forKey: Keys.storageLimitKind)
             UserDefaults.standard.set(mb, forKey: Keys.storageLimitValue)
         }
+    }
+
+    private static func loadSkipSeconds(key: String, defaultValue: Int) -> Int {
+        guard UserDefaults.standard.object(forKey: key) != nil else {
+            return defaultValue
+        }
+        let stored = UserDefaults.standard.integer(forKey: key)
+        return skipIntervalPresets.contains(stored) ? stored : defaultValue
     }
 
     private static func loadStorageLimit() -> DownloadStorageLimit {

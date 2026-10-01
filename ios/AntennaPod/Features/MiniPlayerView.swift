@@ -39,20 +39,22 @@ struct MiniPlayerView: View {
                     .accessibilityLabel("Open full player, \(episode.title)")
 
                     Button {
-                        playback.seek(bySeconds: -PlaybackService.skipDeltaSeconds)
+                        playback.seek(bySeconds: -playback.rewindSeconds)
                     } label: {
-                        Image(systemName: "gobackward.30")
+                        Image(systemName: AppSettings.skipSystemImage(forward: false, seconds: settings.rewindSeconds))
                     }
+                    .accessibilityLabel("Rewind \(settings.rewindSeconds) seconds")
                     Button {
                         playback.togglePlayPause()
                     } label: {
                         Image(systemName: playback.isPlaying ? "pause.fill" : "play.fill")
                     }
                     Button {
-                        playback.seek(bySeconds: PlaybackService.skipDeltaSeconds)
+                        playback.seek(bySeconds: playback.fastForwardSeconds)
                     } label: {
-                        Image(systemName: "goforward.30")
+                        Image(systemName: AppSettings.skipSystemImage(forward: true, seconds: settings.fastForwardSeconds))
                     }
+                    .accessibilityLabel("Forward \(settings.fastForwardSeconds) seconds")
                     sleepTimerMenu
                     Menu {
                         ForEach(AppSettings.speedPresets, id: \.self) { speed in

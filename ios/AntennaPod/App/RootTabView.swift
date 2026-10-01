@@ -3,6 +3,7 @@ import SwiftUI
 struct RootTabView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
+    @EnvironmentObject private var playback: PlaybackService
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -43,6 +44,12 @@ struct RootTabView: View {
         }
         .onChange(of: settings.refreshInterval) { _, interval in
             FeedRefreshCoordinator.scheduleBackgroundRefresh(interval: interval)
+        }
+        .onChange(of: settings.rewindSeconds) { _, _ in
+            playback.applyRemoteSkipIntervals()
+        }
+        .onChange(of: settings.fastForwardSeconds) { _, _ in
+            playback.applyRemoteSkipIntervals()
         }
     }
 }
