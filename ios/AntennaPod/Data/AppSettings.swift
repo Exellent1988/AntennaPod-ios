@@ -746,7 +746,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -784,6 +784,13 @@ final class AppSettings: ObservableObject {
             return base
         }
     }
+
+
+    /// Localized label for skip interval pickers / Custom… sheet (e.g. "25 seconds").
+    static func skipIntervalLabel(_ seconds: Int) -> String {
+        String(localized: "\(seconds) seconds")
+    }
+
 
     private enum Keys {
         static let theme = "settings.theme"
@@ -1633,12 +1640,32 @@ final class AppSettings: ObservableObject {
         return min(max(stored, range.lowerBound), range.upperBound)
     }
 
+    /// Presets or Custom… (5–60); out-of-range → default.
     private static func loadSkipSeconds(key: String, defaultValue: Int) -> Int {
         guard UserDefaults.standard.object(forKey: key) != nil else {
             return defaultValue
         }
         let stored = UserDefaults.standard.integer(forKey: key)
-        return skipIntervalPresets.contains(stored) ? stored : defaultValue
+        if skipIntervalPresets.contains(stored) {
+            return stored
+        }
+        let range = PlaybackService.customSkipIntervalSecondsRange
+        if range.contains(stored) {
+            return stored
+        }
+        return defaultValue
+    }
+
+    /// Accept presets or Custom… range; otherwise `defaultValue`.
+    private static func clampSkipSeconds(_ value: Int, defaultValue: Int) -> Int {
+        if skipIntervalPresets.contains(value) {
+            return value
+        }
+        let range = PlaybackService.customSkipIntervalSecondsRange
+        if range.contains(value) {
+            return value
+        }
+        return defaultValue
     }
 
     private static func loadSkipIntroOutroSeconds(key: String) -> Int {
@@ -1868,12 +1895,8 @@ final class AppSettings: ObservableObject {
         playbackSourcePreference =
             PlaybackSourcePreference(rawValue: snap.playbackSourcePreference) ?? .automatic
         autoDeleteAfterPlaying = snap.autoDeleteAfterPlaying
-        if AppSettings.skipIntervalPresets.contains(snap.rewindSeconds) {
-            rewindSeconds = snap.rewindSeconds
-        }
-        if AppSettings.skipIntervalPresets.contains(snap.fastForwardSeconds) {
-            fastForwardSeconds = snap.fastForwardSeconds
-        }
+        rewindSeconds = Self.clampSkipSeconds(snap.rewindSeconds, defaultValue: Self.defaultRewindSeconds)
+        fastForwardSeconds = Self.clampSkipSeconds(snap.fastForwardSeconds, defaultValue: Self.defaultFastForwardSeconds)
         if AppSettings.skipIntroOutroPresets.contains(snap.skipIntroSeconds) {
             skipIntroSeconds = snap.skipIntroSeconds
         }

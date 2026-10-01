@@ -45,7 +45,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Download spielen (offline Datei) | ☐ Play downloaded file |
 | ☐ Mini-Player + Full Player (Artwork / Video) | ☐ Mini player + full player (artwork / video) |
 | ☐ Full/Mini: Open podcast → Feed-Detail (fehlt → disabled / Hinweis) | ☐ Full/Mini: Open podcast → feed detail (missing → disabled / alert) |
-| ☐ Play/Pause, Rewind/FF (Settings-Intervalle) | ☐ Play/Pause, rewind/FF (Settings intervals) |
+| ☐ Play/Pause, Rewind/FF (Settings-Intervalle; Presets + Custom… 5–60s) | ☐ Play/Pause, rewind/FF (Settings intervals; presets + Custom… 5–60s) |
 | ☐ Scrubber / Seek | ☐ Scrubber / seek |
 | ☐ Jump to position (Full: mm:ss / Min+Sek → Seek; disabled ohne Dauer) | ☐ Jump to position (Full: mm:ss / min+sec → seek; disabled without duration) |
 | ☐ Lesezeichen (Full secondary + Mini ⋯; aktuelle Wanduhr-Position + optionale Notiz; Liste/Tap-Seek/Swipe-Löschen; `bookmarks.json`; max. 50/Episode + Hinweis; nur lokal — nicht gpodder; ≠ Kapitel / Mit Position teilen) | ☐ Bookmarks (Full secondary + Mini ⋯; current wall-clock position + optional note; list/tap-seek/swipe-delete; `bookmarks.json`; cap 50/episode + honesty; local-only — not gpodder; ≠ chapters / Share with position) |
@@ -406,6 +406,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Continuous playback: toggle default **on**; off = episode end without queue advance (mark played / progress still apply); end-of-episode sleep timer still stops without advance.
 - Sleep-Timer Custom…: Sheet merkt letzte Minuten (`lastCustomSleepTimerMinutes`, Standard 15, 1–180, Backup); Presets 5–60 und Fade unverändert; kein Shake-to-Reset (kein Motion-API sonst).  
   Sleep timer Custom…: sheet remembers last minutes (`lastCustomSleepTimerMinutes`, default 15, 1–180, backup); presets 5–60 and fade unchanged; no shake-to-reset (no motion API elsewhere).
+- Skip-Intervalle Custom…: Settings → Playback → Rewind / Fast-forward Presets 5/10/15/20/30/60 + **Custom…** (5–60 s, Sheet); gilt für Mini/Full/Lockscreen; Defaults 10/30; SF-Symbol nummeriert wenn verfügbar.  
+  Skip intervals Custom…: Settings → Playback → Rewind / Fast-forward presets 5/10/15/20/30/60 + **Custom…** (5–60 s sheet); mini/full/Lockscreen; defaults 10/30; numbered SF Symbol when available.
 - Sleep-Timer Ende: Settings → Benachrichtigungen → **Bei Schlaf-Timer-Ende benachrichtigen** (Standard **an**); bei Ablauf (Uhr oder Ende der Episode) **eine** lokale Benachrichtigung („Schlaf-Timer beendet“) + Haptik im Vordergrund; gleiche System-Berechtigung wie DL/Sync; kein Push.  
   Sleep timer end: Settings → Notifications → **Notify when sleep timer ends** (default **on**); on expiry (clock or end-of-episode) **one** local banner (“Sleep timer ended”) + foreground haptic; same system permission as DL/sync; no push.
 - Show remaining time: Settings Toggle Standard **aus**; an = Mini + Full rechts −Restzeit statt Dauer; Links Position; Tippen auf Full-Player-Label toggelt.  

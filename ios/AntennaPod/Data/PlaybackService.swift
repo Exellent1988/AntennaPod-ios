@@ -29,6 +29,9 @@ final class PlaybackService: ObservableObject {
     /// Step for Custom… sheet (Slider / Stepper).
     static let customPlaybackSpeedStep: Float = 0.05
 
+    /// Custom rewind / fast-forward skip interval range (seconds). Presets stay 5/10/15/20/30/60.
+    static let customSkipIntervalSecondsRange: ClosedRange<Int> = 5...60
+
     /// Clamp + snap to `customPlaybackSpeedStep` within `customPlaybackSpeedRange`.
     static func clampPlaybackSpeed(_ rate: Float) -> Float {
         let lo = customPlaybackSpeedRange.lowerBound

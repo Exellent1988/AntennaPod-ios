@@ -951,7 +951,7 @@ Organize subscriptions with simple string **tags** (Android-style folders, flat 
 
 ## Skip intervals (Rewind / Fast-forward)
 
-Settings → **Playback → Rewind** / **Fast-forward**: presets **5 / 10 / 15 / 20 / 30 / 60** seconds (`AppSettings.rewindSeconds` / `fastForwardSeconds`, UserDefaults). Defaults match AntennaPod Android (`prefRewindSecs` = 10, `prefFastForwardSecs` = 30). Mini player, full player, and Lockscreen / Now Playing remote skip commands all use these values (SF Symbol icons update when a numbered glyph exists; 20s falls back to plain `gobackward` / `goforward`). Changing the pickers refreshes `MPRemoteCommandCenter` preferred intervals immediately.
+Settings → **Playback → Rewind** / **Fast-forward**: presets **5 / 10 / 15 / 20 / 30 / 60** seconds plus **Custom…** (5–60 seconds sheet; TextField + Stepper) (`AppSettings.rewindSeconds` / `fastForwardSeconds`, UserDefaults + backup). Defaults match AntennaPod Android (`prefRewindSecs` = 10, `prefFastForwardSecs` = 30). Mini player, full player, Lockscreen / Now Playing remotes, Siri/Shortcuts skip, and `antennapod://skip-*` deep links all use these values (SF Symbol icons update when a numbered glyph exists — e.g. 10/30; otherwise plain `gobackward` / `goforward`). Changing the pickers or Custom… refreshes `MPRemoteCommandCenter` preferred intervals immediately via `RootTabView` `onChange`.
 
 ## Skip intro / Skip outro
 

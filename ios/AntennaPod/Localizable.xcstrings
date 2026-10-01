@@ -17731,6 +17731,125 @@
           }
         }
       }
+    },
+    "%lld seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld seconds"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Sekunden"
+          }
+        }
+      }
+    },
+    "Custom rewind": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom rewind"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefiniertes Zurückspulen"
+          }
+        }
+      }
+    },
+    "Custom fast-forward": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom fast-forward"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefiniertes Vorspulen"
+          }
+        }
+      }
+    },
+    "Choose between 5 and 60 seconds. Presets stay available in Settings; custom values work the same for mini player, full player, and Lockscreen / Now Playing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose between 5 and 60 seconds. Presets stay available in Settings; custom values work the same for mini player, full player, and Lockscreen / Now Playing."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle zwischen 5 und 60 Sekunden. Presets bleiben in den Einstellungen; eigene Werte gelten genauso für Mini-Player, Vollbild-Player und Sperrbildschirm / Now Playing."
+          }
+        }
+      }
+    },
+    "Set a custom rewind interval between 5 and 60 seconds.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set a custom rewind interval between 5 and 60 seconds."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefiniertes Zurückspul-Intervall zwischen 5 und 60 Sekunden festlegen."
+          }
+        }
+      }
+    },
+    "Set a custom fast-forward interval between 5 and 60 seconds.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set a custom fast-forward interval between 5 and 60 seconds."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefiniertes Vorspul-Intervall zwischen 5 und 60 Sekunden festlegen."
+          }
+        }
+      }
+    },
+    "Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward). Presets 5/10/15/20/30/60 plus Custom… (5–60 seconds).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward). Presets 5/10/15/20/30/60 plus Custom… (5–60 seconds)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gilt für Mini-Player, Vollbild-Player und Sperrbildschirm-/Now-Playing-Sprungtasten. Standard wie AntennaPod (10 s zurück / 30 s vor). Presets 5/10/15/20/30/60 plus Benutzerdefiniert… (5–60 Sekunden)."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

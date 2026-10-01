@@ -54,6 +54,7 @@ struct SettingsView: View {
     @State private var customMB: Int = 500
     @State private var showClearConfirmation = false
     @State private var showCustomDefaultSpeed = false
+    @State private var customSkipIntervalMode: CustomSkipIntervalSheet.Mode?
     @State private var notificationAuthLabel = "Checking…"
     @State private var podcastIndexAPIKeyDraft = ""
     @State private var podcastIndexAPISecretDraft = ""
@@ -376,6 +377,13 @@ struct SettingsView: View {
                     .environmentObject(playback)
                     .environmentObject(settings)
             }
+            .sheet(item: $customSkipIntervalMode) { mode in
+                CustomSkipIntervalSheet(
+                    mode: mode,
+                    initialSeconds: mode == .rewind ? settings.rewindSeconds : settings.fastForwardSeconds
+                )
+                .environmentObject(settings)
+            }
         }
     }
 
@@ -496,7 +504,10 @@ struct SettingsView: View {
         matchesSearch(
             "Rewind",
             "Fast-forward",
-            "Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward)."
+            "Custom…",
+            "Custom rewind",
+            "Custom fast-forward",
+            "Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward). Presets 5/10/15/20/30/60 plus Custom… (5–60 seconds)."
         )
     }
 
@@ -698,15 +709,31 @@ struct SettingsView: View {
             if matchesPlaybackSkipButtons {
                 Picker("Rewind", selection: $settings.rewindSeconds) {
                     ForEach(AppSettings.skipIntervalPresets, id: \.self) { secs in
-                        Text("\(secs) seconds").tag(secs)
+                        Text(AppSettings.skipIntervalLabel(secs)).tag(secs)
+                    }
+                    if !AppSettings.skipIntervalPresets.contains(settings.rewindSeconds) {
+                        Text(AppSettings.skipIntervalLabel(settings.rewindSeconds))
+                            .tag(settings.rewindSeconds)
                     }
                 }
+                Button(String(localized: "Custom…")) {
+                    customSkipIntervalMode = .rewind
+                }
+                .accessibilityHint(String(localized: "Set a custom rewind interval between 5 and 60 seconds."))
                 Picker("Fast-forward", selection: $settings.fastForwardSeconds) {
                     ForEach(AppSettings.skipIntervalPresets, id: \.self) { secs in
-                        Text("\(secs) seconds").tag(secs)
+                        Text(AppSettings.skipIntervalLabel(secs)).tag(secs)
+                    }
+                    if !AppSettings.skipIntervalPresets.contains(settings.fastForwardSeconds) {
+                        Text(AppSettings.skipIntervalLabel(settings.fastForwardSeconds))
+                            .tag(settings.fastForwardSeconds)
                     }
                 }
-                Text("Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward).")
+                Button(String(localized: "Custom…")) {
+                    customSkipIntervalMode = .fastForward
+                }
+                .accessibilityHint(String(localized: "Set a custom fast-forward interval between 5 and 60 seconds."))
+                Text(String(localized: "Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward). Presets 5/10/15/20/30/60 plus Custom… (5–60 seconds)."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
