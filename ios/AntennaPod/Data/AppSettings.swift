@@ -291,6 +291,35 @@ enum InboxSort: String, CaseIterable, Identifiable {
     }
 }
 
+/// Podcast chip selection on the Inbox list (feeds that currently have Inbox
+/// episodes only — never invent podcasts). Empty storage = All; otherwise feed UUID string.
+enum InboxPodcastFilter: Hashable, Identifiable {
+    case all
+    case feed(UUID)
+
+    var id: String {
+        switch self {
+        case .all: return "__all__"
+        case .feed(let id): return "feed:\(id.uuidString)"
+        }
+    }
+
+    /// Persistable raw value: empty = All; otherwise the feed UUID string.
+    var storageValue: String {
+        switch self {
+        case .all: return ""
+        case .feed(let id): return id.uuidString
+        }
+    }
+
+    static func fromStorage(_ raw: String?) -> InboxPodcastFilter {
+        guard let raw else { return .all }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let id = UUID(uuidString: trimmed) else { return .all }
+        return .feed(id)
+    }
+}
+
 /// How the Downloads tab orders offline episodes (client-side; prefer download completion time).
 enum DownloadsSort: String, CaseIterable, Identifiable {
     case newestFirst
@@ -739,6 +768,7 @@ final class AppSettings: ObservableObject {
         static let feedEpisodeSort = "settings.feedEpisodeSort"
         static let feedEpisodeFilter = "settings.feedEpisodeFilter"
         static let inboxSort = "settings.inboxSort"
+        static let inboxPodcastFilter = "settings.inboxPodcastFilter"
         static let downloadsSort = "settings.downloadsSort"
         static let downloadsFilter = "settings.downloadsFilter"
         static let downloadsPodcastFilter = "settings.downloadsPodcastFilter"
@@ -1074,6 +1104,18 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Inbox podcast chip filter. Empty string = All; otherwise a feed UUID that currently has
+    /// (or recently had) Inbox episodes. Default All. Persisted (+ backup). Applied after
+    /// `inboxSort`, before library `.searchable` replaces the list. Chips list only feeds
+    /// present in the current Inbox catalog (never invent). Orphan inbox items without a
+    /// matching library feed match All only. **View-only** — Mark all / Add all to queue /
+    /// Archive all / tab badge stay full Inbox.
+    @Published var inboxPodcastFilter: String {
+        didSet {
+            UserDefaults.standard.set(inboxPodcastFilter, forKey: Keys.inboxPodcastFilter)
+        }
+    }
+
     /// Downloads tab list order: newest first (default) or oldest first.
     /// Sort key prefers `DownloadedEpisode.downloadedAtEpochMs` (download completion); else episode `pubDateEpochMs`.
     /// Missing dates sort last; stable tiebreaker is episode `id`. Applies to search-filtered results too.
@@ -1404,6 +1446,8 @@ final class AppSettings: ObservableObject {
         let inboxSortRaw = UserDefaults.standard.string(forKey: Keys.inboxSort)
             ?? InboxSort.newestFirst.rawValue
         inboxSort = InboxSort(rawValue: inboxSortRaw) ?? .newestFirst
+        let inboxPodcastFilterRaw = UserDefaults.standard.string(forKey: Keys.inboxPodcastFilter) ?? ""
+        inboxPodcastFilter = InboxPodcastFilter.fromStorage(inboxPodcastFilterRaw).storageValue
         let downloadsSortRaw = UserDefaults.standard.string(forKey: Keys.downloadsSort)
             ?? DownloadsSort.newestFirst.rawValue
         downloadsSort = DownloadsSort(rawValue: downloadsSortRaw) ?? .newestFirst
@@ -1659,6 +1703,7 @@ final class AppSettings: ObservableObject {
             feedEpisodeSort: feedEpisodeSort.rawValue,
             feedEpisodeFilter: feedEpisodeFilter.rawValue,
             inboxSort: inboxSort.rawValue,
+            inboxPodcastFilter: inboxPodcastFilter,
             downloadsSort: downloadsSort.rawValue,
             downloadsFilter: downloadsFilter.rawValue,
             downloadsPodcastFilter: downloadsPodcastFilter,
@@ -1782,6 +1827,9 @@ final class AppSettings: ObservableObject {
         if let inboxSortRaw = snap.inboxSort {
             inboxSort = InboxSort(rawValue: inboxSortRaw) ?? .newestFirst
         }
+        if let inboxPodcastFilterRaw = snap.inboxPodcastFilter {
+            inboxPodcastFilter = InboxPodcastFilter.fromStorage(inboxPodcastFilterRaw).storageValue
+        }
         if let downloadsSortRaw = snap.downloadsSort {
             downloadsSort = DownloadsSort(rawValue: downloadsSortRaw) ?? .newestFirst
         }
@@ -1885,6 +1933,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var feedEpisodeFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var inboxSort: String? = nil
+    /// Absent in older backups → All (empty). Feed UUID string or empty for All.
+    var inboxPodcastFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var downloadsSort: String? = nil
     /// Absent in older backups → all (default).

@@ -13,11 +13,11 @@ struct InboxView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
-    /// Inbox rows ordered by `AppSettings.inboxSort` (`pubDateEpochMs`).
+    /// Full Inbox catalog ordered by `AppSettings.inboxSort` (`pubDateEpochMs`).
     /// Missing dates sort last in both modes; stable tiebreaker is episode `id`
     /// (no `dateAdded` on `PodcastEpisode`). Does not mutate `PodcastStore.inboxEpisodes`
-    /// (Home New preview stays newest-first).
-    private var items: [InboxEpisode] {
+    /// (Home New preview stays newest-first). Used for bulk Mark all / Archive all counts.
+    private var sortedItems: [InboxEpisode] {
         store.inboxEpisodes.sorted { lhs, rhs in
             switch settings.inboxSort {
             case .newestFirst:
@@ -34,25 +34,92 @@ struct InboxView: View {
         }
     }
 
+    /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
+    private var podcastFilter: InboxPodcastFilter {
+        InboxPodcastFilter.fromStorage(settings.inboxPodcastFilter)
+    }
+
+    private var isPodcastFiltering: Bool {
+        if case .feed = podcastFilter { return true }
+        return false
+    }
+
+    /// Unique feeds that currently have at least one Inbox episode (title A–Z).
+    /// Built from the Inbox catalog via `feed(containingEpisodeId:)` — never invent.
+    private var inboxPodcastFeeds: [PodcastFeed] {
+        var seen = Set<UUID>()
+        var feeds: [PodcastFeed] = []
+        for item in store.inboxEpisodes {
+            guard let feed = store.feed(containingEpisodeId: item.episode.id) else { continue }
+            if seen.insert(feed.id).inserted {
+                feeds.append(feed)
+            }
+        }
+        return feeds.sorted {
+            $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+    }
+
+    private var podcastFilterChips: [InboxPodcastFilter] {
+        var chips: [InboxPodcastFilter] = [.all]
+        var feeds = inboxPodcastFeeds
+        // Keep a persisted selection visible (even if that feed no longer has Inbox items)
+        // so the user can see why the list is empty and tap All.
+        if case .feed(let id) = podcastFilter,
+           !feeds.contains(where: { $0.id == id }),
+           let feed = store.feeds.first(where: { $0.id == id }) {
+            feeds.append(feed)
+            feeds.sort {
+                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
+        }
+        chips.append(contentsOf: feeds.map { .feed($0.id) })
+        return chips
+    }
+
+    private func podcastChipTitle(_ chip: InboxPodcastFilter) -> String {
+        switch chip {
+        case .all:
+            return String(localized: "All")
+        case .feed(let id):
+            return store.feeds.first(where: { $0.id == id })?.title
+                ?? inboxPodcastFeeds.first(where: { $0.id == id })?.title
+                ?? String(localized: "Podcast")
+        }
+    }
+
+    /// Visible Inbox rows: `inboxSort` → podcast chip.
+    /// Library `.searchable` replaces this list entirely (`LibrarySearchResultsView`).
+    /// View-only — Mark all / Add all to queue / Archive all stay full-catalog scoped.
+    private var filteredItems: [InboxEpisode] {
+        switch podcastFilter {
+        case .all:
+            return sortedItems
+        case .feed(let feedId):
+            return sortedItems.filter { store.feed(containingEpisodeId: $0.episode.id)?.id == feedId }
+        }
+    }
+
     private var isSearching: Bool {
         !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// Episodes from the **full Inbox catalog** (`store.inboxEpisodes`, newest-first) that are
-    /// not already queued — same catalog as Mark all / Archive all, **not** library-search hits.
+    /// not already queued — same catalog as Mark all / Archive all, **not** library-search hits
+    /// and **not** the podcast-chip filtered subset.
     /// Confirm count and `enqueueAllInbox()` share this eligibility. Menu disabled while searching.
     private var enqueueAllInboxCandidatesCount: Int {
         store.inboxEpisodes.filter { !store.isInQueue($0.episode.id) }.count
     }
 
-    /// Visible Inbox rows for remaining-time: sorted list when **not** in library-search mode.
-    /// While `.searchable` shows `LibrarySearchResultsView` (full library), the info bar is hidden —
-    /// do not report full-Inbox / tab-badge totals over a different visible surface.
+    /// Visible Inbox rows for remaining-time: podcast-filtered sorted list when **not** in
+    /// library-search mode. While `.searchable` shows `LibrarySearchResultsView` (full library),
+    /// the info bar is hidden — do not report full-Inbox / tab-badge totals over a different surface.
     private var visibleInboxForRemaining: [InboxEpisode] {
-        isSearching ? [] : items
+        isSearching ? [] : filteredItems
     }
 
-    /// AntennaPod-like info bar: episode count + remaining over the **visible** Inbox list (sorted).
+    /// AntennaPod-like info bar: episode count + remaining over the **visible** filtered Inbox list.
     /// Remaining per episode = `max(0, duration − position)` when duration known; unplayed with
     /// duration contributes full duration; **played** (not current) → 0; **unknown duration skipped**
     /// (tilde when any skipped). Currently playing uses live `PlaybackService` position/duration.
@@ -87,7 +154,32 @@ struct InboxView: View {
     var body: some View {
         NavigationStack {
             List {
-                // AntennaPod-like inbox info bar (visible sorted Inbox list remaining time).
+                // Podcast chips — hidden while library search replaces Inbox rows.
+                if !isSearching,
+                   !store.inboxEpisodes.isEmpty,
+                   !inboxPodcastFeeds.isEmpty || isPodcastFiltering {
+                    Section {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(podcastFilterChips) { chip in
+                                    InboxPodcastFilterChip(
+                                        title: podcastChipTitle(chip),
+                                        selected: podcastFilter == chip,
+                                        accessibilityHint: String(localized: "Filters the Inbox list by podcast")
+                                    ) {
+                                        settings.inboxPodcastFilter = chip.storageValue
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    } header: {
+                        Text("Podcasts")
+                    }
+                }
+
+                // AntennaPod-like inbox info bar (visible sorted+podcast-filtered Inbox remaining time).
                 // Hidden while library search replaces the Inbox rows.
                 if let remainingLabel = inboxRemainingInfoLabel {
                     Section {
@@ -104,14 +196,24 @@ struct InboxView: View {
 
                 if isSearching {
                     LibrarySearchResultsView(query: debouncedQuery)
-                } else if items.isEmpty {
+                } else if store.inboxEpisodes.isEmpty {
                     ContentUnavailableView(
                         "Inbox empty",
                         systemImage: "tray",
                         description: Text("New and unplayed episodes from your subscriptions appear here. Use search to find any episode or podcast in your library.")
                     )
+                } else if filteredItems.isEmpty {
+                    ContentUnavailableView(
+                        "No matching inbox episodes",
+                        systemImage: "magnifyingglass",
+                        description: Text(
+                            isPodcastFiltering
+                                ? String(localized: "No inbox episodes match your filter.")
+                                : String(localized: "No inbox episodes match your search.")
+                        )
+                    )
                 } else {
-                    ForEach(items) { item in
+                    ForEach(filteredItems) { item in
                         EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button {
@@ -179,18 +281,20 @@ struct InboxView: View {
                         } label: {
                             Label("Mark all as played", systemImage: "checkmark.circle")
                         }
-                        .disabled(items.isEmpty)
+                        // Full Inbox catalog — not the podcast-chip filtered subset.
+                        .disabled(sortedItems.isEmpty)
 
                         Button {
                             store.archiveAllInbox()
                         } label: {
                             Label("Archive all", systemImage: "archivebox")
                         }
-                        .disabled(items.isEmpty)
+                        // Full Inbox catalog — not the podcast-chip filtered subset.
+                        .disabled(sortedItems.isEmpty)
                     } label: {
                         Label("Inbox actions", systemImage: "ellipsis.circle")
                     }
-                    .disabled(items.isEmpty || isSearching)
+                    .disabled(sortedItems.isEmpty || isSearching)
                 }
             }
             .confirmationDialog(
@@ -203,7 +307,7 @@ struct InboxView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Appends \(enqueueAllInboxCandidatesCount) Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full Inbox catalog (same as Mark all / Archive all), not library search. Queue lock does not block enqueue.")
+                Text("Appends \(enqueueAllInboxCandidatesCount) Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full Inbox catalog (same as Mark all / Archive all), not library search or the podcast filter. Queue lock does not block enqueue.")
             }
             .confirmationDialog(
                 "Mark all as played?",
@@ -215,7 +319,7 @@ struct InboxView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Marks \(items.count) Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled.")
+                Text("Marks \(sortedItems.count) Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog (not only the current podcast filter).")
             }
             .navigationDestination(for: PodcastFeed.self) { feed in
                 FeedDetailView(feed: feed)
@@ -263,5 +367,28 @@ struct InboxView: View {
             guard !Task.isCancelled else { return }
             debouncedQuery = trimmed
         }
+    }
+}
+
+/// Filter chip for Inbox podcast chips (mirrors Queue / Downloads).
+private struct InboxPodcastFilterChip: View {
+    let title: String
+    let selected: Bool
+    let accessibilityHint: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline.weight(selected ? .semibold : .regular))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(selected ? Color.accentColor : Color.secondary.opacity(0.15), in: Capsule())
+                .foregroundStyle(selected ? Color.white : Color.primary)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(accessibilityHint)
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }
