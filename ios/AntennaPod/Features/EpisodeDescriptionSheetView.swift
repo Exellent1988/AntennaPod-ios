@@ -3,6 +3,7 @@ import SwiftUI
 /// Scrollable episode shownotes / description sheet (plain text; HTML stripped for beta).
 struct EpisodeDescriptionSheetView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     @EnvironmentObject private var store: PodcastStore
 
     let episode: PodcastEpisode
@@ -33,6 +34,10 @@ struct EpisodeDescriptionSheetView: View {
         episode.shareMessage(feedTitle: resolvedFeedTitle)
     }
 
+    private var websiteURL: URL? {
+        episode.websiteURL
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -58,7 +63,16 @@ struct EpisodeDescriptionSheetView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
                 }
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    if let url = websiteURL {
+                        Button {
+                            openURL(url)
+                        } label: {
+                            Image(systemName: "safari")
+                        }
+                        .accessibilityLabel(String(localized: "Open episode website"))
+                        .accessibilityHint(String(localized: "Opens the episode webpage in the system browser"))
+                    }
                     if let url = shareURL {
                         ShareLink(
                             item: url,

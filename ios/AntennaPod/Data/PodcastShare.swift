@@ -53,6 +53,18 @@ extension PodcastEpisode {
             && url.scheme?.lowercased() != "local-folder"
             && !(url.absoluteString.lowercased().hasPrefix("local-folder:"))
     }
+
+    /// Episode webpage from feed `link` only (`http` / `https`).
+    /// Does **not** fall back to enclosure/`downloadUrl` (that is media, not a website)
+    /// or to feed `siteLink` / RSS. Never invents a URL — nil when missing or non-http(s).
+    var websiteURL: URL? {
+        guard let link else { return nil }
+        let trimmed = link.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return url
+    }
 }
 
 extension PodcastFeed {

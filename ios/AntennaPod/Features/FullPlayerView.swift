@@ -8,6 +8,7 @@ struct FullPlayerView: View {
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
 
     @State private var isScrubbing = false
     @State private var scrubSeconds: Double = 0
@@ -741,6 +742,16 @@ struct FullPlayerView: View {
                         ? String(localized: "Downloaded")
                         : String(localized: "Download")
             )
+
+            if let url = episode.websiteURL {
+                Button {
+                    openURL(url)
+                } label: {
+                    Label("Open episode website", systemImage: "safari")
+                }
+                .accessibilityLabel(String(localized: "Open episode website"))
+                .accessibilityHint(String(localized: "Opens the episode webpage in the system browser"))
+            }
 
             if let url = episode.shareURL(feed: feed) {
                 ShareLink(

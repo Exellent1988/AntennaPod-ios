@@ -365,6 +365,7 @@ struct EpisodeRow: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
+    @Environment(\.openURL) private var openURL
     let episode: PodcastEpisode
     let feedTitle: String
     /// When set (e.g. History last-played), shown instead of the episode pub date.
@@ -516,6 +517,15 @@ struct EpisodeRow: View {
             .accessibilityLabel(String(localized: "Play from beginning"))
             .accessibilityHint(String(localized: "Loads this episode from the start and plays"))
 
+            if let url = episode.websiteURL {
+                Button {
+                    openURL(url)
+                } label: {
+                    Label("Open episode website", systemImage: "safari")
+                }
+                .accessibilityLabel(String(localized: "Open episode website"))
+                .accessibilityHint(String(localized: "Opens the episode webpage in the system browser"))
+            }
             if let url = episodeShareURL {
                 ShareLink(
                     item: url,
