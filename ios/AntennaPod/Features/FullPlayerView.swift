@@ -13,7 +13,10 @@ struct FullPlayerView: View {
     @State private var scrubSeconds: Double = 0
     /// Chapters loaded from Podcast Index JSON when the feed only had a URL.
     @State private var remoteChapters: [PodcastChapter] = []
+    /// Chapters read from a local media file (QuickTime/MP4) when feed has none.
+    @State private var mediaChapters: [PodcastChapter] = []
     @State private var isLoadingRemoteChapters = false
+    @State private var isLoadingMediaChapters = false
     @State private var showTranscript = false
 
     private var episode: PodcastEpisode? { playback.currentEpisode }
@@ -29,9 +32,18 @@ struct FullPlayerView: View {
         return store.episode(id: episode.id) ?? episode
     }
 
-    private var chapters: [PodcastChapter] {
+    /// Feed (inline PSC or fetched Podcast Index) preferred; else media-file chapters.
+    private var feedChapters: [PodcastChapter] {
         if !remoteChapters.isEmpty { return remoteChapters }
         return resolvedEpisode?.chapters ?? []
+    }
+
+    private var chapters: [PodcastChapter] {
+        ChapterMerger.preferFeed(feedChapters, elseMedia: mediaChapters)
+    }
+
+    private var isLoadingChapters: Bool {
+        isLoadingRemoteChapters || isLoadingMediaChapters
     }
 
     private var displayPosition: Double {
@@ -69,7 +81,7 @@ struct FullPlayerView: View {
         }
         .onAppear {
             scrubSeconds = playback.positionSeconds
-            Task { await loadRemoteChaptersIfNeeded() }
+            Task { await loadChaptersIfNeeded() }
         }
         .onChange(of: playback.currentEpisode?.id) { _, newId in
             if newId == nil {
@@ -79,8 +91,9 @@ struct FullPlayerView: View {
             scrubSeconds = playback.positionSeconds
             isScrubbing = false
             remoteChapters = []
+            mediaChapters = []
             showTranscript = false
-            Task { await loadRemoteChaptersIfNeeded() }
+            Task { await loadChaptersIfNeeded() }
         }
         .sheet(isPresented: $showTranscript) {
             if let episode = resolvedEpisode ?? episode {
@@ -145,7 +158,7 @@ struct FullPlayerView: View {
 
     @ViewBuilder
     private var chaptersSection: some View {
-        if isLoadingRemoteChapters && chapters.isEmpty {
+        if isLoadingChapters && chapters.isEmpty {
             HStack {
                 ProgressView()
                 Text("Loading chapters…")
@@ -496,26 +509,65 @@ struct FullPlayerView: View {
     }
 
     @MainActor
-    private func loadRemoteChaptersIfNeeded() async {
+    private func loadChaptersIfNeeded() async {
         guard let resolved = resolvedEpisode else { return }
+
+        // 1) Inline feed chapters (PSC) — prefer; skip remote + media.
         if !resolved.chapters.isEmpty {
             remoteChapters = []
+            mediaChapters = []
             return
         }
-        guard let url = resolved.podcastIndexChapterUrl, !url.isEmpty else { return }
-        isLoadingRemoteChapters = true
-        defer { isLoadingRemoteChapters = false }
-        do {
-            let fetched = try await PodcastIndexChapterParser.fetch(urlString: url)
-            remoteChapters = fetched
-            store.updateChapters(episodeId: resolved.id, chapters: fetched)
-            if var current = playback.currentEpisode, current.id == resolved.id {
-                current.chapters = fetched
+
+        // 2) Podcast Index remote JSON when the feed only had a URL.
+        if let url = resolved.podcastIndexChapterUrl, !url.isEmpty {
+            isLoadingRemoteChapters = true
+            defer { isLoadingRemoteChapters = false }
+            do {
+                let fetched = try await PodcastIndexChapterParser.fetch(urlString: url)
+                if !fetched.isEmpty {
+                    remoteChapters = fetched
+                    mediaChapters = []
+                    store.updateChapters(episodeId: resolved.id, chapters: fetched)
+                    if var current = playback.currentEpisode, current.id == resolved.id {
+                        current.chapters = fetched
+                        playback.currentEpisode = current
+                    }
+                    return
+                }
+                remoteChapters = []
+            } catch {
+                // Fall through to media-file chapters when local.
+                remoteChapters = []
+            }
+        }
+
+        // 3) Local media-file tags (QuickTime/MP4 via AVFoundation) when feed has none.
+        await loadMediaChaptersIfNeeded(for: resolved)
+    }
+
+    @MainActor
+    private func loadMediaChaptersIfNeeded(for episode: PodcastEpisode) async {
+        guard playback.isPlayingFromLocalFile,
+              let fileURL = downloads.localURL(for: episode) else {
+            mediaChapters = []
+            return
+        }
+        isLoadingMediaChapters = true
+        defer { isLoadingMediaChapters = false }
+        let loaded = await MediaFileChapterReader.chapters(fromFileURL: fileURL)
+        // Prefer feed if it appeared meanwhile (e.g. store refresh).
+        if !(resolvedEpisode?.chapters.isEmpty ?? true) || !remoteChapters.isEmpty {
+            mediaChapters = []
+            return
+        }
+        mediaChapters = loaded
+        if !loaded.isEmpty {
+            store.updateChapters(episodeId: episode.id, chapters: loaded)
+            if var current = playback.currentEpisode, current.id == episode.id {
+                current.chapters = loaded
                 playback.currentEpisode = current
             }
-        } catch {
-            // Keep section hidden on failure; feed may simply lack usable chapters.
-            remoteChapters = []
         }
     }
 

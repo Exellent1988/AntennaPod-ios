@@ -17,7 +17,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Video → audio only (Settings + full-player toggle; default off; Lockscreen stays audio)
 - Volume adaptation (Settings; default off; iOS AVAudioSession spokenAudio / speech optimize — not Android loudness gain)
 - Skip silence (Settings toggle only; not applied on stock AVPlayer — needs custom audio graph)
-- Chapters (PSC / Podcast Index from feed; list in full player; tap to seek)
+- Chapters (PSC / Podcast Index from feed + media-file QuickTime/MP4 tags on local files; list in full player; tap to seek)
 - Transcripts (beta; feed `podcast:transcript` URL only — fetch VTT/SRT/JSON, scrollable sheet, tap cue seek; no Whisper/STT)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip/seek using Settings intervals)
 - CarPlay (honest partial: system Now Playing / remotes + background audio; **no** custom CPTemplate / CarPlay entitlement)
@@ -296,7 +296,13 @@ Settings → **Playback → Skip silence**. Default **off**. Preference is persi
 
 ## Chapters
 
-Feed-item chapters are parsed by the Swift `XMLParser` path (`NativeRssAtomParser`): Podlove Simple Chapters (`psc:chapter` / `sc:chapter` with `start`/`title`/`href`/`image`) on RSS items and Atom entries, plus Podcast Index `<podcast:chapters url="…">`. Remote Podcast Index JSON is fetched lazily when the full player opens if only a URL is present. Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`). Full player shows a chapter list (hidden when empty); tap seeks; the active chapter is highlighted from `PlaybackService.positionSeconds`. ID3/M4A/Vorbis media tags are not parsed yet.
+**Feed sources:** Parsed by the Swift `XMLParser` path (`NativeRssAtomParser`): Podlove Simple Chapters (`psc:chapter` / `sc:chapter` with `start`/`title`/`href`/`image`) on RSS items and Atom entries, plus Podcast Index `<podcast:chapters url="…">`. Remote Podcast Index JSON is fetched lazily when the full player opens if only a URL is present.
+
+**Media-file tags (beta, local only):** When the episode is playing from a **local** file (downloaded or local-folder feed) and the feed provided **no** chapters, `MediaFileChapterReader` asks AVFoundation for QuickTime/MP4 chapter tracks (`AVAsset.loadChapterMetadataGroups(bestMatchingPreferredLanguages:)`). Titles come from common metadata title items. **Merge preference:** feed chapters win wholesale when non-empty; otherwise media chapters (`ChapterMerger.preferFeed`). No union-by-start-time / Android same-length field merge in this beta.
+
+**Honest ID3 limits:** **ID3v2 CHAP** (typical MP3) and **Vorbis** chapter comments are **not** read — AVFoundation does not expose them as chapter groups on iOS, and this fork does not ship a custom ID3/Vorbis parser. Nero `chpl` only if AVFoundation surfaces it. Matrix documents the same.
+
+Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`). Full player shows a chapter list (hidden when empty); tap seeks; the active chapter is highlighted from `PlaybackService.positionSeconds`.
 
 ## Transcripts (beta)
 

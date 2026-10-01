@@ -1,6 +1,6 @@
 import Foundation
 
-/// Chapter marker from feed (Podlove Simple Chapters / Podcast Index) or remote JSON.
+/// Chapter marker from feed (Podlove Simple Chapters / Podcast Index), remote JSON, or local media-file tags.
 struct PodcastChapter: Identifiable, Hashable, Codable {
     var id: String { "\(startTimeSeconds)|\(title)" }
     var title: String
@@ -28,7 +28,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     var transcriptUrl: String?
     /// Podcast Index transcript MIME (`application/json`, `text/vtt`, `application/srt`, …).
     var transcriptType: String?
-    /// Inline chapters (PSC / Atom) parsed from the feed item.
+    /// Chapters: feed PSC/Atom, fetched Podcast Index JSON, or media-file tags (when persisted after local read).
     var chapters: [PodcastChapter]
     /// Podcast Index `podcast:chapters` remote JSON URL (fetched lazily when needed).
     var podcastIndexChapterUrl: String?
