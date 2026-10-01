@@ -12648,6 +12648,42 @@
           }
         }
       }
+    },
+    "Subscriptions unplayed remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Subscriptions info bar (unplayed count + remaining over unplayed episodes of visible podcasts after search/tag).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions unplayed remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende ungehörte Zeit in Abonnements %@"
+          }
+        }
+      }
+    },
+    "Subscriptions remaining time covers visible podcasts only (search or tag filter), not the full library": {
+      "extractionState": "manual",
+      "comment": "VoiceOver honesty when Subscriptions search or tag filter narrows visible podcasts for the remaining-time sum.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions remaining time covers visible podcasts only (search or tag filter), not the full library"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Verbleibende Zeit in Abonnements gilt nur für sichtbare Podcasts (Suche oder Tag-Filter), nicht für die gesamte Bibliothek"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
