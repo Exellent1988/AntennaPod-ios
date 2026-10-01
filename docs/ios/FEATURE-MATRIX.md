@@ -49,9 +49,9 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Lockscreen / Now Playing | 5 | todo | |
 | Variable speed | 5 | wip | Mini player rate menu |
 | Sleep timer (Basis) | 5 | todo | |
-| Fortschritt speichern / fortsetzen | 5 | todo | |
-| Mark played / unplayed | 5 | todo | |
-| Continuous playback (Queue) | 5 | todo | Queue tab exists |
+| Fortschritt speichern / fortsetzen | 5 | done | JSON `playback.json`; resume on play |
+| Mark played / unplayed | 5 | done | Manual + smart-mark last 30s (AntennaPod default) |
+| Continuous playback (Queue) | 5 | wip | Auto-next from queue on end |
 | FF / Rewind deltas | 4 | wip | ±30s in mini player |
 | Skip silence | 2 | todo | P3, iOS-API-abhängig |
 | Volume adaptation | 2 | todo | P3 |
