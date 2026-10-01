@@ -272,6 +272,7 @@ enum LocalFolderScanner {
             categories: [],
             isLocked: false,
             lockedOwner: nil,
+            podcastGuid: nil,
             episodes: episodes
         )
     }

@@ -14667,6 +14667,78 @@
         }
       },
       "comment": "Optional podcast:locked owner email from the feed when present. Display-only — never verified."
+    },
+    "Podcast GUID": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast GUID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-GUID"
+          }
+        }
+      },
+      "comment": "Label for channel Podcast Index podcast:guid on Feed detail. Hidden when missing — never invent; distinct from episode guid."
+    },
+    "Copy podcast GUID": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy podcast GUID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-GUID kopieren"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯ / metadata: copy feed-provided podcast:guid to pasteboard. Hidden when missing."
+    },
+    "Copies the podcast GUID from the feed to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the podcast GUID from the feed to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die Podcast-GUID aus dem Feed in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy podcast GUID."
+    },
+    "Podcast GUID copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast GUID copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-GUID in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Alert message after copying podcast:guid."
     }
   },
   "version": "1.0"

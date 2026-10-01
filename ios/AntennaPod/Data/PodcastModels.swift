@@ -225,6 +225,10 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     var isLocked: Bool
     /// Optional `owner` email attribute on `podcast:locked` when the feed provides it. Nil when absent — never invent.
     var lockedOwner: String?
+    /// Podcast Index channel `podcast:guid` (UUIDv5 string) when the feed provides it.
+    /// Nil or blank when absent — **never invent** / never generate from feed URL; display/copy only (not subscription primary key).
+    /// Distinct from per-episode RSS `guid` / Atom `id`.
+    var podcastGuid: String?
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -290,6 +294,13 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// Trimmed non-empty Podcast Index `podcast:guid` from the feed. Hidden when missing — never invent.
+    var displayPodcastGuid: String? {
+        guard let podcastGuid else { return nil }
+        let trimmed = podcastGuid.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     init(
         id: UUID,
         title: String,
@@ -305,6 +316,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         categories: [String] = [],
         isLocked: Bool = false,
         lockedOwner: String? = nil,
+        podcastGuid: String? = nil,
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -321,6 +333,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.categories = categories
         self.isLocked = isLocked
         self.lockedOwner = lockedOwner
+        self.podcastGuid = podcastGuid
         self.episodes = episodes
     }
 
@@ -340,11 +353,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         categories = try c.decodeIfPresent([String].self, forKey: .categories) ?? []
         isLocked = try c.decodeIfPresent(Bool.self, forKey: .isLocked) ?? false
         lockedOwner = try c.decodeIfPresent(String.self, forKey: .lockedOwner)
+        podcastGuid = try c.decodeIfPresent(String.self, forKey: .podcastGuid)
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, episodes
     }
 }
 

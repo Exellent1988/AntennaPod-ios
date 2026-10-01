@@ -37,6 +37,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var feedIsLocked = false
     private var lockedOwnerAttr: String?
     private var capturingLocked = false
+    /// Channel podcast:guid — feed-provided UUIDv5 only; never invent / never generate from feed URL.
+    private var podcastGuid: String?
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -106,6 +108,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             categories: Self.uniqueCategories(categoryTexts),
             isLocked: feedIsLocked,
             lockedOwner: lockedOwnerAttr,
+            podcastGuid: podcastGuid,
             episodes: episodes
         )
     }
@@ -440,6 +443,13 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 imageUrl = text
             case "image":
                 inImage = false
+            case "guid":
+                // Podcast Index <podcast:guid>…</podcast:guid> — channel-level only (item guid handled above).
+                // Store first non-empty feed value as provided; never invent / never derive from feed URL.
+                // Distinct from per-episode RSS <guid> / Atom <id>.
+                if podcastGuid == nil, !text.isEmpty {
+                    podcastGuid = text
+                }
             case "id":
                 break
             default:

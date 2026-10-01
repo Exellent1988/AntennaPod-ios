@@ -14,9 +14,11 @@ struct FeedDetailView: View {
     @State private var showEnqueueAllConfirm = false
     @State private var showUnsubscribeConfirm = false
     @State private var showFeedURLCopied = false
+    @State private var showPodcastGuidCopied = false
     @State private var showFeedDescription = false
     @Environment(\.dismiss) private var dismiss
     @State private var copyFeedURLFeedbackTick = 0
+    @State private var copyPodcastGuidFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -55,6 +57,11 @@ struct FeedDetailView: View {
     /// itunes:category texts when the feed provided them — empty → hide (never invent taxonomy).
     private var displayCategories: [String] {
         liveFeed.displayCategories
+    }
+
+    /// Podcast Index `podcast:guid` when the feed provided it — hide when missing (never invent).
+    private var displayPodcastGuid: String? {
+        liveFeed.displayPodcastGuid
     }
 
     /// VoiceOver for podcast:locked=yes badge + honest footnote (+ optional owner from feed).
@@ -246,6 +253,31 @@ struct FeedDetailView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(feedLockedAccessibilityLabel)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:guid when present — display/copy only; never invent; distinct from episode guid.
+            if let guid = displayPodcastGuid {
+                Section {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(String(localized: "Podcast GUID"))
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                        Text(guid)
+                            .font(.footnote.monospaced())
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                        Button {
+                            copyPodcastGuid()
+                        } label: {
+                            Label("Copy podcast GUID", systemImage: "doc.on.doc")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Copy podcast GUID"))
+                        .accessibilityHint(String(localized: "Copies the podcast GUID from the feed to the pasteboard"))
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityElement(children: .contain)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -446,6 +478,16 @@ struct FeedDetailView: View {
                         .disabled(!canCopyFeedURL)
                         .accessibilityLabel(String(localized: "Copy feed URL"))
 
+                        if displayPodcastGuid != nil {
+                            Button {
+                                copyPodcastGuid()
+                            } label: {
+                                Label("Copy podcast GUID", systemImage: "number")
+                            }
+                            .accessibilityLabel(String(localized: "Copy podcast GUID"))
+                            .accessibilityHint(String(localized: "Copies the podcast GUID from the feed to the pasteboard"))
+                        }
+
                         Button {
                             showDownloadAllConfirm = true
                         } label: {
@@ -570,7 +612,16 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Feed URL copied to the pasteboard."))
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showPodcastGuidCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Podcast GUID copied to the pasteboard."))
+        }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyPodcastGuidFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: liveFeed.title)
@@ -610,6 +661,14 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = trimmed
         copyFeedURLFeedbackTick += 1
         showFeedURLCopied = true
+    }
+
+    /// Feed-provided Podcast Index `podcast:guid` only — never invent / never derive from feed URL.
+    private func copyPodcastGuid() {
+        guard let guid = displayPodcastGuid else { return }
+        UIPasteboard.general.string = guid
+        copyPodcastGuidFeedbackTick += 1
+        showPodcastGuidCopied = true
     }
 
     private func scheduleFilter(for term: String) {
