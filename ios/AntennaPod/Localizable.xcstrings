@@ -1,6 +1,23 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%@ (unlimited)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ (unlimited)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ (unbegrenzt)"
+          }
+        }
+      }
+    },
     "%lld episodes": {
       "extractionState": "manual",
       "localizations": {
@@ -99,6 +116,142 @@
           "stringUnit": {
             "state": "translated",
             "value": "Podcast hinzufügen"
+          }
+        }
+      }
+    },
+    "Add to queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zur Warteschlange hinzufügen"
+          }
+        }
+      }
+    },
+    "After %lld newly marked-played episodes (manual or finished playback), AntennaPod may ask iOS to show a rating sheet once per install. iOS decides whether to show it and may suppress the dialog under system limits — we never spam.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After %lld newly marked-played episodes (manual or finished playback), AntennaPod may ask iOS to show a rating sheet once per install. iOS decides whether to show it and may suppress the dialog under system limits — we never spam."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach %lld neu als gehört markierten Episoden (manuell oder nach Ende) kann AntennaPod iOS einmal pro Installation um eine Bewertung bitten. iOS entscheidet, ob der Dialog erscheint, und kann ihn unter Systemlimits unterdrücken — wir spammen nicht."
+          }
+        }
+      }
+    },
+    "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to %lld newest unplayed episode(s) per feed. Override per podcast via Feed detail → gear. Always/Never beat this global toggle. Cellular gating is under Network / Downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to %lld newest unplayed episode(s) per feed. Override per podcast via Feed detail → gear. Always/Never beat this global toggle. Cellular gating is under Network / Downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach jeder Feed-Aktualisierung (Pull-to-Refresh im Posteingang, Aktualisiert halten oder einzelner Podcast) werden bis zu %lld neueste ungehörte Episode(n) pro Feed eingeordnet. Pro Podcast unter Feed → Zahnrad überschreibbar. Immer/Nie schlagen diesen globalen Schalter. Mobilfunk-Sperre unter Netzwerk / Downloads."
+          }
+        }
+      }
+    },
+    "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules still apply to newest unplayed caps.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules still apply to newest unplayed caps."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach der Aktualisierung werden neu erschienene Episoden in die Warteschlange gestellt und heruntergeladen (achtet auf Auto-Download nur Wi‑Fi). Separate Auto-Download-Regeln gelten weiter für die Neueste-ungehört-Obergrenze."
+          }
+        }
+      }
+    },
+    "After refresh, newly appeared episodes are enqueued on Queue. Inbox still shows them while unplayed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After refresh, newly appeared episodes are enqueued on Queue. Inbox still shows them while unplayed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach der Aktualisierung werden neu erschienene Episoden in die Warteschlange gestellt. Der Posteingang zeigt sie weiterhin, solange sie ungehört sind."
+          }
+        }
+      }
+    },
+    "All": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle"
+          }
+        }
+      }
+    },
+    "Alphabetical A–Z": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alphabetical A–Z"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alphabetisch A–Z"
+          }
+        }
+      }
+    },
+    "Always stream from the network URL, even if the episode is downloaded.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Always stream from the network URL, even if the episode is downloaded."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Immer von der Netzwerk-URL streamen, auch wenn die Episode heruntergeladen ist."
           }
         }
       }
@@ -256,6 +409,23 @@
         }
       }
     },
+    "Apple Watch (beta lite): Continue listening shows episode title + podcast from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Watch (beta lite): Continue listening shows episode title + podcast from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Watch (Beta lite): Weiterhören zeigt Episodentitel + Podcast aus demselben Snapshot wie das Homescreen-Widget (iPhone pusht per Watch Connectivity; App Group group.de.danoeh.antennapod.ios). Play / Auf iPhone öffnen steuert antennapod://play auf dem Companion. Keine eigenständige Watch-Wiedergabe, Downloads oder Warteschlange — bei laufender Wiedergabe System-Now-Playing auf der Watch nutzen. Braucht AntennaPodWatch-Target, Dev Team und App Group auf dem Mac."
+          }
+        }
+      }
+    },
     "Archive": {
       "extractionState": "manual",
       "localizations": {
@@ -358,6 +528,23 @@
         }
       }
     },
+    "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Optional offline media via the toggle (ZIP folder downloads/ ↔ Documents/downloads). gpodder password and Podcast Index keys stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Optional offline media via the toggle (ZIP folder downloads/ ↔ Documents/downloads). gpodder password and Podcast Index keys stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beta-iOS-JSON-Backup (Application-Support-Maps + Einstellungen + gpodder-Prefs). Keine AntennaPod-Android-DB. Optionale Offline-Medien per Schalter (ZIP-Ordner downloads/ ↔ Documents/downloads). gpodder-Passwort und Podcast-Index-Schlüssel bleiben im Keychain und fehlen in der ZIP. Für eine druckbare Aboliste: Import / Export → Abonnements als HTML exportieren."
+          }
+        }
+      }
+    },
     "Cancel": {
       "extractionState": "manual",
       "localizations": {
@@ -392,6 +579,40 @@
         }
       }
     },
+    "CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CarPlay (ehrlich partiell): erscheint über System-Now-Playing bei laufender Wiedergabe — MPNowPlayingInfoCenter + Remote Play/Pause/Skip/Seek (Einstellungen-Intervalle; weiter/zurück → Skip). Info.plist hat bereits UIBackgroundModes audio; AVAudioSession .playback. Keine eigenen CarPlay-Templates / CPTemplate-Szene / CarPlay-Entitlement. Apple-Watch-Companion ist ein separates Beta-lite-Target (Weiterhören + Play auf iPhone)."
+          }
+        }
+      }
+    },
+    "Change PIN": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change PIN"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PIN ändern"
+          }
+        }
+      }
+    },
     "Chapters": {
       "extractionState": "manual",
       "localizations": {
@@ -405,6 +626,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kapitel"
+          }
+        }
+      }
+    },
+    "Choose a 4–6 digit PIN. It is stored only in the Keychain.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a 4–6 digit PIN. It is stored only in the Keychain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle eine 4–6-stellige PIN. Sie wird nur im Keychain gespeichert."
           }
         }
       }
@@ -494,6 +732,108 @@
         }
       }
     },
+    "Clear favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten leeren"
+          }
+        }
+      }
+    },
+    "Clear favorites?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear favorites?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten leeren?"
+          }
+        }
+      }
+    },
+    "Clear history": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear history"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf leeren"
+          }
+        }
+      }
+    },
+    "Clear history?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear history?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf leeren?"
+          }
+        }
+      }
+    },
+    "Clear queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange leeren"
+          }
+        }
+      }
+    },
+    "Clear queue?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear queue?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange leeren?"
+          }
+        }
+      }
+    },
     "Clear search": {
       "extractionState": "manual",
       "localizations": {
@@ -524,6 +864,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Player schließen"
+          }
+        }
+      }
+    },
+    "Confirm new PIN": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm new PIN"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue PIN bestätigen"
+          }
+        }
+      }
+    },
+    "Confirm PIN": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm PIN"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PIN bestätigen"
           }
         }
       }
@@ -562,6 +936,23 @@
         }
       }
     },
+    "Continuous playback": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuous playback"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fortlaufende Wiedergabe"
+          }
+        }
+      }
+    },
     "Contribute": {
       "extractionState": "manual",
       "localizations": {
@@ -575,6 +966,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mitwirken"
+          }
+        }
+      }
+    },
+    "Current PIN": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current PIN"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktuelle PIN"
+          }
+        }
+      }
+    },
+    "Default off — keeps the ZIP small (JSON catalog only). No offline files on device right now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default off — keeps the ZIP small (JSON catalog only). No offline files on device right now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard aus — hält die ZIP klein (nur JSON-Katalog). Gerade keine Offline-Dateien auf dem Gerät."
+          }
+        }
+      }
+    },
+    "Default off — keeps the ZIP small. On: adds ~%lld file(s) (~%@) under downloads/ — larger ZIP, slower export/share/import (STORE, no compression).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default off — keeps the ZIP small. On: adds ~%lld file(s) (~%@) under downloads/ — larger ZIP, slower export/share/import (STORE, no compression)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard aus — hält die ZIP klein. An: fügt ~%lld Datei(en) (~%@) unter downloads/ hinzu — größere ZIP, langsameres Export/Teilen/Import (STORE, keine Kompression)."
           }
         }
       }
@@ -643,6 +1085,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Deaktivieren"
+          }
+        }
+      }
+    },
+    "Disable parental controls": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disable parental controls"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elternschutz deaktivieren"
           }
         }
       }
@@ -732,6 +1191,40 @@
         }
       }
     },
+    "Download all": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download all"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle herunterladen"
+          }
+        }
+      }
+    },
+    "Download all?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download all?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle herunterladen?"
+          }
+        }
+      }
+    },
     "Download errors": {
       "extractionState": "manual",
       "localizations": {
@@ -762,6 +1255,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Download fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "Download failures → Downloads (title = episode, body = error)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download failures → Downloads (title = episode, body = error)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-Fehler → Downloads (Titel = Episode, Text = Fehler)"
           }
         }
       }
@@ -885,6 +1395,23 @@
         }
       }
     },
+    "Enable parental controls": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable parental controls"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elternschutz aktivieren"
+          }
+        }
+      }
+    },
     "End of episode": {
       "extractionState": "manual",
       "localizations": {
@@ -898,6 +1425,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ende der Episode"
+          }
+        }
+      }
+    },
+    "Enter your parental controls PIN to continue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your parental controls PIN to continue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib deine Elternschutz-PIN ein, um fortzufahren."
+          }
+        }
+      }
+    },
+    "Enter your PIN to change Network / Downloads settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your PIN to change Network / Downloads settings."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib deine PIN ein, um Netzwerk-/Download-Einstellungen zu ändern."
+          }
+        }
+      }
+    },
+    "Enter your PIN to turn off parental controls and remove the stored PIN.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your PIN to turn off parental controls and remove the stored PIN."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib deine PIN ein, um den Elternschutz auszuschalten und die gespeicherte PIN zu entfernen."
           }
         }
       }
@@ -1174,6 +1752,40 @@
         }
       }
     },
+    "Favorites actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorites actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten-Aktionen"
+          }
+        }
+      }
+    },
+    "Feed actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-Aktionen"
+          }
+        }
+      }
+    },
     "Feed URL": {
       "extractionState": "manual",
       "localizations": {
@@ -1208,6 +1820,23 @@
         }
       }
     },
+    "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feeds aktualisieren sich nur per Pull-to-Refresh (Posteingang) oder bei Podcast-Aktualisierung. Background App Refresh ist in dieser Beta nicht aktiv (kein Fetch-Modus in Info.plist)."
+          }
+        }
+      }
+    },
     "Filter by title or podcast": {
       "extractionState": "manual",
       "localizations": {
@@ -1238,6 +1867,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ordner"
+          }
+        }
+      }
+    },
+    "Free API key + secret from podcastindex.org (register / API docs). Stored only in the Keychain — not hardcoded and not shipped with the app. Used by Add podcast → Podcast Index search; Subscribe still follows the feed URL pipeline.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Free API key + secret from podcastindex.org (register / API docs). Stored only in the Keychain — not hardcoded and not shipped with the app. Used by Add podcast → Podcast Index search; Subscribe still follows the feed URL pipeline."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kostenloser API-Schlüssel + Secret von podcastindex.org (Registrierung / API-Docs). Nur im Keychain — nicht hardcoded und nicht mitgeliefert. Für Podcast hinzufügen → Podcast-Index-Suche; Abonnieren folgt weiter der Feed-URL."
           }
         }
       }
@@ -1310,6 +1956,23 @@
         }
       }
     },
+    "Hide explicit top charts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide explicit top charts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explizite Top-Charts ausblenden"
+          }
+        }
+      }
+    },
     "History": {
       "extractionState": "manual",
       "localizations": {
@@ -1323,6 +1986,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Verlauf"
+          }
+        }
+      }
+    },
+    "History actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlaufs-Aktionen"
           }
         }
       }
@@ -1374,6 +2054,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Homescreen-Widget"
+          }
+        }
+      }
+    },
+    "Homescreen widget (beta lite): Continue listening shows episode title + podcast from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homescreen widget (beta lite): Continue listening shows episode title + podcast from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Homescreen-Widget (Beta lite): Weiterhören zeigt Episodentitel + Podcast aus einem App-Group-Snapshot. Tippen öffnet antennapod://play. Snapshot kann veraltet sein; kein Live-Scrubber. Widget vom iOS-Homescreen hinzufügen nach Build mit AntennaPodWidget-Extension (App Group group.de.danoeh.antennapod.ios)."
           }
         }
       }
@@ -1480,6 +2177,23 @@
         }
       }
     },
+    "Inbox actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inbox actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posteingangs-Aktionen"
+          }
+        }
+      }
+    },
     "Inbox empty": {
       "extractionState": "manual",
       "localizations": {
@@ -1531,6 +2245,23 @@
         }
       }
     },
+    "Incorrect PIN": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incorrect PIN"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falsche PIN"
+          }
+        }
+      }
+    },
     "Index": {
       "extractionState": "manual",
       "localizations": {
@@ -1561,6 +2292,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "iTunes hat für dieses Land keine Podcasts geliefert, oder Feed-URLs konnten nicht aufgelöst werden. Probiere ein anderes Land in den Einstellungen."
+          }
+        }
+      }
+    },
+    "Keep screen on": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep screen on"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildschirm eingeschaltet lassen"
           }
         }
       }
@@ -1735,6 +2483,74 @@
         }
       }
     },
+    "Lock Add / Discover": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock Add / Discover"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hinzufügen / Entdecken sperren"
+          }
+        }
+      }
+    },
+    "Lock Add / Discover asks for the PIN before the Add sheet or Discover charts. Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock Add / Discover asks for the PIN before the Add sheet or Discover charts. Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hinzufügen / Entdecken sperren fragt vor dem Hinzufügen-Sheet oder Entdecken-Charts nach der PIN. Netzwerk / Downloads sperren blockiert Nur-Wi‑Fi-Schalter bis zur Entsperrung. Explizite Top-Charts ausblenden fordert iTunes-Charts mit explicit=false an, solange der Elternschutz aktiv ist."
+          }
+        }
+      }
+    },
+    "Lock Network / Downloads settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock Network / Downloads settings"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Netzwerk-/Download-Einstellungen sperren"
+          }
+        }
+      }
+    },
+    "Locked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesperrt"
+          }
+        }
+      }
+    },
     "Logging in…": {
       "extractionState": "manual",
       "localizations": {
@@ -1786,6 +2602,40 @@
         }
       }
     },
+    "Mark all as played": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark all as played"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle als gehört markieren"
+          }
+        }
+      }
+    },
+    "Mark all as played?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark all as played?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle als gehört markieren?"
+          }
+        }
+      }
+    },
     "Mark played": {
       "extractionState": "manual",
       "localizations": {
@@ -1820,6 +2670,40 @@
         }
       }
     },
+    "Marks %lld Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld Posteingangs-Episoden als gehört. Die Episoden verlassen den Posteingang; Auto-Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
+          }
+        }
+      }
+    },
+    "Marks %lld unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld ungehörte Episoden in diesem Podcast als gehört. Archiviert nicht; Auto-Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
+          }
+        }
+      }
+    },
     "Mode": {
       "extractionState": "manual",
       "localizations": {
@@ -1850,6 +2734,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Netzwerk / Downloads"
+          }
+        }
+      }
+    },
+    "Network / Downloads settings are locked. Enter the parental PIN to change these toggles.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network / Downloads settings are locked. Enter the parental PIN to change these toggles."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Netzwerk-/Download-Einstellungen sind gesperrt. Gib die Eltern-PIN ein, um diese Schalter zu ändern."
           }
         }
       }
@@ -1905,6 +2806,108 @@
         }
       }
     },
+    "New episodes after refresh → Inbox": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes after refresh → Inbox"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Episoden nach Aktualisierung → Posteingang"
+          }
+        }
+      }
+    },
+    "New episodes start at this speed. You can still change speed in the mini player.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes start at this speed. You can still change speed in the mini player."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Episoden starten mit dieser Geschwindigkeit. Im Mini-Player kannst du sie weiterhin ändern."
+          }
+        }
+      }
+    },
+    "New episodes stay in Inbox (unplayed list). Nothing is added to Queue automatically.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes stay in Inbox (unplayed list). Nothing is added to Queue automatically."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Episoden bleiben im Posteingang (ungehörte Liste). Nichts wird automatisch zur Warteschlange hinzugefügt."
+          }
+        }
+      }
+    },
+    "New PIN (4–6 digits)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New PIN (4–6 digits)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue PIN (4–6 Ziffern)"
+          }
+        }
+      }
+    },
+    "New PIN must be 4–6 digits": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New PIN must be 4–6 digits"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue PIN muss 4–6 Ziffern haben"
+          }
+        }
+      }
+    },
+    "New PINs don’t match": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New PINs don’t match"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue PINs stimmen nicht überein"
+          }
+        }
+      }
+    },
     "Newest episode": {
       "extractionState": "manual",
       "localizations": {
@@ -1918,6 +2921,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Neueste Episode"
+          }
+        }
+      }
+    },
+    "Nextcloud Gpodder Sync (beta MVP): same subscription limits as gpodder.net — additive pull/push of feed URLs; remote removes do not unsubscribe local feeds; episode actions not synced. Enter your Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). Uses HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is kept for UI/state only (Nextcloud has no device API).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud Gpodder Sync (beta MVP): same subscription limits as gpodder.net — additive pull/push of feed URLs; remote removes do not unsubscribe local feeds; episode actions not synced. Enter your Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). Uses HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is kept for UI/state only (Nextcloud has no device API)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud Gpodder Sync (Beta-MVP): gleiche Abonnement-Grenzen wie gpodder.net — additives Pull/Push von Feed-URLs; Remote-Entfernungen deabonnieren lokal nicht; Episodenaktionen nicht synchronisiert. Nextcloud-Basis eingeben (Server-Root oder voller API-Root wie https://cloud.example.com/index.php/apps/gpoddersync/). HTTP Basic (App-Passwort empfohlen). Braucht die Gpodder-Sync-App auf dem Server. Geräte-ID nur für UI/Status (Nextcloud hat keine Geräte-API)."
+          }
+        }
+      }
+    },
+    "No APNs / push.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No APNs / push."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein APNs / Push."
           }
         }
       }
@@ -2296,6 +3333,23 @@
         }
       }
     },
+    "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. Toggles stay on so your preference is clear.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. Toggles stay on so your preference is clear."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benachrichtigungsberechtigung wurde verweigert. AntennaPod zeigt keine Banner, bis du Mitteilungen in den iOS-Einstellungen erlaubst. Die Schalter bleiben an, damit deine Präferenz klar ist."
+          }
+        }
+      }
+    },
     "Notifications": {
       "extractionState": "manual",
       "localizations": {
@@ -2466,6 +3520,74 @@
         }
       }
     },
+    "Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachanpassung über den iOS-`AVAudioSession`-Modus (`.spokenAudio`, Fallback `.voiceChat`). Aus: Audio nutzt `.default`, Video (sichtbare Fläche) `.moviePlayback`. Das ist ein **Session-Modus**, keine Android-LoudnessEnhancer-Kurve. Standard aus."
+          }
+        }
+      }
+    },
+    "Options": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Options"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optionen"
+          }
+        }
+      }
+    },
+    "Parental controls disabled. PIN cleared from Keychain.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parental controls disabled. PIN cleared from Keychain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elternschutz deaktiviert. PIN aus dem Keychain gelöscht."
+          }
+        }
+      }
+    },
+    "Parental controls enabled. PIN stored in Keychain.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parental controls enabled. PIN stored in Keychain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elternschutz aktiviert. PIN im Keychain gespeichert."
+          }
+        }
+      }
+    },
     "Password": {
       "extractionState": "manual",
       "localizations": {
@@ -2517,6 +3639,125 @@
         }
       }
     },
+    "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails. Local only — no push.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails. Local only — no push."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Berechtigung wird angefragt, wenn du einen Benachrichtigungs-Schalter einschaltest oder wenn eine Aktualisierung erstmals neue Episoden findet / ein Download fehlschlägt / Sync fehlschlägt. Nur lokal — kein Push."
+          }
+        }
+      }
+    },
+    "Picture in Picture": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture in Picture"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bild-in-Bild"
+          }
+        }
+      }
+    },
+    "PIN (4–6 digits)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PIN (4–6 digits)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PIN (4–6 Ziffern)"
+          }
+        }
+      }
+    },
+    "PIN is stored in the Keychain (not in Settings backup). Unlock lasts until the app goes to the background. Disable requires the PIN and clears Keychain.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PIN is stored in the Keychain (not in Settings backup). Unlock lasts until the app goes to the background. Disable requires the PIN and clears Keychain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die PIN liegt im Keychain (nicht im Einstellungs-Backup). Entsperren gilt bis die App in den Hintergrund geht. Deaktivieren verlangt die PIN und löscht den Keychain-Eintrag."
+          }
+        }
+      }
+    },
+    "PIN must be 4–6 digits": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PIN must be 4–6 digits"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PIN muss 4–6 Ziffern haben"
+          }
+        }
+      }
+    },
+    "PIN updated.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PIN updated."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PIN aktualisiert."
+          }
+        }
+      }
+    },
+    "PINs don’t match": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PINs don’t match"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PINs stimmen nicht überein"
+          }
+        }
+      }
+    },
     "Play": {
       "extractionState": "manual",
       "localizations": {
@@ -2530,6 +3771,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abspielen"
+          }
+        }
+      }
+    },
+    "Play Next": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play Next"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als Nächstes spielen"
+          }
+        }
+      }
+    },
+    "Play the offline file when available; otherwise stream from the network.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play the offline file when available; otherwise stream from the network."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline-Datei abspielen, wenn vorhanden; sonst aus dem Netzwerk streamen."
           }
         }
       }
@@ -2704,6 +3979,23 @@
         }
       }
     },
+    "Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Einstellung — auf dem Standard-`AVPlayer` **nicht wirksam**. Android-Stille-Überspringen braucht eine eigene `AVAudioEngine`/Player-Node-Graphik; die würde Videofläche, Now Playing und Tempo stören. In dieser Beta ohne Wiedergabe-Effekt. Standard aus."
+          }
+        }
+      }
+    },
     "Preview": {
       "extractionState": "manual",
       "localizations": {
@@ -2806,6 +4098,23 @@
         }
       }
     },
+    "Queue actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queue actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlangen-Aktionen"
+          }
+        }
+      }
+    },
     "Queue empty": {
       "extractionState": "manual",
       "localizations": {
@@ -2819,6 +4128,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Warteschlange leer"
+          }
+        }
+      }
+    },
+    "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, and already downloaded are skipped. Manual download Wi‑Fi only still applies.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, and already downloaded are skipped. Manual download Wi‑Fi only still applies."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stellt den Download von %lld ungehörten Episoden in die Warteschlange (neueste zuerst, max. %lld). Gehörte, archivierte und bereits heruntergeladene werden übersprungen. „Manueller Download nur per WLAN“ gilt weiterhin."
           }
         }
       }
@@ -2904,6 +4230,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entfernen"
+          }
+        }
+      }
+    },
+    "Removes %lld episodes from favorites. Does not delete downloads, archive, mark played, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld episodes from favorites. Does not delete downloads, archive, mark played, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld Episoden aus den Favoriten. Löscht keine Downloads, archiviert nicht, markiert nicht als gehört und leert die Warteschlange nicht."
+          }
+        }
+      }
+    },
+    "Removes %lld episodes from history. Does not unsubscribe, delete downloads, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld episodes from history. Does not unsubscribe, delete downloads, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld Episoden aus dem Verlauf. Deabonniert nicht, löscht keine Downloads und leert die Warteschlange nicht."
+          }
+        }
+      }
+    },
+    "Removes %lld episodes from the queue. Does not stop playback, mark played, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld episodes from the queue. Does not stop playback, mark played, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld Episoden aus der Warteschlange. Stoppt die Wiedergabe nicht, markiert nicht als gehört und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Removes %lld offline episode file(s). Playback history is kept.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld offline episode file(s). Playback history is kept."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld Offline-Episodendatei(en). Der Wiedergabeverlauf bleibt erhalten."
           }
         }
       }
@@ -3299,6 +4693,40 @@
         }
       }
     },
+    "Set a 4–6 digit PIN to restrict Add / Discover and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set a 4–6 digit PIN to restrict Add / Discover and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lege eine 4–6-stellige PIN fest, um Hinzufügen / Entdecken und optional Netzwerk-/Download-Einstellungen oder explizite Charts einzuschränken. Beta-MVP — kein vollständiger Geräte-Elternschutz."
+          }
+        }
+      }
+    },
+    "Set PIN": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set PIN"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "PIN festlegen"
+          }
+        }
+      }
+    },
     "Settings": {
       "extractionState": "manual",
       "localizations": {
@@ -3367,6 +4795,23 @@
         }
       }
     },
+    "Show, hide, and reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, Favorites). Empty optional sections still hide when they have no items.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show, hide, and reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, Favorites). Empty optional sections still hide when they have no items."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home-Abschnitte ein-/ausblenden und neu anordnen (Weiterhören, Posteingang, Warteschlange, Entdecken, Zuletzt aktualisiert, Favoriten). Leere optionale Abschnitte bleiben ausgeblendet."
+          }
+        }
+      }
+    },
     "Siri / Shortcuts": {
       "extractionState": "manual",
       "localizations": {
@@ -3380,6 +4825,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Siri / Kurzbefehle"
+          }
+        }
+      }
+    },
+    "Siri / Shortcuts (lite): Play/Pause, Skip forward, Skip back. Also open via URL schemes: antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents open the app and control playback when an episode is already loaded. Not background-only without App Groups.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siri / Shortcuts (lite): Play/Pause, Skip forward, Skip back. Also open via URL schemes: antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents open the app and control playback when an episode is already loaded. Not background-only without App Groups."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siri / Kurzbefehle (lite): Play/Pause, Vor-/Zurückspringen. Auch per URL: antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents öffnen die App und steuern die Wiedergabe, wenn eine Episode geladen ist. Ohne App Groups nicht rein im Hintergrund."
+          }
+        }
+      }
+    },
+    "Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Override per podcast via Feed detail → gear → Playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Override per podcast via Feed detail → gear → Playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intro überspringen springt bei frischem Start einmal vor (Position nahe 0). Outro überspringen wertet die Episode als beendet, wenn die Restzeit im gewählten Fenster liegt (als gehört + nächste). 0 = aus. Pro Podcast unter Feed → Zahnrad → Wiedergabe überschreibbar."
           }
         }
       }
@@ -3401,6 +4880,40 @@
         }
       }
     },
+    "Sort": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortieren"
+          }
+        }
+      }
+    },
+    "Sort subscriptions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort subscriptions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnements sortieren"
+          }
+        }
+      }
+    },
     "Star episodes from a feed or the full player. Favorites keep their downloads when auto-delete after playing is on.": {
       "extractionState": "manual",
       "localizations": {
@@ -3418,6 +4931,23 @@
         }
       }
     },
+    "Starts Picture in Picture": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts Picture in Picture"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet Bild-in-Bild"
+          }
+        }
+      }
+    },
     "Statistics": {
       "extractionState": "manual",
       "localizations": {
@@ -3431,6 +4961,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Statistiken"
+          }
+        }
+      }
+    },
+    "Status": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Status"
+          }
+        }
+      }
+    },
+    "Stops Picture in Picture": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stops Picture in Picture"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beendet Bild-in-Bild"
           }
         }
       }
@@ -3554,6 +5118,23 @@
         }
       }
     },
+    "Subscriptions only (beta MVP): Login stores the password in the Keychain; Sync pulls remote feed URLs and subscribes missing ones, then pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Episode actions (play/download) are not synced yet. Default host is https://gpodder.net (editable).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions only (beta MVP): Login stores the password in the Keychain; Sync pulls remote feed URLs and subscribes missing ones, then pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Episode actions (play/download) are not synced yet. Default host is https://gpodder.net (editable)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Abonnements (Beta-MVP): Login speichert das Passwort im Keychain; Sync holt Remote-Feed-URLs und abonniert fehlende, dann pusht lokale URLs, die nicht auf dem Server sind. Merge ist additiv — Remote-Entfernungen deabonnieren lokale Feeds nicht. Episodenaktionen (Play/Download) noch nicht synchronisiert. Standard-Host https://gpodder.net (änderbar)."
+          }
+        }
+      }
+    },
     "Sync": {
       "extractionState": "manual",
       "localizations": {
@@ -3567,6 +5148,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sync"
+          }
+        }
+      }
+    },
+    "Sync / login failures → Settings Sync (short error)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync / login failures → Settings Sync (short error)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync-/Login-Fehler → Einstellungen Sync (kurzer Fehler)"
           }
         }
       }
@@ -3669,6 +5267,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dieser iOS-Fork"
+          }
+        }
+      }
+    },
+    "This replaces subscriptions, queue, playback, favorites, archive, tags, feed settings, download catalog, and Settings prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This replaces subscriptions, queue, playback, favorites, archive, tags, feed settings, download catalog, and Settings prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ersetzt Abonnements, Warteschlange, Wiedergabe, Favoriten, Archiv, Tags, Feed-Einstellungen, Download-Katalog und Einstellungen durch das Backup. Wenn die ZIP downloads/ enthält, werden diese Episodendateien nach Documents/downloads geschrieben (gleiche Namen überschrieben; andere lokale Dateien bleiben). Katalog-only-Backups brauchen fehlende Medien erneut. Keychain-Passwörter/Schlüssel werden nicht ersetzt. Nicht rückgängig außer durch ein anderes Backup."
+          }
+        }
+      }
+    },
+    "This will pack %lld offline episode file(s) (~%@) into the ZIP under downloads/. Export and sharing can take a long time and use a lot of storage. Keychain secrets are still omitted.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This will pack %lld offline episode file(s) (~%@) into the ZIP under downloads/. Export and sharing can take a long time and use a lot of storage. Keychain secrets are still omitted."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Packt %lld Offline-Episodendatei(en) (~%@) in die ZIP unter downloads/. Export und Teilen können lange dauern und viel Speicher brauchen. Keychain-Geheimnisse bleiben ausgelassen."
+          }
+        }
+      }
+    },
+    "Toggle visibility and tap Edit to drag-reorder. Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites is off by default.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle visibility and tap Edit to drag-reorder. Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites is off by default."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichtbarkeit umschalten und Bearbeiten tippen zum Neuanordnen. Leere optionale Abschnitte (Weiterhören, Posteingang, Warteschlange, Zuletzt aktualisiert, Favoriten) bleiben auf Home ausgeblendet ohne Einträge. Entdecken zeigt bei Aktivierung immer die Charts-Vorschau. Favoriten standardmäßig aus."
           }
         }
       }
@@ -3860,6 +5509,23 @@
         }
       }
     },
+    "Unlocked (this session)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlocked (this session)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entsperrt (diese Sitzung)"
+          }
+        }
+      }
+    },
     "Unofficial SwiftUI fork of the open-source AntennaPod podcast app. Local-first beta: subscribe, play, download, and manage your library on device.": {
       "extractionState": "manual",
       "localizations": {
@@ -3873,6 +5539,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Inoffizieller SwiftUI-Fork der Open-Source-Podcast-App AntennaPod. Local-first-Beta: abonnieren, abspielen, herunterladen und Bibliothek auf dem Gerät verwalten."
+          }
+        }
+      }
+    },
+    "Unplayed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unplayed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungehört"
           }
         }
       }
@@ -3911,6 +5594,57 @@
         }
       }
     },
+    "Use the local file when it exists; otherwise stream. Default.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use the local file when it exists; otherwise stream. Default."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Datei nutzen, wenn vorhanden; sonst streamen. Standard."
+          }
+        }
+      }
+    },
+    "Used by Home → Discover / Charts and Subscriptions → Discover. Apple iTunes RSS top podcasts (no API key). Automatic uses the device region, or de if unknown.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Used by Home → Discover / Charts and Subscriptions → Discover. Apple iTunes RSS top podcasts (no API key). Automatic uses the device region, or de if unknown."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für Home → Entdecken / Charts und Abonnements → Entdecken. Apple-iTunes-RSS-Top-Podcasts (kein API-Schlüssel). Automatisch nutzt die Geräteregion, sonst de."
+          }
+        }
+      }
+    },
+    "Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gilt für Mini-Player, Vollbild-Player und Sperrbildschirm-/Now-Playing-Sprungtasten. Standard wie AntennaPod (10 s zurück / 30 s vor)."
+          }
+        }
+      }
+    },
     "Username": {
       "extractionState": "manual",
       "localizations": {
@@ -3924,6 +5658,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Benutzername"
+          }
+        }
+      }
+    },
+    "Uses NWPathMonitor (Wi‑Fi / Ethernet vs cellular). Auto-download Wi‑Fi only defaults on — skips enqueue on cellular. Manual download Wi‑Fi only (default off) refuses user downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uses NWPathMonitor (Wi‑Fi / Ethernet vs cellular). Auto-download Wi‑Fi only defaults on — skips enqueue on cellular. Manual download Wi‑Fi only (default off) refuses user downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nutzt NWPathMonitor (Wi‑Fi / Ethernet vs. Mobilfunk). Auto-Download nur Wi‑Fi standardmäßig an — überspringt Mobilfunk. Manueller Download nur Wi‑Fi (Standard aus) lehnt Downloads im Mobilfunk ab und speichert einen Fehler. Stream nur Wi‑Fi (Standard aus) blockiert Stream-URLs im Mobilfunk; lokale Offline-Dateien spielen weiter. Schalter aus = Mobilfunk für diese Aktion erlaubt."
           }
         }
       }
@@ -3979,580 +5730,87 @@
         }
       }
     },
-    "Working…": {
+    "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item, and skips favorited / starred episodes.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Working…"
+            "value": "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item, and skips favorited / starred episodes."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bitte warten…"
+            "value": "Wenn eine Episode als gehört markiert wird (manuell oder nach Wiedergabeende), wird die Offline-Datei über DownloadService gelöscht. Zeile und Gehört-Status bleiben. Ausgesetzt, solange die lokale Datei noch aktiv im Player ist, und bei Favoriten/Sternen."
           }
         }
       }
     },
-    "Play Next": {
+    "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Storage-limit eviction still applies. Wi‑Fi-only for auto-download is under Network / Downloads.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Play Next"
+            "value": "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Storage-limit eviction still applies. Wi‑Fi-only for auto-download is under Network / Downloads."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Als Nächstes spielen"
+            "value": "Wenn aktiv, werden nach einer Feed-Aktualisierung die neuesten ungehörten Episoden (noch nicht heruntergeladen) über DownloadService eingeordnet, begrenzt pro Feed. Pro-Podcast Immer/Nie unter Feed-Einstellungen. Speicherlimit-Bereinigung gilt weiterhin. Nur-Wi‑Fi für Auto-Download unter Netzwerk / Downloads."
           }
         }
       }
     },
-    "Add to queue": {
+    "When enabled, offline files are removed after an episode is marked played. Episode metadata and played status are kept.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Add to queue"
+            "value": "When enabled, offline files are removed after an episode is marked played. Episode metadata and played status are kept."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zur Warteschlange hinzufügen"
+            "value": "Wenn aktiv, werden Offline-Dateien entfernt, nachdem eine Episode als gehört markiert wurde. Metadaten und Gehört-Status bleiben."
           }
         }
       }
     },
-    "Picture in Picture": {
+    "When enabled: new episodes after refresh, download failures, and/or gpodder/Nextcloud login or sync failures. Local only — no push.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Picture in Picture"
+            "value": "When enabled: new episodes after refresh, download failures, and/or gpodder/Nextcloud login or sync failures. Local only — no push."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bild-in-Bild"
+            "value": "Wenn aktiv: neue Episoden nach Aktualisierung, Download-Fehler und/oder gpodder-/Nextcloud-Login- oder Sync-Fehler. Nur lokal — kein Push."
           }
         }
       }
     },
-    "Starts Picture in Picture": {
+    "When on, disables the idle timer while playback is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Starts Picture in Picture"
+            "value": "When on, disables the idle timer while playback is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Startet Bild-in-Bild"
-          }
-        }
-      }
-    },
-    "Stops Picture in Picture": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stops Picture in Picture"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Beendet Bild-in-Bild"
-          }
-        }
-      }
-    },
-    "Mark all as played": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mark all as played"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle als gehört markieren"
-          }
-        }
-      }
-    },
-    "Mark all as played?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mark all as played?"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle als gehört markieren?"
-          }
-        }
-      }
-    },
-    "Inbox actions": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inbox actions"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Posteingangs-Aktionen"
-          }
-        }
-      }
-    },
-    "Marks %lld Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks %lld Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert %lld Posteingangs-Episoden als gehört. Die Episoden verlassen den Posteingang; Auto-Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
-          }
-        }
-      }
-    },
-    "Download all": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download all"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle herunterladen"
-          }
-        }
-      }
-    },
-    "Download all?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download all?"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle herunterladen?"
-          }
-        }
-      }
-    },
-    "Feed actions": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Feed actions"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Feed-Aktionen"
-          }
-        }
-      }
-    },
-    "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, and already downloaded are skipped. Manual download Wi‑Fi only still applies.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, and already downloaded are skipped. Manual download Wi‑Fi only still applies."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stellt den Download von %lld ungehörten Episoden in die Warteschlange (neueste zuerst, max. %lld). Gehörte, archivierte und bereits heruntergeladene werden übersprungen. „Manueller Download nur per WLAN“ gilt weiterhin."
-          }
-        }
-      }
-    },
-    "Keep screen on": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keep screen on"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bildschirm eingeschaltet lassen"
-          }
-        }
-      }
-    },
-    "Clear queue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Warteschlange leeren"
-          }
-        }
-      }
-    },
-    "Clear queue?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear queue?"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Warteschlange leeren?"
-          }
-        }
-      }
-    },
-    "Queue actions": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Queue actions"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Warteschlangen-Aktionen"
-          }
-        }
-      }
-    },
-    "Removes %lld episodes from the queue. Does not stop playback, mark played, or delete downloads.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes %lld episodes from the queue. Does not stop playback, mark played, or delete downloads."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt %lld Episoden aus der Warteschlange. Stoppt die Wiedergabe nicht, markiert nicht als gehört und löscht keine Downloads."
-          }
-        }
-      }
-    },
-    "Marks %lld unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks %lld unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert %lld ungehörte Episoden in diesem Podcast als gehört. Archiviert nicht; Auto-Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
-          }
-        }
-      }
-    },
-    "Alphabetical A–Z": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alphabetical A–Z"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alphabetisch A–Z"
-          }
-        }
-      }
-    },
-    "Sort": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sort"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sortieren"
-          }
-        }
-      }
-    },
-    "Sort subscriptions": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sort subscriptions"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abonnements sortieren"
-          }
-        }
-      }
-    },
-    "Clear history": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear history"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verlauf leeren"
-          }
-        }
-      }
-    },
-    "Clear history?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear history?"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verlauf leeren?"
-          }
-        }
-      }
-    },
-    "History actions": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "History actions"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verlaufs-Aktionen"
-          }
-        }
-      }
-    },
-    "Removes %lld episodes from history. Does not unsubscribe, delete downloads, or clear the queue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes %lld episodes from history. Does not unsubscribe, delete downloads, or clear the queue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt %lld Episoden aus dem Verlauf. Deabonniert nicht, löscht keine Downloads und leert die Warteschlange nicht."
-          }
-        }
-      }
-    },
-    "All": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle"
-          }
-        }
-      }
-    },
-    "Unplayed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unplayed"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ungehört"
-          }
-        }
-      }
-    },
-    "Clear favorites": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear favorites"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Favoriten leeren"
-          }
-        }
-      }
-    },
-    "Clear favorites?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear favorites?"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Favoriten leeren?"
-          }
-        }
-      }
-    },
-    "Favorites actions": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Favorites actions"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Favoriten-Aktionen"
-          }
-        }
-      }
-    },
-    "Removes %lld episodes from favorites. Does not delete downloads, archive, mark played, or clear the queue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes %lld episodes from favorites. Does not delete downloads, archive, mark played, or clear the queue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt %lld Episoden aus den Favoriten. Löscht keine Downloads, archiviert nicht, markiert nicht als gehört und leert die Warteschlange nicht."
-          }
-        }
-      }
-    },
-    "Continuous playback": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continuous playback"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fortlaufende Wiedergabe"
+            "value": "Wenn aktiv, deaktiviert den Idle-Timer während aktiver Wiedergabe, damit der Bildschirm wach bleibt. Wiederhergestellt bei Pause, Stopp oder ohne Episode. Standard aus (akkufreundlich). Überschreibt den Energiesparmodus nur beim Idle-Timer; keine Helligkeitsänderung; PiP und Hintergrund-Audio unverändert."
           }
         }
       }
@@ -4570,6 +5828,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiv, startet nach Ende einer Episode automatisch die nächste aus der Warteschlange. Wenn aus, wird die Episode weiterhin als gehört markiert / Fortschritt gespeichert, aber nicht weitergeschaltet. Der Sleep-Timer „Ende der Episode“ stoppt weiterhin ohne Weiterleitung. Standard an."
+          }
+        }
+      }
+    },
+    "When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, zeigen Video-Episoden (MIME video/* oder mp4/m4v/mov/webm) im Vollbild-Player Cover statt Videofläche. Sperrbildschirm/Now Playing bleibt Audio. Picture-in-Picture ist in dieser Beta nicht enthalten. Standard aus."
+          }
+        }
+      }
+    },
+    "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über dem Limit werden zuerst gehörte Downloads gelöscht (älteste Datei zuerst), dann ungehörte (LRU nach Dateidatum). Läuft nach jedem erfolgreichen Download, beim Öffnen der Einstellungen und beim Start."
+          }
+        }
+      }
+    },
+    "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beim Öffnen der App (Start oder Rückkehr in den Vordergrund) aktualisieren sich alle Abonnements, wenn dieses Intervall abgelaufen ist. Gilt global für jeden Feed. Background App Refresh ist stubbed, bis Info.plist Fetch ergänzt."
+          }
+        }
+      }
+    },
+    "Working…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Working…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitte warten…"
           }
         }
       }

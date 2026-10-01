@@ -25,11 +25,11 @@ enum NewEpisodeAction: String, CaseIterable, Identifiable, Codable, Hashable {
     var helpText: String {
         switch self {
         case .inboxOnly:
-            return "New episodes stay in Inbox (unplayed list). Nothing is added to Queue automatically."
+            return String(localized: "New episodes stay in Inbox (unplayed list). Nothing is added to Queue automatically.")
         case .addToQueue:
-            return "After refresh, newly appeared episodes are enqueued on Queue. Inbox still shows them while unplayed."
+            return String(localized: "After refresh, newly appeared episodes are enqueued on Queue. Inbox still shows them while unplayed.")
         case .addToQueueAndDownload:
-            return "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules still apply to newest unplayed caps."
+            return String(localized: "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules still apply to newest unplayed caps.")
         }
     }
 }

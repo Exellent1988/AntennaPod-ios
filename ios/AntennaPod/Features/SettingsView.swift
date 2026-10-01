@@ -301,9 +301,9 @@ struct SettingsView: View {
 
     private var refreshHelpText: String {
         if settings.refreshInterval == .manual {
-            return "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode)."
+            return String(localized: "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).")
         }
-        return "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch."
+        return String(localized: "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch.")
     }
 
 
@@ -329,9 +329,9 @@ struct SettingsView: View {
 
     private var autoDownloadHelpText: String {
         if !settings.autoDownloadEnabled {
-            return "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Storage-limit eviction still applies. Wi‑Fi-only for auto-download is under Network / Downloads."
+            return String(localized: "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Storage-limit eviction still applies. Wi‑Fi-only for auto-download is under Network / Downloads.")
         }
-        return "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to \(settings.autoDownloadEpisodesPerFeed.rawValue) newest unplayed episode(s) per feed. Override per podcast via Feed detail → gear. Always/Never beat this global toggle. Cellular gating is under Network / Downloads."
+        return String(localized: "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to \(settings.autoDownloadEpisodesPerFeed.rawValue) newest unplayed episode(s) per feed. Override per podcast via Feed detail → gear. Always/Never beat this global toggle. Cellular gating is under Network / Downloads.")
     }
 
     @ViewBuilder
@@ -357,7 +357,7 @@ struct SettingsView: View {
         .sheet(isPresented: $showNetworkPINGate) {
             ParentalPINPromptSheet(
                 title: "Parental controls",
-                message: "Enter your PIN to change Network / Downloads settings.",
+                message: String(localized: "Enter your PIN to change Network / Downloads settings."),
                 onCancel: {
                     showNetworkPINGate = false
                     pendingNetworkUnlockAction = nil
@@ -391,7 +391,7 @@ struct SettingsView: View {
     }
 
     private var networkDownloadsHelpText: String {
-        "Uses NWPathMonitor (Wi‑Fi / Ethernet vs cellular). Auto-download Wi‑Fi only defaults on — skips enqueue on cellular. Manual download Wi‑Fi only (default off) refuses user downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action."
+        String(localized: "Uses NWPathMonitor (Wi‑Fi / Ethernet vs cellular). Auto-download Wi‑Fi only defaults on — skips enqueue on cellular. Manual download Wi‑Fi only (default off) refuses user downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action.")
     }
 
     @ViewBuilder
@@ -434,25 +434,25 @@ struct SettingsView: View {
 
     private var notificationsHelpText: String {
         if notificationAuthLabel == "Denied" {
-            return "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. Toggles stay on so your preference is clear."
+            return String(localized: "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. Toggles stay on so your preference is clear.")
         }
         if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors && !settings.notifyOnSyncErrors {
-            return "When enabled: new episodes after refresh, download failures, and/or gpodder/Nextcloud login or sync failures. Local only — no push."
+            return String(localized: "When enabled: new episodes after refresh, download failures, and/or gpodder/Nextcloud login or sync failures. Local only — no push.")
         }
         if notificationAuthLabel == "Not determined" {
-            return "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails. Local only — no push."
+            return String(localized: "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails. Local only — no push.")
         }
         var parts: [String] = []
         if settings.notifyOnNewEpisodes {
-            parts.append("New episodes after refresh → Inbox")
+            parts.append(String(localized: "New episodes after refresh → Inbox"))
         }
         if settings.notifyOnDownloadErrors {
-            parts.append("Download failures → Downloads (title = episode, body = error)")
+            parts.append(String(localized: "Download failures → Downloads (title = episode, body = error)"))
         }
         if settings.notifyOnSyncErrors {
-            parts.append("Sync / login failures → Settings Sync (short error)")
+            parts.append(String(localized: "Sync / login failures → Settings Sync (short error)"))
         }
-        return parts.joined(separator: ". ") + ". No APNs / push."
+        return parts.joined(separator: ". ") + ". " + String(localized: "No APNs / push.")
     }
 
     @MainActor
@@ -510,9 +510,9 @@ struct SettingsView: View {
 
     private var autoDeleteHelpText: String {
         if settings.autoDeleteAfterPlaying {
-            return "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item, and skips favorited / starred episodes."
+            return String(localized: "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item, and skips favorited / starred episodes.")
         }
-        return "When enabled, offline files are removed after an episode is marked played. Episode metadata and played status are kept."
+        return String(localized: "When enabled, offline files are removed after an episode is marked played. Episode metadata and played status are kept.")
     }
 
     private var storageUsedLabel: String {
@@ -520,11 +520,11 @@ struct SettingsView: View {
         if let limit = downloads.storageUsage.limitFormatted {
             return "\(used) / \(limit)"
         }
-        return "\(used) (unlimited)"
+        return String(localized: "\(used) (unlimited)")
     }
 
     private var evictionHelpText: String {
-        "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch."
+        String(localized: "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch.")
     }
 
     @ViewBuilder
@@ -610,7 +610,7 @@ struct SettingsView: View {
     }
 
     private var podcastIndexHelpText: String {
-        "Free API key + secret from podcastindex.org (register / API docs). Stored only in the Keychain — not hardcoded and not shipped with the app. Used by Add podcast → Podcast Index search; Subscribe still follows the feed URL pipeline."
+        String(localized: "Free API key + secret from podcastindex.org (register / API docs). Stored only in the Keychain — not hardcoded and not shipped with the app. Used by Add podcast → Podcast Index search; Subscribe still follows the feed URL pipeline.")
     }
 
     private func savePodcastIndexKeys() {
@@ -816,9 +816,9 @@ struct SettingsView: View {
     private var gpodderHelpText: String {
         switch gpodder.provider {
         case .gpodderNet:
-            return "Subscriptions only (beta MVP): Login stores the password in the Keychain; Sync pulls remote feed URLs and subscribes missing ones, then pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Episode actions (play/download) are not synced yet. Default host is https://gpodder.net (editable)."
+            return String(localized: "Subscriptions only (beta MVP): Login stores the password in the Keychain; Sync pulls remote feed URLs and subscribes missing ones, then pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Episode actions (play/download) are not synced yet. Default host is https://gpodder.net (editable).")
         case .nextcloud:
-            return "Nextcloud Gpodder Sync (beta MVP): same subscription limits as gpodder.net — additive pull/push of feed URLs; remote removes do not unsubscribe local feeds; episode actions not synced. Enter your Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). Uses HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is kept for UI/state only (Nextcloud has no device API)."
+            return String(localized: "Nextcloud Gpodder Sync (beta MVP): same subscription limits as gpodder.net — additive pull/push of feed URLs; remote removes do not unsubscribe local feeds; episode actions not synced. Enter your Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). Uses HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is kept for UI/state only (Nextcloud has no device API).")
         }
     }
 }

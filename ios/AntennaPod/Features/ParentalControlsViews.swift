@@ -18,7 +18,7 @@ struct ParentalControlsSettingsView: View {
                 Toggle("Enable parental controls", isOn: enableBinding)
                 if parental.isEnabled {
                     LabeledContent("Status") {
-                        Text(parental.isSessionUnlocked ? "Unlocked (this session)" : "Locked")
+                        Text(parental.isSessionUnlocked ? String(localized: "Unlocked (this session)") : String(localized: "Locked"))
                             .foregroundStyle(.secondary)
                     }
                     Button("Change PIN") {
@@ -57,7 +57,7 @@ struct ParentalControlsSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showSetPIN) {
             ParentalSetPINSheet(
-                title: "Set PIN",
+                title: String(localized: "Set PIN"),
                 confirmLabel: String(localized: "Enable"),
                 onCancel: {
                     showSetPIN = false
@@ -67,7 +67,7 @@ struct ParentalControlsSettingsView: View {
                         try parental.enable(pin: pin)
                         showSetPIN = false
                         statusIsError = false
-                        statusMessage = "Parental controls enabled. PIN stored in Keychain."
+                        statusMessage = String(localized: "Parental controls enabled. PIN stored in Keychain.")
                     } catch {
                         statusIsError = true
                         statusMessage = error.localizedDescription
@@ -82,14 +82,14 @@ struct ParentalControlsSettingsView: View {
                     try parental.changePIN(current: current, newPIN: newPIN)
                     showChangePIN = false
                     statusIsError = false
-                    statusMessage = "PIN updated."
+                    statusMessage = String(localized: "PIN updated.")
                 }
             )
         }
         .sheet(isPresented: $showDisablePIN) {
             ParentalPINPromptSheet(
-                title: "Disable parental controls",
-                message: "Enter your PIN to turn off parental controls and remove the stored PIN.",
+                title: String(localized: "Disable parental controls"),
+                message: String(localized: "Enter your PIN to turn off parental controls and remove the stored PIN."),
                 confirmLabel: String(localized: "Disable"),
                 onCancel: { showDisablePIN = false },
                 onSuccess: { pin in
@@ -97,7 +97,7 @@ struct ParentalControlsSettingsView: View {
                         try parental.disable(pin: pin)
                         showDisablePIN = false
                         statusIsError = false
-                        statusMessage = "Parental controls disabled. PIN cleared from Keychain."
+                        statusMessage = String(localized: "Parental controls disabled. PIN cleared from Keychain.")
                         return true
                     } catch {
                         return false
@@ -124,13 +124,13 @@ struct ParentalControlsSettingsView: View {
 
     private var enableHelpText: String {
         if parental.isEnabled {
-            return "PIN is stored in the Keychain (not in Settings backup). Unlock lasts until the app goes to the background. Disable requires the PIN and clears Keychain."
+            return String(localized: "PIN is stored in the Keychain (not in Settings backup). Unlock lasts until the app goes to the background. Disable requires the PIN and clears Keychain.")
         }
-        return "Set a 4–6 digit PIN to restrict Add / Discover and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock."
+        return String(localized: "Set a 4–6 digit PIN to restrict Add / Discover and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock.")
     }
 
     private var optionsHelpText: String {
-        "Lock Add / Discover asks for the PIN before the Add sheet or Discover charts. Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled."
+        String(localized: "Lock Add / Discover asks for the PIN before the Add sheet or Discover charts. Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled.")
     }
 }
 
@@ -139,7 +139,7 @@ struct ParentalControlsSettingsView: View {
 /// Sheet that asks for the existing PIN and unlocks the session on success.
 struct ParentalPINPromptSheet: View {
     let title: String
-    var message: String = "Enter your parental controls PIN to continue."
+    var message: String = String(localized: "Enter your parental controls PIN to continue.")
     var confirmLabel: String = String(localized: "Unlock")
     let onCancel: () -> Void
     /// Return `true` to dismiss (caller may also unlock session). Return `false` on wrong PIN.
@@ -188,7 +188,7 @@ struct ParentalPINPromptSheet: View {
         if onSuccess(trimmed) {
             errorText = nil
         } else {
-            errorText = "Incorrect PIN"
+            errorText = String(localized: "Incorrect PIN")
             pin = ""
         }
     }
@@ -246,11 +246,11 @@ struct ParentalSetPINSheet: View {
         let a = pin.trimmingCharacters(in: .whitespacesAndNewlines)
         let b = confirm.trimmingCharacters(in: .whitespacesAndNewlines)
         guard ParentalControlsKeychain.isValidPIN(a) else {
-            errorText = "PIN must be 4–6 digits"
+            errorText = String(localized: "PIN must be 4–6 digits")
             return
         }
         guard a == b else {
-            errorText = "PINs don’t match"
+            errorText = String(localized: "PINs don’t match")
             return
         }
         errorText = nil
@@ -310,11 +310,11 @@ struct ParentalChangePINSheet: View {
         let a = newPIN.trimmingCharacters(in: .whitespacesAndNewlines)
         let b = confirm.trimmingCharacters(in: .whitespacesAndNewlines)
         guard ParentalControlsKeychain.isValidPIN(a) else {
-            errorText = "New PIN must be 4–6 digits"
+            errorText = String(localized: "New PIN must be 4–6 digits")
             return
         }
         guard a == b else {
-            errorText = "New PINs don’t match"
+            errorText = String(localized: "New PINs don’t match")
             return
         }
         do {

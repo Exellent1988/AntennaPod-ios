@@ -120,24 +120,24 @@ struct DataBackupSection: View {
     private var mediaToggleCaption: String {
         let est = mediaEstimate
         if est.fileCount == 0 {
-            return "Default off — keeps the ZIP small (JSON catalog only). No offline files on device right now."
+            return String(localized: "Default off — keeps the ZIP small (JSON catalog only). No offline files on device right now.")
         }
         let size = DataBackupService.formatBytes(est.bytes)
-        return "Default off — keeps the ZIP small. On: adds ~\(est.fileCount) file(s) (~\(size)) under downloads/ — larger ZIP, slower export/share/import (STORE, no compression)."
+        return String(localized: "Default off — keeps the ZIP small. On: adds ~\(est.fileCount) file(s) (~\(size)) under downloads/ — larger ZIP, slower export/share/import (STORE, no compression).")
     }
 
     private var exportMediaConfirmMessage: String {
         let est = mediaEstimate
         let size = DataBackupService.formatBytes(est.bytes)
-        return "This will pack \(est.fileCount) offline episode file(s) (~\(size)) into the ZIP under downloads/. Export and sharing can take a long time and use a lot of storage. Keychain secrets are still omitted."
+        return String(localized: "This will pack \(est.fileCount) offline episode file(s) (~\(size)) into the ZIP under downloads/. Export and sharing can take a long time and use a lot of storage. Keychain secrets are still omitted.")
     }
 
     private var importConfirmMessage: String {
-        "This replaces subscriptions, queue, playback, favorites, archive, tags, feed settings, download catalog, and Settings prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup."
+        String(localized: "This replaces subscriptions, queue, playback, favorites, archive, tags, feed settings, download catalog, and Settings prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup.")
     }
 
     private var helpText: String {
-        "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Optional offline media via the toggle (ZIP folder downloads/ ↔ Documents/downloads). gpodder password and Podcast Index keys stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML."
+        String(localized: "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Optional offline media via the toggle (ZIP folder downloads/ ↔ Documents/downloads). gpodder password and Podcast Index keys stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML.")
     }
 
     private func requestExport() {

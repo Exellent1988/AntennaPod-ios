@@ -150,11 +150,11 @@ enum PlaybackSourcePreference: String, CaseIterable, Identifiable {
     var helpText: String {
         switch self {
         case .preferDownload:
-            return "Play the offline file when available; otherwise stream from the network."
+            return String(localized: "Play the offline file when available; otherwise stream from the network.")
         case .preferStream:
-            return "Always stream from the network URL, even if the episode is downloaded."
+            return String(localized: "Always stream from the network URL, even if the episode is downloaded.")
         case .automatic:
-            return "Use the local file when it exists; otherwise stream. Default."
+            return String(localized: "Use the local file when it exists; otherwise stream. Default.")
         }
     }
 }

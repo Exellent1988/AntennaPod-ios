@@ -27,7 +27,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch; Feed detail **Download all** for unplayed/not-archived/not-downloaded, newest 50 soft cap)
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder; toolbar Clear queue with confirm)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
-- German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings headers, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript — **partial**, not full i18n)
+- German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings headers + footnotes/help captions, parental detail, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript — **partial**, not full i18n)
 - Accessibility / VoiceOver (beta polish; EpisodeRow combined labels + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
 - Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Play Next + Add to queue; toolbar menu Archive all + Mark all as played with confirm)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first; toolbar Clear history with confirm)
@@ -144,7 +144,7 @@ Default order: Discover → Continue → Inbox → Queue → Recently updated �
 
 Development language remains **English** (`developmentRegion: en`). `ios/project.yml` `knownRegions` includes `en`, `de`, and `Base`. User-visible copy lives in **`ios/AntennaPod/Localizable.xcstrings`** (String Catalog; en source + de).
 
-SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` string literals resolve via `LocalizedStringKey`. Plain `String` surfaces that need a lookup use `String(localized:)` (e.g. `HomeSectionId.label`, Add-mode / discovery ternaries, notification titles, charts help format string, Parental PIN Save/Unlock defaults).
+SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` string literals resolve via `LocalizedStringKey`. Plain `String` surfaces that need a lookup use `String(localized:)` (e.g. Settings/Backup/Parental help captions, `HomeSectionId.label`, Add-mode / discovery ternaries, notification titles, charts help format string, Parental PIN Save/Unlock defaults).
 
 **Covered (partial):**
 
@@ -157,8 +157,10 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` s
 - Download errors: banner title, Errors list title/empty, clear confirmation
 - Full player: Chapters / Transcript sheet titles + loading / unavailable copy
 - Local notifications: Download failed, Sync failed, “N new episodes”
+- Settings footnotes / help captions: Playback (speed, skip, video-as-audio, volume adaptation, skip silence, keep screen on, continuous playback, playback source), Feeds / Keep updated, Auto-download, Network / Downloads, Notifications, Downloads / Storage, Discovery, Sync provider blurbs, Backup help + media captions, Home layout footer, App Store rating / Siri / Widget / Watch / CarPlay notes
+- Parental controls detail: enable/options help, PIN sheet copy, lock status, common PIN errors
 
-**Still English (honest):** long Settings footnotes / help captions, parental-controls detail copy beyond Save/Unlock/Enable/Disable, OS/`localizedDescription` network errors, Statistics/Echo detail rows, Widget / Watch UI (separate targets — no shared String Catalog in this pass; leave English to avoid App Group build breakage), and many secondary accessibility hints. Regenerating XcodeGen on a Mac picks up the catalog + regions; device/simulator language German shows translated keys when present.
+**Still English (honest):** Widget / Watch UI (separate targets — no shared String Catalog; leave English to avoid App Group build breakage), Statistics/Echo detail rows, OS/`localizedDescription` network errors, and many secondary accessibility hints. Regenerating XcodeGen on a Mac picks up the catalog + regions; device/simulator language German shows translated keys when present.
 
 ## Accessibility (VoiceOver, beta polish)
 
