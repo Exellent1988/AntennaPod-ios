@@ -1735,6 +1735,24 @@
         }
       }
     },
+    "All Episodes remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for All Episodes info bar (episode count + remaining duration over soft-capped visible list).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All Episodes remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Episodenzeit %@"
+          }
+        }
+      }
+    },
     "Favorites remaining time %@": {
       "extractionState": "manual",
       "comment": "VoiceOver for Favorites info bar (episode count + remaining duration).",
