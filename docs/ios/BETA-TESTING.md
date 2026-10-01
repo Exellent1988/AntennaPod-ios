@@ -112,6 +112,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Home (Continue / Inbox / Queue / Discover) | ☐ Home (Continue / Inbox / Queue / Discover) |
 | ☐ Inbox (unplayed) + Swipes (Archive / Mark played / Play Next / Queue) | ☐ Inbox (unplayed) + swipes (Archive / Mark played / Play Next / Add to queue) |
 | ☐ Inbox: Alle als gehört markieren (Bestätigung) | ☐ Inbox: Mark all as played (confirm) |
+| ☐ Inbox: Sortierung (Neueste / Älteste zuerst; persistiert) | ☐ Inbox: sort (Newest / Oldest first; persisted) |
 | ☐ Queue: Remove, Archive, Reorder; Full-Player Add/Remove-Toggle | ☐ Queue: remove, archive, reorder; Full Player Add/Remove toggle |
 | ☐ Queue: Warteschlange leeren (Bestätigung) | ☐ Queue: Clear queue (confirm) |
 | ☐ Queue: Suche (Titel / Feed; kein Reorder während Filter) | ☐ Queue: search (title / feed; no reorder while filtering) |

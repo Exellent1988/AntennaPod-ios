@@ -8959,6 +8959,23 @@
           }
         }
       }
+    },
+    "Sort inbox": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort inbox"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posteingang sortieren"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

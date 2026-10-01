@@ -219,8 +219,30 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
 
 
 
-/// How Feed detail orders episodes in one podcast (client-side; Inbox / All Episodes unchanged).
+/// How Feed detail orders episodes in one podcast (client-side; All Episodes unchanged; Inbox has its own `inboxSort`).
 enum FeedEpisodeSort: String, CaseIterable, Identifiable {
+    case newestFirst
+    case oldestFirst
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .newestFirst: return String(localized: "Newest first")
+        case .oldestFirst: return String(localized: "Oldest first")
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .newestFirst: return "arrow.down"
+        case .oldestFirst: return "arrow.up"
+        }
+    }
+}
+
+/// How the Inbox tab orders episodes (client-side; Home New preview stays newest-first).
+enum InboxSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
 
@@ -302,7 +324,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips, queue lock).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, Inbox sort, All Episodes filter chips, queue lock).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -376,6 +398,7 @@ final class AppSettings: ObservableObject {
         static let homeHiddenSections = "settings.home.hiddenSections"
         static let subscriptionsSort = "settings.subscriptionsSort"
         static let feedEpisodeSort = "settings.feedEpisodeSort"
+        static let inboxSort = "settings.inboxSort"
         static let allEpisodesFilter = "settings.allEpisodesFilter"
         static let queueLocked = "settings.queueLocked"
     }
@@ -647,10 +670,20 @@ final class AppSettings: ObservableObject {
     }
 
     /// Feed detail episode list order by `pubDateEpochMs`: newest first (default) or oldest first.
-    /// Global preference (not per-feed) for simplicity. Does not change Inbox / All Episodes.
+    /// Global preference (not per-feed) for simplicity. Does not change All Episodes; Inbox uses `inboxSort`.
     @Published var feedEpisodeSort: FeedEpisodeSort {
         didSet {
             UserDefaults.standard.set(feedEpisodeSort.rawValue, forKey: Keys.feedEpisodeSort)
+        }
+    }
+
+
+    /// Inbox tab episode list order by `pubDateEpochMs`: newest first (default) or oldest first.
+    /// Missing dates sort last; stable tiebreaker is episode `id` (no `dateAdded` on the model).
+    /// Does not change Home New preview (always newest-first from `PodcastStore.inboxEpisodes`) or All Episodes.
+    @Published var inboxSort: InboxSort {
+        didSet {
+            UserDefaults.standard.set(inboxSort.rawValue, forKey: Keys.inboxSort)
         }
     }
 
@@ -851,6 +884,9 @@ final class AppSettings: ObservableObject {
         let feedEpSortRaw = UserDefaults.standard.string(forKey: Keys.feedEpisodeSort)
             ?? FeedEpisodeSort.newestFirst.rawValue
         feedEpisodeSort = FeedEpisodeSort(rawValue: feedEpSortRaw) ?? .newestFirst
+        let inboxSortRaw = UserDefaults.standard.string(forKey: Keys.inboxSort)
+            ?? InboxSort.newestFirst.rawValue
+        inboxSort = InboxSort(rawValue: inboxSortRaw) ?? .newestFirst
         let episodesFilterRaw = UserDefaults.standard.string(forKey: Keys.allEpisodesFilter)
             ?? AllEpisodesFilter.all.rawValue
         allEpisodesFilter = AllEpisodesFilter(rawValue: episodesFilterRaw) ?? .all
@@ -1070,6 +1106,7 @@ final class AppSettings: ObservableObject {
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
             subscriptionsSort: subscriptionsSort.rawValue,
             feedEpisodeSort: feedEpisodeSort.rawValue,
+            inboxSort: inboxSort.rawValue,
             allEpisodesFilter: allEpisodesFilter.rawValue,
             queueLocked: queueLocked
         )
@@ -1166,6 +1203,9 @@ final class AppSettings: ObservableObject {
         if let feedEpSortRaw = snap.feedEpisodeSort {
             feedEpisodeSort = FeedEpisodeSort(rawValue: feedEpSortRaw) ?? .newestFirst
         }
+        if let inboxSortRaw = snap.inboxSort {
+            inboxSort = InboxSort(rawValue: inboxSortRaw) ?? .newestFirst
+        }
         if let filterRaw = snap.allEpisodesFilter {
             allEpisodesFilter = AllEpisodesFilter(rawValue: filterRaw) ?? .all
         }
@@ -1226,6 +1266,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var subscriptionsSort: String? = nil
     /// Absent in older backups → newestFirst (default).
     var feedEpisodeSort: String? = nil
+    /// Absent in older backups → newestFirst (default).
+    var inboxSort: String? = nil
     /// Absent in older backups → all (default).
     var allEpisodesFilter: String? = nil
     /// Absent in older backups → unlocked (false).

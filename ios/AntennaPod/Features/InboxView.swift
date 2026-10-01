@@ -3,6 +3,7 @@ import SwiftUI
 struct InboxView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var settings: AppSettings
 
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -11,8 +12,25 @@ struct InboxView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
+    /// Inbox rows ordered by `AppSettings.inboxSort` (`pubDateEpochMs`).
+    /// Missing dates sort last in both modes; stable tiebreaker is episode `id`
+    /// (no `dateAdded` on `PodcastEpisode`). Does not mutate `PodcastStore.inboxEpisodes`
+    /// (Home New preview stays newest-first).
     private var items: [InboxEpisode] {
-        store.inboxEpisodes
+        store.inboxEpisodes.sorted { lhs, rhs in
+            switch settings.inboxSort {
+            case .newestFirst:
+                let l = lhs.episode.pubDateEpochMs ?? Int64.min
+                let r = rhs.episode.pubDateEpochMs ?? Int64.min
+                if l != r { return l > r }
+                return lhs.episode.id < rhs.episode.id
+            case .oldestFirst:
+                let l = lhs.episode.pubDateEpochMs ?? Int64.max
+                let r = rhs.episode.pubDateEpochMs ?? Int64.max
+                if l != r { return l < r }
+                return lhs.episode.id < rhs.episode.id
+            }
+        }
     }
 
     private var isSearching: Bool {
@@ -69,6 +87,21 @@ struct InboxView: View {
             }
             .navigationTitle("Inbox")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        Picker(selection: $settings.inboxSort) {
+                            ForEach(InboxSort.allCases) { sort in
+                                Label(sort.label, systemImage: sort.systemImage)
+                                    .tag(sort)
+                            }
+                        } label: {
+                            Text("Sort")
+                        }
+                    } label: {
+                        Label("Sort", systemImage: "arrow.up.arrow.down")
+                    }
+                    .accessibilityLabel("Sort inbox")
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button {

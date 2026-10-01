@@ -492,6 +492,7 @@ final class PodcastStore: ObservableObject {
 
     /// Unplayed, non-archived episodes across all subscriptions, newest first (by `pubDateEpochMs`).
     /// "New" matches playback state: not `isPlayed` (in-progress still counts as inbox). Archived are hidden from Inbox (and thus Home New preview).
+    /// Inbox tab may re-sort client-side via `AppSettings.inboxSort`; Home New uses this newest-first order.
     var inboxEpisodes: [InboxEpisode] {
         var items: [InboxEpisode] = []
         for feed in feeds {
