@@ -7,6 +7,7 @@ struct FeedDetailView: View {
     let feed: PodcastFeed
     @State private var showPerFeedSettings = false
     @State private var showDownloadAllConfirm = false
+    @State private var showMarkAllPlayedConfirm = false
 
     /// Live feed from the store when available (episodes refresh after pull/refresh).
     private var liveFeed: PodcastFeed {
@@ -20,6 +21,11 @@ struct FeedDetailView: View {
     /// Unplayed, not archived, not downloaded — newest first, soft-capped.
     private var downloadAllCandidates: [PodcastEpisode] {
         downloads.eligibleForFeedDownloadAll(in: liveFeed, store: store)
+    }
+
+    /// Unplayed, non-archived episodes on this feed only (for Mark all as played).
+    private var markAllPlayedCandidates: [PodcastEpisode] {
+        liveFeed.episodes.filter { !store.isPlayed($0.id) && !store.isArchived($0.id) }
     }
 
     var body: some View {
@@ -103,6 +109,13 @@ struct FeedDetailView: View {
                             Label("Download all", systemImage: "arrow.down.circle")
                         }
                         .disabled(downloadAllCandidates.isEmpty)
+
+                        Button {
+                            showMarkAllPlayedConfirm = true
+                        } label: {
+                            Label("Mark all as played", systemImage: "checkmark.circle")
+                        }
+                        .disabled(markAllPlayedCandidates.isEmpty)
                     } label: {
                         Label("Feed actions", systemImage: "ellipsis.circle")
                     }
@@ -130,6 +143,20 @@ struct FeedDetailView: View {
         } message: {
             Text(
                 "Queues download of \(downloadAllCandidates.count) unplayed episodes (newest first, max \(DownloadService.feedDownloadAllCap)). Played, archived, and already downloaded are skipped. Manual download Wi‑Fi only still applies."
+            )
+        }
+        .confirmationDialog(
+            "Mark all as played?",
+            isPresented: $showMarkAllPlayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as played") {
+                store.markAllPlayed(inFeedId: liveFeed.id)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Marks \(markAllPlayedCandidates.count) unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled."
             )
         }
         .sheet(isPresented: $showPerFeedSettings) {

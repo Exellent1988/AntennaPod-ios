@@ -593,6 +593,19 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Mark every unplayed, non-archived episode in one feed as played (bulk).
+    /// Snapshots eligible ids first, then calls `markPlayed` per id so auto-delete-after-playing
+    /// and queue removal side effects still apply. Feed-scoped only; does not archive.
+    func markAllPlayed(inFeedId feedId: String) {
+        guard let feed = feeds.first(where: { $0.id == feedId }) else { return }
+        let ids = feed.episodes
+            .filter { !isPlayed($0.id) && !isArchived($0.id) }
+            .map(\.id)
+        for id in ids {
+            markPlayed(id)
+        }
+    }
+
     /// Archived episodes across feeds, newest archived first.
     var archivedEpisodes: [ArchivedEpisode] {
         var items: [ArchivedEpisode] = []

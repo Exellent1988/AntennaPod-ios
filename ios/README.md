@@ -45,7 +45,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Share podcast / episode (FeedDetail toolbar share feed URL; EpisodeRow ShareLink / context menu / FeedDetail swipe; full player; prefer page link else enclosure)
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
-- Mark played / unplayed (manual + smart-mark 30s)
+- Mark played / unplayed (manual + smart-mark 30s; Inbox + Feed detail Mark all as played with confirm)
 - Settings tab (theme light/dark/system, **Home layout** (show/hide + reorder), default playback speed, rewind/FF intervals, skip intro/outro, volume adaptation, skip silence preference, Keep screen on, playback source, play video as audio only, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors / sync errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, App Store rating prompt, Siri/Shortcuts note, Homescreen widget note, Apple Watch note, CarPlay note, About)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
@@ -251,7 +251,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 | Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`); toolbar Clear queue (confirm) |
 | Downloads | — | Delete download | — |
 | Inbox | Mark played | Archive | Toolbar menu: Mark all as played (confirm) + Archive all |
-| Feed detail | Archive / Restore | Play Next + Queue + Share | Toolbar Download all (confirm) + EpisodeRow context: Play Next + Add to queue |
+| Feed detail | Archive / Restore | Play Next + Queue + Share | Toolbar Download all + Mark all as played (confirm) + EpisodeRow context: Play Next + Add to queue |
 | History | Mark unplayed (if played) | Remove playback state | — |
 | Favorites | Archive | Unfavorite | — |
 | Archived | — | Restore | — |
@@ -365,6 +365,8 @@ Settings → **Feeds / Keep updated → New episodes**: **Inbox only** (default)
 ## Auto-download
 
 **Download all (Feed detail):** toolbar menu **Download all** with confirmation showing the eligible count. Eligible = unplayed, not archived, not already downloaded / in-flight, remote media URL (skips local-folder files). Soft cap **newest 50**. Enqueues via `DownloadService.downloadAllManual` (`.manual` path); honors **Manual download Wi‑Fi only** once up front — on block shows the same `lastError` / error-log feedback as a single manual download (banner on Feed detail). Does not download played/archived and does not wipe existing downloads.
+
+**Mark all as played (Feed detail):** same toolbar menu, **Mark all as played** with confirmation showing the count of unplayed, non-archived episodes on **this podcast only**. On confirm calls `PodcastStore.markAllPlayed(inFeedId:)` → `markPlayed` per id (auto-delete-after-playing + queue removal still apply). Does **not** archive and does **not** touch other feeds. Disabled when count is 0.
 
 Settings → **Auto-download**: global on/off (default off) and **Episodes per feed** cap (1 / 2 / 3 / 5, default 2). **Wi‑Fi only** for auto-download lives under **Network / Downloads** (default on). After every feed refresh (`refreshAllFeeds`, single-podcast refresh, Inbox pull-to-refresh, Keep updated), `AutoDownloadCoordinator` picks the newest unplayed episodes that are not already downloaded or in-flight and enqueues them through `DownloadService.download` (`.automatic` source skips the manual Wi‑Fi gate). Storage-limit eviction after successful downloads is unchanged. **Per-feed** Auto-download (Use global / Always / Never) is on each podcast’s settings sheet (Feed detail → gear); Always enqueues even when global is off; Never skips that feed; episode cap and Wi‑Fi-only remain global.
 

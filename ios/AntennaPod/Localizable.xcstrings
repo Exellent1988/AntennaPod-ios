@@ -4250,6 +4250,23 @@
           }
         }
       }
+    },
+    "Marks %lld unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld ungehörte Episoden in diesem Podcast als gehört. Archiviert nicht; Auto-Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
