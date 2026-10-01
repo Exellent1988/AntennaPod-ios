@@ -15,6 +15,7 @@ enum PodcastPersistence {
     private static var pendingDownloadsURL: URL { directory.appendingPathComponent("pending-downloads.json") }
     private static var feedSettingsURL: URL { directory.appendingPathComponent("feed-settings.json") }
     private static var favoritesURL: URL { directory.appendingPathComponent("favorites.json") }
+    private static var archivedURL: URL { directory.appendingPathComponent("archived.json") }
     private static var feedTagsURL: URL { directory.appendingPathComponent("feed-tags.json") }
     private static var downloadErrorsURL: URL { directory.appendingPathComponent("download-errors.json") }
 
@@ -84,6 +85,15 @@ enum PodcastPersistence {
 
     static func saveFavorites(_ map: [String: Int64]) {
         encode(map, to: favoritesURL)
+    }
+
+    /// Episode id → archived-at epoch ms (side map; archived ≠ played).
+    static func loadArchived() -> [String: Int64] {
+        decode(archivedURL) ?? [:]
+    }
+
+    static func saveArchived(_ map: [String: Int64]) {
+        encode(map, to: archivedURL)
     }
 
     /// Per-feed tag names keyed by `PodcastFeed.id` (side map; empty arrays omitted).

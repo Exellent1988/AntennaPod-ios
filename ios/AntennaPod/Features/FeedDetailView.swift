@@ -29,6 +29,17 @@ struct FeedDetailView: View {
             Section("Episodes") {
                 ForEach(liveFeed.episodes) { episode in
                     EpisodeRow(episode: episode, feedTitle: liveFeed.title)
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button {
+                                store.toggleArchived(episode.id)
+                            } label: {
+                                Label(
+                                    store.isArchived(episode.id) ? "Restore" : "Archive",
+                                    systemImage: store.isArchived(episode.id) ? "arrow.uturn.backward" : "archivebox"
+                                )
+                            }
+                            .tint(store.isArchived(episode.id) ? .green : .orange)
+                        }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             if let url = episode.shareURL {
                                 ShareLink(
@@ -124,6 +135,11 @@ struct EpisodeRow: View {
                         .foregroundStyle(.yellow)
                         .accessibilityLabel("Favorite")
                 }
+                if store.isArchived(episode.id) {
+                    Image(systemName: "archivebox.fill")
+                        .foregroundStyle(.orange)
+                        .accessibilityLabel("Archived")
+                }
                 if state.isPlayed {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(.secondary)
@@ -200,11 +216,23 @@ struct EpisodeRow: View {
                 .buttonStyle(.bordered)
                 .tint(store.isFavorite(episode.id) ? .yellow : nil)
 
+                Button {
+                    store.toggleArchived(episode.id)
+                } label: {
+                    Label(
+                        store.isArchived(episode.id) ? "Restore" : "Archive",
+                        systemImage: store.isArchived(episode.id) ? "archivebox.fill" : "archivebox"
+                    )
+                }
+                .buttonStyle(.bordered)
+                .tint(store.isArchived(episode.id) ? .orange : nil)
+
                 episodeShareControl
             }
             .labelStyle(.iconOnly)
         }
         .padding(.vertical, 4)
+        .opacity(store.isArchived(episode.id) ? 0.55 : 1)
         .contextMenu {
             if let url = episode.shareURL {
                 ShareLink(
@@ -221,6 +249,14 @@ struct EpisodeRow: View {
                 Label(
                     store.isFavorite(episode.id) ? "Unfavorite" : "Favorite",
                     systemImage: store.isFavorite(episode.id) ? "star.slash" : "star"
+                )
+            }
+            Button {
+                store.toggleArchived(episode.id)
+            } label: {
+                Label(
+                    store.isArchived(episode.id) ? "Restore" : "Archive",
+                    systemImage: store.isArchived(episode.id) ? "arrow.uturn.backward" : "archivebox"
                 )
             }
             Button {

@@ -73,6 +73,11 @@ struct SubscriptionsView: View {
                         Label("Favorites", systemImage: "star")
                     }
                     NavigationLink {
+                        ArchivedView()
+                    } label: {
+                        Label("Archived", systemImage: "archivebox")
+                    }
+                    NavigationLink {
                         HistoryView()
                     } label: {
                         Label("History", systemImage: "clock.arrow.circlepath")

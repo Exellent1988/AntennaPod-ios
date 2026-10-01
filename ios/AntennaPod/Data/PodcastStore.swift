@@ -20,6 +20,10 @@ final class PodcastStore: ObservableObject {
     @Published var favoriteAtById: [String: Int64] = [:] {
         didSet { PodcastPersistence.saveFavorites(favoriteAtById) }
     }
+    /// Episode id → archived-at epoch ms (`archived.json` side map). Archived ≠ played.
+    @Published var archivedAtById: [String: Int64] = [:] {
+        didSet { PodcastPersistence.saveArchived(archivedAtById) }
+    }
     /// Feed id → tag names (`feed-tags.json` side map). Tags exist only while assigned.
     @Published var tagsByFeedId: [UUID: [String]] = [:] {
         didSet { PodcastPersistence.saveFeedTags(tagsByFeedId) }
@@ -46,6 +50,7 @@ final class PodcastStore: ObservableObject {
         playbackStates = PodcastPersistence.loadPlaybackStates()
         feedSettingsById = PodcastPersistence.loadFeedSettings()
         favoriteAtById = PodcastPersistence.loadFavorites()
+        archivedAtById = PodcastPersistence.loadArchived()
         tagsByFeedId = PodcastPersistence.loadFeedTags()
     }
 
@@ -76,6 +81,7 @@ final class PodcastStore: ObservableObject {
         for id in ids {
             playbackStates.removeValue(forKey: id)
             favoriteAtById.removeValue(forKey: id)
+            archivedAtById.removeValue(forKey: id)
         }
     }
 
@@ -376,12 +382,12 @@ final class PodcastStore: ObservableObject {
 
     // MARK: - Inbox (new / unplayed)
 
-    /// Unplayed episodes across all subscriptions, newest first (by `pubDateEpochMs`).
-    /// "New" matches playback state: not `isPlayed` (in-progress still counts as inbox).
+    /// Unplayed, non-archived episodes across all subscriptions, newest first (by `pubDateEpochMs`).
+    /// "New" matches playback state: not `isPlayed` (in-progress still counts as inbox). Archived are hidden from Inbox (and thus Home New preview).
     var inboxEpisodes: [InboxEpisode] {
         var items: [InboxEpisode] = []
         for feed in feeds {
-            for episode in feed.episodes where !isPlayed(episode.id) {
+            for episode in feed.episodes where !isPlayed(episode.id) && !isArchived(episode.id) {
                 items.append(InboxEpisode(episode: episode, feedTitle: feed.title))
             }
         }
@@ -440,6 +446,79 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+
+
+    // MARK: - Archive / restore
+
+    func isArchived(_ episodeId: String) -> Bool {
+        archivedAtById[episodeId] != nil
+    }
+
+    func archive(_ episodeId: String) {
+        guard !isArchived(episodeId) else { return }
+        archivedAtById[episodeId] = Int64(Date().timeIntervalSince1970 * 1000)
+    }
+
+    func restore(_ episodeId: String) {
+        archivedAtById.removeValue(forKey: episodeId)
+    }
+
+    func toggleArchived(_ episodeId: String) {
+        if isArchived(episodeId) {
+            restore(episodeId)
+        } else {
+            archive(episodeId)
+        }
+    }
+
+    /// Archive every episode currently in the Inbox list (bulk).
+    func archiveAllInbox() {
+        let ids = inboxEpisodes.map(\.episode.id)
+        let now = Int64(Date().timeIntervalSince1970 * 1000)
+        var map = archivedAtById
+        for id in ids {
+            if map[id] == nil {
+                map[id] = now
+            }
+        }
+        archivedAtById = map
+    }
+
+    /// Archived episodes across feeds, newest archived first.
+    var archivedEpisodes: [ArchivedEpisode] {
+        var items: [ArchivedEpisode] = []
+        for feed in feeds {
+            for episode in feed.episodes {
+                guard let at = archivedAtById[episode.id] else { continue }
+                items.append(
+                    ArchivedEpisode(
+                        episode: episode,
+                        feedTitle: feed.title,
+                        archivedAtEpochMs: at
+                    )
+                )
+            }
+        }
+        let knownIds = Set(items.map(\.id))
+        for episode in queue where !knownIds.contains(episode.id) {
+            guard let at = archivedAtById[episode.id] else { continue }
+            let title = feed(containingEpisodeId: episode.id)?.title ?? ""
+            items.append(
+                ArchivedEpisode(
+                    episode: episode,
+                    feedTitle: title,
+                    archivedAtEpochMs: at
+                )
+            )
+        }
+        items.sort { lhs, rhs in
+            if lhs.archivedAtEpochMs != rhs.archivedAtEpochMs {
+                return lhs.archivedAtEpochMs > rhs.archivedAtEpochMs
+            }
+            return lhs.episode.title.localizedCaseInsensitiveCompare(rhs.episode.title) == .orderedAscending
+        }
+        return items
+    }
 
     // MARK: - Favorites (starred)
 

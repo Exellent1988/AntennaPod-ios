@@ -31,10 +31,27 @@ struct InboxView: View {
                 } else {
                     ForEach(items) { item in
                         EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button {
+                                    store.archive(item.episode.id)
+                                } label: {
+                                    Label("Archive", systemImage: "archivebox")
+                                }
+                                .tint(.orange)
+                            }
                     }
                 }
             }
             .navigationTitle("Inbox")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    if !items.isEmpty, !isSearching {
+                        Button("Archive all") {
+                            store.archiveAllInbox()
+                        }
+                    }
+                }
+            }
             .navigationDestination(for: PodcastFeed.self) { feed in
                 FeedDetailView(feed: feed)
             }
