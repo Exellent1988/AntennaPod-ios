@@ -11398,6 +11398,24 @@
           }
         }
       }
+    },
+    "Archived remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Archived info bar (episode count + remaining duration over visible sort+search list; archived≠played; played→0).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archived remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Archivzeit %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
