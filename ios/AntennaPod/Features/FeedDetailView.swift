@@ -99,6 +99,11 @@ struct FeedDetailView: View {
         liveFeed.displayTexts
     }
 
+    /// Channel podcast:podroll when the feed provided remoteItems — empty → hide (never invent recommendations).
+    private var displayPodrollItems: [PodcastRemoteItem] {
+        liveFeed.displayPodrollItems
+    }
+
     /// Podcast Index `podcast:guid` when the feed provided it — hide when missing (never invent).
     private var displayPodcastGuid: String? {
         liveFeed.displayPodcastGuid
@@ -385,6 +390,14 @@ struct FeedDetailView: View {
             if !displayTexts.isEmpty {
                 Section {
                     PodcastTxtListView(texts: displayTexts)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:podroll / remoteItem — creator recommendations; Open / Copy / Subscribe preview; hide when none.
+            // Display-only — never invent shows; no Podcast Index GUID resolution.
+            if !displayPodrollItems.isEmpty {
+                Section {
+                    PodcastPodrollListView(items: displayPodrollItems)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -740,6 +753,7 @@ struct FeedDetailView: View {
         }
         .sheet(isPresented: $showFeedDescription) {
             FeedDescriptionSheetView(feed: liveFeed)
+                .environmentObject(store)
         }
         .safeAreaInset(edge: .bottom) {
             if let error = downloads.lastError {

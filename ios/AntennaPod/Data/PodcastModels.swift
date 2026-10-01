@@ -1021,6 +1021,127 @@ enum PodcastTxtDisplay {
     }
 }
 
+
+/// Podcast Index `podcast:remoteItem` under channel `podcast:podroll` — creator-recommended feed.
+/// Attributes: `feedGuid` (required by namespace), optional `feedUrl` / `title` / `medium` / `itemGuid`.
+/// **Display-only:** title + url/guid; Open http(s) feed URL / Copy / Subscribe via existing preview when URL present.
+/// Feed-provided only — never invent recommendations. itemGuid is uncommon for podroll and ignored for subscribe.
+struct PodcastRemoteItem: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields.
+    var id: String { "\(feedGuid ?? "")|\(feedUrl ?? "")|\(title ?? "")" }
+    /// Required `feedGuid` from the feed when provided. Nil when absent — never invent.
+    var feedGuid: String?
+    /// Optional remote feed URL from the feed. Nil when absent — never invent.
+    var feedUrl: String?
+    /// Optional display title hint from the feed. Nil when absent — never invent / never look up.
+    var title: String?
+    /// Optional `medium` attribute (e.g. podcast, music). Nil when absent — never invent.
+    var medium: String?
+    /// Optional `itemGuid` (episode pointer). Rare for podroll; stored when present — never invent.
+    var itemGuid: String?
+
+    init(
+        feedGuid: String? = nil,
+        feedUrl: String? = nil,
+        title: String? = nil,
+        medium: String? = nil,
+        itemGuid: String? = nil
+    ) {
+        self.feedGuid = feedGuid
+        self.feedUrl = feedUrl
+        self.title = title
+        self.medium = medium
+        self.itemGuid = itemGuid
+    }
+
+    /// Trimmed non-empty feedGuid when the feed set it.
+    var displayFeedGuid: String? {
+        guard let feedGuid else { return nil }
+        let trimmed = feedGuid.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty feedUrl string when the feed set it.
+    var displayFeedUrl: String? {
+        guard let feedUrl else { return nil }
+        let trimmed = feedUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty title when the feed set it. Hidden when missing — never invent titles.
+    var displayTitle: String? {
+        guard let title else { return nil }
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty medium when the feed set it.
+    var displayMedium: String? {
+        guard let medium else { return nil }
+        let trimmed = medium.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) URL for the remote feed when `feedUrl` looks like one. Nil otherwise — never invent.
+    var openURL: URL? {
+        guard let raw = displayFeedUrl else { return nil }
+        guard let parsed = URL(string: raw) else { return nil }
+        let scheme = parsed.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return parsed
+    }
+
+    /// Primary line for UI: title → feedUrl → feedGuid (first non-empty). Nil when none.
+    var primaryLabel: String? {
+        displayTitle ?? displayFeedUrl ?? displayFeedGuid
+    }
+}
+
+/// Display helpers for channel `podcast:podroll` / nested `podcast:remoteItem`.
+/// Feed-provided only; Open / Copy / optional Subscribe-by-URL preview. Cap 20.
+enum PodcastPodrollDisplay {
+    /// Soft UI cap — show first N after feed order; honesty footnote when more exist.
+    static let displayCap = 20
+
+    /// Entries with feedGuid and/or feedUrl (at least one identifier). Feed order. Never invent.
+    static func valid(_ items: [PodcastRemoteItem]) -> [PodcastRemoteItem] {
+        items.compactMap { item in
+            let guid = item.displayFeedGuid
+            let url = item.displayFeedUrl
+            guard guid != nil || url != nil else { return nil }
+            return PodcastRemoteItem(
+                feedGuid: guid,
+                feedUrl: url,
+                title: item.displayTitle,
+                medium: item.displayMedium,
+                itemGuid: {
+                    guard let g = item.itemGuid else { return nil }
+                    let t = g.trimmingCharacters(in: .whitespacesAndNewlines)
+                    return t.isEmpty ? nil : t
+                }()
+            )
+        }
+    }
+
+    /// First `displayCap` + whether the feed listed more valid remote items.
+    static func capped(_ items: [PodcastRemoteItem]) -> (shown: [PodcastRemoteItem], truncated: Bool) {
+        let list = valid(items)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+
+    /// Pasteboard line: optional title + url + guid from the feed only.
+    static func copyText(_ item: PodcastRemoteItem) -> String {
+        var parts: [String] = []
+        if let title = item.displayTitle { parts.append(title) }
+        if let url = item.displayFeedUrl { parts.append(url) }
+        if let guid = item.displayFeedGuid { parts.append(guid) }
+        return parts.joined(separator: "\n")
+    }
+}
+
 /// Podcast Index `podcast:contentLink` — fallback / alternate platform link under `podcast:liveItem` (or item).
 /// Element text = label; `href` required. Feed-provided only — never invent URLs.
 struct PodcastContentLink: Identifiable, Hashable, Codable {
@@ -1565,6 +1686,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel-level Podcast Index `podcast:txt` (optional purpose + text) when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — Copy / Open http(s); no Social / Matrix clients.
     var texts: [PodcastTxt]
+    /// Channel-level Podcast Index `podcast:podroll` / nested `podcast:remoteItem` when the feed provides them.
+    /// Empty when absent — never invent recommendations; UI hides when empty. **Display-only** — Open / Copy / Subscribe-by-URL preview.
+    var podrollItems: [PodcastRemoteItem]
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -1682,6 +1806,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastTxtDisplay.valid(texts)
     }
 
+    /// Channel-level `podcast:podroll` remote items (hide when empty — never invent recommendations; display-only).
+    var displayPodrollItems: [PodcastRemoteItem] {
+        PodcastPodrollDisplay.valid(podrollItems)
+    }
+
     init(
         id: UUID,
         title: String,
@@ -1705,6 +1834,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         values: [PodcastValue] = [],
         liveItems: [PodcastLiveItem] = [],
         texts: [PodcastTxt] = [],
+        podrollItems: [PodcastRemoteItem] = [],
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -1729,6 +1859,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.values = values
         self.liveItems = liveItems
         self.texts = texts
+        self.podrollItems = podrollItems
         self.episodes = episodes
     }
 
@@ -1756,11 +1887,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         values = try c.decodeIfPresent([PodcastValue].self, forKey: .values) ?? []
         liveItems = try c.decodeIfPresent([PodcastLiveItem].self, forKey: .liveItems) ?? []
         texts = try c.decodeIfPresent([PodcastTxt].self, forKey: .texts) ?? []
+        podrollItems = try c.decodeIfPresent([PodcastRemoteItem].self, forKey: .podrollItems) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, episodes
     }
 }
 

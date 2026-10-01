@@ -16553,6 +16553,186 @@
           }
         }
       }
+    },
+    "Recommended podcasts": {
+      "extractionState": "manual",
+      "comment": "Section title for podcast:podroll list in Feed detail / description.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommended podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfohlene Podcasts"
+          }
+        }
+      }
+    },
+    "Recommended podcast": {
+      "extractionState": "manual",
+      "comment": "VoiceOver prefix for a podcast:podroll remoteItem row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommended podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfohlener Podcast"
+          }
+        }
+      }
+    },
+    "Feed GUID %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for podcast:remoteItem feedGuid attribute.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed GUID %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-GUID %@"
+          }
+        }
+      }
+    },
+    "Medium %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for optional podcast:remoteItem medium attribute.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medium %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medium %@"
+          }
+        }
+      }
+    },
+    "These recommendations come from the feed (podcast:podroll). Open or copy a feed URL, or preview Subscribe when a URL is present — this app does not invent shows or resolve Podcast Index GUIDs.": {
+      "extractionState": "manual",
+      "comment": "Honesty footnote for podcast:podroll display-only list.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These recommendations come from the feed (podcast:podroll). Open or copy a feed URL, or preview Subscribe when a URL is present — this app does not invent shows or resolve Podcast Index GUIDs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Empfehlungen stammen aus dem Feed (podcast:podroll). Feed-URL öffnen oder kopieren, oder Abo-Vorschau wenn eine URL vorhanden ist — diese App erfindet keine Shows und löst keine Podcast-Index-GUIDs auf."
+          }
+        }
+      }
+    },
+    "Showing first 20 recommended podcasts from the feed.": {
+      "extractionState": "manual",
+      "comment": "Truncation honesty when more than 20 podcast:podroll remoteItems.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first 20 recommended podcasts from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeige die ersten 20 empfohlenen Podcasts aus dem Feed."
+          }
+        }
+      }
+    },
+    "Recommendation copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Alert message after copying a podcast:podroll remoteItem.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommendation copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlung in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the recommended podcast title, feed URL, and GUID to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy on podcast:podroll row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the recommended podcast title, feed URL, and GUID to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert Titel, Feed-URL und GUID der Empfehlung in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the recommended feed URL in the system browser": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Open on podcast:podroll http(s) row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the recommended feed URL in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die empfohlene Feed-URL im Systembrowser"
+          }
+        }
+      }
+    },
+    "Opens a feed preview to confirm Subscribe for the recommended podcast": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Subscribe on podcast:podroll row with feedUrl.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a feed preview to confirm Subscribe for the recommended podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet eine Feed-Vorschau zum Bestätigen des Abos für den empfohlenen Podcast"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
