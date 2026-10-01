@@ -762,6 +762,25 @@ final class PodcastStore: ObservableObject {
         return candidates.count
     }
 
+    /// Append every completed download that is not already queued (bulk).
+    /// Uses `DownloadService.downloads` **catalog order** (array as persisted — oldest completed
+    /// first; new finishes append). Same full completed catalog as Delete played downloads /
+    /// tab badge — **not** UI `downloadsSort`, chip filter, or searchable filter.
+    /// Skips already-queued ids (no duplicates). Uses `enqueue` (append), not `playNext`.
+    /// Safe while queue lock is on (reorder-only — enqueue stays allowed).
+    /// Requires `downloads` wired on the store (same as auto-delete). Returns 0 if unset.
+    /// Callers must confirm first (Downloads toolbar `confirmationDialog`).
+    /// - Returns: number of episodes newly appended.
+    @discardableResult
+    func enqueueAllDownloads() -> Int {
+        guard let downloads else { return 0 }
+        let candidates = downloads.downloads.map(\.episode).filter { !isInQueue($0.id) }
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
     /// Starred episodes across feeds, newest favorited first.
     var favoriteEpisodes: [FavoriteEpisode] {
         var items: [FavoriteEpisode] = []

@@ -10,6 +10,7 @@ struct DownloadsView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
     @State private var showDeletePlayedConfirm = false
+    @State private var showEnqueueAllConfirm = false
     /// Single download pending swipe-delete confirmation (nil = dialog dismissed).
     @State private var episodePendingDelete: PodcastEpisode?
 
@@ -69,6 +70,14 @@ struct DownloadsView: View {
 
     private var playedDownloadsDeleteSizeLabel: String {
         DownloadStorageUsage.formatBytes(downloads.playedDownloadsEligibleByteSize(store: store))
+    }
+
+    /// Episodes from the **full completed Downloads catalog** (`DownloadService.downloads`,
+    /// catalog/persist order — oldest completed first) that are not already queued — same catalog
+    /// as Delete played downloads / tab badge, **not** the chip/search filtered list.
+    /// Confirm count and `enqueueAllDownloads()` share this eligibility.
+    private var enqueueAllDownloadsCandidatesCount: Int {
+        downloads.downloads.filter { !store.isInQueue($0.episode.id) }.count
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** filtered list.
@@ -340,6 +349,14 @@ struct DownloadsView: View {
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
+                        Button {
+                            showEnqueueAllConfirm = true
+                        } label: {
+                            Label("Add all to queue", systemImage: "text.append")
+                        }
+                        .disabled(enqueueAllDownloadsCandidatesCount == 0)
+                        .accessibilityHint("Appends downloaded episodes not already queued")
+
                         Button(role: .destructive) {
                             showDeletePlayedConfirm = true
                         } label: {
@@ -349,8 +366,22 @@ struct DownloadsView: View {
                     } label: {
                         Label("Downloads actions", systemImage: "ellipsis.circle")
                     }
-                    .disabled(playedDownloadsForDelete.isEmpty)
+                    // Menu available whenever the completed catalog is non-empty (Add all / Delete played
+                    // each disable independently — same honesty as Favorites Add all + Clear).
+                    .disabled(downloads.downloads.isEmpty)
                 }
+            }
+            .confirmationDialog(
+                "Add all to queue?",
+                isPresented: $showEnqueueAllConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Add all to queue") {
+                    store.enqueueAllDownloads()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Appends \(enqueueAllDownloadsCandidatesCount) downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue.")
             }
             .confirmationDialog(
                 "Delete played downloads?",

@@ -11518,6 +11518,40 @@
           }
         }
       }
+    },
+    "Appends downloaded episodes not already queued": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends downloaded episodes not already queued"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht heruntergeladene Episoden ein, die noch nicht in der Warteschlange sind"
+          }
+        }
+      }
+    },
+    "Appends %lld downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld heruntergeladene Episoden am Ende der Warteschlange ein (Katalogreihenfolge — älteste abgeschlossene zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Downloads-Katalog (wie Gehörte Downloads löschen), nicht Chip-/Suchfilter. Warteschlangen-Sperre blockiert Einreihen nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
