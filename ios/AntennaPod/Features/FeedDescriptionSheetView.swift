@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Scrollable podcast / feed description sheet (plain text; HTML stripped for beta).
 /// Parallel to `EpisodeDescriptionSheetView` shownotes. Uses `PodcastFeed.descriptionText` only —
@@ -16,11 +17,19 @@ struct FeedDescriptionSheetView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
 
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
+
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
     private var plainDescription: String {
         guard let raw = feed.descriptionText else { return "" }
         return HTMLTextStripping.plainText(from: raw)
+    }
+
+    private var hasPlainDescription: Bool {
+        !plainDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
@@ -77,7 +86,16 @@ struct FeedDescriptionSheetView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
                 }
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Button {
+                        copyPodcastDescription()
+                    } label: {
+                        Image(systemName: "doc.plaintext")
+                    }
+                    .disabled(!hasPlainDescription)
+                    .accessibilityLabel(String(localized: "Copy podcast description"))
+                    .accessibilityHint(String(localized: "Copies the podcast description to the pasteboard"))
+
                     if let url = websiteURL {
                         Button {
                             openURL(url)
@@ -97,6 +115,15 @@ struct FeedDescriptionSheetView: View {
                     .padding(.vertical, 6)
                     .background(.bar)
             }
+            .alert(
+                String(localized: "Copied"),
+                isPresented: $showCopiedAlert
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(copiedAlertMessage)
+            }
+            .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
         .onDisappear {
             debounceTask?.cancel()
@@ -145,6 +172,15 @@ struct FeedDescriptionSheetView: View {
                 .padding()
             }
         }
+    }
+
+    private func copyPodcastDescription() {
+        let text = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Podcast description copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private func scheduleFilter(for term: String) {

@@ -54,6 +54,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Share podcast / episode (system share sheet; episode URL: page link → enclosure → feed site/RSS; `Title — Podcast` message; **Share with position** = same URL + text timestamp `(12:34)` when current item; full player + Shownotes toolbar + EpisodeRow / swipe / context; FeedDetail podcast share + Copy feed URL; no AntennaPod deep link / no `#t=` / no gPodder fake share)
 - Open episode website (opens episode `link` http(s) in system Safari/default browser via `openURL`; full player secondary + Shownotes toolbar + EpisodeRow context; hidden when no usable link; never enclosure / never invents URL; no in-app WebView)
 - Copy episode link (pasteboard `UIPasteboard.general` + brief Copied alert / haptic like Copy feed URL; webpage `link` http(s) only via `websiteURL`; full player + Shownotes + EpisodeRow context; optional clearly labeled **Copy media URL** for enclosure; never silently copies enclosure as episode link; never invents URL)
+- Copy shownotes (Shownotes toolbar; already-loaded plain stripped text → pasteboard + Copied alert / haptic; disabled when empty; optional **Copy podcast description** on Feed description sheet; no remote HTML fetch)
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions list searchable title/`descriptionText`; Queue/Downloads/Favorites/History/Archived/Home title/feed; Feed detail episode title; not iTunes; **remaining time** info bar over **episode hits only**)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (EpisodeRow button/context, Feed leading swipe, **Full player** secondary, All Episodes leading swipe via `PodcastStore.isPlayed` / `togglePlayed` — same `playback.json`; no seek/stop on toggle; VoiceOver hints; Smart mark Off/15/30/60/120 default 30; Inbox + Feed detail Mark all as played with confirm; Feed detail **Add all to queue** with confirm on full feed catalog)
@@ -371,6 +372,15 @@ Copies the episode webpage URL (`PodcastEpisode.websiteURL` / `link` http(s) onl
 - **Entry points:** full player secondary; **Shownotes** toolbar (`doc.on.doc` / `link`); EpisodeRow context menu.
 - EN / DE + VoiceOver labels/hints for both actions.
 
+## Copy shownotes
+
+Copies already-loaded **plain** shownotes text (`HTMLTextStripping` on `PodcastEpisode.descriptionText`) to the pasteboard — same confirmation pattern as **Copy episode link** (`UIPasteboard.general` + brief **Copied** alert + success haptic).
+
+- **Disabled** when the description is empty / blank after strip (no invented text).
+- Does **not** fetch remote HTML or produce rich/AttributedString pasteboard content — plain text only.
+- **Entry:** Shownotes sheet toolbar (`doc.plaintext`).
+- **Parallel:** Feed / podcast description sheet offers **Copy podcast description** the same way.
+
 ## Full player
 
 Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed (**tap** cycles `0.8 / 1.0 / 1.1 / 1.2 / 1.3 / 1.5 / 2.0`, wrap; **long-press** preset menu + **Custom…** 0.50×–3.00× / 0.05 steps → `setRate`, optional Also set as default — same on mini player), sleep timer (same presets + Custom… 1–180 min as mini; mini also shows live remaining countdown / End of ep. on the moon control badge), plus **Play from beginning** / **mark played / unplayed** (`PodcastStore.isPlayed` / `togglePlayed` — same `playback.json` as lists; does **not** seek or stop playback; VoiceOver hints; hidden when nothing playing) / **favorite** (star toggle → `PodcastStore.toggleFavorite`; VoiceOver Add/Remove from favorites; hidden when nothing playing) / queue / download / **Open episode website** (when `episode.link` is http(s)) / **Copy episode link** / optional **Copy media URL** / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
@@ -478,7 +488,7 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 ## Episode description / Shownotes (beta)
 
 - **Parse:** `NativeRssAtomParser` stores item `description` / `summary` / `content` / `subtitle` (prefer longer; CDATA supported) as `PodcastEpisode.descriptionText`. Populated on subscribe / refresh (existing subscriptions need a refresh).
-- **Full player:** **Shownotes** button opens a sheet with scrollable **plain text** (`HTMLTextStripping` — tags removed; not a rich HTML renderer). Empty state when missing / blank after strip. Toolbar: **Open episode website** (when `link` is http(s)) + **Copy episode link** + optional **Copy media URL** + Share. **`.searchable`** filters **already-loaded** plain paragraphs/lines case-insensitively with ~250 ms debounce; empty state when no matches. Does **not** fetch remote HTML beyond the episode feed field — no WebView.
+- **Full player:** **Shownotes** button opens a sheet with scrollable **plain text** (`HTMLTextStripping` — tags removed; not a rich HTML renderer). Empty state when missing / blank after strip. Toolbar: **Copy shownotes** (plain text → pasteboard + Copied alert; disabled when empty) + **Open episode website** (when `link` is http(s)) + **Copy episode link** + optional **Copy media URL** + Share. **`.searchable`** filters **already-loaded** plain paragraphs/lines case-insensitively with ~250 ms debounce; empty state when no matches. Does **not** fetch remote HTML beyond the episode feed field — no WebView.
 - **Episode row:** context menu **Shownotes** (same sheet) + **Open episode website** / **Copy episode link** when link exists + **Copy media URL** when enclosure exists.
 - **Library search:** Feed detail + library episode hits also match `descriptionText` (raw feed text) — separate from the Shownotes sheet filter.
 
@@ -486,7 +496,7 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 ## Feed / podcast description (beta)
 
 - **Parse:** `NativeRssAtomParser` already stores channel `description` / `subtitle` / `summary` as `PodcastFeed.descriptionText` (may contain HTML). Populated on subscribe / refresh — **existing subscriptions may need a feed refresh** if an older save lacked the field.
-- **Feed detail:** toolbar **info.circle** opens a sheet with the podcast **title** and scrollable **plain text** (`HTMLTextStripping`). Button is **hidden** when the description is empty after strip (no invented copy). Sheet toolbar: **Open podcast website** when `siteLink` is http(s). **`.searchable`** filters **already-loaded** plain paragraphs/lines case-insensitively with ~250 ms debounce; empty state when no matches. Does **not** fetch remote HTML beyond the feed description field — no WebView.
+- **Feed detail:** toolbar **info.circle** opens a sheet with the podcast **title** and scrollable **plain text** (`HTMLTextStripping`). Button is **hidden** when the description is empty after strip (no invented copy). Sheet toolbar: **Copy podcast description** (plain text → pasteboard + Copied alert; disabled when empty) + **Open podcast website** when `siteLink` is http(s). **`.searchable`** filters **already-loaded** plain paragraphs/lines case-insensitively with ~250 ms debounce; empty state when no matches. Does **not** fetch remote HTML beyond the feed description field — no WebView.
 - **No author:** `PodcastFeed` has no `author` / `authorEmail` in this beta (discovery preview may still show a hint author from iTunes/Podcast Index — not used here).
 - **Not** a rich HTML / AttributedString renderer.
 - **Library / Subscriptions search:** matching on feed `descriptionText` in Subscriptions / library remains separate from this sheet filter.

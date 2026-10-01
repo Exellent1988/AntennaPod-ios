@@ -30,6 +30,10 @@ struct EpisodeDescriptionSheetView: View {
         return HTMLTextStripping.plainText(from: raw)
     }
 
+    private var hasPlainShownotes: Bool {
+        !plainDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
     private var paragraphs: [String] {
         let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -117,6 +121,15 @@ struct EpisodeDescriptionSheetView: View {
                     Button("Done") { dismiss() }
                 }
                 ToolbarItemGroup(placement: .primaryAction) {
+                    Button {
+                        copyShownotes()
+                    } label: {
+                        Image(systemName: "doc.plaintext")
+                    }
+                    .disabled(!hasPlainShownotes)
+                    .accessibilityLabel(String(localized: "Copy shownotes"))
+                    .accessibilityHint(String(localized: "Copies the episode shownotes to the pasteboard"))
+
                     if let url = websiteURL {
                         Button {
                             openURL(url)
@@ -237,6 +250,15 @@ struct EpisodeDescriptionSheetView: View {
             guard !Task.isCancelled else { return }
             debouncedQuery = trimmed
         }
+    }
+
+    private func copyShownotes() {
+        let text = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Shownotes copied to the pasteboard.")
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private func copyEpisodeLink(_ url: URL) {
