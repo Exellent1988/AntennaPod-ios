@@ -1,10 +1,10 @@
 import Foundation
 import Network
 
-/// Enqueues auto-downloads after feed refresh (global rules; per-feed later).
+/// Enqueues auto-downloads after feed refresh (global + per-feed overrides).
 ///
 /// **Rules (this slice):**
-/// 1. Global toggle `AppSettings.autoDownloadEnabled` must be on.
+/// 1. Per feed: `FeedSettings.autoDownload` Use global / Always / Never (Always/Never beat global).
 /// 2. Per feed: newest unplayed episodes with a media URL, not already downloaded / in-flight,
 ///    capped by `autoDownloadEpisodesPerFeed` (1/2/3/5).
 /// 3. Optional Wi‑Fi / Ethernet-only gate via `NWPathMonitor` (`autoDownloadWifiOnly`).
@@ -26,10 +26,15 @@ enum AutoDownloadCoordinator {
         settings: AppSettings?
     ) async {
         guard let downloads, let settings else { return }
-        guard settings.autoDownloadEnabled else { return }
         guard !isEnqueueInFlight else { return }
         isEnqueueInFlight = true
         defer { isEnqueueInFlight = false }
+
+        let globalOn = settings.autoDownloadEnabled
+        let eligibleFeeds = store.feeds.filter {
+            store.feedSettings(for: $0.id).allowsAutoDownload(globalEnabled: globalOn)
+        }
+        guard !eligibleFeeds.isEmpty else { return }
 
         startNetworkMonitoringIfNeeded()
         guard NetworkPathGate.shared.allowsAutoDownload(wifiOnly: settings.autoDownloadWifiOnly) else {
@@ -38,7 +43,7 @@ enum AutoDownloadCoordinator {
 
         let cap = settings.autoDownloadEpisodesPerFeed.rawValue
         var candidates: [PodcastEpisode] = []
-        for feed in store.feeds {
+        for feed in eligibleFeeds {
             candidates.append(contentsOf: eligibleEpisodes(in: feed, store: store, downloads: downloads, cap: cap))
         }
         for episode in candidates {

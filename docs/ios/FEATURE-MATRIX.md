@@ -35,8 +35,8 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Episodenliste / Feed-Seite | 5 | wip | |
 | Archive / restore | 3 | todo | |
 | Tags / Folders | 3 | todo | |
-| Per-feed settings | 4 | todo | Auto-DL, Speed, Skip Intro |
-| Keep updated | 4 | done | Global via Settings refresh interval (all subscribed feeds on launch/foreground when due); per-feed toggle later |
+| Per-feed settings | 4 | done | Feed detail → gear sheet: Auto-download / Keep updated / Notify Use global·Always·Never; side map `feed-settings.json`; Speed / Skip Intro later |
+| Keep updated | 4 | done | Global via Settings refresh interval; per-feed Keep updated Never skips that feed in refresh-all (single-feed refresh still OK) |
 | New-episode action (Inbox/Queue) | 4 | todo | Regeln → KMP |
 | Local folder feeds | 2 | todo | iOS DocumentPicker |
 | Share podcast/episode | 3 | todo | |
@@ -68,8 +68,8 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Manual download / delete | 5 | done | Documents/downloads + JSON catalog (`downloads.json`) |
 | Offline Wiedergabe | 5 | done | Play from local file; catalog restored on launch |
 | Speicherverwaltung / Cache-Limit | 5 | done | UserDefaults byte budget (unlimited / 1 / 5 / 10 GB / custom MB); usage in Settings; eviction: played oldest-mtime first then unplayed LRU; after DL + Settings open + launch; Clear downloads |
-| Auto-download (global + Regeln) | 4 | done | Global toggle + per-feed cap (1/2/3/5 newest unplayed); enqueue after refresh via DownloadService; Wi‑Fi-only via NWPathMonitor; storage eviction unchanged. Full Android-style filter rules → KMP later |
-| Per-feed auto-download | 4 | todo | Global only in this slice; per-feed enable/disable later |
+| Auto-download (global + Regeln) | 4 | done | Global toggle + per-feed cap (1/2/3/5) + per-feed Use global/Always/Never; enqueue after refresh via DownloadService; Wi‑Fi-only via NWPathMonitor; storage eviction unchanged. Full Android-style filter rules → KMP later |
+| Per-feed auto-download | 4 | done | Use global / Always / Never on feed settings sheet; Always enqueues even when global off; Never skips; cap + Wi‑Fi-only still global |
 | Auto-delete after play | 4 | done | Global Settings toggle (default off); on mark played (manual or playback finished / continuous auto-next) deletes local file via DownloadService; keeps episode row + played status; defers while that local file is still the active player item; favorites/starred n/a yet |
 | Mobile/Wi‑Fi Policy | 4 | wip | Auto-download Wi‑Fi/Ethernet-only via NWPathMonitor; manual downloads still allow cellular; broader cellular prefs later |
 | Background downloads | 5 | done | `URLSessionConfiguration.background`; AppDelegate `handleEventsForBackgroundURLSession`; task↔episode in `pending-downloads.json` |
@@ -108,7 +108,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Refresh interval | 4 | done | UserDefaults presets: manual / 1h / 4h / 12h / 24h; due-check on launch + foreground → `refreshAllFeeds()`; BGAppRefreshTask stubbed (no `fetch` in Info.plist) |
 | Swipe actions | 3 | todo | |
 | Parental controls | 2 | todo | |
-| Notifications (new episodes) | 4 | done | Local UserNotifications after feed refresh; Settings toggle (default on after preference; honest if denied); permission from Settings or first new-eps refresh; tap → Inbox; no push |
+| Notifications (new episodes) | 4 | done | Local UserNotifications after feed refresh; Settings toggle (default on; honest if denied); per-feed Always/Never override; permission from Settings or first new-eps refresh; tap → Inbox; no push |
 | Notifications (DL/Sync errors) | 4 | todo | |
 | About / contribute links | 2 | todo | |
 

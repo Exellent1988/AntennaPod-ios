@@ -5,12 +5,38 @@ struct FeedDetailView: View {
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
     let feed: PodcastFeed
+    @State private var showPerFeedSettings = false
+
+    /// Live feed from the store when available (episodes refresh after pull/refresh).
+    private var liveFeed: PodcastFeed {
+        store.feeds.first(where: { $0.id == feed.id }) ?? feed
+    }
 
     var body: some View {
-        List(feed.episodes) { episode in
-            EpisodeRow(episode: episode, feedTitle: feed.title)
+        List(liveFeed.episodes) { episode in
+            EpisodeRow(episode: episode, feedTitle: liveFeed.title)
         }
-        .navigationTitle(feed.title)
+        .navigationTitle(liveFeed.title)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    showPerFeedSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
+                }
+                .accessibilityLabel("Podcast settings")
+            }
+        }
+        .sheet(isPresented: $showPerFeedSettings) {
+            NavigationStack {
+                PerFeedSettingsView(feedId: feed.id, feedTitle: liveFeed.title)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Done") { showPerFeedSettings = false }
+                        }
+                    }
+            }
+        }
     }
 }
 

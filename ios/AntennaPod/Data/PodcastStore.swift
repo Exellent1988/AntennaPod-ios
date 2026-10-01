@@ -12,6 +12,10 @@ final class PodcastStore: ObservableObject {
     @Published var playbackStates: [String: EpisodePlaybackState] = [:] {
         didSet { PodcastPersistence.savePlaybackStates(playbackStates) }
     }
+    /// Per-subscription overrides keyed by feed id (`feed-settings.json`).
+    @Published var feedSettingsById: [UUID: FeedSettings] = [:] {
+        didSet { PodcastPersistence.saveFeedSettings(feedSettingsById) }
+    }
     @Published var isLoading = false
     @Published var lastError: String?
     @Published var opmlImport = OpmlImportState()
@@ -32,6 +36,7 @@ final class PodcastStore: ObservableObject {
         feeds = PodcastPersistence.loadFeeds()
         queue = PodcastPersistence.loadQueue()
         playbackStates = PodcastPersistence.loadPlaybackStates()
+        feedSettingsById = PodcastPersistence.loadFeedSettings()
     }
 
     func subscribe(feedUrl: String) async {
@@ -54,12 +59,34 @@ final class PodcastStore: ObservableObject {
 
     func unsubscribe(_ feed: PodcastFeed) {
         feeds.removeAll { $0.id == feed.id }
+        feedSettingsById.removeValue(forKey: feed.id)
         let ids = Set(feed.episodes.map(\.id))
         queue.removeAll { ids.contains($0.id) }
         for id in ids {
             playbackStates.removeValue(forKey: id)
         }
     }
+
+    // MARK: - Per-feed settings
+
+    func feedSettings(for feedId: UUID) -> FeedSettings {
+        feedSettingsById[feedId] ?? .default
+    }
+
+    func setFeedSettings(_ settings: FeedSettings, for feedId: UUID) {
+        if settings.isDefault {
+            feedSettingsById.removeValue(forKey: feedId)
+        } else {
+            feedSettingsById[feedId] = settings
+        }
+    }
+
+    func updateFeedSettings(for feedId: UUID, _ mutate: (inout FeedSettings) -> Void) {
+        var current = feedSettings(for: feedId)
+        mutate(&current)
+        setFeedSettings(current, for: feedId)
+    }
+
 
     func refresh(_ feed: PodcastFeed) async {
         guard !feed.feedUrl.isEmpty else {
@@ -73,7 +100,8 @@ final class PodcastStore: ObservableObject {
             if !newcomers.isEmpty {
                 await NewEpisodeNotificationCoordinator.handleNewEpisodes(
                     [NewEpisodeBatch(feedTitle: updated.title, feedId: updated.id, feedUrl: updated.feedUrl, episodes: newcomers)],
-                    settings: settings
+                    settings: settings,
+                    store: self
                 )
             }
         }
@@ -336,6 +364,7 @@ final class PodcastStore: ObservableObject {
         let snapshot = feeds
         var newBatches: [NewEpisodeBatch] = []
         for feed in snapshot where !feed.feedUrl.isEmpty {
+            guard feedSettings(for: feed.id).participatesInBulkRefresh else { continue }
             let existingIds = Set(feed.episodes.map(\.id))
             do {
                 try await subscribeQuietly(feedUrl: feed.feedUrl)
@@ -358,7 +387,7 @@ final class PodcastStore: ObservableObject {
         }
         // Stamp even if some feeds failed — avoids hammering on every foreground.
         settings?.markFeedRefreshCompleted()
-        await NewEpisodeNotificationCoordinator.handleNewEpisodes(newBatches, settings: settings)
+        await NewEpisodeNotificationCoordinator.handleNewEpisodes(newBatches, settings: settings, store: self)
         await AutoDownloadCoordinator.enqueueAfterRefresh(
             store: self,
             downloads: downloads,

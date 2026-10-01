@@ -24,8 +24,9 @@ final class NotificationDeepLinkRouter: ObservableObject {
 ///
 /// **Permission:** requested once from Settings (toggle on) or the first refresh that finds
 /// new episodes while the toggle is on and status is `.notDetermined`.
-/// **Honesty:** posts only when `AppSettings.notifyOnNewEpisodes` is on **and** authorization
+/// **Honesty:** posts when global or per-feed Always allows it **and** authorization
 /// is `.authorized` / `.provisional`. Denied stays denied — Settings shows the real status.
+/// Per-feed Never suppresses that feed even when global is on.
 @MainActor
 enum NewEpisodeNotificationCoordinator {
     static let categoryId = "NEW_EPISODES"
@@ -79,13 +80,21 @@ enum NewEpisodeNotificationCoordinator {
     }
 
     /// After refresh: request permission on first new-episode find if still undetermined, then notify.
+    /// Per-feed `notifyOnNewEpisodes` Use global / Always / Never overrides the global toggle.
     static func handleNewEpisodes(
         _ batches: [NewEpisodeBatch],
-        settings: AppSettings?
+        settings: AppSettings?,
+        store: PodcastStore? = nil
     ) async {
         guard let settings else { return }
-        guard settings.notifyOnNewEpisodes else { return }
-        let flat = batches.filter { !$0.episodes.isEmpty }
+        let globalOn = settings.notifyOnNewEpisodes
+        let flat = batches.filter { batch in
+            guard !batch.episodes.isEmpty else { return false }
+            if let store {
+                return store.feedSettings(for: batch.feedId).allowsNotify(globalEnabled: globalOn)
+            }
+            return globalOn
+        }
         guard !flat.isEmpty else { return }
 
         var status = await authorizationStatus()

@@ -196,12 +196,12 @@ struct SettingsView: View {
 
     private var autoDownloadHelpText: String {
         if !settings.autoDownloadEnabled {
-            return "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Storage-limit eviction still applies."
+            return "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Storage-limit eviction still applies."
         }
         let wifi = settings.autoDownloadWifiOnly
             ? " On cellular, auto-download is skipped (NWPathMonitor); manual downloads still work."
             : " Auto-download may use cellular."
-        return "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to \(settings.autoDownloadEpisodesPerFeed.rawValue) newest unplayed episode(s) per feed. Per-feed toggles come later.\(wifi)"
+        return "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to \(settings.autoDownloadEpisodesPerFeed.rawValue) newest unplayed episode(s) per feed. Override per podcast via Feed detail → gear. Always/Never beat this global toggle.\(wifi)"
     }
 
     @ViewBuilder
