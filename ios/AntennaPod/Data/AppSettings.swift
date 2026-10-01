@@ -746,7 +746,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -754,8 +754,8 @@ final class AppSettings: ObservableObject {
     static let skipIntervalPresets: [Int] = [5, 10, 15, 20, 30, 60]
     /// Skip intro / outro presets (0 = off). Matches common AntennaPod values.
     static let skipIntroOutroPresets: [Int] = [0, 5, 10, 15, 30, 60]
-    /// Smart mark as played presets (0 = off). AntennaPod `prefSmartMarkAsPlayedSecs` values (subset).
-    static let smartMarkAsPlayedPresets: [Int] = [0, 15, 30, 60, 120]
+    /// Smart mark as played presets (0 = off). AntennaPod `prefSmartMarkAsPlayedSecs` values + Custom… 1–600.
+    static let smartMarkAsPlayedPresets: [Int] = [0, 15, 30, 60, 120, 300, 600]
     /// Rewind-after-pause presets (0 = off). Simpler than Android's graduated elapsed buckets; default 2s.
     static let rewindAfterPausePresets: [Int] = [0, 1, 2, 3, 5, 10]
     /// Android `prefRewindSecs` default.
@@ -1102,7 +1102,7 @@ final class AppSettings: ObservableObject {
     }
 
     /// Seconds before end that count as “played” when leaving / stopping (Android `prefSmartMarkAsPlayedSecs`, default 30).
-    /// `0` = Off: only mark played on natural end (`ended: true`) or explicit mark — not near-end scrub/leave.
+    /// Presets Off/15/30/60/120/300/600 + Custom… 1–600. `0` = Off: only natural end (`ended: true`) or explicit mark — not near-end scrub/leave.
     @Published var smartMarkAsPlayedSeconds: Int {
         didSet {
             UserDefaults.standard.set(smartMarkAsPlayedSeconds, forKey: Keys.smartMarkAsPlayedSeconds)
@@ -1682,6 +1682,7 @@ final class AppSettings: ObservableObject {
     }
 
     /// Label for smart-mark Settings picker (`Off` when 0); uses String Catalog.
+    /// Android-like: ≥60 and divisible by 60 → minutes; else seconds (Custom…).
     static func smartMarkAsPlayedLabel(_ seconds: Int) -> String {
         switch seconds {
         case 0:
@@ -1691,11 +1692,19 @@ final class AppSettings: ObservableObject {
         case 30:
             return String(localized: "30 seconds")
         case 60:
-            return String(localized: "60 seconds")
+            return String(localized: "1 minute")
         case 120:
-            return String(localized: "120 seconds")
+            return String(localized: "2 minutes")
+        case 300:
+            return String(localized: "5 minutes")
+        case 600:
+            return String(localized: "10 minutes")
         default:
-            return "\(seconds) seconds"
+            if seconds >= 60, seconds % 60 == 0 {
+                let minutes = seconds / 60
+                return String(localized: "\(minutes) minutes")
+            }
+            return String(localized: "\(seconds) seconds")
         }
     }
 
@@ -1719,12 +1728,25 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Presets or Custom… (1–600); out-of-range → default 30. Off (0) is a preset.
     private static func loadSmartMarkAsPlayedSeconds() -> Int {
         guard UserDefaults.standard.object(forKey: Keys.smartMarkAsPlayedSeconds) != nil else {
             return defaultSmartMarkAsPlayedSeconds
         }
         let stored = UserDefaults.standard.integer(forKey: Keys.smartMarkAsPlayedSeconds)
-        return smartMarkAsPlayedPresets.contains(stored) ? stored : defaultSmartMarkAsPlayedSeconds
+        return clampSmartMarkAsPlayedSeconds(stored)
+    }
+
+    /// Accept presets (incl. Off) or Custom… 1–600; otherwise default 30.
+    private static func clampSmartMarkAsPlayedSeconds(_ value: Int) -> Int {
+        if smartMarkAsPlayedPresets.contains(value) {
+            return value
+        }
+        let range = PlaybackService.customSmartMarkAsPlayedSecondsRange
+        if range.contains(value) {
+            return value
+        }
+        return defaultSmartMarkAsPlayedSeconds
     }
 
     private static func loadRewindAfterPauseSeconds() -> Int {
@@ -1923,9 +1945,7 @@ final class AppSettings: ObservableObject {
             ? rewindAfter
             : Self.defaultRewindAfterPauseSeconds
         let smartMark = snap.smartMarkAsPlayedSeconds ?? Self.defaultSmartMarkAsPlayedSeconds
-        smartMarkAsPlayedSeconds = Self.smartMarkAsPlayedPresets.contains(smartMark)
-            ? smartMark
-            : Self.defaultSmartMarkAsPlayedSeconds
+        smartMarkAsPlayedSeconds = Self.clampSmartMarkAsPlayedSeconds(smartMark)
         chartsCountryCode = ChartsCountryPreference.fromStorage(snap.chartsCountryCode).storageValue
         if let orderRaw = snap.homeSectionOrder, !orderRaw.isEmpty {
             var order: [HomeSectionId] = []

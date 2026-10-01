@@ -110,7 +110,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; Route kann ignorieren) | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; route may ignore) |
 | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; Pause ≥1s → Seek zurück; kein Cold-Play) | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; pause ≥1s → seek back; not on cold play) |
 | ☐ Progress speichern / Resume | ☐ Progress save / resume |
-| ☐ Mark played / unplayed (EpisodeRow, Feed-Swipe, Full Player, Alle Episoden; VoiceOver Hints; Smart mark Off/15/30/60/120, default 30) | ☐ Mark played / unplayed (EpisodeRow, Feed swipe, Full Player, All Episodes; VoiceOver hints; Smart mark Off/15/30/60/120, default 30) |
+| ☐ Mark played / unplayed (EpisodeRow, Feed-Swipe, Full Player, Alle Episoden; VoiceOver Hints; Smart mark Off/15/30/60/120/300/600 + Custom… 1–600s, default 30; nur Restsekunden) | ☐ Mark played / unplayed (EpisodeRow, Feed swipe, Full Player, All Episodes; VoiceOver hints; Smart mark Off/15/30/60/120/300/600 + Custom… 1–600s, default 30; seconds remaining only) |
 | ☐ Skip intro / outro (wenn > 0) | ☐ Skip intro / outro (when > 0) |
 
 ---
@@ -414,7 +414,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Show remaining time: Settings toggle default **off**; on = mini + full right −remaining instead of duration; left position; tap full-player label toggles.
 - Rewind after pause: Settings → Playback Picker Off/1/2/3/5/10 (Standard **2**); nur nach echter Pause ≥1s der aktuellen Episode — nicht bei Cold-Play / erstem Start; fester Betrag (nicht Android-Zeitstufen).  
   Rewind after pause: Settings → Playback picker Off/1/2/3/5/10 (default **2**); only after a real pause ≥1s of the current item — not cold play / first start; fixed amount (not Android elapsed tiers).
-- Smart mark as played: Settings → Playback Picker Off/15/30/60/120 (Standard **30**); Aus (0) = nur natürliches Ende oder manuell als gehört — kein Near-End-Scrub.  
-  Smart mark as played: Settings → Playback picker Off/15/30/60/120 (default **30**); Off (0) = only natural end or explicit mark — not near-end scrub.
+- Smart mark as played: Settings → Playback Presets Off/15/30/60/120/300/600 + **Custom…** (1–600 s); Standard **30**; Aus (0) = nur natürliches Ende oder manuell — kein Near-End-Scrub; **nur Restsekunden** (kein %-Schwellwert).  
+  Smart mark as played: Settings → Playback presets Off/15/30/60/120/300/600 + **Custom…** (1–600 s); default **30**; Off (0) = only natural end or explicit mark — not near-end scrub; **seconds remaining only** (no percent threshold).
 
 Siehe auch: [FEATURE-MATRIX.md](FEATURE-MATRIX.md), [ios/README.md](../../ios/README.md).

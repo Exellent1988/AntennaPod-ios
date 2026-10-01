@@ -31,6 +31,9 @@ final class PlaybackService: ObservableObject {
 
     /// Custom rewind / fast-forward skip interval range (seconds). Presets stay 5/10/15/20/30/60.
     static let customSkipIntervalSecondsRange: ClosedRange<Int> = 5...60
+    /// Custom smart-mark threshold range (seconds). Presets stay Off/15/30/60/120/300/600 (Android).
+    /// Off (0) is Settings-only; Custom… uses 1…600.
+    static let customSmartMarkAsPlayedSecondsRange: ClosedRange<Int> = 1...600
 
     /// Clamp + snap to `customPlaybackSpeedStep` within `customPlaybackSpeedRange`.
     static func clampPlaybackSpeed(_ rate: Float) -> Float {

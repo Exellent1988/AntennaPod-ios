@@ -55,6 +55,7 @@ struct SettingsView: View {
     @State private var showClearConfirmation = false
     @State private var showCustomDefaultSpeed = false
     @State private var customSkipIntervalMode: CustomSkipIntervalSheet.Mode?
+    @State private var showCustomSmartMark = false
     @State private var notificationAuthLabel = "Checking…"
     @State private var podcastIndexAPIKeyDraft = ""
     @State private var podcastIndexAPISecretDraft = ""
@@ -384,6 +385,10 @@ struct SettingsView: View {
                 )
                 .environmentObject(settings)
             }
+            .sheet(isPresented: $showCustomSmartMark) {
+                CustomSmartMarkSheet(initialSeconds: settings.smartMarkAsPlayedSeconds)
+                    .environmentObject(settings)
+            }
         }
     }
 
@@ -582,7 +587,9 @@ struct SettingsView: View {
     private var matchesPlaybackSmartMark: Bool {
         matchesSearch(
             "Smart mark as played",
-            "Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30."
+            "Custom…",
+            "Custom smart mark",
+            "Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Presets Off/15/30/60/120/300/600 plus Custom… (1–600 seconds). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30. Seconds remaining only — not a percent threshold."
         )
     }
 
@@ -827,9 +834,17 @@ struct SettingsView: View {
                     ForEach(AppSettings.smartMarkAsPlayedPresets, id: \.self) { secs in
                         Text(AppSettings.smartMarkAsPlayedLabel(secs)).tag(secs)
                     }
+                    if !AppSettings.smartMarkAsPlayedPresets.contains(settings.smartMarkAsPlayedSeconds) {
+                        Text(AppSettings.smartMarkAsPlayedLabel(settings.smartMarkAsPlayedSeconds))
+                            .tag(settings.smartMarkAsPlayedSeconds)
+                    }
                 }
-                .accessibilityHint(String(localized: "Seconds before end that count as played when leaving. Off marks only on natural end. Default 30."))
-                Text("Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30.")
+                .accessibilityHint(String(localized: "Seconds before end that count as played when leaving. Off marks only on natural end. Presets plus Custom… 1–600. Default 30."))
+                Button(String(localized: "Custom…")) {
+                    showCustomSmartMark = true
+                }
+                .accessibilityHint(String(localized: "Set a custom smart mark threshold between 1 and 600 seconds remaining."))
+                Text(String(localized: "Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Presets Off/15/30/60/120/300/600 plus Custom… (1–600 seconds). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30. Seconds remaining only — not a percent threshold."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

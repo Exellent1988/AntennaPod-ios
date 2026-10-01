@@ -17850,6 +17850,176 @@
           }
         }
       }
+    },
+    "1 minute": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 minute"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Minute"
+          }
+        }
+      }
+    },
+    "2 minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 minutes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 Minuten"
+          }
+        }
+      }
+    },
+    "5 minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 minutes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 Minuten"
+          }
+        }
+      }
+    },
+    "10 minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 minutes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 Minuten"
+          }
+        }
+      }
+    },
+    "%lld minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld minutes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Minuten"
+          }
+        }
+      }
+    },
+    "Custom smart mark": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom smart mark"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefiniertes Smart Mark"
+          }
+        }
+      }
+    },
+    "Choose between 1 and 600 seconds remaining. Presets (Off / 15 / 30 / 60 / 120 / 300 / 600) stay in Settings. Marks played when leaving or stopping within this window — not a percent threshold.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose between 1 and 600 seconds remaining. Presets (Off / 15 / 30 / 60 / 120 / 300 / 600) stay in Settings. Marks played when leaving or stopping within this window — not a percent threshold."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle zwischen 1 und 600 Sekunden Restzeit. Presets (Aus / 15 / 30 / 60 / 120 / 300 / 600) bleiben in den Einstellungen. Markiert als gehört beim Verlassen oder Stoppen in diesem Fenster — kein Prozent-Schwellwert."
+          }
+        }
+      }
+    },
+    "Set a custom smart mark threshold between 1 and 600 seconds remaining.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set a custom smart mark threshold between 1 and 600 seconds remaining."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefinierten Smart-Mark-Schwellwert zwischen 1 und 600 Sekunden Restzeit festlegen."
+          }
+        }
+      }
+    },
+    "Seconds before end that count as played when leaving. Off marks only on natural end. Presets plus Custom… 1–600. Default 30.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seconds before end that count as played when leaving. Off marks only on natural end. Presets plus Custom… 1–600. Default 30."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sekunden vor dem Ende, die beim Verlassen als gehört zählen. Aus markiert nur bei natürlichem Ende. Presets plus Benutzerdefiniert… 1–600. Standard 30."
+          }
+        }
+      }
+    },
+    "Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Presets Off/15/30/60/120/300/600 plus Custom… (1–600 seconds). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30. Seconds remaining only — not a percent threshold.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Presets Off/15/30/60/120/300/600 plus Custom… (1–600 seconds). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30. Seconds remaining only — not a percent threshold."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als gehört markieren, wenn beim Verlassen oder Stoppen weniger als diese Sekunden Restzeit bleiben (AntennaPod Smart Mark). Presets Aus/15/30/60/120/300/600 plus Benutzerdefiniert… (1–600 Sekunden). Aus (0) = nur bei natürlichem Ende oder manuell — nicht bei Scrub nahe dem Ende. Standard 30. Nur Restsekunden — kein Prozent-Schwellwert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
