@@ -14524,6 +14524,24 @@
           }
         }
       }
+    },
+    "Explicit": {
+      "extractionState": "manual",
+      "comment": "Badge when feed/episode itunes:explicit is yes/true/explicit. Hidden otherwise — not a content-rating claim beyond the flag.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explicit"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explizit"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

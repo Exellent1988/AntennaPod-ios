@@ -179,6 +179,19 @@ struct FeedDetailView: View {
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
+            // Channel itunes:explicit only — hide when feed does not mark explicit (never invent).
+            if liveFeed.isExplicit {
+                Section {
+                    Text(String(localized: "Explicit"))
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.2), in: Capsule())
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityLabel(String(localized: "Explicit"))
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
             if !feedTags.isEmpty {
                 Section("Tags") {
                     FlowTagRow(tags: feedTags)
@@ -611,6 +624,15 @@ struct EpisodeRow: View {
                     Text(episode.title)
                         .font(.headline)
                     Spacer(minLength: 8)
+                    // itunes:explicit yes/true/explicit (item or inherited channel) — hide otherwise.
+                    if episode.isExplicit {
+                        Text(String(localized: "Explicit"))
+                            .font(.caption2.weight(.semibold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                            .accessibilityHidden(true)
+                    }
                     if store.isFavorite(episode.id) {
                         Image(systemName: "star.fill")
                             .foregroundStyle(.yellow)
@@ -1011,11 +1033,14 @@ struct EpisodeRow: View {
         return String(localized: "Download")
     }
 
-    /// VoiceOver summary: title, feed, season/episode, type, date, duration, size, played / percent (+ remaining) or position-only, downloaded (+ favorite/archived).
+    /// VoiceOver summary: title, feed, Explicit when marked, season/episode, type, date, duration, size, played / percent (+ remaining) or position-only, downloaded (+ favorite/archived).
     private var episodeAccessibilityLabel: String {
         var parts: [String] = [episode.title]
         if !feedTitle.isEmpty {
             parts.append(feedTitle)
+        }
+        if episode.isExplicit {
+            parts.append(String(localized: "Explicit"))
         }
         if let seasonA11y = episode.seasonEpisodeAccessibilityLabel {
             parts.append(seasonA11y)

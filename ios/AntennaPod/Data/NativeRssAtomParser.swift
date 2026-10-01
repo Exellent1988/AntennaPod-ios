@@ -21,6 +21,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itunesAuthor: String?
     private var atomAuthorName: String?
     private var managingEditor: String?
+    /// Channel itunes:explicit — true only for yes/true/explicit.
+    private var feedIsExplicit = false
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -51,6 +53,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itemEpisodeNumber: Int?
     /// itunes:episodeType (`full` / `trailer` / `bonus`) — nil when absent / unknown.
     private var itemEpisodeType: String?
+    /// Item itunes:explicit override; nil = inherit channel (or false when channel unmarked).
+    private var itemExplicitOverride: Bool?
     private var elementStack: [String] = []
 
     init(data: Data) {
@@ -78,6 +82,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 atomAuthorName: atomAuthorName,
                 managingEditor: managingEditor
             ),
+            isExplicit: feedIsExplicit,
             episodes: episodes
         )
     }
@@ -118,6 +123,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemSeasonNumber = nil
             itemEpisodeNumber = nil
             itemEpisodeType = nil
+            itemExplicitOverride = nil
             if local.lowercased() == "entry", let href = attributeDict["href"] {
                 itemLink = href
             }
@@ -272,6 +278,12 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 if let t = ItunesSeasonEpisodeParsing.episodeType(from: text) {
                     itemEpisodeType = t
                 }
+            case "explicit":
+                // itunes:explicit — yes/true/explicit → true; no/false/clean → false (override).
+                // Unknown/empty ignored (keep inherit).
+                if let flagged = ItunesExplicitParsing.parse(text) {
+                    itemExplicitOverride = flagged
+                }
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
@@ -290,7 +302,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     durationSeconds: itemDurationSeconds,
                     seasonNumber: itemSeasonNumber,
                     episodeNumber: itemEpisodeNumber,
-                    episodeType: itemEpisodeType
+                    episodeType: itemEpisodeType,
+                    isExplicit: itemExplicitOverride ?? feedIsExplicit
                 )
                 episodes.append(episode)
                 inItem = false
@@ -323,6 +336,11 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 // RSS managingEditor — often "email (Name)"; store as provided, never invent.
                 if !text.isEmpty {
                     managingEditor = text
+                }
+            case "explicit":
+                // Channel itunes:explicit — only yes/true/explicit marks the feed.
+                if let flagged = ItunesExplicitParsing.parse(text) {
+                    feedIsExplicit = flagged
                 }
             case "url" where inImage:
                 imageUrl = text
@@ -452,6 +470,24 @@ enum ItunesSeasonEpisodeParsing {
         switch trimmed {
         case "full", "trailer", "bonus":
             return trimmed
+        default:
+            return nil
+        }
+    }
+}
+
+/// iTunes parental advisory from `itunes:explicit` text nodes.
+/// Apple Podcasts: `yes` / `true` / `explicit` → explicit; `no` / `false` / `clean` → not explicit.
+/// Unknown or empty → nil (do not invent; item inherits channel when override nil).
+enum ItunesExplicitParsing {
+    static func parse(_ raw: String) -> Bool? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !trimmed.isEmpty else { return nil }
+        switch trimmed {
+        case "yes", "true", "explicit":
+            return true
+        case "no", "false", "clean":
+            return false
         default:
             return nil
         }

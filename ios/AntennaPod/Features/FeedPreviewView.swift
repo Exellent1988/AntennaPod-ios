@@ -211,6 +211,14 @@ struct FeedPreviewView: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
                 }
+                if parsed?.isExplicit == true {
+                    Text(String(localized: "Explicit"))
+                        .font(.caption2.weight(.semibold))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.secondary.opacity(0.2), in: Capsule())
+                        .accessibilityLabel(String(localized: "Explicit"))
+                }
                 Text(request.feedUrl)
                     .font(.caption2)
                     .foregroundStyle(.tertiary)

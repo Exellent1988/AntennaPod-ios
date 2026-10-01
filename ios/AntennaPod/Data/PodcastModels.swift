@@ -44,6 +44,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     var episodeNumber: Int?
     /// iTunes episode type from `itunes:episodeType` (`full` / `trailer` / `bonus`). `nil` = not in feed.
     var episodeType: String?
+    /// `itunes:explicit` yes/true/explicit on the item (or inherited from channel when item omits it).
+    /// `false` when missing, clean/no/false, or unknown — never invent; UI hides badge unless true.
+    var isExplicit: Bool
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -92,7 +95,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         durationSeconds: Double = 0,
         seasonNumber: Int? = nil,
         episodeNumber: Int? = nil,
-        episodeType: String? = nil
+        episodeType: String? = nil,
+        isExplicit: Bool = false
     ) {
         self.id = id
         self.title = title
@@ -110,6 +114,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.seasonNumber = seasonNumber
         self.episodeNumber = episodeNumber
         self.episodeType = episodeType
+        self.isExplicit = isExplicit
     }
 
     init(from decoder: Decoder) throws {
@@ -130,6 +135,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         seasonNumber = try c.decodeIfPresent(Int.self, forKey: .seasonNumber)
         episodeNumber = try c.decodeIfPresent(Int.self, forKey: .episodeNumber)
         episodeType = try c.decodeIfPresent(String.self, forKey: .episodeType)
+        isExplicit = try c.decodeIfPresent(Bool.self, forKey: .isExplicit) ?? false
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).
@@ -201,6 +207,8 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Podcast author when the feed provides it (`itunes:author` / Atom `author`/`name` / RSS `managingEditor`).
     /// Nil or blank when absent — never invented from discovery hints alone.
     var author: String?
+    /// Channel `itunes:explicit` yes/true/explicit. `false` when missing/clean — never invent; UI hides unless true.
+    var isExplicit: Bool
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -214,6 +222,45 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         guard let author else { return nil }
         let trimmed = author.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
+    }
+
+    init(
+        id: UUID,
+        title: String,
+        feedUrl: String,
+        siteLink: String? = nil,
+        imageUrl: String? = nil,
+        descriptionText: String? = nil,
+        author: String? = nil,
+        isExplicit: Bool = false,
+        episodes: [PodcastEpisode]
+    ) {
+        self.id = id
+        self.title = title
+        self.feedUrl = feedUrl
+        self.siteLink = siteLink
+        self.imageUrl = imageUrl
+        self.descriptionText = descriptionText
+        self.author = author
+        self.isExplicit = isExplicit
+        self.episodes = episodes
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        title = try c.decode(String.self, forKey: .title)
+        feedUrl = try c.decode(String.self, forKey: .feedUrl)
+        siteLink = try c.decodeIfPresent(String.self, forKey: .siteLink)
+        imageUrl = try c.decodeIfPresent(String.self, forKey: .imageUrl)
+        descriptionText = try c.decodeIfPresent(String.self, forKey: .descriptionText)
+        author = try c.decodeIfPresent(String.self, forKey: .author)
+        isExplicit = try c.decodeIfPresent(Bool.self, forKey: .isExplicit) ?? false
+        episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, episodes
     }
 }
 

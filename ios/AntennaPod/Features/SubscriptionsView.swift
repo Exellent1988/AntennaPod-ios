@@ -531,6 +531,15 @@ struct SubscriptionsView: View {
                                 .foregroundStyle(.orange)
                                 .accessibilityHidden(true)
                         }
+                        // Channel itunes:explicit — hide when feed does not mark it (never invent).
+                        if feed.isExplicit {
+                            Text(String(localized: "Explicit"))
+                                .font(.caption2.weight(.semibold))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.secondary.opacity(0.2), in: Capsule())
+                                .accessibilityHidden(true)
+                        }
                     }
                     // Feed author when present (itunes:author / Atom name / managingEditor); hide when missing.
                     if let author = feed.displayAuthor {
@@ -628,6 +637,9 @@ struct SubscriptionsView: View {
         var parts: [String] = [feed.title]
         if LocalFolderFeed.isLocalFolderFeed(feed) {
             parts.append(String(localized: "Folder"))
+        }
+        if feed.isExplicit {
+            parts.append(String(localized: "Explicit"))
         }
         if let author = feed.displayAuthor {
             parts.append(author)
