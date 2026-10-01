@@ -4,6 +4,7 @@ struct SubscriptionsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var parental: ParentalControls
+    @Environment(\.openURL) private var openURL
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
     @State private var path = NavigationPath()
     @State private var lastHandledFeedOpenToken: UUID?
@@ -449,6 +450,30 @@ struct SubscriptionsView: View {
                 Label("Refresh", systemImage: "arrow.clockwise")
             }
             .tint(.blue)
+        }
+        .modifier(OpenPodcastWebsiteContextMenu(url: feed.websiteURL, openURL: openURL))
+    }
+}
+
+/// Attaches a context-menu action only when `siteLink` is a usable http(s) URL (hidden otherwise).
+private struct OpenPodcastWebsiteContextMenu: ViewModifier {
+    let url: URL?
+    let openURL: OpenURLAction
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if let url {
+            content.contextMenu {
+                Button {
+                    openURL(url)
+                } label: {
+                    Label("Open podcast website", systemImage: "safari")
+                }
+                .accessibilityLabel(String(localized: "Open podcast website"))
+                .accessibilityHint(String(localized: "Opens the podcast webpage in the system browser"))
+            }
+        } else {
+            content
         }
     }
 }

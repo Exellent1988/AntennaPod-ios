@@ -322,7 +322,7 @@ Share an **episode** or a **podcast** via the **system share sheet** only (`Shar
 
 **Share with position:** second action on the **full player** (and **Shownotes** toolbar when the shownotes episode is the **current playback item**). Same URL precedence; message appends a human-readable timestamp from `PlaybackService.positionSeconds` — e.g. `Title — Podcast (12:34)` (`m:ss` / `h:mm:ss`, same as the scrubber). **Text timestamp only** — does **not** invent AntennaPod deep links or append `#t=` media fragments. Hidden when position is unknown or the episode is not current (list rows keep plain Share only).
 
-**Entry points:** full player secondary Share + Share with position; **Shownotes** sheet toolbar (Share + position when current); EpisodeRow button + context menu; Feed detail trailing swipe Share. **Feed detail** toolbar shares the **podcast** (title + feed URL); the ⋯ **Feed actions** menu also offers **Copy feed URL** (`UIPasteboard.general` + brief **Copied** alert / haptic). Local-folder feeds disable Copy / podcast Share — no network RSS URL. See also **Copy episode link** (webpage only) under Open episode website.
+**Entry points:** full player secondary Share + Share with position; **Shownotes** sheet toolbar (Share + position when current); EpisodeRow button + context menu; Feed detail trailing swipe Share. **Feed detail** toolbar shares the **podcast** (title + feed URL); the ⋯ **Feed actions** menu also offers **Open podcast website** (http(s) `siteLink` → system browser; hidden when missing) and **Copy feed URL** (`UIPasteboard.general` + brief **Copied** alert / haptic). Local-folder feeds disable Copy / podcast Share — no network RSS URL. See also **Copy episode link** (webpage only) under Open episode website and **Open podcast website** (`siteLink`).
 
 ## Open episode website
 
@@ -332,6 +332,16 @@ Opens the episode’s real webpage (`PodcastEpisode.link`) in the **system brows
 - **Hidden** when no usable link (do not show a disabled control that implies a website exists).
 - **Entry points:** full player secondary actions; **Shownotes** sheet toolbar (safari icon); EpisodeRow context menu.
 - EN / DE + VoiceOver label **Open episode website** and hint **Opens the episode webpage in the system browser**.
+
+## Open podcast website
+
+Opens the podcast’s homepage (`PodcastFeed.siteLink`) in the **system browser** (Safari / default) via SwiftUI `openURL` — **not** an in-app WebView, and **not** the feed RSS / subscription URL.
+
+- **URL rule:** only non-empty `http` / `https` `feed.siteLink` (`PodcastFeed.websiteURL`). **No** fallback to `feedUrl` / RSS. Never invents a URL.
+- **Hidden** when missing or non-http(s) (do not show a disabled control that implies a website exists).
+- **Distinct from** in-app **Open podcast** (full/mini player → Subscriptions → Feed detail) and from **Open episode website** (episode `link`).
+- **Entry points:** Feed detail ⋯ **Feed actions** menu; Subscriptions row context menu.
+- EN / DE + VoiceOver label **Open podcast website** / **Podcast-Website öffnen** and hint **Opens the podcast webpage in the system browser**.
 
 ## Copy episode link
 

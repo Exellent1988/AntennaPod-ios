@@ -6,6 +6,7 @@ struct FeedDetailView: View {
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var settings: AppSettings
+    @Environment(\.openURL) private var openURL
     let feed: PodcastFeed
     @State private var showPerFeedSettings = false
     @State private var showDownloadAllConfirm = false
@@ -195,6 +196,16 @@ struct FeedDetailView: View {
                         .accessibilityLabel("Share podcast")
                     }
                     Menu {
+                        if let url = liveFeed.websiteURL {
+                            Button {
+                                openURL(url)
+                            } label: {
+                                Label("Open podcast website", systemImage: "safari")
+                            }
+                            .accessibilityLabel(String(localized: "Open podcast website"))
+                            .accessibilityHint(String(localized: "Opens the podcast webpage in the system browser"))
+                        }
+
                         Button {
                             copyFeedURL()
                         } label: {
