@@ -30,6 +30,8 @@ struct AntennaPodApp: App {
         downloads.runStorageMaintenance()
         // Homescreen widget Continue-listening snapshot (needs store.playback wired).
         store.publishWidgetSnapshot()
+        // Apple Watch companion: WCSession for snapshot push + play remote.
+        WatchCompanionBridge.shared.activateIfNeeded()
         // BGAppRefreshTask stub — Info.plist has no `fetch` mode (see FeedRefreshCoordinator).
         FeedRefreshCoordinator.registerBackgroundRefreshIfNeeded()
         // NWPathMonitor for Network / Downloads Wi‑Fi-only gates (auto / manual / stream).

@@ -34,6 +34,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Rating prompt (optional; after 10 mark-played, once per install `AppStore.requestReview`; Settings toggle default on + Reset; iOS may suppress)
 - Siri Shortcuts lite (App Intents Play/Pause / Skip forward/back + `antennapod://` URL schemes; opens app; needs current episode)
 - Homescreen widget (beta lite; WidgetKit Continue listening from App Group snapshot; tap → `antennapod://play`; empty placeholder; may be stale / no scrubber)
+- Apple Watch companion (beta lite; watchOS Continue listening from same snapshot via WC push; Play → iPhone `antennapod://play`; empty state; no independent playback / downloads / queue)
 - Swipe actions (Queue Remove+Archive + drag reorder; Downloads Delete; Inbox/Feed/History/Favorites/Archived/All Episodes useful swipes)
 - Favorites / starred episodes (Subscriptions → Library → Favorites; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; auto-delete skips favorites)
 - Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived; bulk Archive all in Inbox)
@@ -42,7 +43,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, volume adaptation, skip silence preference, playback source, play video as audio only, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors / sync errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, App Store rating prompt, Siri/Shortcuts note, Homescreen widget note, CarPlay note, About)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, volume adaptation, skip silence preference, playback source, play video as audio only, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors / sync errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, App Store rating prompt, Siri/Shortcuts note, Homescreen widget note, Apple Watch note, CarPlay note, About)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -71,15 +72,16 @@ Root tabs (6): **Home**, Inbox, Subscriptions, Queue, Downloads, Settings.
 ```
 ios/
 ├── README.md
-├── project.yml              # XcodeGen (app + AntennaPodWidget)
-├── Shared/                  # App Group Continue-listening snapshot (app + widget)
+├── project.yml              # XcodeGen (app + AntennaPodWidget + AntennaPodWatch)
+├── Shared/                  # App Group Continue-listening snapshot (app + widget + watch keys)
 ├── AntennaPodWidget/        # WidgetKit extension (Continue listening)
+├── AntennaPodWatch/         # watchOS companion (Continue listening + Play on iPhone)
 └── AntennaPod/
     ├── AntennaPodApp.swift
     ├── AntennaPod.entitlements   # App Group
     ├── App/RootTabView.swift
-    ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    ├── Data/…               # store, repository, playback, download, parsers, WatchCompanionBridge
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + Apple Watch note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -92,6 +94,8 @@ open AntennaPod.xcodeproj
 ```
 
 **Homescreen widget:** XcodeGen creates `AntennaPod` + embedded `AntennaPodWidget`. Select a Development Team, ensure App Group `group.de.danoeh.antennapod.ios` is enabled for **both** targets (entitlements files are already listed), build/run on a device or simulator, then add **Continue listening** from the iOS home-screen widget gallery. Without a signing team / App Group capability on the Apple developer portal, the extension may fail to install — shared snapshot code still builds into the app.
+
+**Apple Watch companion:** XcodeGen also creates embedded `AntennaPodWatch` (watchOS 10+ single-target app, bundle `de.danoeh.antennapod.ios.watchkitapp`). Select the **same Development Team** on the Watch target, enable App Group `group.de.danoeh.antennapod.ios` for the Watch app on the Apple developer portal / Xcode Signing, then build/run the iOS app onto a phone paired with a Watch (or Watch simulator). The Watch UI shows Continue listening from the phone-pushed snapshot; **Play on iPhone** remotes playback via Watch Connectivity (and best-effort `antennapod://play`). Without signing / App Group, the Watch target may not install — Shared snapshot types + `project.yml` stub remain for Mac builds.
 
 See `docs/ios/PLAN.md`, `docs/ios/FEATURE-MATRIX.md`, and `docs/ios/BETA-TESTING.md` (manual beta checklist).
 
@@ -188,7 +192,16 @@ Honest empty state when little/no year data. Footnote: approximate — same limi
 - **Empty:** “Open AntennaPod to continue”.
 - **Honest limits:** snapshot **may be stale** (not live Now Playing); **no scrubber / transport** on the widget; requires App Group entitlement + codesigning for the extension to install; add the widget manually from the home screen.
 
-Shared Codable helpers live in `ios/Shared/WidgetContinueSnapshot.swift` (compiled into both targets).
+Shared Codable helpers live in `ios/Shared/WidgetContinueSnapshot.swift` (compiled into app, widget, and Watch targets).
+
+## Apple Watch companion (beta lite)
+
+**watchOS** app target (`AntennaPodWatch`, XcodeGen, watchOS 10+, `WKCompanionAppBundleIdentifier` → `de.danoeh.antennapod.ios`) shows **Continue listening**: episode title + feed name.
+
+- **Snapshot source:** same Codable payload / key as the Homescreen Widget (`group.de.danoeh.antennapod.ios` / `widget.continueListening.snapshot.v1`). Because App Group containers are **per-device**, the iPhone pushes snapshot bytes to the Watch via **Watch Connectivity** `updateApplicationContext` (`WatchCompanionBridge` on save / activate). Watch also tries App Group `UserDefaults` as a local fallback (usually empty).
+- **Play / Open on iPhone:** Watch Connectivity `sendMessage` / `transferUserInfo` with action `play` → iPhone `PlaybackDeepLinkRouter` (`antennapod://play`). Best-effort fallback: `WKApplication.openSystemURL(antennapod://play)` (custom schemes are less reliable than WC).
+- **Empty:** “Open AntennaPod on iPhone to continue”.
+- **Honest limits:** **no** independent Watch audio playback, **no** download management, **no** full queue UI. When the phone is already playing, use **system Now Playing** controls on the Watch. Snapshot may be stale until WC delivers. Requires Dev Team + App Group capability for device install.
 
 ## Swipe actions
 

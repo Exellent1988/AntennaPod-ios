@@ -4,9 +4,9 @@ import Foundation
 import WidgetKit
 #endif
 
-/// App Group shared between the main app and the homescreen WidgetKit extension.
+/// App Group shared between the main app, homescreen WidgetKit extension, and Apple Watch companion.
 enum AntennaPodAppGroup {
-    /// Must match entitlements on both AntennaPod and AntennaPodWidget targets.
+    /// Must match entitlements on AntennaPod, AntennaPodWidget, and AntennaPodWatch targets.
     static let identifier = "group.de.danoeh.antennapod.ios"
     static let continueSnapshotKey = "widget.continueListening.snapshot.v1"
     /// Widget kind registered in `AntennaPodContinueWidget`.
@@ -17,21 +17,36 @@ enum AntennaPodAppGroup {
     }
 }
 
-/// Lightweight Continue-listening payload for the homescreen widget (App Group UserDefaults).
-/// Written by the main app; read by the Widget extension. May be stale — not live playback.
+/// Watch Connectivity keys for Continue-listening snapshot + play remote (phone ↔ watch).
+/// App Group UserDefaults is per-device; the phone pushes snapshot bytes via `applicationContext`.
+enum WatchCompanionKeys {
+    static let snapshotDataKey = AntennaPodAppGroup.continueSnapshotKey
+    static let actionKey = "watch.action"
+    static let playAction = "play"
+}
+
+/// Lightweight Continue-listening payload for the homescreen widget and Apple Watch (App Group UserDefaults).
+/// Written by the main app; read by the Widget extension. Watch prefers WC `applicationContext` (App Group alone does not cross devices).
+/// May be stale — not live playback.
 struct WidgetContinueSnapshot: Codable, Equatable, Hashable {
     var episodeId: String
     var episodeTitle: String
     var feedTitle: String
     var updatedAtEpochMs: Int64
 
-    /// Deep link opened when the widget is tapped (`PlaybackDeepLinkRouter`).
+    /// Deep link opened when the widget is tapped (`PlaybackDeepLinkRouter`); watch Play maps to the same action via WC / openSystemURL.
     static var playURL: URL { URL(string: "antennapod://play")! }
 
     static func load(from defaults: UserDefaults? = AntennaPodAppGroup.sharedDefaults) -> WidgetContinueSnapshot? {
         guard let defaults,
               let data = defaults.data(forKey: AntennaPodAppGroup.continueSnapshotKey)
         else { return nil }
+        return try? JSONDecoder().decode(WidgetContinueSnapshot.self, from: data)
+    }
+
+    /// Decode snapshot from Watch Connectivity applicationContext / userInfo payload.
+    static func load(fromWatchContext context: [String: Any]) -> WidgetContinueSnapshot? {
+        guard let data = context[WatchCompanionKeys.snapshotDataKey] as? Data, !data.isEmpty else { return nil }
         return try? JSONDecoder().decode(WidgetContinueSnapshot.self, from: data)
     }
 

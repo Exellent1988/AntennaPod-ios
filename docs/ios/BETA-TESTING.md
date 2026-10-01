@@ -13,7 +13,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | DE | EN |
 |----|----|
 | ☐ App auf Gerät/Simulator bauen (`xcodegen` + Team/Signing) | ☐ Build on device/simulator (`xcodegen` + Team/signing) |
-| ☐ App Group `group.de.danoeh.antennapod.ios` für App + Widget | ☐ App Group enabled for app + widget targets |
+| ☐ App Group `group.de.danoeh.antennapod.ios` für App + Widget + Watch | ☐ App Group enabled for app + widget + Watch targets |
 | ☐ Background audio in Info.plist vorhanden (`UIBackgroundModes` → `audio`) | ☐ Background audio present (`UIBackgroundModes` → `audio`) |
 
 ---
@@ -124,6 +124,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ New-episode action (Inbox / Queue) | ☐ New-episode action (Inbox / Queue) |
 | ☐ Siri / Shortcuts lite (`antennapod://…`) | ☐ Siri / Shortcuts lite (`antennapod://…`) |
 | ☐ Homescreen widget Continue listening (kann stale sein) | ☐ Homescreen widget Continue listening (may be stale) |
+| ☐ Apple Watch: Continue listening + Play on iPhone (kein eigenes Playback) | ☐ Apple Watch: Continue listening + Play on iPhone (no independent playback) |
 | ☐ About / Version / Links | ☐ About / version / links |
 | ☐ Rating prompt (optional; iOS kann unterdrücken) | ☐ Rating prompt (optional; iOS may suppress) |
 
@@ -133,8 +134,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 
 - **Kein** eigenes CarPlay-UI (`CPTemplate`) ohne Apple-Entitlement.  
   **No** custom CarPlay templates without Apple entitlement.
-- **Kein** watchOS / Apple Watch Companion-Target.  
-  **No** watchOS / Apple Watch companion target yet.
+- Apple Watch: **kein** unabhängiges Watch-Playback / Downloads / Queue — nur Continue-Snapshot + Play-on-iPhone + System-Now-Playing.  
+  Apple Watch: **no** independent Watch playback / downloads / queue — Continue snapshot + Play on iPhone + system Now Playing only.
 - **Kein** Push (nur lokale UserNotifications).  
   **No** push (local UserNotifications only).
 - Skip silence: Preference only — nicht auf stock AVPlayer.  

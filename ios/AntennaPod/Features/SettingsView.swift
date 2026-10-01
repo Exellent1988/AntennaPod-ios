@@ -170,6 +170,7 @@ struct SettingsView: View {
                 appStoreRatingSection
                 siriShortcutsSection
                 homescreenWidgetSection
+                appleWatchSection
                 carPlaySection
                 Section("About") {
                     NavigationLink {
@@ -646,10 +647,22 @@ struct SettingsView: View {
         }
     }
 
+
+    @ViewBuilder
+    private var appleWatchSection: some View {
+        Section {
+            Text("Apple Watch (beta lite): Continue listening shows episode title + podcast from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("Apple Watch")
+        }
+    }
+
     @ViewBuilder
     private var carPlaySection: some View {
         Section {
-            Text("CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. No Apple Watch companion target yet.")
+            Text("CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         } header: {

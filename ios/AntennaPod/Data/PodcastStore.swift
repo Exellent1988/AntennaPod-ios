@@ -506,6 +506,8 @@ final class PodcastStore: ObservableObject {
             continueEpisodeTitle: cont?.episode.title,
             continueFeedTitle: cont?.feedTitle
         )
+        // Keep Apple Watch Continue-listening in sync (WC applicationContext).
+        WatchCompanionBridge.shared.pushCurrentSnapshot()
     }
 
     /// Subscriptions ordered by newest episode `pubDateEpochMs` (proxy for recently updated).
