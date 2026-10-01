@@ -19,24 +19,89 @@ struct FavoritesView: View {
     }
 
     /// Episodes from the **full Favorites catalog** (`store.favoriteEpisodes`, newest-favorited first) that are
-    /// not already queued — same catalog as Clear favorites, **not** the searchable filtered list.
+    /// not already queued — same catalog as Clear favorites, **not** the podcast-chip or searchable filtered list.
     /// Confirm count and `enqueueAllFavorites()` share this eligibility.
     private var enqueueAllFavoritesCandidatesCount: Int {
         items.filter { !store.isInQueue($0.episode.id) }.count
     }
 
-    /// Visible favorites ordered by `AppSettings.favoritesSort`.
+    /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
+    private var podcastFilter: FavoritesPodcastFilter {
+        FavoritesPodcastFilter.fromStorage(settings.favoritesPodcastFilter)
+    }
+
+    private var isPodcastFiltering: Bool {
+        if case .feed = podcastFilter { return true }
+        return false
+    }
+
+    /// Unique feeds that currently have at least one favorite episode (title A–Z).
+    /// Built from the Favorites catalog via `feed(containingEpisodeId:)` — never invent.
+    private var favoritesPodcastFeeds: [PodcastFeed] {
+        var seen = Set<UUID>()
+        var feeds: [PodcastFeed] = []
+        for item in items {
+            guard let feed = store.feed(containingEpisodeId: item.episode.id) else { continue }
+            if seen.insert(feed.id).inserted {
+                feeds.append(feed)
+            }
+        }
+        return feeds.sorted {
+            $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+    }
+
+    private var podcastFilterChips: [FavoritesPodcastFilter] {
+        var chips: [FavoritesPodcastFilter] = [.all]
+        var feeds = favoritesPodcastFeeds
+        // Keep a persisted selection visible (even if that feed no longer has favorites)
+        // so the user can see why the list is empty and tap All.
+        if case .feed(let id) = podcastFilter,
+           !feeds.contains(where: { $0.id == id }),
+           let feed = store.feeds.first(where: { $0.id == id }) {
+            feeds.append(feed)
+            feeds.sort {
+                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
+        }
+        chips.append(contentsOf: feeds.map { .feed($0.id) })
+        return chips
+    }
+
+    private func podcastChipTitle(_ chip: FavoritesPodcastFilter) -> String {
+        switch chip {
+        case .all:
+            return String(localized: "All")
+        case .feed(let id):
+            return store.feeds.first(where: { $0.id == id })?.title
+                ?? favoritesPodcastFeeds.first(where: { $0.id == id })?.title
+                ?? String(localized: "Podcast")
+        }
+    }
+
+    private var isSearching: Bool {
+        !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Visible favorites: podcast chip → search → `favoritesSort`.
     /// Sort key: `FavoriteEpisode.favoritedAtEpochMs` (`favoriteAtById` / `favorites.json`).
-    /// Empty query shows the full list; sort applies to search-filtered results too.
+    /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
     /// Does not mutate `PodcastStore.favoriteEpisodes` (Home Favorites preview / Clear favorites stay newest-first catalog).
+    /// View-only — Clear favorites / Add all to queue stay full-catalog scoped.
     private var filteredItems: [FavoriteEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-        let base = items
+        let afterPodcast: [FavoriteEpisode]
+        switch podcastFilter {
+        case .all:
+            afterPodcast = items
+        case .feed(let feedId):
+            afterPodcast = items.filter { store.feed(containingEpisodeId: $0.episode.id)?.id == feedId }
+        }
         let filtered: [FavoriteEpisode]
         if q.isEmpty {
-            filtered = base
+            filtered = afterPodcast
         } else {
-            filtered = base.filter { item in
+            filtered = afterPodcast.filter { item in
                 if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
                 return item.feedTitle.localizedCaseInsensitiveContains(q)
             }
@@ -58,7 +123,7 @@ struct FavoritesView: View {
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** Favorites list
-    /// (sort + searchable filter). Remaining per episode = `max(0, duration − position)` when
+    /// (podcast chip + searchable filter + sort). Remaining per episode = `max(0, duration − position)` when
     /// duration known; unplayed with duration contributes full duration; **played** (not current)
     /// → 0; **unknown duration skipped** (tilde when any skipped). Currently playing uses live
     /// `PlaybackService` position/duration. Wall-clock only (no playback-speed divide).
@@ -93,8 +158,30 @@ struct FavoritesView: View {
 
     var body: some View {
         List {
-            // AntennaPod-like favorites info bar (visible sorted+filtered list remaining time).
-            // Hidden when catalog empty or search matches nothing — not full-catalog Clear count.
+            if !items.isEmpty, !favoritesPodcastFeeds.isEmpty || isPodcastFiltering {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(podcastFilterChips) { chip in
+                                FavoritesPodcastFilterChip(
+                                    title: podcastChipTitle(chip),
+                                    selected: podcastFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the Favorites list by podcast")
+                                ) {
+                                    settings.favoritesPodcastFilter = chip.storageValue
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                } header: {
+                    Text("Podcasts")
+                }
+            }
+
+            // AntennaPod-like favorites info bar (visible sorted+podcast+search filtered list remaining time).
+            // Hidden when catalog empty or filters match nothing — not full-catalog Clear count.
             if let remainingLabel = favoritesRemainingInfoLabel {
                 Section {
                     Text(remainingLabel)
@@ -118,7 +205,11 @@ struct FavoritesView: View {
                 ContentUnavailableView(
                     "No matching favorites",
                     systemImage: "magnifyingglass",
-                    description: Text("No favorites match your search.")
+                    description: Text(
+                        isPodcastFiltering && !isSearching
+                            ? String(localized: "No favorites match your filter.")
+                            : String(localized: "No favorites match your search.")
+                    )
                 )
             } else {
                 ForEach(filteredItems) { item in
@@ -204,7 +295,7 @@ struct FavoritesView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Appends \(enqueueAllFavoritesCandidatesCount) favorite episodes to the end of the queue (newest favorited first). Already queued episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the searchable filter. Queue lock does not block enqueue.")
+            Text("Appends \(enqueueAllFavoritesCandidatesCount) favorite episodes to the end of the queue (newest favorited first). Already queued episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the podcast or searchable filter. Queue lock does not block enqueue.")
         }
         .confirmationDialog(
             "Clear favorites?",
@@ -235,4 +326,25 @@ struct FavoritesView: View {
     }
 }
 
+/// Filter chip for Favorites podcast chips (mirrors Inbox / Queue / Downloads).
+private struct FavoritesPodcastFilterChip: View {
+    let title: String
+    let selected: Bool
+    let accessibilityHint: String
+    let action: () -> Void
 
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline.weight(selected ? .semibold : .regular))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(selected ? Color.accentColor : Color.secondary.opacity(0.15), in: Capsule())
+                .foregroundStyle(selected ? Color.white : Color.primary)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(accessibilityHint)
+        .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+}

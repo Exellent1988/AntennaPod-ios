@@ -11520,23 +11520,6 @@
         }
       }
     },
-    "Appends %lld favorite episodes to the end of the queue (newest favorited first). Already queued episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the searchable filter. Queue lock does not block enqueue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends %lld favorite episodes to the end of the queue (newest favorited first). Already queued episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the searchable filter. Queue lock does not block enqueue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht %lld Favoriten-Episoden am Ende der Warteschlange ein (zuletzt favorisiert zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Favoriten-Katalog (wie Favoriten leeren), nicht die Suchfilterung. Warteschlangen-Sperre blockiert Einreihen nicht."
-          }
-        }
-      }
-    },
     "Appends downloaded episodes not already queued": {
       "extractionState": "manual",
       "localizations": {
@@ -17514,6 +17497,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Markiert %lld Posteingangs-Episoden als gehört. Episoden verlassen den Posteingang; Auto-Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert. Nutzt den gesamten Posteingangs-Katalog (nicht nur den aktuellen Podcast-Filter)."
+          }
+        }
+      }
+    },
+    "Filters the Favorites list by podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Favorites list by podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Favoriten-Liste nach Podcast"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Favorites podcast filter chips."
+    },
+    "No favorites match your filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No favorites match your filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Favoriten passen zu deinem Filter."
+          }
+        }
+      }
+    },
+    "Appends %lld favorite episodes to the end of the queue (newest favorited first). Already queued episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the podcast or searchable filter. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld favorite episodes to the end of the queue (newest favorited first). Already queued episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the podcast or searchable filter. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld Favoriten-Episoden am Ende der Warteschlange ein (zuletzt favorisiert zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Favoriten-Katalog (wie Favoriten leeren), nicht Podcast- oder Suchfilter. Warteschlangen-Sperre blockiert Einreihen nicht."
           }
         }
       }

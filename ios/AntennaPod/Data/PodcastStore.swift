@@ -1097,7 +1097,7 @@ final class PodcastStore: ObservableObject {
 
     /// Append every favorite episode that is not already queued (bulk).
     /// Uses store `favoriteEpisodes` order (**newest-first** by `favoritedAtEpochMs` — same catalog as
-    /// Clear favorites / Home Favorites preview). Does **not** follow UI `favoritesSort` or searchable filter.
+    /// Clear favorites / Home Favorites preview). Does **not** follow UI `favoritesSort`, podcast chip, or searchable filter.
     /// Skips already-queued ids (no duplicates). Uses `enqueue` (append), not `playNext`.
     /// Safe while queue lock is on (reorder-only — enqueue stays allowed).
     /// Callers must confirm first (Favorites toolbar `confirmationDialog`).

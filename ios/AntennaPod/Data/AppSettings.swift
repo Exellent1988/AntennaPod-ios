@@ -419,6 +419,36 @@ enum FavoritesSort: String, CaseIterable, Identifiable {
 }
 
 
+
+/// Podcast chip selection on the Favorites list (feeds that currently have favorite
+/// episodes only — never invent podcasts). Empty storage = All; otherwise feed UUID string.
+enum FavoritesPodcastFilter: Hashable, Identifiable {
+    case all
+    case feed(UUID)
+
+    var id: String {
+        switch self {
+        case .all: return "__all__"
+        case .feed(let id): return "feed:\(id.uuidString)"
+        }
+    }
+
+    /// Persistable raw value: empty = All; otherwise the feed UUID string.
+    var storageValue: String {
+        switch self {
+        case .all: return ""
+        case .feed(let id): return id.uuidString
+        }
+    }
+
+    static func fromStorage(_ raw: String?) -> FavoritesPodcastFilter {
+        guard let raw else { return .all }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let id = UUID(uuidString: trimmed) else { return .all }
+        return .feed(id)
+    }
+}
+
 /// How the Archived list orders episodes (client-side; by archived-at timestamp).
 enum ArchivedSort: String, CaseIterable, Identifiable {
     case newestFirst
@@ -689,7 +719,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History size limit, Favorites sort, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -775,6 +805,7 @@ final class AppSettings: ObservableObject {
         static let historySort = "settings.historySort"
         static let historySizeLimit = "settings.historySizeLimit"
         static let favoritesSort = "settings.favoritesSort"
+        static let favoritesPodcastFilter = "settings.favoritesPodcastFilter"
         static let archivedSort = "settings.archivedSort"
         static let allEpisodesFilter = "settings.allEpisodesFilter"
         static let allEpisodesSort = "settings.allEpisodesSort"
@@ -1167,10 +1198,22 @@ final class AppSettings: ObservableObject {
     /// Favorites list order by `FavoriteEpisode.favoritedAtEpochMs` (`favorites.json` / `favoriteAtById`):
     /// newest first (default) or oldest first.
     /// Stable tiebreaker is episode `id`. Client-side re-sort in FavoritesView only — `PodcastStore.favoriteEpisodes`
-    /// stays newest-first for Home Favorites preview / Clear favorites counts. Applies to search-filtered results too.
+    /// stays newest-first for Home Favorites preview / Clear favorites counts. Applies to podcast-chip + search-filtered results too.
     @Published var favoritesSort: FavoritesSort {
         didSet {
             UserDefaults.standard.set(favoritesSort.rawValue, forKey: Keys.favoritesSort)
+        }
+    }
+
+    /// Favorites podcast chip filter. Empty string = All; otherwise a feed UUID that currently has
+    /// (or recently had) favorite episodes. Default All. Persisted (+ backup). Applied before
+    /// `.searchable`; `favoritesSort` still orders the filtered list. Chips list only feeds
+    /// present in the current Favorites catalog (never invent). Orphan favorites without a
+    /// matching library feed match All only. **View-only** — Clear favorites / Add all to queue
+    /// stay full Favorites catalog. Home Favorites preview does not follow this chip.
+    @Published var favoritesPodcastFilter: String {
+        didSet {
+            UserDefaults.standard.set(favoritesPodcastFilter, forKey: Keys.favoritesPodcastFilter)
         }
     }
 
@@ -1465,6 +1508,8 @@ final class AppSettings: ObservableObject {
         let favoritesSortRaw = UserDefaults.standard.string(forKey: Keys.favoritesSort)
             ?? FavoritesSort.newestFirst.rawValue
         favoritesSort = FavoritesSort(rawValue: favoritesSortRaw) ?? .newestFirst
+        let favoritesPodcastFilterRaw = UserDefaults.standard.string(forKey: Keys.favoritesPodcastFilter) ?? ""
+        favoritesPodcastFilter = FavoritesPodcastFilter.fromStorage(favoritesPodcastFilterRaw).storageValue
         let archivedSortRaw = UserDefaults.standard.string(forKey: Keys.archivedSort)
             ?? ArchivedSort.newestFirst.rawValue
         archivedSort = ArchivedSort(rawValue: archivedSortRaw) ?? .newestFirst
@@ -1710,6 +1755,7 @@ final class AppSettings: ObservableObject {
             historySort: historySort.rawValue,
             historySizeLimit: historySizeLimit.rawValue,
             favoritesSort: favoritesSort.rawValue,
+            favoritesPodcastFilter: favoritesPodcastFilter,
             archivedSort: archivedSort.rawValue,
             allEpisodesFilter: allEpisodesFilter.rawValue,
             allEpisodesSort: allEpisodesSort.rawValue,
@@ -1848,6 +1894,9 @@ final class AppSettings: ObservableObject {
         if let favoritesSortRaw = snap.favoritesSort {
             favoritesSort = FavoritesSort(rawValue: favoritesSortRaw) ?? .newestFirst
         }
+        if let favoritesPodcastFilterRaw = snap.favoritesPodcastFilter {
+            favoritesPodcastFilter = FavoritesPodcastFilter.fromStorage(favoritesPodcastFilterRaw).storageValue
+        }
         if let archivedSortRaw = snap.archivedSort {
             archivedSort = ArchivedSort(rawValue: archivedSortRaw) ?? .newestFirst
         }
@@ -1947,6 +1996,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var historySizeLimit: Int? = 0
     /// Absent in older backups → newestFirst (default).
     var favoritesSort: String? = nil
+    /// Absent in older backups → All (empty). Feed UUID string or empty for All.
+    var favoritesPodcastFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var archivedSort: String? = nil
     /// Absent in older backups → all (default).
