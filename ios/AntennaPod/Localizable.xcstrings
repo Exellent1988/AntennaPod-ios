@@ -11620,6 +11620,57 @@
           }
         }
       }
+    },
+    "Episodes actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodes actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden-Aktionen"
+          }
+        }
+      }
+    },
+    "Appends All Episodes not already queued (newest 500 soft cap)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends All Episodes not already queued (newest 500 soft cap)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht Alle-Episoden ein, die noch nicht in der Warteschlange sind (Soft-Cap neueste 500)"
+          }
+        }
+      }
+    },
+    "Appends %lld episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the chip or search filter. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the chip or search filter. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld Episoden am Ende der Warteschlange ein (neueste zuerst innerhalb Soft-Cap neueste 500). Bereits eingereihte Episoden werden übersprungen. Nutzt den Soft-Cap-All-Episodes-Katalog (neueste 500 nach Erscheinungsdatum), nicht Chip- oder Suchfilter. Warteschlangen-Sperre blockiert Einreihen nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

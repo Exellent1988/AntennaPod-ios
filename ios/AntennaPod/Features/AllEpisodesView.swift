@@ -6,6 +6,22 @@ struct AllEpisodesView: View {
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var downloads: DownloadService
     @State private var searchText = ""
+    @State private var showEnqueueAllConfirm = false
+
+    /// Soft-capped catalog (`store.allEpisodes`, newest-500) — Add all to queue always uses this,
+    /// **not** the chip/search filtered visible list (`items`).
+    private var catalogItems: [InboxEpisode] {
+        store.allEpisodes
+    }
+
+    /// Episodes from the **soft-capped All Episodes catalog** (`store.allEpisodes`, newest 500 by
+    /// `pubDateEpochMs`) that are not already queued — same catalog as the list’s soft cap,
+    /// **not** chip (`allEpisodesFilter`) or searchable filter.
+    /// Confirm count and `enqueueAllEpisodes()` share this eligibility.
+    /// **Soft-cap honesty:** never claims eligibility beyond the newest-500 set.
+    private var enqueueAllEpisodesCandidatesCount: Int {
+        catalogItems.filter { !store.isInQueue($0.episode.id) }.count
+    }
 
     /// Soft cap first (newest 500 via `store.allEpisodes`), then sort → chip → search.
     /// **Honesty:** `store.allEpisodes` is already the newest-500 by `pubDateEpochMs`.
@@ -242,8 +258,35 @@ struct AllEpisodesView: View {
                 }
                 .accessibilityLabel("Sort all episodes")
             }
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button {
+                        showEnqueueAllConfirm = true
+                    } label: {
+                        Label("Add all to queue", systemImage: "text.append")
+                    }
+                    .disabled(enqueueAllEpisodesCandidatesCount == 0)
+                    .accessibilityHint("Appends All Episodes not already queued (newest 500 soft cap)")
+                } label: {
+                    Label("Episodes actions", systemImage: "ellipsis.circle")
+                }
+                // Menu enabled whenever soft-capped catalog is non-empty (even if chip/search hides rows).
+                .disabled(catalogItems.isEmpty)
+            }
         }
         .searchable(text: $searchText, prompt: "Filter by title or podcast")
+        .confirmationDialog(
+            "Add all to queue?",
+            isPresented: $showEnqueueAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all to queue") {
+                store.enqueueAllEpisodes()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllEpisodesCandidatesCount) episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the chip or search filter. Queue lock does not block enqueue.")
+        }
     }
 }
 

@@ -563,6 +563,24 @@ final class PodcastStore: ObservableObject {
         return items
     }
 
+    /// Append every soft-capped All Episodes item that is not already queued (bulk).
+    /// Uses store `allEpisodes` order (**newest-first** by `pubDateEpochMs` within the
+    /// newest-**500** soft cap — same catalog as Library → Episodes). Does **not** follow
+    /// UI `allEpisodesSort`, chip filter (`allEpisodesFilter`), or searchable filter.
+    /// **Soft-cap honesty:** never enqueues beyond the newest-500 set.
+    /// Skips already-queued ids (no duplicates). Uses `enqueue` (append), not `playNext`.
+    /// Safe while queue lock is on (reorder-only — enqueue stays allowed).
+    /// Callers must confirm first (All Episodes toolbar `confirmationDialog`).
+    /// - Returns: number of episodes newly appended.
+    @discardableResult
+    func enqueueAllEpisodes() -> Int {
+        let candidates = allEpisodes.map(\.episode).filter { !isInQueue($0.id) }
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
     // MARK: - Home sections
 
     /// In-progress (not played) episodes with meaningful progress, newest `lastPlayedAt` first.
