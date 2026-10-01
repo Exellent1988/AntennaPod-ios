@@ -506,6 +506,11 @@ struct EpisodeRow: View {
                         ? String(localized: "Restore")
                         : String(localized: "Archive")
                 )
+                .accessibilityHint(
+                    store.isArchived(episode.id)
+                        ? String(localized: "Restores this episode from the archive")
+                        : String(localized: "Hides this episode from Inbox without marking it played")
+                )
 
                 episodeShareControl
             }

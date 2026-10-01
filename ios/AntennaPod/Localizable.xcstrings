@@ -8228,6 +8228,40 @@
           }
         }
       }
+    },
+    "Hides this episode from Inbox without marking it played": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hides this episode from Inbox without marking it played"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blendet diese Episode aus dem Posteingang aus, ohne sie als gehört zu markieren"
+          }
+        }
+      }
+    },
+    "Restores this episode from the archive": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restores this episode from the archive"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stellt diese Episode aus dem Archiv wieder her"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

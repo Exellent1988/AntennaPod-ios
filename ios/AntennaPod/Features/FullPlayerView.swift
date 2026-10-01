@@ -666,6 +666,7 @@ struct FullPlayerView: View {
     private func secondaryActions(episode: PodcastEpisode) -> some View {
         let played = store.isPlayed(episode.id)
         let favorited = store.isFavorite(episode.id)
+        let archived = store.isArchived(episode.id)
         return HStack(spacing: 16) {
             Button {
                 playback.playFromBeginning()
@@ -707,6 +708,26 @@ struct FullPlayerView: View {
                 favorited
                     ? String(localized: "Removes this episode from favorites")
                     : String(localized: "Adds this episode to favorites")
+            )
+
+            Button {
+                store.toggleArchived(episode.id)
+            } label: {
+                Label(
+                    archived ? "Restore" : "Archive",
+                    systemImage: archived ? "archivebox.fill" : "archivebox"
+                )
+            }
+            .tint(archived ? .orange : nil)
+            .accessibilityLabel(
+                archived
+                    ? String(localized: "Restore")
+                    : String(localized: "Archive")
+            )
+            .accessibilityHint(
+                archived
+                    ? String(localized: "Restores this episode from the archive")
+                    : String(localized: "Hides this episode from Inbox without marking it played")
             )
 
             Button {
