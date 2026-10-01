@@ -173,6 +173,52 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    // MARK: - Library search (local only)
+
+    /// Matching subscriptions by feed title or feed description (case-insensitive).
+    func matchingFeeds(query: String) -> [PodcastFeed] {
+        let q = Self.normalizedQuery(query)
+        guard !q.isEmpty else { return [] }
+        return feeds.filter { feed in
+            Self.matches(feed.title, query: q)
+                || Self.matches(feed.descriptionText, query: q)
+        }
+        .sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+    }
+
+    /// Matching episodes across subscriptions by episode title (feeds listed separately).
+    func matchingEpisodes(query: String) -> [LibraryEpisodeHit] {
+        let q = Self.normalizedQuery(query)
+        guard !q.isEmpty else { return [] }
+        var hits: [LibraryEpisodeHit] = []
+        for feed in feeds {
+            for episode in feed.episodes where Self.matches(episode.title, query: q) {
+                hits.append(
+                    LibraryEpisodeHit(
+                        episode: episode,
+                        feedTitle: feed.title,
+                        feedId: feed.id
+                    )
+                )
+            }
+        }
+        hits.sort { lhs, rhs in
+            let titleCmp = lhs.episode.title.localizedCaseInsensitiveCompare(rhs.episode.title)
+            if titleCmp != .orderedSame { return titleCmp == .orderedAscending }
+            return lhs.feedTitle.localizedCaseInsensitiveCompare(rhs.feedTitle) == .orderedAscending
+        }
+        return hits
+    }
+
+    private static func normalizedQuery(_ raw: String) -> String {
+        raw.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private static func matches(_ value: String?, query: String) -> Bool {
+        guard let value, !value.isEmpty else { return false }
+        return value.localizedCaseInsensitiveContains(query)
+    }
+
     // MARK: - OPML import / export
 
     func exportOpmlXML() -> String {

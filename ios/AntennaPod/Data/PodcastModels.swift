@@ -44,3 +44,12 @@ struct InboxEpisode: Identifiable, Hashable {
     let episode: PodcastEpisode
     let feedTitle: String
 }
+
+/// Episode hit from local library search (title / feed title / descriptions).
+struct LibraryEpisodeHit: Identifiable, Hashable {
+    var id: String { episode.id }
+    let episode: PodcastEpisode
+    let feedTitle: String
+    let feedId: UUID
+}
+

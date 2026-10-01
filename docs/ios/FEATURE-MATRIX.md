@@ -18,7 +18,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Favorites | 3 | todo | |
 | Subscriptions | 5 | wip | List + subscribe sheet |
 | Add podcast | 5 | wip | URL + Apple Podcasts search (Subscribe reuses feed URL pipeline) |
-| Search (Bibliothek) | 4 | todo | |
+| Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
 | Statistics | 2 | todo | P3 |
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (5): Inbox, Subscriptions, Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | wip | Mini player only |

@@ -4,6 +4,13 @@ struct SubscriptionsView: View {
     @EnvironmentObject private var store: PodcastStore
     @State private var showAdd = false
     @State private var showOpmlSheet = false
+    @State private var searchText = ""
+
+    private var filteredFeeds: [PodcastFeed] {
+        let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if q.isEmpty { return store.feeds }
+        return store.matchingFeeds(query: q)
+    }
 
     var body: some View {
         NavigationStack {
@@ -14,8 +21,14 @@ struct SubscriptionsView: View {
                         systemImage: "dot.radiowaves.left.and.right",
                         description: Text("Search Apple Podcasts, add by feed URL, or import an OPML file.")
                     )
+                } else if filteredFeeds.isEmpty {
+                    ContentUnavailableView(
+                        "No matching podcasts",
+                        systemImage: "magnifyingglass",
+                        description: Text("No subscriptions match your library search.")
+                    )
                 } else {
-                    ForEach(store.feeds) { feed in
+                    ForEach(filteredFeeds) { feed in
                         NavigationLink(value: feed) {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(feed.title)
@@ -44,6 +57,7 @@ struct SubscriptionsView: View {
                 }
             }
             .navigationTitle("Subscriptions")
+            .searchable(text: $searchText, prompt: "Search subscriptions")
             .navigationDestination(for: PodcastFeed.self) { feed in
                 FeedDetailView(feed: feed)
             }
