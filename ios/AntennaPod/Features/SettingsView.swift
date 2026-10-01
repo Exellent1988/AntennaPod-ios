@@ -162,6 +162,15 @@ struct SettingsView: View {
                     Text("When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Picker("Smart mark as played", selection: $settings.smartMarkAsPlayedSeconds) {
+                        ForEach(AppSettings.smartMarkAsPlayedPresets, id: \.self) { secs in
+                            Text(AppSettings.smartMarkAsPlayedLabel(secs)).tag(secs)
+                        }
+                    }
+                    .accessibilityHint("Seconds before end that count as played when leaving. Off marks only on natural end. Default 30.")
+                    Text("Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
                 refreshSection
                 autoDownloadSection

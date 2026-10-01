@@ -300,7 +300,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -308,12 +308,16 @@ final class AppSettings: ObservableObject {
     static let skipIntervalPresets: [Int] = [5, 10, 15, 20, 30, 60]
     /// Skip intro / outro presets (0 = off). Matches common AntennaPod values.
     static let skipIntroOutroPresets: [Int] = [0, 5, 10, 15, 30, 60]
+    /// Smart mark as played presets (0 = off). AntennaPod `prefSmartMarkAsPlayedSecs` values (subset).
+    static let smartMarkAsPlayedPresets: [Int] = [0, 15, 30, 60, 120]
     /// Android `prefRewindSecs` default.
     static let defaultRewindSeconds: Int = 10
     /// Android `prefFastForwardSecs` default.
     static let defaultFastForwardSeconds: Int = 30
     /// Global skip intro / outro default (off).
     static let defaultSkipIntroOutroSeconds: Int = 0
+    /// Android `prefSmartMarkAsPlayedSecs` default.
+    static let defaultSmartMarkAsPlayedSeconds: Int = 30
     static let customStorageMBRange = 50...100_000
 
     /// SF Symbol for skip buttons (`gobackward.10`, `goforward.30`, …). Falls back to unnumbered glyph when no preset icon exists (e.g. 20s).
@@ -356,6 +360,7 @@ final class AppSettings: ObservableObject {
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
         static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
         static let continuousPlaybackEnabled = "settings.continuousPlaybackEnabled"
+        static let smartMarkAsPlayedSeconds = "settings.smartMarkAsPlayedSeconds"
         static let homeSectionOrder = "settings.home.sectionOrder"
         static let homeHiddenSections = "settings.home.hiddenSections"
         static let subscriptionsSort = "settings.subscriptionsSort"
@@ -571,6 +576,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Seconds before end that count as “played” when leaving / stopping (Android `prefSmartMarkAsPlayedSecs`, default 30).
+    /// `0` = Off: only mark played on natural end (`ended: true`) or explicit mark — not near-end scrub/leave.
+    @Published var smartMarkAsPlayedSeconds: Int {
+        didSet {
+            UserDefaults.standard.set(smartMarkAsPlayedSeconds, forKey: Keys.smartMarkAsPlayedSeconds)
+        }
+    }
+
     /// Ordered Home section ids (all known sections; hidden ones stay in order for Settings reorder).
     @Published var homeSectionOrder: [HomeSectionId] {
         didSet {
@@ -769,6 +782,7 @@ final class AppSettings: ObservableObject {
             // Default on: auto-advance to next queue episode on end (AntennaPod continuous playback).
             continuousPlaybackEnabled = true
         }
+        smartMarkAsPlayedSeconds = Self.loadSmartMarkAsPlayedSeconds()
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
         homeSectionOrder = Self.loadHomeSectionOrder()
@@ -836,6 +850,32 @@ final class AppSettings: ObservableObject {
     /// Label for Settings pickers (`Off` when 0).
     static func skipIntroOutroLabel(_ seconds: Int) -> String {
         seconds == 0 ? "Off" : "\(seconds) seconds"
+    }
+
+    /// Label for smart-mark Settings picker (`Off` when 0); uses String Catalog.
+    static func smartMarkAsPlayedLabel(_ seconds: Int) -> String {
+        switch seconds {
+        case 0:
+            return String(localized: "Off")
+        case 15:
+            return String(localized: "15 seconds")
+        case 30:
+            return String(localized: "30 seconds")
+        case 60:
+            return String(localized: "60 seconds")
+        case 120:
+            return String(localized: "120 seconds")
+        default:
+            return "\(seconds) seconds"
+        }
+    }
+
+    private static func loadSmartMarkAsPlayedSeconds() -> Int {
+        guard UserDefaults.standard.object(forKey: Keys.smartMarkAsPlayedSeconds) != nil else {
+            return defaultSmartMarkAsPlayedSeconds
+        }
+        let stored = UserDefaults.standard.integer(forKey: Keys.smartMarkAsPlayedSeconds)
+        return smartMarkAsPlayedPresets.contains(stored) ? stored : defaultSmartMarkAsPlayedSeconds
     }
 
 
@@ -929,6 +969,7 @@ final class AppSettings: ObservableObject {
             skipSilenceEnabled: skipSilenceEnabled,
             keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
             continuousPlaybackEnabled: continuousPlaybackEnabled,
+            smartMarkAsPlayedSeconds: smartMarkAsPlayedSeconds,
             chartsCountryCode: chartsCountryCode,
             homeSectionOrder: homeSectionOrder.map(\.rawValue),
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
@@ -991,6 +1032,10 @@ final class AppSettings: ObservableObject {
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
         keepScreenOnWhilePlaying = snap.keepScreenOnWhilePlaying ?? false
         continuousPlaybackEnabled = snap.continuousPlaybackEnabled ?? true
+        let smartMark = snap.smartMarkAsPlayedSeconds ?? Self.defaultSmartMarkAsPlayedSeconds
+        smartMarkAsPlayedSeconds = Self.smartMarkAsPlayedPresets.contains(smartMark)
+            ? smartMark
+            : Self.defaultSmartMarkAsPlayedSeconds
         chartsCountryCode = ChartsCountryPreference.fromStorage(snap.chartsCountryCode).storageValue
         if let orderRaw = snap.homeSectionOrder, !orderRaw.isEmpty {
             var order: [HomeSectionId] = []
@@ -1061,6 +1106,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var keepScreenOnWhilePlaying: Bool? = false
     /// Absent in older backups → treated as on (auto-next from queue).
     var continuousPlaybackEnabled: Bool? = true
+    /// Absent in older backups → treated as 30 (AntennaPod default).
+    var smartMarkAsPlayedSeconds: Int? = 30
     var chartsCountryCode: String
     /// Absent in older backups → default order.
     var homeSectionOrder: [String]? = nil

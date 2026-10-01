@@ -6511,6 +6511,125 @@
           }
         }
       }
+    },
+    "Smart mark as played": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smart mark as played"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intelligent als gehört markieren"
+          }
+        }
+      }
+    },
+    "Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als gehört markieren, wenn beim Verlassen oder Stoppen weniger als diese Sekunden Restzeit bleiben (AntennaPod Smart Mark). Aus (0) = nur bei natürlichem Ende oder manuell — nicht bei Scrub nahe dem Ende. Standard 30."
+          }
+        }
+      }
+    },
+    "Off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus"
+          }
+        }
+      }
+    },
+    "15 seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "15 seconds"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "15 Sekunden"
+          }
+        }
+      }
+    },
+    "30 seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 seconds"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 Sekunden"
+          }
+        }
+      }
+    },
+    "60 seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "60 seconds"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "60 Sekunden"
+          }
+        }
+      }
+    },
+    "120 seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "120 seconds"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "120 Sekunden"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -12,8 +12,8 @@ enum SleepTimerMode: Equatable {
 
 @MainActor
 final class PlaybackService: ObservableObject {
-    /// AntennaPod default (`prefSmartMarkAsPlayedSecs` = 30).
-    static let smartMarkAsPlayedSeconds: Double = 30
+    /// Fallback when settings unbound (AntennaPod `prefSmartMarkAsPlayedSecs` default = 30).
+    static let defaultSmartMarkAsPlayedSeconds: Double = 30
     /// Throttle JSON writes while the periodic observer fires every 0.5s.
     private static let persistIntervalSeconds: Double = 5
     /// Soft fade window matching Android `SleepTimer.NOTIFICATION_THRESHOLD` (10s).
@@ -501,7 +501,7 @@ final class PlaybackService: ObservableObject {
         }
     }
 
-    /// Save progress; mark played when ended or within smart-mark window (last 30s).
+    /// Save progress; mark played when ended or within configurable smart-mark window.
     private func finishCurrentEpisode(ended: Bool) {
         guard let episode = currentEpisode, let store else {
             return
@@ -531,7 +531,14 @@ final class PlaybackService: ObservableObject {
         guard duration.isFinite, duration > 0 else {
             return false
         }
-        return position >= duration - Self.smartMarkAsPlayedSeconds
+        let threshold = Double(
+            settings?.smartMarkAsPlayedSeconds ?? Int(Self.defaultSmartMarkAsPlayedSeconds)
+        )
+        // Off (0): only natural end (`ended: true`) or explicit mark — not near-end leave/stop/scrub.
+        guard threshold > 0 else {
+            return false
+        }
+        return position >= duration - threshold
     }
 
     private func persistProgress(force: Bool) {
