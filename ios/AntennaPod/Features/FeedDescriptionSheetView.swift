@@ -2,8 +2,8 @@ import SwiftUI
 import UIKit
 
 /// Scrollable podcast / feed description sheet (plain text; HTML stripped for beta).
-/// Parallel to `EpisodeDescriptionSheetView` shownotes. Uses `PodcastFeed.descriptionText` only —
-/// no author field on the model in this beta.
+/// Parallel to `EpisodeDescriptionSheetView` shownotes. Uses `PodcastFeed.descriptionText`
+/// plus optional `author` under the title when the feed provided it (hidden when missing).
 /// Supports `.searchable` filter over already-loaded plain paragraphs/lines (case-insensitive,
 /// ~250 ms debounce). Does not fetch remote HTML beyond the feed's description field —
 /// no WebView / rich HTML renderer.
@@ -30,6 +30,10 @@ struct FeedDescriptionSheetView: View {
 
     private var hasPlainDescription: Bool {
         !plainDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private var displayAuthor: String? {
+        feed.displayAuthor
     }
 
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
@@ -146,6 +150,14 @@ struct FeedDescriptionSheetView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityAddTraits(.isHeader)
 
+                    if let author = displayAuthor {
+                        Text(author)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityLabel(String(localized: "Author \(author)"))
+                    }
+
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
                             .font(.body)
@@ -163,6 +175,14 @@ struct FeedDescriptionSheetView: View {
                         .font(.title2.weight(.semibold))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityAddTraits(.isHeader)
+
+                    if let author = displayAuthor {
+                        Text(author)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityLabel(String(localized: "Author \(author)"))
+                    }
 
                     Text(plainDescription)
                         .font(.body)

@@ -52,7 +52,8 @@ struct FeedPreviewView: View {
     }
 
     private var displayAuthor: String? {
-        request.hintAuthor?.nilIfEmpty
+        // Prefer author from the fetched feed when present; else discovery hint (iTunes/Index/fyyd).
+        parsed?.displayAuthor ?? request.hintAuthor?.nilIfEmpty
     }
 
     private var displayArtworkURL: URL? {

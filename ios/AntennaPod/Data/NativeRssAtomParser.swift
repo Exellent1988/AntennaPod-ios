@@ -17,12 +17,18 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var link: String?
     private var descriptionText: String?
     private var imageUrl: String?
+    /// Prefer itunes:author (or RSS author text) → Atom author/name → managingEditor.
+    private var itunesAuthor: String?
+    private var atomAuthorName: String?
+    private var managingEditor: String?
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
     private var currentText = ""
     private var inItem = false
     private var inImage = false
+    /// Atom `<author>` / RSS itunes:author element at channel/feed level (not item).
+    private var inFeedAuthor = false
 
     private var itemTitle: String?
     private var itemLink: String?
@@ -67,6 +73,11 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             siteLink: link,
             imageUrl: imageUrl,
             descriptionText: descriptionText,
+            author: Self.preferredAuthor(
+                itunesAuthor: itunesAuthor,
+                atomAuthorName: atomAuthorName,
+                managingEditor: managingEditor
+            ),
             episodes: episodes
         )
     }
@@ -113,6 +124,11 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         case "image":
             if !inItem {
                 inImage = true
+            }
+        case "author":
+            // Channel itunes:author (text) or Atom <author> wrapper — ignore item-level authors.
+            if !inItem {
+                inFeedAuthor = true
             }
         case "enclosure":
             enclosureUrl = attributeDict["url"] ?? attributeDict["href"]
@@ -291,6 +307,23 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 }
             case "description", "subtitle", "summary":
                 descriptionText = text
+            case "author":
+                // itunes:author / RSS author: text node on the element itself.
+                // Atom wraps <name>/<email> — those set atomAuthorName; leave text empty here.
+                if inFeedAuthor, !text.isEmpty {
+                    itunesAuthor = text
+                }
+                inFeedAuthor = false
+            case "name":
+                // Atom <author><name>…</name></author> at feed level only.
+                if inFeedAuthor, !text.isEmpty {
+                    atomAuthorName = text
+                }
+            case "managingeditor":
+                // RSS managingEditor — often "email (Name)"; store as provided, never invent.
+                if !text.isEmpty {
+                    managingEditor = text
+                }
             case "url" where inImage:
                 imageUrl = text
             case "logo", "icon":
@@ -316,6 +349,23 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             return String(name[name.index(after: index)...])
         }
         return name
+    }
+}
+
+extension XMLFeedParser {
+    /// Non-empty author preference: itunes/RSS author text → Atom name → managingEditor.
+    /// Returns nil when none present (UI hides; never invents).
+    fileprivate static func preferredAuthor(
+        itunesAuthor: String?,
+        atomAuthorName: String?,
+        managingEditor: String?
+    ) -> String? {
+        for candidate in [itunesAuthor, atomAuthorName, managingEditor] {
+            if let raw = candidate?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty {
+                return raw
+            }
+        }
+        return nil
     }
 }
 

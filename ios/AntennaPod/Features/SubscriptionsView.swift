@@ -42,7 +42,7 @@ struct SubscriptionsView: View {
     }
 
     /// Visible subscriptions after search; empty query shows full list under current sort.
-    /// Matches feed **title** and optional **descriptionText** (no author/authorEmail on PodcastFeed).
+    /// Matches feed **title**, optional **descriptionText**, and optional **author** (`PodcastStore.matchingFeeds`).
     private var searchFilteredFeeds: [PodcastFeed] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base: [PodcastFeed]
@@ -532,6 +532,14 @@ struct SubscriptionsView: View {
                                 .accessibilityHidden(true)
                         }
                     }
+                    // Feed author when present (itunes:author / Atom name / managingEditor); hide when missing.
+                    if let author = feed.displayAuthor {
+                        Text(author)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .accessibilityHidden(true)
+                    }
                     HStack(spacing: 6) {
                         Text("\(feed.episodes.count) episodes")
                             .font(.subheadline)
@@ -620,6 +628,9 @@ struct SubscriptionsView: View {
         var parts: [String] = [feed.title]
         if LocalFolderFeed.isLocalFolderFeed(feed) {
             parts.append(String(localized: "Folder"))
+        }
+        if let author = feed.displayAuthor {
+            parts.append(author)
         }
         let epCount = feed.episodes.count
         if epCount == 1 {

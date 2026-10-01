@@ -42,6 +42,11 @@ struct FeedDetailView: View {
         !plainFeedDescription.isEmpty
     }
 
+    /// Channel author when the feed provided it (hidden when missing — never invent).
+    private var displayAuthor: String? {
+        liveFeed.displayAuthor
+    }
+
     /// Episodes for this feed ordered by `AppSettings.feedEpisodeSort` (`pubDateEpochMs`).
     /// Missing dates sort last in both modes. Does not mutate stored feed order.
     private var sortedEpisodes: [PodcastEpisode] {
@@ -163,6 +168,16 @@ struct FeedDetailView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                 }
+            }
+            if let author = displayAuthor {
+                Section {
+                    Text(author)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityLabel(String(localized: "Author \(author)"))
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
             if !feedTags.isEmpty {
                 Section("Tags") {

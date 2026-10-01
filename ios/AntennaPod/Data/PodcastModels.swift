@@ -198,12 +198,22 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     var imageUrl: String?
     /// Channel / feed description from RSS (`description` / Atom `subtitle` / `summary`). May contain HTML.
     var descriptionText: String?
+    /// Podcast author when the feed provides it (`itunes:author` / Atom `author`/`name` / RSS `managingEditor`).
+    /// Nil or blank when absent — never invented from discovery hints alone.
+    var author: String?
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
     var hasDescriptionText: Bool {
         guard let descriptionText else { return false }
         return !descriptionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Trimmed non-empty author for UI / VoiceOver / search. Hidden when missing.
+    var displayAuthor: String? {
+        guard let author else { return nil }
+        let trimmed = author.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
     }
 }
 

@@ -14506,6 +14506,24 @@
           }
         }
       }
+    },
+    "Author %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for podcast author when feed provides itunes:author / Atom author name / managingEditor.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Author %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autor %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

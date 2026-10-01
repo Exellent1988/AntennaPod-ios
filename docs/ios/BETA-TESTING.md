@@ -72,6 +72,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Relative Veröffentlichungsdaten (EpisodeRow: Heute / Gestern / vor N Tagen ≤7 / sonst Medium-Absolut; Caption `S2 E5 · Trailer/Bonus · Datum · Dauer · Größe` wenn bekannt; VoiceOver) | ☐ Relative publish dates (EpisodeRow: Today / Yesterday / N days ago ≤7 / else medium absolute; caption `S2 E5 · Trailer/Bonus · date · duration · size` when known; VoiceOver) |
 | ☐ Fortschrittsbalken EpisodeRow (gestartet-nicht-fertig: position>1, !isPlayed, Dauer bekannt; aus `playback.json`; VoiceOver Prozent + Rest / Position) | ☐ EpisodeRow progress bar (started-not-finished: position>1, !isPlayed, duration known; from `playback.json`; VoiceOver percent + remaining / position) |
 | ☐ Podcast-Beschreibung (Feed-Detail info; Titel + Text; ausgeblendet wenn leer; ggf. Refresh nötig) | ☐ Podcast description (Feed detail info; title + text; hidden when empty; refresh may be needed) |
+| ☐ Podcast-Autor (Subscriptions-Untertitel + Feed-Detail; nur wenn Feed `itunes:author`/Atom/`managingEditor` liefert; ausgeblendet wenn leer; ggf. Refresh; VoiceOver Autor) | ☐ Podcast author (Subscriptions subtitle + Feed detail; only when feed provides `itunes:author`/Atom/`managingEditor`; hide when empty; refresh may be needed; VoiceOver Author) |
 | ☐ Podcast-Beschreibungs-Suche (Absätze/Zeilen; Groß/Klein egal; Debounce; leer bei keinen Treffern; nur geladener Text) | ☐ Podcast description search (paragraphs/lines; case-insensitive; debounce; empty when no matches; already-loaded text only) |
 | ☐ Podcast-Beschreibung kopieren (Beschreibungs-Sheet; Plain-Text Zwischenablage; Copied-Alert; disabled wenn leer) | ☐ Copy podcast description (description sheet; plain text pasteboard; Copied alert; disabled when empty) |
 | ☐ Video → audio only Toggle | ☐ Play video as audio only |
@@ -162,7 +163,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Subscriptions + Tags/Filter | ☐ Subscriptions + tags/filter |
 | ☐ Tags verwalten: Liste + Umbenennen + Löschen (Bestätigung; Settings / Abonnements) | ☐ Manage tags: list + rename + delete (confirm; Settings / Subscriptions) |
 | ☐ Tags verwalten: Suche (Tag-Name; Debounce; leer bei keinen Treffern; nur vorhandene Tags; Umbenennen/Löschen bleiben pro sichtbarem Tag, wirken global auf den Namen) | ☐ Manage tags search (tag name; debounce; empty when no matches; existing tags only; rename/delete stay on visible rows, still apply to that name globally) |
-| ☐ Subscriptions: Suche (Titel / Beschreibung; Sort bleibt) | ☐ Subscriptions: search (title / description; sort preserved) |
+| ☐ Subscriptions: Suche (Titel / Beschreibung / Autor; Sort bleibt) | ☐ Subscriptions: search (title / description / author; sort preserved) |
 | ☐ Subscriptions: Sortierung (Zuletzt aktualisiert / Alphabetisch) | ☐ Subscriptions: sort (Recently updated / Alphabetical) |
 | ☐ Subscriptions: Alle aktualisieren (Toolbar + Pull; ehrlicher Fortschritt **N von M** aus per-Feed-Callbacks; Fehler weiter über `lastError`) | ☐ Subscriptions: Refresh all (toolbar + pull; honest **N of M** progress from per-feed completions; failures still via `lastError`) |
 | ☐ Home / Inbox: Pull-to-refresh — gleicher **N von M**-Fortschritt wie Subscriptions (`refreshAllFeeds`) | ☐ Home / Inbox: pull-to-refresh — same **N of M** progress as Subscriptions (`refreshAllFeeds`) |
