@@ -13554,6 +13554,159 @@
           }
         }
       }
+    },
+    "AntennaPod Statistics — This week": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Statistics — This week"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod-Statistiken — Diese Woche"
+          }
+        }
+      }
+    },
+    "AntennaPod Statistics — This month": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Statistics — This month"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod-Statistiken — Dieser Monat"
+          }
+        }
+      }
+    },
+    "AntennaPod Statistics — This year": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Statistics — This year"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod-Statistiken — Dieses Jahr"
+          }
+        }
+      }
+    },
+    "AntennaPod Statistics — All time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Statistics — All time"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod-Statistiken — Gesamte Zeit"
+          }
+        }
+      }
+    },
+    "In progress: %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In progress: %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Bearbeitung: %lld"
+          }
+        }
+      }
+    },
+    "%lld. %@ — %@ (%lld played · %lld in progress)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld. %@ — %@ (%lld played · %lld in progress)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld. %@ — %@ (%lld gehört · %lld in Bearbeitung)"
+          }
+        }
+      }
+    },
+    "(Approximate — played use saved duration; in-progress use position. No rewinds, speed, or re-listens. Coarse episode stamps — lastPlayedAt else updatedAt.)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(Approximate — played use saved duration; in-progress use position. No rewinds, speed, or re-listens. Coarse episode stamps — lastPlayedAt else updatedAt.)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(Näherungswert — gehört nutzt gespeicherte Dauer; in Bearbeitung die Position. Keine Rückspulungen, Geschwindigkeit oder erneutes Hören. Grobe Episoden-Stempel — lastPlayedAt sonst updatedAt.)"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with a plain-text Statistics summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with a plain-text Statistics summary"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit einer reinen Text-Zusammenfassung der Statistiken"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with a plain-text Echo summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with a plain-text Echo summary"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit einer reinen Text-Zusammenfassung von Echo"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

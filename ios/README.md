@@ -39,8 +39,8 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Accessibility / VoiceOver (beta polish; EpisodeRow combined labels (incl. relative publish date + duration + size when known + in-progress percent/remaining when known) + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
 - Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Play Next + Add to queue; toolbar **Sort** Newest/Oldest first by `pubDateEpochMs` (`inboxSort`); toolbar menu **Add all to queue** (confirm eligible = full Inbox minus queued; `enqueueAllInbox` append newest-first; skip queued; OK when Queue locked) + Archive all + Mark all as played with confirm; **remaining time** info bar over visible sorted Inbox list (hidden during library search — search shows its own episode-hit bar); **tab badge** = `inboxEpisodes.count`, hidden when 0)
 - History (played / in-progress from `playback.json`; Subscriptions → Library → History; toolbar **Sort** Newest/Oldest first by `lastPlayedAtEpochMs` (`historySort`); **History size** cap Settings → Library `historySizeLimit` 50/100/200/500/Unlimited default; **remaining time** info bar over visible sort+search list (played→0; not Clear catalog); `.searchable` title/feed filter with debounce; toolbar Clear history with confirm on full list)
-- Statistics (beta; Subscriptions → Library → Statistics + Settings; totals + top podcasts from `playback.json`; approx time; **time range** This week / This month / This year / All time)
-- Echo / Year in Review (beta lite; Library + Settings; shared Statistics time range on playback/favorites; ShareLink text)
+- Statistics (beta; Subscriptions → Library → Statistics + Settings; totals + top podcasts from `playback.json`; approx time; **time range** This week / This month / This year / All time; toolbar **Share** plain-text summary)
+- Echo / Year in Review (beta lite; Library + Settings; shared Statistics time range on playback/favorites; ShareLink plain-text + VoiceOver hint)
 - About / contribute links (Settings → About; fork blurb; Bundle version; antennapod.org / GitHub / contribute / docs / this fork)
 - Rating prompt (optional; after 10 mark-played, once per install `AppStore.requestReview`; Settings toggle default on + Reset; iOS may suppress)
 - Siri Shortcuts lite (App Intents Play/Pause / Skip forward/back + `antennapod://` URL schemes; opens app; needs current episode)
@@ -239,6 +239,7 @@ Local-only search over subscribed feeds and their episodes (title, feed title, f
 - **In progress** — episodes with progress (`positionSeconds > 1`) that are not marked played (shown when non-zero), in range.
 - **Approx. listening time** — sum of estimates: **played** use saved `durationSeconds` (position is cleared on mark-played); **in-progress** use `positionSeconds`. Footnote on screen: does **not** count rewinds, speed, or re-listens.
 - **Top podcasts** — per-feed rollup sorted by approximate time, then play count.
+- **Share** — toolbar `ShareLink` with a plain-text summary when there is data (time-range title, played / in-progress counts, approx listening time, top podcasts, honesty footnote). Same approximation limits as the on-screen footnotes — **no charts or images**.
 
 Empty state when there is no played / in-progress playback data; distinct copy when All time has data but the selected range does not.
 
@@ -250,7 +251,7 @@ Empty state when there is no played / in-progress playback data; distinct copy w
 - **Approx. listening time** — same estimate as Statistics (played → saved duration).
 - **Top podcasts** — per-feed rollup for that range (up to 10).
 - **Favorites** — count starred in range from `favorites.json` (plus total if different).
-- **Share** — toolbar `ShareLink` with a plain-text summary when there is data (title adapts to range).
+- **Share** — toolbar `ShareLink` with a plain-text summary when there is data (title adapts to range; VoiceOver hint).
 
 Honest empty / out-of-range states. Footnote: approximate — same limits as Statistics (no rewinds / speed / re-listens; coarse episode stamps; derived from `playback.json`).
 
@@ -325,7 +326,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 
 ## Share
 
-Share an **episode** or a **podcast** via the **system share sheet** only (`ShareLink` / `UIActivityViewController`). There is **no AntennaPod deep link**, no in-app social posting, and **no fake gPodder share** — recipients get a real title + URL they can open in a browser or player.
+Share an **episode** or a **podcast** via the **system share sheet** only (`ShareLink` / `UIActivityViewController`). There is **no AntennaPod deep link**, no in-app social posting, and **no fake gPodder share** — recipients get a real title + URL they can open in a browser or player. **Statistics** and **Echo** also expose a toolbar `ShareLink` with a **plain-text** listening summary (range, counts, approx time, top podcasts + honesty footnote) — no charts or images.
 
 **Episode payload:** subject = episode title; message = `Title — Podcast` when the feed title is known (else title alone). **URL precedence** (first network URL wins; never invents a URL):
 

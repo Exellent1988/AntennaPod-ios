@@ -114,6 +114,7 @@ struct EchoView: View {
                     ShareLink(item: Self.shareText(for: summary, range: settings.statisticsTimeRange)) {
                         Label("Share", systemImage: "square.and.arrow.up")
                     }
+                    .accessibilityHint(String(localized: "Opens the system share sheet with a plain-text Echo summary"))
                 }
             }
         }

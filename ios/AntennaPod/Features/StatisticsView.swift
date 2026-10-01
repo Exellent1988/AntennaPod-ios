@@ -97,6 +97,16 @@ struct StatisticsView: View {
         }
         .navigationTitle("Statistics")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                if !stats.isEmpty {
+                    ShareLink(item: Self.shareText(for: stats, range: settings.statisticsTimeRange)) {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                    .accessibilityHint(String(localized: "Opens the system share sheet with a plain-text Statistics summary"))
+                }
+            }
+        }
     }
 
     private static var approximationFootnote: String {
@@ -138,5 +148,56 @@ struct StatisticsView: View {
             return String(localized: "\(total)s")
         }
         return String(localized: "0 min")
+    }
+
+    static func shareText(for stats: ListeningStatistics, range: StatisticsTimeRange) -> String {
+        let title: String
+        switch range {
+        case .thisWeek:
+            title = String(localized: "AntennaPod Statistics — This week")
+        case .thisMonth:
+            title = String(localized: "AntennaPod Statistics — This month")
+        case .thisYear:
+            title = String(localized: "AntennaPod Statistics — This year")
+        case .allTime:
+            title = String(localized: "AntennaPod Statistics — All time")
+        }
+        var lines: [String] = [
+            title,
+            "",
+            String(localized: "Played episodes: \(stats.playedEpisodeCount)"),
+            String(localized: "Approx. listening time: \(formatDuration(stats.approximateListenedSeconds))"),
+        ]
+        if stats.inProgressEpisodeCount > 0 {
+            lines.insert(
+                String(localized: "In progress: \(stats.inProgressEpisodeCount)"),
+                at: 3
+            )
+        }
+        if !stats.topPodcasts.isEmpty {
+            lines.append("")
+            lines.append(String(localized: "Top podcasts:"))
+            for (index, feed) in stats.topPodcasts.enumerated() {
+                let duration = formatDuration(feed.approximateListenedSeconds)
+                if feed.inProgressEpisodeCount > 0 {
+                    lines.append(
+                        String(
+                            localized: "\(index + 1). \(feed.feedTitle) — \(duration) (\(feed.playedEpisodeCount) played · \(feed.inProgressEpisodeCount) in progress)"
+                        )
+                    )
+                } else {
+                    lines.append(
+                        String(localized: "\(index + 1). \(feed.feedTitle) — \(duration) (\(feed.playedEpisodeCount) played)")
+                    )
+                }
+            }
+        }
+        lines.append("")
+        lines.append(
+            String(
+                localized: "(Approximate — played use saved duration; in-progress use position. No rewinds, speed, or re-listens. Coarse episode stamps — lastPlayedAt else updatedAt.)"
+            )
+        )
+        return lines.joined(separator: "\n")
     }
 }
