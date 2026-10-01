@@ -1,0 +1,54 @@
+import Foundation
+
+/// Helpers for subscription tags / folders (simple string labels per feed).
+enum FeedTags {
+    /// Trim, collapse internal whitespace, reject empty. Case preserved for display; equality is case-insensitive.
+    static func normalize(_ raw: String) -> String? {
+        let trimmed = raw
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Case-insensitive equality for tag names.
+    static func equal(_ a: String, _ b: String) -> Bool {
+        a.compare(b, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
+    }
+
+    /// Sorted unique display names (case-insensitive dedupe keeps first-seen casing).
+    static func uniqueSorted(_ tags: [String]) -> [String] {
+        var seen: [String] = []
+        for tag in tags {
+            guard let n = normalize(tag) else { continue }
+            if !seen.contains(where: { equal($0, n) }) {
+                seen.append(n)
+            }
+        }
+        return seen.sorted {
+            $0.localizedCaseInsensitiveCompare($1) == .orderedAscending
+        }
+    }
+}
+
+/// Filter / grouping selection on the Subscriptions list.
+enum SubscriptionTagFilter: Hashable, Identifiable {
+    case all
+    case tag(String)
+    case untagged
+
+    var id: String {
+        switch self {
+        case .all: return "__all__"
+        case .untagged: return "__untagged__"
+        case .tag(let name): return "tag:\(name.lowercased())"
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .all: return "All"
+        case .untagged: return "Untagged"
+        case .tag(let name): return name
+        }
+    }
+}

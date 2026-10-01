@@ -20,6 +20,10 @@ final class PodcastStore: ObservableObject {
     @Published var favoriteAtById: [String: Int64] = [:] {
         didSet { PodcastPersistence.saveFavorites(favoriteAtById) }
     }
+    /// Feed id → tag names (`feed-tags.json` side map). Tags exist only while assigned.
+    @Published var tagsByFeedId: [UUID: [String]] = [:] {
+        didSet { PodcastPersistence.saveFeedTags(tagsByFeedId) }
+    }
     @Published var isLoading = false
     @Published var lastError: String?
     @Published var opmlImport = OpmlImportState()
@@ -42,6 +46,7 @@ final class PodcastStore: ObservableObject {
         playbackStates = PodcastPersistence.loadPlaybackStates()
         feedSettingsById = PodcastPersistence.loadFeedSettings()
         favoriteAtById = PodcastPersistence.loadFavorites()
+        tagsByFeedId = PodcastPersistence.loadFeedTags()
     }
 
     func subscribe(feedUrl: String) async {
@@ -65,6 +70,7 @@ final class PodcastStore: ObservableObject {
     func unsubscribe(_ feed: PodcastFeed) {
         feeds.removeAll { $0.id == feed.id }
         feedSettingsById.removeValue(forKey: feed.id)
+        tagsByFeedId.removeValue(forKey: feed.id)
         let ids = Set(feed.episodes.map(\.id))
         queue.removeAll { ids.contains($0.id) }
         for id in ids {
@@ -93,6 +99,95 @@ final class PodcastStore: ObservableObject {
         setFeedSettings(current, for: feedId)
     }
 
+    // MARK: - Tags / folders
+
+    /// Tags assigned to a feed (sorted, unique).
+    func tags(for feedId: UUID) -> [String] {
+        FeedTags.uniqueSorted(tagsByFeedId[feedId] ?? [])
+    }
+
+    /// All tag names currently in use across subscriptions (sorted).
+    var allTags: [String] {
+        FeedTags.uniqueSorted(tagsByFeedId.values.flatMap { $0 })
+    }
+
+    func setTags(_ tags: [String], for feedId: UUID) {
+        let cleaned = FeedTags.uniqueSorted(tags)
+        if cleaned.isEmpty {
+            tagsByFeedId.removeValue(forKey: feedId)
+        } else {
+            tagsByFeedId[feedId] = cleaned
+        }
+    }
+
+    @discardableResult
+    func addTag(_ raw: String, to feedId: UUID) -> Bool {
+        guard let name = FeedTags.normalize(raw) else { return false }
+        var current = tags(for: feedId)
+        if current.contains(where: { FeedTags.equal($0, name) }) {
+            return false
+        }
+        // Prefer existing casing from the global vocabulary when matching.
+        let display = allTags.first(where: { FeedTags.equal($0, name) }) ?? name
+        current.append(display)
+        setTags(current, for: feedId)
+        return true
+    }
+
+    func removeTag(_ raw: String, from feedId: UUID) {
+        guard let name = FeedTags.normalize(raw) else { return }
+        let current = tags(for: feedId).filter { !FeedTags.equal($0, name) }
+        setTags(current, for: feedId)
+    }
+
+    /// Rename a tag everywhere it is used. Empty / duplicate target removes or merges.
+    func renameTag(from oldRaw: String, to newRaw: String) {
+        guard let oldName = FeedTags.normalize(oldRaw) else { return }
+        guard let newName = FeedTags.normalize(newRaw) else {
+            deleteTag(oldName)
+            return
+        }
+        if FeedTags.equal(oldName, newName) { return }
+        let display = allTags.first(where: { FeedTags.equal($0, newName) }) ?? newName
+        var next = tagsByFeedId
+        for (feedId, list) in next {
+            var updated: [String] = []
+            for tag in list {
+                if FeedTags.equal(tag, oldName) {
+                    if !updated.contains(where: { FeedTags.equal($0, display) }) {
+                        updated.append(display)
+                    }
+                } else if !updated.contains(where: { FeedTags.equal($0, tag) }) {
+                    updated.append(tag)
+                }
+            }
+            next[feedId] = FeedTags.uniqueSorted(updated)
+            if next[feedId]?.isEmpty == true {
+                next.removeValue(forKey: feedId)
+            }
+        }
+        tagsByFeedId = next
+    }
+
+    /// Delete a tag from every feed (last use → tag disappears from `allTags`).
+    func deleteTag(_ raw: String) {
+        guard let name = FeedTags.normalize(raw) else { return }
+        let snapshot = tagsByFeedId
+        for (feedId, list) in snapshot {
+            setTags(list.filter { !FeedTags.equal($0, name) }, for: feedId)
+        }
+    }
+
+    func feeds(withTag raw: String) -> [PodcastFeed] {
+        guard let name = FeedTags.normalize(raw) else { return [] }
+        return feeds.filter { feed in
+            tags(for: feed.id).contains(where: { FeedTags.equal($0, name) })
+        }
+    }
+
+    var untaggedFeeds: [PodcastFeed] {
+        feeds.filter { tags(for: $0.id).isEmpty }
+    }
 
     func refresh(_ feed: PodcastFeed) async {
         guard !feed.feedUrl.isEmpty else {

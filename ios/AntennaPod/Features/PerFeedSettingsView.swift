@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Per-subscription overrides (Auto-download / Keep updated / Notifications).
+/// Per-subscription overrides (Auto-download / Keep updated / Notifications) + tags.
 struct PerFeedSettingsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var appSettings: AppSettings
@@ -8,8 +8,23 @@ struct PerFeedSettingsView: View {
     let feedId: UUID
     let feedTitle: String
 
+    @State private var newTagDraft = ""
+    @State private var renameFrom: String?
+    @State private var renameDraft = ""
+    @State private var showRenameAlert = false
+
     private var current: FeedSettings {
         store.feedSettings(for: feedId)
+    }
+
+    private var assignedTags: [String] {
+        store.tags(for: feedId)
+    }
+
+    private var suggestedTags: [String] {
+        store.allTags.filter { existing in
+            !assignedTags.contains(where: { FeedTags.equal($0, existing) })
+        }
     }
 
     var body: some View {
@@ -53,6 +68,65 @@ struct PerFeedSettingsView: View {
                 Text("Notifications")
             }
 
+            Section {
+                if assignedTags.isEmpty {
+                    Text("No tags yet")
+                        .foregroundStyle(.secondary)
+                } else {
+                    ForEach(assignedTags, id: \.self) { tag in
+                        HStack {
+                            Image(systemName: "tag")
+                                .foregroundStyle(.secondary)
+                            Text(tag)
+                            Spacer()
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                store.removeTag(tag, from: feedId)
+                            } label: {
+                                Label("Remove", systemImage: "trash")
+                            }
+                        }
+                        .contextMenu {
+                            Button("Rename…") {
+                                renameFrom = tag
+                                renameDraft = tag
+                                showRenameAlert = true
+                            }
+                            Button("Remove from podcast", role: .destructive) {
+                                store.removeTag(tag, from: feedId)
+                            }
+                            Button("Delete tag everywhere", role: .destructive) {
+                                store.deleteTag(tag)
+                            }
+                        }
+                    }
+                }
+
+                if !suggestedTags.isEmpty {
+                    ForEach(suggestedTags, id: \.self) { tag in
+                        Button {
+                            store.addTag(tag, to: feedId)
+                        } label: {
+                            Label(tag, systemImage: "plus.circle")
+                        }
+                    }
+                }
+
+                HStack {
+                    TextField("New tag", text: $newTagDraft)
+                        .textInputAutocapitalization(.words)
+                        .autocorrectionDisabled()
+                        .onSubmit(addDraftTag)
+                    Button("Add") { addDraftTag() }
+                        .disabled(FeedTags.normalize(newTagDraft) == nil)
+                }
+            } header: {
+                Text("Tags / Folders")
+            } footer: {
+                Text("A podcast can have several tags. Tags exist while assigned; removing the last use deletes the tag. Rename applies to every podcast using that name.")
+            }
+
             if !current.isDefault {
                 Section {
                     Button("Reset to global defaults", role: .destructive) {
@@ -63,6 +137,27 @@ struct PerFeedSettingsView: View {
         }
         .navigationTitle(feedTitle.isEmpty ? "Podcast settings" : feedTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .alert("Rename tag", isPresented: $showRenameAlert) {
+            TextField("Tag name", text: $renameDraft)
+            Button("Cancel", role: .cancel) {
+                renameFrom = nil
+            }
+            Button("Rename") {
+                if let from = renameFrom {
+                    store.renameTag(from: from, to: renameDraft)
+                }
+                renameFrom = nil
+            }
+        } message: {
+            Text("Renames this tag on every podcast that uses it. Clear the name to delete it everywhere.")
+        }
+    }
+
+    private func addDraftTag() {
+        let ok = store.addTag(newTagDraft, to: feedId)
+        if ok {
+            newTagDraft = ""
+        }
     }
 
     private var autoDownloadBinding: Binding<PerFeedOverride> {

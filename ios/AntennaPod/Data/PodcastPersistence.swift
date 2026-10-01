@@ -15,6 +15,7 @@ enum PodcastPersistence {
     private static var pendingDownloadsURL: URL { directory.appendingPathComponent("pending-downloads.json") }
     private static var feedSettingsURL: URL { directory.appendingPathComponent("feed-settings.json") }
     private static var favoritesURL: URL { directory.appendingPathComponent("favorites.json") }
+    private static var feedTagsURL: URL { directory.appendingPathComponent("feed-tags.json") }
     private static var downloadErrorsURL: URL { directory.appendingPathComponent("download-errors.json") }
 
     static func loadFeeds() -> [PodcastFeed] {
@@ -83,6 +84,30 @@ enum PodcastPersistence {
 
     static func saveFavorites(_ map: [String: Int64]) {
         encode(map, to: favoritesURL)
+    }
+
+    /// Per-feed tag names keyed by `PodcastFeed.id` (side map; empty arrays omitted).
+    static func loadFeedTags() -> [UUID: [String]] {
+        let raw: [String: [String]] = decode(feedTagsURL) ?? [:]
+        var out: [UUID: [String]] = [:]
+        for (key, value) in raw {
+            guard let id = UUID(uuidString: key) else { continue }
+            let tags = FeedTags.uniqueSorted(value)
+            if !tags.isEmpty {
+                out[id] = tags
+            }
+        }
+        return out
+    }
+
+    static func saveFeedTags(_ map: [UUID: [String]]) {
+        let cleaned = map.compactMap { key, value -> (String, [String])? in
+            let tags = FeedTags.uniqueSorted(value)
+            guard !tags.isEmpty else { return nil }
+            return (key.uuidString, tags)
+        }
+        let raw = Dictionary(uniqueKeysWithValues: cleaned)
+        encode(raw, to: feedTagsURL)
     }
 
     /// Ring buffer of recent download failures (newest first; capped by caller).

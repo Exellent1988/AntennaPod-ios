@@ -12,21 +12,37 @@ struct FeedDetailView: View {
         store.feeds.first(where: { $0.id == feed.id }) ?? feed
     }
 
+    private var feedTags: [String] {
+        store.tags(for: liveFeed.id)
+    }
+
     var body: some View {
-        List(liveFeed.episodes) { episode in
-            EpisodeRow(episode: episode, feedTitle: liveFeed.title)
-                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                    if let url = episode.shareURL {
-                        ShareLink(
-                            item: url,
-                            subject: Text(episode.title),
-                            message: Text(episode.title)
-                        ) {
-                            Label("Share", systemImage: "square.and.arrow.up")
-                        }
-                        .tint(.indigo)
+        List {
+            if !feedTags.isEmpty {
+                Section("Tags") {
+                    FlowTagRow(tags: feedTags)
+                    Button("Manage tags…") {
+                        showPerFeedSettings = true
                     }
                 }
+            }
+            Section("Episodes") {
+                ForEach(liveFeed.episodes) { episode in
+                    EpisodeRow(episode: episode, feedTitle: liveFeed.title)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            if let url = episode.shareURL {
+                                ShareLink(
+                                    item: url,
+                                    subject: Text(episode.title),
+                                    message: Text(episode.title)
+                                ) {
+                                    Label("Share", systemImage: "square.and.arrow.up")
+                                }
+                                .tint(.indigo)
+                            }
+                        }
+                }
+            }
         }
         .navigationTitle(liveFeed.title)
         .toolbar {
@@ -59,6 +75,25 @@ struct FeedDetailView: View {
                             Button("Done") { showPerFeedSettings = false }
                         }
                     }
+            }
+        }
+    }
+}
+
+
+/// Simple wrapping tag chips (Feed detail header).
+private struct FlowTagRow: View {
+    let tags: [String]
+
+    var body: some View {
+        // LazyVGrid keeps layout simple without a custom flow layout.
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: 8)], alignment: .leading, spacing: 8) {
+            ForEach(tags, id: \.self) { tag in
+                Text(tag)
+                    .font(.caption)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(Color.secondary.opacity(0.15), in: Capsule())
             }
         }
     }
