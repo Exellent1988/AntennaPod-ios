@@ -85,7 +85,7 @@ struct DataBackupSection: View {
     }
 
     private var helpText: String {
-        "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Catalog only for downloads — offline media not included. gpodder password and Podcast Index keys stay in Keychain and are omitted from the ZIP."
+        "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Catalog only for downloads — offline media not included. gpodder password and Podcast Index keys stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML."
     }
 
     private func exportBackup() {

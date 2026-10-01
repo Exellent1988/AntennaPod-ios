@@ -10,6 +10,7 @@ extension UTType {
 }
 
 /// Shared Import / Export controls used from Settings and Subscriptions.
+/// OPML import/export plus AntennaPod-style HTML export lite (subscriptions).
 struct OpmlImportExportSection: View {
     @EnvironmentObject private var store: PodcastStore
     @State private var showImporter = false
@@ -24,6 +25,13 @@ struct OpmlImportExportSection: View {
                 exportOpml()
             } label: {
                 Label("Export OPML", systemImage: "square.and.arrow.up")
+            }
+            .disabled(store.feeds.isEmpty)
+
+            Button {
+                exportHtml()
+            } label: {
+                Label("Export subscriptions as HTML", systemImage: "doc.richtext")
             }
             .disabled(store.feeds.isEmpty)
 
@@ -97,6 +105,17 @@ struct OpmlImportExportSection: View {
         exportError = nil
         do {
             let url = try store.exportOpmlTemporaryFile()
+            shareURL = url
+            showShare = true
+        } catch {
+            exportError = error.localizedDescription
+        }
+    }
+
+    private func exportHtml() {
+        exportError = nil
+        do {
+            let url = try store.exportSubscriptionsHTMLTemporaryFile(includeEpisodeCount: true)
             shareURL = url
             showShare = true
         } catch {

@@ -28,7 +28,7 @@ struct DataBackupManifest: Codable, Equatable {
                 "Downloads: catalog metadata only (downloads.json); media under Documents/downloads is not included — re-download offline files.",
                 "Keychain secrets are NOT included (gpodder password, Podcast Index API key/secret). Re-enter passwords/keys after import on a new device.",
                 "pending-downloads.json (in-flight tasks) is omitted.",
-                "HTML export is not part of this backup."
+                "HTML subscription export is separate (Settings → Import / Export), not part of this ZIP."
             ]
         )
     }

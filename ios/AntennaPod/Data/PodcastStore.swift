@@ -819,6 +819,16 @@ final class PodcastStore: ObservableObject {
         try OpmlWriter.writeTemporaryFile(feeds: feeds)
     }
 
+    // MARK: - HTML export (subscriptions)
+
+    func exportSubscriptionsHTML(includeEpisodeCount: Bool = true) -> String {
+        HtmlExportWriter.writeDocument(feeds: feeds, includeEpisodeCount: includeEpisodeCount)
+    }
+
+    func exportSubscriptionsHTMLTemporaryFile(includeEpisodeCount: Bool = true) throws -> URL {
+        try HtmlExportWriter.writeTemporaryFile(feeds: feeds, includeEpisodeCount: includeEpisodeCount)
+    }
+
     /// Parse OPML and subscribe each feed URL via the existing fetch/parse pipeline.
     /// Skips URLs already in `feeds`. Records per-URL errors without aborting the batch.
     func importOpml(data: Data) async {

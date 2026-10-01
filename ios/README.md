@@ -32,7 +32,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Backup** (iOS JSON), Statistics link, About)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics link, About)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -41,7 +41,9 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Per-feed settings (Feed detail → gear: Auto-download, Keep updated, Notify overrides)
 - Tags / Folders for subscriptions (side map `feed-tags.json`; manage on per-feed settings; Subscriptions filter chips + optional group-by-tag; untagged)
 - OPML import/export (Settings + Subscriptions; share sheet / file picker; batch subscribe)
-- Local data backup import/export (Settings → Backup; iOS JSON ZIP of Application Support maps + Settings + gpodder prefs; catalog-only downloads; no Keychain secrets; not Android DB; HTML export later)
+- HTML subscription export (Settings + Subscriptions Import / Export; share sheet `.html`)
+- Local data backup import/export (Settings → Backup; iOS JSON ZIP of Application Support maps + Settings + gpodder prefs; catalog-only downloads; no Keychain secrets; not Android DB)
+- HTML export (Settings → Import / Export → Export subscriptions as HTML; self-contained list with title, feed URL links, episode count; share sheet; distinct from OPML + JSON backup)
 - Download storage limit (Settings: usage + max size; auto-evict played first)
 - Auto-delete after playing (global toggle; deletes offline file on mark played; keeps episode row)
 - Notifications for new episodes (local UserNotifications after refresh; Settings toggle; tap opens Inbox; no push)
@@ -61,7 +63,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview), top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Backup + Statistics + About), queue swipes/reorder, OPML, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview), top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Backup + Statistics + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -79,7 +81,7 @@ See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
 
 Subscriptions, queue, per-feed settings (`feed-settings.json`), subscription tags (`feed-tags.json`), starred episode ids (`favorites.json`), archived episode ids (`archived.json`), and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`, `lastPlayedAtEpochMs`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `feed-settings.json`, `feed-tags.json`, `favorites.json`, `archived.json`, `playback.json`). Inbox is derived from that state (unplayed, non-archived episodes across feeds, newest first). Archived episodes stay on feed lists (dimmed/badge) and in Library → Archived. All Episodes is the same cross-feed catalog without the unplayed filter (newest pubDate first, soft-capped at 500). History lists played or in-progress episodes (newest `lastPlayedAt` first); swipe removes playback state or marks unplayed. Older `playback.json` without `lastPlayedAt` migrates from `updatedAt` when played/in-progress. Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme, default playback speed, rewind/fast-forward intervals, skip intro/outro seconds, playback source preference, feed refresh interval, auto-download, Network / Downloads Wi‑Fi policy (`autoDownloadWifiOnly` / `manualDownloadWifiOnly` / `streamWifiOnly`), auto-delete-after-playing, and notify-on-new-episodes / notify-on-download-errors prefs live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts / mini+full+Now Playing skip / `PlaybackService.play` source resolution / launch+foreground due-check / post-refresh enqueue / mark-played download cleanup. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`), in-flight background task↔episode map (`pending-downloads.json`), and a recent download-error ring buffer (`download-errors.json`, ~50 entries: episode id/title, feed, message, timestamp). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
 
-**Data backup (beta):** Settings → **Backup** exports a ZIP of those Application Support JSON files plus `app-settings.json` and `gpodder-prefs.json` (STORE ZIP via `MinimalZip`). **Not** AntennaPod Android DB. Downloads = **catalog only** (`downloads.json`) — media under Documents/downloads is omitted (re-download after import). **Keychain secrets omitted** (gpodder password, Podcast Index API key/secret). Import warns before replace, writes files, reloads `PodcastStore` / `DownloadService` / Settings / gpodder prefs. `pending-downloads.json` is cleared on import. HTML export remains todo.
+**Data backup (beta):** Settings → **Backup** exports a ZIP of those Application Support JSON files plus `app-settings.json` and `gpodder-prefs.json` (STORE ZIP via `MinimalZip`). **Not** AntennaPod Android DB. Downloads = **catalog only** (`downloads.json`) — media under Documents/downloads is omitted (re-download after import). **Keychain secrets omitted** (gpodder password, Podcast Index API key/secret). Import warns before replace, writes files, reloads `PodcastStore` / `DownloadService` / Settings / gpodder prefs. `pending-downloads.json` is cleared on import. **HTML export** is separate under Import / Export (not in the ZIP).
 
 
 
@@ -291,8 +293,12 @@ Settings → **Backup** (beta):
 
 - **Export data backup** — builds a ZIP (`AntennaPod-iOS-Backup-….zip`) with `manifest.json`, Application Support maps (`feeds`, `queue`, `playback`, `downloads` catalog, `feed-settings`, `favorites`, `archived`, `feed-tags`, `download-errors`), `app-settings.json`, and `gpodder-prefs.json`. Share via the system sheet.
 - **Import data backup** — file importer (`.zip`) → confirmation **Replace local data?** → restore JSON maps + prefs → refresh store / downloads catalog (pruned to media present on device) / Settings / gpodder.
-- **Honesty:** iOS JSON Application Support backup — **not** Android AntennaPod database export. **No offline media** in the ZIP (catalog only; re-download). **No Keychain secrets** (re-enter gpodder password / Podcast Index keys on a new device; same-device Keychain may still unlock login). HTML export still todo.
+- **Honesty:** iOS JSON Application Support backup — **not** Android AntennaPod database export. **No offline media** in the ZIP (catalog only; re-download). **No Keychain secrets** (re-enter gpodder password / Podcast Index keys on a new device; same-device Keychain may still unlock login). HTML subscription list is **Export subscriptions as HTML** under Import / Export (not this ZIP).
 
 ## OPML
 
 Export writes AntennaPod-compatible OPML 2.0 (`outline` with `text`/`title`/`xmlUrl`/`htmlUrl`) via a share sheet. Import uses the system file picker (`.opml` / `.xml`), parses with Foundation `XMLParser`, and subscribes each feed URL through the existing `FeedRepository` pipeline (skips duplicates; shows progress and per-feed errors). Entry points: **Settings → Import / Export** and **Subscriptions** toolbar.
+
+## HTML export
+
+**Settings → Import / Export → Export subscriptions as HTML** (also on Subscriptions toolbar sheet). Writes a self-contained `.html` file (inline CSS, AntennaPod-blue lite styling) listing each subscription: **title** (links to site when known), **feed URL** as a link, and **episode count**. Share via the system sheet. Sorted by title. Distinct from OPML (machine import) and the JSON ZIP backup (full state). Export-only — no HTML import.

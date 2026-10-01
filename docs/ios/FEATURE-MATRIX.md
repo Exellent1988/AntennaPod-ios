@@ -93,8 +93,8 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 |---------|---------|------------|---------|
 | gpodder.net sync | 4 | done | **P1 MVP**: Settings → Sync; provider gpodder.net; Keychain password; device id+name; login/logout/sync now; URLSession API2 auth + device + subscription get/upload; pull missing feeds + push local URLs; **additive merge** (remote removes do not wipe local); episode actions stub/not synced |
 | Nextcloud Gpodder sync | 4 | done | **P1 MVP**: same Settings Sync section; provider Nextcloud; base URL (server root or `…/index.php/apps/gpoddersync/`); reuses Keychain + Login/Sync; client composes Nextcloud paths (`subscriptions`, `subscription_change/create`); login probes GET subscriptions (no device API); **additive** subscriptions only — episode actions not synced |
-| AntennaPod DB backup import/export | 3 | partial | **iOS JSON backup** (not Android DB): Settings → Backup export/import ZIP of Application Support maps (feeds/queue/playback/downloads catalog/favorites/archived/feed-settings/tags/download-errors) + app-settings + gpodder prefs; **no Keychain secrets**; **catalog only** for downloads (re-download media); replace warn + store refresh. HTML export still todo |
-| HTML export | 2 | todo | |
+| AntennaPod DB backup import/export | 3 | partial | **iOS JSON backup** (not Android DB): Settings → Backup export/import ZIP of Application Support maps (feeds/queue/playback/downloads catalog/favorites/archived/feed-settings/tags/download-errors) + app-settings + gpodder prefs; **no Keychain secrets**; **catalog only** for downloads (re-download media); replace warn + store refresh. HTML export is separate (Import / Export) |
+| HTML export | 2 | done | Settings → Import / Export → **Export subscriptions as HTML**; self-contained list (title, feed URL link, episode count); share sheet `.html`; AntennaPod-style lite; distinct from OPML + JSON backup |
 | Wear OS companion | 1 | n/a | → Watch später P4 |
 
 ## Settings (P0-Subset zuerst)
