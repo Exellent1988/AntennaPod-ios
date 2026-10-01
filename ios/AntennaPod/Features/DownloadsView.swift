@@ -438,21 +438,50 @@ private struct DownloadsFilterChip: View {
     }
 }
 
-/// Simple list of persisted download failures (ring buffer) with clear action.
+/// Persisted download failures (ring buffer) with clear action and searchable filter
+/// over episode title / feed title / error message (already-saved log only).
 struct DownloadErrorsView: View {
     @EnvironmentObject private var downloads: DownloadService
     @State private var showClearConfirmation = false
+    @State private var searchText = ""
+    @State private var debouncedQuery = ""
+    @State private var debounceTask: Task<Void, Never>?
+
+    private let debounceNs: UInt64 = 250_000_000 // 250 ms
+
+    /// Full persisted ring buffer — Clear always targets this list (not the filtered subset).
+    private var allErrors: [DownloadErrorEntry] {
+        downloads.recentErrors
+    }
+
+    /// Visible errors; empty query shows the full log. Filters title, feed, and message.
+    private var filteredErrors: [DownloadErrorEntry] {
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let base = allErrors
+        if q.isEmpty { return base }
+        return base.filter { entry in
+            if entry.episodeTitle.localizedCaseInsensitiveContains(q) { return true }
+            if entry.feedTitle.localizedCaseInsensitiveContains(q) { return true }
+            return entry.message.localizedCaseInsensitiveContains(q)
+        }
+    }
 
     var body: some View {
         List {
-            if downloads.recentErrors.isEmpty {
+            if allErrors.isEmpty {
                 ContentUnavailableView(
                     "No download errors",
                     systemImage: "checkmark.circle",
                     description: Text("Failed downloads will appear here (up to \(DownloadService.downloadErrorRingCapacity) recent).")
                 )
+            } else if filteredErrors.isEmpty {
+                ContentUnavailableView(
+                    "No matching errors",
+                    systemImage: "magnifyingglass",
+                    description: Text("No download errors match your search.")
+                )
             } else {
-                ForEach(downloads.recentErrors) { entry in
+                ForEach(filteredErrors) { entry in
                     VStack(alignment: .leading, spacing: 4) {
                         Text(entry.episodeTitle.isEmpty ? String(localized: "Unknown episode") : entry.episodeTitle)
                             .font(.headline)
@@ -475,12 +504,20 @@ struct DownloadErrorsView: View {
         }
         .navigationTitle("Download errors")
         .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $searchText, prompt: "Search download errors")
+        .onChange(of: searchText) { _, newValue in
+            scheduleFilter(for: newValue)
+        }
+        .onDisappear {
+            debounceTask?.cancel()
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Clear", role: .destructive) {
                     showClearConfirmation = true
                 }
-                .disabled(downloads.recentErrors.isEmpty && downloads.lastError == nil)
+                // Clear always targets the full persisted log (not the filtered subset).
+                .disabled(allErrors.isEmpty && downloads.lastError == nil)
             }
         }
         .confirmationDialog(
@@ -494,6 +531,20 @@ struct DownloadErrorsView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Removes the saved error log and the Downloads banner. Offline files are kept.")
+        }
+    }
+
+    private func scheduleFilter(for term: String) {
+        debounceTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            debouncedQuery = ""
+            return
+        }
+        debounceTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: debounceNs)
+            guard !Task.isCancelled else { return }
+            debouncedQuery = trimmed
         }
     }
 }

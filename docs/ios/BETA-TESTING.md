@@ -111,6 +111,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Auto-delete after play | ☐ Auto-delete after play |
 | ☐ Network / Downloads Wi‑Fi-only Gates | ☐ Network / Downloads Wi‑Fi-only gates |
 | ☐ Download-Fehlerbanner + Log | ☐ Download error banner + log |
+| ☐ Download-Fehler-Suche (Titel / Feed / Meldung; Debounce; leer bei keinen Treffern; nur gespeicherter Log; Clear = voller Log) | ☐ Download errors search (title / feed / message; debounce; empty when no matches; persisted log only; Clear = full log) |
 | ☐ Downloads: Suche (Titel / Feed) | ☐ Downloads: search (title / feed) |
 | ☐ Downloads: Sortierung (Neueste / Älteste; Download-Zeit sonst pubDate; persistiert) | ☐ Downloads: sort (Newest / Oldest; download time else pubDate; persisted) |
 | ☐ Downloads: Filter-Chips Alle / Ungehört / Gehört (persistiert; mit Suche + Sort) | ☐ Downloads: filter chips All / Unplayed / Played (persisted; with search + sort) |
