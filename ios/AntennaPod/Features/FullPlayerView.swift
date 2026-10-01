@@ -77,6 +77,22 @@ struct FullPlayerView: View {
                     }
                     .accessibilityLabel(String(localized: "Close player"))
                 }
+                if let episode, showsVideoSurface(for: episode) {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            playback.pictureInPicture.toggle()
+                        } label: {
+                            Image(systemName: playback.pictureInPicture.isActive ? "pip.exit" : "pip.enter")
+                        }
+                        .disabled(!playback.pictureInPicture.isPossible && !playback.pictureInPicture.isActive)
+                        .accessibilityLabel(String(localized: "Picture in Picture"))
+                        .accessibilityHint(
+                            playback.pictureInPicture.isActive
+                                ? String(localized: "Stops Picture in Picture")
+                                : String(localized: "Starts Picture in Picture")
+                        )
+                    }
+                }
             }
         }
         .onAppear {
@@ -84,6 +100,7 @@ struct FullPlayerView: View {
             Task { await loadChaptersIfNeeded() }
         }
         .onChange(of: playback.currentEpisode?.id) { _, newId in
+            playback.pictureInPicture.tearDown()
             if newId == nil {
                 dismiss()
                 return
@@ -94,6 +111,17 @@ struct FullPlayerView: View {
             mediaChapters = []
             showTranscript = false
             Task { await loadChaptersIfNeeded() }
+        }
+        .onChange(of: settings.playVideoAsAudioOnly) { _, audioOnly in
+            if audioOnly {
+                playback.pictureInPicture.tearDown()
+            }
+        }
+        // Nested ObservableObject — forward publishes so PiP button enablement refreshes.
+        .onReceive(playback.pictureInPicture.objectWillChange) { _ in
+            // Touch published flags so body re-reads isPossible / isActive.
+            _ = playback.pictureInPicture.isPossible
+            _ = playback.pictureInPicture.isActive
         }
         .sheet(isPresented: $showTranscript) {
             if let episode = resolvedEpisode ?? episode {
@@ -236,11 +264,16 @@ struct FullPlayerView: View {
     @ViewBuilder
     private func mediaSurface(episode: PodcastEpisode, side: CGFloat) -> some View {
         if showsVideoSurface(for: episode), let player = playback.avPlayer {
-            EpisodeVideoSurface(player: player)
-                .frame(width: side, height: side * 9 / 16)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .shadow(color: .black.opacity(0.18), radius: 12, y: 6)
-                .accessibilityLabel(String(localized: "Video player"))
+            // One AVPlayer ↔ one AVPlayerLayer. While PiP holds the layer, show a placeholder.
+            if playback.pictureInPicture.isActive {
+                pipActivePlaceholder(side: side)
+            } else {
+                EpisodeVideoSurface(player: player, pictureInPicture: playback.pictureInPicture)
+                    .frame(width: side, height: side * 9 / 16)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .shadow(color: .black.opacity(0.18), radius: 12, y: 6)
+                    .accessibilityLabel(String(localized: "Video player"))
+            }
         } else {
             artwork(side: side)
         }
@@ -296,6 +329,23 @@ struct FullPlayerView: View {
                     .font(.system(size: 48))
                     .foregroundStyle(.secondary)
             }
+    }
+
+    private func pipActivePlaceholder(side: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .fill(Color.black)
+            .frame(width: side, height: side * 9 / 16)
+            .overlay {
+                VStack(spacing: 8) {
+                    Image(systemName: "pip")
+                        .font(.system(size: 36))
+                    Text("Picture in Picture")
+                        .font(.subheadline.weight(.semibold))
+                }
+                .foregroundStyle(.white.opacity(0.9))
+            }
+            .shadow(color: .black.opacity(0.18), radius: 12, y: 6)
+            .accessibilityLabel(String(localized: "Picture in Picture"))
     }
 
     private var scrubber: some View {

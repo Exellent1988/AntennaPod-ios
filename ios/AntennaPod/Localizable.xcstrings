@@ -3978,6 +3978,57 @@
           }
         }
       }
+    },
+    "Picture in Picture": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Picture in Picture"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bild-in-Bild"
+          }
+        }
+      }
+    },
+    "Starts Picture in Picture": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts Picture in Picture"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet Bild-in-Bild"
+          }
+        }
+      }
+    },
+    "Stops Picture in Picture": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stops Picture in Picture"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beendet Bild-in-Bild"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

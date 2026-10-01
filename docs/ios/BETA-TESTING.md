@@ -48,6 +48,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Chapters tippen → Seek (wenn im Feed) | ☐ Chapters tap → seek (when in feed) |
 | ☐ Transcript sheet (nur Feed-URL) | ☐ Transcript sheet (feed URL only) |
 | ☐ Video → audio only Toggle | ☐ Play video as audio only |
+| ☐ Picture in Picture (Video-Surface, Button) | ☐ Picture in Picture (video surface, button) |
 | ☐ Continuous queue (nächste Episode) | ☐ Continuous queue (next episode) |
 | ☐ Progress speichern / Resume | ☐ Progress save / resume |
 | ☐ Mark played / unplayed (+ smart-mark ~30s) | ☐ Mark played / unplayed (+ smart-mark ~30s) |

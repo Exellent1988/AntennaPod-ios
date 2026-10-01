@@ -62,8 +62,11 @@ final class PlaybackService: ObservableObject {
     /// Shared player for the full-player video surface (`AVPlayerLayer` / `EpisodeVideoSurface`).
     /// Nil when nothing is loaded. Lockscreen / Now Playing stays metadata-only (no video).
     var avPlayer: AVPlayer? { player }
+    /// Picture-in-Picture for the video surface (beta lite). Lives here so PiP can outlive the full-player sheet.
+    let pictureInPicture = PictureInPictureSession()
     private var timeObserver: Any?
     private var statusCancellable: AnyCancellable?
+    private var pipCancellable: AnyCancellable?
     private var endObserver: NSObjectProtocol?
     private var lastPersistedAt: Date = .distantPast
 
@@ -88,6 +91,9 @@ final class PlaybackService: ObservableObject {
     init() {
         setupRemoteCommandsIfNeeded()
         UIApplication.shared.beginReceivingRemoteControlEvents()
+        pipCancellable = pictureInPicture.objectWillChange.sink { [weak self] _ in
+            self?.objectWillChange.send()
+        }
     }
 
     /// Starts or switches playback. Returns `false` when streaming is blocked by Wi‑Fi-only policy
@@ -631,6 +637,7 @@ final class PlaybackService: ObservableObject {
             NotificationCenter.default.removeObserver(endObserver)
         }
         endObserver = nil
+        pictureInPicture.tearDown()
         player?.pause()
         player = nil
     }

@@ -13,7 +13,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Episode list
 - Stream playback (AVPlayer, speed, configurable skip intervals)
 - Full player sheet (artwork or video surface, scrubber, transport; tap mini player to open)
-- Video player (beta lite; MIME video/* or mp4/m4v/mov/webm → AVPlayerLayer in full player; no PiP)
+- Video player (beta lite; MIME video/* or mp4/m4v/mov/webm → AVPlayerLayer in full player; PiP beta lite)
 - Video → audio only (Settings + full-player toggle; default off; Lockscreen stays audio)
 - Volume adaptation (Settings; default off; iOS AVAudioSession spokenAudio / speech optimize — not Android loudness gain)
 - Skip silence (Settings toggle only; not applied on stock AVPlayer — needs custom audio graph)
@@ -282,11 +282,13 @@ Tap the mini player title or progress bar to open a full-screen sheet: feed artw
 
 **Full player:** When video and **Play video as audio only** is off, the artwork slot is replaced by an `AVPlayerLayer` (`EpisodeVideoSurface`) bound to the same `PlaybackService` `AVPlayer` — transport / scrub stay shared. Aspect-fit on a black rounded frame (16:9-ish height).
 
-**Audio only:** Toggle in **Settings → Playback** and on the full player (video episodes only). Default **off**. Hides the video surface and shows artwork; does **not** re-encode or swap to an audio-only track (same media item). Persisted in `AppSettings` / UserDefaults and included in iOS JSON backup.
+**Picture in Picture (beta lite):** Full-player toolbar button (**Picture in Picture**) when the video surface is shown. Uses `AVPictureInPictureController(playerLayer:)` on that layer (AVKit), observes `isPictureInPicturePossible`, and enables `canStartPictureInPictureAutomaticallyFromInline` for home/app-switch while the inline surface is visible. Session lives on `PlaybackService` so PiP can outlive the sheet; the layer host is retained while PiP is active (one `AVPlayer` ↔ one layer). Hidden when **Play video as audio only** is on or the episode is not video; disabled when PiP is not possible. `UIBackgroundModes` stays **audio** only (no extra PiP background mode). `AVAudioSession` `.playback` already required.
 
-**Lockscreen / Now Playing:** Remains audio metadata + feed artwork (no video on lock screen). **Picture-in-picture** is **not** included in this lite slice.
+**Audio only:** Toggle in **Settings → Playback** and on the full player (video episodes only). Default **off**. Hides the video surface and shows artwork; does **not** re-encode or swap to an audio-only track (same media item). Persisted in `AppSettings` / UserDefaults and included in iOS JSON backup. PiP does not apply in audio-only mode.
 
-**Honest limits:** No dedicated landscape video chrome; no PiP; playback of exotic codecs depends on AVFoundation; local-folder feeds stay audio-extension-only.
+**Lockscreen / Now Playing:** Remains audio metadata + feed artwork (no video on lock screen). System PiP window is separate from Lockscreen Now Playing.
+
+**Honest limits:** No dedicated landscape video chrome; no AirPlay redesign; automatic PiP only via `canStartPictureInPictureAutomaticallyFromInline` (not a custom home-button handler); exotic codecs depend on AVFoundation; local-folder feeds stay audio-extension-only; PiP availability is system-dependent (`isPictureInPicturePossible`).
 
 ## Volume adaptation (P3 lite)
 
