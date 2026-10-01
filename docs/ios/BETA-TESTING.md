@@ -50,6 +50,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Play from beginning (Full secondary: Seek 0 + Play; EpisodeRow Kontext; kein Unplayed-Flag) | ☐ Play from beginning (Full secondary: seek 0 + play; EpisodeRow context; no unplayed flag) |
 | ☐ Favorit umschalten (Full secondary Stern; EpisodeRow; sofort via `favorites.json`) | ☐ Favorite toggle (Full secondary star; EpisodeRow; immediate via `favorites.json`) |
 | ☐ Archivieren / Wiederherstellen (Full secondary; EpisodeRow; sofort via `archived.json`; Inbox ausblenden) | ☐ Archive / restore (Full secondary; EpisodeRow; immediate via `archived.json`; hides from Inbox) |
+| ☐ Queue-Menü Full Player (Add ↔ Remove via `isInQueue`; Play Next wenn nicht schon next; gleiche Store-APIs) | ☐ Full Player Queue menu (Add ↔ Remove via `isInQueue`; Play Next when not already next; same store APIs) |
 | ☐ Full Player Download (nicht geladen → Laden; läuft → Abbrechen; geladen → Download löschen; kein Confirm; lokal-Ordner ausgeblendet) | ☐ Full Player download (not downloaded → Download; in progress → Cancel; downloaded → Delete download; no confirm; hidden for local-folder) |
 | ☐ Geschwindigkeit Tippen = nächste Preset (0.8…2.0 Wrap); Long-Press = Menü; Default aus Settings | ☐ Speed tap = next preset (0.8…2.0 wrap); long-press = menu; default from Settings |
 | ☐ Sleep timer (Uhr / Ende der Episode / Custom… 1–180 Min.; Mini-Player Restzeit-Badge) | ☐ Sleep timer (clock / end of episode / Custom… 1–180 min; mini player remaining badge) |
@@ -109,7 +110,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Home (Continue / Inbox / Queue / Discover) | ☐ Home (Continue / Inbox / Queue / Discover) |
 | ☐ Inbox (unplayed) + Swipes (Archive / Mark played / Play Next / Queue) | ☐ Inbox (unplayed) + swipes (Archive / Mark played / Play Next / Add to queue) |
 | ☐ Inbox: Alle als gehört markieren (Bestätigung) | ☐ Inbox: Mark all as played (confirm) |
-| ☐ Queue: Remove, Archive, Reorder | ☐ Queue: remove, archive, reorder |
+| ☐ Queue: Remove, Archive, Reorder; Full-Player Add/Remove-Toggle | ☐ Queue: remove, archive, reorder; Full Player Add/Remove toggle |
 | ☐ Queue: Warteschlange leeren (Bestätigung) | ☐ Queue: Clear queue (confirm) |
 | ☐ Queue: Suche (Titel / Feed; kein Reorder während Filter) | ☐ Queue: search (title / feed; no reorder while filtering) |
 | ☐ Queue: An Anfang / Ans Ende (Kontextmenü; ausgeblendet wenn erste/letzte/nicht in Queue) | ☐ Queue: Move to top / bottom (context menu; hide if first/last/not queued) |

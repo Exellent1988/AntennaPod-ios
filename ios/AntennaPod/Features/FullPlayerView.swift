@@ -755,19 +755,8 @@ struct FullPlayerView: View {
                     : String(localized: "Hides this episode from Inbox without marking it played")
             )
 
-            Button {
-                store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
-            } label: {
-                Label("Play Next", systemImage: "text.insert")
-            }
-            .accessibilityLabel(String(localized: "Play Next"))
-
-            Button {
-                store.enqueue(episode)
-            } label: {
-                Label("Queue", systemImage: "text.append")
-            }
-            .accessibilityLabel(String(localized: "Queue"))
+            // Queue menu: crowded HStack → group Add/Remove + Play Next (existing APIs only).
+            queueActionsMenu(episode: episode)
 
             // Remote-media only: skip local-folder `file://` (already on disk).
             if canManageDownload(for: episode) {
@@ -843,6 +832,74 @@ struct FullPlayerView: View {
         .buttonStyle(.bordered)
         .labelStyle(.titleAndIcon)
         .controlSize(.small)
+    }
+
+    /// Full-player Queue menu: Add/Remove toggle + optional Play Next (hidden when already next).
+    @ViewBuilder
+    private func queueActionsMenu(episode: PodcastEpisode) -> some View {
+        let inQueue = store.isInQueue(episode.id)
+        Menu {
+            Button {
+                if inQueue {
+                    store.removeFromQueue(episode)
+                } else {
+                    store.enqueue(episode)
+                }
+            } label: {
+                Label(
+                    inQueue ? "Remove from queue" : "Add to queue",
+                    systemImage: inQueue ? "minus.circle" : "text.append"
+                )
+            }
+            .accessibilityLabel(
+                inQueue
+                    ? String(localized: "Remove from queue")
+                    : String(localized: "Add to queue")
+            )
+            .accessibilityHint(
+                inQueue
+                    ? String(localized: "Removes this episode from the queue")
+                    : String(localized: "Adds this episode to the queue")
+            )
+
+            if !isAlreadyNextInQueue(episode) {
+                Button {
+                    store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
+                } label: {
+                    Label("Play Next", systemImage: "text.insert")
+                }
+                .accessibilityLabel(String(localized: "Play Next"))
+                .accessibilityHint(String(localized: "Places this episode to play next in the queue"))
+            }
+        } label: {
+            Label(
+                inQueue ? "In queue" : "Queue",
+                systemImage: inQueue ? "text.badge.checkmark" : "text.append"
+            )
+        }
+        .accessibilityLabel(String(localized: "Queue actions"))
+        .accessibilityValue(
+            inQueue
+                ? String(localized: "In queue")
+                : String(localized: "Not in queue")
+        )
+        .accessibilityHint(String(localized: "Opens add, remove, and Play Next queue actions"))
+    }
+
+    /// True when Play Next would leave queue order unchanged (already in the play-next slot).
+    private func isAlreadyNextInQueue(_ episode: PodcastEpisode) -> Bool {
+        guard store.isInQueue(episode.id) else { return false }
+        var simulated = store.queue
+        simulated.removeAll { $0.id == episode.id }
+        let insertIndex: Int
+        if let playingId = playback.currentEpisode?.id,
+           let index = simulated.firstIndex(where: { $0.id == playingId }) {
+            insertIndex = index + 1
+        } else {
+            insertIndex = 0
+        }
+        simulated.insert(episode, at: min(insertIndex, simulated.count))
+        return simulated.map(\.id) == store.queue.map(\.id)
     }
 
     @MainActor

@@ -268,6 +268,10 @@ final class PodcastStore: ObservableObject {
         )
     }
 
+    func isInQueue(_ episodeId: String) -> Bool {
+        queue.contains { $0.id == episodeId }
+    }
+
     func enqueue(_ episode: PodcastEpisode) {
         if !queue.contains(where: { $0.id == episode.id }) {
             queue.append(episode)
