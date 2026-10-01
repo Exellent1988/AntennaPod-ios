@@ -86,14 +86,55 @@ struct EpisodePlaybackState: Hashable, Codable {
     var durationSeconds: Double
     var isPlayed: Bool
     var updatedAtEpochMs: Int64
+    /// Last time the user played or marked this episode played (History sort key).
+    /// Distinct from `updatedAtEpochMs`, which also bumps on mark-unplayed.
+    var lastPlayedAtEpochMs: Int64?
 
     static func empty(nowMs: Int64 = Int64(Date().timeIntervalSince1970 * 1000)) -> EpisodePlaybackState {
         EpisodePlaybackState(
             positionSeconds: 0,
             durationSeconds: 0,
             isPlayed: false,
-            updatedAtEpochMs: nowMs
+            updatedAtEpochMs: nowMs,
+            lastPlayedAtEpochMs: nil
         )
+    }
+
+    init(
+        positionSeconds: Double,
+        durationSeconds: Double,
+        isPlayed: Bool,
+        updatedAtEpochMs: Int64,
+        lastPlayedAtEpochMs: Int64? = nil
+    ) {
+        self.positionSeconds = positionSeconds
+        self.durationSeconds = durationSeconds
+        self.isPlayed = isPlayed
+        self.updatedAtEpochMs = updatedAtEpochMs
+        self.lastPlayedAtEpochMs = lastPlayedAtEpochMs
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        positionSeconds = try c.decodeIfPresent(Double.self, forKey: .positionSeconds) ?? 0
+        durationSeconds = try c.decodeIfPresent(Double.self, forKey: .durationSeconds) ?? 0
+        isPlayed = try c.decodeIfPresent(Bool.self, forKey: .isPlayed) ?? false
+        updatedAtEpochMs = try c.decodeIfPresent(Int64.self, forKey: .updatedAtEpochMs)
+            ?? Int64(Date().timeIntervalSince1970 * 1000)
+        lastPlayedAtEpochMs = try c.decodeIfPresent(Int64.self, forKey: .lastPlayedAtEpochMs)
+        // Migrate older `playback.json` without `lastPlayedAtEpochMs`.
+        if lastPlayedAtEpochMs == nil, isPlayed || positionSeconds > 0 {
+            lastPlayedAtEpochMs = updatedAtEpochMs
+        }
+    }
+
+    /// Whether this state should appear in History (played or in-progress).
+    var belongsInHistory: Bool {
+        isPlayed || positionSeconds > 1
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case positionSeconds, durationSeconds, isPlayed, updatedAtEpochMs, lastPlayedAtEpochMs
     }
 }
 
@@ -110,6 +151,14 @@ struct LibraryEpisodeHit: Identifiable, Hashable {
     let episode: PodcastEpisode
     let feedTitle: String
     let feedId: UUID
+}
+
+/// Episode row for History (played / in-progress), newest last-played first.
+struct HistoryEpisode: Identifiable, Hashable {
+    var id: String { episode.id }
+    let episode: PodcastEpisode
+    let feedTitle: String
+    let lastPlayedAtEpochMs: Int64
 }
 
 enum ChapterIndexing {

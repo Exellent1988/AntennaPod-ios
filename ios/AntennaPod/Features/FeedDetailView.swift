@@ -20,6 +20,9 @@ struct EpisodeRow: View {
     @EnvironmentObject private var downloads: DownloadService
     let episode: PodcastEpisode
     let feedTitle: String
+    /// When set (e.g. History last-played), shown instead of the episode pub date.
+    var dateOverride: Date? = nil
+    var dateAccessibilityLabel: String? = nil
 
     private var state: EpisodePlaybackState {
         store.playbackState(for: episode.id)
@@ -43,7 +46,12 @@ struct EpisodeRow: View {
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             }
-            if let ms = episode.pubDateEpochMs {
+            if let dateOverride {
+                Text(dateOverride, style: .relative)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel(dateAccessibilityLabel ?? "Date")
+            } else if let ms = episode.pubDateEpochMs {
                 Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .date)
                     .font(.caption)
                     .foregroundStyle(.secondary)

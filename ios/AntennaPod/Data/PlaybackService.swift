@@ -127,6 +127,7 @@ final class PlaybackService: ObservableObject {
         resumeSleepTimerIfNeeded()
         updateNowPlayingInfo(force: true)
         loadArtworkIfNeeded()
+        store?.touchLastPlayed(episode.id)
     }
 
     func togglePlayPause() {

@@ -14,13 +14,13 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Inbox | 4 | done | Unplayed across feeds (`!isPlayed`), newest first; tab + pull-to-refresh all feeds |
 | Episodes (Alle) | 4 | todo | |
 | Downloads-Liste | 5 | wip | P0, local files + persisted catalog |
-| History | 3 | todo | |
+| History | 3 | done | Played / in-progress across feeds, newest `lastPlayedAt` first; Subscriptions → Library → History; swipe remove / mark unplayed; tap via EpisodeRow |
 | Favorites | 3 | todo | |
 | Subscriptions | 5 | wip | List + subscribe sheet |
 | Add podcast | 5 | wip | URL + Apple Podcasts search (Subscribe reuses feed URL pipeline) |
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
 | Statistics | 2 | todo | P3 |
-| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (5): Inbox, Subscriptions, Queue, Downloads, Settings |
+| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (5): Inbox, Subscriptions (+ Library → History), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
 | Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + playback source + download storage limit + refresh interval + auto-download + auto-delete after play (P0/P1); more prefs later |
@@ -49,7 +49,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Lockscreen / Now Playing | 5 | done | MPNowPlayingInfoCenter + remote play/pause/skip (Settings intervals)/scrub; artwork from feed |
 | Variable speed | 5 | wip | Mini + full player rate menu |
 | Sleep timer (Basis) | 5 | done | Clock presets 5–60 min + end of episode; fade last 10s; mini + full player menu |
-| Fortschritt speichern / fortsetzen | 5 | done | JSON `playback.json`; resume on play |
+| Fortschritt speichern / fortsetzen | 5 | done | JSON `playback.json` (`position` / `duration` / `isPlayed` / `lastPlayedAt`); resume on play |
 | Mark played / unplayed | 5 | done | Manual + smart-mark last 30s (AntennaPod default) |
 | Continuous playback (Queue) | 5 | done | Auto-next from queue on episode end (`nextQueueEpisode`); end-of-episode sleep timer still stops without advancing |
 | FF / Rewind deltas | 4 | done | Settings presets 5/10/15/20/30/60; defaults 10s rewind / 30s FF (Android); mini + full + Now Playing remotes |

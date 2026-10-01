@@ -103,7 +103,12 @@ final class PodcastStore: ObservableObject {
         if durationSeconds.isFinite, durationSeconds > 0 {
             state.durationSeconds = durationSeconds
         }
-        state.updatedAtEpochMs = Int64(Date().timeIntervalSince1970 * 1000)
+        let nowMs = Int64(Date().timeIntervalSince1970 * 1000)
+        state.updatedAtEpochMs = nowMs
+        // Stamp History sort key while listening (throttle not needed — didSet already persists).
+        if positionSeconds > 1 || state.isPlayed {
+            state.lastPlayedAtEpochMs = nowMs
+        }
         playbackStates[episodeId] = state
     }
 
@@ -113,7 +118,9 @@ final class PodcastStore: ObservableObject {
         var state = playbackState(for: episodeId)
         state.isPlayed = true
         state.positionSeconds = 0
-        state.updatedAtEpochMs = Int64(Date().timeIntervalSince1970 * 1000)
+        let nowMs = Int64(Date().timeIntervalSince1970 * 1000)
+        state.updatedAtEpochMs = nowMs
+        state.lastPlayedAtEpochMs = nowMs
         playbackStates[episodeId] = state
         if removeFromQueue {
             queue.removeAll { $0.id == episodeId }
@@ -135,6 +142,15 @@ final class PodcastStore: ObservableObject {
         } else {
             markPlayed(episodeId)
         }
+    }
+
+    /// Stamp History sort key when playback starts (even before first progress persist).
+    func touchLastPlayed(_ episodeId: String) {
+        var state = playbackState(for: episodeId)
+        let nowMs = Int64(Date().timeIntervalSince1970 * 1000)
+        state.updatedAtEpochMs = nowMs
+        state.lastPlayedAtEpochMs = nowMs
+        playbackStates[episodeId] = state
     }
 
     /// Next queue item after `episodeId`, or the head of the queue if that id is gone.
@@ -231,7 +247,56 @@ final class PodcastStore: ObservableObject {
         return items
     }
 
-    /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
+    // MARK: - History (played / in-progress)
+
+    /// Episodes marked played or with meaningful progress, newest `lastPlayedAt` first.
+    var historyEpisodes: [HistoryEpisode] {
+        var items: [HistoryEpisode] = []
+        for feed in feeds {
+            for episode in feed.episodes {
+                let state = playbackState(for: episode.id)
+                guard state.belongsInHistory else { continue }
+                let lastPlayed = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
+                items.append(
+                    HistoryEpisode(
+                        episode: episode,
+                        feedTitle: feed.title,
+                        lastPlayedAtEpochMs: lastPlayed
+                    )
+                )
+            }
+        }
+        // Include queue-only copies that still have playback state (rare but possible).
+        let knownIds = Set(items.map(\.id))
+        for episode in queue where !knownIds.contains(episode.id) {
+            let state = playbackState(for: episode.id)
+            guard state.belongsInHistory else { continue }
+            let lastPlayed = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
+            let title = feed(containingEpisodeId: episode.id)?.title ?? ""
+            items.append(
+                HistoryEpisode(
+                    episode: episode,
+                    feedTitle: title,
+                    lastPlayedAtEpochMs: lastPlayed
+                )
+            )
+        }
+        items.sort { lhs, rhs in
+            if lhs.lastPlayedAtEpochMs != rhs.lastPlayedAtEpochMs {
+                return lhs.lastPlayedAtEpochMs > rhs.lastPlayedAtEpochMs
+            }
+            return lhs.episode.title.localizedCaseInsensitiveCompare(rhs.episode.title) == .orderedAscending
+        }
+        return items
+    }
+
+    /// Drop progress / played flags so the episode leaves History (episode row itself stays).
+    func removeFromHistory(_ episodeId: String) {
+        playbackStates.removeValue(forKey: episodeId)
+        pendingAutoDeleteIds.remove(episodeId)
+    }
+
+        /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
     func refreshAllFeeds() async {
         lastError = nil
         isLoading = true

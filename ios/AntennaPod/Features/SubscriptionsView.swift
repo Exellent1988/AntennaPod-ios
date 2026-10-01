@@ -15,6 +15,13 @@ struct SubscriptionsView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section("Library") {
+                    NavigationLink {
+                        HistoryView()
+                    } label: {
+                        Label("History", systemImage: "clock.arrow.circlepath")
+                    }
+                }
                 if store.feeds.isEmpty {
                     ContentUnavailableView(
                         "No subscriptions",
