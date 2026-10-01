@@ -232,9 +232,10 @@ struct InboxView: View {
             }
             .overlay {
                 if store.isLoading {
-                    ProgressView("Refreshing feeds…")
+                    ProgressView(store.refreshProgressLabel)
                         .padding()
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        .accessibilityLabel(store.refreshProgressLabel)
                 }
             }
             .safeAreaInset(edge: .bottom) {

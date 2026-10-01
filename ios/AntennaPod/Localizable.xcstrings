@@ -4321,6 +4321,23 @@
         }
       }
     },
+    "Refreshing %lld of %lld…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refreshing %lld of %lld…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiere %lld von %lld…"
+          }
+        }
+      }
+    },
     "Regenerate device id from name": {
       "extractionState": "manual",
       "localizations": {

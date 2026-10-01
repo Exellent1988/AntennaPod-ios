@@ -33,6 +33,12 @@ final class PodcastStore: ObservableObject {
         didSet { PodcastPersistence.saveFeedTags(tagsByFeedId) }
     }
     @Published var isLoading = false
+    /// Feeds finished (success or failure) during the in-flight `refreshAllFeeds()`.
+    /// Honest completion count only — not a byte/percent estimate. Zero when idle.
+    @Published var refreshCompletedCount = 0
+    /// Feeds that will run in the in-flight `refreshAllFeeds()` (non-empty URL + Keep updated participates).
+    /// Zero when idle or for non-bulk `isLoading` work (subscribe / single-feed refresh).
+    @Published var refreshTotalCount = 0
     @Published var lastError: String?
     @Published var opmlImport = OpmlImportState()
 
@@ -1376,15 +1382,38 @@ final class PodcastStore: ObservableObject {
         )
     }
 
+    /// Localized overlay / a11y label for bulk feed refresh. Uses real completed/total when known;
+    /// falls back to indeterminate copy when `refreshTotalCount` is 0 (idle or non-bulk loading).
+    var refreshProgressLabel: String {
+        let total = refreshTotalCount
+        if total > 0 {
+            return String(
+                format: String(localized: "Refreshing %lld of %lld…"),
+                refreshCompletedCount,
+                total
+            )
+        }
+        return String(localized: "Refreshing feeds…")
+    }
+
     /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
+    /// Publishes honest per-feed completion counts (`refreshCompletedCount` / `refreshTotalCount`) for UI.
     func refreshAllFeeds() async {
         lastError = nil
         isLoading = true
-        defer { isLoading = false }
+        defer {
+            isLoading = false
+            refreshCompletedCount = 0
+            refreshTotalCount = 0
+        }
         let snapshot = feeds
+        let targets = snapshot.filter {
+            !$0.feedUrl.isEmpty && feedSettings(for: $0.id).participatesInBulkRefresh
+        }
+        refreshTotalCount = targets.count
+        refreshCompletedCount = 0
         var newBatches: [NewEpisodeBatch] = []
-        for feed in snapshot where !feed.feedUrl.isEmpty {
-            guard feedSettings(for: feed.id).participatesInBulkRefresh else { continue }
+        for feed in targets {
             if LocalFolderFeed.isLocalFolderFeed(feed) {
                 let existingIds = Set(feed.episodes.map(\.id))
                 do {
@@ -1403,6 +1432,7 @@ final class PodcastStore: ObservableObject {
                 } catch {
                     lastError = error.localizedDescription
                 }
+                refreshCompletedCount += 1
                 continue
             }
             let existingIds = Set(feed.episodes.map(\.id))
@@ -1424,6 +1454,7 @@ final class PodcastStore: ObservableObject {
             } catch {
                 lastError = error.localizedDescription
             }
+            refreshCompletedCount += 1
         }
         // Stamp even if some feeds failed — avoids hammering on every foreground.
         settings?.markFeedRefreshCompleted()
