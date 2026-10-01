@@ -11571,23 +11571,6 @@
         }
       }
     },
-    "Appends %lld history episodes to the end of the queue (newest last-played first). Already queued episodes are skipped. Uses the full History catalog (same as Clear history), not the searchable filter. Queue lock does not block enqueue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends %lld history episodes to the end of the queue (newest last-played first). Already queued episodes are skipped. Uses the full History catalog (same as Clear history), not the searchable filter. Queue lock does not block enqueue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht %lld Verlaufs-Episoden am Ende der Warteschlange ein (zuletzt gespielt zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Verlaufs-Katalog (wie Verlauf leeren), nicht die Suchfilterung. Warteschlangen-Sperre blockiert Einreihen nicht."
-          }
-        }
-      }
-    },
     "Appends archived episodes not already queued": {
       "extractionState": "manual",
       "localizations": {
@@ -17693,6 +17676,58 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet die Bild-URL aus dem Feed im Systembrowser"
+          }
+        }
+      }
+    },
+    "Filters the History list by podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the History list by podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Verlaufs-Liste nach Podcast"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for History podcast filter chips."
+    },
+    "No history matches your filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No history matches your filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Verlauf passt zu deinem Filter."
+          }
+        }
+      }
+    },
+    "Appends %lld history episodes to the end of the queue (newest last-played first). Already queued episodes are skipped. Uses the full History catalog (same as Clear history), not the podcast or searchable filter. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld history episodes to the end of the queue (newest last-played first). Already queued episodes are skipped. Uses the full History catalog (same as Clear history), not the podcast or searchable filter. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld Verlaufs-Episoden am Ende der Warteschlange ein (zuletzt gespielt zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Verlaufs-Katalog (wie Verlauf leeren), nicht Podcast- oder Suchfilter. Warteschlangen-Sperre blockiert Einreihen nicht."
           }
         }
       }

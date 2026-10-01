@@ -25,19 +25,84 @@ struct HistoryView: View {
         items.filter { !store.isInQueue($0.episode.id) }.count
     }
 
-    /// Visible history ordered by `AppSettings.historySort`.
+    /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
+    private var podcastFilter: HistoryPodcastFilter {
+        HistoryPodcastFilter.fromStorage(settings.historyPodcastFilter)
+    }
+
+    private var isPodcastFiltering: Bool {
+        if case .feed = podcastFilter { return true }
+        return false
+    }
+
+    /// Unique feeds that currently have at least one history episode (title A–Z).
+    /// Built from the History catalog via `feed(containingEpisodeId:)` — never invent.
+    private var historyPodcastFeeds: [PodcastFeed] {
+        var seen = Set<UUID>()
+        var feeds: [PodcastFeed] = []
+        for item in items {
+            guard let feed = store.feed(containingEpisodeId: item.episode.id) else { continue }
+            if seen.insert(feed.id).inserted {
+                feeds.append(feed)
+            }
+        }
+        return feeds.sorted {
+            $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+    }
+
+    private var podcastFilterChips: [HistoryPodcastFilter] {
+        var chips: [HistoryPodcastFilter] = [.all]
+        var feeds = historyPodcastFeeds
+        // Keep a persisted selection visible (even if that feed no longer has history)
+        // so the user can see why the list is empty and tap All.
+        if case .feed(let id) = podcastFilter,
+           !feeds.contains(where: { $0.id == id }),
+           let feed = store.feeds.first(where: { $0.id == id }) {
+            feeds.append(feed)
+            feeds.sort {
+                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
+        }
+        chips.append(contentsOf: feeds.map { .feed($0.id) })
+        return chips
+    }
+
+    private func podcastChipTitle(_ chip: HistoryPodcastFilter) -> String {
+        switch chip {
+        case .all:
+            return String(localized: "All")
+        case .feed(let id):
+            return store.feeds.first(where: { $0.id == id })?.title
+                ?? historyPodcastFeeds.first(where: { $0.id == id })?.title
+                ?? String(localized: "Podcast")
+        }
+    }
+
+    private var isSearching: Bool {
+        !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Visible history: podcast chip → search → `historySort`.
     /// Sort key: `HistoryEpisode.lastPlayedAtEpochMs` (`lastPlayedAt`, else `updatedAt` from playback state).
-    /// Empty query shows the full list; sort applies to search-filtered results too.
+    /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
     /// Does not mutate `PodcastStore.historyEpisodes` (Home Continue / Clear history stay newest-first catalog).
+    /// View-only — Clear history / Add all to queue stay full-catalog scoped.
     /// Respects history size limit catalog as-is (store already trimmed).
     private var filteredItems: [HistoryEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-        let base = items
+        let afterPodcast: [HistoryEpisode]
+        switch podcastFilter {
+        case .all:
+            afterPodcast = items
+        case .feed(let feedId):
+            afterPodcast = items.filter { store.feed(containingEpisodeId: $0.episode.id)?.id == feedId }
+        }
         let filtered: [HistoryEpisode]
         if q.isEmpty {
-            filtered = base
+            filtered = afterPodcast
         } else {
-            filtered = base.filter { item in
+            filtered = afterPodcast.filter { item in
                 if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
                 return item.feedTitle.localizedCaseInsensitiveContains(q)
             }
@@ -59,7 +124,7 @@ struct HistoryView: View {
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** History list
-    /// (sort + searchable filter). Remaining per episode = `max(0, duration − position)` when
+    /// (podcast chip + searchable filter + sort). Remaining per episode = `max(0, duration − position)` when
     /// duration known; unplayed with duration contributes full duration; **played** (not current)
     /// → 0 (History is mostly played / in-progress — low totals are expected and correct; still
     /// useful for in-progress); **unknown duration skipped** (tilde when any skipped). Currently
@@ -96,8 +161,30 @@ struct HistoryView: View {
 
     var body: some View {
         List {
-            // AntennaPod-like history info bar (visible sorted+filtered list remaining time).
-            // Hidden when catalog empty or search matches nothing — not full-catalog Clear count.
+            if !items.isEmpty, !historyPodcastFeeds.isEmpty || isPodcastFiltering {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(podcastFilterChips) { chip in
+                                HistoryPodcastFilterChip(
+                                    title: podcastChipTitle(chip),
+                                    selected: podcastFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the History list by podcast")
+                                ) {
+                                    settings.historyPodcastFilter = chip.storageValue
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                } header: {
+                    Text("Podcasts")
+                }
+            }
+
+            // AntennaPod-like history info bar (visible sorted+podcast+search filtered list remaining time).
+            // Hidden when catalog empty or filters match nothing — not full-catalog Clear count.
             // Played (not current) → 0; totals may often be low — still useful for in-progress.
             if let remainingLabel = historyRemainingInfoLabel {
                 Section {
@@ -122,7 +209,11 @@ struct HistoryView: View {
                 ContentUnavailableView(
                     "No matching history",
                     systemImage: "magnifyingglass",
-                    description: Text("No history matches your search.")
+                    description: Text(
+                        isPodcastFiltering && !isSearching
+                            ? String(localized: "No history matches your filter.")
+                            : String(localized: "No history matches your search.")
+                    )
                 )
             } else {
                 ForEach(filteredItems) { item in
@@ -226,7 +317,7 @@ struct HistoryView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Appends \(enqueueAllHistoryCandidatesCount) history episodes to the end of the queue (newest last-played first). Already queued episodes are skipped. Uses the full History catalog (same as Clear history), not the searchable filter. Queue lock does not block enqueue.")
+            Text("Appends \(enqueueAllHistoryCandidatesCount) history episodes to the end of the queue (newest last-played first). Already queued episodes are skipped. Uses the full History catalog (same as Clear history), not the podcast or searchable filter. Queue lock does not block enqueue.")
         }
         .confirmationDialog(
             "Clear history?",

@@ -364,7 +364,34 @@ enum HistorySort: String, CaseIterable, Identifiable {
     }
 }
 
+/// Podcast chip selection on the History list (feeds that currently have history
+/// episodes only — never invent podcasts). Empty storage = All; otherwise feed UUID string.
+enum HistoryPodcastFilter: Hashable, Identifiable {
+    case all
+    case feed(UUID)
 
+    var id: String {
+        switch self {
+        case .all: return "__all__"
+        case .feed(let id): return "feed:\(id.uuidString)"
+        }
+    }
+
+    /// Persistable raw value: empty = All; otherwise the feed UUID string.
+    var storageValue: String {
+        switch self {
+        case .all: return ""
+        case .feed(let id): return id.uuidString
+        }
+    }
+
+    static func fromStorage(_ raw: String?) -> HistoryPodcastFilter {
+        guard let raw else { return .all }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let id = UUID(uuidString: trimmed) else { return .all }
+        return .feed(id)
+    }
+}
 
 /// Cap on History-listed episodes (played / in-progress in `playback.json`).
 /// **No separate history.json** — History is derived from `playbackStates`. Trimming drops the oldest
@@ -719,7 +746,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -803,6 +830,7 @@ final class AppSettings: ObservableObject {
         static let downloadsFilter = "settings.downloadsFilter"
         static let downloadsPodcastFilter = "settings.downloadsPodcastFilter"
         static let historySort = "settings.historySort"
+        static let historyPodcastFilter = "settings.historyPodcastFilter"
         static let historySizeLimit = "settings.historySizeLimit"
         static let favoritesSort = "settings.favoritesSort"
         static let favoritesPodcastFilter = "settings.favoritesPodcastFilter"
@@ -1177,10 +1205,22 @@ final class AppSettings: ObservableObject {
     /// History list order by `HistoryEpisode.lastPlayedAtEpochMs`: newest first (default) or oldest first.
     /// That field is `playbackStates.lastPlayedAtEpochMs`, else `updatedAtEpochMs` (same as store History catalog).
     /// Stable tiebreaker is episode `id`. Client-side re-sort in HistoryView only — `PodcastStore.historyEpisodes`
-    /// stays newest-first for Home Continue / Clear history counts. Applies to search-filtered results too.
+    /// stays newest-first for Home Continue / Clear history counts. Applies to podcast-chip + search-filtered results too.
     @Published var historySort: HistorySort {
         didSet {
             UserDefaults.standard.set(historySort.rawValue, forKey: Keys.historySort)
+        }
+    }
+
+    /// History podcast chip filter. Empty string = All; otherwise a feed UUID that currently has
+    /// (or recently had) history episodes. Default All. Persisted (+ backup). Applied before
+    /// `.searchable`; `historySort` still orders the filtered list. Chips list only feeds
+    /// present in the current History catalog (never invent). Orphan history items without a
+    /// matching library feed match All only. **View-only** — Clear history / Add all to queue
+    /// stay full History catalog. Home Continue listening does not follow this chip.
+    @Published var historyPodcastFilter: String {
+        didSet {
+            UserDefaults.standard.set(historyPodcastFilter, forKey: Keys.historyPodcastFilter)
         }
     }
 
@@ -1502,6 +1542,8 @@ final class AppSettings: ObservableObject {
         let historySortRaw = UserDefaults.standard.string(forKey: Keys.historySort)
             ?? HistorySort.newestFirst.rawValue
         historySort = HistorySort(rawValue: historySortRaw) ?? .newestFirst
+        let historyPodcastFilterRaw = UserDefaults.standard.string(forKey: Keys.historyPodcastFilter) ?? ""
+        historyPodcastFilter = HistoryPodcastFilter.fromStorage(historyPodcastFilterRaw).storageValue
         let historyLimitRaw = UserDefaults.standard.object(forKey: Keys.historySizeLimit) as? Int
             ?? HistorySizeLimit.unlimited.rawValue
         historySizeLimit = HistorySizeLimit(rawValue: historyLimitRaw) ?? .unlimited
@@ -1753,6 +1795,7 @@ final class AppSettings: ObservableObject {
             downloadsFilter: downloadsFilter.rawValue,
             downloadsPodcastFilter: downloadsPodcastFilter,
             historySort: historySort.rawValue,
+            historyPodcastFilter: historyPodcastFilter,
             historySizeLimit: historySizeLimit.rawValue,
             favoritesSort: favoritesSort.rawValue,
             favoritesPodcastFilter: favoritesPodcastFilter,
@@ -1888,6 +1931,9 @@ final class AppSettings: ObservableObject {
         if let historySortRaw = snap.historySort {
             historySort = HistorySort(rawValue: historySortRaw) ?? .newestFirst
         }
+        if let historyPodcastFilterRaw = snap.historyPodcastFilter {
+            historyPodcastFilter = HistoryPodcastFilter.fromStorage(historyPodcastFilterRaw).storageValue
+        }
         if let historyLimitRaw = snap.historySizeLimit {
             historySizeLimit = HistorySizeLimit(rawValue: historyLimitRaw) ?? .unlimited
         }
@@ -1992,6 +2038,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var downloadsPodcastFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var historySort: String? = nil
+    /// Absent in older backups → All (empty). Feed UUID string or empty for All.
+    var historyPodcastFilter: String? = nil
     /// Absent in older backups → Unlimited (0). Raw `HistorySizeLimit` value.
     var historySizeLimit: Int? = 0
     /// Absent in older backups → newestFirst (default).
