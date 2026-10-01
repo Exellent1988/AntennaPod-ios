@@ -10744,6 +10744,76 @@
           }
         }
       }
+    },
+    "%@ • %@ left": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ • %@ left"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ • %@ verbleibend"
+          }
+        }
+      }
+    },
+    "~%@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~%@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~%@"
+          }
+        }
+      }
+    },
+    "Queue remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Queue info bar (episode count + remaining duration).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queue remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Warteschlangenzeit %@"
+          }
+        }
+      }
+    },
+    "Remaining time excludes %lld episode(s) with unknown duration": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint when some queue episodes lack duration.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining time excludes %lld episode(s) with unknown duration"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Zeit schließt %lld Episode(n) ohne bekannte Dauer aus"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
