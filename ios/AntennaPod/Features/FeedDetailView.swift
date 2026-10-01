@@ -510,9 +510,11 @@ struct EpisodeRow: View {
                 if dateOverride != nil || episode.pubDateEpochMs != nil || formattedKnownDuration != nil {
                     HStack(spacing: 6) {
                         if let dateOverride {
+                            // History / Favorites / Archived: live relative (hours matter).
                             Text(dateOverride, style: .relative)
-                        } else if let ms = episode.pubDateEpochMs {
-                            Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .date)
+                        } else if let caption = formattedPubDateCaption {
+                            // Publish date: Today / Yesterday / N days ago / absolute.
+                            Text(caption)
                         }
                         if let formattedKnownDuration {
                             if dateOverride != nil || episode.pubDateEpochMs != nil {
@@ -832,7 +834,7 @@ struct EpisodeRow: View {
         return String(localized: "Download")
     }
 
-    /// VoiceOver summary: title, feed, duration, played/progress, downloaded (+ favorite/archived).
+    /// VoiceOver summary: title, feed, date, duration, played/progress, downloaded (+ favorite/archived).
     private var episodeAccessibilityLabel: String {
         var parts: [String] = [episode.title]
         if !feedTitle.isEmpty {
@@ -840,6 +842,8 @@ struct EpisodeRow: View {
         }
         if let dateOverride, let custom = dateAccessibilityLabel {
             parts.append(custom)
+        } else if let caption = formattedPubDateCaption {
+            parts.append(caption)
         }
         if let formattedKnownDuration {
             parts.append(String(localized: "Duration \(formattedKnownDuration)"))
@@ -862,6 +866,13 @@ struct EpisodeRow: View {
             parts.append(String(localized: "Archived"))
         }
         return parts.joined(separator: ", ")
+    }
+
+    /// Publish-date caption: Today / Yesterday / N days ago (≤7) / medium absolute.
+    private var formattedPubDateCaption: String? {
+        guard let ms = episode.pubDateEpochMs else { return nil }
+        let date = Date(timeIntervalSince1970: Double(ms) / 1000)
+        return EpisodeDateFormatting.listCaption(for: date)
     }
 
     /// Prefer feed `itunes:duration` / media duration; fall back to saved playback duration.
