@@ -2,11 +2,6 @@ name: iOS
 
 on:
   pull_request:
-    paths:
-      - "ios/**"
-      - "shared/kmp/**"
-      - "shared/specs/**"
-      - ".github/workflows/ios.yml"
   push:
     branches: [ master, develop ]
     paths:

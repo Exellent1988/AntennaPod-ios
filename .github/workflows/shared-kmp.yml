@@ -2,10 +2,6 @@ name: Shared KMP
 
 on:
   pull_request:
-    paths:
-      - "shared/kmp/**"
-      - "shared/specs/**"
-      - ".github/workflows/shared-kmp.yml"
   push:
     branches: [ master, develop ]
     paths:

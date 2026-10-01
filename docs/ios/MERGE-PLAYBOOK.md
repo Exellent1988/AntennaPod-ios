@@ -49,8 +49,8 @@ Feature-Arbeit immer auf Branches vom aktuellen `develop`, z. B. `cursor/…`.
 | Workflow | Zweck |
 |----------|--------|
 | Bestehende Android-Workflows | Unverändert; Upstream-Parität |
-| `shared-kmp.yml` | KMP `commonTest` / Compile auf Linux |
-| `ios.yml` | macOS-Runner: XCFramework + XcodeGen/`xcodebuild` |
+| `shared-kmp.yml` | KMP JVM-Tests — läuft auf **jedem** PR (kein Path-Filter), damit Required Checks nicht hängen |
+| `ios.yml` | macOS: XCFramework + XcodeGen/`xcodebuild` — ebenfalls auf jedem PR |
 
 Ein grünes `:app:assembleDebug` ist die Merge-Gate für Android. iOS/KMP-Rot blockiert Upstream-Sync nicht, blockiert aber iOS-Feature-Merges.
 
