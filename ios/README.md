@@ -24,7 +24,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, auto-delete after play, notify on new episodes)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, auto-delete after play, notify on new episodes, gpodder.net sync)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -34,6 +34,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Download storage limit (Settings: usage + max size; auto-evict played first)
 - Auto-delete after playing (global toggle; deletes offline file on mark played; keeps episode row)
 - Notifications for new episodes (local UserNotifications after refresh; Settings toggle; tap opens Inbox; no push)
+- gpodder.net sync (subscriptions MVP: Settings login/sync; Keychain; pull+push feed URLs; additive merge; episode actions later)
 
 Root tabs (6): **Home**, Inbox, Subscriptions, Queue, Downloads, Settings.
 
@@ -47,7 +48,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home, inbox, all episodes, history, favorites, library search, subscriptions, feed detail + per-feed settings, add/discover, player, downloads, queue, settings, OPML, notifications
+    └── Features/…           # home, inbox, all episodes, history, favorites, library search, subscriptions, feed detail + per-feed settings, add/discover, player, downloads, queue, settings (+ gpodder sync), OPML, notifications
 ```
 
 ## Local setup (Mac)
@@ -158,6 +159,25 @@ Settings → **Notifications → Notify on new episodes** (default on). Uses `Us
 ## Discovery
 
 Apple Podcasts search uses the public iTunes Search API (`media=podcast`, no API key) via `URLSession` (`ItunesSearchService`). Results that include a `feedUrl` are listed with artwork, title, and artist; **Subscribe** runs the existing `PodcastStore.subscribe(feedUrl:)` / `FeedRepository` fetch+parse path (same as Add by URL). Search is lightly debounced (~400 ms). Empty results and network/decode errors are surfaced in the Add sheet. Entry: **Subscriptions → +** (Search / Feed URL segmented control).
+
+
+## Sync / gpodder.net
+
+Settings → **Sync / gpodder.net** (beta MVP — **subscriptions only**):
+
+- **Host** defaults to `https://gpodder.net` (editable; Nextcloud Gpodder sync is a **separate todo**, not this host field alone).
+- **Username** / **password**: password stored in the **Keychain** (Security framework); username + host + device metadata in `UserDefaults`.
+- **Device name** (caption) + stable **device id** (generated once; “Regenerate device id from name” sanitizes to `[A-Za-z0-9._-]+` and resets the subscription timestamp).
+- **Login** / **Logout** / **Sync now**; last sync time, status string, and error.
+
+Client (`GpodderClient`, `URLSession`, HTTP Basic) follows the [gpodder.net API reference](https://gpoddernet.readthedocs.io/en/latest/api/reference/):
+
+- `POST /api/2/auth/{username}/login.json`
+- `POST /api/2/devices/{username}/{deviceid}.json`
+- `GET /api/2/subscriptions/{username}/{deviceid}.json?since=`
+- `POST /api/2/subscriptions/{username}/{deviceid}.json` with `{ "add", "remove" }` (API2 change upload; same as Android — not a full-list PUT)
+
+**Sync behavior:** pull remote adds → `subscribeQuietly` for missing feeds (same `FeedRepository` pipeline); push local feed URLs not known on the server. **Additive merge:** remote `remove` entries do **not** unsubscribe local podcasts (avoids wiping the library on conflict). Episode actions (play / download / delete) are **not** synced yet. Conflicts where another device unsubscribed a feed leave the local subscription in place until you remove it manually or OPML-export/import.
 
 ## OPML
 

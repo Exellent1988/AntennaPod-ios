@@ -7,12 +7,14 @@ struct AntennaPodApp: App {
     @StateObject private var playback: PlaybackService
     @StateObject private var downloads: DownloadService
     @StateObject private var settings: AppSettings
+    @StateObject private var gpodder: GpodderSyncService
 
     init() {
         let store = PodcastStore()
         let playback = PlaybackService()
         let downloads = DownloadService()
         let settings = AppSettings()
+        let gpodder = GpodderSyncService()
         playback.store = store
         playback.downloads = downloads
         playback.settings = settings
@@ -31,6 +33,7 @@ struct AntennaPodApp: App {
         _playback = StateObject(wrappedValue: playback)
         _downloads = StateObject(wrappedValue: downloads)
         _settings = StateObject(wrappedValue: settings)
+        _gpodder = StateObject(wrappedValue: gpodder)
     }
 
     var body: some Scene {
@@ -40,6 +43,7 @@ struct AntennaPodApp: App {
                 .environmentObject(playback)
                 .environmentObject(downloads)
                 .environmentObject(settings)
+                .environmentObject(gpodder)
                 .preferredColorScheme(settings.theme.colorScheme)
         }
     }

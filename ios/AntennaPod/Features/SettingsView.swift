@@ -44,6 +44,8 @@ private enum StorageLimitPickerChoice: String, CaseIterable, Identifiable {
 struct SettingsView: View {
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var downloads: DownloadService
+    @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var gpodder: GpodderSyncService
 
     @State private var customMB: Int = 500
     @State private var showClearConfirmation = false
@@ -120,6 +122,7 @@ struct SettingsView: View {
                 autoDownloadSection
                 notificationsSection
                 storageSection
+                gpodderSyncSection
                 OpmlImportExportSection()
             }
             .navigationTitle("Settings")
@@ -320,5 +323,97 @@ struct SettingsView: View {
 
     private var evictionHelpText: String {
         "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch."
+    }
+
+    @ViewBuilder
+    private var gpodderSyncSection: some View {
+        Section {
+            TextField("Host", text: $gpodder.host)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .keyboardType(.URL)
+            TextField("Username", text: $gpodder.username)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .disabled(gpodder.isLoggedIn)
+            if !gpodder.isLoggedIn {
+                SecureField("Password", text: $gpodder.passwordDraft)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+            } else {
+                LabeledContent("Password") {
+                    Text("Stored in Keychain")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            TextField("Device name", text: $gpodder.deviceName)
+                .disabled(gpodder.isBusy)
+            LabeledContent("Device id") {
+                Text(gpodder.deviceId)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+                    .textSelection(.enabled)
+            }
+            Button("Regenerate device id from name") {
+                gpodder.regenerateDeviceIdFromName()
+            }
+            .disabled(gpodder.isBusy || gpodder.deviceName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            if gpodder.isLoggedIn {
+                Button {
+                    Task { await gpodder.syncNow(store: store) }
+                } label: {
+                    if gpodder.isBusy {
+                        Label("Working…", systemImage: "arrow.triangle.2.circlepath")
+                    } else {
+                        Label("Sync now", systemImage: "arrow.triangle.2.circlepath")
+                    }
+                }
+                .disabled(gpodder.isBusy)
+                Button("Logout", role: .destructive) {
+                    gpodder.logout()
+                }
+                .disabled(gpodder.isBusy)
+            } else {
+                Button {
+                    Task { await gpodder.login() }
+                } label: {
+                    if gpodder.isBusy {
+                        Label("Logging in…", systemImage: "person.badge.key")
+                    } else {
+                        Label("Login", systemImage: "person.badge.key")
+                    }
+                }
+                .disabled(gpodder.isBusy)
+            }
+            if let last = gpodder.lastSyncAt {
+                LabeledContent("Last sync") {
+                    Text(last, style: .relative)
+                        .foregroundStyle(.secondary)
+                }
+            } else {
+                LabeledContent("Last sync") {
+                    Text("Never")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Text(gpodder.lastSyncStatus)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            if let err = gpodder.lastSyncError, !err.isEmpty {
+                Text(err)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+            Text(gpodderHelpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("Sync / gpodder.net")
+        }
+    }
+
+    private var gpodderHelpText: String {
+        "Subscriptions only (beta MVP): Login stores the password in the Keychain; Sync pulls remote feed URLs and subscribes missing ones, then pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Episode actions (play/download) are not synced yet. Default host is https://gpodder.net (editable). Nextcloud Gpodder sync is a separate todo."
     }
 }
