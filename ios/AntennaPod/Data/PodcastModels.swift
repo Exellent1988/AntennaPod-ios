@@ -291,6 +291,65 @@ enum ChapterIndexing {
         // Before the first chapter → jump to it.
         return chapters[0].startTimeSeconds
     }
+
+    /// End of chapter at `index`: next chapter start, or `episodeDurationSeconds` for the last
+    /// chapter when a known finite duration is provided. `nil` when index is invalid, or when
+    /// this is the last chapter and episode duration is unknown (cannot invent an end).
+    /// Wall-clock offsets only — no playback-speed divide.
+    static func endSeconds(
+        in chapters: [PodcastChapter],
+        atIndex index: Int,
+        episodeDurationSeconds: Double?
+    ) -> Double? {
+        guard index >= 0, index < chapters.count else { return nil }
+        let next = index + 1
+        if next < chapters.count {
+            let end = chapters[next].startTimeSeconds
+            guard end.isFinite, end >= chapters[index].startTimeSeconds else { return nil }
+            return end
+        }
+        guard let duration = episodeDurationSeconds,
+              duration.isFinite,
+              duration > 0 else {
+            return nil
+        }
+        let start = chapters[index].startTimeSeconds
+        guard duration >= start else { return nil }
+        return duration
+    }
+
+    /// Chapter duration = end − start when end is known. `nil` when end cannot be derived
+    /// (e.g. last chapter without episode duration).
+    static func durationSeconds(
+        in chapters: [PodcastChapter],
+        atIndex index: Int,
+        episodeDurationSeconds: Double?
+    ) -> Double? {
+        guard let end = endSeconds(in: chapters, atIndex: index, episodeDurationSeconds: episodeDurationSeconds),
+              index >= 0, index < chapters.count else {
+            return nil
+        }
+        let start = chapters[index].startTimeSeconds
+        let duration = end - start
+        guard duration.isFinite, duration >= 0 else { return nil }
+        return duration
+    }
+
+    /// Remaining wall-clock time in the chapter at `index`: `max(0, end − position)`.
+    /// `nil` when end is unknown. Does not require the chapter to be current — callers decide
+    /// when to show remaining (typically only for the active chapter).
+    static func remainingSeconds(
+        in chapters: [PodcastChapter],
+        atIndex index: Int,
+        positionSeconds: Double,
+        episodeDurationSeconds: Double?
+    ) -> Double? {
+        guard let end = endSeconds(in: chapters, atIndex: index, episodeDurationSeconds: episodeDurationSeconds) else {
+            return nil
+        }
+        guard positionSeconds.isFinite else { return nil }
+        return max(0, end - positionSeconds)
+    }
 }
 
 /// Approximate listening time attributed to one episode from `playback.json`.

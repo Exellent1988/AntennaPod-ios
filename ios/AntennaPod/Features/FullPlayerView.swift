@@ -92,6 +92,21 @@ struct FullPlayerView: View {
         ChapterIndexing.nextSeekSeconds(in: chapters, at: displayPosition)
     }
 
+    /// Known episode duration for last-chapter end (live player → feed → saved playback).
+    /// `nil` when unknown — last chapter duration/remaining stays hidden (no invented end).
+    private var chapterEpisodeDurationSeconds: Double? {
+        let live = playback.durationSeconds
+        if live.isFinite, live > 0 { return live }
+        if let episode = resolvedEpisode, episode.hasKnownDuration {
+            return episode.durationSeconds
+        }
+        if let episode = resolvedEpisode ?? episode {
+            let saved = store.playbackState(for: episode.id).durationSeconds
+            if saved.isFinite, saved > 0 { return saved }
+        }
+        return nil
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -375,6 +390,11 @@ struct FullPlayerView: View {
                                 .foregroundStyle(index == currentChapterIndex ? .primary : .secondary)
                                 .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                            if let trailing = chapterTrailingTimeLabel(index: index) {
+                                Text(trailing)
+                                    .font(.caption.monospacedDigit())
+                                    .foregroundStyle(.secondary)
+                            }
                             if index == currentChapterIndex {
                                 Image(systemName: "waveform")
                                     .font(.caption)
@@ -389,7 +409,7 @@ struct FullPlayerView: View {
                         }
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel(String(localized: "Chapter \(chapter.title), \(format(chapter.startTimeSeconds))"))
+                    .accessibilityLabel(chapterAccessibilityLabel(index: index, chapter: chapter))
                     .accessibilityAddTraits(index == currentChapterIndex ? .isSelected : [])
                 }
             }
@@ -397,6 +417,50 @@ struct FullPlayerView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         // No chapters → hide section entirely (no empty placeholder).
+    }
+
+    /// Trailing time for a chapter row: current → live remaining (−m:ss) when end known;
+    /// otherwise chapter duration when known. Hidden when times cannot be derived honestly.
+    private func chapterTrailingTimeLabel(index: Int) -> String? {
+        let episodeDuration = chapterEpisodeDurationSeconds
+        if index == currentChapterIndex,
+           let remaining = ChapterIndexing.remainingSeconds(
+               in: chapters,
+               atIndex: index,
+               positionSeconds: displayPosition,
+               episodeDurationSeconds: episodeDuration
+           ) {
+            return formatRemaining(remaining)
+        }
+        if let duration = ChapterIndexing.durationSeconds(
+            in: chapters,
+            atIndex: index,
+            episodeDurationSeconds: episodeDuration
+        ) {
+            return format(duration)
+        }
+        return nil
+    }
+
+    private func chapterAccessibilityLabel(index: Int, chapter: PodcastChapter) -> String {
+        var parts = [String(localized: "Chapter \(chapter.title), \(format(chapter.startTimeSeconds))")]
+        let episodeDuration = chapterEpisodeDurationSeconds
+        if index == currentChapterIndex,
+           let remaining = ChapterIndexing.remainingSeconds(
+               in: chapters,
+               atIndex: index,
+               positionSeconds: displayPosition,
+               episodeDurationSeconds: episodeDuration
+           ) {
+            parts.append(String(localized: "\(format(remaining)) remaining"))
+        } else if let duration = ChapterIndexing.durationSeconds(
+            in: chapters,
+            atIndex: index,
+            episodeDurationSeconds: episodeDuration
+        ) {
+            parts.append(String(localized: "Duration \(format(duration))"))
+        }
+        return parts.joined(separator: ", ")
     }
 
     @ViewBuilder

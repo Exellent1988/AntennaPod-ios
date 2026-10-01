@@ -59,6 +59,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Chapters tippen → Seek (wenn im Feed) | ☐ Chapters tap → seek (when in feed) |
 | ☐ Kapitel Prev/Next (nur wenn Kapitel; Next → nächster Start; Prev → Anfang wenn >2s sonst vorheriges) | ☐ Chapter prev/next (only when chapters; Next → next start; Prev → restart if >2s else previous) |
 | ☐ Aktueller Kapitel-Titel (Mini unter Episode; Full unter Podcast; leer/ohne Kapitel ausgeblendet; folgt Position) | ☐ Current chapter title (mini under episode; full under podcast; hidden when none/empty; follows position) |
+| ☐ Kapitel-Liste: Dauer (next−start; letztes = Episodendauer−start wenn bekannt) / aktuelles Remaining live; ohne Ende ausgeblendet; Wanduhr | ☐ Chapter list: duration (next−start; last = episode duration−start when known) / current remaining live; hide when end unknown; wall-clock |
 | ☐ Transcript sheet (nur Feed-URL) | ☐ Transcript sheet (feed URL only) |
 | ☐ Shownotes / Beschreibung (Full Player + Episode-Kontext; leer wenn keine; HTML → Plain Text) | ☐ Shownotes / description (full player + episode context; empty when none; HTML → plain text) |
 | ☐ Episoden-Dauer in Listen (EpisodeRow Caption `m:ss`/`h:mm:ss` aus Feed/`playback`; versteckt wenn unbekannt; VoiceOver Dauer) | ☐ Episode duration on lists (EpisodeRow caption `m:ss`/`h:mm:ss` from feed/playback; hidden when unknown; VoiceOver Duration) |
