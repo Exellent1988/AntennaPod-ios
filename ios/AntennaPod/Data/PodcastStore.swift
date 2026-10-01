@@ -138,6 +138,29 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Episode from subscriptions (preferred over a stale queue / player copy for chapters).
+    func episode(id episodeId: String) -> PodcastEpisode? {
+        for feed in feeds {
+            if let episode = feed.episodes.first(where: { $0.id == episodeId }) {
+                return episode
+            }
+        }
+        return queue.first { $0.id == episodeId }
+    }
+
+    /// Persist chapters onto the subscribed / queued episode after a remote Podcast Index fetch.
+    func updateChapters(episodeId: String, chapters: [PodcastChapter]) {
+        guard !chapters.isEmpty else { return }
+        if let fi = feeds.firstIndex(where: { $0.episodes.contains { $0.id == episodeId } }) {
+            if let ei = feeds[fi].episodes.firstIndex(where: { $0.id == episodeId }) {
+                feeds[fi].episodes[ei].chapters = chapters
+            }
+        }
+        if let qi = queue.firstIndex(where: { $0.id == episodeId }) {
+            queue[qi].chapters = chapters
+        }
+    }
+
     // MARK: - Inbox (new / unplayed)
 
     /// Unplayed episodes across all subscriptions, newest first (by `pubDateEpochMs`).

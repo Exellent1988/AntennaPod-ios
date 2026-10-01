@@ -9,6 +9,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Episode list
 - Stream playback (AVPlayer, speed, ±30s)
 - Full player sheet (artwork, scrubber, transport; tap mini player to open)
+- Chapters (PSC / Podcast Index from feed; list in full player; tap to seek)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip)
 - Sleep timer (clock presets + end of episode, fade-out)
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch)
@@ -60,6 +61,10 @@ Local-only search over subscribed feeds and their episodes (title, feed title, f
 ## Full player
 
 Tap the mini player title or progress bar to open a full-screen sheet: feed artwork, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, ±30s, speed menu, sleep timer (same presets as mini), plus mark played / queue / download. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
+
+## Chapters
+
+Feed-item chapters are parsed by the Swift `XMLParser` path (`NativeRssAtomParser`): Podlove Simple Chapters (`psc:chapter` / `sc:chapter` with `start`/`title`/`href`/`image`) on RSS items and Atom entries, plus Podcast Index `<podcast:chapters url="…">`. Remote Podcast Index JSON is fetched lazily when the full player opens if only a URL is present. Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`). Full player shows a chapter list (hidden when empty); tap seeks; the active chapter is highlighted from `PlaybackService.positionSeconds`. ID3/M4A/Vorbis media tags are not parsed yet.
 
 ## Discovery
 

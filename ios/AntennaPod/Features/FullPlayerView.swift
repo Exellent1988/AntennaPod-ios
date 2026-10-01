@@ -10,6 +10,9 @@ struct FullPlayerView: View {
 
     @State private var isScrubbing = false
     @State private var scrubSeconds: Double = 0
+    /// Chapters loaded from Podcast Index JSON when the feed only had a URL.
+    @State private var remoteChapters: [PodcastChapter] = []
+    @State private var isLoadingRemoteChapters = false
 
     private var episode: PodcastEpisode? { playback.currentEpisode }
 
@@ -18,8 +21,23 @@ struct FullPlayerView: View {
         return store.feed(containingEpisodeId: episode.id)
     }
 
+    /// Prefer store episode (post-refresh) over a possibly stale player/queue copy.
+    private var resolvedEpisode: PodcastEpisode? {
+        guard let episode else { return nil }
+        return store.episode(id: episode.id) ?? episode
+    }
+
+    private var chapters: [PodcastChapter] {
+        if !remoteChapters.isEmpty { return remoteChapters }
+        return resolvedEpisode?.chapters ?? []
+    }
+
     private var displayPosition: Double {
         isScrubbing ? scrubSeconds : playback.positionSeconds
+    }
+
+    private var currentChapterIndex: Int? {
+        ChapterIndexing.currentIndex(in: chapters, at: displayPosition)
     }
 
     var body: some View {
@@ -49,6 +67,7 @@ struct FullPlayerView: View {
         }
         .onAppear {
             scrubSeconds = playback.positionSeconds
+            Task { await loadRemoteChaptersIfNeeded() }
         }
         .onChange(of: playback.currentEpisode?.id) { _, newId in
             if newId == nil {
@@ -57,6 +76,8 @@ struct FullPlayerView: View {
             }
             scrubSeconds = playback.positionSeconds
             isScrubbing = false
+            remoteChapters = []
+            Task { await loadRemoteChaptersIfNeeded() }
         }
     }
 
@@ -64,35 +85,95 @@ struct FullPlayerView: View {
     private func playerContent(episode: PodcastEpisode) -> some View {
         GeometryReader { geo in
             let side = min(geo.size.width - 48, 320)
-            VStack(spacing: 24) {
-                Spacer(minLength: 8)
-                artwork(side: side)
-                VStack(spacing: 6) {
-                    Text(episode.title)
-                        .font(.title2.weight(.semibold))
-                        .multilineTextAlignment(.center)
-                        .lineLimit(3)
-                    Text(feed?.title ?? "Podcast")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(2)
+            ScrollView {
+                VStack(spacing: 24) {
+                    artwork(side: side)
+                        .padding(.top, 8)
+                    VStack(spacing: 6) {
+                        Text(episode.title)
+                            .font(.title2.weight(.semibold))
+                            .multilineTextAlignment(.center)
+                            .lineLimit(3)
+                        Text(feed?.title ?? "Podcast")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    }
+                    .padding(.horizontal)
+
+                    scrubber
+                        .padding(.horizontal)
+
+                    transportControls
+                        .padding(.horizontal)
+
+                    secondaryActions(episode: episode)
+                        .padding(.horizontal)
+
+                    chaptersSection
+                        .padding(.horizontal)
+
+                    Spacer(minLength: 24)
                 }
-                .padding(.horizontal)
-
-                scrubber
-                    .padding(.horizontal)
-
-                transportControls
-                    .padding(.horizontal)
-
-                secondaryActions(episode: episode)
-                    .padding(.horizontal)
-
-                Spacer(minLength: 8)
+                .frame(maxWidth: .infinity)
+                .padding(.bottom, 16)
             }
             .frame(width: geo.size.width, height: geo.size.height)
-            .padding(.bottom, 16)
         }
+    }
+
+    @ViewBuilder
+    private var chaptersSection: some View {
+        if isLoadingRemoteChapters && chapters.isEmpty {
+            HStack {
+                ProgressView()
+                Text("Loading chapters…")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 8)
+        } else if !chapters.isEmpty {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Chapters")
+                    .font(.headline)
+                ForEach(Array(chapters.enumerated()), id: \.element.id) { index, chapter in
+                    Button {
+                        playback.seek(toSeconds: chapter.startTimeSeconds)
+                        scrubSeconds = chapter.startTimeSeconds
+                    } label: {
+                        HStack(alignment: .firstTextBaseline, spacing: 12) {
+                            Text(format(chapter.startTimeSeconds))
+                                .font(.caption.monospacedDigit())
+                                .foregroundStyle(.secondary)
+                                .frame(minWidth: 44, alignment: .trailing)
+                            Text(chapter.title)
+                                .font(.subheadline.weight(index == currentChapterIndex ? .semibold : .regular))
+                                .foregroundStyle(index == currentChapterIndex ? .primary : .secondary)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            if index == currentChapterIndex {
+                                Image(systemName: "waveform")
+                                    .font(.caption)
+                                    .foregroundStyle(.tint)
+                            }
+                        }
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 10)
+                        .background {
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(index == currentChapterIndex ? Color.accentColor.opacity(0.12) : Color.clear)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Chapter \(chapter.title), \(format(chapter.startTimeSeconds))")
+                    .accessibilityAddTraits(index == currentChapterIndex ? .isSelected : [])
+                }
+            }
+            .padding(.top, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        // No chapters → hide section entirely (no empty placeholder).
     }
 
     @ViewBuilder
@@ -300,6 +381,30 @@ struct FullPlayerView: View {
         .buttonStyle(.bordered)
         .labelStyle(.titleAndIcon)
         .controlSize(.small)
+    }
+
+    @MainActor
+    private func loadRemoteChaptersIfNeeded() async {
+        guard let resolved = resolvedEpisode else { return }
+        if !resolved.chapters.isEmpty {
+            remoteChapters = []
+            return
+        }
+        guard let url = resolved.podcastIndexChapterUrl, !url.isEmpty else { return }
+        isLoadingRemoteChapters = true
+        defer { isLoadingRemoteChapters = false }
+        do {
+            let fetched = try await PodcastIndexChapterParser.fetch(urlString: url)
+            remoteChapters = fetched
+            store.updateChapters(episodeId: resolved.id, chapters: fetched)
+            if var current = playback.currentEpisode, current.id == resolved.id {
+                current.chapters = fetched
+                playback.currentEpisode = current
+            }
+        } catch {
+            // Keep section hidden on failure; feed may simply lack usable chapters.
+            remoteChapters = []
+        }
     }
 
     private func format(_ seconds: Double) -> String {

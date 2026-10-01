@@ -55,7 +55,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | FF / Rewind deltas | 4 | wip | ±30s in mini + full player |
 | Skip silence | 2 | todo | P3, iOS-API-abhängig |
 | Volume adaptation | 2 | todo | P3 |
-| Chapters | 4 | todo | Feed + Media-Tags |
+| Chapters | 4 | done | PSC inline (`psc:chapter`) + Podcast Index URL/JSON; full player list, tap seek, current highlight; hidden when none. Media-file tags later |
 | Transcripts | 2 | todo | P3 |
 | Headset / Bluetooth pause | 4 | todo | |
 | Prefer stream vs download | 5 | todo | |

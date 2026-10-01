@@ -33,6 +33,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var enclosureType: String?
     private var enclosureLength: Int64 = 0
     private var transcriptUrl: String?
+    private var itemChapters: [PodcastChapter] = []
+    private var podcastIndexChapterUrl: String?
     private var elementStack: [String] = []
 
     init(data: Data) {
@@ -87,6 +89,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             enclosureType = nil
             enclosureLength = 0
             transcriptUrl = nil
+            itemChapters = []
+            podcastIndexChapterUrl = nil
             if local.lowercased() == "entry", let href = attributeDict["href"] {
                 itemLink = href
             }
@@ -125,6 +129,30 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             if inItem, transcriptUrl == nil {
                 transcriptUrl = attributeDict["url"]
             }
+        case "chapters":
+            // Podcast Index: <podcast:chapters url="https://…/chapters.json" type="application/json"/>
+            if inItem {
+                let url = attributeDict["url"] ?? attributeDict["href"]
+                if let url, !url.isEmpty {
+                    podcastIndexChapterUrl = url
+                }
+            }
+        case "chapter":
+            // Podlove Simple Chapters (psc:/sc:) — also works under Atom entries.
+            if inItem, let startRaw = attributeDict["start"], !startRaw.isEmpty,
+               let startSeconds = ChapterTimeParsing.seconds(from: startRaw) {
+                let title = attributeDict["title"]?.trimmingCharacters(in: .whitespacesAndNewlines)
+                let href = attributeDict["href"] ?? attributeDict["url"]
+                let image = attributeDict["image"] ?? attributeDict["img"]
+                itemChapters.append(
+                    PodcastChapter(
+                        title: (title?.isEmpty == false) ? title! : "Chapter",
+                        startTimeSeconds: startSeconds,
+                        href: href,
+                        imageUrl: image
+                    )
+                )
+            }
         default:
             break
         }
@@ -160,6 +188,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     itemDescription = text
                 }
             case "item", "entry":
+                let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
                     id: itemGuid ?? itemLink ?? UUID().uuidString,
                     title: itemTitle ?? "Episode",
@@ -168,7 +197,9 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     downloadUrl: enclosureUrl,
                     mimeType: enclosureType,
                     size: enclosureLength,
-                    transcriptUrl: transcriptUrl
+                    transcriptUrl: transcriptUrl,
+                    chapters: sorted,
+                    podcastIndexChapterUrl: podcastIndexChapterUrl
                 )
                 episodes.append(episode)
                 inItem = false
@@ -242,5 +273,33 @@ enum FeedDateParsing {
             return Int64(date.timeIntervalSince1970 * 1000)
         }
         return nil
+    }
+}
+
+/// Podlove Simple Chapters / NPT-style start times → seconds.
+enum ChapterTimeParsing {
+    static func seconds(from raw: String) -> Double? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+
+        if trimmed.contains(":") {
+            let parts = trimmed.split(separator: ":", omittingEmptySubsequences: false).map(String.init)
+            guard parts.count == 2 || parts.count == 3 else { return nil }
+            var idx = 0
+            var total: Double = 0
+            if parts.count == 3 {
+                guard let hours = Double(parts[idx]) else { return nil }
+                total += hours * 3600
+                idx += 1
+            }
+            guard let minutes = Double(parts[idx]) else { return nil }
+            total += minutes * 60
+            idx += 1
+            guard let secs = Double(parts[idx]) else { return nil }
+            total += secs
+            return total
+        }
+
+        return Double(trimmed)
     }
 }
