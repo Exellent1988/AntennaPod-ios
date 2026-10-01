@@ -507,14 +507,24 @@ struct EpisodeRow: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
-                if let dateOverride {
-                    Text(dateOverride, style: .relative)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else if let ms = episode.pubDateEpochMs {
-                    Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .date)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if dateOverride != nil || episode.pubDateEpochMs != nil || formattedKnownDuration != nil {
+                    HStack(spacing: 6) {
+                        if let dateOverride {
+                            Text(dateOverride, style: .relative)
+                        } else if let ms = episode.pubDateEpochMs {
+                            Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .date)
+                        }
+                        if let formattedKnownDuration {
+                            if dateOverride != nil || episode.pubDateEpochMs != nil {
+                                Text("·")
+                                    .accessibilityHidden(true)
+                            }
+                            Text(formattedKnownDuration)
+                                .monospacedDigit()
+                        }
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
                 if progressFraction > 0, !state.isPlayed {
                     ProgressView(value: progressFraction)
@@ -822,7 +832,7 @@ struct EpisodeRow: View {
         return String(localized: "Download")
     }
 
-    /// VoiceOver summary: title, feed, played/progress, downloaded (+ favorite/archived).
+    /// VoiceOver summary: title, feed, duration, played/progress, downloaded (+ favorite/archived).
     private var episodeAccessibilityLabel: String {
         var parts: [String] = [episode.title]
         if !feedTitle.isEmpty {
@@ -830,6 +840,9 @@ struct EpisodeRow: View {
         }
         if let dateOverride, let custom = dateAccessibilityLabel {
             parts.append(custom)
+        }
+        if let formattedKnownDuration {
+            parts.append(String(localized: "Duration \(formattedKnownDuration)"))
         }
         if state.isPlayed {
             parts.append(String(localized: "Played"))
@@ -849,5 +862,23 @@ struct EpisodeRow: View {
             parts.append(String(localized: "Archived"))
         }
         return parts.joined(separator: ", ")
+    }
+
+    /// Prefer feed `itunes:duration` / media duration; fall back to saved playback duration.
+    /// Hidden when both unknown or zero — never invents a length.
+    private var knownDurationSeconds: Double? {
+        if episode.hasKnownDuration {
+            return episode.durationSeconds
+        }
+        let played = state.durationSeconds
+        if played.isFinite, played > 0 {
+            return played
+        }
+        return nil
+    }
+
+    /// `m:ss` / `h:mm:ss` via the same formatter as the full-player scrubber / share timestamp.
+    private var formattedKnownDuration: String? {
+        PodcastEpisode.formatPlaybackPosition(knownDurationSeconds)
     }
 }

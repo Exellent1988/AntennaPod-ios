@@ -22,6 +22,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Chapters (PSC / Podcast Index from feed + media-file QuickTime/MP4 tags on local files; list in full player; tap to seek; **Previous/Next chapter** when available; **current chapter title** on mini + full player)
 - Transcripts (beta; feed `podcast:transcript` URL only — fetch VTT/SRT/JSON, scrollable sheet, tap cue seek; no Whisper/STT)
 - Episode description / Shownotes (beta; RSS `description`/`content:encoded` → `descriptionText`; full player + EpisodeRow context sheet; plain text, HTML stripped; empty state; refresh to populate existing feeds)
+- Episode duration on list rows (beta; RSS `itunes:duration` / Media RSS → `PodcastEpisode.durationSeconds`; EpisodeRow caption `m:ss`/`h:mm:ss` via share/scrubber formatter; fallback to `playback.json` duration; hide when unknown/zero; VoiceOver EN/DE; no Settings toggle)
 - Feed / podcast description (beta; channel `description`/`subtitle`/`summary` → `PodcastFeed.descriptionText`; Feed detail toolbar info → sheet with title + plain text; hidden when empty; refresh may be needed for older saves; no author on model)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip/seek using Settings intervals)
 - CarPlay (honest partial: system Now Playing / remotes + background audio; **no** custom CPTemplate / CarPlay entitlement)
@@ -31,7 +32,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder; EpisodeRow context **Move to top** / **Move to bottom** via `moveQueue`; **Queue lock** toolbar + Settings disables reorder / Move to top-bottom only; filter chips **All** / **Unplayed** / **Played** via `isPlayed` (`queueFilter`); `.searchable` title/feed with debounce; reorder disabled while chip/search filtering or locked; toolbar Clear queue with confirm (full queue); **full player** Queue menu Add/Remove toggle + Play Next)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
 - German localization (beta; main `Localizable.xcstrings` en+de + per-target Widget/Watch catalogs; tabs/nav, Settings headers + footnotes/help captions, parental detail, Statistics + Echo, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript, Homescreen Widget + Apple Watch UI — **partial**, not full i18n)
-- Accessibility / VoiceOver (beta polish; EpisodeRow combined labels + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
+- Accessibility / VoiceOver (beta polish; EpisodeRow combined labels (incl. duration when known) + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
 - Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Play Next + Add to queue; toolbar **Sort** Newest/Oldest first by `pubDateEpochMs` (`inboxSort`); toolbar menu Archive all + Mark all as played with confirm)
 - History (played / in-progress; Subscriptions → Library → History; toolbar **Sort** Newest/Oldest first by `lastPlayedAtEpochMs` (`historySort`); `.searchable` title/feed filter with debounce; toolbar Clear history with confirm on full list)
 - Statistics (beta; Subscriptions → Library → Statistics + Settings; totals + top podcasts from `playback.json`; approx time)
@@ -193,7 +194,7 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` s
 
 VoiceOver-oriented polish on the existing beta UI (not a full accessibility audit / Dynamic Type pass):
 
-- **EpisodeRow** — combined `accessibilityLabel` (title, feed, played / percent progress, downloaded, favorite, archived) with `.isStaticText`; icon-only Play / Download / Queue / Mark played / Favorite / Archive / Share buttons get explicit localized labels (+ `.startsMediaSession` on Play).
+- **EpisodeRow** — combined `accessibilityLabel` (title, feed, duration when known, played / percent progress, downloaded, favorite, archived) with `.isStaticText`; icon-only Play / Download / Queue / Mark played / Favorite / Archive / Share buttons get explicit localized labels (+ `.startsMediaSession` on Play).
 - **Mini + full player** — play/pause, rewind/forward (interval seconds), speed (tap cycles presets; long-press full menu), sleep timer (VoiceOver **Sleep timer, N minutes remaining** / end of episode when active), and scrubber / progress (value + hint). Secondary full-player actions labeled like EpisodeRow; **Queue actions** menu is state-aware (In queue / Not in queue + Add/Remove / Play Next).
 - **Main tabs** — VoiceOver names from `Label` titles in `RootTabView` (String Catalog en+de).
 - **Settings toggles** — bindings unchanged; short `accessibilityHint` on playback / network / notification / storage / rating toggles where the on-screen caption is long.

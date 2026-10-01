@@ -37,6 +37,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var transcriptPriority: Int = 0
     private var itemChapters: [PodcastChapter] = []
     private var podcastIndexChapterUrl: String?
+    /// itunes:duration / media:content@duration → seconds; 0 = unknown.
+    private var itemDurationSeconds: Double = 0
     private var elementStack: [String] = []
 
     init(data: Data) {
@@ -95,6 +97,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             transcriptPriority = 0
             itemChapters = []
             podcastIndexChapterUrl = nil
+            itemDurationSeconds = 0
             if local.lowercased() == "entry", let href = attributeDict["href"] {
                 itemLink = href
             }
@@ -114,6 +117,13 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     enclosureType = "video/*"
                 }
                 enclosureLength = Int64(attributeDict["fileSize"] ?? attributeDict["length"] ?? "0") ?? 0
+                // Media RSS duration is seconds (integer); keep first positive value if itunes not set yet.
+                if itemDurationSeconds <= 0,
+                   let raw = attributeDict["duration"],
+                   let seconds = EpisodeDurationParsing.seconds(from: raw),
+                   seconds > 0 {
+                    itemDurationSeconds = seconds
+                }
             }
         case "link":
             let rel = attributeDict["rel"] ?? ""
@@ -217,6 +227,11 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                         itemDescription = text
                     }
                 }
+            case "duration":
+                // itunes:duration (HH:MM:SS / MM:SS / seconds). Overrides media:content@duration when present.
+                if let seconds = EpisodeDurationParsing.seconds(from: text), seconds > 0 {
+                    itemDurationSeconds = seconds
+                }
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
@@ -231,7 +246,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     transcriptType: transcriptType,
                     chapters: sorted,
                     podcastIndexChapterUrl: podcastIndexChapterUrl,
-                    descriptionText: itemDescription
+                    descriptionText: itemDescription,
+                    durationSeconds: itemDurationSeconds
                 )
                 episodes.append(episode)
                 inItem = false
@@ -333,6 +349,14 @@ enum ChapterTimeParsing {
         }
 
         return Double(trimmed)
+    }
+}
+
+/// Episode duration from feed metadata (`itunes:duration`, Media RSS seconds).
+/// Same formats as Android `DurationParser` / chapter NPT: `H:MM:SS`, `MM:SS`, or plain seconds.
+enum EpisodeDurationParsing {
+    static func seconds(from raw: String) -> Double? {
+        ChapterTimeParsing.seconds(from: raw)
     }
 }
 

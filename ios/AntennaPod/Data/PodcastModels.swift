@@ -35,6 +35,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Episode shownotes / description from RSS (`description` / `content:encoded` / Atom `summary` / `content`).
     /// May contain HTML; UI strips tags to plain text for beta display.
     var descriptionText: String?
+    /// Feed-declared duration in seconds (`itunes:duration` / Media RSS `media:content@duration`).
+    /// `0` = unknown / missing. Prefer this for list rows; playback may refine via `EpisodePlaybackState.durationSeconds`.
+    var durationSeconds: Double
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -79,7 +82,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         transcriptType: String? = nil,
         chapters: [PodcastChapter] = [],
         podcastIndexChapterUrl: String? = nil,
-        descriptionText: String? = nil
+        descriptionText: String? = nil,
+        durationSeconds: Double = 0
     ) {
         self.id = id
         self.title = title
@@ -93,6 +97,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.chapters = chapters
         self.podcastIndexChapterUrl = podcastIndexChapterUrl
         self.descriptionText = descriptionText
+        self.durationSeconds = durationSeconds
     }
 
     init(from decoder: Decoder) throws {
@@ -109,12 +114,18 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         chapters = try c.decodeIfPresent([PodcastChapter].self, forKey: .chapters) ?? []
         podcastIndexChapterUrl = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterUrl)
         descriptionText = try c.decodeIfPresent(String.self, forKey: .descriptionText)
+        durationSeconds = try c.decodeIfPresent(Double.self, forKey: .durationSeconds) ?? 0
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).
     var hasDescriptionText: Bool {
         guard let descriptionText else { return false }
         return !descriptionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Finite feed duration greater than zero (hide when unknown).
+    var hasKnownDuration: Bool {
+        durationSeconds.isFinite && durationSeconds > 0
     }
 }
 

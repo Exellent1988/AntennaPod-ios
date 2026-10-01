@@ -60,6 +60,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Aktueller Kapitel-Titel (Mini unter Episode; Full unter Podcast; leer/ohne Kapitel ausgeblendet; folgt Position) | ☐ Current chapter title (mini under episode; full under podcast; hidden when none/empty; follows position) |
 | ☐ Transcript sheet (nur Feed-URL) | ☐ Transcript sheet (feed URL only) |
 | ☐ Shownotes / Beschreibung (Full Player + Episode-Kontext; leer wenn keine; HTML → Plain Text) | ☐ Shownotes / description (full player + episode context; empty when none; HTML → plain text) |
+| ☐ Episoden-Dauer in Listen (EpisodeRow Caption `m:ss`/`h:mm:ss` aus Feed/`playback`; versteckt wenn unbekannt; VoiceOver Dauer) | ☐ Episode duration on lists (EpisodeRow caption `m:ss`/`h:mm:ss` from feed/playback; hidden when unknown; VoiceOver Duration) |
 | ☐ Podcast-Beschreibung (Feed-Detail info; Titel + Text; ausgeblendet wenn leer; ggf. Refresh nötig) | ☐ Podcast description (Feed detail info; title + text; hidden when empty; refresh may be needed) |
 | ☐ Video → audio only Toggle | ☐ Play video as audio only |
 | ☐ Picture in Picture (Video-Surface, Button) | ☐ Picture in Picture (video surface, button) |

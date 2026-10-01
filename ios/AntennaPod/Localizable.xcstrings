@@ -9571,6 +9571,23 @@
           }
         }
       }
+    },
+    "Duration %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duration %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dauer %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
