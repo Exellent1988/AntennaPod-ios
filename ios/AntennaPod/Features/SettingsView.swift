@@ -468,10 +468,33 @@ struct SettingsView: View {
     @ViewBuilder
     private var gpodderSyncSection: some View {
         Section {
-            TextField("Host", text: $gpodder.host)
+            Picker("Provider", selection: Binding(
+                get: { gpodder.provider },
+                set: { gpodder.selectProvider($0) }
+            )) {
+                ForEach(GpodderProvider.allCases) { provider in
+                    Text(provider.label).tag(provider)
+                }
+            }
+            .disabled(gpodder.isBusy)
+
+            if gpodder.provider == .nextcloud {
+                TextField(
+                    GpodderProvider.nextcloudPlaceholderHost,
+                    text: $gpodder.host
+                )
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .keyboardType(.URL)
+                .disabled(gpodder.isLoggedIn)
+            } else {
+                TextField("Host", text: $gpodder.host)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .keyboardType(.URL)
+                    .disabled(gpodder.isLoggedIn)
+            }
+
             TextField("Username", text: $gpodder.username)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
@@ -549,11 +572,16 @@ struct SettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
         } header: {
-            Text("Sync / gpodder.net")
+            Text("Sync")
         }
     }
 
     private var gpodderHelpText: String {
-        "Subscriptions only (beta MVP): Login stores the password in the Keychain; Sync pulls remote feed URLs and subscribes missing ones, then pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Episode actions (play/download) are not synced yet. Default host is https://gpodder.net (editable). Nextcloud Gpodder sync is a separate todo."
+        switch gpodder.provider {
+        case .gpodderNet:
+            return "Subscriptions only (beta MVP): Login stores the password in the Keychain; Sync pulls remote feed URLs and subscribes missing ones, then pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Episode actions (play/download) are not synced yet. Default host is https://gpodder.net (editable)."
+        case .nextcloud:
+            return "Nextcloud Gpodder Sync (beta MVP): same subscription limits as gpodder.net — additive pull/push of feed URLs; remote removes do not unsubscribe local feeds; episode actions not synced. Enter your Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). Uses HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is kept for UI/state only (Nextcloud has no device API)."
+        }
     }
 }

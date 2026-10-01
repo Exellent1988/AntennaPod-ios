@@ -27,7 +27,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, auto-delete after play, notify on new episodes / download errors, Discovery charts country + Podcast Index API keys, gpodder.net sync)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, auto-delete after play, notify on new episodes / download errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -40,7 +40,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Notifications for new episodes (local UserNotifications after refresh; Settings toggle; tap opens Inbox; no push)
 - Download log / errors (ring buffer in Application Support; Downloads banner + errors list; Clear errors)
 - Notify on download errors (local UserNotifications; Settings toggle default on; tap opens Downloads; Sync-error notify later; no push)
-- gpodder.net sync (subscriptions MVP: Settings login/sync; Keychain; pull+push feed URLs; additive merge; episode actions later)
+- gpodder.net / Nextcloud Gpodder sync (subscriptions MVP: provider picker; Keychain; pull+push feed URLs; additive merge; episode actions later)
 
 Root tabs (6): **Home**, Inbox, Subscriptions, Queue, Downloads, Settings.
 
@@ -54,7 +54,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover, top lists, player, downloads (+ error log), queue, settings (+ gpodder sync + charts country), OPML, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover, top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country), OPML, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -196,23 +196,34 @@ Add podcast sheet (**Subscriptions → +**) has three segments: **Apple Podcasts
 **Podcast Index** (`PodcastIndexSearchService`) calls `https://api.podcastindex.org/api/1.0/search/byterm` with auth headers `X-Auth-Date`, `X-Auth-Key`, and `Authorization` = SHA-1(`apiKey` + `apiSecret` + unix time) per the Podcast Index docs. **API key and secret are user-supplied** (free registration at podcastindex.org) and stored only in the **Keychain** (`PodcastIndexKeychain`) — nothing is hardcoded or shipped with the app. Paste them under **Settings → Discovery / Podcast Index**. If keys are missing, the Add sheet shows an honest empty state explaining how to get keys. Results show title, author, and artwork; **Subscribe** reuses the same feed URL pipeline. Debounce matches Apple (~400 ms).
 
 
-## Sync / gpodder.net
+## Sync / gpodder.net / Nextcloud
 
-Settings → **Sync / gpodder.net** (beta MVP — **subscriptions only**):
+Settings → **Sync** (beta MVP — **subscriptions only**):
 
-- **Host** defaults to `https://gpodder.net` (editable; Nextcloud Gpodder sync is a **separate todo**, not this host field alone).
-- **Username** / **password**: password stored in the **Keychain** (Security framework); username + host + device metadata in `UserDefaults`.
-- **Device name** (caption) + stable **device id** (generated once; “Regenerate device id from name” sanitizes to `[A-Za-z0-9._-]+` and resets the subscription timestamp).
-- **Login** / **Logout** / **Sync now**; last sync time, status string, and error.
+- **Provider** picker: **gpodder.net** (default) vs **Nextcloud** (Gpodder Sync app).
+- **Host / base URL**
+  - gpodder.net: defaults to `https://gpodder.net` (editable).
+  - Nextcloud: custom base — server root (`https://cloud.example.com`) or full API root (`https://cloud.example.com/index.php/apps/gpoddersync/`). If the path does not already contain `gpoddersync`, the client appends `index.php/apps/gpoddersync/` (same root AntennaPod Android + [nextcloud-gpodder](https://github.com/thrillfall/nextcloud-gpodder) use).
+- **Username** / **password**: password in the **Keychain**; username + provider + host + device metadata in `UserDefaults`. Nextcloud: prefer an **app password**.
+- **Device name** + stable **device id** (gpodder.net API2; Nextcloud has no device API — fields kept for UI/state only; update is a no-op).
+- **Login** / **Logout** / **Sync now**; last sync time, status, error.
 
-Client (`GpodderClient`, `URLSession`, HTTP Basic) follows the [gpodder.net API reference](https://gpoddernet.readthedocs.io/en/latest/api/reference/):
+Client (`GpodderClient`, `URLSession`, HTTP Basic), reused for both providers:
+
+**gpodder.net** ([API reference](https://gpoddernet.readthedocs.io/en/latest/api/reference/)):
 
 - `POST /api/2/auth/{username}/login.json`
 - `POST /api/2/devices/{username}/{deviceid}.json`
 - `GET /api/2/subscriptions/{username}/{deviceid}.json?since=`
-- `POST /api/2/subscriptions/{username}/{deviceid}.json` with `{ "add", "remove" }` (API2 change upload; same as Android — not a full-list PUT)
+- `POST /api/2/subscriptions/{username}/{deviceid}.json` with `{ "add", "remove" }`
 
-**Sync behavior:** pull remote adds → `subscribeQuietly` for missing feeds (same `FeedRepository` pipeline); push local feed URLs not known on the server. **Additive merge:** remote `remove` entries do **not** unsubscribe local podcasts (avoids wiping the library on conflict). Episode actions (play / download / delete) are **not** synced yet. Conflicts where another device unsubscribed a feed leave the local subscription in place until you remove it manually or OPML-export/import.
+**Nextcloud** (API root `…/index.php/apps/gpoddersync/`):
+
+- Login probes `GET …/subscriptions?since=0` (no dedicated auth/device endpoints).
+- `GET …/subscriptions?since=`
+- `POST …/subscription_change/create` with `{ "add", "remove" }`
+
+**Sync behavior (both):** pull remote adds → `subscribeQuietly` for missing feeds; push local URLs not on the server. **Additive merge:** remote `remove` does **not** unsubscribe local podcasts. Episode actions are **not** synced yet (honest MVP; same limits for Nextcloud as gpodder.net).
 
 ## OPML
 

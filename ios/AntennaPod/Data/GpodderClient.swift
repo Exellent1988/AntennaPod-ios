@@ -1,13 +1,35 @@
 import Foundation
 
-/// gpodder.net API v2 client (URLSession + HTTP Basic).
-/// Shapes follow https://gpoddernet.readthedocs.io/en/latest/api/reference/
-/// Upload subscription *changes* uses POST (API docs / Android), not PUT of a full list.
+/// Sync backend: gpodder.net API2 vs Nextcloud Gpodder Sync app paths.
+enum GpodderProvider: String, CaseIterable, Identifiable {
+    case gpodderNet
+    case nextcloud
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .gpodderNet: return "gpodder.net"
+        case .nextcloud: return "Nextcloud"
+        }
+    }
+
+    /// Path segment AntennaPod Android + nextcloud-gpodder append under the server root.
+    /// Docs: `GET/POST …/index.php/apps/gpoddersync/subscriptions` etc.
+    static let nextcloudAPIPathPrefix = "index.php/apps/gpoddersync/"
+
+    static let nextcloudPlaceholderHost = "https://cloud.example.com/index.php/apps/gpoddersync/"
+}
+
+/// gpodder.net API v2 + Nextcloud Gpodder Sync client (URLSession + HTTP Basic).
+/// gpodder shapes: https://gpoddernet.readthedocs.io/en/latest/api/reference/
+/// Nextcloud paths: https://github.com/thrillfall/nextcloud-gpodder (subscriptions MVP).
 struct GpodderClient {
     var baseURL: URL
     var username: String
     var password: String
     var deviceId: String
+    var provider: GpodderProvider
 
     private let session: URLSession
     private let decoder = JSONDecoder()
@@ -18,37 +40,52 @@ struct GpodderClient {
         username: String,
         password: String,
         deviceId: String,
+        provider: GpodderProvider = .gpodderNet,
         session: URLSession = .shared
     ) throws {
         let trimmed = host.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let url = Self.normalizeBaseURL(trimmed) else {
+        guard let url = Self.normalizeBaseURL(trimmed, provider: provider) else {
             throw GpodderError.invalidHost
         }
         self.baseURL = url
         self.username = username.trimmingCharacters(in: .whitespacesAndNewlines)
         self.password = password
         self.deviceId = deviceId
+        self.provider = provider
         self.session = session
-        guard !self.username.isEmpty, !self.deviceId.isEmpty else {
+        guard !self.username.isEmpty else {
+            throw GpodderError.missingCredentials
+        }
+        if provider == .gpodderNet, self.deviceId.isEmpty {
             throw GpodderError.missingCredentials
         }
     }
 
     // MARK: - Auth
 
-    /// POST /api/2/auth/{username}/login.json (HTTP Basic).
+    /// gpodder.net: POST /api/2/auth/{username}/login.json
+    /// Nextcloud: no login endpoint — probes GET subscriptions (HTTP Basic).
     func login() async throws {
-        let url = try apiURL("api/2/auth/\(pathEncoded(username))/login.json")
-        var request = authorizedRequest(url: url, method: "POST")
-        request.httpBody = Data()
-        request.setValue("text/plain", forHTTPHeaderField: "Content-Type")
-        _ = try await perform(request, expectBody: false)
+        switch provider {
+        case .gpodderNet:
+            let url = try apiURL("api/2/auth/\(pathEncoded(username))/login.json")
+            var request = authorizedRequest(url: url, method: "POST")
+            request.httpBody = Data()
+            request.setValue("text/plain", forHTTPHeaderField: "Content-Type")
+            _ = try await perform(request, expectBody: false)
+        case .nextcloud:
+            // Nextcloud Gpodder Sync has no auth/device API (Android login() is empty).
+            // Credential check: GET subscriptions?since=0 under the API root.
+            _ = try await getSubscriptionChanges(since: 0)
+        }
     }
 
     // MARK: - Devices
 
-    /// POST /api/2/devices/{username}/{deviceid}.json
+    /// gpodder.net: POST /api/2/devices/{username}/{deviceid}.json
+    /// Nextcloud: no-op (devices not implemented by the app).
     func updateDevice(caption: String, type: String = "mobile") async throws {
+        guard provider == .gpodderNet else { return }
         let url = try apiURL("api/2/devices/\(pathEncoded(username))/\(pathEncoded(deviceId)).json")
         var request = authorizedRequest(url: url, method: "POST")
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
@@ -59,10 +96,18 @@ struct GpodderClient {
 
     // MARK: - Subscriptions
 
-    /// GET /api/2/subscriptions/{username}/{deviceid}.json?since=
+    /// gpodder.net: GET /api/2/subscriptions/{username}/{deviceid}.json?since=
+    /// Nextcloud: GET {apiRoot}/subscriptions?since=
     func getSubscriptionChanges(since: Int64) async throws -> SubscriptionChanges {
+        let path: String
+        switch provider {
+        case .gpodderNet:
+            path = "api/2/subscriptions/\(pathEncoded(username))/\(pathEncoded(deviceId)).json"
+        case .nextcloud:
+            path = "subscriptions"
+        }
         var components = URLComponents(
-            url: try apiURL("api/2/subscriptions/\(pathEncoded(username))/\(pathEncoded(deviceId)).json"),
+            url: try apiURL(path),
             resolvingAgainstBaseURL: false
         )!
         components.queryItems = [URLQueryItem(name: "since", value: String(since))]
@@ -72,10 +117,17 @@ struct GpodderClient {
         return try decoder.decode(SubscriptionChanges.self, from: data)
     }
 
-    /// POST /api/2/subscriptions/{username}/{deviceid}.json with `{ "add": [...], "remove": [...] }`.
-    /// (API reference + AntennaPod Android; not a full-list PUT.)
+    /// gpodder.net: POST /api/2/subscriptions/{username}/{deviceid}.json
+    /// Nextcloud: POST {apiRoot}/subscription_change/create
     func uploadSubscriptionChanges(add: [String], remove: [String]) async throws -> UploadChangesResponse {
-        let url = try apiURL("api/2/subscriptions/\(pathEncoded(username))/\(pathEncoded(deviceId)).json")
+        let path: String
+        switch provider {
+        case .gpodderNet:
+            path = "api/2/subscriptions/\(pathEncoded(username))/\(pathEncoded(deviceId)).json"
+        case .nextcloud:
+            path = "subscription_change/create"
+        }
+        let url = try apiURL(path)
         var request = authorizedRequest(url: url, method: "POST")
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         let body = SubscriptionChangeBody(add: add, remove: remove)
@@ -84,6 +136,7 @@ struct GpodderClient {
         if data.isEmpty {
             return UploadChangesResponse(timestamp: nil, updateUrls: nil)
         }
+        // Nextcloud may return only `{ "timestamp": … }` without update_urls.
         return try decoder.decode(UploadChangesResponse.self, from: data)
     }
 
@@ -94,6 +147,7 @@ struct GpodderClient {
         request.httpMethod = method
         request.timeoutInterval = 30
         request.setValue("AntennaPod-iOS/0.1", forHTTPHeaderField: "User-Agent")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         let raw = "\(username):\(password)"
         let basic = Data(raw.utf8).base64EncodedString()
         request.setValue("Basic \(basic)", forHTTPHeaderField: "Authorization")
@@ -129,30 +183,52 @@ struct GpodderClient {
     }
 
     private func pathEncoded(_ value: String) -> String {
-        // Path segment encoding (keep unreserved; encode the rest).
         var allowed = CharacterSet.alphanumerics
         allowed.insert(charactersIn: "-._~")
         return value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
     }
 
-    static func normalizeBaseURL(_ host: String) -> URL? {
+    static func normalizeBaseURL(_ host: String, provider: GpodderProvider = .gpodderNet) -> URL? {
         var s = host.trimmingCharacters(in: .whitespacesAndNewlines)
         if s.isEmpty { return nil }
         if !s.contains("://") {
             s = "https://\(s)"
         }
-        guard var components = URLComponents(string: s), let scheme = components.scheme, let hostName = components.host else {
+        guard var components = URLComponents(string: s), components.scheme != nil, components.host != nil else {
             return nil
         }
-        // Ensure trailing slash on base so relative paths append cleanly.
-        if !(components.path.isEmpty || components.path.hasSuffix("/")) {
-            components.path += "/"
-        } else if components.path.isEmpty {
-            components.path = "/"
+
+        var path = components.path
+        if provider == .nextcloud {
+            path = ensureNextcloudAPIRoot(path)
         }
-        _ = scheme
-        _ = hostName
+
+        // Ensure trailing slash on base so relative paths append cleanly.
+        if path.isEmpty {
+            path = "/"
+        } else if !path.hasSuffix("/") {
+            path += "/"
+        }
+        components.path = path
         return components.url
+    }
+
+    /// Compose Nextcloud API root: append `index.php/apps/gpoddersync/` when the user
+    /// entered only the server (Android-style), or normalize an already-complete path.
+    static func ensureNextcloudAPIRoot(_ path: String) -> String {
+        let prefix = GpodderProvider.nextcloudAPIPathPrefix
+        var p = path
+        while p.hasSuffix("/") { p.removeLast() }
+        let lower = p.lowercased()
+        if lower.contains("gpoddersync") {
+            // Already points at (or under) the app — keep as API root.
+            return p.isEmpty ? "/" + prefix.trimmingCharacters(in: CharacterSet(charactersIn: "/")) : p
+        }
+        if p.isEmpty || p == "/" {
+            return "/" + prefix.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        }
+        // Server subfolder + API prefix (e.g. /nextcloud + /index.php/apps/gpoddersync).
+        return p + "/" + prefix.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
     }
 
     /// Sanitize a human device caption into a gpodder device id (`[A-Za-z0-9._-]+`).
@@ -216,22 +292,22 @@ enum GpodderError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidHost:
-            return "Invalid gpodder host URL"
+            return "Invalid sync host URL"
         case .missingCredentials:
             return "Username and device id are required"
         case .unauthorized:
             return "Login failed (unauthorized)"
         case .notFound:
-            return "gpodder resource not found (404)"
+            return "Sync resource not found (404) — check host / Nextcloud Gpodder Sync path"
         case .invalidResponse:
-            return "Invalid response from gpodder"
+            return "Invalid response from sync server"
         case .httpStatus(let code, let body):
             if body.isEmpty {
-                return "gpodder HTTP \(code)"
+                return "Sync HTTP \(code)"
             }
-            return "gpodder HTTP \(code): \(body)"
+            return "Sync HTTP \(code): \(body)"
         case .notLoggedIn:
-            return "Not logged in to gpodder.net"
+            return "Not logged in to sync provider"
         }
     }
 }

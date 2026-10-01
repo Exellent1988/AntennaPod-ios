@@ -1,11 +1,12 @@
 import Foundation
 
-/// gpodder.net sync prefs + orchestration (subscriptions MVP; episode actions stubbed).
+/// gpodder.net / Nextcloud Gpodder Sync prefs + orchestration (subscriptions MVP; episode actions stubbed).
 @MainActor
 final class GpodderSyncService: ObservableObject {
     static let defaultHost = "https://gpodder.net"
 
     private enum Keys {
+        static let provider = "gpodder.provider"
         static let host = "gpodder.host"
         static let username = "gpodder.username"
         static let deviceId = "gpodder.deviceId"
@@ -17,6 +18,13 @@ final class GpodderSyncService: ObservableObject {
         static let subscriptionTimestamp = "gpodder.subscriptionTimestamp"
         /// URLs known to be on the server for this device (additive merge helper).
         static let knownRemoteURLs = "gpodder.knownRemoteURLs"
+    }
+
+    /// gpodder.net (API2) vs Nextcloud Gpodder Sync (different path root).
+    @Published var provider: GpodderProvider {
+        didSet {
+            UserDefaults.standard.set(provider.rawValue, forKey: Keys.provider)
+        }
     }
 
     @Published var host: String {
@@ -90,7 +98,14 @@ final class GpodderSyncService: ObservableObject {
     }
 
     init() {
-        host = UserDefaults.standard.string(forKey: Keys.host) ?? Self.defaultHost
+        let providerRaw = UserDefaults.standard.string(forKey: Keys.provider) ?? GpodderProvider.gpodderNet.rawValue
+        provider = GpodderProvider(rawValue: providerRaw) ?? .gpodderNet
+        let storedHost = UserDefaults.standard.string(forKey: Keys.host)
+        if let storedHost, !storedHost.isEmpty {
+            host = storedHost
+        } else {
+            host = provider == .gpodderNet ? Self.defaultHost : ""
+        }
         username = UserDefaults.standard.string(forKey: Keys.username) ?? ""
         let storedName = UserDefaults.standard.string(forKey: Keys.deviceName)
         let defaultName = "AntennaPod iOS"
@@ -124,6 +139,28 @@ final class GpodderSyncService: ObservableObject {
         knownRemoteURLs = []
     }
 
+    /// Switch provider preset: logs out and applies default host (gpodder.net) or clears for Nextcloud.
+    func selectProvider(_ newProvider: GpodderProvider) {
+        guard newProvider != provider else { return }
+        if isLoggedIn {
+            logout()
+        }
+        provider = newProvider
+        switch newProvider {
+        case .gpodderNet:
+            if host.isEmpty || host.lowercased().contains("gpoddersync") {
+                host = Self.defaultHost
+            }
+        case .nextcloud:
+            if host == Self.defaultHost || host.lowercased().contains("gpodder.net") {
+                host = ""
+            }
+        }
+        subscriptionTimestamp = 0
+        knownRemoteURLs = []
+        lastSyncStatus = "Provider: \(newProvider.label)"
+    }
+
     // MARK: - Login / Logout
 
     func login() async {
@@ -136,6 +173,11 @@ final class GpodderSyncService: ObservableObject {
         let pass = passwordDraft
         guard !user.isEmpty, !pass.isEmpty else {
             lastSyncError = "Enter username and password"
+            lastSyncStatus = "Login failed"
+            return
+        }
+        if provider == .nextcloud, host.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            lastSyncError = "Enter Nextcloud base URL (e.g. https://cloud.example.com/index.php/apps/gpoddersync/)"
             lastSyncStatus = "Login failed"
             return
         }
@@ -297,11 +339,22 @@ final class GpodderSyncService: ObservableObject {
     // MARK: - Helpers
 
     private func makeClient(password: String) throws -> GpodderClient {
-        try GpodderClient(
-            host: host.isEmpty ? Self.defaultHost : host,
+        let resolvedHost: String
+        switch provider {
+        case .gpodderNet:
+            resolvedHost = host.isEmpty ? Self.defaultHost : host
+        case .nextcloud:
+            guard !host.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                throw GpodderError.invalidHost
+            }
+            resolvedHost = host
+        }
+        return try GpodderClient(
+            host: resolvedHost,
             username: username,
             password: password,
-            deviceId: deviceId
+            deviceId: deviceId,
+            provider: provider
         )
     }
 
