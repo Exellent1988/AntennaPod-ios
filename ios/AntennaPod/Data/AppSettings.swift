@@ -429,6 +429,35 @@ enum DownloadsFilter: String, CaseIterable, Identifiable {
     }
 }
 
+/// Podcast chip selection on the Downloads list (feeds that currently have downloaded
+/// episodes only — never invent podcasts). Empty storage = All; otherwise feed UUID string.
+enum DownloadsPodcastFilter: Hashable, Identifiable {
+    case all
+    case feed(UUID)
+
+    var id: String {
+        switch self {
+        case .all: return "__all__"
+        case .feed(let id): return "feed:\(id.uuidString)"
+        }
+    }
+
+    /// Persistable raw value: empty = All; otherwise the feed UUID string.
+    var storageValue: String {
+        switch self {
+        case .all: return ""
+        case .feed(let id): return id.uuidString
+        }
+    }
+
+    static func fromStorage(_ raw: String?) -> DownloadsPodcastFilter {
+        guard let raw else { return .all }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let id = UUID(uuidString: trimmed) else { return .all }
+        return .feed(id)
+    }
+}
+
 /// Filter chips on Queue tab. Uses PodcastStore.isPlayed on queued episodes
 /// (archive ignored — same honesty as Downloads; queue can still hold archived items).
 enum QueueFilter: String, CaseIterable, Identifiable {
@@ -602,7 +631,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History size limit, Favorites sort, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History size limit, Favorites sort, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -683,6 +712,7 @@ final class AppSettings: ObservableObject {
         static let inboxSort = "settings.inboxSort"
         static let downloadsSort = "settings.downloadsSort"
         static let downloadsFilter = "settings.downloadsFilter"
+        static let downloadsPodcastFilter = "settings.downloadsPodcastFilter"
         static let historySort = "settings.historySort"
         static let historySizeLimit = "settings.historySizeLimit"
         static let favoritesSort = "settings.favoritesSort"
@@ -1024,10 +1054,20 @@ final class AppSettings: ObservableObject {
     }
 
     /// Downloads tab chip filter (All / Unplayed / Played via PodcastStore.isPlayed). Default All. Persisted.
-    /// Applied before `.searchable`; `downloadsSort` still orders the filtered list.
+    /// Applied before podcast filter and `.searchable`; `downloadsSort` still orders the filtered list.
     @Published var downloadsFilter: DownloadsFilter {
         didSet {
             UserDefaults.standard.set(downloadsFilter.rawValue, forKey: Keys.downloadsFilter)
+        }
+    }
+
+    /// Downloads podcast chip filter. Empty string = All; otherwise a feed UUID that currently has
+    /// (or recently had) downloaded episodes. Default All. Persisted (+ backup). Applied after
+    /// played chip, before `.searchable`. Chips list only feeds present in the current download set
+    /// (never invent). Orphan downloads without a matching library feed match All only.
+    @Published var downloadsPodcastFilter: String {
+        didSet {
+            UserDefaults.standard.set(downloadsPodcastFilter, forKey: Keys.downloadsPodcastFilter)
         }
     }
 
@@ -1329,6 +1369,8 @@ final class AppSettings: ObservableObject {
         let downloadsFilterRaw = UserDefaults.standard.string(forKey: Keys.downloadsFilter)
             ?? DownloadsFilter.all.rawValue
         downloadsFilter = DownloadsFilter(rawValue: downloadsFilterRaw) ?? .all
+        let downloadsPodcastFilterRaw = UserDefaults.standard.string(forKey: Keys.downloadsPodcastFilter) ?? ""
+        downloadsPodcastFilter = DownloadsPodcastFilter.fromStorage(downloadsPodcastFilterRaw).storageValue
         let historySortRaw = UserDefaults.standard.string(forKey: Keys.historySort)
             ?? HistorySort.newestFirst.rawValue
         historySort = HistorySort(rawValue: historySortRaw) ?? .newestFirst
@@ -1576,6 +1618,7 @@ final class AppSettings: ObservableObject {
             inboxSort: inboxSort.rawValue,
             downloadsSort: downloadsSort.rawValue,
             downloadsFilter: downloadsFilter.rawValue,
+            downloadsPodcastFilter: downloadsPodcastFilter,
             historySort: historySort.rawValue,
             historySizeLimit: historySizeLimit.rawValue,
             favoritesSort: favoritesSort.rawValue,
@@ -1701,6 +1744,9 @@ final class AppSettings: ObservableObject {
         if let downloadsFilterRaw = snap.downloadsFilter {
             downloadsFilter = DownloadsFilter(rawValue: downloadsFilterRaw) ?? .all
         }
+        if let downloadsPodcastFilterRaw = snap.downloadsPodcastFilter {
+            downloadsPodcastFilter = DownloadsPodcastFilter.fromStorage(downloadsPodcastFilterRaw).storageValue
+        }
         if let historySortRaw = snap.historySort {
             historySort = HistorySort(rawValue: historySortRaw) ?? .newestFirst
         }
@@ -1796,6 +1842,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var downloadsSort: String? = nil
     /// Absent in older backups → all (default).
     var downloadsFilter: String? = nil
+    /// Absent in older backups → All (empty). Feed UUID string or empty for All.
+    var downloadsPodcastFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var historySort: String? = nil
     /// Absent in older backups → Unlimited (0). Raw `HistorySizeLimit` value.

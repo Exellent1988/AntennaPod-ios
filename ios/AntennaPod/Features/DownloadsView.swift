@@ -17,8 +17,9 @@ struct DownloadsView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
-    /// Visible downloaded episodes: chip filter → search → sort.
-    /// Chip uses `PodcastStore.isPlayed`. Sort by `AppSettings.downloadsSort`
+    /// Visible downloaded episodes: played chip → podcast chip → search → sort.
+    /// Played chip uses `PodcastStore.isPlayed`. Podcast chip uses feeds present in the
+    /// current download set only (never invent). Sort by `AppSettings.downloadsSort`
     /// (prefer `downloadedAtEpochMs`, else `pubDateEpochMs`).
     private var filteredDownloads: [DownloadedEpisode] {
         var base = downloads.downloads
@@ -29,6 +30,12 @@ struct DownloadsView: View {
             base = base.filter { !store.isPlayed($0.episode.id) }
         case .played:
             base = base.filter { store.isPlayed($0.episode.id) }
+        }
+        switch podcastFilter {
+        case .all:
+            break
+        case .feed(let feedId):
+            base = base.filter { store.feed(containingEpisodeId: $0.episode.id)?.id == feedId }
         }
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let filtered: [DownloadedEpisode]
@@ -57,8 +64,63 @@ struct DownloadsView: View {
         }
     }
 
+    /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
+    private var podcastFilter: DownloadsPodcastFilter {
+        DownloadsPodcastFilter.fromStorage(settings.downloadsPodcastFilter)
+    }
+
+    private var isPodcastFiltering: Bool {
+        if case .feed = podcastFilter { return true }
+        return false
+    }
+
+    /// Unique feeds that currently have at least one completed download (title A–Z).
+    /// Built from the visible download catalog via `feed(containingEpisodeId:)` — never invent.
+    private var downloadPodcastFeeds: [PodcastFeed] {
+        var seen = Set<UUID>()
+        var feeds: [PodcastFeed] = []
+        for item in downloads.downloads {
+            guard let feed = store.feed(containingEpisodeId: item.episode.id) else { continue }
+            if seen.insert(feed.id).inserted {
+                feeds.append(feed)
+            }
+        }
+        return feeds.sorted {
+            $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+    }
+
+    private var podcastFilterChips: [DownloadsPodcastFilter] {
+        var chips: [DownloadsPodcastFilter] = [.all]
+        var feeds = downloadPodcastFeeds
+        // Keep a persisted selection visible (even if that feed no longer has downloads)
+        // so the user can see why the list is empty and tap All.
+        if case .feed(let id) = podcastFilter,
+           !feeds.contains(where: { $0.id == id }),
+           let feed = store.feeds.first(where: { $0.id == id }) {
+            feeds.append(feed)
+            feeds.sort {
+                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
+        }
+        chips.append(contentsOf: feeds.map { .feed($0.id) })
+        return chips
+    }
+
+    private func podcastChipTitle(_ chip: DownloadsPodcastFilter) -> String {
+        switch chip {
+        case .all:
+            return String(localized: "All")
+        case .feed(let id):
+            return store.feeds.first(where: { $0.id == id })?.title
+                ?? downloadPodcastFeeds.first(where: { $0.id == id })?.title
+                ?? String(localized: "Podcast")
+        }
+    }
+
     private var isFiltering: Bool {
         settings.downloadsFilter != .all
+            || isPodcastFiltering
             || !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
@@ -155,7 +217,8 @@ struct DownloadsView: View {
                             ForEach(DownloadsFilter.allCases) { chip in
                                 DownloadsFilterChip(
                                     title: chip.label,
-                                    selected: settings.downloadsFilter == chip
+                                    selected: settings.downloadsFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the Downloads list")
                                 ) {
                                     settings.downloadsFilter = chip
                                 }
@@ -164,6 +227,28 @@ struct DownloadsView: View {
                         .padding(.vertical, 4)
                     }
                     .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                }
+
+                if !downloads.downloads.isEmpty, !downloadPodcastFeeds.isEmpty || isPodcastFiltering {
+                    Section {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(podcastFilterChips) { chip in
+                                    DownloadsFilterChip(
+                                        title: podcastChipTitle(chip),
+                                        selected: podcastFilter == chip,
+                                        accessibilityHint: String(localized: "Filters the Downloads list by podcast")
+                                    ) {
+                                        settings.downloadsPodcastFilter = chip.storageValue
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    } header: {
+                        Text("Podcasts")
+                    }
                 }
 
                 // AntennaPod-like downloads info bar (visible filtered list remaining time).
@@ -420,6 +505,7 @@ struct DownloadsView: View {
 private struct DownloadsFilterChip: View {
     let title: String
     let selected: Bool
+    let accessibilityHint: String
     let action: () -> Void
 
     var body: some View {
@@ -433,7 +519,7 @@ private struct DownloadsFilterChip: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
-        .accessibilityHint(String(localized: "Filters the Downloads list"))
+        .accessibilityHint(accessibilityHint)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

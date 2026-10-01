@@ -17376,6 +17376,24 @@
           }
         }
       }
+    },
+    "Filters the Downloads list by podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Downloads list by podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Downloads-Liste nach Podcast"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Downloads podcast filter chips."
     }
   },
   "version": "1.0"
