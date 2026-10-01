@@ -58,6 +58,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Sleep timer (Uhr / Ende der Episode / Custom… 1–180 Min.; Mini-Player Restzeit-Badge; Ende → lokale Benachrichtigung + Haptik wenn Vordergrund; Settings-Toggle Standard an) | ☐ Sleep timer (clock / end of episode / Custom… 1–180 min; mini player remaining badge; end → local notification + foreground haptic; Settings toggle default on) |
 | ☐ Chapters tippen → Seek (wenn im Feed) | ☐ Chapters tap → seek (when in feed) |
 | ☐ Kapitel Prev/Next (nur wenn Kapitel; Next → nächster Start; Prev → Anfang wenn >2s sonst vorheriges) | ☐ Chapter prev/next (only when chapters; Next → next start; Prev → restart if >2s else previous) |
+| ☐ Kapitel-Suche (Titel; Groß/Klein egal; Debounce; leer bei keinen Treffern; nur geladene Kapitel) | ☐ Chapter search (title; case-insensitive; debounce; empty when no matches; already-loaded chapters only) |
 | ☐ Aktueller Kapitel-Titel (Mini unter Episode; Full unter Podcast; leer/ohne Kapitel ausgeblendet; folgt Position) | ☐ Current chapter title (mini under episode; full under podcast; hidden when none/empty; follows position) |
 | ☐ Kapitel-Liste: Dauer (next−start; letztes = Episodendauer−start wenn bekannt) / aktuelles Remaining live; ohne Ende ausgeblendet; Wanduhr | ☐ Chapter list: duration (next−start; last = episode duration−start when known) / current remaining live; hide when end unknown; wall-clock |
 | ☐ Transcript sheet (nur Feed-URL) | ☐ Transcript sheet (feed URL only) |

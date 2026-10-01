@@ -20,7 +20,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Skip silence (Settings toggle only; not applied on stock AVPlayer — needs custom audio graph)
 - Stereo to mono (Settings; default off; best-effort `AVAudioSession` preferred output channels = 1 — route-dependent; not ExoPlayer remix)
 - Keep screen on while playing (Settings; default off; `isIdleTimerDisabled` only — no Low Power Mode override / brightness; PiP/background audio unchanged)
-- Chapters (PSC / Podcast Index from feed + media-file QuickTime/MP4 tags on local files; list in full player; tap to seek; **Previous/Next chapter** when available; **current chapter title** on mini + full player; **chapter duration / current remaining** on list when end known)
+- Chapters (PSC / Podcast Index from feed + media-file QuickTime/MP4 tags on local files; list in full player; tap to seek; **`.searchable` title filter** on already-loaded chapters; **Previous/Next chapter** when available; **current chapter title** on mini + full player; **chapter duration / current remaining** on list when end known)
 - Transcripts (beta; feed `podcast:transcript` URL only — fetch VTT/SRT/JSON, scrollable sheet, tap cue seek; **searchable cue-text filter**; no Whisper/STT)
 - Episode description / Shownotes (beta; RSS `description`/`content:encoded` → `descriptionText`; full player + EpisodeRow context sheet; plain text, HTML stripped; empty state; refresh to populate existing feeds)
 - Episode duration on list rows (beta; RSS `itunes:duration` / Media RSS → `PodcastEpisode.durationSeconds`; EpisodeRow caption `m:ss`/`h:mm:ss` via share/scrubber formatter; fallback to `playback.json` duration; hide when unknown/zero; VoiceOver EN/DE; no Settings toggle)
@@ -458,6 +458,8 @@ When leaving, stopping, or switching episodes, `PlaybackService.finishCurrentEpi
 **Honest ID3 limits:** **ID3v2 CHAP** (typical MP3) and **Vorbis** chapter comments are **not** read — AVFoundation does not expose them as chapter groups on iOS, and this fork does not ship a custom ID3/Vorbis parser. Nero `chpl` only if AVFoundation surfaces it. Matrix documents the same.
 
 Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`). Full player shows a chapter list (hidden when empty); tap seeks; the active chapter is highlighted from `PlaybackService.positionSeconds`.
+
+**Chapter search (Full player list):** When chapters are loaded, the full player NavigationStack exposes `.searchable` (prompt **Search chapters**). Filters **already-loaded** chapter titles case-insensitively with ~250 ms debounce; empty state when no matches. Does **not** re-fetch Podcast Index / media chapters for search — client-side only. Visible rows keep tap-to-seek and duration/remaining trailing labels (original indices).
 
 **Chapter duration / remaining (Full player list):** Each row can show a trailing time when it can be derived honestly from chapter starts (+ episode duration for the last chapter). `ChapterIndexing.endSeconds` / `durationSeconds` / `remainingSeconds`: duration = next chapter start − this start; last chapter end = known episode duration (live player → feed `itunes:duration` / media → saved playback) − start. **Current** chapter shows live wall-clock remaining (`end − position`, formatted like −m:ss); other chapters show duration. **Hidden** when the end cannot be known (e.g. last chapter without duration). Wall-clock only — **no** playback-speed divide. Does not invent chapters or claim ID3 CHAP / Vorbis support.
 

@@ -33,6 +33,13 @@ struct FullPlayerView: View {
     /// Single episode pending Full Player Remove-from-queue confirmation (nil = dialog dismissed).
     @State private var episodePendingRemoveFromQueue: PodcastEpisode?
 
+    /// Chapter list `.searchable` (filters already-loaded titles only).
+    @State private var chapterSearchText = ""
+    @State private var chapterDebouncedQuery = ""
+    @State private var chapterDebounceTask: Task<Void, Never>?
+
+    private let chapterDebounceNs: UInt64 = 250_000_000 // 250 ms
+
     private var episode: PodcastEpisode? { playback.currentEpisode }
 
     private var feed: PodcastFeed? {
@@ -58,6 +65,17 @@ struct FullPlayerView: View {
 
     private var isLoadingChapters: Bool {
         isLoadingRemoteChapters || isLoadingMediaChapters
+    }
+
+    /// Visible chapter indices after light-debounced case-insensitive title filter.
+    private var filteredChapterIndices: [Int] {
+        let q = chapterDebouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !q.isEmpty else { return Array(chapters.indices) }
+        return chapters.indices.filter { chapters[$0].title.localizedCaseInsensitiveContains(q) }
+    }
+
+    private var isFilteringChapters: Bool {
+        !chapterDebouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private var displayPosition: Double {
@@ -111,7 +129,15 @@ struct FullPlayerView: View {
         NavigationStack {
             Group {
                 if let episode {
-                    playerContent(episode: episode)
+                    if chapters.isEmpty {
+                        playerContent(episode: episode)
+                    } else {
+                        playerContent(episode: episode)
+                            .searchable(text: $chapterSearchText, prompt: "Search chapters")
+                            .onChange(of: chapterSearchText) { _, newValue in
+                                scheduleChapterFilter(for: newValue)
+                            }
+                    }
                 } else {
                     ContentUnavailableView(
                         "Nothing playing",
@@ -166,6 +192,9 @@ struct FullPlayerView: View {
             scrubSeconds = playback.positionSeconds
             Task { await loadChaptersIfNeeded() }
         }
+        .onDisappear {
+            chapterDebounceTask?.cancel()
+        }
         .onChange(of: playback.currentEpisode?.id) { _, newId in
             playback.pictureInPicture.tearDown()
             if newId == nil {
@@ -178,6 +207,7 @@ struct FullPlayerView: View {
             mediaChapters = []
             showTranscript = false
             showDescription = false
+            resetChapterSearch()
             Task { await loadChaptersIfNeeded() }
         }
         .onChange(of: settings.playVideoAsAudioOnly) { _, audioOnly in
@@ -375,48 +405,80 @@ struct FullPlayerView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Chapters")
                     .font(.headline)
-                ForEach(Array(chapters.enumerated()), id: \.element.id) { index, chapter in
-                    Button {
-                        playback.seek(toSeconds: chapter.startTimeSeconds)
-                        scrubSeconds = chapter.startTimeSeconds
-                    } label: {
-                        HStack(alignment: .firstTextBaseline, spacing: 12) {
-                            Text(format(chapter.startTimeSeconds))
-                                .font(.caption.monospacedDigit())
-                                .foregroundStyle(.secondary)
-                                .frame(minWidth: 44, alignment: .trailing)
-                            Text(chapter.title)
-                                .font(.subheadline.weight(index == currentChapterIndex ? .semibold : .regular))
-                                .foregroundStyle(index == currentChapterIndex ? .primary : .secondary)
-                                .multilineTextAlignment(.leading)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            if let trailing = chapterTrailingTimeLabel(index: index) {
-                                Text(trailing)
+                if isFilteringChapters && filteredChapterIndices.isEmpty {
+                    ContentUnavailableView(
+                        "No matching chapters",
+                        systemImage: "magnifyingglass",
+                        description: Text("No chapters match your search.")
+                    )
+                    .frame(maxWidth: .infinity, minHeight: 120)
+                    .accessibilityElement(children: .combine)
+                } else {
+                    ForEach(filteredChapterIndices, id: \.self) { index in
+                        let chapter = chapters[index]
+                        Button {
+                            playback.seek(toSeconds: chapter.startTimeSeconds)
+                            scrubSeconds = chapter.startTimeSeconds
+                        } label: {
+                            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                                Text(format(chapter.startTimeSeconds))
                                     .font(.caption.monospacedDigit())
                                     .foregroundStyle(.secondary)
+                                    .frame(minWidth: 44, alignment: .trailing)
+                                Text(chapter.title)
+                                    .font(.subheadline.weight(index == currentChapterIndex ? .semibold : .regular))
+                                    .foregroundStyle(index == currentChapterIndex ? .primary : .secondary)
+                                    .multilineTextAlignment(.leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                if let trailing = chapterTrailingTimeLabel(index: index) {
+                                    Text(trailing)
+                                        .font(.caption.monospacedDigit())
+                                        .foregroundStyle(.secondary)
+                                }
+                                if index == currentChapterIndex {
+                                    Image(systemName: "waveform")
+                                        .font(.caption)
+                                        .foregroundStyle(.tint)
+                                }
                             }
-                            if index == currentChapterIndex {
-                                Image(systemName: "waveform")
-                                    .font(.caption)
-                                    .foregroundStyle(.tint)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 10)
+                            .background {
+                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                    .fill(index == currentChapterIndex ? Color.accentColor.opacity(0.12) : Color.clear)
                             }
                         }
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 10)
-                        .background {
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(index == currentChapterIndex ? Color.accentColor.opacity(0.12) : Color.clear)
-                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(chapterAccessibilityLabel(index: index, chapter: chapter))
+                        .accessibilityHint(String(localized: "Seeks playback to this chapter"))
+                        .accessibilityAddTraits(index == currentChapterIndex ? .isSelected : [])
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityLabel(chapterAccessibilityLabel(index: index, chapter: chapter))
-                    .accessibilityAddTraits(index == currentChapterIndex ? .isSelected : [])
                 }
             }
             .padding(.top, 8)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         // No chapters → hide section entirely (no empty placeholder).
+    }
+
+    private func resetChapterSearch() {
+        chapterDebounceTask?.cancel()
+        chapterSearchText = ""
+        chapterDebouncedQuery = ""
+    }
+
+    private func scheduleChapterFilter(for term: String) {
+        chapterDebounceTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            chapterDebouncedQuery = ""
+            return
+        }
+        chapterDebounceTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: chapterDebounceNs)
+            guard !Task.isCancelled else { return }
+            chapterDebouncedQuery = trimmed
+        }
     }
 
     /// Trailing time for a chapter row: current → live remaining (−m:ss) when end known;
