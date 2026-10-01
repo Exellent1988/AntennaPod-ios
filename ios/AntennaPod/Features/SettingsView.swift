@@ -41,6 +41,8 @@ private enum StorageLimitPickerChoice: String, CaseIterable, Identifiable {
     }
 }
 
+/// Settings tab: preferences Form with `.searchable` filter on section/row titles (+ footnotes where listed).
+/// Empty sections hide while filtering; empty state when no matches. NavigationLinks stay live for visible rows.
 struct SettingsView: View {
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var downloads: DownloadService
@@ -59,6 +61,44 @@ struct SettingsView: View {
     @State private var pendingNetworkUnlockAction: (() -> Void)?
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
     @State private var ratingPromptUITick = 0
+    @State private var searchText = ""
+    @State private var debouncedQuery = ""
+    @State private var debounceTask: Task<Void, Never>?
+
+    private let debounceNs: UInt64 = 250_000_000 // 250 ms
+
+    private var isSearchFiltering: Bool {
+        !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Case-insensitive match on source keys and their localized catalog values (EN/DE).
+    private func matchesSearch(_ keys: String...) -> Bool {
+        matchesSearch(Array(keys))
+    }
+
+    private func matchesSearch(_ keys: [String]) -> Bool {
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        if q.isEmpty { return true }
+        return keys.contains { key in
+            if key.localizedCaseInsensitiveContains(q) { return true }
+            let localized = String(localized: String.LocalizationValue(key))
+            return localized.localizedCaseInsensitiveContains(q)
+        }
+    }
+
+    private func scheduleFilter(for term: String) {
+        debounceTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            debouncedQuery = ""
+            return
+        }
+        debounceTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: debounceNs)
+            guard !Task.isCancelled else { return }
+            debouncedQuery = trimmed
+        }
+    }
 
     private var pickerChoice: Binding<StorageLimitPickerChoice> {
         Binding(
@@ -77,183 +117,183 @@ struct SettingsView: View {
         NavigationStack {
             ScrollViewReader { proxy in
             Form {
-                Section("Appearance") {
-                    Picker(String(localized: "Theme"), selection: $settings.theme) {
-                        ForEach(AppTheme.allCases) { theme in
-                            Text(theme.label).tag(theme)
-                        }
-                    }
-                    .accessibilityLabel(String(localized: "Theme"))
-                    .accessibilityValue(settings.theme.label)
-                    .accessibilityHint(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
-                    Text(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .accessibilityLabel(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
+                if matchesAppearanceSection {
+                    appearanceSection
                 }
-                Section("Home") {
-                    NavigationLink {
-                        HomeLayoutSettingsView()
-                    } label: {
-                        Label("Home layout", systemImage: "rectangle.grid.1x2")
-                    }
-                    Text("Show, hide, and reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, Favorites). Empty optional sections still hide when they have no items.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if matchesHomeSection {
+                    homeSettingsSection
                 }
-                Section("Playback") {
-                    Picker("Default speed", selection: $settings.defaultPlaybackSpeed) {
-                        ForEach(AppSettings.speedPresets, id: \.self) { speed in
-                            Text(String(format: "%.1f×", speed)).tag(speed)
-                        }
-                    }
-                    Text("New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Picker("Rewind", selection: $settings.rewindSeconds) {
-                        ForEach(AppSettings.skipIntervalPresets, id: \.self) { secs in
-                            Text("\(secs) seconds").tag(secs)
-                        }
-                    }
-                    Picker("Fast-forward", selection: $settings.fastForwardSeconds) {
-                        ForEach(AppSettings.skipIntervalPresets, id: \.self) { secs in
-                            Text("\(secs) seconds").tag(secs)
-                        }
-                    }
-                    Text("Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward).")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Picker("Skip intro", selection: $settings.skipIntroSeconds) {
-                        ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
-                            Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
-                        }
-                    }
-                    Picker("Skip outro", selection: $settings.skipOutroSeconds) {
-                        ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
-                            Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
-                        }
-                    }
-                    Text("Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Override per podcast via Feed detail → gear → Playback.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Picker("Playback source", selection: $settings.playbackSourcePreference) {
-                        ForEach(PlaybackSourcePreference.allCases) { pref in
-                            Text(pref.label).tag(pref)
-                        }
-                    }
-                    Text(settings.playbackSourcePreference.helpText)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Toggle("Play video as audio only", isOn: $settings.playVideoAsAudioOnly)
-                        .accessibilityHint("Hides the video surface and shows artwork instead. Lockscreen stays audio.")
-                    Text("When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Toggle("Volume adaptation", isOn: $settings.volumeAdaptationEnabled)
-                        .accessibilityHint("Optimizes the audio session for speech. Not Android loudness gain.")
-                    Text("Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Toggle("Skip silence", isOn: $settings.skipSilenceEnabled)
-                        .accessibilityHint("Preference only; not applied on stock AVPlayer in this beta.")
-                    Text("Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Toggle("Stereo to mono", isOn: $settings.stereoToMonoEnabled)
-                        .accessibilityHint("Best-effort mono output via AVAudioSession preferred channels. Route-dependent. Default off.")
-                    Text("When on, requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)` (restores up to 2 when off). **Best-effort** — the system may ignore this depending on the route (built-in speaker, Bluetooth, CarPlay, etc.). Keeps stock `AVPlayer` (video surface, PiP, Now Playing). Not Android ExoPlayer stereo→mono remix. Default off.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Toggle("Keep screen on", isOn: $settings.keepScreenOnWhilePlaying)
-                        .accessibilityHint("Prevents idle lock while audio or video is actively playing. Default off.")
-                    Text("When on, disables the idle timer while playback is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Toggle("Continuous playback", isOn: $settings.continuousPlaybackEnabled)
-                        .accessibilityHint("When on, finishing an episode auto-plays the next Queue item. Default on.")
-                    Text("When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Toggle("Show remaining time", isOn: $settings.showRemainingTime)
-                        .accessibilityHint("When on, player time labels show time left instead of total duration. Default off.")
-                    Text("When on, the mini and full player show remaining time (−m:ss) on the right instead of total duration. Left stays current position. Tap the full-player duration/remaining label to toggle. Default off.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Picker("Rewind after pause", selection: $settings.rewindAfterPauseSeconds) {
-                        ForEach(AppSettings.rewindAfterPausePresets, id: \.self) { secs in
-                            Text(AppSettings.rewindAfterPauseLabel(secs)).tag(secs)
-                        }
-                    }
-                    .accessibilityHint("Seconds to seek back when resuming after a pause of at least 1 second. Off disables. Default 2.")
-                    Text("When resuming after a pause of at least 1 second, seek backward by this many seconds so you do not lose context. Off (0) disables. Does not apply on first start / cold play from a row — only after an actual pause of the current item. Fixed amount (honest beta; not Android’s elapsed-time tiers). Default 2.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Picker("Smart mark as played", selection: $settings.smartMarkAsPlayedSeconds) {
-                        ForEach(AppSettings.smartMarkAsPlayedPresets, id: \.self) { secs in
-                            Text(AppSettings.smartMarkAsPlayedLabel(secs)).tag(secs)
-                        }
-                    }
-                    .accessibilityHint("Seconds before end that count as played when leaving. Off marks only on natural end. Default 30.")
-                    Text("Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if matchesPlaybackSection {
+                    playbackSettingsSection
                 }
-                Section("Queue") {
-                    Toggle("Lock queue", isOn: $settings.queueLocked)
-                        .accessibilityHint("When on, disables Queue drag reorder and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off.")
-                    Text("When on, the Queue tab disables Edit drag reorder and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if matchesQueueSection {
+                    queueSettingsSection
                 }
-                refreshSection
-                autoDownloadSection
-                networkDownloadsSection
-                notificationsSection
-                storageSection
-                podcastIndexDiscoverySection
-                gpodderSyncSection
-                    .id("settings-sync")
-                Section("Library") {
-                    NavigationLink {
-                        ManageTagsView()
-                    } label: {
-                        Label("Manage tags", systemImage: "tag")
-                    }
-                    .accessibilityHint(String(localized: "Rename or delete subscription tags across all podcasts"))
-                    NavigationLink {
-                        StatisticsView()
-                    } label: {
-                        Label("Statistics", systemImage: "chart.bar.doc.horizontal")
-                    }
-                    NavigationLink {
-                        EchoView()
-                    } label: {
-                        Label("Echo", systemImage: "sparkles.rectangle.stack")
+                if matchesSearch(
+                    "Feeds / Keep updated",
+                    "Refresh interval",
+                    "Last refresh",
+                    "Never",
+                    "New episodes",
+                    "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).",
+                    "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch."
+                ) {
+                    refreshSection
+                }
+                if matchesSearch(
+                    "Auto-download",
+                    "Episodes per feed",
+                    "When enabled, after a feed refresh only newly appeared episode IDs (not the whole backlog) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Local-folder feeds are skipped. Storage-limit eviction still applies. Runs on refresh success — no separate silent BGAppRefresh. Wi‑Fi-only for auto-download is under Network / Downloads."
+                ) {
+                    autoDownloadSection
+                }
+                if matchesSearch(
+                    "Network / Downloads",
+                    "Auto-download Wi‑Fi only",
+                    "Manual download Wi‑Fi only",
+                    "Stream Wi‑Fi only",
+                    "Network / Downloads settings are locked. Enter the parental PIN to change these toggles.",
+                    "Uses NWPathMonitor (Wi‑Fi / Ethernet vs cellular). Auto-download Wi‑Fi only defaults on — skips enqueue on cellular. Manual download Wi‑Fi only (default off) refuses user downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action."
+                ) {
+                    networkDownloadsSection
+                }
+                if matchesSearch(
+                    "Notifications",
+                    "Notify on new episodes",
+                    "Notify on download errors",
+                    "Notify on sync errors",
+                    "Permission",
+                    "Open iOS Settings",
+                    "Download errors",
+                    "Allowed",
+                    "Denied",
+                    "Not determined"
+                ) {
+                    notificationsSection
+                }
+                if matchesSearch(
+                    "Downloads / Storage",
+                    "Delete episode after playing",
+                    "Used",
+                    "Max storage",
+                    "Clear downloads",
+                    "Unlimited",
+                    "Custom (MB)",
+                    "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch."
+                ) {
+                    storageSection
+                }
+                if matchesSearch(
+                    "Discovery",
+                    "Charts country",
+                    "API key",
+                    "API secret",
+                    "Replace keys…",
+                    "Clear keys",
+                    "Save keys",
+                    "Stored in Keychain",
+                    "Free API key + secret from podcastindex.org (register / API docs). Stored only in the Keychain — not hardcoded and not shipped with the app. Used by Add podcast → Podcast Index search; Subscribe still follows the feed URL pipeline.",
+                    "Used by Home → Discover / Charts and Subscriptions → Discover. Apple iTunes RSS top podcasts (no API key). Automatic uses the device region, or de if unknown."
+                ) {
+                    podcastIndexDiscoverySection
+                }
+                if matchesSearch(
+                    "Sync",
+                    "Provider",
+                    "Host",
+                    "Username",
+                    "Password",
+                    "Device name",
+                    "Device id",
+                    "Regenerate device id from name",
+                    "Sync now",
+                    "Login",
+                    "Logout",
+                    "Last sync",
+                    "Working…",
+                    "Logging in…",
+                    "gpodder.net",
+                    "Nextcloud"
+                ) {
+                    gpodderSyncSection
+                        .id("settings-sync")
+                }
+                if matchesLibrarySection {
+                    librarySettingsSection
+                }
+                if matchesSearch("Privacy", "Parental controls") {
+                    Section("Privacy") {
+                        NavigationLink {
+                            ParentalControlsSettingsView()
+                        } label: {
+                            Label("Parental controls", systemImage: "lock.shield")
+                        }
                     }
                 }
-                Section("Privacy") {
-                    NavigationLink {
-                        ParentalControlsSettingsView()
-                    } label: {
-                        Label("Parental controls", systemImage: "lock.shield")
+                if matchesSearch(
+                    "App Store",
+                    "Ask for App Store rating",
+                    "Mark-played count",
+                    "Prompt attempted",
+                    "Reset rating prompt state",
+                    "Yes (once)",
+                    "Not yet"
+                ) {
+                    appStoreRatingSection
+                }
+                if matchesSearch("Siri / Shortcuts", "Siri / Shortcuts (lite): Play/Pause, Skip forward, Skip back. Also open via URL schemes: antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents open the app and control playback when an episode is already loaded. Not background-only without App Groups.") {
+                    siriShortcutsSection
+                }
+                if matchesSearch("Homescreen widget", "Homescreen widget (beta lite): Continue listening shows episode title + podcast from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).") {
+                    homescreenWidgetSection
+                }
+                if matchesSearch("Apple Watch", "Apple Watch (beta lite): Continue listening shows episode title + podcast from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.") {
+                    appleWatchSection
+                }
+                if matchesSearch("CarPlay", "CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).") {
+                    carPlaySection
+                }
+                if matchesSearch("About") {
+                    Section("About") {
+                        NavigationLink {
+                            AboutView()
+                        } label: {
+                            Label("About", systemImage: "info.circle")
+                        }
                     }
                 }
-                appStoreRatingSection
-                siriShortcutsSection
-                homescreenWidgetSection
-                appleWatchSection
-                carPlaySection
-                Section("About") {
-                    NavigationLink {
-                        AboutView()
-                    } label: {
-                        Label("About", systemImage: "info.circle")
-                    }
+                if matchesSearch(
+                    "Backup",
+                    "Export data backup",
+                    "Import data backup",
+                    "Include downloaded episode files"
+                ) {
+                    DataBackupSection()
                 }
-                DataBackupSection()
-                OpmlImportExportSection()
+                if matchesSearch(
+                    "Import / Export",
+                    "Export OPML",
+                    "Import OPML",
+                    "Export subscriptions as HTML"
+                ) {
+                    OpmlImportExportSection()
+                }
+                if isSearchFiltering && !hasAnyMatchingSettingsSection {
+                    ContentUnavailableView(
+                        "No matching settings",
+                        systemImage: "magnifyingglass",
+                        description: Text("No settings rows or sections match your search.")
+                    )
+                }
             }
             .navigationTitle("Settings")
+            .searchable(text: $searchText, prompt: "Search settings")
+            .onChange(of: searchText) { _, newValue in
+                scheduleFilter(for: newValue)
+            }
+            .onDisappear {
+                debounceTask?.cancel()
+            }
             .onAppear {
                 if case .customMegabytes(let mb) = settings.downloadStorageLimit {
                     customMB = mb
@@ -308,6 +348,391 @@ struct SettingsView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Removes \(downloads.downloads.count) offline episode file(s). Playback history is kept.")
+            }
+        }
+    }
+
+    private var hasAnyMatchingSettingsSection: Bool {
+        matchesAppearanceSection
+            || matchesHomeSection
+            || matchesPlaybackSection
+            || matchesQueueSection
+            || matchesSearch(
+                "Feeds / Keep updated",
+                "Refresh interval",
+                "Last refresh",
+                "New episodes"
+            )
+            || matchesSearch("Auto-download", "Episodes per feed")
+            || matchesSearch(
+                "Network / Downloads",
+                "Auto-download Wi‑Fi only",
+                "Manual download Wi‑Fi only",
+                "Stream Wi‑Fi only"
+            )
+            || matchesSearch(
+                "Notifications",
+                "Notify on new episodes",
+                "Notify on download errors",
+                "Notify on sync errors",
+                "Download errors"
+            )
+            || matchesSearch(
+                "Downloads / Storage",
+                "Delete episode after playing",
+                "Max storage",
+                "Clear downloads"
+            )
+            || matchesSearch("Discovery", "Charts country", "API key", "API secret")
+            || matchesSearch("Sync", "Provider", "Host", "Username", "Sync now", "Login")
+            || matchesLibrarySection
+            || matchesSearch("Privacy", "Parental controls")
+            || matchesSearch("App Store", "Ask for App Store rating", "Reset rating prompt state")
+            || matchesSearch("Siri / Shortcuts")
+            || matchesSearch("Homescreen widget")
+            || matchesSearch("Apple Watch")
+            || matchesSearch("CarPlay")
+            || matchesSearch("About")
+            || matchesSearch("Backup", "Export data backup", "Import data backup")
+            || matchesSearch("Import / Export", "Export OPML", "Import OPML", "Export subscriptions as HTML")
+    }
+
+    private var matchesAppearanceSection: Bool {
+        matchesSearch(
+            "Appearance",
+            "Theme",
+            "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."
+        )
+    }
+
+    private var matchesHomeSection: Bool {
+        matchesSearch(
+            "Home",
+            "Home layout",
+            "Show, hide, and reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, Favorites). Empty optional sections still hide when they have no items."
+        )
+    }
+
+    private var matchesQueueSection: Bool {
+        matchesSearch(
+            "Queue",
+            "Lock queue",
+            "When on, the Queue tab disables Edit drag reorder and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off."
+        )
+    }
+
+    private var matchesLibrarySection: Bool {
+        matchesSearch("Library", "Manage tags", "Statistics", "Echo")
+    }
+
+    /// Row-level keywords for Playback (section shows if header or any row matches).
+    private var matchesPlaybackSection: Bool {
+        matchesSearch("Playback")
+            || matchesPlaybackSpeed
+            || matchesPlaybackSkipButtons
+            || matchesPlaybackIntroOutro
+            || matchesPlaybackSource
+            || matchesPlaybackVideoAudio
+            || matchesPlaybackVolume
+            || matchesPlaybackSkipSilence
+            || matchesPlaybackStereo
+            || matchesPlaybackKeepScreen
+            || matchesPlaybackContinuous
+            || matchesPlaybackRemaining
+            || matchesPlaybackRewindPause
+            || matchesPlaybackSmartMark
+    }
+
+    private var matchesPlaybackSpeed: Bool {
+        matchesSearch(
+            "Default speed",
+            "New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list."
+        )
+    }
+
+    private var matchesPlaybackSkipButtons: Bool {
+        matchesSearch(
+            "Rewind",
+            "Fast-forward",
+            "Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward)."
+        )
+    }
+
+    private var matchesPlaybackIntroOutro: Bool {
+        matchesSearch(
+            "Skip intro",
+            "Skip outro",
+            "Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Override per podcast via Feed detail → gear → Playback."
+        )
+    }
+
+    private var matchesPlaybackSource: Bool {
+        matchesSearch("Playback source")
+    }
+
+    private var matchesPlaybackVideoAudio: Bool {
+        matchesSearch(
+            "Play video as audio only",
+            "When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off."
+        )
+    }
+
+    private var matchesPlaybackVolume: Bool {
+        matchesSearch(
+            "Volume adaptation",
+            "Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off."
+        )
+    }
+
+    private var matchesPlaybackSkipSilence: Bool {
+        matchesSearch(
+            "Skip silence",
+            "Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off."
+        )
+    }
+
+    private var matchesPlaybackStereo: Bool {
+        matchesSearch(
+            "Stereo to mono",
+            "When on, requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)` (restores up to 2 when off). **Best-effort** — the system may ignore this depending on the route (built-in speaker, Bluetooth, CarPlay, etc.). Keeps stock `AVPlayer` (video surface, PiP, Now Playing). Not Android ExoPlayer stereo→mono remix. Default off."
+        )
+    }
+
+    private var matchesPlaybackKeepScreen: Bool {
+        matchesSearch(
+            "Keep screen on",
+            "When on, disables the idle timer while playback is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged."
+        )
+    }
+
+    private var matchesPlaybackContinuous: Bool {
+        matchesSearch(
+            "Continuous playback",
+            "When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on."
+        )
+    }
+
+    private var matchesPlaybackRemaining: Bool {
+        matchesSearch(
+            "Show remaining time",
+            "When on, the mini and full player show remaining time (−m:ss) on the right instead of total duration. Left stays current position. Tap the full-player duration/remaining label to toggle. Default off."
+        )
+    }
+
+    private var matchesPlaybackRewindPause: Bool {
+        matchesSearch(
+            "Rewind after pause",
+            "When resuming after a pause of at least 1 second, seek backward by this many seconds so you do not lose context. Off (0) disables. Does not apply on first start / cold play from a row — only after an actual pause of the current item. Fixed amount (honest beta; not Android’s elapsed-time tiers). Default 2."
+        )
+    }
+
+    private var matchesPlaybackSmartMark: Bool {
+        matchesSearch(
+            "Smart mark as played",
+            "Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30."
+        )
+    }
+
+    @ViewBuilder
+    private var appearanceSection: some View {
+        Section("Appearance") {
+            if matchesSearch(
+                "Appearance",
+                "Theme",
+                "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."
+            ) {
+                Picker(String(localized: "Theme"), selection: $settings.theme) {
+                    ForEach(AppTheme.allCases) { theme in
+                        Text(theme.label).tag(theme)
+                    }
+                }
+                .accessibilityLabel(String(localized: "Theme"))
+                .accessibilityValue(settings.theme.label)
+                .accessibilityHint(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
+                Text(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var homeSettingsSection: some View {
+        Section("Home") {
+            NavigationLink {
+                HomeLayoutSettingsView()
+            } label: {
+                Label("Home layout", systemImage: "rectangle.grid.1x2")
+            }
+            Text("Show, hide, and reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, Favorites). Empty optional sections still hide when they have no items.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var queueSettingsSection: some View {
+        Section("Queue") {
+            Toggle("Lock queue", isOn: $settings.queueLocked)
+                .accessibilityHint("When on, disables Queue drag reorder and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off.")
+            Text("When on, the Queue tab disables Edit drag reorder and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    @ViewBuilder
+    private var librarySettingsSection: some View {
+        Section("Library") {
+            if matchesSearch("Library", "Manage tags") {
+                NavigationLink {
+                    ManageTagsView()
+                } label: {
+                    Label("Manage tags", systemImage: "tag")
+                }
+                .accessibilityHint(String(localized: "Rename or delete subscription tags across all podcasts"))
+            }
+            if matchesSearch("Library", "Statistics") {
+                NavigationLink {
+                    StatisticsView()
+                } label: {
+                    Label("Statistics", systemImage: "chart.bar.doc.horizontal")
+                }
+            }
+            if matchesSearch("Library", "Echo") {
+                NavigationLink {
+                    EchoView()
+                } label: {
+                    Label("Echo", systemImage: "sparkles.rectangle.stack")
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var playbackSettingsSection: some View {
+        Section("Playback") {
+            if matchesPlaybackSpeed {
+                Picker("Default speed", selection: $settings.defaultPlaybackSpeed) {
+                    ForEach(AppSettings.speedPresets, id: \.self) { speed in
+                        Text(String(format: "%.1f×", speed)).tag(speed)
+                    }
+                }
+                Text("New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackSkipButtons {
+                Picker("Rewind", selection: $settings.rewindSeconds) {
+                    ForEach(AppSettings.skipIntervalPresets, id: \.self) { secs in
+                        Text("\(secs) seconds").tag(secs)
+                    }
+                }
+                Picker("Fast-forward", selection: $settings.fastForwardSeconds) {
+                    ForEach(AppSettings.skipIntervalPresets, id: \.self) { secs in
+                        Text("\(secs) seconds").tag(secs)
+                    }
+                }
+                Text("Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward).")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackIntroOutro {
+                Picker("Skip intro", selection: $settings.skipIntroSeconds) {
+                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
+                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
+                    }
+                }
+                Picker("Skip outro", selection: $settings.skipOutroSeconds) {
+                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
+                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
+                    }
+                }
+                Text("Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Override per podcast via Feed detail → gear → Playback.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackSource {
+                Picker("Playback source", selection: $settings.playbackSourcePreference) {
+                    ForEach(PlaybackSourcePreference.allCases) { pref in
+                        Text(pref.label).tag(pref)
+                    }
+                }
+                Text(settings.playbackSourcePreference.helpText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackVideoAudio {
+                Toggle("Play video as audio only", isOn: $settings.playVideoAsAudioOnly)
+                    .accessibilityHint("Hides the video surface and shows artwork instead. Lockscreen stays audio.")
+                Text("When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackVolume {
+                Toggle("Volume adaptation", isOn: $settings.volumeAdaptationEnabled)
+                    .accessibilityHint("Optimizes the audio session for speech. Not Android loudness gain.")
+                Text("Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackSkipSilence {
+                Toggle("Skip silence", isOn: $settings.skipSilenceEnabled)
+                    .accessibilityHint("Preference only; not applied on stock AVPlayer in this beta.")
+                Text("Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackStereo {
+                Toggle("Stereo to mono", isOn: $settings.stereoToMonoEnabled)
+                    .accessibilityHint("Best-effort mono output via AVAudioSession preferred channels. Route-dependent. Default off.")
+                Text("When on, requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)` (restores up to 2 when off). **Best-effort** — the system may ignore this depending on the route (built-in speaker, Bluetooth, CarPlay, etc.). Keeps stock `AVPlayer` (video surface, PiP, Now Playing). Not Android ExoPlayer stereo→mono remix. Default off.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackKeepScreen {
+                Toggle("Keep screen on", isOn: $settings.keepScreenOnWhilePlaying)
+                    .accessibilityHint("Prevents idle lock while audio or video is actively playing. Default off.")
+                Text("When on, disables the idle timer while playback is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackContinuous {
+                Toggle("Continuous playback", isOn: $settings.continuousPlaybackEnabled)
+                    .accessibilityHint("When on, finishing an episode auto-plays the next Queue item. Default on.")
+                Text("When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackRemaining {
+                Toggle("Show remaining time", isOn: $settings.showRemainingTime)
+                    .accessibilityHint("When on, player time labels show time left instead of total duration. Default off.")
+                Text("When on, the mini and full player show remaining time (−m:ss) on the right instead of total duration. Left stays current position. Tap the full-player duration/remaining label to toggle. Default off.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackRewindPause {
+                Picker("Rewind after pause", selection: $settings.rewindAfterPauseSeconds) {
+                    ForEach(AppSettings.rewindAfterPausePresets, id: \.self) { secs in
+                        Text(AppSettings.rewindAfterPauseLabel(secs)).tag(secs)
+                    }
+                }
+                .accessibilityHint("Seconds to seek back when resuming after a pause of at least 1 second. Off disables. Default 2.")
+                Text("When resuming after a pause of at least 1 second, seek backward by this many seconds so you do not lose context. Off (0) disables. Does not apply on first start / cold play from a row — only after an actual pause of the current item. Fixed amount (honest beta; not Android’s elapsed-time tiers). Default 2.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackSmartMark {
+                Picker("Smart mark as played", selection: $settings.smartMarkAsPlayedSeconds) {
+                    ForEach(AppSettings.smartMarkAsPlayedPresets, id: \.self) { secs in
+                        Text(AppSettings.smartMarkAsPlayedLabel(secs)).tag(secs)
+                    }
+                }
+                .accessibilityHint("Seconds before end that count as played when leaving. Off marks only on natural end. Default 30.")
+                Text("Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
         }
     }
