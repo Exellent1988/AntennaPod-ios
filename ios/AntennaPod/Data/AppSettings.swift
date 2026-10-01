@@ -159,7 +159,7 @@ enum PlaybackSourcePreference: String, CaseIterable, Identifiable {
     }
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source, auto-delete).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -176,6 +176,7 @@ final class AppSettings: ObservableObject {
         static let autoDownloadEpisodesPerFeed = "settings.autoDownload.episodesPerFeed"
         static let autoDownloadWifiOnly = "settings.autoDownload.wifiOnly"
         static let playbackSourcePreference = "settings.playbackSourcePreference"
+        static let autoDeleteAfterPlaying = "settings.autoDelete.afterPlaying"
     }
 
     private enum Kind: String {
@@ -250,6 +251,13 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// When true, delete the local download after an episode is marked played (file only; DB row kept).
+    @Published var autoDeleteAfterPlaying: Bool {
+        didSet {
+            UserDefaults.standard.set(autoDeleteAfterPlaying, forKey: Keys.autoDeleteAfterPlaying)
+        }
+    }
+
     init() {
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
@@ -285,6 +293,11 @@ final class AppSettings: ObservableObject {
         let sourceRaw = UserDefaults.standard.string(forKey: Keys.playbackSourcePreference)
             ?? PlaybackSourcePreference.automatic.rawValue
         playbackSourcePreference = PlaybackSourcePreference(rawValue: sourceRaw) ?? .automatic
+        if UserDefaults.standard.object(forKey: Keys.autoDeleteAfterPlaying) != nil {
+            autoDeleteAfterPlaying = UserDefaults.standard.bool(forKey: Keys.autoDeleteAfterPlaying)
+        } else {
+            autoDeleteAfterPlaying = false
+        }
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh

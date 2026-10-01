@@ -20,6 +20,7 @@ struct AntennaPodApp: App {
         downloads.settings = settings
         store.settings = settings
         store.downloads = downloads
+        store.playback = playback
         // Launch maintenance once weak refs are wired (limit + played status available).
         downloads.runStorageMaintenance()
         // BGAppRefreshTask stub — Info.plist has no `fetch` mode (see FeedRefreshCoordinator).

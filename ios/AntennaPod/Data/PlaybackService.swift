@@ -66,7 +66,9 @@ final class PlaybackService: ObservableObject {
 
     func play(episode: PodcastEpisode, fileURL: URL? = nil) {
         let isFreshEpisode = currentEpisode?.id != episode.id
+        var leavingEpisodeId: String?
         if let current = currentEpisode, current.id != episode.id {
+            leavingEpisodeId = current.id
             finishCurrentEpisode(ended: false)
         }
 
@@ -84,6 +86,10 @@ final class PlaybackService: ObservableObject {
         tearDownPlayer(clearSleepTimer: false)
         currentEpisode = episode
         isPlayingFromLocalFile = playingLocal
+        // Local file no longer the active player item — run deferred auto-delete if pending.
+        if let leavingEpisodeId {
+            store?.flushAutoDeleteAfterPlaying(for: leavingEpisodeId)
+        }
         let item = AVPlayerItem(url: url)
         let newPlayer = AVPlayer(playerItem: item)
         newPlayer.rate = rate
@@ -136,6 +142,7 @@ final class PlaybackService: ObservableObject {
 
     func stop() {
         resumeAfterInterruption = false
+        let leavingId = currentEpisode?.id
         finishCurrentEpisode(ended: false)
         tearDownPlayer(clearSleepTimer: true)
         currentEpisode = nil
@@ -144,6 +151,9 @@ final class PlaybackService: ObservableObject {
         positionSeconds = 0
         durationSeconds = 0
         clearNowPlayingInfo()
+        if let leavingId {
+            store?.flushAutoDeleteAfterPlaying(for: leavingId)
+        }
     }
 
     func setRate(_ newRate: Float) {
@@ -257,6 +267,11 @@ final class PlaybackService: ObservableObject {
     // MARK: - Private
 
 
+    /// `true` when auto-delete must wait: this episode is loaded and playing from a local file.
+    func shouldBlockAutoDelete(for episodeId: String) -> Bool {
+        currentEpisode?.id == episodeId && isPlayingFromLocalFile
+    }
+
     /// Honor Settings playback-source preference via `DownloadService.localURL`.
     /// - Prefer download / Automatic: local file when present, else network URL.
     /// - Prefer stream: always network URL when available (falls back to local if no remote).
@@ -333,6 +348,7 @@ final class PlaybackService: ObservableObject {
     private func handlePlaybackEnded() {
         // End-of-episode sleep timer: mark finished, stop — do not auto-advance queue.
         if case .endOfEpisode = sleepTimerMode, isSleepTimerActive {
+            let finishedId = currentEpisode?.id
             finishCurrentEpisode(ended: true)
             expireSleepTimer()
             tearDownPlayer(clearSleepTimer: false)
@@ -341,6 +357,9 @@ final class PlaybackService: ObservableObject {
             positionSeconds = 0
             durationSeconds = 0
             clearNowPlayingInfo()
+            if let finishedId {
+                store?.flushAutoDeleteAfterPlaying(for: finishedId)
+            }
             return
         }
 
@@ -349,6 +368,7 @@ final class PlaybackService: ObservableObject {
         let next = finishedId.flatMap { store?.nextQueueEpisode(after: $0) }
         finishCurrentEpisode(ended: true)
         if let next {
+            // play() switches away and flushes deferred auto-delete for the finished episode.
             play(episode: next)
         } else {
             isPlaying = false
@@ -359,6 +379,9 @@ final class PlaybackService: ObservableObject {
             positionSeconds = 0
             durationSeconds = 0
             clearNowPlayingInfo()
+            if let finishedId {
+                store?.flushAutoDeleteAfterPlaying(for: finishedId)
+            }
         }
     }
 

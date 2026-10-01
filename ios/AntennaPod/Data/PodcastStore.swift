@@ -18,8 +18,13 @@ final class PodcastStore: ObservableObject {
 
     /// Optional settings for stamping last feed-refresh time after `refreshAllFeeds()`.
     weak var settings: AppSettings?
-    /// Optional downloads for auto-download enqueue after refresh.
+    /// Optional downloads for auto-download enqueue after refresh / auto-delete after play.
     weak var downloads: DownloadService?
+    /// Optional playback so auto-delete can skip while a local file is still the active player item.
+    weak var playback: PlaybackService?
+
+    /// Episode ids marked played while still loaded as the local player item; flushed when playback leaves them.
+    private var pendingAutoDeleteIds: Set<String> = []
 
     private let repository = FeedRepository()
 
@@ -103,6 +108,7 @@ final class PodcastStore: ObservableObject {
     }
 
     /// AntennaPod-like: mark played and reset position for a clean resume-from-start later.
+    /// When auto-delete-after-playing is on, removes the local download file (keeps the episode row).
     func markPlayed(_ episodeId: String, removeFromQueue: Bool = true) {
         var state = playbackState(for: episodeId)
         state.isPlayed = true
@@ -112,6 +118,7 @@ final class PodcastStore: ObservableObject {
         if removeFromQueue {
             queue.removeAll { $0.id == episodeId }
         }
+        enqueueAutoDeleteAfterPlaying(episodeId)
     }
 
     func markUnplayed(_ episodeId: String) {
@@ -119,6 +126,7 @@ final class PodcastStore: ObservableObject {
         state.isPlayed = false
         state.updatedAtEpochMs = Int64(Date().timeIntervalSince1970 * 1000)
         playbackStates[episodeId] = state
+        pendingAutoDeleteIds.remove(episodeId)
     }
 
     func togglePlayed(_ episodeId: String) {
@@ -169,6 +177,38 @@ final class PodcastStore: ObservableObject {
         if let qi = queue.firstIndex(where: { $0.id == episodeId }) {
             queue[qi].chapters = chapters
         }
+    }
+
+    // MARK: - Auto-delete after playing
+
+    /// Call when playback leaves an episode (end, stop, or switch) so a deferred auto-delete can run.
+    func flushAutoDeleteAfterPlaying(for episodeId: String) {
+        guard pendingAutoDeleteIds.remove(episodeId) != nil else { return }
+        performAutoDeleteAfterPlaying(episodeId)
+    }
+
+    private func enqueueAutoDeleteAfterPlaying(_ episodeId: String) {
+        guard settings?.autoDeleteAfterPlaying == true else { return }
+        // Don't delete the file while AVPlayer is still using that local URL.
+        if playback?.shouldBlockAutoDelete(for: episodeId) == true {
+            pendingAutoDeleteIds.insert(episodeId)
+            return
+        }
+        performAutoDeleteAfterPlaying(episodeId)
+    }
+
+    private func performAutoDeleteAfterPlaying(_ episodeId: String) {
+        guard settings?.autoDeleteAfterPlaying == true else { return }
+        guard let downloads else { return }
+        let episode: PodcastEpisode?
+        if let item = downloads.downloads.first(where: { $0.id == episodeId }) {
+            episode = item.episode
+        } else {
+            episode = self.episode(id: episodeId)
+        }
+        guard let episode, downloads.isDownloaded(episode) else { return }
+        // File + catalog only; feeds / playbackStates (played) stay.
+        downloads.delete(episode)
     }
 
     // MARK: - Inbox (new / unplayed)

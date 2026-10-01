@@ -19,13 +19,14 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, playback source, feed refresh interval, auto-download)
+- Settings tab (theme light/dark/system, default playback speed, playback source, feed refresh interval, auto-download, auto-delete after play)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
 - Auto-download (global on/off + episodes-per-feed cap; after refresh; optional Wi‑Fi only)
 - OPML import/export (Settings + Subscriptions; share sheet / file picker; batch subscribe)
 - Download storage limit (Settings: usage + max size; auto-evict played first)
+- Auto-delete after playing (global toggle; deletes offline file on mark played; keeps episode row)
 
 Root tabs (5): **Inbox**, Subscriptions, Queue, Downloads, Settings.
 
@@ -55,7 +56,7 @@ See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
 
 ## Persistence
 
-Subscriptions, queue, and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `playback.json`). Inbox is derived from that state (unplayed episodes across feeds, newest first). Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme, default playback speed, playback source preference, feed refresh interval, and auto-download prefs live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts / `PlaybackService.play` source resolution / launch+foreground due-check / post-refresh enqueue. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`) and in-flight background task↔episode map (`pending-downloads.json`). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
+Subscriptions, queue, and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `playback.json`). Inbox is derived from that state (unplayed episodes across feeds, newest first). Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme, default playback speed, playback source preference, feed refresh interval, auto-download, and auto-delete-after-playing prefs live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts / `PlaybackService.play` source resolution / launch+foreground due-check / post-refresh enqueue / mark-played download cleanup. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`) and in-flight background task↔episode map (`pending-downloads.json`). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
 
 
 ## Library search
@@ -90,6 +91,10 @@ Settings → **Auto-download**: global on/off (default off), **Episodes per feed
 ## Prefer stream vs download
 
 Settings → **Playback → Playback source**: **Prefer download** (local file via `DownloadService.localURL` when present), **Prefer stream** (always the episode network URL even if downloaded), or **Automatic** (default: local if the file exists, else stream). `PlaybackService.play` and continuous queue auto-next honor this; EpisodeRow / Downloads play buttons no longer force a local URL. Mini player and full player show a small **Local** / **Stream** indicator for the active item.
+
+## Auto-delete after playing
+
+Settings → **Downloads / Storage → Delete episode after playing** (default off, `AppSettings.autoDeleteAfterPlaying`). When an episode is marked played — manual toggle or playback finished / continuous auto-next (`PlaybackService` → `PodcastStore.markPlayed`) — if a local download exists, `DownloadService.delete` removes the offline file and catalog entry. The feed episode row and `isPlayed` status stay. Deletion is deferred while that episode is still the active player item **and** playing from a local file (`shouldBlockAutoDelete`); `PlaybackService` flushes the pending delete on end / stop / switch. Favorites/starred are not implemented yet (no skip). Storage-limit eviction is unchanged.
 
 ## Discovery
 

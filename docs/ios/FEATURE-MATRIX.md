@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (5): Inbox, Subscriptions, Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, ±30s, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | wip | Tab: theme + default speed + playback source + download storage limit + refresh interval + auto-download (P0/P1); more prefs later |
+| Settings | 5 | wip | Tab: theme + default speed + playback source + download storage limit + refresh interval + auto-download + auto-delete after play (P0/P1); more prefs later |
 
 ## Subscriptions
 
@@ -70,7 +70,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Speicherverwaltung / Cache-Limit | 5 | done | UserDefaults byte budget (unlimited / 1 / 5 / 10 GB / custom MB); usage in Settings; eviction: played oldest-mtime first then unplayed LRU; after DL + Settings open + launch; Clear downloads |
 | Auto-download (global + Regeln) | 4 | done | Global toggle + per-feed cap (1/2/3/5 newest unplayed); enqueue after refresh via DownloadService; Wi‑Fi-only via NWPathMonitor; storage eviction unchanged. Full Android-style filter rules → KMP later |
 | Per-feed auto-download | 4 | todo | Global only in this slice; per-feed enable/disable later |
-| Auto-delete after play | 4 | todo | |
+| Auto-delete after play | 4 | done | Global Settings toggle (default off); on mark played (manual or playback finished / continuous auto-next) deletes local file via DownloadService; keeps episode row + played status; defers while that local file is still the active player item; favorites/starred n/a yet |
 | Mobile/Wi‑Fi Policy | 4 | wip | Auto-download Wi‑Fi/Ethernet-only via NWPathMonitor; manual downloads still allow cellular; broader cellular prefs later |
 | Background downloads | 5 | done | `URLSessionConfiguration.background`; AppDelegate `handleEventsForBackgroundURLSession`; task↔episode in `pending-downloads.json` |
 | Download log / errors | 3 | todo | lastError surfaced in UI |
@@ -103,6 +103,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Theme light/dark/auto | 5 | done | UserDefaults; `preferredColorScheme` system/light/dark |
 | Default playback speed | 5 | done | UserDefaults; applied on fresh episode start; mini-player marks Default |
 | Prefer stream vs download | 5 | done | UserDefaults; Prefer download / Prefer stream / Automatic; honored in `PlaybackService.play` |
+| Auto-delete after play | 4 | done | UserDefaults; deletes download file after mark played; defers while local file is active player item |
 | FF/Rewind seconds | 4 | todo | |
 | Refresh interval | 4 | done | UserDefaults presets: manual / 1h / 4h / 12h / 24h; due-check on launch + foreground → `refreshAllFeeds()`; BGAppRefreshTask stubbed (no `fetch` in Info.plist) |
 | Swipe actions | 3 | todo | |
