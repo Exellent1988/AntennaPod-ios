@@ -623,6 +623,89 @@ final class PodcastStore: ObservableObject {
         pendingAutoDeleteIds.remove(episodeId)
     }
 
+    // MARK: - Statistics (from playback.json)
+
+    /// Totals + per-feed top list derived from saved playback state (honest approximation).
+    var listeningStatistics: ListeningStatistics {
+        var played = 0
+        var inProgress = 0
+        var totalSeconds: Double = 0
+        var perFeed: [UUID: (title: String, played: Int, inProgress: Int, seconds: Double)] = [:]
+
+        for feed in feeds {
+            var feedPlayed = 0
+            var feedInProgress = 0
+            var feedSeconds: Double = 0
+            for episode in feed.episodes {
+                let state = playbackState(for: episode.id)
+                guard ListeningTimeEstimate.hasMeaningfulData(state) else { continue }
+                let secs = ListeningTimeEstimate.seconds(for: state)
+                if state.isPlayed {
+                    played += 1
+                    feedPlayed += 1
+                } else {
+                    inProgress += 1
+                    feedInProgress += 1
+                }
+                totalSeconds += secs
+                feedSeconds += secs
+            }
+            if feedPlayed > 0 || feedInProgress > 0 {
+                perFeed[feed.id] = (feed.title, feedPlayed, feedInProgress, feedSeconds)
+            }
+        }
+
+        // Queue-only episodes with playback state (same as History).
+        let knownEpisodeIds = Set(feeds.flatMap { $0.episodes.map(\.id) })
+        for episode in queue where !knownEpisodeIds.contains(episode.id) {
+            let state = playbackState(for: episode.id)
+            guard ListeningTimeEstimate.hasMeaningfulData(state) else { continue }
+            let secs = ListeningTimeEstimate.seconds(for: state)
+            if state.isPlayed {
+                played += 1
+            } else {
+                inProgress += 1
+            }
+            totalSeconds += secs
+            if let feed = feed(containingEpisodeId: episode.id) {
+                var entry = perFeed[feed.id] ?? (feed.title, 0, 0, 0)
+                if state.isPlayed {
+                    entry.played += 1
+                } else {
+                    entry.inProgress += 1
+                }
+                entry.seconds += secs
+                perFeed[feed.id] = entry
+            }
+        }
+
+        let top = perFeed.map { (id, v) in
+            FeedListeningStats(
+                id: id,
+                feedTitle: v.title,
+                playedEpisodeCount: v.played,
+                inProgressEpisodeCount: v.inProgress,
+                approximateListenedSeconds: v.seconds
+            )
+        }
+        .sorted { lhs, rhs in
+            if lhs.approximateListenedSeconds != rhs.approximateListenedSeconds {
+                return lhs.approximateListenedSeconds > rhs.approximateListenedSeconds
+            }
+            if lhs.playedEpisodeCount != rhs.playedEpisodeCount {
+                return lhs.playedEpisodeCount > rhs.playedEpisodeCount
+            }
+            return lhs.feedTitle.localizedCaseInsensitiveCompare(rhs.feedTitle) == .orderedAscending
+        }
+
+        return ListeningStatistics(
+            playedEpisodeCount: played,
+            inProgressEpisodeCount: inProgress,
+            approximateListenedSeconds: totalSeconds,
+            topPodcasts: top
+        )
+    }
+
     /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
     func refreshAllFeeds() async {
         lastError = nil

@@ -19,8 +19,8 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Subscriptions | 5 | wip | List + subscribe sheet |
 | Add podcast | 5 | wip | URL + Apple Podcasts + Podcast Index search; charts via Discover (Subscribe reuses feed URL pipeline) |
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
-| Statistics | 2 | todo | P3 |
-| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History), Queue, Downloads, Settings |
+| Statistics | 2 | done | Totals from `playback.json`: played count, approx listening time (played→duration / in-progress→position), per-feed top podcasts; Library + Settings; honest approximation footnote; Echo still separate |
+| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
 | Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync (P0/P1); more prefs later |
@@ -118,7 +118,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Statistics | 2 | todo | |
+| Statistics | 2 | done | Same as Navigation: derived from playback progress; no Echo / year-in-review |
 | Echo (Year in Review) | 2 | todo | |
 | Homescreen Widget | 1 | todo | WidgetKit |
 | CarPlay | 1 | todo | |

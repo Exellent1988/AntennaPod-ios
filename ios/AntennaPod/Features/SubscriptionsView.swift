@@ -83,6 +83,11 @@ struct SubscriptionsView: View {
                         Label("History", systemImage: "clock.arrow.circlepath")
                     }
                     NavigationLink {
+                        StatisticsView()
+                    } label: {
+                        Label("Statistics", systemImage: "chart.bar.doc.horizontal")
+                    }
+                    NavigationLink {
                         TopListsView()
                     } label: {
                         Label("Discover", systemImage: "chart.bar")

@@ -192,3 +192,53 @@ enum ChapterIndexing {
         return current
     }
 }
+
+/// Approximate listening time attributed to one episode from `playback.json`.
+/// Played → `durationSeconds` when known (position is cleared on mark-played);
+/// in-progress → `positionSeconds`. Not cumulative across rewinds / re-listens / speed.
+enum ListeningTimeEstimate {
+    static func seconds(for state: EpisodePlaybackState) -> Double {
+        if state.isPlayed {
+            if state.durationSeconds.isFinite, state.durationSeconds > 0 {
+                return state.durationSeconds
+            }
+            return 0
+        }
+        if state.positionSeconds > 1 {
+            return state.positionSeconds
+        }
+        return 0
+    }
+
+    static func hasMeaningfulData(_ state: EpisodePlaybackState) -> Bool {
+        state.isPlayed || state.positionSeconds > 1
+    }
+}
+
+/// Per-podcast rollup for Statistics (top list).
+struct FeedListeningStats: Identifiable, Hashable {
+    let id: UUID
+    let feedTitle: String
+    let playedEpisodeCount: Int
+    let inProgressEpisodeCount: Int
+    let approximateListenedSeconds: Double
+}
+
+/// Library-wide listening stats derived from `playback.json` (honest approximation).
+struct ListeningStatistics: Hashable {
+    var playedEpisodeCount: Int
+    var inProgressEpisodeCount: Int
+    var approximateListenedSeconds: Double
+    var topPodcasts: [FeedListeningStats]
+
+    var isEmpty: Bool {
+        playedEpisodeCount == 0 && inProgressEpisodeCount == 0
+    }
+
+    static let empty = ListeningStatistics(
+        playedEpisodeCount: 0,
+        inProgressEpisodeCount: 0,
+        approximateListenedSeconds: 0,
+        topPodcasts: []
+    )
+}

@@ -128,6 +128,13 @@ struct SettingsView: View {
                 storageSection
                 podcastIndexDiscoverySection
                 gpodderSyncSection
+                Section("Library") {
+                    NavigationLink {
+                        StatisticsView()
+                    } label: {
+                        Label("Statistics", systemImage: "chart.bar.doc.horizontal")
+                    }
+                }
                 OpmlImportExportSection()
             }
             .navigationTitle("Settings")

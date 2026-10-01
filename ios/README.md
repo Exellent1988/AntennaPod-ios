@@ -20,6 +20,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Home tab (Continue listening, Inbox / Queue previews, recently updated feeds; pull-to-refresh)
 - Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Archive all)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first)
+- Statistics (beta; Subscriptions → Library → Statistics + Settings; totals + top podcasts from `playback.json`; approx time)
 - Favorites / starred episodes (Subscriptions → Library → Favorites; star on EpisodeRow + full player; `favorites.json`; auto-delete skips favorites)
 - Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox swipe; Library → Archived; bulk Archive all in Inbox)
 - Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500; searchable title/feed filter; EpisodeRow actions)
@@ -27,7 +28,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, auto-delete after play, notify on new episodes / download errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, auto-delete after play, notify on new episodes / download errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, Statistics link)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -54,7 +55,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover, top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country), OPML, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover, top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Statistics), OPML, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -94,6 +95,18 @@ Local-only search over subscribed feeds and their episodes (title, feed title, f
 ## History
 
 **Subscriptions → Library → History** (no extra root tab). Lists episodes that are marked played or have progress (`positionSeconds > 1`), sorted by `lastPlayedAtEpochMs` descending. Rows show feed title and a relative last-played date; tap actions reuse `EpisodeRow` (play / download / queue / mark played / favorite). Swipe trailing **Remove** clears that episode’s playback state (leaves the feed row). Swipe leading **Mark unplayed** when played (episode drops out of History if there is no remaining progress). Root tabs stay at six (Home first).
+
+## Statistics
+
+**Subscriptions → Library → Statistics** (also **Settings → Library → Statistics**). Derived from existing `playback.json` — no separate cumulative `listenedSeconds` counter in this beta.
+
+- **Played episodes** — count of episodes with `isPlayed`.
+- **In progress** — episodes with progress (`positionSeconds > 1`) that are not marked played (shown when non-zero).
+- **Approx. listening time** — sum of estimates: **played** use saved `durationSeconds` (position is cleared on mark-played); **in-progress** use `positionSeconds`. Footnote on screen: does **not** count rewinds, speed, or re-listens.
+- **Top podcasts** — per-feed rollup sorted by approximate time, then play count.
+
+Empty state when there is no played / in-progress playback data. Echo / Year in Review remains todo.
+
 
 ## Favorites
 
