@@ -51,6 +51,12 @@ struct FeedDetailView: View {
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             Button {
+                                store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
+                            } label: {
+                                Label("Play Next", systemImage: "text.insert")
+                            }
+                            .tint(.teal)
+                            Button {
                                 store.enqueue(episode)
                             } label: {
                                 Label("Queue", systemImage: "text.append")
@@ -302,6 +308,11 @@ struct EpisodeRow: View {
                     state.isPlayed ? "Mark unplayed" : "Mark played",
                     systemImage: state.isPlayed ? "circle" : "checkmark.circle"
                 )
+            }
+            Button {
+                store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
+            } label: {
+                Label("Play Next", systemImage: "text.insert")
             }
             Button {
                 store.enqueue(episode)

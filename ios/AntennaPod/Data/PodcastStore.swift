@@ -269,6 +269,25 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// AntennaPod-style **Play Next**: place `episode` immediately after the currently
+    /// playing queue item (or at the head if nothing is playing / current is not queued).
+    /// If already in the queue, moves it (no duplicate). Persists via `queue` `didSet`.
+    ///
+    /// Continuous playback uses `nextQueueEpisode(after:)`: when current *is* in the queue,
+    /// Play Next becomes the auto-next item; when current is *not* queued, head-of-queue is
+    /// already what auto-next uses after finish (same honesty as append when current not queued).
+    func playNext(_ episode: PodcastEpisode, currentlyPlayingId: String?) {
+        queue.removeAll { $0.id == episode.id }
+        let insertIndex: Int
+        if let playingId = currentlyPlayingId,
+           let index = queue.firstIndex(where: { $0.id == playingId }) {
+            insertIndex = index + 1
+        } else {
+            insertIndex = 0
+        }
+        queue.insert(episode, at: min(insertIndex, queue.count))
+    }
+
     func removeFromQueue(_ episode: PodcastEpisode) {
         queue.removeAll { $0.id == episode.id }
     }

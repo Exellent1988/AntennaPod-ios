@@ -466,6 +466,13 @@ struct FullPlayerView: View {
             )
 
             Button {
+                store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
+            } label: {
+                Label("Play Next", systemImage: "text.insert")
+            }
+            .accessibilityLabel(String(localized: "Play Next"))
+
+            Button {
                 store.enqueue(episode)
             } label: {
                 Label("Queue", systemImage: "text.append")

@@ -172,6 +172,8 @@ Honest limits: not every screen/control audited; no custom rotor / reduce-motion
 
 **Queue** tab lists enqueued episodes (JSON under Application Support). Swipe trailing **Remove**, leading **Archive**. **Edit** enables drag reorder via `PodcastStore.moveQueue(from:to:)` (persists with `queue.json`). Continuous playback still advances with `nextQueueEpisode`.
 
+**Add to Queue** (`PodcastStore.enqueue`) appends if absent. **Play Next** (`PodcastStore.playNext(_:currentlyPlayingId:)`) moves/inserts immediately after the currently playing queue item, or at the **head** when nothing is playing / the current episode is not in the queue — so auto-next after finish still hits that head item (honest: same as today’s append semantics when current is not queued). Entry points: EpisodeRow context menu, Feed detail swipe, full player (alongside Queue).
+
 ## Library search
 
 Local-only search over subscribed feeds and their episodes (title, feed title, feed description) — distinct from Apple Podcasts / iTunes discovery in Add podcast. **Inbox** uses `.searchable` with a short debounce (~250 ms): empty query keeps the unplayed Inbox; non-empty shows Podcasts + Episodes sections. Matching feeds navigate to `FeedDetailView`; episodes reuse `EpisodeRow` (play / download / queue / mark played). **Subscriptions** also filters the feed list via searchable. Empty states when nothing matches.
@@ -248,7 +250,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 | Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`) |
 | Downloads | — | Delete download | — |
 | Inbox | Mark played | Archive | Toolbar Archive all |
-| Feed detail | Archive / Restore | Queue + Share | — |
+| Feed detail | Archive / Restore | Play Next + Queue + Share | EpisodeRow context: Play Next + Add to queue |
 | History | Mark unplayed (if played) | Remove playback state | — |
 | Favorites | Archive | Unfavorite | — |
 | Archived | — | Restore | — |
