@@ -300,7 +300,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -364,6 +364,7 @@ final class AppSettings: ObservableObject {
         static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
         static let volumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
+        static let stereoToMonoEnabled = "settings.stereoToMonoEnabled"
         static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
         static let continuousPlaybackEnabled = "settings.continuousPlaybackEnabled"
         static let showRemainingTime = "settings.showRemainingTime"
@@ -564,6 +565,14 @@ final class AppSettings: ObservableObject {
     @Published var skipSilenceEnabled: Bool {
         didSet {
             UserDefaults.standard.set(skipSilenceEnabled, forKey: Keys.skipSilenceEnabled)
+        }
+    }
+
+    /// When true, `PlaybackService` best-effort requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)`.
+    /// Default off. Route-dependent (system may ignore); keeps stock `AVPlayer` (video / PiP / Now Playing). **Not** Android ExoPlayer channel remix.
+    @Published var stereoToMonoEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(stereoToMonoEnabled, forKey: Keys.stereoToMonoEnabled)
         }
     }
 
@@ -793,6 +802,12 @@ final class AppSettings: ObservableObject {
         } else {
             // Default off; preference only — PlaybackService does not skip silence on AVPlayer.
             skipSilenceEnabled = false
+        }
+        if UserDefaults.standard.object(forKey: Keys.stereoToMonoEnabled) != nil {
+            stereoToMonoEnabled = UserDefaults.standard.bool(forKey: Keys.stereoToMonoEnabled)
+        } else {
+            // Default off: leave preferred output channel count alone (stereo routes stay stereo).
+            stereoToMonoEnabled = false
         }
         if UserDefaults.standard.object(forKey: Keys.keepScreenOnWhilePlaying) != nil {
             keepScreenOnWhilePlaying = UserDefaults.standard.bool(forKey: Keys.keepScreenOnWhilePlaying)
@@ -1026,6 +1041,7 @@ final class AppSettings: ObservableObject {
             playVideoAsAudioOnly: playVideoAsAudioOnly,
             volumeAdaptationEnabled: volumeAdaptationEnabled,
             skipSilenceEnabled: skipSilenceEnabled,
+            stereoToMonoEnabled: stereoToMonoEnabled,
             keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
             continuousPlaybackEnabled: continuousPlaybackEnabled,
             showRemainingTime: showRemainingTime,
@@ -1091,6 +1107,7 @@ final class AppSettings: ObservableObject {
         playVideoAsAudioOnly = snap.playVideoAsAudioOnly ?? false
         volumeAdaptationEnabled = snap.volumeAdaptationEnabled ?? false
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
+        stereoToMonoEnabled = snap.stereoToMonoEnabled ?? false
         keepScreenOnWhilePlaying = snap.keepScreenOnWhilePlaying ?? false
         continuousPlaybackEnabled = snap.continuousPlaybackEnabled ?? true
         showRemainingTime = snap.showRemainingTime ?? false
@@ -1168,6 +1185,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var volumeAdaptationEnabled: Bool? = false
     /// Absent in older backups → treated as off (preference only; no AVPlayer skip).
     var skipSilenceEnabled: Bool? = false
+    /// Absent in older backups → treated as off (stereo / system default channel count).
+    var stereoToMonoEnabled: Bool? = false
     /// Absent in older backups → treated as off (allow idle lock).
     var keepScreenOnWhilePlaying: Bool? = false
     /// Absent in older backups → treated as on (auto-next from queue).

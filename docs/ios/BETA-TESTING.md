@@ -52,6 +52,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Keep screen on (Settings; idle timer während Play) | ☐ Keep screen on (Settings; idle timer while playing) |
 | ☐ Continuous playback Toggle (an → Queue-Next; aus → Stop ohne Advance) | ☐ Continuous playback toggle (on → queue next; off → stop, no advance) |
 | ☐ Show remaining time (Settings; Mini/Full rechts −Rest; Tippen Full-Label) | ☐ Show remaining time (Settings; mini/full right −remaining; tap full label) |
+| ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; Route kann ignorieren) | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; route may ignore) |
 | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; Pause ≥1s → Seek zurück; kein Cold-Play) | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; pause ≥1s → seek back; not on cold play) |
 | ☐ Progress speichern / Resume | ☐ Progress save / resume |
 | ☐ Mark played / unplayed (+ Smart mark Settings Off/15/30/60/120, default 30) | ☐ Mark played / unplayed (+ Smart mark Settings Off/15/30/60/120, default 30) |
@@ -162,6 +163,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Skip silence: preference only — not applied on stock AVPlayer.
 - Volume adaptation: iOS session mode (`.spokenAudio`), nicht Android LoudnessEnhancer.  
   Volume adaptation: iOS session mode, not Android loudness gain.
+- Stereo to mono: Best-Effort `setPreferredOutputNumberOfChannels(1)`; Route kann ignorieren; kein ExoPlayer-Remix; AVPlayer bleibt.  
+  Stereo to mono: best-effort `setPreferredOutputNumberOfChannels(1)`; route may ignore; not ExoPlayer remix; AVPlayer kept.
 - Keep screen on: nur Idle-Timer (`isIdleTimerDisabled`); kein Low-Power-Override / keine Helligkeit; PiP/Hintergrund-Audio unverändert.  
   Keep screen on: idle timer only; no Low Power Mode override / no brightness; PiP/background audio unchanged.
 - Continuous playback: Toggle Standard **an**; aus = Episode-Ende ohne Queue-Advance (Mark played / Progress bleiben); Sleep-Timer Ende der Episode stoppt weiterhin ohne Advance.  

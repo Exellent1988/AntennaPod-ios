@@ -669,8 +669,9 @@ final class PlaybackService: ObservableObject {
         player = nil
     }
 
-    /// Re-apply `AVAudioSession` category/mode after Settings changes (volume adaptation / video→audio-only)
-    /// while a player item is loaded. No-op when nothing is playing or loaded.
+    /// Re-apply `AVAudioSession` category/mode + preferred output channels after Settings changes
+    /// (volume adaptation / video→audio-only / stereo→mono) while a player item is loaded.
+    /// No-op when nothing is playing or loaded.
     func applyAudioSessionConfiguration() {
         guard player != nil else { return }
         activateSession()
@@ -709,6 +710,7 @@ final class PlaybackService: ObservableObject {
         let mode = preferredAudioSessionMode()
         do {
             try session.setCategory(.playback, mode: mode, options: [])
+            applyPreferredOutputChannelCount(on: session)
             try session.setActive(true)
         } catch {
             // `.spokenAudio` should work with `.playback`; if the mode is rejected, fall back to `.voiceChat`
@@ -717,12 +719,32 @@ final class PlaybackService: ObservableObject {
                 settings?.volumeAdaptationEnabled == true ? .voiceChat : .default
             do {
                 try session.setCategory(.playback, mode: fallback, options: [])
+                applyPreferredOutputChannelCount(on: session)
                 try session.setActive(true)
             } catch {
             }
         }
         UIApplication.shared.beginReceivingRemoteControlEvents()
         setupAudioSessionObserversIfNeeded()
+    }
+
+    /// Best-effort mono / stereo preference via `setPreferredOutputNumberOfChannels`.
+    /// When Stereo to mono is on → request 1 channel; when off → request up to 2 (or max available).
+    /// The system may ignore this depending on the route (speaker, BT, CarPlay, etc.). Keeps stock AVPlayer.
+    private func applyPreferredOutputChannelCount(on session: AVAudioSession) {
+        let maxChannels = session.maximumOutputNumberOfChannels
+        guard maxChannels >= 1 else { return }
+        let preferred: Int
+        if settings?.stereoToMonoEnabled == true {
+            preferred = 1
+        } else {
+            preferred = min(2, maxChannels)
+        }
+        do {
+            try session.setPreferredOutputNumberOfChannels(preferred)
+        } catch {
+            // Route may reject preferred channel count — best-effort only; do not fail playback.
+        }
     }
 
 

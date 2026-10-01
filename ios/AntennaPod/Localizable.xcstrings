@@ -7191,6 +7191,57 @@
           }
         }
       }
+    },
+    "Stereo to mono": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stereo to mono"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stereo zu Mono"
+          }
+        }
+      }
+    },
+    "Best-effort mono output via AVAudioSession preferred channels. Route-dependent. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best-effort mono output via AVAudioSession preferred channels. Route-dependent. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best-Effort-Mono-Ausgabe über AVAudioSession bevorzugte Kanäle. Routenabhängig. Standard aus."
+          }
+        }
+      }
+    },
+    "When on, requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)` (restores up to 2 when off). **Best-effort** — the system may ignore this depending on the route (built-in speaker, Bluetooth, CarPlay, etc.). Keeps stock `AVPlayer` (video surface, PiP, Now Playing). Not Android ExoPlayer stereo→mono remix. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)` (restores up to 2 when off). **Best-effort** — the system may ignore this depending on the route (built-in speaker, Bluetooth, CarPlay, etc.). Keeps stock `AVPlayer` (video surface, PiP, Now Playing). Not Android ExoPlayer stereo→mono remix. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, fordert Mono-Ausgabe über `AVAudioSession.setPreferredOutputNumberOfChannels(1)` an (aus: bis zu 2 Kanäle). **Best Effort** — das System kann je nach Route (eingebauter Lautsprecher, Bluetooth, CarPlay usw.) ignorieren. Behält den Standard-`AVPlayer` (Videofläche, PiP, Now Playing). Kein Android-ExoPlayer-Stereo→Mono-Remix. Standard aus."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

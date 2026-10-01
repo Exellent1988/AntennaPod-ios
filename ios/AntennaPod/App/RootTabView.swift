@@ -76,6 +76,9 @@ struct RootTabView: View {
         .onChange(of: settings.volumeAdaptationEnabled) { _, _ in
             playback.applyAudioSessionConfiguration()
         }
+        .onChange(of: settings.stereoToMonoEnabled) { _, _ in
+            playback.applyAudioSessionConfiguration()
+        }
         .onChange(of: settings.playVideoAsAudioOnly) { _, _ in
             playback.applyAudioSessionConfiguration()
         }
