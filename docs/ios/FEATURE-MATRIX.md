@@ -121,9 +121,9 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Statistics | 2 | done | Same as Navigation: derived from playback progress |
 | Echo (Year in Review) | 2 | done | **Beta lite**: current calendar year (device calendar); played count via `lastPlayedAt`; approx listening time + top podcasts from `playback.json`; favorites this year from `favorites.json`; Library + Settings; empty state; ShareLink text; same approximation limits as Statistics |
 | Homescreen Widget | 1 | done | **Beta lite**: WidgetKit Continue listening (episode title + feed) from App Group `UserDefaults` snapshot written on playback/queue/progress changes; tap → `antennapod://play` (`PlaybackDeepLinkRouter`); empty: “Open AntennaPod to continue”. Snapshot may be stale; no live scrubber; needs App Group entitlement + signing for device. XcodeGen target `AntennaPodWidget` |
-| CarPlay | 1 | todo | |
+| CarPlay | 1 | partial | **Honest**: system Now Playing / remotes (`MPNowPlayingInfoCenter` + `MPRemoteCommandCenter` play/pause/toggle/skip±/seek + next/prev→skip; `AVAudioSession` `.playback`; `UIBackgroundModes` audio). **No** custom CarPlay scene / `CPTemplate` / CarPlay audio entitlement / `UIBrowsableContent` |
 | Siri Shortcuts | 1 | done | **Lite**: App Intents + AppShortcutsProvider (Play/Pause, Skip forward/back) open app; URL schemes `antennapod://play|pause|toggle|skip-forward|skip-back` handled in-app via PlaybackService. Not background-only / no App Group shared store; needs current episode loaded |
-| Apple Watch companion | 1 | todo | |
+| Apple Watch companion | 1 | todo | no watchOS target yet — not a fake companion |
 | Chromecast | 1 | n/a | AirPlay statt Cast |
 | Rating prompt | 1 | done | **Optional**: after 10 successful mark-played (manual or finish), once per install `AppStore.requestReview(in:)`; Settings toggle default on + Reset for testing; honest that iOS may suppress sheet / system limits |
 

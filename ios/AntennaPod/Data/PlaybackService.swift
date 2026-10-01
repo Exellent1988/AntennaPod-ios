@@ -85,6 +85,11 @@ final class PlaybackService: ObservableObject {
     /// Skip-outro fired once per episode play session (avoids observer re-entry / loops).
     private var didTriggerSkipOutroForSession = false
 
+    init() {
+        setupRemoteCommandsIfNeeded()
+        UIApplication.shared.beginReceivingRemoteControlEvents()
+    }
+
     /// Starts or switches playback. Returns `false` when streaming is blocked by Wi‑Fi-only policy
     /// (current player left unchanged; `lastError` set for UI).
     @discardableResult
@@ -187,6 +192,7 @@ final class PlaybackService: ObservableObject {
             persistProgress(force: true)
             pauseSleepTimerCountdown()
         } else {
+            activateSession()
             player.play()
             player.rate = rate
             isPlaying = true
@@ -747,6 +753,8 @@ final class PlaybackService: ObservableObject {
 
     // MARK: - Now Playing / remote commands
 
+    /// Lockscreen, Control Center, Bluetooth, and system Now Playing (incl. CarPlay audio surface).
+    /// No custom CPTemplate / CarPlay scene — that needs Apple CarPlay audio entitlement.
     private func setupRemoteCommandsIfNeeded() {
         guard !remoteCommandsConfigured else { return }
         remoteCommandsConfigured = true
@@ -802,6 +810,25 @@ final class PlaybackService: ObservableObject {
 
         applyRemoteSkipIntervals()
 
+        // Steering-wheel next/previous often fire these instead of skip+/-; map to Settings intervals.
+        center.nextTrackCommand.isEnabled = true
+        center.nextTrackCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                self.seek(bySeconds: self.fastForwardSeconds)
+            }
+            return .success
+        }
+
+        center.previousTrackCommand.isEnabled = true
+        center.previousTrackCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                self.seek(bySeconds: -self.rewindSeconds)
+            }
+            return .success
+        }
+
         center.changePlaybackPositionCommand.isEnabled = true
         center.changePlaybackPositionCommand.addTarget { [weak self] event in
             guard let positionEvent = event as? MPChangePlaybackPositionCommandEvent else {
@@ -841,6 +868,8 @@ final class PlaybackService: ObservableObject {
         info[MPMediaItemPropertyTitle] = episode.title
         info[MPMediaItemPropertyArtist] = feed?.title ?? "Podcast"
         info[MPMediaItemPropertyAlbumTitle] = feed?.title ?? "Podcast"
+        info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
+        info[MPNowPlayingInfoPropertyIsLiveStream] = false
         if durationSeconds.isFinite, durationSeconds > 0 {
             info[MPMediaItemPropertyPlaybackDuration] = durationSeconds
         }

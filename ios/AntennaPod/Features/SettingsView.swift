@@ -170,6 +170,7 @@ struct SettingsView: View {
                 appStoreRatingSection
                 siriShortcutsSection
                 homescreenWidgetSection
+                carPlaySection
                 Section("About") {
                     NavigationLink {
                         AboutView()
@@ -642,6 +643,17 @@ struct SettingsView: View {
                 .foregroundStyle(.secondary)
         } header: {
             Text("Homescreen widget")
+        }
+    }
+
+    @ViewBuilder
+    private var carPlaySection: some View {
+        Section {
+            Text("CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. No Apple Watch companion target yet.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("CarPlay")
         }
     }
 

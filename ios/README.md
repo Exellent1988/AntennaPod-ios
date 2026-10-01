@@ -19,7 +19,8 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Skip silence (Settings toggle only; not applied on stock AVPlayer — needs custom audio graph)
 - Chapters (PSC / Podcast Index from feed; list in full player; tap to seek)
 - Transcripts (beta; feed `podcast:transcript` URL only — fetch VTT/SRT/JSON, scrollable sheet, tap cue seek; no Whisper/STT)
-- Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip using Settings intervals)
+- Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip/seek using Settings intervals)
+- CarPlay (honest partial: system Now Playing / remotes + background audio; **no** custom CPTemplate / CarPlay entitlement)
 - Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
 - Sleep timer (clock presets + end of episode, fade-out)
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch)
@@ -41,7 +42,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, volume adaptation, skip silence preference, playback source, play video as audio only, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors / sync errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, App Store rating prompt, Siri/Shortcuts note, Homescreen widget note, About)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, volume adaptation, skip silence preference, playback source, play video as audio only, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors / sync errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, App Store rating prompt, Siri/Shortcuts note, Homescreen widget note, CarPlay note, About)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -78,7 +79,7 @@ ios/
     ├── AntennaPod.entitlements   # App Group
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -92,7 +93,7 @@ open AntennaPod.xcodeproj
 
 **Homescreen widget:** XcodeGen creates `AntennaPod` + embedded `AntennaPodWidget`. Select a Development Team, ensure App Group `group.de.danoeh.antennapod.ios` is enabled for **both** targets (entitlements files are already listed), build/run on a device or simulator, then add **Continue listening** from the iOS home-screen widget gallery. Without a signing team / App Group capability on the Apple developer portal, the extension may fail to install — shared snapshot code still builds into the app.
 
-See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
+See `docs/ios/PLAN.md`, `docs/ios/FEATURE-MATRIX.md`, and `docs/ios/BETA-TESTING.md` (manual beta checklist).
 
 ## Persistence
 
@@ -264,6 +265,18 @@ Feed-item chapters are parsed by the Swift `XMLParser` path (`NativeRssAtomParse
 
 `PlaybackService` observes `AVAudioSession` interruption notifications (pause on began; resume on ended when `shouldResume`) and route changes (pause when the old output is unavailable — headphones unplugged). Bluetooth headset play/pause buttons stay on `MPRemoteCommandCenter` / Now Playing; interruption handling only pauses or resumes `AVPlayer` and refreshes Now Playing info.
 
+## CarPlay (honest partial)
+
+Audio apps often appear on CarPlay through **system Now Playing** once they publish `MPNowPlayingInfoCenter` metadata and handle `MPRemoteCommandCenter` (already used for Lockscreen). This fork hardens that path; it does **not** ship a custom CarPlay UI.
+
+| Already in place | Notes |
+|------------------|--------|
+| `UIBackgroundModes` → `audio` | Set in `Info.plist` (background playback + Now Playing eligibility) |
+| `AVAudioSession` category `.playback` | Activated on play / resume; mode may be `.spokenAudio` / `.default` / `.moviePlayback` per Settings |
+| Remotes | play / pause / toggle, skip± (Settings intervals), seek scrub; next/previous track mapped to skip± for steering wheels |
+| Now Playing info | title, artist/album (feed), artwork, duration, elapsed, rate; media type audio |
+
+**Not included (on purpose):** `CPTemplate` / `CPTemplateApplicationScene`, CarPlay audio entitlement (`com.apple.developer.carplay-audio`), or `UIBrowsableContent` / browsable-content APIs — those need Apple entitlement or are the wrong path for a podcast Now Playing surface. Matrix status: **partial**.
 
 ## Feed refresh / Keep updated
 

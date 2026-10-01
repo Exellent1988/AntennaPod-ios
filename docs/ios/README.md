@@ -7,5 +7,6 @@ Dokumentation für den iOS-Port mit schmalem KMP-Kern. Liegt nur im Fork; Upstre
 | [PLAN.md](PLAN.md) | Architektur-Empfehlung, Phasen, Risiken |
 | [FEATURE-MATRIX.md](FEATURE-MATRIX.md) | Feature-Parität mit Gewichten und Status |
 | [MERGE-PLAYBOOK.md](MERGE-PLAYBOOK.md) | Upstream mergen, Fork-only-Pfade, CI |
+| [BETA-TESTING.md](BETA-TESTING.md) | Beta-Checkliste (DE/EN) für manuelle Tests |
 
 Verwandte Ordner: `shared/kmp/`, `shared/specs/`, `ios/`.
