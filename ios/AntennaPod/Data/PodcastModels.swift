@@ -18,6 +18,151 @@ struct PodcastChapter: Identifiable, Hashable, Codable {
 }
 
 
+
+/// Podcast Index `podcast:trailer` — channel-level teaser media when the feed provides it.
+/// Element text = title (required to keep); attributes `url`, `pubdate`, optional `length` / `type` / `season`.
+/// **Feed-provided only** — never invent trailers. Distinct from item `itunes:episodeType=trailer` (EpisodeRow badge).
+struct PodcastTrailer: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields.
+    var id: String { "\(title)|\(url ?? "")|\(pubDate ?? "")|\(season.map(String.init) ?? "")" }
+    /// Trailer title from element text (required by Podcast Index; may be truncated ~128 chars by aggregators).
+    var title: String
+    /// Raw `pubdate` attribute (RFC2822) when provided.
+    var pubDate: String?
+    /// Parsed `pubdate` epoch ms when parsable; nil when missing/unparsable — never invent.
+    var pubDateEpochMs: Int64?
+    /// Media URL string from `url` attribute when provided.
+    var url: String?
+    /// Optional file size in bytes from `length`.
+    var length: Int64?
+    /// Optional MIME type from `type` (e.g. audio/mp3, video/mp4).
+    var type: String?
+    /// Optional season number this trailer previews.
+    var season: Int?
+
+    init(
+        title: String,
+        pubDate: String? = nil,
+        pubDateEpochMs: Int64? = nil,
+        url: String? = nil,
+        length: Int64? = nil,
+        type: String? = nil,
+        season: Int? = nil
+    ) {
+        self.title = title
+        self.pubDate = pubDate
+        self.pubDateEpochMs = pubDateEpochMs
+        self.url = url
+        self.length = length
+        self.type = type
+        self.season = season
+    }
+
+    /// Trimmed non-empty title. Nil when blank.
+    var displayTitle: String? {
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) media URL from feed `url` only. Nil when missing / non-http(s).
+    var mediaURL: URL? {
+        guard let url else { return nil }
+        let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let parsed = URL(string: trimmed) else { return nil }
+        let scheme = parsed.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return parsed
+    }
+
+    /// True when MIME or URL extension looks like audio/video enclosure media (prefer in-app play).
+    var looksLikePlayableMedia: Bool {
+        if let mime = type?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(), !mime.isEmpty {
+            if mime.hasPrefix("audio/") || mime.hasPrefix("video/") {
+                return true
+            }
+        }
+        return Self.mediaFileExtension(from: url) != nil
+    }
+
+    /// Prefer `PlaybackService` when http(s) URL looks enclosure-like; otherwise openURL for other http(s).
+    var prefersInAppPlayback: Bool {
+        mediaURL != nil && looksLikePlayableMedia
+    }
+
+    private static let mediaExtensions: Set<String> = [
+        "mp3", "m4a", "aac", "ogg", "opus", "wav", "flac",
+        "mp4", "m4v", "mov", "webm"
+    ]
+
+    private static func mediaFileExtension(from urlString: String?) -> String? {
+        guard let urlString, !urlString.isEmpty else { return nil }
+        let path: String
+        if let parsed = URL(string: urlString) {
+            path = parsed.path
+        } else {
+            path = urlString.split(separator: "?", maxSplits: 1).first.map(String.init) ?? urlString
+        }
+        let ext = (path as NSString).pathExtension.lowercased()
+        return mediaExtensions.contains(ext) ? ext : nil
+    }
+
+    /// Synthetic episode for `PlaybackService.play` — not added to `PodcastFeed.episodes`.
+    /// Id embeds feed UUID so Now Playing can resolve artwork/title via `feed(containingEpisodeId:)`.
+    func asPlaybackEpisode(feedId: UUID) -> PodcastEpisode? {
+        guard let media = mediaURL else { return nil }
+        let titleText = displayTitle ?? title
+        return PodcastEpisode(
+            id: "podcast-trailer:\(feedId.uuidString):\(media.absoluteString)",
+            title: titleText,
+            link: nil,
+            pubDateEpochMs: pubDateEpochMs,
+            downloadUrl: media.absoluteString,
+            mimeType: type,
+            size: length ?? 0,
+            transcriptUrl: nil,
+            transcriptType: nil,
+            chapters: [],
+            podcastIndexChapterUrl: nil,
+            descriptionText: nil,
+            durationSeconds: 0,
+            seasonNumber: season,
+            episodeNumber: nil,
+            episodeType: "trailer",
+            isExplicit: false,
+            people: []
+        )
+    }
+}
+
+/// Display helpers for channel `podcast:trailer` (feed-provided only).
+enum PodcastTrailerDisplay {
+    /// Non-empty titled trailers in feed order (no invented entries).
+    static func valid(_ trailers: [PodcastTrailer]) -> [PodcastTrailer] {
+        trailers.compactMap { trailer in
+            guard let title = trailer.displayTitle else { return nil }
+            return PodcastTrailer(
+                title: title,
+                pubDate: trailer.pubDate,
+                pubDateEpochMs: trailer.pubDateEpochMs,
+                url: trailer.url,
+                length: trailer.length,
+                type: trailer.type,
+                season: trailer.season
+            )
+        }
+    }
+
+    /// Most recent trailer by `pubDateEpochMs` (Podcast Index: choose latest when several).
+    /// Missing/unparsable dates sort as oldest. Nil when none.
+    static func mostRecent(_ trailers: [PodcastTrailer]) -> PodcastTrailer? {
+        let list = valid(trailers)
+        guard !list.isEmpty else { return nil }
+        return list.max { lhs, rhs in
+            (lhs.pubDateEpochMs ?? Int64.min) < (rhs.pubDateEpochMs ?? Int64.min)
+        }
+    }
+}
+
 /// Podcast Index `podcast:person` — feed-provided credits only (never invent people).
 /// Name is element text; optional `role` / `group` / `href` / `img` attributes when set.
 /// Spec defaults (host/cast) are **not** assumed here — UI shows role only when the feed set it.
@@ -324,6 +469,10 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel-level Podcast Index `podcast:person` entries when the feed provides them.
     /// Empty when absent — never invent people; UI hides when empty.
     var people: [PodcastPerson]
+    /// Channel-level Podcast Index `podcast:trailer` entries when the feed provides them.
+    /// Empty when absent — never invent trailers; UI hides when empty.
+    /// Distinct from item `itunes:episodeType=trailer` (EpisodeRow Trailer badge).
+    var trailers: [PodcastTrailer]
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -401,6 +550,16 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastPeopleDisplay.valid(people)
     }
 
+    /// Non-empty titled channel `podcast:trailer` entries (hide when empty — never invent).
+    var displayTrailers: [PodcastTrailer] {
+        PodcastTrailerDisplay.valid(trailers)
+    }
+
+    /// Most recent channel trailer by pubdate (Podcast Index multi-trailer rule). Nil when none.
+    var displayTrailer: PodcastTrailer? {
+        PodcastTrailerDisplay.mostRecent(trailers)
+    }
+
     init(
         id: UUID,
         title: String,
@@ -418,6 +577,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         lockedOwner: String? = nil,
         podcastGuid: String? = nil,
         people: [PodcastPerson] = [],
+        trailers: [PodcastTrailer] = [],
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -436,6 +596,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.lockedOwner = lockedOwner
         self.podcastGuid = podcastGuid
         self.people = people
+        self.trailers = trailers
         self.episodes = episodes
     }
 
@@ -457,11 +618,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         lockedOwner = try c.decodeIfPresent(String.self, forKey: .lockedOwner)
         podcastGuid = try c.decodeIfPresent(String.self, forKey: .podcastGuid)
         people = try c.decodeIfPresent([PodcastPerson].self, forKey: .people) ?? []
+        trailers = try c.decodeIfPresent([PodcastTrailer].self, forKey: .trailers) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, episodes
     }
 }
 

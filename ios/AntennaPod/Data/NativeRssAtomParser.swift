@@ -41,6 +41,15 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var podcastGuid: String?
     /// Channel podcast:person — feed-provided only; never invent people or default role/group.
     private var channelPeople: [PodcastPerson] = []
+    /// Channel podcast:trailer — feed-provided only; never invent trailers.
+    private var channelTrailers: [PodcastTrailer] = []
+    /// Capturing podcast:trailer element text (title) + pending attributes.
+    private var capturingTrailer = false
+    private var pendingTrailerPubDate: String?
+    private var pendingTrailerUrl: String?
+    private var pendingTrailerLength: Int64?
+    private var pendingTrailerType: String?
+    private var pendingTrailerSeason: Int?
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -120,6 +129,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             lockedOwner: lockedOwnerAttr,
             podcastGuid: podcastGuid,
             people: channelPeople,
+            trailers: channelTrailers,
             episodes: episodes
         )
     }
@@ -304,6 +314,28 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             pendingPersonGroup = Self.nonEmptyAttr(attributeDict["group"] ?? attributeDict["Group"])
             pendingPersonHref = Self.nonEmptyAttr(attributeDict["href"] ?? attributeDict["url"])
             pendingPersonImg = Self.nonEmptyAttr(attributeDict["img"] ?? attributeDict["image"])
+        case "trailer":
+            // Podcast Index: <podcast:trailer pubdate="…" url="…" length="…" type="…" season="…">Title</podcast:trailer>
+            // Channel-level only. Title (element text) required to keep; url/pubdate/length/type/season optional here —
+            // never invent trailers. Distinct from item itunes:episodeType=trailer.
+            if !inItem {
+                capturingTrailer = true
+                pendingTrailerPubDate = Self.nonEmptyAttr(attributeDict["pubdate"] ?? attributeDict["pubDate"])
+                pendingTrailerUrl = Self.nonEmptyAttr(attributeDict["url"] ?? attributeDict["href"])
+                if let rawLen = Self.nonEmptyAttr(attributeDict["length"] ?? attributeDict["fileSize"]),
+                   let len = Int64(rawLen) {
+                    pendingTrailerLength = len
+                } else {
+                    pendingTrailerLength = nil
+                }
+                pendingTrailerType = Self.nonEmptyAttr(attributeDict["type"])
+                if let rawSeason = Self.nonEmptyAttr(attributeDict["season"]),
+                   let season = ItunesSeasonEpisodeParsing.nonNegativeInt(from: rawSeason) {
+                    pendingTrailerSeason = season
+                } else {
+                    pendingTrailerSeason = nil
+                }
+            }
         default:
             break
         }
@@ -475,6 +507,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 }
             case "person":
                 finishPerson(text: text, intoItem: false)
+            case "trailer":
+                finishTrailer(text: text)
             case "id":
                 break
             default:
@@ -514,6 +548,33 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         } else {
             channelPeople.append(person)
         }
+    }
+
+    /// Finish a channel podcast:trailer — append when title non-empty; never invent.
+    private func finishTrailer(text: String) {
+        defer {
+            capturingTrailer = false
+            pendingTrailerPubDate = nil
+            pendingTrailerUrl = nil
+            pendingTrailerLength = nil
+            pendingTrailerType = nil
+            pendingTrailerSeason = nil
+        }
+        guard capturingTrailer else { return }
+        let title = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty else { return }
+        let pub = pendingTrailerPubDate
+        channelTrailers.append(
+            PodcastTrailer(
+                title: title,
+                pubDate: pub,
+                pubDateEpochMs: FeedDateParsing.epochMs(from: pub),
+                url: pendingTrailerUrl,
+                length: pendingTrailerLength,
+                type: pendingTrailerType,
+                season: pendingTrailerSeason
+            )
+        )
     }
 
     private func localName(_ name: String) -> String {

@@ -64,6 +64,12 @@ struct FeedDetailView: View {
         liveFeed.displayPeople
     }
 
+    /// Most recent channel podcast:trailer when the feed provided one — hide when missing (never invent).
+    /// Distinct from item itunes:episodeType=trailer (EpisodeRow badge).
+    private var displayTrailer: PodcastTrailer? {
+        liveFeed.displayTrailer
+    }
+
     /// Podcast Index `podcast:guid` when the feed provided it — hide when missing (never invent).
     private var displayPodcastGuid: String? {
         liveFeed.displayPodcastGuid
@@ -302,6 +308,14 @@ struct FeedDetailView: View {
             if !displayPeople.isEmpty {
                 Section {
                     PodcastPeopleListView(people: displayPeople)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:trailer — title + Play (enclosure-like http(s) via PlaybackService) or Open URL; hide when none.
+            // Distinct from itunes:episodeType=trailer on items (EpisodeRow Trailer badge).
+            if let trailer = displayTrailer {
+                Section {
+                    feedTrailerRow(trailer)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -682,6 +696,66 @@ struct FeedDetailView: View {
         copyPodcastGuidFeedbackTick += 1
         showPodcastGuidCopied = true
     }
+
+    /// Channel podcast:trailer row — title (+ optional season); Play via PlaybackService when enclosure-like, else openURL.
+    @ViewBuilder
+    private func feedTrailerRow(_ trailer: PodcastTrailer) -> some View {
+        let title = trailer.displayTitle ?? trailer.title
+        VStack(alignment: .leading, spacing: 8) {
+            Text(String(localized: "Trailer"))
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .accessibilityAddTraits(.isHeader)
+
+            Text(title)
+                .font(.subheadline)
+                .foregroundStyle(.primary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let season = trailer.season {
+                Text(String(localized: "Season \(season)"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            if trailer.prefersInAppPlayback {
+                Button {
+                    playOrOpenTrailer(trailer)
+                } label: {
+                    Label("Play trailer", systemImage: "play.fill")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Play trailer"))
+                .accessibilityHint(String(localized: "Plays the podcast trailer from the feed"))
+            } else if trailer.mediaURL != nil {
+                Button {
+                    playOrOpenTrailer(trailer)
+                } label: {
+                    Label("Open trailer", systemImage: "safari")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Open trailer"))
+                .accessibilityHint(String(localized: "Opens the trailer URL in the system browser"))
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .contain)
+    }
+
+    /// Prefer in-app play for enclosure-like http(s) media; fall back to system browser for other http(s).
+    /// Uses `fromBeginning: true` so feed skip-intro does not clip the trailer.
+    private func playOrOpenTrailer(_ trailer: PodcastTrailer) {
+        if trailer.prefersInAppPlayback,
+           let episode = trailer.asPlaybackEpisode(feedId: liveFeed.id) {
+            if playback.play(episode: episode, fromBeginning: true) {
+                return
+            }
+        }
+        if let url = trailer.mediaURL {
+            openURL(url)
+        }
+    }
+
 
     private func scheduleFilter(for term: String) {
         debounceTask?.cancel()

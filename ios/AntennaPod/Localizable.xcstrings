@@ -14811,6 +14811,78 @@
         }
       },
       "comment": "VoiceOver label for a podcast:person with name and role. Unused if Swift stores interpolated key."
+    },
+    "Play trailer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play trailer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer abspielen"
+          }
+        }
+      },
+      "comment": "Feed detail button: play channel podcast:trailer media via PlaybackService. Hidden when no playable URL."
+    },
+    "Open trailer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open trailer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer öffnen"
+          }
+        }
+      },
+      "comment": "Feed detail button: open non-enclosure-like podcast:trailer http(s) URL in system browser."
+    },
+    "Plays the podcast trailer from the feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays the podcast trailer from the feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt den Podcast-Trailer aus dem Feed ab"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Play trailer on Feed detail."
+    },
+    "Opens the trailer URL in the system browser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the trailer URL in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Trailer-URL im Systembrowser"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Open trailer on Feed detail."
     }
   },
   "version": "1.0"

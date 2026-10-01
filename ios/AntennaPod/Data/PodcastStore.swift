@@ -551,9 +551,21 @@ final class PodcastStore: ObservableObject {
 
     /// Feed that owns the episode (for Now Playing artist / artwork).
     func feed(containingEpisodeId episodeId: String) -> PodcastFeed? {
-        feeds.first { feed in
+        if let feed = feeds.first(where: { feed in
             feed.episodes.contains { $0.id == episodeId }
+        }) {
+            return feed
         }
+        // Synthetic channel podcast:trailer playback ids: podcast-trailer:<feedUUID>:<mediaURL>
+        // so Now Playing can resolve artwork / podcast title without adding trailer to episodes[].
+        if episodeId.hasPrefix("podcast-trailer:") {
+            let parts = episodeId.split(separator: ":", maxSplits: 2, omittingEmptySubsequences: false)
+            // ["podcast-trailer", "<uuid>", "<url…>"]
+            if parts.count >= 2, let feedId = UUID(uuidString: String(parts[1])) {
+                return feeds.first { $0.id == feedId }
+            }
+        }
+        return nil
     }
 
     /// Episode from subscriptions (preferred over a stale queue / player copy for chapters).
