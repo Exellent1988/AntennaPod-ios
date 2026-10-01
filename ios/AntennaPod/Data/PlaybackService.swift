@@ -379,14 +379,37 @@ final class PlaybackService: ObservableObject {
         guard isSleepTimerActive else { return nil }
         switch sleepTimerMode {
         case .endOfEpisode:
-            return "End of ep."
+            return String(localized: "End of ep.")
         case .clock:
             if let remaining = sleepTimerRemainingSeconds {
                 return formatCountdown(remaining)
             }
-            return "Sleep"
+            return String(localized: "Sleep")
         case .none:
             return nil
+        }
+    }
+
+    /// VoiceOver label for mini / full player sleep controls (EN/DE catalog).
+    /// Uses existing `sleepTimerRemainingSeconds` / mode — no separate timer.
+    var sleepTimerAccessibilityLabel: String {
+        guard isSleepTimerActive else {
+            return String(localized: "Sleep timer")
+        }
+        switch sleepTimerMode {
+        case .endOfEpisode:
+            return String(localized: "Sleep timer, end of episode")
+        case .clock:
+            guard let remaining = sleepTimerRemainingSeconds else {
+                return String(localized: "Sleep timer")
+            }
+            if remaining < 60 {
+                return String(localized: "Sleep timer, less than 1 minute remaining")
+            }
+            let minutes = Int((remaining / 60.0).rounded(.up))
+            return String(localized: "Sleep timer, \(minutes) minutes remaining")
+        case .none:
+            return String(localized: "Sleep timer")
         }
     }
 

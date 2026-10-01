@@ -52,7 +52,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Archivieren / Wiederherstellen (Full secondary; EpisodeRow; sofort via `archived.json`; Inbox ausblenden) | ☐ Archive / restore (Full secondary; EpisodeRow; immediate via `archived.json`; hides from Inbox) |
 | ☐ Full Player Download (nicht geladen → Laden; läuft → Abbrechen; geladen → Download löschen; kein Confirm; lokal-Ordner ausgeblendet) | ☐ Full Player download (not downloaded → Download; in progress → Cancel; downloaded → Delete download; no confirm; hidden for local-folder) |
 | ☐ Geschwindigkeit Tippen = nächste Preset (0.8…2.0 Wrap); Long-Press = Menü; Default aus Settings | ☐ Speed tap = next preset (0.8…2.0 wrap); long-press = menu; default from Settings |
-| ☐ Sleep timer (Uhr / Ende der Episode / Custom… 1–180 Min.) | ☐ Sleep timer (clock / end of episode / Custom… 1–180 min) |
+| ☐ Sleep timer (Uhr / Ende der Episode / Custom… 1–180 Min.; Mini-Player Restzeit-Badge) | ☐ Sleep timer (clock / end of episode / Custom… 1–180 min; mini player remaining badge) |
 | ☐ Chapters tippen → Seek (wenn im Feed) | ☐ Chapters tap → seek (when in feed) |
 | ☐ Kapitel Prev/Next (nur wenn Kapitel; Next → nächster Start; Prev → Anfang wenn >2s sonst vorheriges) | ☐ Chapter prev/next (only when chapters; Next → next start; Prev → restart if >2s else previous) |
 | ☐ Transcript sheet (nur Feed-URL) | ☐ Transcript sheet (feed URL only) |

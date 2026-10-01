@@ -166,18 +166,17 @@ struct MiniPlayerView: View {
                 showCustomSleepTimer = true
             }
         } label: {
-            if playback.isSleepTimerActive, let label = playback.sleepTimerStatusLabel {
-                Text(label)
-                    .font(.caption2.monospacedDigit())
-                    .lineLimit(1)
-            } else {
+            HStack(spacing: 4) {
                 Image(systemName: "moon.zzz")
+                if playback.isSleepTimerActive, let label = playback.sleepTimerStatusLabel {
+                    Text(label)
+                        .font(.caption2.monospacedDigit())
+                        .lineLimit(1)
+                }
             }
         }
-        .accessibilityLabel(playback.isSleepTimerActive
-            ? "\(String(localized: "Sleep timer")) \(playback.sleepTimerStatusLabel ?? "active")"
-            : String(localized: "Sleep timer"))
-        .accessibilityHint("Sets or turns off the sleep timer")
+        .accessibilityLabel(playback.sleepTimerAccessibilityLabel)
+        .accessibilityHint(String(localized: "Sets or turns off the sleep timer"))
     }
 
     private var sourceIndicator: some View {

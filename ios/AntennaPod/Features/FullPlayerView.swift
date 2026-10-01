@@ -647,20 +647,19 @@ struct FullPlayerView: View {
                 showCustomSleepTimer = true
             }
         } label: {
-            if playback.isSleepTimerActive, let label = playback.sleepTimerStatusLabel {
-                Text(label)
-                    .font(.caption.monospacedDigit())
-                    .frame(minWidth: 44)
-            } else {
+            HStack(spacing: 4) {
                 Image(systemName: "moon.zzz")
                     .font(.title3)
-                    .frame(minWidth: 44)
+                if playback.isSleepTimerActive, let label = playback.sleepTimerStatusLabel {
+                    Text(label)
+                        .font(.caption.monospacedDigit())
+                        .lineLimit(1)
+                }
             }
+            .frame(minWidth: 44)
         }
-        .accessibilityLabel(playback.isSleepTimerActive
-            ? "\(String(localized: "Sleep timer")) \(playback.sleepTimerStatusLabel ?? "active")"
-            : String(localized: "Sleep timer"))
-        .accessibilityHint("Sets or turns off the sleep timer")
+        .accessibilityLabel(playback.sleepTimerAccessibilityLabel)
+        .accessibilityHint(String(localized: "Sets or turns off the sleep timer"))
     }
 
     /// True when the episode has a remote enclosure (not a local-folder `file://`).

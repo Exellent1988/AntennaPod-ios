@@ -25,7 +25,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip/seek using Settings intervals)
 - CarPlay (honest partial: system Now Playing / remotes + background audio; **no** custom CPTemplate / CarPlay entitlement)
 - Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
-- Sleep timer (clock presets + end of episode + Custom… 1–180 min, fade-out)
+- Sleep timer (clock presets + end of episode + Custom… 1–180 min, fade-out; mini player shows live remaining when active)
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch; Feed detail **Download all** for unplayed/not-archived/not-downloaded, newest 50 soft cap; **Full player** Download / Cancel / Delete via same `DownloadService.download` / `cancelDownload` / `delete`)
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder; EpisodeRow context **Move to top** / **Move to bottom** via `moveQueue`; `.searchable` title/feed filter with debounce; reorder disabled while filtering; toolbar Clear queue with confirm)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
@@ -186,7 +186,7 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` s
 VoiceOver-oriented polish on the existing beta UI (not a full accessibility audit / Dynamic Type pass):
 
 - **EpisodeRow** — combined `accessibilityLabel` (title, feed, played / percent progress, downloaded, favorite, archived) with `.isStaticText`; icon-only Play / Download / Queue / Mark played / Favorite / Archive / Share buttons get explicit localized labels (+ `.startsMediaSession` on Play).
-- **Mini + full player** — play/pause, rewind/forward (interval seconds), speed (tap cycles presets; long-press full menu), sleep timer, and scrubber / progress (value + hint). Secondary full-player actions labeled like EpisodeRow.
+- **Mini + full player** — play/pause, rewind/forward (interval seconds), speed (tap cycles presets; long-press full menu), sleep timer (VoiceOver **Sleep timer, N minutes remaining** / end of episode when active), and scrubber / progress (value + hint). Secondary full-player actions labeled like EpisodeRow.
 - **Main tabs** — VoiceOver names from `Label` titles in `RootTabView` (String Catalog en+de).
 - **Settings toggles** — bindings unchanged; short `accessibilityHint` on playback / network / notification / storage / rating toggles where the on-screen caption is long.
 
@@ -327,7 +327,7 @@ Opens the episode’s real webpage (`PodcastEpisode.link`) in the **system brows
 
 ## Full player
 
-Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed (**tap** cycles `0.8 / 1.0 / 1.1 / 1.2 / 1.3 / 1.5 / 2.0`, wrap; **long-press** keeps the full preset menu — same on mini player), sleep timer (same presets + Custom… 1–180 min as mini), plus **Play from beginning** / mark played / **favorite** (star toggle → `PodcastStore.toggleFavorite`; VoiceOver Add/Remove from favorites; hidden when nothing playing) / queue / download / **Open episode website** (when `episode.link` is http(s)) / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
+Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed (**tap** cycles `0.8 / 1.0 / 1.1 / 1.2 / 1.3 / 1.5 / 2.0`, wrap; **long-press** keeps the full preset menu — same on mini player), sleep timer (same presets + Custom… 1–180 min as mini; mini also shows live remaining countdown / End of ep. on the moon control badge), plus **Play from beginning** / mark played / **favorite** (star toggle → `PodcastStore.toggleFavorite`; VoiceOver Add/Remove from favorites; hidden when nothing playing) / queue / download / **Open episode website** (when `episode.link` is http(s)) / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
 
 **Jump to position:** tap the left (current) time under the scrubber to open a medium sheet. Enter **mm:ss** / **h:mm:ss** (or a plain seconds integer) in the TextField, or use **minutes** + **seconds** steppers; **Jump** parses, clamps to `[0, duration]`, and calls `PlaybackService.seek(toSeconds:)`. Disabled when there is no episode or duration is unknown / zero.
 
