@@ -21,21 +21,37 @@ struct EpisodeRow: View {
     let episode: PodcastEpisode
     let feedTitle: String
 
+    private var state: EpisodePlaybackState {
+        store.playbackState(for: episode.id)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(episode.title)
-                .font(.headline)
+            HStack(alignment: .firstTextBaseline) {
+                Text(episode.title)
+                    .font(.headline)
+                Spacer(minLength: 8)
+                if state.isPlayed {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                        .accessibilityLabel("Played")
+                }
+            }
             if let ms = episode.pubDateEpochMs {
                 Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .date)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+            }
+            if progressFraction > 0, !state.isPlayed {
+                ProgressView(value: progressFraction)
+                    .tint(.accentColor)
             }
             HStack {
                 Button {
                     let local = downloads.localURL(for: episode)
                     playback.play(episode: episode, fileURL: local)
                 } label: {
-                    Label("Play", systemImage: "play.fill")
+                    Label(resumeLabel, systemImage: "play.fill")
                 }
                 .buttonStyle(.bordered)
 
@@ -59,9 +75,35 @@ struct EpisodeRow: View {
                     Label("Queue", systemImage: "text.append")
                 }
                 .buttonStyle(.bordered)
+
+                Button {
+                    store.togglePlayed(episode.id)
+                } label: {
+                    Label(
+                        state.isPlayed ? "Mark unplayed" : "Mark played",
+                        systemImage: state.isPlayed ? "circle" : "checkmark.circle"
+                    )
+                }
+                .buttonStyle(.bordered)
             }
             .labelStyle(.iconOnly)
         }
         .padding(.vertical, 4)
+    }
+
+    private var progressFraction: Double {
+        let duration = state.durationSeconds
+        let position = state.positionSeconds
+        guard duration.isFinite, duration > 0, position > 0 else {
+            return 0
+        }
+        return min(1, position / duration)
+    }
+
+    private var resumeLabel: String {
+        if !state.isPlayed, state.positionSeconds > 1 {
+            return "Resume"
+        }
+        return "Play"
     }
 }

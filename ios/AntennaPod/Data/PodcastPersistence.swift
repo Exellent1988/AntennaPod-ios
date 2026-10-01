@@ -10,6 +10,7 @@ enum PodcastPersistence {
 
     private static var feedsURL: URL { directory.appendingPathComponent("feeds.json") }
     private static var queueURL: URL { directory.appendingPathComponent("queue.json") }
+    private static var playbackURL: URL { directory.appendingPathComponent("playback.json") }
 
     static func loadFeeds() -> [PodcastFeed] {
         decode(feedsURL) ?? []
@@ -25,6 +26,15 @@ enum PodcastPersistence {
 
     static func saveQueue(_ queue: [PodcastEpisode]) {
         encode(queue, to: queueURL)
+    }
+
+    /// Map of episode id → playback state.
+    static func loadPlaybackStates() -> [String: EpisodePlaybackState] {
+        decode(playbackURL) ?? [:]
+    }
+
+    static func savePlaybackStates(_ states: [String: EpisodePlaybackState]) {
+        encode(states, to: playbackURL)
     }
 
     private static func decode<T: Decodable>(_ url: URL) -> T? {

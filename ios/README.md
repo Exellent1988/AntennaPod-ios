@@ -8,7 +8,9 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Episode list
 - Stream playback (AVPlayer, speed, ±30s)
 - Offline download to Documents/downloads
-- Queue tab (in-memory)
+- Queue tab (JSON)
+- Playback progress save / resume
+- Mark played / unplayed (manual + smart-mark 30s)
 
 ## Layout
 
@@ -36,4 +38,4 @@ See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
 
 ## Persistence
 
-Subscriptions and queue are stored as JSON under Application Support (`PodcastPersistence`). Downloads remain files under Documents/downloads. GRDB/SQLite aligned with AntennaPod schema comes later.
+Subscriptions, queue, and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `playback.json`). Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Downloads remain files under Documents/downloads. GRDB/SQLite aligned with AntennaPod schema comes later.

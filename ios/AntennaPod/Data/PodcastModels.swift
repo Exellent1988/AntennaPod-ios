@@ -20,3 +20,20 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     var descriptionText: String?
     var episodes: [PodcastEpisode]
 }
+
+/// Per-episode playback progress and played flag (keyed by episode id / guid).
+struct EpisodePlaybackState: Hashable, Codable {
+    var positionSeconds: Double
+    var durationSeconds: Double
+    var isPlayed: Bool
+    var updatedAtEpochMs: Int64
+
+    static func empty(nowMs: Int64 = Int64(Date().timeIntervalSince1970 * 1000)) -> EpisodePlaybackState {
+        EpisodePlaybackState(
+            positionSeconds: 0,
+            durationSeconds: 0,
+            isPlayed: false,
+            updatedAtEpochMs: nowMs
+        )
+    }
+}
