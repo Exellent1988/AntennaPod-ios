@@ -17552,6 +17552,150 @@
           }
         }
       }
+    },
+    "Images": {
+      "extractionState": "manual",
+      "comment": "Section title for podcast:images / podcast:image list in Feed detail / description / Shownotes.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Images"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilder"
+          }
+        }
+      }
+    },
+    "These image URLs come from the feed (podcast:images / podcast:image). Open or copy a link — the app does not download every size. Higher-resolution artwork is preferred for the player when available.": {
+      "extractionState": "manual",
+      "comment": "Honesty footnote under podcast:images / podcast:image list.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These image URLs come from the feed (podcast:images / podcast:image). Open or copy a link — the app does not download every size. Higher-resolution artwork is preferred for the player when available."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Bild-URLs stammen aus dem Feed (podcast:images / podcast:image). Link öffnen oder kopieren — die App lädt nicht jede Größe herunter. Für den Player wird bei Verfügbarkeit bevorzugt eine höhere Auflösung genutzt."
+          }
+        }
+      }
+    },
+    "Showing first 10 image variants from the feed.": {
+      "extractionState": "manual",
+      "comment": "Truncation honesty when more than 10 podcast:images / podcast:image variants.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first 10 image variants from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeige die ersten 10 Bildvarianten aus dem Feed."
+          }
+        }
+      }
+    },
+    "Image URL copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Alert message after copying a podcast image URL.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Image URL copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bild-URL in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Image": {
+      "extractionState": "manual",
+      "comment": "VoiceOver prefix for a podcast:image / srcset variant row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Image"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bild"
+          }
+        }
+      }
+    },
+    "Width %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver width label for a podcast image variant (e.g. Width 1500w).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Width %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Breite %@"
+          }
+        }
+      }
+    },
+    "Copies the image URL from the feed to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy on a podcast image variant.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the image URL from the feed to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die Bild-URL aus dem Feed in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the image URL from the feed in the system browser": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Open on a podcast image variant.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the image URL from the feed in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Bild-URL aus dem Feed im Systembrowser"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

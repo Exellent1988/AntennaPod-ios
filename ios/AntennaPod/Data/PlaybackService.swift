@@ -1127,7 +1127,10 @@ final class PlaybackService: ObservableObject {
 
     private func loadArtworkIfNeeded() {
         guard let episode = currentEpisode else { return }
-        let imageUrl = store?.feed(containingEpisodeId: episode.id)?.imageUrl
+        let feed = store?.feed(containingEpisodeId: episode.id)
+        let resolved = store?.episode(id: episode.id) ?? episode
+        let imageUrl = resolved.preferredPodcastImagesArtworkURL
+            ?? feed?.preferredDisplayArtworkURL
         guard let imageUrl, !imageUrl.isEmpty, imageUrl != cachedArtworkURL else {
             if imageUrl == nil || imageUrl?.isEmpty == true {
                 cachedArtwork = nil

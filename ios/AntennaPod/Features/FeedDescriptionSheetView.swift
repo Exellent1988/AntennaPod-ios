@@ -119,6 +119,15 @@ struct FeedDescriptionSheetView: View {
         !displayLicenses.isEmpty
     }
 
+    /// Channel podcast:images / podcast:image when the feed provided variants — empty → hide.
+    private var displayImages: [PodcastImageVariant] {
+        feed.displayImages
+    }
+
+    private var hasImages: Bool {
+        !displayImages.isEmpty
+    }
+
     /// Channel podcast:podroll when the feed provided remoteItems — empty → hide (never invent).
     private var displayPodrollItems: [PodcastRemoteItem] {
         feed.displayPodrollItems
@@ -200,6 +209,9 @@ struct FeedDescriptionSheetView: View {
                             }
                             if hasLicenses {
                                 PodcastLicenseListView(licenses: displayLicenses)
+                            }
+                            if hasImages {
+                                PodcastImagesListView(images: displayImages)
                             }
                             if hasPodroll {
                                 PodcastPodrollListView(items: displayPodrollItems)
@@ -388,6 +400,9 @@ struct FeedDescriptionSheetView: View {
                     if hasLicenses {
                         PodcastLicenseListView(licenses: displayLicenses)
                     }
+                    if hasImages {
+                        PodcastImagesListView(images: displayImages)
+                    }
                     if hasPodroll {
                         PodcastPodrollListView(items: displayPodrollItems)
                     }
@@ -516,6 +531,9 @@ struct FeedDescriptionSheetView: View {
                     }
                     if hasLicenses {
                         PodcastLicenseListView(licenses: displayLicenses)
+                    }
+                    if hasImages {
+                        PodcastImagesListView(images: displayImages)
                     }
                     if hasPodroll {
                         PodcastPodrollListView(items: displayPodrollItems)

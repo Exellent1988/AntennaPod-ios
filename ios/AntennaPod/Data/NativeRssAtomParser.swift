@@ -78,6 +78,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var channelTexts: [PodcastTxt] = []
     /// Channel podcast:license — feed-provided only; display-only (text + Open http(s) / Copy; no DRM).
     private var channelLicenses: [PodcastLicense] = []
+    /// Channel podcast:images / podcast:image — feed-provided only; store URL+width; prefer one for artwork (no eager multi-download).
+    private var channelImages: [PodcastImageVariant] = []
     /// Channel podcast:podroll / nested remoteItem — feed-provided only; display-only (Open / Copy / Subscribe preview).
     private var channelPodrollItems: [PodcastRemoteItem] = []
     /// Inside channel podcast:podroll — capture nested remoteItem only; do not invent recommendations.
@@ -149,6 +151,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     /// Capturing podcast:license optional url + element text.
     private var capturingLicense = false
     private var pendingLicenseUrl: String?
+    /// Item podcast:images / podcast:image — feed-provided only; store URL+width; prefer one for artwork.
+    private var itemImages: [PodcastImageVariant] = []
     /// Capturing podcast:alternateEnclosure attributes + nested sources.
     private var capturingAlternateEnclosure = false
     private var pendingAltType: String?
@@ -221,6 +225,10 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         guard feedType != nil, title != nil || !episodes.isEmpty else {
             throw FeedParsingError.unsupported
         }
+        // When only podcast:images / podcast:image provided artwork, seed classic imageUrl for older paths.
+        if imageUrl == nil {
+            imageUrl = PodcastImagesDisplay.preferredArtworkURL(channelImages)
+        }
         return PodcastFeed(
             id: UUID(),
             title: title ?? "Podcast",
@@ -257,6 +265,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             liveItems: channelLiveItems,
             texts: channelTexts,
             licenses: channelLicenses,
+            images: channelImages,
             podrollItems: channelPodrollItems,
             publisherItems: channelPublisherItems,
             episodes: episodes
@@ -324,6 +333,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemLicenses = []
             capturingLicense = false
             pendingLicenseUrl = nil
+            itemImages = []
             capturingAlternateEnclosure = false
             pendingAltType = nil
             pendingAltLength = nil
@@ -341,8 +351,55 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             if local.lowercased() == "entry", let href = attributeDict["href"] {
                 itemLink = href
             }
+        case "images":
+            // Podcast Index (deprecated): <podcast:images srcset="url 1500w, url 600w, …"/>
+            // Channel and/or item. Absolute http(s) URLs + optional width descriptors. Cap ~10 later in display.
+            // Do not eagerly download all variants — store URLs + widths only.
+            if inLiveItem { break }
+            if inPodroll || inPublisher { break }
+            finishPodcastImagesSrcset(attributeDict["srcset"] ?? attributeDict["srcSet"], intoItem: inItem)
         case "image":
-            if !inItem && !inLiveItem {
+            // Three shapes share local name "image":
+            // 1) podcast:image href="…" width="…" (and optional height/alt/purpose) — Podcasting 2.0
+            // 2) itunes:image href="…" — classic artwork URL (prefer as feed.imageUrl when unset)
+            // 3) RSS <image> wrapper with nested <url> — channel only (inImage)
+            if inLiveItem { break }
+            if inPodroll || inPublisher { break }
+            let href = Self.nonEmptyAttr(attributeDict["href"] ?? attributeDict["url"])
+            if let href {
+                let ns = (namespaceURI ?? "").lowercased()
+                let q = (qName ?? "").lowercased()
+                let rawName = elementName.lowercased()
+                // XMLParser often leaves prefixes on elementName when shouldProcessNamespaces is false.
+                let looksPodcast = ns.contains("podcast")
+                    || q.hasPrefix("podcast:")
+                    || rawName.hasPrefix("podcast:")
+                let widthRaw = attributeDict["width"]
+                let heightRaw = attributeDict["height"]
+                let alt = attributeDict["alt"]
+                let purpose = attributeDict["purpose"]
+                // podcast:image (ns / richer attrs) → variants list; itunes:image (href-only) → classic artwork only.
+                if looksPodcast
+                    || Self.nonEmptyAttr(widthRaw) != nil
+                    || Self.nonEmptyAttr(heightRaw) != nil
+                    || Self.nonEmptyAttr(alt) != nil
+                    || Self.nonEmptyAttr(purpose) != nil
+                    || Self.nonEmptyAttr(attributeDict["aspect-ratio"] ?? attributeDict["aspectRatio"]) != nil
+                    || Self.nonEmptyAttr(attributeDict["type"]) != nil {
+                    finishPodcastImage(
+                        href: href,
+                        widthRaw: widthRaw,
+                        heightRaw: heightRaw,
+                        alt: alt,
+                        purpose: purpose,
+                        intoItem: inItem
+                    )
+                }
+                // itunes:image / podcast:image → seed classic imageUrl when unset (channel only).
+                if !inItem, imageUrl == nil {
+                    imageUrl = href
+                }
+            } else if !inItem {
                 inImage = true
             }
         case "author":
@@ -877,7 +934,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     alternateEnclosures: itemAlternateEnclosures,
                     soundbites: itemSoundbites,
                     texts: itemTexts,
-                    licenses: itemLicenses
+                    licenses: itemLicenses,
+                    images: itemImages
                 )
                 episodes.append(episode)
                 inItem = false
@@ -1212,6 +1270,71 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         }
     }
 
+
+    /// Finish podcast:images srcset — parse "url Nw, url Nw, …" into variants (absolute http(s) preferred).
+    /// Cap applied at parse/display (~10). Never invent URLs; do not download variants here.
+    private func finishPodcastImagesSrcset(_ srcset: String?, intoItem: Bool) {
+        guard let srcset else { return }
+        let trimmed = srcset.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        let parts = trimmed.split(separator: ",")
+        for part in parts {
+            let tokens = part.trimmingCharacters(in: .whitespacesAndNewlines)
+                .split(whereSeparator: { $0.isWhitespace })
+                .map(String.init)
+            guard let urlToken = tokens.first, !urlToken.isEmpty else { continue }
+            var width: Int?
+            if tokens.count >= 2 {
+                let desc = tokens[1].lowercased()
+                if desc.hasSuffix("w"), let n = Int(desc.dropLast()), n > 0 {
+                    width = n
+                }
+                // Density descriptors (1x/2x) are ignored for width — never invent a pixel width.
+            }
+            appendPodcastImageVariant(
+                PodcastImageVariant(url: urlToken, width: width),
+                intoItem: intoItem
+            )
+        }
+    }
+
+    /// Finish podcast:image (href) or itunes:image (href) — store as variant; optional width/height/alt/purpose.
+    private func finishPodcastImage(
+        href: String,
+        widthRaw: String?,
+        heightRaw: String?,
+        alt: String?,
+        purpose: String?,
+        intoItem: Bool
+    ) {
+        let width = Self.positiveIntAttr(widthRaw)
+        let height = Self.positiveIntAttr(heightRaw)
+        appendPodcastImageVariant(
+            PodcastImageVariant(
+                url: href,
+                width: width,
+                height: height,
+                alt: Self.nonEmptyAttr(alt),
+                purpose: Self.nonEmptyAttr(purpose)
+            ),
+            intoItem: intoItem
+        )
+    }
+
+    private func appendPodcastImageVariant(_ variant: PodcastImageVariant, intoItem: Bool) {
+        // Soft parse-time cap so pathological feeds cannot balloon library JSON — display cap matches.
+        let cap = PodcastImagesDisplay.displayCap
+        if intoItem {
+            guard inItem else { return }
+            guard itemImages.count < cap else { return }
+            itemImages.append(variant)
+        } else {
+            guard !inItem else { return }
+            guard channelImages.count < cap else { return }
+            channelImages.append(variant)
+        }
+    }
+
     /// Finish podcast:contentLink under liveItem — append when href present; never invent.
     private func finishContentLink(text: String) {
         defer {
@@ -1449,6 +1572,11 @@ extension XMLFeedParser {
     /// Trimmed non-empty attribute value, or nil.
     fileprivate static func nonEmptyAttr(_ raw: String?) -> String? {
         guard let raw else { return nil }
+
+    fileprivate static func positiveIntAttr(_ raw: String?) -> Int? {
+        guard let raw = nonEmptyAttr(raw), let n = Int(raw), n > 0 else { return nil }
+        return n
+    }
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
     }

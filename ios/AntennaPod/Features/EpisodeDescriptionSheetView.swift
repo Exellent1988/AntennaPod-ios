@@ -106,6 +106,15 @@ struct EpisodeDescriptionSheetView: View {
         !episode.displayLicenses.isEmpty
     }
 
+    /// Item podcast:images / podcast:image when the feed provided variants — empty → hide.
+    private var displayImages: [PodcastImageVariant] {
+        episode.images
+    }
+
+    private var hasImages: Bool {
+        !episode.displayImages.isEmpty
+    }
+
     /// Item podcast:chapters remote URL when set — Open / Copy; hide when missing (never invent).
     private var hasChaptersURL: Bool {
         episode.hasPodcastIndexChapterURL
@@ -228,6 +237,9 @@ struct EpisodeDescriptionSheetView: View {
                             }
                             if hasLicenses {
                                 PodcastLicenseListView(licenses: displayLicenses)
+                            }
+                            if hasImages {
+                                PodcastImagesListView(images: displayImages)
                             }
                             if hasChaptersURL {
                                 PodcastChaptersURLView(episode: episode)
@@ -371,6 +383,9 @@ struct EpisodeDescriptionSheetView: View {
                     if hasLicenses {
                         PodcastLicenseListView(licenses: displayLicenses)
                     }
+                    if hasImages {
+                        PodcastImagesListView(images: displayImages)
+                    }
                     if hasChaptersURL {
                         PodcastChaptersURLView(episode: episode)
                     }
@@ -411,6 +426,9 @@ struct EpisodeDescriptionSheetView: View {
                     }
                     if hasLicenses {
                         PodcastLicenseListView(licenses: displayLicenses)
+                    }
+                    if hasImages {
+                        PodcastImagesListView(images: displayImages)
                     }
                     if hasChaptersURL {
                         PodcastChaptersURLView(episode: episode)

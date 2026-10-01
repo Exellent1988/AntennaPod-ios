@@ -114,6 +114,11 @@ struct FeedDetailView: View {
         liveFeed.displayLicenses
     }
 
+    /// Channel podcast:images / podcast:image when the feed provided variants — empty → hide (Open/Copy; prefer one for artwork).
+    private var displayImages: [PodcastImageVariant] {
+        liveFeed.displayImages
+    }
+
     /// Channel podcast:podroll when the feed provided remoteItems — empty → hide (never invent recommendations).
     private var displayPodrollItems: [PodcastRemoteItem] {
         liveFeed.displayPodrollItems
@@ -499,6 +504,14 @@ struct FeedDetailView: View {
             if !displayLicenses.isEmpty {
                 Section {
                     PodcastLicenseListView(licenses: displayLicenses)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:images / podcast:image — URL + optional width; Open / Copy; hide when none.
+            // Prefer one higher-res URL for artwork elsewhere; do not download all variants here. Never invent.
+            if !displayImages.isEmpty {
+                Section {
+                    PodcastImagesListView(images: displayImages)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }

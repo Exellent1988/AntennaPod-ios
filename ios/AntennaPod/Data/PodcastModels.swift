@@ -1098,6 +1098,141 @@ enum PodcastLicenseDisplay {
 }
 
 
+
+
+/// Podcast Index `podcast:images` (deprecated srcset) / `podcast:image` (href + optional width).
+/// Channel and/or item. Stores URL + optional pixel width (and optional height/alt/purpose when present).
+/// **Feed-provided only** — never invent URLs or sizes. Cap ~10 for display/storage honesty.
+/// Prefer one higher-res http(s) URL for Feed detail / Full player / Now Playing artwork; do **not** download all variants eagerly.
+struct PodcastImageVariant: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields.
+    var id: String { "\(url)|\(width.map(String.init) ?? "")|\(height.map(String.init) ?? "")|\(purpose ?? "")" }
+    /// Image URL from `podcast:image` href / `podcast:images` srcset entry. Required non-empty to keep.
+    var url: String
+    /// Pixel width from srcset `Nw` descriptor or `width` attribute when the feed provides it. Nil when absent — never invent.
+    var width: Int?
+    /// Optional `height` attribute on `podcast:image`. Nil when absent — never invent.
+    var height: Int?
+    /// Optional `alt` attribute. Nil when absent — never invent.
+    var alt: String?
+    /// Optional `purpose` attribute (space-separated tokens). Nil when absent — never invent.
+    var purpose: String?
+
+    init(
+        url: String,
+        width: Int? = nil,
+        height: Int? = nil,
+        alt: String? = nil,
+        purpose: String? = nil
+    ) {
+        self.url = url
+        self.width = width
+        self.height = height
+        self.alt = alt
+        self.purpose = purpose
+    }
+
+    /// Trimmed non-empty URL string when present.
+    var displayURLString: String? {
+        let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) URL when valid. Nil otherwise — never invent.
+    var openURL: URL? {
+        guard let raw = displayURLString, let parsed = URL(string: raw) else { return nil }
+        let scheme = parsed.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return parsed
+    }
+
+    /// Trimmed non-empty alt when the feed set it.
+    var displayAlt: String? {
+        guard let alt else { return nil }
+        let trimmed = alt.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty purpose when the feed set it (raw feed string).
+    var displayPurpose: String? {
+        guard let purpose else { return nil }
+        let trimmed = purpose.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Width label for UI when known (e.g. "1500w"). Nil when width absent — never invent.
+    var displayWidthLabel: String? {
+        guard let width, width > 0 else { return nil }
+        return "\(width)w"
+    }
+}
+
+/// Display helpers for `podcast:images` / `podcast:image` lists (channel or item).
+/// Feed-provided only; Open / Copy; prefer one higher-res http(s) URL for artwork — never download all eagerly.
+enum PodcastImagesDisplay {
+    /// Soft UI / storage cap — show first N after feed order; honesty footnote when more exist.
+    static let displayCap = 10
+
+    /// Soft upper bound when picking a single artwork URL (avoid pathological huge assets when smaller widths exist).
+    static let preferredMaxWidth = 3000
+
+    /// http(s) variants only, feed order. No invented URLs.
+    static func valid(_ items: [PodcastImageVariant]) -> [PodcastImageVariant] {
+        items.compactMap { item in
+            guard let open = item.openURL else { return nil }
+            return PodcastImageVariant(
+                url: open.absoluteString,
+                width: item.width.flatMap { $0 > 0 ? $0 : nil },
+                height: item.height.flatMap { $0 > 0 ? $0 : nil },
+                alt: item.displayAlt,
+                purpose: item.displayPurpose
+            )
+        }
+    }
+
+    /// First `displayCap` + whether the feed listed more valid image variants.
+    static func capped(_ items: [PodcastImageVariant]) -> (shown: [PodcastImageVariant], truncated: Bool) {
+        let list = valid(items)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+
+    /// Pick one reasonable http(s) artwork URL: largest width ≤ `preferredMaxWidth`, else largest width, else first.
+    /// Nil when no valid variants — callers fall back to `itunes:image` / RSS `<image>` / Atom logo path.
+    static func preferredArtworkURL(_ items: [PodcastImageVariant]) -> String? {
+        let list = valid(items)
+        guard !list.isEmpty else { return nil }
+        let withWidth = list.compactMap { item -> (PodcastImageVariant, Int)? in
+            guard let w = item.width, w > 0 else { return nil }
+            return (item, w)
+        }
+        if !withWidth.isEmpty {
+            let underCap = withWidth.filter { $0.1 <= preferredMaxWidth }
+            let pool = underCap.isEmpty ? withWidth : underCap
+            return pool.max(by: { $0.1 < $1.1 })?.0.url
+        }
+        return list.first?.url
+    }
+
+    /// Pasteboard line: optional width + URL (+ optional purpose/alt).
+    static func copyText(_ item: PodcastImageVariant) -> String {
+        var parts: [String] = []
+        if let w = item.displayWidthLabel {
+            parts.append(w)
+        }
+        if let purpose = item.displayPurpose {
+            parts.append(purpose)
+        }
+        parts.append(item.displayURLString ?? item.url)
+        if let alt = item.displayAlt {
+            parts.append(alt)
+        }
+        return parts.joined(separator: " · ")
+    }
+}
+
 /// Podcast Index `podcast:remoteItem` under channel `podcast:podroll` or `podcast:publisher`.
 /// Attributes: `feedGuid` (required by namespace), optional `feedUrl` / `title` / `medium` / `itemGuid`.
 /// **Display-only:** title + url/guid; Open http(s) feed URL / Copy / Subscribe via existing preview when URL present.
@@ -1535,6 +1670,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Item-level Podcast Index `podcast:license` (text and/or optional url) when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — show text; Open http(s) / Copy; **no DRM**.
     var licenses: [PodcastLicense]
+    /// Item-level Podcast Index `podcast:images` / `podcast:image` variants when the feed provides them.
+    /// Empty when absent — never invent; UI hides when empty. Prefer one higher-res http(s) for artwork; Open/Copy list — do **not** download all eagerly.
+    var images: [PodcastImageVariant]
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -1618,7 +1756,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         alternateEnclosures: [PodcastAlternateEnclosure] = [],
         soundbites: [PodcastSoundbite] = [],
         texts: [PodcastTxt] = [],
-        licenses: [PodcastLicense] = []
+        licenses: [PodcastLicense] = [],
+        images: [PodcastImageVariant] = []
     ) {
         self.id = id
         self.title = title
@@ -1647,6 +1786,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.soundbites = soundbites
         self.texts = texts
         self.licenses = licenses
+        self.images = images
     }
 
     init(from decoder: Decoder) throws {
@@ -1678,6 +1818,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         soundbites = try c.decodeIfPresent([PodcastSoundbite].self, forKey: .soundbites) ?? []
         texts = try c.decodeIfPresent([PodcastTxt].self, forKey: .texts) ?? []
         licenses = try c.decodeIfPresent([PodcastLicense].self, forKey: .licenses) ?? []
+        images = try c.decodeIfPresent([PodcastImageVariant].self, forKey: .images) ?? []
     }
 
     /// Trimmed non-empty item `podcast:medium` from the feed. Hidden when missing — never invent / never remap.
@@ -1730,6 +1871,16 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Valid item-level `podcast:license` entries (hide when empty — never invent; display-only; no DRM).
     var displayLicenses: [PodcastLicense] {
         PodcastLicenseDisplay.valid(licenses)
+    }
+
+    /// Valid item-level `podcast:images` / `podcast:image` variants (hide when empty — never invent; Open/Copy; prefer one for artwork).
+    var displayImages: [PodcastImageVariant] {
+        PodcastImagesDisplay.valid(images)
+    }
+
+    /// Preferred item artwork URL from `podcast:images` / `podcast:image` when present (http(s)). Nil → fall back to feed artwork.
+    var preferredPodcastImagesArtworkURL: String? {
+        PodcastImagesDisplay.preferredArtworkURL(images)
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).
@@ -1973,6 +2124,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel-level Podcast Index `podcast:license` (text and/or optional url) when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — show text; Open http(s) / Copy; **no DRM**.
     var licenses: [PodcastLicense]
+    /// Channel-level Podcast Index `podcast:images` / `podcast:image` variants when the feed provides them.
+    /// Empty when absent — never invent; UI hides when empty. Prefer one higher-res http(s) for Feed detail / Full player / Now Playing; Open/Copy list — do **not** download all eagerly.
+    var images: [PodcastImageVariant]
     /// Channel-level Podcast Index `podcast:podroll` / nested `podcast:remoteItem` when the feed provides them.
     /// Empty when absent — never invent recommendations; UI hides when empty. **Display-only** — Open / Copy / Subscribe-by-URL preview.
     var podrollItems: [PodcastRemoteItem]
@@ -2167,6 +2321,27 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastLicenseDisplay.valid(licenses)
     }
 
+    /// Valid channel-level `podcast:images` / `podcast:image` variants (hide when empty — never invent; Open/Copy; prefer one for artwork).
+    var displayImages: [PodcastImageVariant] {
+        PodcastImagesDisplay.valid(images)
+    }
+
+    /// Preferred channel artwork: one higher-res http(s) from `podcast:images`/`podcast:image` when present; else existing `imageUrl` (itunes/RSS/Atom).
+    var preferredDisplayArtworkURL: String? {
+        if let fromImages = PodcastImagesDisplay.preferredArtworkURL(images) {
+            return fromImages
+        }
+        guard let imageUrl else { return nil }
+        let trimmed = imageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        guard let parsed = URL(string: trimmed) else { return trimmed }
+        let scheme = parsed.scheme?.lowercased()
+        if scheme == nil || scheme == "http" || scheme == "https" || scheme == "file" {
+            return trimmed
+        }
+        return nil
+    }
+
     /// Channel-level `podcast:podroll` remote items (hide when empty — never invent recommendations; display-only).
     var displayPodrollItems: [PodcastRemoteItem] {
         PodcastPodrollDisplay.valid(podrollItems)
@@ -2206,6 +2381,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         liveItems: [PodcastLiveItem] = [],
         texts: [PodcastTxt] = [],
         licenses: [PodcastLicense] = [],
+        images: [PodcastImageVariant] = [],
         podrollItems: [PodcastRemoteItem] = [],
         publisherItems: [PodcastRemoteItem] = [],
         episodes: [PodcastEpisode]
@@ -2238,6 +2414,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.liveItems = liveItems
         self.texts = texts
         self.licenses = licenses
+        self.images = images
         self.podrollItems = podrollItems
         self.publisherItems = publisherItems
         self.episodes = episodes
@@ -2273,13 +2450,14 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         liveItems = try c.decodeIfPresent([PodcastLiveItem].self, forKey: .liveItems) ?? []
         texts = try c.decodeIfPresent([PodcastTxt].self, forKey: .texts) ?? []
         licenses = try c.decodeIfPresent([PodcastLicense].self, forKey: .licenses) ?? []
+        images = try c.decodeIfPresent([PodcastImageVariant].self, forKey: .images) ?? []
         podrollItems = try c.decodeIfPresent([PodcastRemoteItem].self, forKey: .podrollItems) ?? []
         publisherItems = try c.decodeIfPresent([PodcastRemoteItem].self, forKey: .publisherItems) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, isBlocked, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, licenses, podrollItems, publisherItems, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, isBlocked, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, licenses, images, podrollItems, publisherItems, episodes
     }
 }
 

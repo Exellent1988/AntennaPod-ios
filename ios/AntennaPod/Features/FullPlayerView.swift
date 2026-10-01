@@ -54,6 +54,14 @@ struct FullPlayerView: View {
         return store.episode(id: episode.id) ?? episode
     }
 
+    /// Prefer item `podcast:images`/`podcast:image`, then channel variants / classic `imageUrl`. One URL only — no eager multi-download.
+    private var preferredArtworkURLString: String? {
+        if let ep = resolvedEpisode, let fromItem = ep.preferredPodcastImagesArtworkURL {
+            return fromItem
+        }
+        return feed?.preferredDisplayArtworkURL
+    }
+
     /// Feed (inline PSC or fetched Podcast Index) preferred; else media-file chapters.
     private var feedChapters: [PodcastChapter] {
         if !remoteChapters.isEmpty { return remoteChapters }
@@ -655,7 +663,7 @@ struct FullPlayerView: View {
     @ViewBuilder
     private func artwork(side: CGFloat) -> some View {
         Group {
-            if let urlString = feed?.imageUrl, let url = URL(string: urlString) {
+            if let urlString = preferredArtworkURLString, let url = URL(string: urlString) {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     case .success(let image):

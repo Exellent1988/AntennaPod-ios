@@ -57,6 +57,7 @@ struct FeedPreviewView: View {
     }
 
     private var displayArtworkURL: URL? {
+        if let s = parsed?.preferredDisplayArtworkURL?.nilIfEmpty, let u = URL(string: s) { return u }
         if let s = parsed?.imageUrl?.nilIfEmpty, let u = URL(string: s) { return u }
         return request.hintArtworkURL
     }
