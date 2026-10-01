@@ -1,42 +1,43 @@
 import SwiftUI
 
 /// Shared discovery row (Apple Search, Podcast Index, Top lists).
+/// Selecting the row or Preview / Open opens the online feed preview (not fire-and-forget subscribe).
 struct DiscoveryResultRow: View {
     let title: String
     let author: String
     let artworkURL: URL?
     let feedUrl: String
     let isSubscribed: Bool
-    let isSubscribing: Bool
-    let onSubscribe: () -> Void
+    let onSelect: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            artwork
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.headline)
-                    .lineLimit(2)
-                Text(author)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-            }
-            Spacer(minLength: 8)
-            if isSubscribed {
-                Text("Subscribed")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            } else {
-                Button(isSubscribing ? "…" : "Subscribe") {
-                    onSubscribe()
+        Button(action: onSelect) {
+            HStack(spacing: 12) {
+                artwork
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                        .lineLimit(2)
+                    Text(author)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.small)
-                .disabled(isSubscribing || feedUrl.isEmpty)
+                Spacer(minLength: 8)
+                Text(isSubscribed ? "Open" : "Preview")
+                    .font(.subheadline.weight(.semibold))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.accentColor, in: Capsule())
+                    .foregroundStyle(.white)
             }
+            .padding(.vertical, 4)
+            .contentShape(Rectangle())
         }
-        .padding(.vertical, 4)
+        .buttonStyle(.plain)
+        .disabled(feedUrl.isEmpty)
+        .accessibilityLabel(isSubscribed ? "Open subscribed podcast" : "Preview podcast before subscribe")
     }
 
     @ViewBuilder
@@ -74,4 +75,3 @@ struct DiscoveryResultRow: View {
             }
     }
 }
-

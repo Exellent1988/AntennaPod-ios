@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Apple iTunes top podcast charts (Quick discovery). Pull-to-refresh; Subscribe via feed URL pipeline.
+/// Apple iTunes top podcast charts (Quick discovery). Pull-to-refresh; Preview → Confirm Subscribe.
 struct TopListsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
@@ -9,7 +9,7 @@ struct TopListsView: View {
     @State private var isLoading = false
     @State private var loadError: String?
     @State private var didLoad = false
-    @State private var subscribingFeedUrl: String?
+    @State private var previewRequest: FeedPreviewRequest?
 
     private let service = ItunesTopListService()
 
@@ -26,7 +26,7 @@ struct TopListsView: View {
     var body: some View {
         List {
             Section {
-                Text("Top podcasts on Apple Charts for \(countryLabel). No API key — public iTunes RSS. Change country under Settings → Discovery.")
+                Text("Top podcasts on Apple Charts for \(countryLabel). No API key — public iTunes RSS. Change country under Settings → Discovery. Tap Preview to fetch the feed before subscribe.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -62,26 +62,25 @@ struct TopListsView: View {
                             artworkURL: item.artworkURL,
                             feedUrl: item.feedUrl,
                             isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl },
-                            isSubscribing: subscribingFeedUrl == item.feedUrl,
-                            onSubscribe: {
-                                Task { await subscribe(item.feedUrl) }
+                            onSelect: {
+                                previewRequest = FeedPreviewRequest(
+                                    feedUrl: item.feedUrl,
+                                    hintTitle: item.title,
+                                    hintAuthor: item.author,
+                                    hintArtworkURL: item.artworkURL
+                                )
                             }
                         )
                     }
-                }
-            }
-
-            if let error = store.lastError {
-                Section {
-                    Text(error)
-                        .foregroundStyle(.red)
-                        .font(.subheadline)
                 }
             }
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Discover")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(item: $previewRequest) { request in
+            FeedPreviewView(request: request)
+        }
         .overlay {
             if isLoading && results.isEmpty {
                 ProgressView("Loading charts…")
@@ -118,14 +117,6 @@ struct TopListsView: View {
             didLoad = true
             loadError = error.localizedDescription
         }
-    }
-
-    @MainActor
-    private func subscribe(_ feedUrl: String) async {
-        guard !feedUrl.isEmpty else { return }
-        subscribingFeedUrl = feedUrl
-        defer { subscribingFeedUrl = nil }
-        await store.subscribe(feedUrl: feedUrl)
     }
 }
 

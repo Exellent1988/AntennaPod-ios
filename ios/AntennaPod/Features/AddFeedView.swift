@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Add podcast: Apple Podcasts / Podcast Index search + subscribe-by-URL.
+/// Add podcast: Apple Podcasts / Podcast Index search + preview-by-URL (confirm subscribe).
 struct AddFeedView: View {
     @EnvironmentObject private var store: PodcastStore
     @Environment(\.dismiss) private var dismiss
@@ -26,7 +26,7 @@ struct AddFeedView: View {
     @State private var indexSearchTask: Task<Void, Never>?
     @State private var indexHasKeys = PodcastIndexKeychain.hasCredentials
 
-    @State private var subscribingFeedUrl: String?
+    @State private var previewRequest: FeedPreviewRequest?
 
     private let itunesSearcher = ItunesSearchService()
     private let podcastIndexSearcher = PodcastIndexSearchService()
@@ -62,6 +62,11 @@ struct AddFeedView: View {
             }
             .navigationTitle("Add podcast")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(item: $previewRequest) { request in
+                FeedPreviewView(request: request) {
+                    dismiss()
+                }
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
@@ -72,10 +77,10 @@ struct AddFeedView: View {
                 }
                 if mode == .url {
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Subscribe") {
-                            Task { await subscribeURL() }
+                        Button("Preview") {
+                            openURLPreview()
                         }
-                        .disabled(store.isLoading || urlText.trimmingCharacters(in: .whitespacesAndNewlines).count < 8)
+                        .disabled(urlText.trimmingCharacters(in: .whitespacesAndNewlines).count < 8)
                     }
                 }
             }
@@ -158,20 +163,16 @@ struct AddFeedView: View {
                             artworkURL: item.artworkURL,
                             feedUrl: item.feedUrl,
                             isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl },
-                            isSubscribing: subscribingFeedUrl == item.feedUrl,
-                            onSubscribe: {
-                                Task { await subscribeFeedUrl(item.feedUrl) }
+                            onSelect: {
+                                previewRequest = FeedPreviewRequest(
+                                    feedUrl: item.feedUrl,
+                                    hintTitle: item.title,
+                                    hintAuthor: item.author,
+                                    hintArtworkURL: item.artworkURL
+                                )
                             }
                         )
                     }
-                }
-            }
-
-            if let error = store.lastError, mode == .apple {
-                Section {
-                    Text(error)
-                        .foregroundStyle(.red)
-                        .font(.subheadline)
                 }
             }
         }
@@ -251,20 +252,16 @@ struct AddFeedView: View {
                                 artworkURL: item.artworkURL,
                                 feedUrl: item.feedUrl,
                                 isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl },
-                                isSubscribing: subscribingFeedUrl == item.feedUrl,
-                                onSubscribe: {
-                                    Task { await subscribeFeedUrl(item.feedUrl) }
+                                onSelect: {
+                                    previewRequest = FeedPreviewRequest(
+                                        feedUrl: item.feedUrl,
+                                        hintTitle: item.title,
+                                        hintAuthor: item.author,
+                                        hintArtworkURL: item.artworkURL
+                                    )
                                 }
                             )
                         }
-                    }
-                }
-
-                if let error = store.lastError, mode == .podcastIndex {
-                    Section {
-                        Text(error)
-                            .foregroundStyle(.red)
-                            .font(.subheadline)
                     }
                 }
             }
@@ -286,14 +283,14 @@ struct AddFeedView: View {
                     .autocorrectionDisabled()
                     .focused($urlFocused)
             }
-            if let error = store.lastError {
-                Section {
-                    Text(error)
-                        .foregroundStyle(.red)
+            Section {
+                Button("Preview feed") {
+                    openURLPreview()
                 }
+                .disabled(urlText.trimmingCharacters(in: .whitespacesAndNewlines).count < 8)
             }
             Section {
-                Text("Paste an RSS/Atom podcast feed URL, or use Apple Podcasts / Podcast Index search to find feeds.")
+                Text("Paste an RSS/Atom podcast feed URL, or use Apple Podcasts / Podcast Index search. Preview fetches the feed before you confirm subscribe.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -402,24 +399,11 @@ struct AddFeedView: View {
         }
     }
 
-    // MARK: - Subscribe
+    // MARK: - Preview
 
-    @MainActor
-    private func subscribeFeedUrl(_ feedUrl: String) async {
-        guard !feedUrl.isEmpty else { return }
-        subscribingFeedUrl = feedUrl
-        defer { subscribingFeedUrl = nil }
-        await store.subscribe(feedUrl: feedUrl)
-        if store.lastError == nil {
-            dismiss()
-        }
-    }
-
-    @MainActor
-    private func subscribeURL() async {
-        await store.subscribe(feedUrl: urlText.trimmingCharacters(in: .whitespacesAndNewlines))
-        if store.lastError == nil {
-            dismiss()
-        }
+    private func openURLPreview() {
+        let trimmed = urlText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.count >= 8 else { return }
+        previewRequest = FeedPreviewRequest(feedUrl: trimmed)
     }
 }
