@@ -176,6 +176,12 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Chromecast | 1 | n/a | AirPlay statt Cast |
 | Rating prompt | 1 | done | **Optional**: after 10 successful mark-played (manual or finish), once per install `AppStore.requestReview(in:)`; Settings toggle default on + Reset for testing; honest that iOS may suppress sheet / system limits |
 
+## iOS architecture notes (fork)
+
+| Topic | Hinweis |
+|-------|---------|
+| List / Home remaining-time sums | Shared `EpisodeRemainingTime` (`ios/AntennaPod/Data/EpisodeRemainingTime.swift`): wall-clock `max(0, duration − position)`, unknown skip + `~`, live current, played→0. Call sites pass their own episode set (visible filtered / preview soft-cap / unplayed map / library search hits). Labels EN/DE unchanged. Distinct from `WidgetRemainingTime` / chapter remaining. |
+
 ## KMP vs. native (Kurz)
 
 | In KMP (Shared) | Native iOS |

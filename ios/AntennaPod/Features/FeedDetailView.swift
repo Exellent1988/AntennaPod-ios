@@ -97,25 +97,7 @@ struct FeedDetailView: View {
     /// Distinct from **Download all** / **Mark all as played** / **Add all to queue** full-feed eligibility counts.
     private var feedRemainingInfoLabel: String? {
         guard !filteredEpisodes.isEmpty else { return nil }
-        let summary = feedRemainingSummary
-        let episodesWord: String
-        if summary.episodeCount == 1 {
-            episodesWord = String(localized: "1 episode")
-        } else {
-            episodesWord = String(localized: "\(summary.episodeCount) episodes")
-        }
-        // All durations unknown — show count only (no invented time).
-        guard summary.knownCount > 0 else {
-            return episodesWord
-        }
-        let formatted = StatisticsView.formatDuration(summary.remainingSeconds)
-        let timePart: String
-        if summary.unknownCount > 0 {
-            timePart = String(localized: "~\(formatted)")
-        } else {
-            timePart = formatted
-        }
-        return String(localized: "\(episodesWord) • \(timePart) left")
+        return EpisodeRemainingTime.episodesInfoBarLabel(for: feedRemainingSummary)
     }
 
     private var feedRemainingAccessibilityLabel: String {
@@ -128,55 +110,18 @@ struct FeedDetailView: View {
         return parts.joined(separator: ". ")
     }
 
-    private var feedRemainingSummary: FeedRemainingSummary {
-        var remaining = 0.0
-        var known = 0
-        var unknown = 0
-        for episode in filteredEpisodes {
-            guard let duration = knownDurationSeconds(for: episode) else {
-                unknown += 1
-                continue
-            }
-            known += 1
-            // Mark-played clears position; do not count full duration as still left
-            // (unless this is the live current episode — use live position instead).
-            if store.isPlayed(episode.id), playback.currentEpisode?.id != episode.id {
-                continue
-            }
-            let position = positionSeconds(for: episode)
-            remaining += max(0, duration - position)
-        }
-        return FeedRemainingSummary(
-            episodeCount: filteredEpisodes.count,
-            remainingSeconds: remaining,
-            knownCount: known,
-            unknownCount: unknown
+    private var feedRemainingSummary: EpisodeRemainingTime.Summary {
+        EpisodeRemainingTime.summarize(
+            episodes: filteredEpisodes,
+            currentEpisodeId: playback.currentEpisode?.id,
+            liveDurationSeconds: playback.durationSeconds,
+            livePositionSeconds: playback.positionSeconds,
+            isPlayed: { store.isPlayed($0) },
+            savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
+            savedPositionSeconds: { store.positionSeconds(for: $0) }
         )
     }
 
-    /// Prefer live player duration when this episode is current; else feed `itunes:duration` /
-    /// media; else saved playback duration. Never invents a length.
-    private func knownDurationSeconds(for episode: PodcastEpisode) -> Double? {
-        if playback.currentEpisode?.id == episode.id {
-            let live = playback.durationSeconds
-            if live.isFinite, live > 0 { return live }
-        }
-        if episode.hasKnownDuration {
-            return episode.durationSeconds
-        }
-        let saved = store.playbackState(for: episode.id).durationSeconds
-        if saved.isFinite, saved > 0 { return saved }
-        return nil
-    }
-
-    /// Live player position when current; else saved progress (`0` when unplayed / cleared).
-    private func positionSeconds(for episode: PodcastEpisode) -> Double {
-        if playback.currentEpisode?.id == episode.id {
-            let live = playback.positionSeconds
-            return live.isFinite ? max(0, live) : 0
-        }
-        return max(0, store.positionSeconds(for: episode.id))
-    }
 
     /// Unplayed, not archived, not downloaded — newest first, soft-capped.
     /// Bulk Download all always uses full-feed eligibility (not the filtered subset).
@@ -577,13 +522,6 @@ struct FeedDetailView: View {
 
 
 
-/// Sum of remaining seconds over the visible Feed detail list (sort → chip → searchable).
-private struct FeedRemainingSummary {
-    var episodeCount: Int
-    var remainingSeconds: Double
-    var knownCount: Int
-    var unknownCount: Int
-}
 
 /// Filter chip for Feed detail All / Unplayed / Played (mirrors Downloads / All Episodes).
 private struct FeedEpisodeFilterChip: View {

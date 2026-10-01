@@ -441,14 +441,12 @@ final class PodcastStore: ObservableObject {
     }
 
     /// Feed duration when known; else saved playback duration. Never invents a length.
-    /// Matches QueueView remaining-time known-duration path except live player (store has no PlaybackService).
+    /// Matches remaining-time known-duration path except live player (store sort has no PlaybackService).
     private func knownDurationSecondsForQueueSort(_ episode: PodcastEpisode) -> Double? {
-        if episode.hasKnownDuration {
-            return episode.durationSeconds
-        }
-        let saved = playbackState(for: episode.id).durationSeconds
-        if saved.isFinite, saved > 0 { return saved }
-        return nil
+        EpisodeRemainingTime.knownDurationSeconds(
+            for: episode,
+            savedDurationSeconds: playbackState(for: episode.id).durationSeconds
+        )
     }
 
     // MARK: - Playback progress / played
@@ -666,44 +664,29 @@ final class PodcastStore: ObservableObject {
     func unplayedRemainingByFeedId() -> [UUID: FeedUnplayedRemainingSummary] {
         var result: [UUID: FeedUnplayedRemainingSummary] = [:]
         result.reserveCapacity(feeds.count)
+        let currentId = playback?.currentEpisode?.id
+        let liveDur = playback?.durationSeconds ?? 0
+        let livePos = playback?.positionSeconds ?? 0
         for feed in feeds {
-            var unplayed = 0
-            var remaining = 0.0
-            var known = 0
-            var unknown = 0
-            for episode in feed.episodes where !isPlayed(episode.id) && !isArchived(episode.id) {
-                unplayed += 1
-                guard let duration = knownDurationSeconds(for: episode) else {
-                    unknown += 1
-                    continue
-                }
-                known += 1
-                // Mark-played clears position; do not count full duration as still left
-                // (unless this is the live current episode — use live position instead).
-                if isPlayed(episode.id), playback?.currentEpisode?.id != episode.id {
-                    continue
-                }
-                remaining += max(0, duration - remainingPositionSeconds(for: episode))
-            }
-            if unplayed > 0 {
-                result[feed.id] = FeedUnplayedRemainingSummary(
-                    unplayedCount: unplayed,
-                    remainingSeconds: remaining,
-                    knownCount: known,
-                    unknownCount: unknown
-                )
-            }
+            let episodes = feed.episodes.filter { !isPlayed($0.id) && !isArchived($0.id) }
+            guard !episodes.isEmpty else { continue }
+            let summary = EpisodeRemainingTime.summarize(
+                episodes: episodes,
+                currentEpisodeId: currentId,
+                liveDurationSeconds: liveDur,
+                livePositionSeconds: livePos,
+                isPlayed: { isPlayed($0) },
+                savedDurationSeconds: { playbackState(for: $0).durationSeconds },
+                savedPositionSeconds: { positionSeconds(for: $0) }
+            )
+            result[feed.id] = FeedUnplayedRemainingSummary(
+                unplayedCount: summary.episodeCount,
+                remainingSeconds: summary.remainingSeconds,
+                knownCount: summary.knownCount,
+                unknownCount: summary.unknownCount
+            )
         }
         return result
-    }
-
-    /// Live player position when current; else saved progress (`0` when unplayed / cleared).
-    private func remainingPositionSeconds(for episode: PodcastEpisode) -> Double {
-        if let playback, playback.currentEpisode?.id == episode.id {
-            let live = playback.positionSeconds
-            return live.isFinite ? max(0, live) : 0
-        }
-        return max(0, positionSeconds(for: episode.id))
     }
 
     // MARK: - All Episodes (catalog)
@@ -824,16 +807,12 @@ final class PodcastStore: ObservableObject {
     /// Prefer live player duration when this episode is current; else feed `itunes:duration` /
     /// media; else saved playback duration. Never invents a length. Used by widget snapshot.
     private func knownDurationSeconds(for episode: PodcastEpisode) -> Double? {
-        if let playback, playback.currentEpisode?.id == episode.id {
-            let live = playback.durationSeconds
-            if live.isFinite, live > 0 { return live }
-        }
-        if episode.hasKnownDuration {
-            return episode.durationSeconds
-        }
-        let saved = playbackState(for: episode.id).durationSeconds
-        if saved.isFinite, saved > 0 { return saved }
-        return nil
+        EpisodeRemainingTime.knownDurationSeconds(
+            for: episode,
+            currentEpisodeId: playback?.currentEpisode?.id,
+            liveDurationSeconds: playback?.durationSeconds ?? 0,
+            savedDurationSeconds: playbackState(for: episode.id).durationSeconds
+        )
     }
 
     /// Subscriptions ordered by newest episode `pubDateEpochMs` (proxy for recently updated).

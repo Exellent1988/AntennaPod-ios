@@ -125,26 +125,7 @@ struct SubscriptionsView: View {
     /// remaining (`inboxSort` / full Inbox). Hidden when no visible feeds or no unplayed
     /// episodes among them.
     private var subscriptionsRemainingInfoLabel: String? {
-        let summary = subscriptionsRemainingSummary
-        guard summary.episodeCount > 0 else { return nil }
-        let unplayedWord: String
-        if summary.episodeCount == 1 {
-            unplayedWord = String(localized: "1 unplayed")
-        } else {
-            unplayedWord = String(localized: "\(summary.episodeCount) unplayed")
-        }
-        // All durations unknown — show count only (no invented time).
-        guard summary.knownCount > 0 else {
-            return unplayedWord
-        }
-        let formatted = StatisticsView.formatDuration(summary.remainingSeconds)
-        let timePart: String
-        if summary.unknownCount > 0 {
-            timePart = String(localized: "~\(formatted)")
-        } else {
-            timePart = formatted
-        }
-        return String(localized: "\(unplayedWord) • \(timePart) left")
+        EpisodeRemainingTime.unplayedInfoBarLabel(for: subscriptionsRemainingSummary)
     }
 
     private var subscriptionsRemainingAccessibilityLabel: String {
@@ -160,7 +141,7 @@ struct SubscriptionsView: View {
         return parts.joined(separator: ". ")
     }
 
-    private var subscriptionsRemainingSummary: SubscriptionsRemainingSummary {
+    private var subscriptionsRemainingSummary: EpisodeRemainingTime.Summary {
         var episodeCount = 0
         var remaining = 0.0
         var known = 0
@@ -172,7 +153,7 @@ struct SubscriptionsView: View {
             known += s.knownCount
             unknown += s.unknownCount
         }
-        return SubscriptionsRemainingSummary(
+        return EpisodeRemainingTime.Summary(
             episodeCount: episodeCount,
             remainingSeconds: remaining,
             knownCount: known,
@@ -615,15 +596,12 @@ struct SubscriptionsView: View {
     /// Compact per-feed remaining for a subscription row. Hidden when unplayed is 0 or all
     /// durations unknown (no invented time). Prefix `~` when any unplayed episode lacks duration.
     private func feedRowRemainingLabel(_ summary: FeedUnplayedRemainingSummary?) -> String? {
-        guard let summary, summary.unplayedCount > 0, summary.knownCount > 0 else { return nil }
-        let formatted = StatisticsView.formatDuration(summary.remainingSeconds)
-        let timePart: String
-        if summary.unknownCount > 0 {
-            timePart = String(localized: "~\(formatted)")
-        } else {
-            timePart = formatted
-        }
-        return String(localized: "\(timePart) left")
+        guard let summary, summary.unplayedCount > 0 else { return nil }
+        return EpisodeRemainingTime.timeLeftLabel(
+            remainingSeconds: summary.remainingSeconds,
+            knownCount: summary.knownCount,
+            unknownCount: summary.unknownCount
+        )
     }
 
     private func unplayedCountLabel(_ count: Int) -> String {
@@ -662,13 +640,6 @@ struct SubscriptionsView: View {
     }
 }
 
-/// Sum of remaining seconds over unplayed episodes of visible Subscriptions (search + tag).
-private struct SubscriptionsRemainingSummary {
-    var episodeCount: Int
-    var remainingSeconds: Double
-    var knownCount: Int
-    var unknownCount: Int
-}
 
 /// Attaches a context-menu action only when `siteLink` is a usable http(s) URL (hidden otherwise).
 private struct OpenPodcastWebsiteContextMenu: ViewModifier {

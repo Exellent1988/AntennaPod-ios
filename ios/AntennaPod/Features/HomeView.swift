@@ -76,25 +76,7 @@ struct HomeView: View {
     /// catalog / History list.
     private var continueRemainingInfoLabel: String? {
         guard !continueItems.isEmpty else { return nil }
-        let summary = continueRemainingSummary
-        let episodesWord: String
-        if summary.episodeCount == 1 {
-            episodesWord = String(localized: "1 episode")
-        } else {
-            episodesWord = String(localized: "\(summary.episodeCount) episodes")
-        }
-        // All durations unknown — show count only (no invented time).
-        guard summary.knownCount > 0 else {
-            return episodesWord
-        }
-        let formatted = StatisticsView.formatDuration(summary.remainingSeconds)
-        let timePart: String
-        if summary.unknownCount > 0 {
-            timePart = String(localized: "~\(formatted)")
-        } else {
-            timePart = formatted
-        }
-        return String(localized: "\(episodesWord) • \(timePart) left")
+        return EpisodeRemainingTime.episodesInfoBarLabel(for: continueRemainingSummary)
     }
 
     private var continueRemainingAccessibilityLabel: String {
@@ -116,31 +98,15 @@ struct HomeView: View {
         return parts.joined(separator: ". ")
     }
 
-    private var continueRemainingSummary: ContinueRemainingSummary {
-        var remaining = 0.0
-        var known = 0
-        var unknown = 0
-        for item in continueItems {
-            let episode = item.episode
-            guard let duration = knownDurationSeconds(for: episode) else {
-                unknown += 1
-                continue
-            }
-            known += 1
-            // Mark-played clears position; do not count full duration as still left
-            // (unless this is the live current episode — use live position instead).
-            // Continue catalog is in-progress-only; played→0 still kept for computation honesty.
-            if store.isPlayed(episode.id), playback.currentEpisode?.id != episode.id {
-                continue
-            }
-            let position = positionSeconds(for: episode)
-            remaining += max(0, duration - position)
-        }
-        return ContinueRemainingSummary(
-            episodeCount: continueItems.count,
-            remainingSeconds: remaining,
-            knownCount: known,
-            unknownCount: unknown
+    private var continueRemainingSummary: EpisodeRemainingTime.Summary {
+        EpisodeRemainingTime.summarize(
+            episodes: continueItems.map(\.episode),
+            currentEpisodeId: playback.currentEpisode?.id,
+            liveDurationSeconds: playback.durationSeconds,
+            livePositionSeconds: playback.positionSeconds,
+            isPlayed: { store.isPlayed($0) },
+            savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
+            savedPositionSeconds: { store.positionSeconds(for: $0) }
         )
     }
 
@@ -156,25 +122,7 @@ struct HomeView: View {
     /// tab / tab badge.
     private var inboxRemainingInfoLabel: String? {
         guard !inboxItems.isEmpty else { return nil }
-        let summary = inboxRemainingSummary
-        let episodesWord: String
-        if summary.episodeCount == 1 {
-            episodesWord = String(localized: "1 episode")
-        } else {
-            episodesWord = String(localized: "\(summary.episodeCount) episodes")
-        }
-        // All durations unknown — show count only (no invented time).
-        guard summary.knownCount > 0 else {
-            return episodesWord
-        }
-        let formatted = StatisticsView.formatDuration(summary.remainingSeconds)
-        let timePart: String
-        if summary.unknownCount > 0 {
-            timePart = String(localized: "~\(formatted)")
-        } else {
-            timePart = formatted
-        }
-        return String(localized: "\(episodesWord) • \(timePart) left")
+        return EpisodeRemainingTime.episodesInfoBarLabel(for: inboxRemainingSummary)
     }
 
     private var inboxRemainingAccessibilityLabel: String {
@@ -196,31 +144,15 @@ struct HomeView: View {
         return parts.joined(separator: ". ")
     }
 
-    private var inboxRemainingSummary: HomeInboxRemainingSummary {
-        var remaining = 0.0
-        var known = 0
-        var unknown = 0
-        for item in inboxItems {
-            let episode = item.episode
-            guard let duration = knownDurationSeconds(for: episode) else {
-                unknown += 1
-                continue
-            }
-            known += 1
-            // Mark-played clears position; do not count full duration as still left
-            // (unless this is the live current episode — use live position instead).
-            // Inbox preview is usually unplayed-only; played→0 still kept for computation honesty.
-            if store.isPlayed(episode.id), playback.currentEpisode?.id != episode.id {
-                continue
-            }
-            let position = positionSeconds(for: episode)
-            remaining += max(0, duration - position)
-        }
-        return HomeInboxRemainingSummary(
-            episodeCount: inboxItems.count,
-            remainingSeconds: remaining,
-            knownCount: known,
-            unknownCount: unknown
+    private var inboxRemainingSummary: EpisodeRemainingTime.Summary {
+        EpisodeRemainingTime.summarize(
+            episodes: inboxItems.map(\.episode),
+            currentEpisodeId: playback.currentEpisode?.id,
+            liveDurationSeconds: playback.durationSeconds,
+            livePositionSeconds: playback.positionSeconds,
+            isPlayed: { store.isPlayed($0) },
+            savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
+            savedPositionSeconds: { store.positionSeconds(for: $0) }
         )
     }
 
@@ -235,25 +167,7 @@ struct HomeView: View {
     /// tab badge / Queue screen chip+search filter.
     private var queueRemainingInfoLabel: String? {
         guard !queueItems.isEmpty else { return nil }
-        let summary = queueRemainingSummary
-        let episodesWord: String
-        if summary.episodeCount == 1 {
-            episodesWord = String(localized: "1 episode")
-        } else {
-            episodesWord = String(localized: "\(summary.episodeCount) episodes")
-        }
-        // All durations unknown — show count only (no invented time).
-        guard summary.knownCount > 0 else {
-            return episodesWord
-        }
-        let formatted = StatisticsView.formatDuration(summary.remainingSeconds)
-        let timePart: String
-        if summary.unknownCount > 0 {
-            timePart = String(localized: "~\(formatted)")
-        } else {
-            timePart = formatted
-        }
-        return String(localized: "\(episodesWord) • \(timePart) left")
+        return EpisodeRemainingTime.episodesInfoBarLabel(for: queueRemainingSummary)
     }
 
     private var queueRemainingAccessibilityLabel: String {
@@ -275,32 +189,17 @@ struct HomeView: View {
         return parts.joined(separator: ". ")
     }
 
-    private var queueRemainingSummary: HomeQueueRemainingSummary {
-        var remaining = 0.0
-        var known = 0
-        var unknown = 0
-        for episode in queueItems {
-            guard let duration = knownDurationSeconds(for: episode) else {
-                unknown += 1
-                continue
-            }
-            known += 1
-            // Mark-played clears position; do not count full duration as still left
-            // (unless this is the live current episode — use live position instead).
-            if store.isPlayed(episode.id), playback.currentEpisode?.id != episode.id {
-                continue
-            }
-            let position = positionSeconds(for: episode)
-            remaining += max(0, duration - position)
-        }
-        return HomeQueueRemainingSummary(
-            episodeCount: queueItems.count,
-            remainingSeconds: remaining,
-            knownCount: known,
-            unknownCount: unknown
+    private var queueRemainingSummary: EpisodeRemainingTime.Summary {
+        EpisodeRemainingTime.summarize(
+            episodes: queueItems,
+            currentEpisodeId: playback.currentEpisode?.id,
+            liveDurationSeconds: playback.durationSeconds,
+            livePositionSeconds: playback.positionSeconds,
+            isPlayed: { store.isPlayed($0) },
+            savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
+            savedPositionSeconds: { store.positionSeconds(for: $0) }
         )
     }
-
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible Favorites preview**
     /// rows only (`favoriteItems` = filter then soft-cap `previewLimit`). Remaining per episode =
@@ -314,25 +213,7 @@ struct HomeView: View {
     /// Preview stays newest-favorited-first (does **not** follow Favorites `favoritesSort`).
     private var favoritesRemainingInfoLabel: String? {
         guard !favoriteItems.isEmpty else { return nil }
-        let summary = favoritesRemainingSummary
-        let episodesWord: String
-        if summary.episodeCount == 1 {
-            episodesWord = String(localized: "1 episode")
-        } else {
-            episodesWord = String(localized: "\(summary.episodeCount) episodes")
-        }
-        // All durations unknown — show count only (no invented time).
-        guard summary.knownCount > 0 else {
-            return episodesWord
-        }
-        let formatted = StatisticsView.formatDuration(summary.remainingSeconds)
-        let timePart: String
-        if summary.unknownCount > 0 {
-            timePart = String(localized: "~\(formatted)")
-        } else {
-            timePart = formatted
-        }
-        return String(localized: "\(episodesWord) • \(timePart) left")
+        return EpisodeRemainingTime.episodesInfoBarLabel(for: favoritesRemainingSummary)
     }
 
     private var favoritesRemainingAccessibilityLabel: String {
@@ -354,55 +235,16 @@ struct HomeView: View {
         return parts.joined(separator: ". ")
     }
 
-    private var favoritesRemainingSummary: HomeFavoritesRemainingSummary {
-        var remaining = 0.0
-        var known = 0
-        var unknown = 0
-        for item in favoriteItems {
-            let episode = item.episode
-            guard let duration = knownDurationSeconds(for: episode) else {
-                unknown += 1
-                continue
-            }
-            known += 1
-            // Mark-played clears position; do not count full duration as still left
-            // (unless this is the live current episode — use live position instead).
-            if store.isPlayed(episode.id), playback.currentEpisode?.id != episode.id {
-                continue
-            }
-            let position = positionSeconds(for: episode)
-            remaining += max(0, duration - position)
-        }
-        return HomeFavoritesRemainingSummary(
-            episodeCount: favoriteItems.count,
-            remainingSeconds: remaining,
-            knownCount: known,
-            unknownCount: unknown
+    private var favoritesRemainingSummary: EpisodeRemainingTime.Summary {
+        EpisodeRemainingTime.summarize(
+            episodes: favoriteItems.map(\.episode),
+            currentEpisodeId: playback.currentEpisode?.id,
+            liveDurationSeconds: playback.durationSeconds,
+            livePositionSeconds: playback.positionSeconds,
+            isPlayed: { store.isPlayed($0) },
+            savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
+            savedPositionSeconds: { store.positionSeconds(for: $0) }
         )
-    }
-
-    /// Prefer live player duration when this episode is current; else feed `itunes:duration` /
-    /// media; else saved playback duration. Never invents a length.
-    private func knownDurationSeconds(for episode: PodcastEpisode) -> Double? {
-        if playback.currentEpisode?.id == episode.id {
-            let live = playback.durationSeconds
-            if live.isFinite, live > 0 { return live }
-        }
-        if episode.hasKnownDuration {
-            return episode.durationSeconds
-        }
-        let saved = store.playbackState(for: episode.id).durationSeconds
-        if saved.isFinite, saved > 0 { return saved }
-        return nil
-    }
-
-    /// Live player position when current; else saved progress (`0` when unplayed / cleared).
-    private func positionSeconds(for episode: PodcastEpisode) -> Double {
-        if playback.currentEpisode?.id == episode.id {
-            let live = playback.positionSeconds
-            return live.isFinite ? max(0, live) : 0
-        }
-        return max(0, store.positionSeconds(for: episode.id))
     }
 
     /// Library content that would appear under visible non-Discover sections (respects search filter).
@@ -801,36 +643,4 @@ private protocol HomeSearchableEpisode {
 extension HistoryEpisode: HomeSearchableEpisode {}
 extension InboxEpisode: HomeSearchableEpisode {}
 extension FavoriteEpisode: HomeSearchableEpisode {}
-
-/// Sum of remaining seconds over the visible Home Continue preview rows (filter + soft-cap).
-private struct ContinueRemainingSummary {
-    var episodeCount: Int
-    var remainingSeconds: Double
-    var knownCount: Int
-    var unknownCount: Int
-}
-
-/// Sum of remaining seconds over the visible Home Inbox/New preview rows (filter + soft-cap).
-private struct HomeInboxRemainingSummary {
-    var episodeCount: Int
-    var remainingSeconds: Double
-    var knownCount: Int
-    var unknownCount: Int
-}
-
-/// Sum of remaining seconds over the visible Home Queue preview rows (filter + soft-cap).
-private struct HomeQueueRemainingSummary {
-    var episodeCount: Int
-    var remainingSeconds: Double
-    var knownCount: Int
-    var unknownCount: Int
-}
-
-/// Sum of remaining seconds over the visible Home Favorites preview rows (filter + soft-cap).
-private struct HomeFavoritesRemainingSummary {
-    var episodeCount: Int
-    var remainingSeconds: Double
-    var knownCount: Int
-    var unknownCount: Int
-}
 
