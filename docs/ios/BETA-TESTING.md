@@ -70,6 +70,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Relative Veröffentlichungsdaten (EpisodeRow: Heute / Gestern / vor N Tagen ≤7 / sonst Medium-Absolut; Caption `Datum · Dauer · Größe` wenn bekannt; VoiceOver) | ☐ Relative publish dates (EpisodeRow: Today / Yesterday / N days ago ≤7 / else medium absolute; caption `date · duration · size` when known; VoiceOver) |
 | ☐ Fortschrittsbalken EpisodeRow (gestartet-nicht-fertig: position>1, !isPlayed, Dauer bekannt; aus `playback.json`; VoiceOver Prozent + Rest / Position) | ☐ EpisodeRow progress bar (started-not-finished: position>1, !isPlayed, duration known; from `playback.json`; VoiceOver percent + remaining / position) |
 | ☐ Podcast-Beschreibung (Feed-Detail info; Titel + Text; ausgeblendet wenn leer; ggf. Refresh nötig) | ☐ Podcast description (Feed detail info; title + text; hidden when empty; refresh may be needed) |
+| ☐ Podcast-Beschreibungs-Suche (Absätze/Zeilen; Groß/Klein egal; Debounce; leer bei keinen Treffern; nur geladener Text) | ☐ Podcast description search (paragraphs/lines; case-insensitive; debounce; empty when no matches; already-loaded text only) |
 | ☐ Video → audio only Toggle | ☐ Play video as audio only |
 | ☐ Picture in Picture (Video-Surface, Button) | ☐ Picture in Picture (video surface, button) |
 | ☐ Keep screen on (Settings; idle timer während Play) | ☐ Keep screen on (Settings; idle timer while playing) |

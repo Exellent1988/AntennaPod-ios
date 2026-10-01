@@ -13979,6 +13979,40 @@
           }
         }
       }
+    },
+    "Search description": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search description"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beschreibung durchsuchen"
+          }
+        }
+      }
+    },
+    "No description text matches your search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No description text matches your search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Beschreibungstext passt zu deiner Suche."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

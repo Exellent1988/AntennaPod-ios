@@ -28,7 +28,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Shared list/Home **remaining-time** helper (`EpisodeRemainingTime`): one wall-clock sum (`max(0, duration − position)`, unknowns → `~`, live current, played→0); call sites keep their own episode scopes (visible filtered / Home preview soft-cap / Subscriptions unplayed map / library search episode hits). No user-facing behavior change; EN/DE strings unchanged.
 - Relative publish dates on list rows (beta; EpisodeRow `pubDateEpochMs` via `EpisodeDateFormatting`: Today / Yesterday / N days ago for ≤7 calendar days (`RelativeDateTimeFormatter` locale-aware EN/DE), else medium absolute; caption `date · duration · size` (omit unknown parts); History/Favorites/Archived `dateOverride` stays live SwiftUI `.relative`; VoiceOver includes publish caption; no Settings toggle)
 - EpisodeRow in-progress playback (beta polish; thin `ProgressView` under caption when `playback.json` `positionSeconds > 1` and not `isPlayed` and duration known — fraction = position/duration; duration from playback state or feed `itunes:duration`/media; hide when unplayed, played, or duration unknown; VoiceOver EN/DE **N percent played** + remaining, or **At m:ss** if duration unknown; no Settings toggle)
-- Feed / podcast description (beta; channel `description`/`subtitle`/`summary` → `PodcastFeed.descriptionText`; Feed detail toolbar info → sheet with title + plain text; hidden when empty; refresh may be needed for older saves; no author on model)
+- Feed / podcast description (beta; channel `description`/`subtitle`/`summary` → `PodcastFeed.descriptionText`; Feed detail toolbar info → sheet with title + plain text; `.searchable` over already-loaded paragraphs/lines, ~250 ms debounce; hidden when empty; refresh may be needed for older saves; no author on model)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip/seek using Settings intervals)
 - CarPlay (honest partial: system Now Playing / remotes + background audio; **no** custom CPTemplate / CarPlay entitlement)
 - Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
@@ -486,9 +486,10 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 ## Feed / podcast description (beta)
 
 - **Parse:** `NativeRssAtomParser` already stores channel `description` / `subtitle` / `summary` as `PodcastFeed.descriptionText` (may contain HTML). Populated on subscribe / refresh — **existing subscriptions may need a feed refresh** if an older save lacked the field.
-- **Feed detail:** toolbar **info.circle** opens a sheet with the podcast **title** and scrollable **plain text** (`HTMLTextStripping`). Button is **hidden** when the description is empty after strip (no invented copy). Sheet toolbar: **Open podcast website** when `siteLink` is http(s).
+- **Feed detail:** toolbar **info.circle** opens a sheet with the podcast **title** and scrollable **plain text** (`HTMLTextStripping`). Button is **hidden** when the description is empty after strip (no invented copy). Sheet toolbar: **Open podcast website** when `siteLink` is http(s). **`.searchable`** filters **already-loaded** plain paragraphs/lines case-insensitively with ~250 ms debounce; empty state when no matches. Does **not** fetch remote HTML beyond the feed description field — no WebView.
 - **No author:** `PodcastFeed` has no `author` / `authorEmail` in this beta (discovery preview may still show a hint author from iTunes/Podcast Index — not used here).
 - **Not** a rich HTML / AttributedString renderer.
+- **Library / Subscriptions search:** matching on feed `descriptionText` in Subscriptions / library remains separate from this sheet filter.
 
 
 ## Headset / Bluetooth pause
