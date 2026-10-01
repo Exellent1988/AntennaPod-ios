@@ -304,7 +304,9 @@ final class PodcastStore: ObservableObject {
 
     /// AntennaPod-like: mark played and reset position for a clean resume-from-start later.
     /// When auto-delete-after-playing is on, removes the local download file (keeps the episode row).
+    /// Counts a successful mark-played for the optional App Store rating prompt when newly played.
     func markPlayed(_ episodeId: String, removeFromQueue: Bool = true) {
+        let wasPlayed = isPlayed(episodeId)
         var state = playbackState(for: episodeId)
         state.isPlayed = true
         state.positionSeconds = 0
@@ -316,6 +318,9 @@ final class PodcastStore: ObservableObject {
             queue.removeAll { $0.id == episodeId }
         }
         enqueueAutoDeleteAfterPlaying(episodeId)
+        if !wasPlayed {
+            RatingPromptCoordinator.recordSuccessfulMarkPlayed(settings: settings)
+        }
     }
 
     func markUnplayed(_ episodeId: String) {

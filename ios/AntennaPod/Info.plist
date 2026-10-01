@@ -15,5 +15,16 @@
 	</dict>
 	<key>UILaunchScreen</key>
 	<dict/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>de.danoeh.antennapod.ios</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>antennapod</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

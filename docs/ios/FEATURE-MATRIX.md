@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | done | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics / Echo), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | done | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + **new-episode action** + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + notifications (new eps / DL errors / sync errors) + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + Statistics / Echo + About (P0/P1); more prefs later |
+| Settings | 5 | done | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + **new-episode action** + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + notifications (new eps / DL errors / sync errors) + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + Statistics / Echo + App Store rating prompt + Siri/Shortcuts note + About (P0/P1); more prefs later |
 
 ## Subscriptions
 
@@ -122,10 +122,10 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Echo (Year in Review) | 2 | done | **Beta lite**: current calendar year (device calendar); played count via `lastPlayedAt`; approx listening time + top podcasts from `playback.json`; favorites this year from `favorites.json`; Library + Settings; empty state; ShareLink text; same approximation limits as Statistics |
 | Homescreen Widget | 1 | todo | WidgetKit |
 | CarPlay | 1 | todo | |
-| Siri Shortcuts | 1 | todo | |
+| Siri Shortcuts | 1 | done | **Lite**: App Intents + AppShortcutsProvider (Play/Pause, Skip forward/back) open app; URL schemes `antennapod://play|pause|toggle|skip-forward|skip-back` handled in-app via PlaybackService. Not background-only / no App Group shared store; needs current episode loaded |
 | Apple Watch companion | 1 | todo | |
 | Chromecast | 1 | n/a | AirPlay statt Cast |
-| Rating prompt | 1 | todo | optional |
+| Rating prompt | 1 | done | **Optional**: after 10 successful mark-played (manual or finish), once per install `AppStore.requestReview(in:)`; Settings toggle default on + Reset for testing; honest that iOS may suppress sheet / system limits |
 
 ## KMP vs. native (Kurz)
 

@@ -1,0 +1,115 @@
+import AppIntents
+import Foundation
+
+/// Lite Siri / Shortcuts: Play/Pause, Skip forward, Skip back.
+///
+/// Uses `openAppWhenRun` and the same handlers as `antennapod://` URL schemes.
+/// Full in-process control without opening the UI would need App Groups / a shared store —
+/// not wired in this beta. Discoverable via `AppShortcutsProvider` + Shortcuts app.
+
+struct TogglePlaybackAppIntent: AppIntent {
+    static var title: LocalizedStringResource = "Play/Pause"
+    static var description = IntentDescription(
+        "Play or pause the current episode in AntennaPod (opens the app)."
+    )
+    static var openAppWhenRun: Bool = true
+
+    func perform() async throws -> some IntentResult {
+        await MainActor.run {
+            PlaybackDeepLinkRouter.shared.enqueue(.toggle)
+        }
+        return .result()
+    }
+}
+
+struct PlayCurrentAppIntent: AppIntent {
+    static var title: LocalizedStringResource = "Play"
+    static var description = IntentDescription(
+        "Resume the current episode in AntennaPod (opens the app)."
+    )
+    static var openAppWhenRun: Bool = true
+
+    func perform() async throws -> some IntentResult {
+        await MainActor.run {
+            PlaybackDeepLinkRouter.shared.enqueue(.play)
+        }
+        return .result()
+    }
+}
+
+struct PauseCurrentAppIntent: AppIntent {
+    static var title: LocalizedStringResource = "Pause"
+    static var description = IntentDescription(
+        "Pause playback in AntennaPod (opens the app)."
+    )
+    static var openAppWhenRun: Bool = true
+
+    func perform() async throws -> some IntentResult {
+        await MainActor.run {
+            PlaybackDeepLinkRouter.shared.enqueue(.pause)
+        }
+        return .result()
+    }
+}
+
+struct SkipForwardAppIntent: AppIntent {
+    static var title: LocalizedStringResource = "Skip Forward"
+    static var description = IntentDescription(
+        "Skip forward by the Settings fast-forward interval (opens the app)."
+    )
+    static var openAppWhenRun: Bool = true
+
+    func perform() async throws -> some IntentResult {
+        await MainActor.run {
+            PlaybackDeepLinkRouter.shared.enqueue(.skipForward)
+        }
+        return .result()
+    }
+}
+
+struct SkipBackAppIntent: AppIntent {
+    static var title: LocalizedStringResource = "Skip Back"
+    static var description = IntentDescription(
+        "Skip back by the Settings rewind interval (opens the app)."
+    )
+    static var openAppWhenRun: Bool = true
+
+    func perform() async throws -> some IntentResult {
+        await MainActor.run {
+            PlaybackDeepLinkRouter.shared.enqueue(.skipBack)
+        }
+        return .result()
+    }
+}
+
+struct AntennaPodAppShortcuts: AppShortcutsProvider {
+    static var appShortcuts: [AppShortcut] {
+        AppShortcut(
+            intent: TogglePlaybackAppIntent(),
+            phrases: [
+                "Play or pause \(.applicationName)",
+                "Toggle playback in \(.applicationName)"
+            ],
+            shortTitle: "Play/Pause",
+            systemImageName: "playpause.fill"
+        )
+        AppShortcut(
+            intent: SkipForwardAppIntent(),
+            phrases: [
+                "Skip forward in \(.applicationName)",
+                "Fast forward \(.applicationName)"
+            ],
+            shortTitle: "Skip Forward",
+            systemImageName: "goforward"
+        )
+        AppShortcut(
+            intent: SkipBackAppIntent(),
+            phrases: [
+                "Skip back in \(.applicationName)",
+                "Rewind \(.applicationName)"
+            ],
+            shortTitle: "Skip Back",
+            systemImageName: "gobackward"
+        )
+    }
+}

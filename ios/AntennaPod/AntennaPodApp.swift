@@ -32,6 +32,8 @@ struct AntennaPodApp: App {
         FeedRefreshCoordinator.registerBackgroundRefreshIfNeeded()
         // NWPathMonitor for Network / Downloads Wi‑Fi-only gates (auto / manual / stream).
         AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
+        // Siri / URL-scheme playback actions (antennapod://play etc.).
+        PlaybackDeepLinkRouter.shared.attach(playback: playback)
         _store = StateObject(wrappedValue: store)
         _playback = StateObject(wrappedValue: playback)
         _downloads = StateObject(wrappedValue: downloads)
@@ -50,6 +52,13 @@ struct AntennaPodApp: App {
                 .environmentObject(gpodder)
                 .environmentObject(parental)
                 .preferredColorScheme(settings.theme.colorScheme)
+                .onOpenURL { url in
+                    _ = PlaybackDeepLinkRouter.shared.handle(url: url)
+                }
+                .onAppear {
+                    // Re-attach in case a cold-start intent queued before init finished wiring.
+                    PlaybackDeepLinkRouter.shared.attach(playback: playback)
+                }
         }
     }
 }

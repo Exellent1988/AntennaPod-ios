@@ -58,6 +58,7 @@ struct SettingsView: View {
     @State private var showNetworkPINGate = false
     @State private var pendingNetworkUnlockAction: (() -> Void)?
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
+    @State private var ratingPromptUITick = 0
 
     private var pickerChoice: Binding<StorageLimitPickerChoice> {
         Binding(
@@ -154,6 +155,8 @@ struct SettingsView: View {
                         Label("Parental controls", systemImage: "lock.shield")
                     }
                 }
+                appStoreRatingSection
+                siriShortcutsSection
                 Section("About") {
                     NavigationLink {
                         AboutView()
@@ -578,6 +581,43 @@ struct SettingsView: View {
             podcastIndexKeyError = nil
         } catch {
             podcastIndexKeyError = error.localizedDescription
+        }
+    }
+
+    @ViewBuilder
+    private var appStoreRatingSection: some View {
+        Section {
+            Toggle("Ask for App Store rating", isOn: $settings.askForAppStoreRating)
+            LabeledContent("Mark-played count") {
+                Text("\(RatingPromptCoordinator.successfulMarkPlayedCount)/\(RatingPromptCoordinator.threshold)")
+                    .foregroundStyle(.secondary)
+            }
+            .id("rating-count-\(ratingPromptUITick)")
+            LabeledContent("Prompt attempted") {
+                Text(RatingPromptCoordinator.hasRequestedReview ? "Yes (once)" : "Not yet")
+                    .foregroundStyle(.secondary)
+            }
+            .id("rating-attempted-\(ratingPromptUITick)")
+            Button("Reset rating prompt state") {
+                RatingPromptCoordinator.resetState()
+                ratingPromptUITick += 1
+            }
+            Text("After \(RatingPromptCoordinator.threshold) newly marked-played episodes (manual or finished playback), AntennaPod may ask iOS to show a rating sheet once per install. iOS decides whether to show it and may suppress the dialog under system limits — we never spam.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("App Store")
+        }
+    }
+
+    @ViewBuilder
+    private var siriShortcutsSection: some View {
+        Section {
+            Text("Siri / Shortcuts (lite): Play/Pause, Skip forward, Skip back. Also open via URL schemes: antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents open the app and control playback when an episode is already loaded. Not background-only without App Groups.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("Siri / Shortcuts")
         }
     }
 

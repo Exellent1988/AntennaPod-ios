@@ -193,7 +193,7 @@ enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
     ]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error / sync-error notifications).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error / sync-error notifications, App Store rating prompt).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -243,6 +243,7 @@ final class AppSettings: ObservableObject {
         static let notifyOnDownloadErrors = "settings.notifyOnDownloadErrors"
         static let notifyOnSyncErrors = "settings.notifyOnSyncErrors"
         static let chartsCountryCode = "settings.chartsCountryCode"
+        static let askForAppStoreRating = "settings.askForAppStoreRating"
     }
 
     private enum Kind: String {
@@ -403,6 +404,15 @@ final class AppSettings: ObservableObject {
         }
     }
 
+
+    /// When true, after ~10 successful mark-played events ask iOS once for an App Store rating sheet.
+    /// Defaults on; iOS may still suppress the dialog (system limits). Reset via Settings for testing.
+    @Published var askForAppStoreRating: Bool {
+        didSet {
+            UserDefaults.standard.set(askForAppStoreRating, forKey: Keys.askForAppStoreRating)
+        }
+    }
+
     /// Resolved ISO country used for chart requests.
     var resolvedChartsCountryCode: String {
         let pref = ChartsCountryPreference.fromStorage(chartsCountryCode)
@@ -494,6 +504,11 @@ final class AppSettings: ObservableObject {
         } else {
             // Default on; same permission gate as new-episode / download-error alerts.
             notifyOnSyncErrors = true
+        }
+        if UserDefaults.standard.object(forKey: Keys.askForAppStoreRating) != nil {
+            askForAppStoreRating = UserDefaults.standard.bool(forKey: Keys.askForAppStoreRating)
+        } else {
+            askForAppStoreRating = true
         }
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
@@ -607,6 +622,7 @@ final class AppSettings: ObservableObject {
             notifyOnNewEpisodes: notifyOnNewEpisodes,
             notifyOnDownloadErrors: notifyOnDownloadErrors,
             notifyOnSyncErrors: notifyOnSyncErrors,
+            askForAppStoreRating: askForAppStoreRating,
             chartsCountryCode: chartsCountryCode
         )
     }
@@ -658,6 +674,7 @@ final class AppSettings: ObservableObject {
         notifyOnNewEpisodes = snap.notifyOnNewEpisodes
         notifyOnDownloadErrors = snap.notifyOnDownloadErrors
         notifyOnSyncErrors = snap.notifyOnSyncErrors ?? true
+        askForAppStoreRating = snap.askForAppStoreRating ?? true
         chartsCountryCode = ChartsCountryPreference.fromStorage(snap.chartsCountryCode).storageValue
     }
 }
@@ -686,5 +703,7 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var notifyOnDownloadErrors: Bool
     /// Absent in older backups → treated as on (default).
     var notifyOnSyncErrors: Bool? = true
+    /// Absent in older backups → treated as on (default).
+    var askForAppStoreRating: Bool? = true
     var chartsCountryCode: String
 }
