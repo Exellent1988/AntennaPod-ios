@@ -9010,6 +9010,23 @@
           }
         }
       }
+    },
+    "Sort favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten sortieren"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

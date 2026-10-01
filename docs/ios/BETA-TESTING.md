@@ -131,6 +131,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ History: Sortierung (Neueste / Älteste; lastPlayedAt sonst updatedAt; persistiert) | ☐ History: sort (Newest / Oldest; lastPlayedAt else updatedAt; persisted) |
 | ☐ Favoriten (Stern; Full Player + EpisodeRow; VoiceOver Add/Remove) | ☐ Favorites (star; Full Player + EpisodeRow; VoiceOver Add/Remove) |
 | ☐ Favoriten: Suche (Titel / Feed) | ☐ Favorites: search (title / feed) |
+| ☐ Favoriten: Sortierung (Neueste / Älteste; favoritedAt; persistiert) | ☐ Favorites: sort (Newest / Oldest; favoritedAt; persisted) |
 | ☐ Favoriten: Favoriten leeren (Bestätigung) | ☐ Favorites: Clear favorites (confirm) |
 | ☐ Archive / Restore (Listen + Full Player; `archived.json`) | ☐ Archive / restore (lists + Full Player; `archived.json`) |
 | ☐ Archiviert: Suche (Titel / Feed) | ☐ Archived: search (title / feed) |

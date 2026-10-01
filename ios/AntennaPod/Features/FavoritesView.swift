@@ -2,6 +2,7 @@ import SwiftUI
 
 struct FavoritesView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var settings: AppSettings
 
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -10,19 +11,40 @@ struct FavoritesView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
-    /// Full favorites catalog (newest first) — Clear favorites always uses this count.
+    /// Full favorites catalog (store order: newest favorited first) — Clear favorites always uses this count.
     private var items: [FavoriteEpisode] {
         store.favoriteEpisodes
     }
 
-    /// Visible favorites; empty query shows the full list.
+    /// Visible favorites ordered by `AppSettings.favoritesSort`.
+    /// Sort key: `FavoriteEpisode.favoritedAtEpochMs` (`favoriteAtById` / `favorites.json`).
+    /// Empty query shows the full list; sort applies to search-filtered results too.
+    /// Does not mutate `PodcastStore.favoriteEpisodes` (Home Favorites preview / Clear favorites stay newest-first catalog).
     private var filteredItems: [FavoriteEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base = items
-        if q.isEmpty { return base }
-        return base.filter { item in
-            if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
-            return item.feedTitle.localizedCaseInsensitiveContains(q)
+        let filtered: [FavoriteEpisode]
+        if q.isEmpty {
+            filtered = base
+        } else {
+            filtered = base.filter { item in
+                if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+                return item.feedTitle.localizedCaseInsensitiveContains(q)
+            }
+        }
+        return filtered.sorted { lhs, rhs in
+            switch settings.favoritesSort {
+            case .newestFirst:
+                if lhs.favoritedAtEpochMs != rhs.favoritedAtEpochMs {
+                    return lhs.favoritedAtEpochMs > rhs.favoritedAtEpochMs
+                }
+                return lhs.episode.id < rhs.episode.id
+            case .oldestFirst:
+                if lhs.favoritedAtEpochMs != rhs.favoritedAtEpochMs {
+                    return lhs.favoritedAtEpochMs < rhs.favoritedAtEpochMs
+                }
+                return lhs.episode.id < rhs.episode.id
+            }
         }
     }
 
@@ -76,6 +98,21 @@ struct FavoritesView: View {
             debounceTask?.cancel()
         }
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Picker(selection: $settings.favoritesSort) {
+                        ForEach(FavoritesSort.allCases) { sort in
+                            Label(sort.label, systemImage: sort.systemImage)
+                                .tag(sort)
+                        }
+                    } label: {
+                        Text("Sort")
+                    }
+                } label: {
+                    Label("Sort", systemImage: "arrow.up.arrow.down")
+                }
+                .accessibilityLabel("Sort favorites")
+            }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button(role: .destructive) {

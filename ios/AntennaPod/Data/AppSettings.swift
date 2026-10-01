@@ -307,6 +307,29 @@ enum HistorySort: String, CaseIterable, Identifiable {
     }
 }
 
+
+/// How the Favorites list orders episodes (client-side; by favorited-at timestamp).
+enum FavoritesSort: String, CaseIterable, Identifiable {
+    case newestFirst
+    case oldestFirst
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .newestFirst: return String(localized: "Newest first")
+        case .oldestFirst: return String(localized: "Oldest first")
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .newestFirst: return "arrow.down"
+        case .oldestFirst: return "arrow.up"
+        }
+    }
+}
+
 /// Filter chips on Library → Episodes (All Episodes). Applied after the newest-500 soft cap.
 enum AllEpisodesFilter: String, CaseIterable, Identifiable {
     case all
@@ -445,6 +468,7 @@ final class AppSettings: ObservableObject {
         static let inboxSort = "settings.inboxSort"
         static let downloadsSort = "settings.downloadsSort"
         static let historySort = "settings.historySort"
+        static let favoritesSort = "settings.favoritesSort"
         static let allEpisodesFilter = "settings.allEpisodesFilter"
         static let queueLocked = "settings.queueLocked"
     }
@@ -752,6 +776,16 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Favorites list order by `FavoriteEpisode.favoritedAtEpochMs` (`favorites.json` / `favoriteAtById`):
+    /// newest first (default) or oldest first.
+    /// Stable tiebreaker is episode `id`. Client-side re-sort in FavoritesView only — `PodcastStore.favoriteEpisodes`
+    /// stays newest-first for Home Favorites preview / Clear favorites counts. Applies to search-filtered results too.
+    @Published var favoritesSort: FavoritesSort {
+        didSet {
+            UserDefaults.standard.set(favoritesSort.rawValue, forKey: Keys.favoritesSort)
+        }
+    }
+
     /// Library → Episodes chip filter (All / Unplayed / Downloaded / Favorites). Default All. Persisted.
     @Published var allEpisodesFilter: AllEpisodesFilter {
         didSet {
@@ -958,6 +992,9 @@ final class AppSettings: ObservableObject {
         let historySortRaw = UserDefaults.standard.string(forKey: Keys.historySort)
             ?? HistorySort.newestFirst.rawValue
         historySort = HistorySort(rawValue: historySortRaw) ?? .newestFirst
+        let favoritesSortRaw = UserDefaults.standard.string(forKey: Keys.favoritesSort)
+            ?? FavoritesSort.newestFirst.rawValue
+        favoritesSort = FavoritesSort(rawValue: favoritesSortRaw) ?? .newestFirst
         let episodesFilterRaw = UserDefaults.standard.string(forKey: Keys.allEpisodesFilter)
             ?? AllEpisodesFilter.all.rawValue
         allEpisodesFilter = AllEpisodesFilter(rawValue: episodesFilterRaw) ?? .all
@@ -1180,6 +1217,7 @@ final class AppSettings: ObservableObject {
             inboxSort: inboxSort.rawValue,
             downloadsSort: downloadsSort.rawValue,
             historySort: historySort.rawValue,
+            favoritesSort: favoritesSort.rawValue,
             allEpisodesFilter: allEpisodesFilter.rawValue,
             queueLocked: queueLocked
         )
@@ -1285,6 +1323,9 @@ final class AppSettings: ObservableObject {
         if let historySortRaw = snap.historySort {
             historySort = HistorySort(rawValue: historySortRaw) ?? .newestFirst
         }
+        if let favoritesSortRaw = snap.favoritesSort {
+            favoritesSort = FavoritesSort(rawValue: favoritesSortRaw) ?? .newestFirst
+        }
         if let filterRaw = snap.allEpisodesFilter {
             allEpisodesFilter = AllEpisodesFilter(rawValue: filterRaw) ?? .all
         }
@@ -1351,6 +1392,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var downloadsSort: String? = nil
     /// Absent in older backups → newestFirst (default).
     var historySort: String? = nil
+    /// Absent in older backups → newestFirst (default).
+    var favoritesSort: String? = nil
     /// Absent in older backups → all (default).
     var allEpisodesFilter: String? = nil
     /// Absent in older backups → unlocked (false).
