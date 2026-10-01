@@ -290,6 +290,7 @@ final class AppSettings: ObservableObject {
         static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
         static let volumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
+        static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
         static let homeSectionOrder = "settings.home.sectionOrder"
         static let homeHiddenSections = "settings.home.hiddenSections"
     }
@@ -485,6 +486,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// When true, keep the screen awake (`UIApplication.isIdleTimerDisabled`) while playback is actively playing.
+    /// Default off (battery-friendly). Does not override Low Power Mode system behavior beyond the idle timer; no brightness hacks; PiP / background audio unchanged.
+    @Published var keepScreenOnWhilePlaying: Bool {
+        didSet {
+            UserDefaults.standard.set(keepScreenOnWhilePlaying, forKey: Keys.keepScreenOnWhilePlaying)
+        }
+    }
+
 
     /// Ordered Home section ids (all known sections; hidden ones stay in order for Settings reorder).
     @Published var homeSectionOrder: [HomeSectionId] {
@@ -649,6 +658,12 @@ final class AppSettings: ObservableObject {
             // Default off; preference only — PlaybackService does not skip silence on AVPlayer.
             skipSilenceEnabled = false
         }
+        if UserDefaults.standard.object(forKey: Keys.keepScreenOnWhilePlaying) != nil {
+            keepScreenOnWhilePlaying = UserDefaults.standard.bool(forKey: Keys.keepScreenOnWhilePlaying)
+        } else {
+            // Default off: allow normal idle lock (battery-friendly).
+            keepScreenOnWhilePlaying = false
+        }
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
         homeSectionOrder = Self.loadHomeSectionOrder()
@@ -798,6 +813,7 @@ final class AppSettings: ObservableObject {
             playVideoAsAudioOnly: playVideoAsAudioOnly,
             volumeAdaptationEnabled: volumeAdaptationEnabled,
             skipSilenceEnabled: skipSilenceEnabled,
+            keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
             chartsCountryCode: chartsCountryCode,
             homeSectionOrder: homeSectionOrder.map(\.rawValue),
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted()
@@ -855,6 +871,7 @@ final class AppSettings: ObservableObject {
         playVideoAsAudioOnly = snap.playVideoAsAudioOnly ?? false
         volumeAdaptationEnabled = snap.volumeAdaptationEnabled ?? false
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
+        keepScreenOnWhilePlaying = snap.keepScreenOnWhilePlaying ?? false
         chartsCountryCode = ChartsCountryPreference.fromStorage(snap.chartsCountryCode).storageValue
         if let orderRaw = snap.homeSectionOrder, !orderRaw.isEmpty {
             var order: [HomeSectionId] = []
@@ -912,6 +929,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var volumeAdaptationEnabled: Bool? = false
     /// Absent in older backups → treated as off (preference only; no AVPlayer skip).
     var skipSilenceEnabled: Bool? = false
+    /// Absent in older backups → treated as off (allow idle lock).
+    var keepScreenOnWhilePlaying: Bool? = false
     var chartsCountryCode: String
     /// Absent in older backups → default order.
     var homeSectionOrder: [String]? = nil

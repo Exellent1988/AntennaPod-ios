@@ -79,6 +79,12 @@ struct RootTabView: View {
         .onChange(of: settings.playVideoAsAudioOnly) { _, _ in
             playback.applyAudioSessionConfiguration()
         }
+        .onChange(of: settings.keepScreenOnWhilePlaying) { _, _ in
+            playback.applyIdleTimerPolicy()
+        }
+        .onChange(of: playback.isPlaying) { _, _ in
+            playback.applyIdleTimerPolicy()
+        }
         .onChange(of: notificationDeepLink.inboxOpenToken) { _, token in
             guard token != nil else { return }
             selectedTab = .inbox

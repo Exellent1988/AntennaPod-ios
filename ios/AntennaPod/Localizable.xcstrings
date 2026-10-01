@@ -4165,6 +4165,23 @@
           }
         }
       }
+    },
+    "Keep screen on": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep screen on"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildschirm eingeschaltet lassen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

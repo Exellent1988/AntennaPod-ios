@@ -152,6 +152,11 @@ struct SettingsView: View {
                     Text("Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Toggle("Keep screen on", isOn: $settings.keepScreenOnWhilePlaying)
+                        .accessibilityHint("Prevents idle lock while audio or video is actively playing. Default off.")
+                    Text("When on, disables the idle timer while playback is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
                 refreshSection
                 autoDownloadSection

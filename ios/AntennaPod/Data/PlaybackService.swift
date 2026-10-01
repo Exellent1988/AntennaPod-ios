@@ -184,6 +184,7 @@ final class PlaybackService: ObservableObject {
         loadArtworkIfNeeded()
         store?.touchLastPlayed(episode.id)
         store?.publishWidgetSnapshot()
+        applyIdleTimerPolicy()
         return true
     }
 
@@ -205,6 +206,7 @@ final class PlaybackService: ObservableObject {
             resumeSleepTimerIfNeeded()
         }
         updateNowPlayingInfo(force: true)
+        applyIdleTimerPolicy()
     }
 
     func stop() {
@@ -222,6 +224,7 @@ final class PlaybackService: ObservableObject {
             store?.flushAutoDeleteAfterPlaying(for: leavingId)
         }
         store?.publishWidgetSnapshot()
+        applyIdleTimerPolicy()
     }
 
     func setRate(_ newRate: Float) {
@@ -434,6 +437,7 @@ final class PlaybackService: ObservableObject {
                 }
                 self.isPlaying = playing
                 self.updateNowPlayingInfo(force: true)
+                self.applyIdleTimerPolicy()
             }
 
         endObserver = NotificationCenter.default.addObserver(
@@ -462,6 +466,7 @@ final class PlaybackService: ObservableObject {
             if let finishedId {
                 store?.flushAutoDeleteAfterPlaying(for: finishedId)
             }
+            applyIdleTimerPolicy()
             return
         }
 
@@ -487,6 +492,10 @@ final class PlaybackService: ObservableObject {
             if let finishedId {
                 store?.flushAutoDeleteAfterPlaying(for: finishedId)
             }
+            applyIdleTimerPolicy()
+        } else {
+            // Continuous next started — play() already called applyIdleTimerPolicy.
+            applyIdleTimerPolicy()
         }
     }
 
@@ -586,6 +595,7 @@ final class PlaybackService: ObservableObject {
         persistProgress(force: true)
         clearSleepTimerState(restoreVolume: true)
         updateNowPlayingInfo(force: true)
+        applyIdleTimerPolicy()
     }
 
     private func pauseSleepTimerCountdown() {
@@ -647,6 +657,20 @@ final class PlaybackService: ObservableObject {
     func applyAudioSessionConfiguration() {
         guard player != nil else { return }
         activateSession()
+    }
+
+    /// Keep screen awake only while Settings **Keep screen on** is enabled and playback is actively playing.
+    /// Uses `UIApplication.shared.isIdleTimerDisabled`. Restores `false` when paused/stopped/no episode/toggle off.
+    /// Honesty: idle timer only — does not override Low Power Mode beyond that; no brightness hacks; PiP/background audio unchanged.
+    func applyIdleTimerPolicy() {
+        let activelyPlaying = isPlaying || (player?.rate ?? 0) > 0
+        let shouldDisableIdle =
+            (settings?.keepScreenOnWhilePlaying == true)
+            && activelyPlaying
+            && currentEpisode != nil
+        if UIApplication.shared.isIdleTimerDisabled != shouldDisableIdle {
+            UIApplication.shared.isIdleTimerDisabled = shouldDisableIdle
+        }
     }
 
     /// Choose session mode from Settings + current media:
@@ -775,6 +799,7 @@ final class PlaybackService: ObservableObject {
             pauseSleepTimerCountdown()
         }
         updateNowPlayingInfo(force: true)
+        applyIdleTimerPolicy()
     }
 
     private func resumeAfterAudioSessionEvent() {
@@ -785,6 +810,7 @@ final class PlaybackService: ObservableObject {
         isPlaying = true
         resumeSleepTimerIfNeeded()
         updateNowPlayingInfo(force: true)
+        applyIdleTimerPolicy()
     }
 
     // MARK: - Now Playing / remote commands

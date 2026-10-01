@@ -49,6 +49,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Transcript sheet (nur Feed-URL) | ☐ Transcript sheet (feed URL only) |
 | ☐ Video → audio only Toggle | ☐ Play video as audio only |
 | ☐ Picture in Picture (Video-Surface, Button) | ☐ Picture in Picture (video surface, button) |
+| ☐ Keep screen on (Settings; idle timer während Play) | ☐ Keep screen on (Settings; idle timer while playing) |
 | ☐ Continuous queue (nächste Episode) | ☐ Continuous queue (next episode) |
 | ☐ Progress speichern / Resume | ☐ Progress save / resume |
 | ☐ Mark played / unplayed (+ smart-mark ~30s) | ☐ Mark played / unplayed (+ smart-mark ~30s) |
@@ -145,5 +146,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Skip silence: preference only — not applied on stock AVPlayer.
 - Volume adaptation: iOS session mode (`.spokenAudio`), nicht Android LoudnessEnhancer.  
   Volume adaptation: iOS session mode, not Android loudness gain.
+- Keep screen on: nur Idle-Timer (`isIdleTimerDisabled`); kein Low-Power-Override / keine Helligkeit; PiP/Hintergrund-Audio unverändert.  
+  Keep screen on: idle timer only; no Low Power Mode override / no brightness; PiP/background audio unchanged.
 
 Siehe auch: [FEATURE-MATRIX.md](FEATURE-MATRIX.md), [ios/README.md](../../ios/README.md).
