@@ -157,6 +157,11 @@ struct SettingsView: View {
                     Text("When on, disables the idle timer while playback is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Toggle("Continuous playback", isOn: $settings.continuousPlaybackEnabled)
+                        .accessibilityHint("When on, finishing an episode auto-plays the next Queue item. Default on.")
+                    Text("When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
                 refreshSection
                 autoDownloadSection

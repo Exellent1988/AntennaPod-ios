@@ -50,7 +50,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Video → audio only Toggle | ☐ Play video as audio only |
 | ☐ Picture in Picture (Video-Surface, Button) | ☐ Picture in Picture (video surface, button) |
 | ☐ Keep screen on (Settings; idle timer während Play) | ☐ Keep screen on (Settings; idle timer while playing) |
-| ☐ Continuous queue (nächste Episode) | ☐ Continuous queue (next episode) |
+| ☐ Continuous playback Toggle (an → Queue-Next; aus → Stop ohne Advance) | ☐ Continuous playback toggle (on → queue next; off → stop, no advance) |
 | ☐ Progress speichern / Resume | ☐ Progress save / resume |
 | ☐ Mark played / unplayed (+ smart-mark ~30s) | ☐ Mark played / unplayed (+ smart-mark ~30s) |
 | ☐ Skip intro / outro (wenn > 0) | ☐ Skip intro / outro (when > 0) |
@@ -154,5 +154,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Volume adaptation: iOS session mode, not Android loudness gain.
 - Keep screen on: nur Idle-Timer (`isIdleTimerDisabled`); kein Low-Power-Override / keine Helligkeit; PiP/Hintergrund-Audio unverändert.  
   Keep screen on: idle timer only; no Low Power Mode override / no brightness; PiP/background audio unchanged.
+- Continuous playback: Toggle Standard **an**; aus = Episode-Ende ohne Queue-Advance (Mark played / Progress bleiben); Sleep-Timer Ende der Episode stoppt weiterhin ohne Advance.  
+  Continuous playback: toggle default **on**; off = episode end without queue advance (mark played / progress still apply); end-of-episode sleep timer still stops without advance.
 
 Siehe auch: [FEATURE-MATRIX.md](FEATURE-MATRIX.md), [ios/README.md](../../ios/README.md).

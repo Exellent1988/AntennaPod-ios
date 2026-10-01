@@ -332,6 +332,7 @@ final class AppSettings: ObservableObject {
         static let volumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
         static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
+        static let continuousPlaybackEnabled = "settings.continuousPlaybackEnabled"
         static let homeSectionOrder = "settings.home.sectionOrder"
         static let homeHiddenSections = "settings.home.hiddenSections"
         static let subscriptionsSort = "settings.subscriptionsSort"
@@ -537,6 +538,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// When true, finishing an episode auto-advances to `nextQueueEpisode`. Default on.
+    /// When off, episode end still saves progress / marks played (same as today) but does not start the next queue item.
+    /// End-of-episode sleep timer always stops without advancing (unchanged).
+    @Published var continuousPlaybackEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(continuousPlaybackEnabled, forKey: Keys.continuousPlaybackEnabled)
+        }
+    }
 
     /// Ordered Home section ids (all known sections; hidden ones stay in order for Settings reorder).
     @Published var homeSectionOrder: [HomeSectionId] {
@@ -722,6 +731,12 @@ final class AppSettings: ObservableObject {
             // Default off: allow normal idle lock (battery-friendly).
             keepScreenOnWhilePlaying = false
         }
+        if UserDefaults.standard.object(forKey: Keys.continuousPlaybackEnabled) != nil {
+            continuousPlaybackEnabled = UserDefaults.standard.bool(forKey: Keys.continuousPlaybackEnabled)
+        } else {
+            // Default on: auto-advance to next queue episode on end (AntennaPod continuous playback).
+            continuousPlaybackEnabled = true
+        }
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
         homeSectionOrder = Self.loadHomeSectionOrder()
@@ -878,6 +893,7 @@ final class AppSettings: ObservableObject {
             volumeAdaptationEnabled: volumeAdaptationEnabled,
             skipSilenceEnabled: skipSilenceEnabled,
             keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
+            continuousPlaybackEnabled: continuousPlaybackEnabled,
             chartsCountryCode: chartsCountryCode,
             homeSectionOrder: homeSectionOrder.map(\.rawValue),
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
@@ -938,6 +954,7 @@ final class AppSettings: ObservableObject {
         volumeAdaptationEnabled = snap.volumeAdaptationEnabled ?? false
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
         keepScreenOnWhilePlaying = snap.keepScreenOnWhilePlaying ?? false
+        continuousPlaybackEnabled = snap.continuousPlaybackEnabled ?? true
         chartsCountryCode = ChartsCountryPreference.fromStorage(snap.chartsCountryCode).storageValue
         if let orderRaw = snap.homeSectionOrder, !orderRaw.isEmpty {
             var order: [HomeSectionId] = []
@@ -1003,6 +1020,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var skipSilenceEnabled: Bool? = false
     /// Absent in older backups → treated as off (allow idle lock).
     var keepScreenOnWhilePlaying: Bool? = false
+    /// Absent in older backups → treated as on (auto-next from queue).
+    var continuousPlaybackEnabled: Bool? = true
     var chartsCountryCode: String
     /// Absent in older backups → default order.
     var homeSectionOrder: [String]? = nil

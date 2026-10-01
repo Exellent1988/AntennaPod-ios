@@ -472,7 +472,9 @@ final class PlaybackService: ObservableObject {
 
         let finishedId = currentEpisode?.id
         // Snapshot next before markPlayed removes the finished item from the queue.
-        let next = finishedId.flatMap { store?.nextQueueEpisode(after: $0) }
+        // When continuous playback is off, finish without auto-advancing (same stop path as no-next).
+        let continuous = settings?.continuousPlaybackEnabled ?? true
+        let next = continuous ? finishedId.flatMap { store?.nextQueueEpisode(after: $0) } : nil
         finishCurrentEpisode(ended: true)
         var startedNext = false
         if let next {

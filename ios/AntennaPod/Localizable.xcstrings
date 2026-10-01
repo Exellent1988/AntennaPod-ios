@@ -4539,6 +4539,40 @@
           }
         }
       }
+    },
+    "Continuous playback": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuous playback"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fortlaufende Wiedergabe"
+          }
+        }
+      }
+    },
+    "When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, startet nach Ende einer Episode automatisch die nächste aus der Warteschlange. Wenn aus, wird die Episode weiterhin als gehört markiert / Fortschritt gespeichert, aber nicht weitergeschaltet. Der Sleep-Timer „Ende der Episode“ stoppt weiterhin ohne Weiterleitung. Standard an."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
