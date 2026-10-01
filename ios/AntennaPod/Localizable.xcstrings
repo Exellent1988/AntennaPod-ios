@@ -4387,23 +4387,6 @@
         }
       }
     },
-    "Removes %lld episodes from the queue. Does not stop playback, mark played, or delete downloads.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes %lld episodes from the queue. Does not stop playback, mark played, or delete downloads."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt %lld Episoden aus der Warteschlange. Stoppt die Wiedergabe nicht, markiert nicht als gehört und löscht keine Downloads."
-          }
-        }
-      }
-    },
     "Removes %lld offline episode file(s). Playback history is kept.": {
       "extractionState": "manual",
       "localizations": {
@@ -11050,6 +11033,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Füge eine RSS/Atom-Podcast-Feed-URL ein, oder nutze Apple- / Index- / fyyd-Suche. Vorschau lädt den Feed, bevor du das Abonnement bestätigst. Liegt eine http(s)-URL in der Zwischenablage, nutze „Aus Zwischenablage hinzufügen“."
+          }
+        }
+      }
+    },
+    "Removes %lld episodes from the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld episodes from the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld Episoden aus der gesamten Warteschlange (nicht nur dem aktuellen Filter). Stoppt die Wiedergabe nicht, ändert den Fortschritt nicht, markiert nicht als gehört und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then removes every episode from the queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then removes every episode from the queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und entfernt dann alle Episoden aus der Warteschlange"
+          }
+        }
+      }
+    },
+    "Clear the entire queue after confirmation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear the entire queue after confirmation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesamte Warteschlange nach Bestätigung leeren"
           }
         }
       }

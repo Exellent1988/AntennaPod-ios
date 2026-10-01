@@ -326,7 +326,8 @@ final class PodcastStore: ObservableObject {
     }
 
     /// Remove every episode from the queue. Persists via `queue` `didSet`.
-    /// Does not stop playback, mark played, or delete downloads — only clears queue entries.
+    /// Does not stop playback, change progress, mark played, or delete downloads — only clears queue entries.
+    /// Callers must confirm first (Queue tab `confirmationDialog`); safe while queue lock is on (reorder-only).
     func clearQueue() {
         queue = []
     }

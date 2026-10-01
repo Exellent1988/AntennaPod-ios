@@ -127,7 +127,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Inbox: Tab-Badge (Anzahl Inbox-Episoden; 0 ausgeblendet; System-VoiceOver) | ☐ Inbox: tab badge (inbox episode count; hide when 0; system VoiceOver) |
 | ☐ Queue: Tab-Badge (volle Warteschlangen-Länge; nicht Chip/Suche-Filter; 0 ausgeblendet; System-VoiceOver) | ☐ Queue: tab badge (full queue length; not chip/search filter; hide when 0; system VoiceOver) |
 | ☐ Queue: Remove, Archive, Reorder; Full-Player Add/Remove-Toggle | ☐ Queue: remove, archive, reorder; Full Player Add/Remove toggle |
-| ☐ Queue: Warteschlange leeren (Bestätigung) | ☐ Queue: Clear queue (confirm) |
+| ☐ Queue: Warteschlange leeren (immer Bestätigung mit voller Anzahl + Hinweis; auch bei Sperre; kein Download/Fortschritt-Löschen) | ☐ Queue: Clear queue (always confirm with full count + honesty; works when locked; no download/progress wipe) |
 | ☐ Queue: Suche (Titel / Feed; kein Reorder während Filter) | ☐ Queue: search (title / feed; no reorder while filtering) |
 | ☐ Queue: An Anfang / Ans Ende (Kontextmenü; ausgeblendet wenn erste/letzte/nicht in Queue) | ☐ Queue: Move to top / bottom (context menu; hide if first/last/not queued) |
 | ☐ Queue: Sperre (Toolbar + Settings; kein Reorder / An Anfang-Ende; Einreihen / Als Nächstes / Entfernen / Leeren bleiben) | ☐ Queue: lock (toolbar + Settings; no reorder / Move to top-bottom; enqueue / Play Next / Remove / Clear still work) |
@@ -225,6 +225,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Downloads remaining time: info bar under chips — sum `max(0, duration − position)` over **visible** chip+search list (**not** full offline catalog / tab badge); unknown durations omitted (`~`); live position for current episode; wall-clock (no speed); EN/DE a11y.
 - Queue lock: Toolbar Lock/Unlock (`lock.fill` / `lock.open`) + Settings → Queue Toggle; persistiert `AppSettings.queueLocked` (Default aus). Gesperrt = kein Edit/Ziehen-Reorder und kein Move to top/bottom; **Einreihen / Play Next / Remove / Archive-Swipe / Clear queue bleiben** (nur Reihenfolge-Sperre, wie Android `prefQueueLocked`).
   Queue lock: toolbar Lock/Unlock (`lock.fill` / `lock.open`) + Settings → Queue toggle; persists `AppSettings.queueLocked` (default off). Locked = no Edit/drag reorder and no Move to top/bottom; **enqueue / Play Next / Remove / Archive swipe / Clear queue still work** (reorder lock only, mirrors Android `prefQueueLocked`).
+- Clear queue confirm: Toolbar ⋯ → Warteschlange leeren öffnet **immer** `confirmationDialog` mit **voller** `queue.count` (nicht Chip/Suche) + Hinweis (kein Stopp der Wiedergabe / kein Fortschritts-/Played-/Download-Löschen); `clearQueue` nur nach Bestätigen; bei leerer Queue deaktiviert; **Sperre blockiert Clear nicht**.
+  Clear queue confirm: toolbar ⋯ → Clear queue **always** opens `confirmationDialog` with **full** `queue.count` (not chip/search) + honesty (does not stop playback / change progress / mark played / delete downloads); `clearQueue` only after confirm; disabled when empty; **lock does not block Clear**.
 - Continuous playback: Toggle Standard **an**; aus = Episode-Ende ohne Queue-Advance (Mark played / Progress bleiben); Sleep-Timer Ende der Episode stoppt weiterhin ohne Advance.  
   Continuous playback: toggle default **on**; off = episode end without queue advance (mark played / progress still apply); end-of-episode sleep timer still stops without advance.
 - Show remaining time: Settings Toggle Standard **aus**; an = Mini + Full rechts −Restzeit statt Dauer; Links Position; Tippen auf Full-Player-Label toggelt.  

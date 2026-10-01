@@ -269,16 +269,25 @@ struct QueueView: View {
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button(role: .destructive) {
+                            // Always confirm before clearQueue() — never clear from the menu alone.
                             showClearQueueConfirm = true
                         } label: {
                             Label("Clear queue", systemImage: "trash")
                         }
                         // Clear always targets the full queue (not the filtered subset).
+                        // Queue lock does **not** disable Clear — reorder-only lock (Android parity).
                         .disabled(store.queue.isEmpty)
+                        .accessibilityHint(
+                            String(localized: "Asks for confirmation, then removes every episode from the queue")
+                        )
                     } label: {
                         Label("Queue actions", systemImage: "ellipsis.circle")
                     }
                     .disabled(store.queue.isEmpty)
+                    .accessibilityLabel(String(localized: "Queue actions"))
+                    .accessibilityHint(
+                        String(localized: "Clear the entire queue after confirmation")
+                    )
                 }
             }
             .confirmationDialog(
@@ -291,7 +300,9 @@ struct QueueView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Removes \(store.queue.count) episodes from the queue. Does not stop playback, mark played, or delete downloads.")
+                Text(
+                    "Removes \(store.queue.count) episodes from the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads."
+                )
             }
         }
     }
