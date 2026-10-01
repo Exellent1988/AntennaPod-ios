@@ -13,6 +13,7 @@ struct FeedDetailView: View {
     @State private var showMarkAllPlayedConfirm = false
     @State private var showUnsubscribeConfirm = false
     @State private var showFeedURLCopied = false
+    @State private var showFeedDescription = false
     @Environment(\.dismiss) private var dismiss
     @State private var copyFeedURLFeedbackTick = 0
     @State private var searchText = ""
@@ -28,6 +29,16 @@ struct FeedDetailView: View {
 
     private var feedTags: [String] {
         store.tags(for: liveFeed.id)
+    }
+
+    /// Channel description as plain text (HTML stripped). Empty → hide info toolbar control.
+    private var plainFeedDescription: String {
+        guard let raw = liveFeed.descriptionText else { return "" }
+        return HTMLTextStripping.plainText(from: raw)
+    }
+
+    private var hasReadableFeedDescription: Bool {
+        !plainFeedDescription.isEmpty
     }
 
     /// Episodes for this feed ordered by `AppSettings.feedEpisodeSort` (`pubDateEpochMs`).
@@ -222,6 +233,15 @@ struct FeedDetailView: View {
             }
             ToolbarItem(placement: .primaryAction) {
                 HStack(spacing: 12) {
+                    if hasReadableFeedDescription {
+                        Button {
+                            showFeedDescription = true
+                        } label: {
+                            Image(systemName: "info.circle")
+                        }
+                        .accessibilityLabel(String(localized: "Podcast description"))
+                        .accessibilityHint(String(localized: "Opens the podcast description from the feed"))
+                    }
                     if let url = liveFeed.shareURL {
                         ShareLink(
                             item: url,
@@ -346,6 +366,9 @@ struct FeedDetailView: View {
                         }
                     }
             }
+        }
+        .sheet(isPresented: $showFeedDescription) {
+            FeedDescriptionSheetView(feed: liveFeed)
         }
         .safeAreaInset(edge: .bottom) {
             if let error = downloads.lastError {

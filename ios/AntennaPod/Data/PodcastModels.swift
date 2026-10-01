@@ -124,8 +124,15 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     var feedUrl: String
     var siteLink: String?
     var imageUrl: String?
+    /// Channel / feed description from RSS (`description` / Atom `subtitle` / `summary`). May contain HTML.
     var descriptionText: String?
     var episodes: [PodcastEpisode]
+
+    /// Non-empty feed description (may still contain HTML).
+    var hasDescriptionText: Bool {
+        guard let descriptionText else { return false }
+        return !descriptionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 }
 
 /// Per-episode playback progress and played flag (keyed by episode id / guid).

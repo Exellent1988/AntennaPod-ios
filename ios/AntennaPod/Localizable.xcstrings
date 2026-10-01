@@ -9282,6 +9282,57 @@
           }
         }
       }
+    },
+    "Podcast description": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast description"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Beschreibung"
+          }
+        }
+      }
+    },
+    "Opens the podcast description from the feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the podcast description from the feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Podcast-Beschreibung aus dem Feed"
+          }
+        }
+      }
+    },
+    "This podcast has no description in the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast has no description in the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Podcast hat keine Beschreibung im Feed."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -22,6 +22,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Chapters (PSC / Podcast Index from feed + media-file QuickTime/MP4 tags on local files; list in full player; tap to seek; **Previous/Next chapter** when available; **current chapter title** on mini + full player)
 - Transcripts (beta; feed `podcast:transcript` URL only — fetch VTT/SRT/JSON, scrollable sheet, tap cue seek; no Whisper/STT)
 - Episode description / Shownotes (beta; RSS `description`/`content:encoded` → `descriptionText`; full player + EpisodeRow context sheet; plain text, HTML stripped; empty state; refresh to populate existing feeds)
+- Feed / podcast description (beta; channel `description`/`subtitle`/`summary` → `PodcastFeed.descriptionText`; Feed detail toolbar info → sheet with title + plain text; hidden when empty; refresh may be needed for older saves; no author on model)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip/seek using Settings intervals)
 - CarPlay (honest partial: system Now Playing / remotes + background audio; **no** custom CPTemplate / CarPlay entitlement)
 - Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
@@ -459,6 +460,14 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 - **Full player:** **Shownotes** button opens a sheet with scrollable **plain text** (`HTMLTextStripping` — tags removed; not a rich HTML renderer). Empty state when missing / blank after strip. Toolbar: **Open episode website** (when `link` is http(s)) + **Copy episode link** + optional **Copy media URL** + Share.
 - **Episode row:** context menu **Shownotes** (same sheet) + **Open episode website** / **Copy episode link** when link exists + **Copy media URL** when enclosure exists.
 - **Search:** Feed detail + library episode hits also match `descriptionText` (raw feed text).
+
+
+## Feed / podcast description (beta)
+
+- **Parse:** `NativeRssAtomParser` already stores channel `description` / `subtitle` / `summary` as `PodcastFeed.descriptionText` (may contain HTML). Populated on subscribe / refresh — **existing subscriptions may need a feed refresh** if an older save lacked the field.
+- **Feed detail:** toolbar **info.circle** opens a sheet with the podcast **title** and scrollable **plain text** (`HTMLTextStripping`). Button is **hidden** when the description is empty after strip (no invented copy). Sheet toolbar: **Open podcast website** when `siteLink` is http(s).
+- **No author:** `PodcastFeed` has no `author` / `authorEmail` in this beta (discovery preview may still show a hint author from iTunes/Podcast Index — not used here).
+- **Not** a rich HTML / AttributedString renderer.
 
 
 ## Headset / Bluetooth pause

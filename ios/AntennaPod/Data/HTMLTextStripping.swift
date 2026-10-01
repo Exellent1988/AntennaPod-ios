@@ -1,6 +1,6 @@
 import Foundation
 
-/// Lightweight HTML → plain text for episode shownotes (beta).
+/// Lightweight HTML → plain text for episode shownotes / feed descriptions (beta).
 /// Not a full HTML renderer — strips tags, decodes common entities, normalizes whitespace.
 enum HTMLTextStripping {
     static func plainText(from html: String) -> String {
