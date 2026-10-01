@@ -528,9 +528,11 @@ struct EpisodeRow: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 }
-                if progressFraction > 0, !state.isPlayed {
+                // AntennaPod-like: thin bar only for started-not-finished (position > 1, not isPlayed, duration known).
+                if progressFraction > 0 {
                     ProgressView(value: progressFraction)
                         .tint(.accentColor)
+                        .accessibilityHidden(true)
                 }
             }
             .accessibilityElement(children: .ignore)
@@ -808,13 +810,26 @@ struct EpisodeRow: View {
         }
     }
 
+    /// Fraction of episode heard for the thin list ProgressView.
+    /// Position + duration from `playback.json` (`EpisodePlaybackState`); duration may fall back
+    /// to feed `itunes:duration` / media via `knownDurationSeconds` when playback duration is unset.
+    /// Hidden (0) when unplayed (`position ≤ 1`), fully played (`isPlayed`), or duration unknown.
     private var progressFraction: Double {
-        let duration = state.durationSeconds
+        guard !state.isPlayed else { return 0 }
         let position = state.positionSeconds
-        guard duration.isFinite, duration > 0, position > 0 else {
+        // Match Resume / Continue listening: ignore sub-second noise.
+        guard position > 1, let duration = knownDurationSeconds, duration > 0 else {
             return 0
         }
         return min(1, position / duration)
+    }
+
+    /// Remaining wall-clock seconds when in-progress with known duration; else `nil`.
+    private var remainingSeconds: Double? {
+        guard progressFraction > 0, let duration = knownDurationSeconds else { return nil }
+        let left = duration - state.positionSeconds
+        guard left.isFinite, left > 0 else { return nil }
+        return left
     }
 
     private var resumeLabel: String {
@@ -834,7 +849,7 @@ struct EpisodeRow: View {
         return String(localized: "Download")
     }
 
-    /// VoiceOver summary: title, feed, date, duration, played/progress, downloaded (+ favorite/archived).
+    /// VoiceOver summary: title, feed, date, duration, played / percent (+ remaining) or position-only, downloaded (+ favorite/archived).
     private var episodeAccessibilityLabel: String {
         var parts: [String] = [episode.title]
         if !feedTitle.isEmpty {
@@ -852,7 +867,16 @@ struct EpisodeRow: View {
             parts.append(String(localized: "Played"))
         } else if progressFraction > 0 {
             let pct = Int((progressFraction * 100).rounded())
-            parts.append("\(pct) percent played")
+            parts.append(String(localized: "\(pct) percent played"))
+            if let remaining = remainingSeconds,
+               let formatted = PodcastEpisode.formatPlaybackPosition(remaining) {
+                parts.append(String(localized: "\(formatted) remaining"))
+            }
+        } else if !state.isPlayed, state.positionSeconds > 1 {
+            // Duration unknown: no bar, but VoiceOver can still say saved position.
+            if let formatted = PodcastEpisode.formatPlaybackPosition(state.positionSeconds) {
+                parts.append(String(localized: "At \(formatted)"))
+            }
         }
         if downloads.isDownloaded(episode) {
             parts.append(String(localized: "Downloaded"))

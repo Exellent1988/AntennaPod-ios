@@ -62,6 +62,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Shownotes / Beschreibung (Full Player + Episode-Kontext; leer wenn keine; HTML → Plain Text) | ☐ Shownotes / description (full player + episode context; empty when none; HTML → plain text) |
 | ☐ Episoden-Dauer in Listen (EpisodeRow Caption `m:ss`/`h:mm:ss` aus Feed/`playback`; versteckt wenn unbekannt; VoiceOver Dauer) | ☐ Episode duration on lists (EpisodeRow caption `m:ss`/`h:mm:ss` from feed/playback; hidden when unknown; VoiceOver Duration) |
 | ☐ Relative Veröffentlichungsdaten (EpisodeRow: Heute / Gestern / vor N Tagen ≤7 / sonst Medium-Absolut; Dauer unverändert `Datum · Dauer`; VoiceOver) | ☐ Relative publish dates (EpisodeRow: Today / Yesterday / N days ago ≤7 / else medium absolute; duration intact `date · duration`; VoiceOver) |
+| ☐ Fortschrittsbalken EpisodeRow (gestartet-nicht-fertig: position>1, !isPlayed, Dauer bekannt; aus `playback.json`; VoiceOver Prozent + Rest / Position) | ☐ EpisodeRow progress bar (started-not-finished: position>1, !isPlayed, duration known; from `playback.json`; VoiceOver percent + remaining / position) |
 | ☐ Podcast-Beschreibung (Feed-Detail info; Titel + Text; ausgeblendet wenn leer; ggf. Refresh nötig) | ☐ Podcast description (Feed detail info; title + text; hidden when empty; refresh may be needed) |
 | ☐ Video → audio only Toggle | ☐ Play video as audio only |
 | ☐ Picture in Picture (Video-Surface, Button) | ☐ Picture in Picture (video surface, button) |
