@@ -27,6 +27,8 @@ struct FullPlayerView: View {
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyURLFeedbackTick = 0
+    /// Single download pending Full Player delete confirmation (nil = dialog dismissed).
+    @State private var episodePendingDeleteDownload: PodcastEpisode?
 
     private var episode: PodcastEpisode? { playback.currentEpisode }
 
@@ -197,6 +199,27 @@ struct FullPlayerView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(copiedAlertMessage)
+        }
+        .confirmationDialog(
+            "Delete download?",
+            isPresented: Binding(
+                get: { episodePendingDeleteDownload != nil },
+                set: { if !$0 { episodePendingDeleteDownload = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: episodePendingDeleteDownload
+        ) { episode in
+            Button("Delete download", role: .destructive) {
+                downloads.delete(episode)
+                episodePendingDeleteDownload = nil
+            }
+            Button("Cancel", role: .cancel) {
+                episodePendingDeleteDownload = nil
+            }
+        } message: { episode in
+            Text(
+                "Delete download for \"\(episode.title)\"? Removes the local offline file only. Keeps played status, queue, and favorites."
+            )
         }
         .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
         .sheet(isPresented: $showCustomSleepTimer) {
@@ -711,7 +734,7 @@ struct FullPlayerView: View {
             return String(localized: "Cancels the in-progress download")
         }
         if downloads.isDownloaded(episode) {
-            return String(localized: "Deletes the offline file for this episode")
+            return String(localized: "Asks for confirmation, then deletes the offline file for this episode")
         }
         return String(localized: "Downloads this episode for offline playback")
     }
@@ -811,8 +834,8 @@ struct FullPlayerView: View {
                     if downloads.inProgress.contains(episode.id) {
                         downloads.cancelDownload(episode)
                     } else if downloads.isDownloaded(episode) {
-                        // Same path as Downloads tab swipe Delete — no confirm for a single file.
-                        downloads.delete(episode)
+                        // Same path as Downloads tab swipe Delete — confirm first.
+                        episodePendingDeleteDownload = episode
                     } else {
                         Task { await downloads.download(episode) }
                     }

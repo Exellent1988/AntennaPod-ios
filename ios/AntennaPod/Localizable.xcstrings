@@ -11257,6 +11257,57 @@
           }
         }
       }
+    },
+    "Delete download?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete download?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download löschen?"
+          }
+        }
+      }
+    },
+    "Delete download for \"%@\"? Removes the local offline file only. Keeps played status, queue, and favorites.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete download for \"%@\"? Removes the local offline file only. Keeps played status, queue, and favorites."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download von „%@“ löschen? Entfernt nur die lokale Offline-Datei. Wiedergabestatus, Warteschlange und Favoriten bleiben erhalten."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then deletes the offline file for this episode": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then deletes the offline file for this episode"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und löscht dann die Offline-Datei dieser Episode"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

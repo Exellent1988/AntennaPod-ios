@@ -10,6 +10,8 @@ struct DownloadsView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
     @State private var showDeletePlayedConfirm = false
+    /// Single download pending swipe-delete confirmation (nil = dialog dismissed).
+    @State private var episodePendingDelete: PodcastEpisode?
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -284,7 +286,7 @@ struct DownloadsView: View {
                                 }
                                 .tint(.purple)
                                 Button(role: .destructive) {
-                                    downloads.delete(item.episode)
+                                    episodePendingDelete = item.episode
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
@@ -362,6 +364,27 @@ struct DownloadsView: View {
             } message: {
                 Text(
                     "Deletes \(playedDownloadsForDelete.count) played offline file(s) (\(playedDownloadsDeleteSizeLabel)). Keeps unplayed downloads and favorites. Does not mark unplayed, clear the queue, or clear all downloads."
+                )
+            }
+            .confirmationDialog(
+                "Delete download?",
+                isPresented: Binding(
+                    get: { episodePendingDelete != nil },
+                    set: { if !$0 { episodePendingDelete = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: episodePendingDelete
+            ) { episode in
+                Button("Delete download", role: .destructive) {
+                    downloads.delete(episode)
+                    episodePendingDelete = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    episodePendingDelete = nil
+                }
+            } message: { episode in
+                Text(
+                    "Delete download for \"\(episode.title)\"? Removes the local offline file only. Keeps played status, queue, and favorites."
                 )
             }
         }
