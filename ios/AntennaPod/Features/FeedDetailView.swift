@@ -54,6 +54,11 @@ struct FeedDetailView: View {
         liveFeed.displayLanguage
     }
 
+    /// Channel podcast:medium raw string when the feed provided it — hidden when missing (never invent/remap).
+    private var displayMedium: String? {
+        liveFeed.displayMedium
+    }
+
     /// itunes:category texts when the feed provided them — empty → hide (never invent taxonomy).
     private var displayCategories: [String] {
         liveFeed.displayCategories
@@ -261,6 +266,19 @@ struct FeedDetailView: View {
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityLabel(String(localized: "Language \(language)"))
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:medium when present — raw feed string; hide when missing (never invent/remap; display-only).
+            if let medium = displayMedium {
+                Section {
+                    Text(medium)
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.2), in: Capsule())
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityLabel(String(localized: "Medium \(medium)"))
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -969,6 +987,15 @@ struct EpisodeRow: View {
                             .background(Color.secondary.opacity(0.2), in: Capsule())
                             .accessibilityHidden(true)
                     }
+                    // Item podcast:medium raw string when set — hide when missing (never invent/remap; display-only).
+                    if let medium = episode.displayMedium {
+                        Text(medium)
+                            .font(.caption2.weight(.semibold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                            .accessibilityHidden(true)
+                    }
                     if store.isFavorite(episode.id) {
                         Image(systemName: "star.fill")
                             .foregroundStyle(.yellow)
@@ -1377,6 +1404,9 @@ struct EpisodeRow: View {
         }
         if episode.isExplicit {
             parts.append(String(localized: "Explicit"))
+        }
+        if let medium = episode.displayMedium {
+            parts.append(String(localized: "Medium \(medium)"))
         }
         if let seasonA11y = episode.seasonEpisodeAccessibilityLabel {
             parts.append(seasonA11y)

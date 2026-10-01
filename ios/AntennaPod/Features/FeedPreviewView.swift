@@ -218,6 +218,14 @@ struct FeedPreviewView: View {
                         .lineLimit(1)
                         .accessibilityLabel(String(localized: "Language \(language)"))
                 }
+                if let medium = parsed?.displayMedium {
+                    Text(medium)
+                        .font(.caption2.weight(.semibold))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.secondary.opacity(0.2), in: Capsule())
+                        .accessibilityLabel(String(localized: "Medium \(medium)"))
+                }
                 if let cats = parsed?.categoriesCaption {
                     Text(cats)
                         .font(.caption)

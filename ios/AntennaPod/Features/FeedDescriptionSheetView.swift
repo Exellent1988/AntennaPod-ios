@@ -40,6 +40,10 @@ struct FeedDescriptionSheetView: View {
         feed.displayLanguage
     }
 
+    private var displayMedium: String? {
+        feed.displayMedium
+    }
+
     private var displayCategories: [String] {
         feed.displayCategories
     }
@@ -264,6 +268,16 @@ struct FeedDescriptionSheetView: View {
                             .accessibilityLabel(String(localized: "Language \(language)"))
                     }
 
+                    if let medium = displayMedium {
+                        Text(medium)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityLabel(String(localized: "Medium \(medium)"))
+                    }
+
                     if !displayCategories.isEmpty {
                         FeedDescriptionCategoryChips(categories: displayCategories)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -328,6 +342,16 @@ struct FeedDescriptionSheetView: View {
                             .foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .accessibilityLabel(String(localized: "Language \(language)"))
+                    }
+
+                    if let medium = displayMedium {
+                        Text(medium)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityLabel(String(localized: "Medium \(medium)"))
                     }
 
                     if !displayCategories.isEmpty {

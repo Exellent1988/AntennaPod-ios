@@ -649,6 +649,15 @@ struct SubscriptionsView: View {
                                 .background(Color.secondary.opacity(0.2), in: Capsule())
                                 .accessibilityHidden(true)
                         }
+                        // Channel podcast:medium raw string when set — hide when missing (never invent/remap).
+                        if let medium = feed.displayMedium {
+                            Text(medium)
+                                .font(.caption2.weight(.semibold))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.secondary.opacity(0.2), in: Capsule())
+                                .accessibilityHidden(true)
+                        }
                     }
                     // Feed author when present (itunes:author / Atom name / managingEditor); hide when missing.
                     if let author = feed.displayAuthor {
@@ -765,6 +774,9 @@ struct SubscriptionsView: View {
         }
         if feed.isExplicit {
             parts.append(String(localized: "Explicit"))
+        }
+        if let medium = feed.displayMedium {
+            parts.append(String(localized: "Medium \(medium)"))
         }
         if let author = feed.displayAuthor {
             parts.append(author)

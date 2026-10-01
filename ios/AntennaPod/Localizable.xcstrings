@@ -16610,7 +16610,7 @@
     },
     "Medium %@": {
       "extractionState": "manual",
-      "comment": "VoiceOver for optional podcast:remoteItem medium attribute.",
+      "comment": "VoiceOver for podcast:medium when feed/item provides it (raw feed string: podcast/music/video/…), or optional podcast:remoteItem medium attribute. Never invent or remap; hide when missing.",
       "localizations": {
         "en": {
           "stringUnit": {

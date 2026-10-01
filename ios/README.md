@@ -42,6 +42,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Soundbite (beta; parse item Podcast Index `podcast:soundbite` startTime+duration (+ optional title) into `PodcastEpisode.soundbites`; Shownotes + Full player list start/duration + title when set; **Seek to start** via existing `PlaybackService.seek(toSeconds:)` when this episode is current — else **Copy**; first 20 + honesty; **feed-provided only** — never invent; **no** separate clip player / end trim; **hide when none**; refresh to populate existing feeds)
 - Text / `podcast:txt` (beta; parse channel and/or item Podcast Index `podcast:txt` optional purpose + text into `PodcastFeed.texts` / `PodcastEpisode.texts`; Feed detail + description sheet + episode Shownotes: purpose as raw feed string when set + text body; **Copy**; **Open** when value looks like http(s); first 20 + honesty; **feed-provided only** — never invent purposes; **display-only** — **no** Social / Matrix / special clients; **hide when none**; refresh to populate existing feeds)
 - Podroll / `podcast:podroll` (beta; parse channel Podcast Index `podcast:podroll` / nested `podcast:remoteItem` feedGuid and/or feedUrl (+ optional title/medium/itemGuid) into `PodcastFeed.podrollItems`; Feed detail + description: title + url/guid when present; **Open** http(s); **Copy**; **Subscribe** via existing feed preview when feedUrl; first 20 + honesty; **feed-provided only** — never invent recommendations; **no** Podcast Index GUID resolve; **hide when none**; refresh to populate existing feeds)
+- Medium / `podcast:medium` (beta; parse channel and/or item Podcast Index `podcast:medium` into `PodcastFeed.medium` / `PodcastEpisode.medium` as **raw feed string**; Feed detail + description + preview + Subscriptions + EpisodeRow capsule when set; VoiceOver **Medium …**; **feed-provided only** — never invent or remap; **display-only** — **no** playback pipeline change; **hide when missing**; refresh to populate existing feeds)
 - Shared list/Home **remaining-time** helper (`EpisodeRemainingTime`): one wall-clock sum (`max(0, duration − position)`, unknowns → `~`, live current, played→0); call sites keep their own episode scopes (visible filtered / Home preview soft-cap / Subscriptions unplayed map / library search episode hits). No user-facing behavior change; EN/DE strings unchanged.
 - Relative publish dates on list rows (beta; EpisodeRow `pubDateEpochMs` via `EpisodeDateFormatting`: Today / Yesterday / N days ago for ≤7 calendar days (`RelativeDateTimeFormatter` locale-aware EN/DE), else medium absolute; caption `S2 E5 · Trailer/Bonus · date · duration · size` (omit unknown parts); History/Favorites/Archived `dateOverride` stays live SwiftUI `.relative`; VoiceOver includes publish caption; no Settings toggle)
 - EpisodeRow in-progress playback (beta polish; thin `ProgressView` under caption when `playback.json` `positionSeconds > 1` and not `isPlayed` and duration known — fraction = position/duration; duration from playback state or feed `itunes:duration`/media; hide when unplayed, played, or duration unknown; VoiceOver EN/DE **N percent played** + remaining, or **At m:ss** if duration unknown; no Settings toggle)
@@ -688,6 +689,15 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 - **Honesty:** **Display-only.** No Podcast Index GUID resolution, no auto-subscribe, no invented show catalog. GUID-only rows can be copied; Subscribe requires a feed URL.
 - **Local-folder feeds:** no `podcast:podroll` (no RSS).
 - EN / DE + VoiceOver.
+
+## Medium / `podcast:medium` (beta)
+
+- **Parse:** `NativeRssAtomParser` stores channel and/or item Podcast Index **`podcast:medium`** element text into `PodcastFeed.medium` / `PodcastEpisode.medium` as the **raw feed string** (e.g. podcast, music, video, audiobook). **Feed-provided only** — never invent values or remap beyond display. Distinct from `media:content@medium` and optional `podcast:remoteItem` medium attribute on podroll. Populated on subscribe / refresh — **existing subscriptions need a feed refresh**.
+- **UI:** Feed detail (+ description sheet / subscribe preview), **Subscriptions** row, and **EpisodeRow** show a small capsule with the raw string when set. VoiceOver **Medium …**. **Hidden when missing.**
+- **Honesty:** **Display-only.** Does **not** change the playback pipeline (no auto video surface / music mode from medium).
+- **Local-folder feeds:** no `podcast:medium` (no RSS).
+- EN / DE + VoiceOver.
+
 
 
 ## Headset / Bluetooth pause

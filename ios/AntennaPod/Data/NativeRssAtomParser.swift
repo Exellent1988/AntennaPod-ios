@@ -26,6 +26,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     /// Prefer itunes:language / RSS language element → xml:lang on rss/feed/channel.
     private var languageElement: String?
     private var xmlLang: String?
+    /// Channel podcast:medium — raw feed string (podcast/music/video/…); nil when absent. Display-only; never invent/remap.
+    private var channelMedium: String?
     /// Prefer channel `podcast:funding` (url + optional text) over Atom `link rel="payment"`.
     private var fundingUrl: String?
     private var fundingLabel: String?
@@ -98,6 +100,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itemEpisodeType: String?
     /// Item itunes:explicit override; nil = inherit channel (or false when channel unmarked).
     private var itemExplicitOverride: Bool?
+    /// Item podcast:medium — raw feed string when present; nil when absent. Display-only; never invent/remap.
+    private var itemMedium: String?
     /// Item podcast:person — feed-provided only; never invent.
     private var itemPeople: [PodcastPerson] = []
     /// Item podcast:location — feed-provided only; never invent / never geocode.
@@ -208,6 +212,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 languageElement: languageElement,
                 xmlLang: xmlLang
             ),
+            medium: channelMedium,
             fundingUrl: fundingUrl,
             fundingLabel: fundingLabel,
             categories: Self.uniqueCategories(categoryTexts),
@@ -270,6 +275,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemEpisodeNumber = nil
             itemEpisodeType = nil
             itemExplicitOverride = nil
+            itemMedium = nil
             itemPeople = []
             itemLocations = []
             itemSocialInteracts = []
@@ -761,6 +767,12 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishSoundbite(text: text)
             case "txt":
                 finishTxt(text: text, intoItem: true)
+            case "medium":
+                // Podcast Index <podcast:medium>…</podcast:medium> on item — store raw string; never invent/remap.
+                // Distinct from media:content@medium and podcast:remoteItem medium attribute.
+                if !text.isEmpty {
+                    itemMedium = text
+                }
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
@@ -781,6 +793,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     episodeNumber: itemEpisodeNumber,
                     episodeType: itemEpisodeType,
                     isExplicit: itemExplicitOverride ?? feedIsExplicit,
+                    medium: itemMedium,
                     people: itemPeople,
                     locations: itemLocations,
                     socialInteracts: itemSocialInteracts,
@@ -847,6 +860,14 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 // RSS <language> / itunes:language — store as provided (never invent). Prefer over xml:lang.
                 if !text.isEmpty {
                     languageElement = text
+                }
+            case "medium":
+                // Podcast Index <podcast:medium>…</podcast:medium> on channel — store raw string; never invent/remap.
+                // Distinct from media:content@medium and podcast:remoteItem medium attribute (podroll).
+                // Skip when inside podroll (remoteItem is attribute-only) / liveItem.
+                if inPodroll { break }
+                if !text.isEmpty {
+                    channelMedium = text
                 }
             case "url" where inImage:
                 imageUrl = text

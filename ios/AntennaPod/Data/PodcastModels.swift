@@ -1400,6 +1400,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// `itunes:explicit` yes/true/explicit on the item (or inherited from channel when item omits it).
     /// `false` when missing, clean/no/false, or unknown — never invent; UI hides badge unless true.
     var isExplicit: Bool
+    /// Item-level Podcast Index `podcast:medium` raw string when the feed provides it (e.g. podcast / music / video).
+    /// Nil when absent — never invent or remap; UI hides unless present. Display-only — does not change playback.
+    var medium: String?
     /// Item-level Podcast Index `podcast:person` entries when the feed provides them.
     /// Empty when absent — never invent people; UI hides when empty.
     var people: [PodcastPerson]
@@ -1471,6 +1474,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         episodeNumber: Int? = nil,
         episodeType: String? = nil,
         isExplicit: Bool = false,
+        medium: String? = nil,
         people: [PodcastPerson] = [],
         locations: [PodcastLocation] = [],
         socialInteracts: [PodcastSocialInteract] = [],
@@ -1496,6 +1500,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.episodeNumber = episodeNumber
         self.episodeType = episodeType
         self.isExplicit = isExplicit
+        self.medium = medium
         self.people = people
         self.locations = locations
         self.socialInteracts = socialInteracts
@@ -1524,6 +1529,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         episodeNumber = try c.decodeIfPresent(Int.self, forKey: .episodeNumber)
         episodeType = try c.decodeIfPresent(String.self, forKey: .episodeType)
         isExplicit = try c.decodeIfPresent(Bool.self, forKey: .isExplicit) ?? false
+        medium = try c.decodeIfPresent(String.self, forKey: .medium)
         people = try c.decodeIfPresent([PodcastPerson].self, forKey: .people) ?? []
         locations = try c.decodeIfPresent([PodcastLocation].self, forKey: .locations) ?? []
         socialInteracts = try c.decodeIfPresent([PodcastSocialInteract].self, forKey: .socialInteracts) ?? []
@@ -1531,6 +1537,13 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         alternateEnclosures = try c.decodeIfPresent([PodcastAlternateEnclosure].self, forKey: .alternateEnclosures) ?? []
         soundbites = try c.decodeIfPresent([PodcastSoundbite].self, forKey: .soundbites) ?? []
         texts = try c.decodeIfPresent([PodcastTxt].self, forKey: .texts) ?? []
+    }
+
+    /// Trimmed non-empty item `podcast:medium` from the feed. Hidden when missing — never invent / never remap.
+    var displayMedium: String? {
+        guard let medium else { return nil }
+        let trimmed = medium.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
     }
 
     /// Non-empty named item-level `podcast:person` entries (hide when empty — never invent).
@@ -1647,6 +1660,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Feed language BCP-47 / ISO 639 code when the feed provides it (`itunes:language` / RSS `language` / `xml:lang`).
     /// Nil or blank when absent — never invent; UI hides unless present.
     var language: String?
+    /// Channel Podcast Index `podcast:medium` raw string when the feed provides it (e.g. podcast / music / video / audiobook).
+    /// Nil when absent — never invent or remap beyond display; UI hides unless present. Display-only — does not change playback.
+    var medium: String?
     /// Podcast Index `podcast:funding` / Atom `link rel="payment"` URL when the feed provides it.
     /// Nil or blank when absent — never invent; UI hides unless http(s) valid.
     var fundingUrl: String?
@@ -1716,6 +1732,13 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     var displayLanguage: String? {
         guard let code = languageCode else { return nil }
         return FeedLanguageFormatting.displayName(for: code)
+    }
+
+    /// Trimmed non-empty channel `podcast:medium` from the feed. Hidden when missing — never invent / never remap.
+    var displayMedium: String? {
+        guard let medium else { return nil }
+        let trimmed = medium.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
     }
 
     /// Trimmed non-empty funding label from the feed when provided. Hidden/fallback when missing.
@@ -1821,6 +1844,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         author: String? = nil,
         isExplicit: Bool = false,
         language: String? = nil,
+        medium: String? = nil,
         fundingUrl: String? = nil,
         fundingLabel: String? = nil,
         categories: [String] = [],
@@ -1846,6 +1870,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.author = author
         self.isExplicit = isExplicit
         self.language = language
+        self.medium = medium
         self.fundingUrl = fundingUrl
         self.fundingLabel = fundingLabel
         self.categories = categories
@@ -1874,6 +1899,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         author = try c.decodeIfPresent(String.self, forKey: .author)
         isExplicit = try c.decodeIfPresent(Bool.self, forKey: .isExplicit) ?? false
         language = try c.decodeIfPresent(String.self, forKey: .language)
+        medium = try c.decodeIfPresent(String.self, forKey: .medium)
         fundingUrl = try c.decodeIfPresent(String.self, forKey: .fundingUrl)
         fundingLabel = try c.decodeIfPresent(String.self, forKey: .fundingLabel)
         categories = try c.decodeIfPresent([String].self, forKey: .categories) ?? []
@@ -1892,7 +1918,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, episodes
     }
 }
 
