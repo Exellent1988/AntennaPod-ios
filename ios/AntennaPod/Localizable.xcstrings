@@ -9622,6 +9622,397 @@
           }
         }
       }
+    },
+    "Manage tags": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage tags"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags verwalten"
+          }
+        }
+      }
+    },
+    "Rename or delete subscription tags across all podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename or delete subscription tags across all podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnement-Tags für alle Podcasts umbenennen oder löschen"
+          }
+        }
+      }
+    },
+    "Tag name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag-Name"
+          }
+        }
+      }
+    },
+    "Applies the new name to every podcast that uses this tag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Applies the new name to every podcast that uses this tag"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übernimmt den neuen Namen für jeden Podcast mit diesem Tag"
+          }
+        }
+      }
+    },
+    "Delete tag?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete tag?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag löschen?"
+          }
+        }
+      }
+    },
+    "Delete tag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete tag"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag löschen"
+          }
+        }
+      }
+    },
+    "Removes the tag from all podcasts; does not unsubscribe": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the tag from all podcasts; does not unsubscribe"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt den Tag von allen Podcasts; beendet keine Abos"
+          }
+        }
+      }
+    },
+    "Removes “%@” from %lld podcasts. Does not unsubscribe or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes “%@” from %lld podcasts. Does not unsubscribe or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt „%@“ von %lld Podcasts. Beendet keine Abos und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Rename updates every podcast using that name. Delete removes the tag from those podcasts; subscriptions stay. Empty names disappear from this list.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename updates every podcast using that name. Delete removes the tag from those podcasts; subscriptions stay. Empty names disappear from this list."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umbenennen aktualisiert jeden Podcast mit diesem Namen. Löschen entfernt den Tag von diesen Podcasts; Abos bleiben. Leere Namen verschwinden aus dieser Liste."
+          }
+        }
+      }
+    },
+    "Add tags on a podcast under Feed detail → gear → Tags / Folders. They also appear as filter chips on Subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add tags on a podcast under Feed detail → gear → Tags / Folders. They also appear as filter chips on Subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags unter Feed-Detail → Zahnrad → Tags / Ordner hinzufügen. Sie erscheinen auch als Filter-Chips unter Abonnements."
+          }
+        }
+      }
+    },
+    "Swipe or use the context menu to rename or delete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipe or use the context menu to rename or delete"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wischen oder Kontextmenü zum Umbenennen oder Löschen"
+          }
+        }
+      }
+    },
+    "Swipe to remove from this podcast; context menu to rename or delete everywhere": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipe to remove from this podcast; context menu to rename or delete everywhere"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wischen entfernt von diesem Podcast; Kontextmenü zum globalen Umbenennen oder Löschen"
+          }
+        }
+      }
+    },
+    "1 podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Podcast"
+          }
+        }
+      }
+    },
+    "%lld podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Podcasts"
+          }
+        }
+      }
+    },
+    "Rename tag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename tag"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag umbenennen"
+          }
+        }
+      }
+    },
+    "Rename…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umbenennen…"
+          }
+        }
+      }
+    },
+    "Delete tag everywhere": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete tag everywhere"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag überall löschen"
+          }
+        }
+      }
+    },
+    "Remove from podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove from podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vom Podcast entfernen"
+          }
+        }
+      }
+    },
+    "Renames this tag on every podcast that uses it. Clear the name to delete it everywhere.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renames this tag on every podcast that uses it. Clear the name to delete it everywhere."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benennt diesen Tag bei jedem Podcast um, der ihn nutzt. Leerer Name löscht ihn überall."
+          }
+        }
+      }
+    },
+    "Untagged": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Untagged"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ohne Tag"
+          }
+        }
+      }
+    },
+    "Manage tags…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage tags…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags verwalten…"
+          }
+        }
+      }
+    },
+    "New tag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New tag"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neuer Tag"
+          }
+        }
+      }
+    },
+    "A podcast can have several tags. Tags exist while assigned; removing the last use deletes the tag. Rename applies to every podcast using that name.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A podcast can have several tags. Tags exist while assigned; removing the last use deletes the tag. Rename applies to every podcast using that name."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Podcast kann mehrere Tags haben. Tags existieren nur, solange sie zugewiesen sind; die letzte Nutzung löscht den Tag. Umbenennen gilt für alle Podcasts mit diesem Namen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

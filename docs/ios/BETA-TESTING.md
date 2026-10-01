@@ -125,6 +125,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Queue: Sperre (Toolbar + Settings; kein Reorder / An Anfang-Ende; Einreihen / Als Nächstes / Entfernen / Leeren bleiben) | ☐ Queue: lock (toolbar + Settings; no reorder / Move to top-bottom; enqueue / Play Next / Remove / Clear still work) |
 | ☐ Queue: Filterchips Alle / Ungehört / Gehört (persistiert; kein Reorder während Filter; Clear bleibt full-queue) | ☐ Queue: filter chips All / Unplayed / Played (persisted; no reorder while filtering; Clear stays full-queue) |
 | ☐ Subscriptions + Tags/Filter | ☐ Subscriptions + tags/filter |
+| ☐ Tags verwalten: Liste + Umbenennen + Löschen (Bestätigung; Settings / Abonnements) | ☐ Manage tags: list + rename + delete (confirm; Settings / Subscriptions) |
 | ☐ Subscriptions: Suche (Titel / Beschreibung; Sort bleibt) | ☐ Subscriptions: search (title / description; sort preserved) |
 | ☐ Subscriptions: Sortierung (Zuletzt aktualisiert / Alphabetisch) | ☐ Subscriptions: sort (Recently updated / Alphabetical) |
 | ☐ Subscriptions: Alle aktualisieren (Toolbar + Pull; Progress während `isLoading`) | ☐ Subscriptions: Refresh all (toolbar + pull; progress while `isLoading`) |

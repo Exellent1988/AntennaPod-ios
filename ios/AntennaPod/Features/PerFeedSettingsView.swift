@@ -12,6 +12,7 @@ struct PerFeedSettingsView: View {
     @State private var renameFrom: String?
     @State private var renameDraft = ""
     @State private var showRenameAlert = false
+    @State private var tagPendingDelete: String?
 
     private var current: FeedSettings {
         store.feedSettings(for: feedId)
@@ -140,6 +141,9 @@ struct PerFeedSettingsView: View {
                                 Label("Remove", systemImage: "trash")
                             }
                         }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(tag)
+                        .accessibilityHint(String(localized: "Swipe to remove from this podcast; context menu to rename or delete everywhere"))
                         .contextMenu {
                             Button("Rename…") {
                                 renameFrom = tag
@@ -150,7 +154,7 @@ struct PerFeedSettingsView: View {
                                 store.removeTag(tag, from: feedId)
                             }
                             Button("Delete tag everywhere", role: .destructive) {
-                                store.deleteTag(tag)
+                                tagPendingDelete = tag
                             }
                         }
                     }
@@ -192,6 +196,7 @@ struct PerFeedSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .alert("Rename tag", isPresented: $showRenameAlert) {
             TextField("Tag name", text: $renameDraft)
+                .accessibilityLabel(String(localized: "Tag name"))
             Button("Cancel", role: .cancel) {
                 renameFrom = nil
             }
@@ -201,8 +206,33 @@ struct PerFeedSettingsView: View {
                 }
                 renameFrom = nil
             }
+            .accessibilityHint(String(localized: "Applies the new name to every podcast that uses this tag"))
         } message: {
             Text("Renames this tag on every podcast that uses it. Clear the name to delete it everywhere.")
+        }
+        .confirmationDialog(
+            "Delete tag?",
+            isPresented: Binding(
+                get: { tagPendingDelete != nil },
+                set: { if !$0 { tagPendingDelete = nil } }
+            ),
+            titleVisibility: .visible
+        ) {
+            Button("Delete tag everywhere", role: .destructive) {
+                if let tag = tagPendingDelete {
+                    store.deleteTag(tag)
+                }
+                tagPendingDelete = nil
+            }
+            .accessibilityHint(String(localized: "Removes the tag from all podcasts; does not unsubscribe"))
+            Button("Cancel", role: .cancel) {
+                tagPendingDelete = nil
+            }
+        } message: {
+            if let tag = tagPendingDelete {
+                let count = store.feeds(withTag: tag).count
+                Text(String(format: String(localized: "Removes “%@” from %lld podcasts. Does not unsubscribe or delete downloads."), tag, count))
+            }
         }
     }
 

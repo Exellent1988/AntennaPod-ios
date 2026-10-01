@@ -208,6 +208,12 @@ struct SettingsView: View {
                     .id("settings-sync")
                 Section("Library") {
                     NavigationLink {
+                        ManageTagsView()
+                    } label: {
+                        Label("Manage tags", systemImage: "tag")
+                    }
+                    .accessibilityHint(String(localized: "Rename or delete subscription tags across all podcasts"))
+                    NavigationLink {
                         StatisticsView()
                     } label: {
                         Label("Statistics", systemImage: "chart.bar.doc.horizontal")

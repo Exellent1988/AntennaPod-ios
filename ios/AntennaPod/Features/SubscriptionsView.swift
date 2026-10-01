@@ -274,6 +274,15 @@ struct SubscriptionsView: View {
                     }
                     .accessibilityLabel("Sort subscriptions")
                 }
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink {
+                        ManageTagsView()
+                    } label: {
+                        Image(systemName: "tag")
+                    }
+                    .accessibilityLabel(String(localized: "Manage tags"))
+                    .accessibilityHint(String(localized: "Rename or delete subscription tags across all podcasts"))
+                }
             }
             .sheet(isPresented: $showAdd) {
                 AddFeedView()

@@ -63,7 +63,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Auto-download (global on/off + episodes-per-feed cap; **new episode IDs after refresh only**; Wi‑Fi only under Network / Downloads; per-feed Use global / Always / Never; skips local-folder)
 - Mobile / Wi‑Fi policy (auto / manual download / stream Wi‑Fi-only toggles; shared NWPathMonitor)
 - Per-feed settings (Feed detail → gear: Auto-download, Keep updated, New episodes, Notify, Skip intro/outro, Playback speed overrides)
-- Tags / Folders for subscriptions (side map `feed-tags.json`; manage on per-feed settings; Subscriptions filter chips + optional group-by-tag; untagged)
+- Tags / Folders for subscriptions (side map `feed-tags.json`; assign on per-feed settings; **Manage tags** in Settings → Library + Subscriptions toolbar — list with counts, rename, delete with confirm; filter chips + optional group-by-tag; untagged)
 - Unsubscribe confirm (Subscriptions trailing swipe + Feed detail ⋯; destructive dialog with podcast title; removes feed + feed-settings + tags + queue items from that feed + favorites/archive/playback history for its episodes; **keeps downloaded files**; local-folder releases bookmark; dismisses Feed detail after confirm)
 - Subscriptions list sort (toolbar: Recently updated default / Alphabetical A–Z; `subscriptionsSort` pref + backup; client-side only, no drag-reorder)
 - Subscriptions list search (`.searchable`; filter by feed title and optional `descriptionText`; light debounce ~250 ms; empty query = sorted list; empty state when no matches; sort + tag filters still apply; no author/authorEmail on model)
@@ -108,7 +108,7 @@ ios/
     ├── AntennaPod.entitlements   # App Group
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers, WatchCompanionBridge
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ filter chips + searchable + error log), queue (+ searchable; reorder off while filtering), settings (+ Home layout + gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + Apple Watch note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts + Manage tags), feed detail + per-feed settings (+ tags), ManageTagsView, add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ filter chips + searchable + error log), queue (+ searchable; reorder off while filtering), settings (+ Home layout + Manage tags + gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + Apple Watch note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -584,12 +584,13 @@ The same sheet also manages **Tags / Folders** (see below).
 
 Organize subscriptions with simple string **tags** (Android-style folders, flat — no nested hierarchy in this beta).
 
-- **Persistence:** Application Support `feed-tags.json` — map of feed id → `[String]` (0..n tags per feed). Survives feed refresh; cleared on unsubscribe.
-- **Manage:** Feed detail → **gear** (Per-feed settings) → Tags / Folders: add an existing tag or type a new name, swipe/context **Remove**; context **Rename…** (global) or **Delete tag everywhere**. Feed detail shows assigned tags when any exist (**Manage tags…** opens the same sheet).
+- **Persistence:** Application Support `feed-tags.json` — map of feed id → `[String]` (0..n tags per feed) via `PodcastStore.tagsByFeedId` / `PodcastPersistence`. Survives feed refresh; cleared on unsubscribe. **No second tag store** — rename/delete update the same map.
+- **Assign (per podcast):** Feed detail → **gear** (Per-feed settings) → Tags / Folders: add an existing tag or type a new name; swipe **Remove** (this podcast only). Context **Rename…** (global) or **Delete tag everywhere** (destructive **confirm**). Feed detail shows assigned tags when any exist (**Manage tags…** opens the same per-feed sheet).
+- **Manage tags (global):** **Settings → Library → Manage tags** and **Subscriptions** toolbar (tag icon) → `ManageTagsView`: lists every in-use tag with **podcast counts**; **Rename** (alert; updates all feeds using that name via `PodcastStore.renameTag`); **Delete** (confirmation dialog; `deleteTag` strips the label from feeds — **does not unsubscribe** or delete downloads). Empty state explains how to add tags. EN/DE + VoiceOver labels/hints.
 - **Subscriptions list:** when any tags exist, filter chips (**All** / each tag / **Untagged**) plus optional **Group by tag** (All only): sections per tag then Untagged; a podcast with several tags appears under each. With grouping off, tag names show as a subtitle on rows.
 - **Search:** `.searchable` (prompt **Search subscriptions**, ~250 ms debounce) filters by feed **title** and optional **`descriptionText`** (`PodcastStore.matchingFeeds`). Empty query shows the full list under the current sort; empty state when nothing matches (separate copy when only the tag filter empties the list). No `author` / `authorEmail` fields on `PodcastFeed` in this beta.
 - **Sort:** toolbar menu (**Sort**) — **Recently updated** (default; newest episode `pubDateEpochMs`, same proxy as Home) or **Alphabetical A–Z** by feed title. Persisted in `AppSettings.subscriptionsSort` (+ JSON backup). Applied after search/tag filters; when grouping by tag, feeds inside each section use the same order. **Client-side only** — no drag-reorder of subscriptions in this beta.
-- **Lifecycle:** tags exist only while assigned; removing the last use drops the name from the vocabulary (no empty-tag Settings manager in this MVP).
+- **Lifecycle:** tags exist only while assigned; removing the last use (or Delete on Manage tags) drops the name from `allTags`.
 
 ## Skip intervals (Rewind / Fast-forward)
 
