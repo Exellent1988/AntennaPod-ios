@@ -80,6 +80,10 @@ struct RootTabView: View {
             guard token != nil else { return }
             selectedTab = .downloads
         }
+        .onChange(of: notificationDeepLink.settingsSyncOpenToken) { _, token in
+            guard token != nil else { return }
+            selectedTab = .settings
+        }
         .alert(
             "Cannot stream",
             isPresented: Binding(

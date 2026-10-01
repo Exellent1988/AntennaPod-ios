@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | done | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics / Echo), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | done | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + **new-episode action** + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + notifications + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + Statistics / Echo + About (P0/P1); more prefs later |
+| Settings | 5 | done | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + **new-episode action** + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + notifications (new eps / DL errors / sync errors) + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + Statistics / Echo + About (P0/P1); more prefs later |
 
 ## Subscriptions
 
@@ -80,7 +80,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Add by RSS URL | 5 | wip | Add sheet Feed URL tab |
+| Add by RSS URL | 5 | done | Add sheet **Feed URL** tab: paste RSS/Atom URL → **Preview feed** → Confirm Subscribe (same online Preview as discovery); already subscribed → Open feed |
 | Apple Podcasts / iTunes Search | 4 | done | Native URLSession; Add sheet Search tab; debounced; feedUrl → subscribe |
 | Podcast Index | 4 | done | User-supplied API key+secret (Keychain); Settings → Discovery; Add sheet tab; auth sha1; Subscribe via feed URL; honest empty state if keys missing |
 | fyyd | 3 | done | Public fyyd.de API (`/0.2/search/podcast?term=`); no API key; Add sheet tab; debounced; Preview → Confirm Subscribe via feed URL; honest empty/error states |
@@ -111,7 +111,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Swipe actions | 3 | done | Queue: Remove + Archive (+ Edit drag reorder). Downloads: Delete. Inbox: Archive + Mark played. Feed: Archive/Restore + Queue + Share. History: Remove + Mark unplayed. Favorites: Unfavorite + Archive. Archived: Restore. All Episodes: Archive/Restore + Mark played. EpisodeRow buttons remain for play/download/queue/favorite/share |
 | Parental controls | 2 | done | **MVP**: Settings → Parental controls; 4–6 digit PIN in Keychain; lock Add/Discover; optional lock Network/Downloads toggles; optional hide explicit iTunes charts (`explicit=false`); session unlock until background (`scenePhase`); disable clears PIN |
 | Notifications (new episodes) | 4 | done | Local UserNotifications after feed refresh; Settings toggle (default on; honest if denied); per-feed Always/Never override; permission from Settings or first new-eps refresh; tap → Inbox; no push |
-| Notifications (DL/Sync errors) | 4 | partial | **DL done**: Settings “Notify on download errors” (default on; same UNUserNotificationCenter permission as new episodes); local banner on failure (episode title + short error); tap → Downloads. **Sync errors later** (no push) |
+| Notifications (DL/Sync errors) | 4 | done | **Local only, no push.** DL: Settings “Notify on download errors” (default on); banner on failure (episode title + short error); tap → Downloads. Sync: Settings “Notify on sync errors” (default on; same UNUserNotificationCenter permission); gpodder/Nextcloud login or sync failure → local banner (short error); tap → Settings Sync |
 | About / contribute links | 2 | done | Settings → About: AntennaPod iOS fork blurb; version from Bundle (placeholder fallback); Links → antennapod.org, GitHub AntennaPod, contribute, docs, this fork (`Exellent1988/AntennaPod-ios`) via Safari `Link` |
 
 ## Extras

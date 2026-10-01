@@ -193,7 +193,7 @@ enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
     ]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error notifications).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error / sync-error notifications).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -241,6 +241,7 @@ final class AppSettings: ObservableObject {
         static let skipOutroSeconds = "settings.skipOutroSeconds"
         static let notifyOnNewEpisodes = "settings.notifyOnNewEpisodes"
         static let notifyOnDownloadErrors = "settings.notifyOnDownloadErrors"
+        static let notifyOnSyncErrors = "settings.notifyOnSyncErrors"
         static let chartsCountryCode = "settings.chartsCountryCode"
     }
 
@@ -387,6 +388,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Notify when gpodder / Nextcloud login or sync fails (local UserNotifications; no push).
+    /// Defaults on; shares the same system permission as new-episode / download-error alerts.
+    @Published var notifyOnSyncErrors: Bool {
+        didSet {
+            UserDefaults.standard.set(notifyOnSyncErrors, forKey: Keys.notifyOnSyncErrors)
+        }
+    }
+
     /// iTunes top-lists country: `"auto"` (device locale → else `de`) or ISO alpha-2 (`de`, `us`, …).
     @Published var chartsCountryCode: String {
         didSet {
@@ -479,6 +488,12 @@ final class AppSettings: ObservableObject {
         } else {
             // Default on; same permission gate as new-episode alerts.
             notifyOnDownloadErrors = true
+        }
+        if UserDefaults.standard.object(forKey: Keys.notifyOnSyncErrors) != nil {
+            notifyOnSyncErrors = UserDefaults.standard.bool(forKey: Keys.notifyOnSyncErrors)
+        } else {
+            // Default on; same permission gate as new-episode / download-error alerts.
+            notifyOnSyncErrors = true
         }
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
@@ -591,6 +606,7 @@ final class AppSettings: ObservableObject {
             skipOutroSeconds: skipOutroSeconds,
             notifyOnNewEpisodes: notifyOnNewEpisodes,
             notifyOnDownloadErrors: notifyOnDownloadErrors,
+            notifyOnSyncErrors: notifyOnSyncErrors,
             chartsCountryCode: chartsCountryCode
         )
     }
@@ -641,6 +657,7 @@ final class AppSettings: ObservableObject {
         }
         notifyOnNewEpisodes = snap.notifyOnNewEpisodes
         notifyOnDownloadErrors = snap.notifyOnDownloadErrors
+        notifyOnSyncErrors = snap.notifyOnSyncErrors ?? true
         chartsCountryCode = ChartsCountryPreference.fromStorage(snap.chartsCountryCode).storageValue
     }
 }
@@ -667,5 +684,7 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var skipOutroSeconds: Int
     var notifyOnNewEpisodes: Bool
     var notifyOnDownloadErrors: Bool
+    /// Absent in older backups → treated as on (default).
+    var notifyOnSyncErrors: Bool? = true
     var chartsCountryCode: String
 }

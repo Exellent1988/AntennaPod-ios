@@ -51,7 +51,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Auto-delete after playing (global toggle; deletes offline file on mark played; keeps episode row)
 - Notifications for new episodes (local UserNotifications after refresh; Settings toggle; tap opens Inbox; no push)
 - Download log / errors (ring buffer in Application Support; Downloads banner + errors list; Clear errors)
-- Notify on download errors (local UserNotifications; Settings toggle default on; tap opens Downloads; Sync-error notify later; no push)
+- Notify on download / sync errors (local UserNotifications; Settings toggles default on; DL tap → Downloads; Sync tap → Settings Sync; no push)
 - Parental controls (beta; Settings → Parental controls; 4–6 digit PIN in Keychain; lock Add/Discover; optional Network/Downloads lock + hide explicit charts; session unlock until background)
 - gpodder.net / Nextcloud Gpodder sync (subscriptions MVP: provider picker; Keychain; pull+push feed URLs; additive merge; episode actions later)
 
@@ -290,11 +290,15 @@ Settings → **Notifications → Notify on new episodes** (default on). Uses `Us
 
 Failed downloads are appended to a ring buffer (~50) in Application Support `download-errors.json` (episode id, title, feed title, message, timestamp). `DownloadService.lastError` still drives a red **Last download failed** banner on the **Downloads** tab (episode + feed when known). **Downloads → Errors** toolbar and **Settings → Notifications → Download errors** open the same simple list; **Clear** wipes the log and banner (offline files kept).
 
-Settings → **Notifications → Notify on download errors** (default on) reuses the same `UNUserNotificationCenter` permission path as new-episode alerts. On failure (no media URL, HTTP error, move failure, or task error — not user cancel), if the toggle is on and permission allows, a **local** notification posts: **title** = episode title, **body** = short error. Tap opens the **Downloads** tab. **No push / APNs.** Sync-error notifications are **not** implemented yet (matrix: DL done, Sync later).
+Settings → **Notifications → Notify on download errors** (default on) reuses the same `UNUserNotificationCenter` permission path as new-episode alerts. On failure (no media URL, HTTP error, move failure, or task error — not user cancel), if the toggle is on and permission allows, a **local** notification posts: **title** = episode title, **body** = short error. Tap opens the **Downloads** tab. **No push / APNs.**
+
+Settings → **Notifications → Notify on sync errors** (default on) shares that same permission path. When gpodder.net / Nextcloud **login** or **sync** fails (`GpodderSyncService` records `lastSyncError`), a **local** notification posts: **title** = “Sync failed”, **body** = short error. Tap opens the **Settings** tab and scrolls to **Sync**. **No push / APNs.**
 
 ## Discovery
 
 Add podcast sheet (**Subscriptions → +**) has four segments: **Apple**, **Index**, **fyyd**, and **URL**.
+
+**Feed URL / Add by RSS** — Add podcast → **URL** tab: paste an RSS/Atom feed URL → **Preview feed** → Confirm Subscribe (same Preview pipeline as discovery). Already subscribed → **Open feed**.
 
 **Online feed preview** — discovering a podcast (search / charts) or tapping **Preview** on the Feed URL tab opens a Preview screen that fetches and parses the RSS/Atom via `FeedRepository` (same parser as subscribe). Shows title, author/artwork when known (discovery hints + feed image), episode count, and the first **10** episode titles. **Confirm Subscribe** runs `PodcastStore.subscribe(feedUrl:)`; **Cancel** goes back. If the feed URL is already in the library, the primary action is **Open feed** (pushes `FeedDetailView`) instead of Subscribe. Discovery rows are no longer fire-and-forget Subscribe.
 
@@ -317,7 +321,7 @@ Settings → **Sync** (beta MVP — **subscriptions only**):
   - Nextcloud: custom base — server root (`https://cloud.example.com`) or full API root (`https://cloud.example.com/index.php/apps/gpoddersync/`). If the path does not already contain `gpoddersync`, the client appends `index.php/apps/gpoddersync/` (same root AntennaPod Android + [nextcloud-gpodder](https://github.com/thrillfall/nextcloud-gpodder) use).
 - **Username** / **password**: password in the **Keychain**; username + provider + host + device metadata in `UserDefaults`. Nextcloud: prefer an **app password**.
 - **Device name** + stable **device id** (gpodder.net API2; Nextcloud has no device API — fields kept for UI/state only; update is a no-op).
-- **Login** / **Logout** / **Sync now**; last sync time, status, error.
+- **Login** / **Logout** / **Sync now**; last sync time, status, error. Login/sync failures can post a **local** notification when Settings → Notify on sync errors is on (tap → Settings Sync).
 
 Client (`GpodderClient`, `URLSession`, HTTP Basic), reused for both providers:
 

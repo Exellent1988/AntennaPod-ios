@@ -57,6 +57,7 @@ struct SettingsView: View {
     @State private var podcastIndexKeyError: String?
     @State private var showNetworkPINGate = false
     @State private var pendingNetworkUnlockAction: (() -> Void)?
+    @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
 
     private var pickerChoice: Binding<StorageLimitPickerChoice> {
         Binding(
@@ -73,6 +74,7 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
+            ScrollViewReader { proxy in
             Form {
                 Section("Appearance") {
                     Picker("Theme", selection: $settings.theme) {
@@ -132,6 +134,7 @@ struct SettingsView: View {
                 storageSection
                 podcastIndexDiscoverySection
                 gpodderSyncSection
+                    .id("settings-sync")
                 Section("Library") {
                     NavigationLink {
                         StatisticsView()
@@ -188,6 +191,23 @@ struct SettingsView: View {
                     await refreshNotificationAuthLabel()
                 }
             }
+            .onChange(of: settings.notifyOnSyncErrors) { _, enabled in
+                guard enabled else { return }
+                Task {
+                    await NewEpisodeNotificationCoordinator.requestPermissionIfNeeded()
+                    await refreshNotificationAuthLabel()
+                }
+            }
+            .onChange(of: notificationDeepLink.settingsSyncOpenToken) { _, token in
+                guard token != nil else { return }
+                // Defer slightly so the Settings tab is visible before scrolling.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    withAnimation {
+                        proxy.scrollTo("settings-sync", anchor: .top)
+                    }
+                }
+            }
+            } // ScrollViewReader
             .confirmationDialog(
                 "Clear all downloads?",
                 isPresented: $showClearConfirmation,
@@ -334,6 +354,7 @@ struct SettingsView: View {
         Section {
             Toggle("Notify on new episodes", isOn: $settings.notifyOnNewEpisodes)
             Toggle("Notify on download errors", isOn: $settings.notifyOnDownloadErrors)
+            Toggle("Notify on sync errors", isOn: $settings.notifyOnSyncErrors)
             LabeledContent("Permission") {
                 Text(notificationAuthLabel)
                     .foregroundStyle(.secondary)
@@ -365,13 +386,13 @@ struct SettingsView: View {
 
     private var notificationsHelpText: String {
         if notificationAuthLabel == "Denied" {
-            return "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. Toggles stay on so your preference is clear. Sync-error notifications are not implemented yet."
+            return "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. Toggles stay on so your preference is clear."
         }
-        if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors {
-            return "When enabled: new episodes after refresh, and/or download failures (episode title + short error). Local only — no push. Sync-error notifications later."
+        if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors && !settings.notifyOnSyncErrors {
+            return "When enabled: new episodes after refresh, download failures, and/or gpodder/Nextcloud login or sync failures. Local only — no push."
         }
         if notificationAuthLabel == "Not determined" {
-            return "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails. Local only — no push."
+            return "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails. Local only — no push."
         }
         var parts: [String] = []
         if settings.notifyOnNewEpisodes {
@@ -380,7 +401,10 @@ struct SettingsView: View {
         if settings.notifyOnDownloadErrors {
             parts.append("Download failures → Downloads (title = episode, body = error)")
         }
-        return parts.joined(separator: ". ") + ". No APNs / push. Sync-error notifications later."
+        if settings.notifyOnSyncErrors {
+            parts.append("Sync / login failures → Settings Sync (short error)")
+        }
+        return parts.joined(separator: ". ") + ". No APNs / push."
     }
 
     @MainActor

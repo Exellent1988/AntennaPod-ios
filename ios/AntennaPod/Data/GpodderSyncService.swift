@@ -75,6 +75,9 @@ final class GpodderSyncService: ObservableObject {
 
     @Published var isBusy = false
 
+    /// Wired from `AntennaPodApp` for sync-error local notifications.
+    weak var settings: AppSettings?
+
     /// Draft password field (never persisted in UserDefaults; Keychain only on Login).
     @Published var passwordDraft: String = ""
 
@@ -172,13 +175,14 @@ final class GpodderSyncService: ObservableObject {
         let user = username.trimmingCharacters(in: .whitespacesAndNewlines)
         let pass = passwordDraft
         guard !user.isEmpty, !pass.isEmpty else {
-            lastSyncError = "Enter username and password"
-            lastSyncStatus = "Login failed"
+            recordFailure(error: "Enter username and password", status: "Login failed")
             return
         }
         if provider == .nextcloud, host.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            lastSyncError = "Enter Nextcloud base URL (e.g. https://cloud.example.com/index.php/apps/gpoddersync/)"
-            lastSyncStatus = "Login failed"
+            recordFailure(
+                error: "Enter Nextcloud base URL (e.g. https://cloud.example.com/index.php/apps/gpoddersync/)",
+                status: "Login failed"
+            )
             return
         }
         username = user
@@ -194,8 +198,7 @@ final class GpodderSyncService: ObservableObject {
             lastSyncStatus = "Logged in"
         } catch {
             isLoggedIn = false
-            lastSyncError = error.localizedDescription
-            lastSyncStatus = "Login failed"
+            recordFailure(error: error.localizedDescription, status: "Login failed")
         }
     }
 
@@ -218,14 +221,12 @@ final class GpodderSyncService: ObservableObject {
     func syncNow(store: PodcastStore) async {
         guard !isBusy else { return }
         guard isLoggedIn else {
-            lastSyncError = GpodderError.notLoggedIn.localizedDescription
-            lastSyncStatus = "Not logged in"
+            recordFailure(error: GpodderError.notLoggedIn.localizedDescription, status: "Not logged in")
             return
         }
         guard let password = GpodderKeychain.loadPassword() else {
             isLoggedIn = false
-            lastSyncError = "Password missing from Keychain — log in again"
-            lastSyncStatus = "Not logged in"
+            recordFailure(error: "Password missing from Keychain — log in again", status: "Not logged in")
             return
         }
 
@@ -326,13 +327,25 @@ final class GpodderSyncService: ObservableObject {
             parts.append("episode actions: not synced yet")
             lastSyncStatus = parts.joined(separator: " · ")
             if let first = subscribeFailures.first {
-                lastSyncError = first
+                // Sync completed with subscribe errors — still surface + notify.
+                recordFailure(error: first, status: lastSyncStatus)
             } else {
                 lastSyncError = nil
             }
         } catch {
-            lastSyncError = error.localizedDescription
-            lastSyncStatus = "Sync failed"
+            recordFailure(error: error.localizedDescription, status: "Sync failed")
+        }
+    }
+
+
+    /// Persist failure + optional local notification (Settings toggle + permission).
+    private func recordFailure(error message: String, status: String) {
+        lastSyncError = message
+        lastSyncStatus = status
+        let msg = message
+        let settings = self.settings
+        Task {
+            await SyncErrorNotificationCoordinator.notifyIfNeeded(message: msg, settings: settings)
         }
     }
 

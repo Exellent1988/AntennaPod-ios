@@ -15,6 +15,7 @@ struct NewEpisodeBatch {
 final class NotificationDeepLinkRouter: ObservableObject {
     @Published private(set) var inboxOpenToken: UUID?
     @Published private(set) var downloadsOpenToken: UUID?
+    @Published private(set) var settingsSyncOpenToken: UUID?
 
     func openInbox() {
         inboxOpenToken = UUID()
@@ -22,6 +23,11 @@ final class NotificationDeepLinkRouter: ObservableObject {
 
     func openDownloads() {
         downloadsOpenToken = UUID()
+    }
+
+    /// Open Settings tab and scroll to Sync (gpodder / Nextcloud).
+    func openSettingsSync() {
+        settingsSyncOpenToken = UUID()
     }
 }
 
@@ -64,7 +70,13 @@ enum NewEpisodeNotificationCoordinator {
             intentIdentifiers: [],
             options: []
         )
-        center.setNotificationCategories([category, dlCategory])
+        let syncCategory = UNNotificationCategory(
+            identifier: SyncErrorNotificationCoordinator.categoryId,
+            actions: [],
+            intentIdentifiers: [],
+            options: []
+        )
+        center.setNotificationCategories([category, dlCategory, syncCategory])
     }
 
     static func authorizationStatus() async -> UNAuthorizationStatus {

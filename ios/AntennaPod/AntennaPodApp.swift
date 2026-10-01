@@ -22,6 +22,7 @@ struct AntennaPodApp: App {
         playback.settings = settings
         downloads.store = store
         downloads.settings = settings
+        gpodder.settings = settings
         store.settings = settings
         store.downloads = downloads
         store.playback = playback

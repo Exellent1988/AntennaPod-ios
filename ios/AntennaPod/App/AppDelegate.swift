@@ -1,7 +1,7 @@
 import UIKit
 import UserNotifications
 
-/// Wires background URLSession completion and local notification taps (new episodes / download errors).
+/// Wires background URLSession completion and local notification taps (new episodes / DL / sync errors).
 final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     func application(
         _ application: UIApplication,
@@ -43,9 +43,14 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         let info = response.notification.request.content.userInfo
         let destination = info[NewEpisodeNotificationCoordinator.destinationKey] as? String
             ?? info[DownloadErrorNotificationCoordinator.destinationKey] as? String
+            ?? info[SyncErrorNotificationCoordinator.destinationKey] as? String
         let identifier = response.notification.request.identifier
         Task { @MainActor in
-            if destination == DownloadErrorNotificationCoordinator.destinationDownloads
+            if destination == SyncErrorNotificationCoordinator.destinationSettingsSync
+                || identifier.hasPrefix("sync-error.")
+            {
+                NewEpisodeNotificationCoordinator.deepLink.openSettingsSync()
+            } else if destination == DownloadErrorNotificationCoordinator.destinationDownloads
                 || identifier.hasPrefix("download-error.")
             {
                 NewEpisodeNotificationCoordinator.deepLink.openDownloads()
