@@ -109,6 +109,11 @@ struct FeedDetailView: View {
         liveFeed.displayPodrollItems
     }
 
+    /// Channel podcast:publisher when the feed provided remoteItems — empty → hide (never invent publishers).
+    private var displayPublisherItems: [PodcastRemoteItem] {
+        liveFeed.displayPublisherItems
+    }
+
     /// Podcast Index `podcast:guid` when the feed provided it — hide when missing (never invent).
     private var displayPodcastGuid: String? {
         liveFeed.displayPodcastGuid
@@ -416,6 +421,14 @@ struct FeedDetailView: View {
             if !displayPodrollItems.isEmpty {
                 Section {
                     PodcastPodrollListView(items: displayPodrollItems)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:publisher / remoteItem — publisher feed link; Open / Copy / Subscribe preview; hide when none.
+            // Display-only — never invent publishers; no Podcast Index GUID resolution. Cap 1.
+            if !displayPublisherItems.isEmpty {
+                Section {
+                    PodcastPublisherListView(items: displayPublisherItems)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }

@@ -1022,10 +1022,10 @@ enum PodcastTxtDisplay {
 }
 
 
-/// Podcast Index `podcast:remoteItem` under channel `podcast:podroll` — creator-recommended feed.
+/// Podcast Index `podcast:remoteItem` under channel `podcast:podroll` or `podcast:publisher`.
 /// Attributes: `feedGuid` (required by namespace), optional `feedUrl` / `title` / `medium` / `itemGuid`.
 /// **Display-only:** title + url/guid; Open http(s) feed URL / Copy / Subscribe via existing preview when URL present.
-/// Feed-provided only — never invent recommendations. itemGuid is uncommon for podroll and ignored for subscribe.
+/// Feed-provided only — never invent recommendations/publishers. itemGuid is uncommon for podroll/publisher and ignored for subscribe.
 struct PodcastRemoteItem: Identifiable, Hashable, Codable {
     /// Stable list identity from feed fields.
     var id: String { "\(feedGuid ?? "")|\(feedUrl ?? "")|\(title ?? "")" }
@@ -1139,6 +1139,34 @@ enum PodcastPodrollDisplay {
         if let url = item.displayFeedUrl { parts.append(url) }
         if let guid = item.displayFeedGuid { parts.append(guid) }
         return parts.joined(separator: "\n")
+    }
+}
+
+
+/// Display helpers for channel `podcast:publisher` / nested `podcast:remoteItem`.
+/// Feed-provided only; Open / Copy / optional Subscribe-by-URL preview. Cap 1 (namespace: usually exactly one).
+enum PodcastPublisherDisplay {
+    /// Soft UI cap — show first N after feed order; honesty footnote when more exist.
+    /// Podcasting 2.0 allows a single nested remoteItem; keep a tiny cap if a feed misbehaves.
+    static let displayCap = 1
+
+    /// Entries with feedGuid and/or feedUrl (at least one identifier). Feed order. Never invent.
+    static func valid(_ items: [PodcastRemoteItem]) -> [PodcastRemoteItem] {
+        PodcastPodrollDisplay.valid(items)
+    }
+
+    /// First `displayCap` + whether the feed listed more valid remote items.
+    static func capped(_ items: [PodcastRemoteItem]) -> (shown: [PodcastRemoteItem], truncated: Bool) {
+        let list = valid(items)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+
+    /// Pasteboard line: optional title + url + guid from the feed only.
+    static func copyText(_ item: PodcastRemoteItem) -> String {
+        PodcastPodrollDisplay.copyText(item)
     }
 }
 
@@ -1705,6 +1733,10 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel-level Podcast Index `podcast:podroll` / nested `podcast:remoteItem` when the feed provides them.
     /// Empty when absent — never invent recommendations; UI hides when empty. **Display-only** — Open / Copy / Subscribe-by-URL preview.
     var podrollItems: [PodcastRemoteItem]
+    /// Channel-level Podcast Index `podcast:publisher` / nested `podcast:remoteItem` when the feed provides them.
+    /// Empty when absent — never invent publishers; UI hides when empty. **Display-only** — Open / Copy / Subscribe-by-URL preview.
+    /// Namespace typically has exactly one remoteItem pointing at the publisher feed.
+    var publisherItems: [PodcastRemoteItem]
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -1834,6 +1866,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastPodrollDisplay.valid(podrollItems)
     }
 
+    /// Channel-level `podcast:publisher` remote items (hide when empty — never invent publishers; display-only).
+    var displayPublisherItems: [PodcastRemoteItem] {
+        PodcastPublisherDisplay.valid(publisherItems)
+    }
+
     init(
         id: UUID,
         title: String,
@@ -1859,6 +1896,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         liveItems: [PodcastLiveItem] = [],
         texts: [PodcastTxt] = [],
         podrollItems: [PodcastRemoteItem] = [],
+        publisherItems: [PodcastRemoteItem] = [],
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -1885,6 +1923,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.liveItems = liveItems
         self.texts = texts
         self.podrollItems = podrollItems
+        self.publisherItems = publisherItems
         self.episodes = episodes
     }
 
@@ -1914,11 +1953,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         liveItems = try c.decodeIfPresent([PodcastLiveItem].self, forKey: .liveItems) ?? []
         texts = try c.decodeIfPresent([PodcastTxt].self, forKey: .texts) ?? []
         podrollItems = try c.decodeIfPresent([PodcastRemoteItem].self, forKey: .podrollItems) ?? []
+        publisherItems = try c.decodeIfPresent([PodcastRemoteItem].self, forKey: .publisherItems) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, publisherItems, episodes
     }
 }
 

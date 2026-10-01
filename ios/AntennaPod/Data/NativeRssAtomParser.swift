@@ -66,6 +66,10 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var channelPodrollItems: [PodcastRemoteItem] = []
     /// Inside channel podcast:podroll — capture nested remoteItem only; do not invent recommendations.
     private var inPodroll = false
+    /// Channel podcast:publisher / nested remoteItem — feed-provided only; display-only (Open / Copy / Subscribe preview).
+    private var channelPublisherItems: [PodcastRemoteItem] = []
+    /// Inside channel podcast:publisher — capture nested remoteItem only; do not invent publishers.
+    private var inPublisher = false
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -227,6 +231,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             liveItems: channelLiveItems,
             texts: channelTexts,
             podrollItems: channelPodrollItems,
+            publisherItems: channelPublisherItems,
             episodes: episodes
         )
     }
@@ -641,18 +646,28 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             // Display-only: Open / Copy / Subscribe-by-URL preview when feedUrl present.
             guard !inItem && !inLiveItem else { break }
             inPodroll = true
+        case "publisher":
+            // Podcast Index: <podcast:publisher>…</podcast:publisher> — channel link to publisher feed.
+            // Children: typically exactly one <podcast:remoteItem …/>. Feed-provided only — never invent.
+            // Display-only: Open / Copy / Subscribe-by-URL preview when feedUrl present.
+            guard !inItem && !inLiveItem else { break }
+            inPublisher = true
         case "remoteitem":
             // Podcast Index: <podcast:remoteItem feedGuid="…" feedUrl="…" title="…" medium="…" itemGuid="…"/>
-            // Under podcast:podroll (channel). feedGuid required by namespace; feedUrl/title optional.
-            // Never invent recommendations; do not resolve GUID via Podcast Index API in this beta.
-            guard inPodroll, !inItem, !inLiveItem else { break }
-            finishRemoteItem(attributes: attributeDict)
+            // Under podcast:podroll or podcast:publisher (channel). feedGuid required by namespace; feedUrl/title optional.
+            // Never invent recommendations/publishers; do not resolve GUID via Podcast Index API in this beta.
+            guard !inItem, !inLiveItem else { break }
+            if inPublisher {
+                finishPublisherRemoteItem(attributes: attributeDict)
+            } else if inPodroll {
+                finishRemoteItem(attributes: attributeDict)
+            }
         case "txt":
             // Podcast Index: <podcast:txt purpose="…">text</podcast:txt>
             // Channel and/or item. Element text required; purpose optional — never invent.
             // Display-only: Copy / Open http(s). No Social / Matrix / special clients.
             if inLiveItem { break }
-            if inPodroll { break }
+            if inPodroll || inPublisher { break }
             capturingTxt = true
             pendingTxtPurpose = Self.nonEmptyAttr(attributeDict["purpose"] ?? attributeDict["Purpose"])
         default:
@@ -863,9 +878,9 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 }
             case "medium":
                 // Podcast Index <podcast:medium>…</podcast:medium> on channel — store raw string; never invent/remap.
-                // Distinct from media:content@medium and podcast:remoteItem medium attribute (podroll).
-                // Skip when inside podroll (remoteItem is attribute-only) / liveItem.
-                if inPodroll { break }
+                // Distinct from media:content@medium and podcast:remoteItem medium attribute (podroll/publisher).
+                // Skip when inside podroll/publisher (remoteItem is attribute-only) / liveItem.
+                if inPodroll || inPublisher { break }
                 if !text.isEmpty {
                     channelMedium = text
                 }
@@ -896,6 +911,10 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishValue(intoItem: false)
             case "txt":
                 finishTxt(text: text, intoItem: false)
+            case "podroll":
+                inPodroll = false
+            case "publisher":
+                inPublisher = false
             case "id":
                 break
             default:
@@ -1002,6 +1021,28 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         let itemGuid = Self.nonEmptyAttr(attributeDict["itemGuid"] ?? attributeDict["itemguid"])
         guard feedGuid != nil || feedUrl != nil else { return }
         channelPodrollItems.append(
+            PodcastRemoteItem(
+                feedGuid: feedGuid,
+                feedUrl: feedUrl,
+                title: title,
+                medium: medium,
+                itemGuid: itemGuid
+            )
+        )
+    }
+
+
+    /// Finish podcast:remoteItem under publisher — append when feedGuid and/or feedUrl present; never invent.
+    /// Display-only Open / Copy / Subscribe preview — no Podcast Index GUID resolution / no auto-subscribe.
+    private func finishPublisherRemoteItem(attributes attributeDict: [String: String]) {
+        guard inPublisher, !inItem, !inLiveItem else { return }
+        let feedGuid = Self.nonEmptyAttr(attributeDict["feedGuid"] ?? attributeDict["feedguid"])
+        let feedUrl = Self.nonEmptyAttr(attributeDict["feedUrl"] ?? attributeDict["feedurl"] ?? attributeDict["url"])
+        let title = Self.nonEmptyAttr(attributeDict["title"])
+        let medium = Self.nonEmptyAttr(attributeDict["medium"])
+        let itemGuid = Self.nonEmptyAttr(attributeDict["itemGuid"] ?? attributeDict["itemguid"])
+        guard feedGuid != nil || feedUrl != nil else { return }
+        channelPublisherItems.append(
             PodcastRemoteItem(
                 feedGuid: feedGuid,
                 feedUrl: feedUrl,

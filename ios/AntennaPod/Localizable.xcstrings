@@ -16733,6 +16733,132 @@
           }
         }
       }
+    },
+    "Publisher": {
+      "extractionState": "manual",
+      "comment": "Section title / VoiceOver prefix for podcast:publisher list in Feed detail / description.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher"
+          }
+        }
+      }
+    },
+    "This publisher comes from the feed (podcast:publisher). Open or copy a feed URL, or preview Subscribe when a URL is present — this app does not invent publishers or resolve Podcast Index GUIDs.": {
+      "extractionState": "manual",
+      "comment": "Honesty footnote for podcast:publisher display-only list.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This publisher comes from the feed (podcast:publisher). Open or copy a feed URL, or preview Subscribe when a URL is present — this app does not invent publishers or resolve Podcast Index GUIDs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Publisher stammt aus dem Feed (podcast:publisher). Feed-URL öffnen oder kopieren, oder Abo-Vorschau wenn eine URL vorhanden ist — diese App erfindet keine Publisher und löst keine Podcast-Index-GUIDs auf."
+          }
+        }
+      }
+    },
+    "Showing first publisher from the feed.": {
+      "extractionState": "manual",
+      "comment": "Truncation honesty when more than 1 podcast:publisher remoteItem.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first publisher from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeigt den ersten Publisher aus dem Feed."
+          }
+        }
+      }
+    },
+    "Publisher copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Alert message after copying a podcast:publisher remoteItem.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the publisher title, feed URL, and GUID to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy on podcast:publisher row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the publisher title, feed URL, and GUID to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert Publisher-Titel, Feed-URL und GUID in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the publisher feed URL in the system browser": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Open on podcast:publisher http(s) row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the publisher feed URL in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Publisher-Feed-URL im Systembrowser"
+          }
+        }
+      }
+    },
+    "Opens a feed preview to confirm Subscribe for the publisher feed": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Subscribe on podcast:publisher row with feedUrl.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a feed preview to confirm Subscribe for the publisher feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet eine Feed-Vorschau zur Abo-Bestätigung für den Publisher-Feed"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
