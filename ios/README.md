@@ -44,7 +44,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Favorites / starred episodes (Subscriptions → Library → Favorites; optional Home preview via Home layout; star on **EpisodeRow** + **full player** secondary via `PodcastStore.toggleFavorite` / `favorites.json`; VoiceOver Add to favorites / Remove from favorites; swipe Unfavorite + Archive; `.searchable` title/feed filter with debounce; toolbar Clear favorites with confirm on full list; auto-delete skips favorites)
 - Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; **full player** secondary Archive/Restore via `PodcastStore.toggleArchived` + EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived with `.searchable` + toolbar Restore all confirm on full list; bulk Archive all + Mark all as played in Inbox)
 - Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500 then All/Unplayed/Downloaded chips + searchable title/feed; EpisodeRow actions; swipe Archive + Mark played/unplayed; filter persisted in AppSettings)
-- Share podcast / episode (system share sheet; episode URL: page link → enclosure → feed site/RSS; `Title — Podcast` message; full player + Shownotes toolbar + EpisodeRow / swipe / context; FeedDetail podcast share + Copy feed URL; no AntennaPod deep link / no gPodder fake share)
+- Share podcast / episode (system share sheet; episode URL: page link → enclosure → feed site/RSS; `Title — Podcast` message; **Share with position** = same URL + text timestamp `(12:34)` when current item; full player + Shownotes toolbar + EpisodeRow / swipe / context; FeedDetail podcast share + Copy feed URL; no AntennaPod deep link / no `#t=` / no gPodder fake share)
 - Open episode website (opens episode `link` http(s) in system Safari/default browser via `openURL`; full player secondary + Shownotes toolbar + EpisodeRow context; hidden when no usable link; never enclosure / never invents URL; no in-app WebView)
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; Queue/Downloads/Favorites/History/Archived title/feed; Feed detail episode title; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
@@ -310,9 +310,11 @@ Share an **episode** or a **podcast** via the **system share sheet** only (`Shar
 3. Feed homepage / `siteLink`
 4. Feed RSS / `feedUrl`
 
-`file://` and `local-folder://` URLs are omitted. Share is **hidden or disabled** when nothing shareable is available. **Share with playback position** is not in this beta.
+`file://` and `local-folder://` URLs are omitted. Share is **hidden or disabled** when nothing shareable is available.
 
-**Entry points:** full player secondary Share; **Shownotes** sheet toolbar; EpisodeRow button + context menu; Feed detail trailing swipe Share. **Feed detail** toolbar shares the **podcast** (title + feed URL); the ⋯ **Feed actions** menu also offers **Copy feed URL** (`UIPasteboard.general` + brief **Copied** alert / haptic). Local-folder feeds disable Copy / podcast Share — no network RSS URL.
+**Share with position:** second action on the **full player** (and **Shownotes** toolbar when the shownotes episode is the **current playback item**). Same URL precedence; message appends a human-readable timestamp from `PlaybackService.positionSeconds` — e.g. `Title — Podcast (12:34)` (`m:ss` / `h:mm:ss`, same as the scrubber). **Text timestamp only** — does **not** invent AntennaPod deep links or append `#t=` media fragments. Hidden when position is unknown or the episode is not current (list rows keep plain Share only).
+
+**Entry points:** full player secondary Share + Share with position; **Shownotes** sheet toolbar (Share + position when current); EpisodeRow button + context menu; Feed detail trailing swipe Share. **Feed detail** toolbar shares the **podcast** (title + feed URL); the ⋯ **Feed actions** menu also offers **Copy feed URL** (`UIPasteboard.general` + brief **Copied** alert / haptic). Local-folder feeds disable Copy / podcast Share — no network RSS URL.
 
 ## Open episode website
 

@@ -38,14 +38,48 @@ extension PodcastEpisode {
 
     /// One-line share text for Messages/Mail: `"Title — Podcast"` when a feed title is known.
     func shareMessage(feedTitle: String?) -> String {
-        let title = self.title.trimmingCharacters(in: .whitespacesAndNewlines)
-        let podcast = feedTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        if !title.isEmpty, !podcast.isEmpty {
-            return "\(title) — \(podcast)"
+        shareMessage(feedTitle: feedTitle, positionSeconds: nil)
+    }
+
+    /// Share text with optional human-readable playback position.
+    /// When `positionSeconds` is a finite non-negative value, appends ` (m:ss)` or ` (h:mm:ss)`
+    /// using the same formatter as the full-player scrubber — e.g. `Title — Podcast (12:34)`.
+    /// Does **not** append `#t=` / media deep-link fragments (text timestamp only).
+    func shareMessage(feedTitle: String?, positionSeconds: Double?) -> String {
+        let base: String = {
+            let title = self.title.trimmingCharacters(in: .whitespacesAndNewlines)
+            let podcast = feedTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !title.isEmpty, !podcast.isEmpty {
+                return "\(title) — \(podcast)"
+            }
+            if !title.isEmpty { return title }
+            if !podcast.isEmpty { return podcast }
+            return ""
+        }()
+        guard let position = Self.formatPlaybackPosition(positionSeconds) else {
+            return base
         }
-        if !title.isEmpty { return title }
-        if !podcast.isEmpty { return podcast }
-        return ""
+        if base.isEmpty { return "(\(position))" }
+        return "\(base) (\(position))"
+    }
+
+    /// Human-readable playback position (`m:ss` / `h:mm:ss`), matching full-player `format(_:)`.
+    /// Returns `nil` when seconds are missing, non-finite, or negative.
+    static func formatPlaybackPosition(_ seconds: Double?) -> String? {
+        guard let seconds, seconds.isFinite, seconds >= 0 else { return nil }
+        let total = Int(seconds)
+        let h = total / 3600
+        let m = (total % 3600) / 60
+        let s = total % 60
+        if h > 0 {
+            return String(format: "%d:%02d:%02d", h, m, s)
+        }
+        return String(format: "%d:%02d", m, s)
+    }
+
+    /// Whether a playback position is known well enough to offer “Share with position”.
+    static func canShareWithPosition(_ seconds: Double?) -> Bool {
+        formatPlaybackPosition(seconds) != nil
     }
 
     private static func isNetworkShareable(_ url: URL) -> Bool {

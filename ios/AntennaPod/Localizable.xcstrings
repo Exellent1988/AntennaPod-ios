@@ -8347,6 +8347,40 @@
           }
         }
       }
+    },
+    "Share with position": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share with position"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit Position teilen"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the episode title, link, and current playback position": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title, link, and current playback position"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit Episodentitel, Link und aktueller Wiedergabeposition"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

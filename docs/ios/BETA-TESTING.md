@@ -129,6 +129,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Archiviert: Alle wiederherstellen (Bestätigung) | ☐ Archived: Restore all (confirm) |
 | ☐ Library search (lokal) | ☐ Library search (local) |
 | ☐ Share Podcast / Episode (Player, Shownotes, EpisodeRow; URL: link→enclosure→feed; kein Deep-Link) | ☐ Share podcast / episode (Player, Shownotes, EpisodeRow; URL: link→enclosure→feed; no deep link) |
+| ☐ Mit Position teilen (Full Player + Shownotes wenn aktuell; Text `Titel — Podcast (12:34)`; kein `#t=`) | ☐ Share with position (Full Player + Shownotes when current; text `Title — Podcast (12:34)`; no `#t=`) |
 | ☐ Episoden-Website öffnen (Player / Shownotes / EpisodeRow; nur http(s) `link`; Systembrowser; kein WebView) | ☐ Open episode website (Player / Shownotes / EpisodeRow; http(s) `link` only; system browser; no WebView) |
 | ☐ Feed-Detail: Feed-URL kopieren (Zwischenablage; local-folder disabled) | ☐ Feed detail: Copy feed URL (pasteboard; local-folder disabled) |
 

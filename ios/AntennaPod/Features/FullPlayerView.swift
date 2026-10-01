@@ -819,6 +819,26 @@ struct FullPlayerView: View {
                 }
                 .accessibilityLabel(String(localized: "Share episode"))
                 .accessibilityHint(String(localized: "Opens the system share sheet with the episode title and link"))
+
+                // Full player always shows the current item — offer position when known.
+                if PodcastEpisode.canShareWithPosition(playback.positionSeconds) {
+                    ShareLink(
+                        item: url,
+                        subject: Text(episode.title),
+                        message: Text(
+                            episode.shareMessage(
+                                feedTitle: feed?.title,
+                                positionSeconds: playback.positionSeconds
+                            )
+                        )
+                    ) {
+                        Label("Share with position", systemImage: "square.and.arrow.up.on.square")
+                    }
+                    .accessibilityLabel(String(localized: "Share with position"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the episode title, link, and current playback position")
+                    )
+                }
             }
         }
         .buttonStyle(.bordered)

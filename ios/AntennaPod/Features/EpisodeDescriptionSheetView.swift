@@ -5,6 +5,7 @@ struct EpisodeDescriptionSheetView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var playback: PlaybackService
 
     let episode: PodcastEpisode
     /// Optional podcast name for share message (`Title — Podcast`). When empty, looked up from the store.
@@ -32,6 +33,19 @@ struct EpisodeDescriptionSheetView: View {
 
     private var shareMessage: String {
         episode.shareMessage(feedTitle: resolvedFeedTitle)
+    }
+
+    /// Only when this shownotes episode is the current playback item and position is known.
+    private var canShareWithPosition: Bool {
+        playback.currentEpisode?.id == episode.id
+            && PodcastEpisode.canShareWithPosition(playback.positionSeconds)
+    }
+
+    private var shareMessageWithPosition: String {
+        episode.shareMessage(
+            feedTitle: resolvedFeedTitle,
+            positionSeconds: playback.positionSeconds
+        )
     }
 
     private var websiteURL: URL? {
@@ -83,6 +97,20 @@ struct EpisodeDescriptionSheetView: View {
                         }
                         .accessibilityLabel(String(localized: "Share episode"))
                         .accessibilityHint(String(localized: "Opens the system share sheet with the episode title and link"))
+
+                        if canShareWithPosition {
+                            ShareLink(
+                                item: url,
+                                subject: Text(episode.title),
+                                message: Text(shareMessageWithPosition)
+                            ) {
+                                Image(systemName: "square.and.arrow.up.on.square")
+                            }
+                            .accessibilityLabel(String(localized: "Share with position"))
+                            .accessibilityHint(
+                                String(localized: "Opens the system share sheet with the episode title, link, and current playback position")
+                            )
+                        }
                     }
                 }
             }
