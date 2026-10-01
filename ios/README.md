@@ -43,7 +43,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Favorites / starred episodes (Subscriptions → Library → Favorites; optional Home preview via Home layout; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; `.searchable` title/feed filter with debounce; toolbar Clear favorites with confirm on full list; auto-delete skips favorites)
 - Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived with `.searchable` + toolbar Restore all confirm on full list; bulk Archive all + Mark all as played in Inbox)
 - Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500 then All/Unplayed/Downloaded chips + searchable title/feed; EpisodeRow actions; swipe Archive + Mark played; filter persisted in AppSettings)
-- Share podcast / episode (FeedDetail toolbar share feed URL; EpisodeRow ShareLink / context menu / FeedDetail swipe; full player; prefer page link else enclosure)
+- Share podcast / episode (FeedDetail toolbar share feed URL; ⋯ **Copy feed URL** to pasteboard + Copied alert; local-folder disabled; EpisodeRow ShareLink / context menu / FeedDetail swipe; full player; prefer page link else enclosure)
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; Queue/Downloads/Favorites/History/Archived title/feed; Feed detail episode title; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + configurable Smart mark as played Off/15/30/60/120 default 30; Inbox + Feed detail Mark all as played with confirm)
@@ -294,7 +294,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 
 ## Share
 
-Share an **episode** (title + URL) or a **podcast** (title + feed URL) via the system share sheet (`ShareLink` / `UIActivityViewController`). Episode URL prefers the item page/`link`, then the enclosure/`downloadUrl`. **Feed detail** toolbar shares the feed URL; episode rows expose Share as a button and in the context menu (Feed detail also offers a trailing swipe Share). The **full player** secondary actions include Share when a URL is available. No cloud / social deep links beyond the system sheet.
+Share an **episode** (title + URL) or a **podcast** (title + feed URL) via the system share sheet (`ShareLink` / `UIActivityViewController`). Episode URL prefers the item page/`link`, then the enclosure/`downloadUrl`. **Feed detail** toolbar shares the feed URL; the ⋯ **Feed actions** menu also offers **Copy feed URL**, which writes `feed.feedUrl` to `UIPasteboard.general` and shows a brief **Copied** alert (plus success haptic). **Local-folder feeds** (`local-folder://`) disable Copy — there is no network RSS URL to paste (same honesty as Share omitting them). Episode rows expose Share as a button and in the context menu (Feed detail also offers a trailing swipe Share). The **full player** secondary actions include Share when a URL is available. No cloud / social deep links beyond the system sheet.
 
 ## Full player
 

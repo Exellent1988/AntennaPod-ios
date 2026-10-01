@@ -118,6 +118,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Archiviert: Alle wiederherstellen (Bestätigung) | ☐ Archived: Restore all (confirm) |
 | ☐ Library search (lokal) | ☐ Library search (local) |
 | ☐ Share Podcast / Episode | ☐ Share podcast / episode |
+| ☐ Feed-Detail: Feed-URL kopieren (Zwischenablage; local-folder disabled) | ☐ Feed detail: Copy feed URL (pasteboard; local-folder disabled) |
 
 ---
 

@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct FeedDetailView: View {
     @EnvironmentObject private var store: PodcastStore
@@ -9,6 +10,8 @@ struct FeedDetailView: View {
     @State private var showPerFeedSettings = false
     @State private var showDownloadAllConfirm = false
     @State private var showMarkAllPlayedConfirm = false
+    @State private var showFeedURLCopied = false
+    @State private var copyFeedURLFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -176,6 +179,14 @@ struct FeedDetailView: View {
                     }
                     Menu {
                         Button {
+                            copyFeedURL()
+                        } label: {
+                            Label("Copy feed URL", systemImage: "doc.on.doc")
+                        }
+                        .disabled(!canCopyFeedURL)
+                        .accessibilityLabel(String(localized: "Copy feed URL"))
+
+                        Button {
                             showDownloadAllConfirm = true
                         } label: {
                             Label("Download all", systemImage: "arrow.down.circle")
@@ -231,6 +242,15 @@ struct FeedDetailView: View {
                 "Marks \(markAllPlayedCandidates.count) unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled."
             )
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showFeedURLCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Feed URL copied to the pasteboard."))
+        }
+        .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: liveFeed.title)
@@ -251,6 +271,22 @@ struct FeedDetailView: View {
                     .background(.ultraThinMaterial)
             }
         }
+    }
+
+
+    /// Network RSS/Atom feeds only — local-folder feeds use a synthetic `local-folder://` id, not a pasteable feed URL.
+    private var canCopyFeedURL: Bool {
+        let trimmed = liveFeed.feedUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return false }
+        return !LocalFolderFeed.isLocalFolderFeed(liveFeed)
+    }
+
+    private func copyFeedURL() {
+        guard canCopyFeedURL else { return }
+        let trimmed = liveFeed.feedUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        UIPasteboard.general.string = trimmed
+        copyFeedURLFeedbackTick += 1
+        showFeedURLCopied = true
     }
 
     private func scheduleFilter(for term: String) {
