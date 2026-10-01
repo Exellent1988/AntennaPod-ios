@@ -19,6 +19,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Inbox tab (unplayed across subscriptions; pull-to-refresh refreshes all feeds)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first)
 - Favorites / starred episodes (Subscriptions → Library → Favorites; star on EpisodeRow + full player; `favorites.json`; auto-delete skips favorites)
+- Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500; searchable title/feed filter; EpisodeRow actions)
 - Share podcast / episode (FeedDetail toolbar share feed URL; EpisodeRow ShareLink / context menu / FeedDetail swipe; full player; prefer page link else enclosure)
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
@@ -46,7 +47,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home, inbox, history, favorites, library search, subscriptions, feed detail + per-feed settings, add/discover, player, downloads, queue, settings, OPML, notifications
+    └── Features/…           # home, inbox, all episodes, history, favorites, library search, subscriptions, feed detail + per-feed settings, add/discover, player, downloads, queue, settings, OPML, notifications
 ```
 
 ## Local setup (Mac)
@@ -62,7 +63,7 @@ See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
 
 ## Persistence
 
-Subscriptions, queue, per-feed settings (`feed-settings.json`), starred episode ids (`favorites.json`), and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`, `lastPlayedAtEpochMs`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `feed-settings.json`, `favorites.json`, `playback.json`). Inbox is derived from that state (unplayed episodes across feeds, newest first). History lists played or in-progress episodes (newest `lastPlayedAt` first); swipe removes playback state or marks unplayed. Older `playback.json` without `lastPlayedAt` migrates from `updatedAt` when played/in-progress. Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme, default playback speed, rewind/fast-forward intervals, skip intro/outro seconds, playback source preference, feed refresh interval, auto-download, auto-delete-after-playing, and notify-on-new-episodes prefs live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts / mini+full+Now Playing skip / `PlaybackService.play` source resolution / launch+foreground due-check / post-refresh enqueue / mark-played download cleanup. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`) and in-flight background task↔episode map (`pending-downloads.json`). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
+Subscriptions, queue, per-feed settings (`feed-settings.json`), starred episode ids (`favorites.json`), and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`, `lastPlayedAtEpochMs`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `feed-settings.json`, `favorites.json`, `playback.json`). Inbox is derived from that state (unplayed episodes across feeds, newest first). All Episodes is the same cross-feed catalog without the unplayed filter (newest pubDate first, soft-capped at 500). History lists played or in-progress episodes (newest `lastPlayedAt` first); swipe removes playback state or marks unplayed. Older `playback.json` without `lastPlayedAt` migrates from `updatedAt` when played/in-progress. Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme, default playback speed, rewind/fast-forward intervals, skip intro/outro seconds, playback source preference, feed refresh interval, auto-download, auto-delete-after-playing, and notify-on-new-episodes prefs live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts / mini+full+Now Playing skip / `PlaybackService.play` source resolution / launch+foreground due-check / post-refresh enqueue / mark-played download cleanup. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`) and in-flight background task↔episode map (`pending-downloads.json`). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
 
 
 
@@ -88,6 +89,10 @@ Local-only search over subscribed feeds and their episodes (title, feed title, f
 ## Favorites
 
 **Subscriptions → Library → Favorites** (no extra root tab; no Home preview in this slice). Starred episode IDs live in Application Support `favorites.json` (episode id → `favoritedAtEpochMs`), independent of `playback.json` so clearing History does not unstar. Toggle from **EpisodeRow** (star icon) or the **full player** secondary actions. List is newest-favorited first across feeds; swipe **Unfavorite**. When **Delete episode after playing** is on, auto-delete **skips** favorited episodes (keeps the offline file). Unsubscribing a feed clears that feed’s favorite entries.
+
+## Episodes (All)
+
+**Subscriptions → Library → Episodes** (no extra root tab). Flat list of episodes from every subscription, newest `pubDateEpochMs` first, showing feed title; rows reuse `EpisodeRow` (play / download / queue / mark / favorite / share). Optional `.searchable` filters by episode title or podcast name (in-memory over the capped list). **Soft limit: newest 500** episodes — not lazy-paged yet; documented so huge libraries stay honest. Distinct from **Inbox** (unplayed only). Root tabs stay at six (Home first).
 
 ## Share
 

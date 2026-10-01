@@ -299,6 +299,32 @@ final class PodcastStore: ObservableObject {
         return items
     }
 
+    // MARK: - All Episodes (catalog)
+
+    /// Soft cap for All Episodes (newest by pubDate). Keeps List honest without lazy paging.
+    static let allEpisodesSoftLimit = 500
+
+    /// All episodes across subscriptions, newest `pubDateEpochMs` first (soft-capped).
+    /// Distinct from Inbox (unplayed only): played / in-progress are included.
+    var allEpisodes: [InboxEpisode] {
+        var items: [InboxEpisode] = []
+        for feed in feeds {
+            for episode in feed.episodes {
+                items.append(InboxEpisode(episode: episode, feedTitle: feed.title))
+            }
+        }
+        items.sort { lhs, rhs in
+            let l = lhs.episode.pubDateEpochMs ?? Int64.min
+            let r = rhs.episode.pubDateEpochMs ?? Int64.min
+            if l != r { return l > r }
+            return lhs.episode.title.localizedCaseInsensitiveCompare(rhs.episode.title) == .orderedAscending
+        }
+        if items.count > Self.allEpisodesSoftLimit {
+            return Array(items.prefix(Self.allEpisodesSoftLimit))
+        }
+        return items
+    }
+
     // MARK: - Home sections
 
     /// In-progress (not played) episodes with meaningful progress, newest `lastPlayedAt` first.

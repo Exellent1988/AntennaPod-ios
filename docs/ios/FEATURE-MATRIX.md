@@ -12,7 +12,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Home (konfigurierbare Sektionen) | 4 | done | Primary tab: Continue listening, Inbox preview, Queue preview, recently updated feeds (by newest ep pubDate); See all → other tabs; pull-to-refresh; not configurable yet |
 | Queue | 5 | wip | JSON persistence |
 | Inbox | 4 | done | Unplayed across feeds (`!isPlayed`), newest first; tab + pull-to-refresh all feeds |
-| Episodes (Alle) | 4 | todo | |
+| Episodes (Alle) | 4 | done | Flat list across subscriptions, newest pubDate first; Subscriptions → Library → Episodes; feed title + EpisodeRow actions; `.searchable` title/feed filter; soft cap newest 500 |
 | Downloads-Liste | 5 | wip | P0, local files + persisted catalog |
 | History | 3 | done | Played / in-progress across feeds, newest `lastPlayedAt` first; Subscriptions → Library → History; swipe remove / mark unplayed; tap via EpisodeRow |
 | Favorites | 3 | done | Starred episode ids in `favorites.json` side map; star toggle on EpisodeRow + full player; Subscriptions → Library → Favorites (newest first); swipe unfavorite; auto-delete skips favorited downloads |
@@ -20,7 +20,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Add podcast | 5 | wip | URL + Apple Podcasts search (Subscribe reuses feed URL pipeline) |
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
 | Statistics | 2 | todo | P3 |
-| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Favorites / History), Queue, Downloads, Settings |
+| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / History), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
 | Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + auto-delete after play + new-episode notifications (P0/P1); more prefs later |

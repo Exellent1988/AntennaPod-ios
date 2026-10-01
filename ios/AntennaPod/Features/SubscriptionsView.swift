@@ -17,6 +17,11 @@ struct SubscriptionsView: View {
             List {
                 Section("Library") {
                     NavigationLink {
+                        AllEpisodesView()
+                    } label: {
+                        Label("Episodes", systemImage: "list.bullet.rectangle")
+                    }
+                    NavigationLink {
                         FavoritesView()
                     } label: {
                         Label("Favorites", systemImage: "star")
