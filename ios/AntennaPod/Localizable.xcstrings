@@ -12576,6 +12576,42 @@
           }
         }
       }
+    },
+    "Home Queue remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Home Queue preview info bar (episode count + remaining over visible soft-capped preview rows).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home Queue remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Warteschlangen-Zeit auf dem Home %@"
+          }
+        }
+      }
+    },
+    "Home Queue remaining time covers the preview only (first %lld), not the full Queue": {
+      "extractionState": "manual",
+      "comment": "VoiceOver soft-cap honesty when Home Queue preview is capped below the full queue catalog.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home Queue remaining time covers the preview only (first %lld), not the full Queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Verbleibende Zeit für die Warteschlange auf dem Home gilt nur für die Vorschau (erste %lld), nicht für die gesamte Warteschlange"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -31,20 +31,21 @@ struct HomeView: View {
         Array(filterEpisodes(store.inboxEpisodes).prefix(previewLimit))
     }
 
-    private var queueItems: [PodcastEpisode] {
+    /// Queue preview catalog after Home title/feed search filter (before soft-cap).
+    /// Does **not** follow Queue tab chips (`queueFilter`) — Home uses full queue order.
+    private var filteredQueueCatalog: [PodcastEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base = store.queue
-        let filtered: [PodcastEpisode]
-        if q.isEmpty {
-            filtered = base
-        } else {
-            filtered = base.filter { episode in
-                if episode.title.localizedCaseInsensitiveContains(q) { return true }
-                let feedTitle = store.feed(containingEpisodeId: episode.id)?.title ?? ""
-                return feedTitle.localizedCaseInsensitiveContains(q)
-            }
+        if q.isEmpty { return base }
+        return base.filter { episode in
+            if episode.title.localizedCaseInsensitiveContains(q) { return true }
+            let feedTitle = store.feed(containingEpisodeId: episode.id)?.title ?? ""
+            return feedTitle.localizedCaseInsensitiveContains(q)
         }
-        return Array(filtered.prefix(previewLimit))
+    }
+
+    private var queueItems: [PodcastEpisode] {
+        Array(filteredQueueCatalog.prefix(previewLimit))
     }
 
     private var recentFeeds: [PodcastFeed] {
@@ -217,6 +218,83 @@ struct HomeView: View {
         }
         return HomeInboxRemainingSummary(
             episodeCount: inboxItems.count,
+            remainingSeconds: remaining,
+            knownCount: known,
+            unknownCount: unknown
+        )
+    }
+
+    /// AntennaPod-like info bar: episode count + remaining over the **visible Queue preview**
+    /// rows only (`queueItems` = title/feed filter then soft-cap `previewLimit`). Remaining per
+    /// episode = `max(0, duration − position)` when duration known; unplayed with duration
+    /// contributes full duration; **played** (not current) → 0; **unknown duration skipped**
+    /// (tilde when any skipped). Currently playing uses live `PlaybackService`
+    /// position/duration. Wall-clock only (no playback-speed divide).
+    /// **Preview soft-cap honesty:** never claims remaining beyond the visible preview rows
+    /// (first `previewLimit` after search filter) — not the full `store.queue` / Queue tab /
+    /// tab badge / Queue screen chip+search filter.
+    private var queueRemainingInfoLabel: String? {
+        guard !queueItems.isEmpty else { return nil }
+        let summary = queueRemainingSummary
+        let episodesWord: String
+        if summary.episodeCount == 1 {
+            episodesWord = String(localized: "1 episode")
+        } else {
+            episodesWord = String(localized: "\(summary.episodeCount) episodes")
+        }
+        // All durations unknown — show count only (no invented time).
+        guard summary.knownCount > 0 else {
+            return episodesWord
+        }
+        let formatted = StatisticsView.formatDuration(summary.remainingSeconds)
+        let timePart: String
+        if summary.unknownCount > 0 {
+            timePart = String(localized: "~\(formatted)")
+        } else {
+            timePart = formatted
+        }
+        return String(localized: "\(episodesWord) • \(timePart) left")
+    }
+
+    private var queueRemainingAccessibilityLabel: String {
+        guard let label = queueRemainingInfoLabel else { return "" }
+        var parts = [String(localized: "Home Queue remaining time \(label)")]
+        let unknown = queueRemainingSummary.unknownCount
+        if unknown > 0 {
+            parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
+        }
+        // Soft-cap: filtered queue catalog longer than visible preview rows.
+        let filteredCatalogCount = filteredQueueCatalog.count
+        if filteredCatalogCount > queueItems.count {
+            parts.append(
+                String(
+                    localized: "Home Queue remaining time covers the preview only (first \(previewLimit)), not the full Queue"
+                )
+            )
+        }
+        return parts.joined(separator: ". ")
+    }
+
+    private var queueRemainingSummary: HomeQueueRemainingSummary {
+        var remaining = 0.0
+        var known = 0
+        var unknown = 0
+        for episode in queueItems {
+            guard let duration = knownDurationSeconds(for: episode) else {
+                unknown += 1
+                continue
+            }
+            known += 1
+            // Mark-played clears position; do not count full duration as still left
+            // (unless this is the live current episode — use live position instead).
+            if store.isPlayed(episode.id), playback.currentEpisode?.id != episode.id {
+                continue
+            }
+            let position = positionSeconds(for: episode)
+            remaining += max(0, duration - position)
+        }
+        return HomeQueueRemainingSummary(
+            episodeCount: queueItems.count,
             remainingSeconds: remaining,
             knownCount: known,
             unknownCount: unknown
@@ -479,6 +557,18 @@ struct HomeView: View {
     @ViewBuilder
     private var queueSection: some View {
         Section {
+            // AntennaPod-like Queue preview info bar (visible preview rows remaining time).
+            // Soft-cap honesty: first `previewLimit` after search filter — not full Queue / tab badge / Queue chips.
+            if let remainingLabel = queueRemainingInfoLabel {
+                Text(remainingLabel)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(queueRemainingAccessibilityLabel)
+                    .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            }
             ForEach(queueItems) { episode in
                 EpisodeRow(
                     episode: episode,
@@ -630,6 +720,14 @@ private struct ContinueRemainingSummary {
 
 /// Sum of remaining seconds over the visible Home Inbox/New preview rows (filter + soft-cap).
 private struct HomeInboxRemainingSummary {
+    var episodeCount: Int
+    var remainingSeconds: Double
+    var knownCount: Int
+    var unknownCount: Int
+}
+
+/// Sum of remaining seconds over the visible Home Queue preview rows (filter + soft-cap).
+private struct HomeQueueRemainingSummary {
     var episodeCount: Int
     var remainingSeconds: Double
     var knownCount: Int
