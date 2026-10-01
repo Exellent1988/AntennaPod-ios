@@ -13350,6 +13350,159 @@
           }
         }
       }
+    },
+    "Cycles to the next speed. Long-press for full list and Custom…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cycles to the next speed. Long-press for full list and Custom…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wechselt zur nächsten Geschwindigkeit. Lange drücken für volle Liste und Benutzerdefiniert…"
+          }
+        }
+      }
+    },
+    "New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list and Custom…. Custom… also available in Settings (0.50×–3.00×).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list and Custom…. Custom… also available in Settings (0.50×–3.00×)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Episoden starten mit dieser Geschwindigkeit. Im Mini-/Vollplayer: Tippen wechselt Presets; lange drücken öffnet die volle Liste und Benutzerdefiniert…. Benutzerdefiniert… auch in den Einstellungen (0,50×–3,00×)."
+          }
+        }
+      }
+    },
+    "Speed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geschwindigkeit"
+          }
+        }
+      }
+    },
+    "Custom playback speed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom playback speed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefinierte Wiedergabegeschwindigkeit"
+          }
+        }
+      }
+    },
+    "Custom default speed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom default speed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefinierte Standardgeschwindigkeit"
+          }
+        }
+      }
+    },
+    "Also set as default": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Also set as default"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auch als Standard festlegen"
+          }
+        }
+      }
+    },
+    "Applies to the current session only (0.50×–3.00×, 0.05 steps) unless Also set as default is on. Stock AVPlayer — quality may degrade above ~2×. Not Android ExoPlayer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Applies to the current session only (0.50×–3.00×, 0.05 steps) unless Also set as default is on. Stock AVPlayer — quality may degrade above ~2×. Not Android ExoPlayer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gilt nur für die aktuelle Sitzung (0,50×–3,00×, Schritte 0,05), außer „Auch als Standard festlegen“ ist an. Stock-AVPlayer — Qualität kann über ~2× nachlassen. Kein Android-ExoPlayer."
+          }
+        }
+      }
+    },
+    "New episodes start at this speed (0.50×–3.00×, 0.05 steps). Does not change the rate of what’s already playing. Stock AVPlayer — quality may degrade above ~2×.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes start at this speed (0.50×–3.00×, 0.05 steps). Does not change the rate of what’s already playing. Stock AVPlayer — quality may degrade above ~2×."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Episoden starten mit dieser Geschwindigkeit (0,50×–3,00×, Schritte 0,05). Ändert nicht die Rate der bereits laufenden Wiedergabe. Stock-AVPlayer — Qualität kann über ~2× nachlassen."
+          }
+        }
+      }
+    },
+    "Set a custom default playback speed between 0.50× and 3.00×.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set a custom default playback speed between 0.50× and 3.00×."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefinierte Standard-Wiedergabegeschwindigkeit zwischen 0,50× und 3,00× festlegen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -23,6 +23,7 @@ struct FullPlayerView: View {
     @State private var showDescription = false
     @State private var showFeedUnavailable = false
     @State private var showCustomSleepTimer = false
+    @State private var showCustomPlaybackSpeed = false
     @State private var showJumpToPosition = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
@@ -248,6 +249,11 @@ struct FullPlayerView: View {
         .sheet(isPresented: $showCustomSleepTimer) {
             CustomSleepTimerSheet()
                 .environmentObject(playback)
+        }
+        .sheet(isPresented: $showCustomPlaybackSpeed) {
+            CustomPlaybackSpeedSheet(mode: .session, initialSpeed: playback.rate)
+                .environmentObject(playback)
+                .environmentObject(settings)
         }
         .sheet(isPresented: $showJumpToPosition) {
             JumpToPositionSheet(initialSeconds: displayPosition)
@@ -672,7 +678,7 @@ struct FullPlayerView: View {
                     playback.setRate(speed)
                 } label: {
                     HStack {
-                        Text(String(format: "%.1f×", speed))
+                        Text(PlaybackService.formatPlaybackSpeed(speed))
                         if speed == settings.defaultPlaybackSpeed {
                             Text("Default")
                                 .font(.caption2)
@@ -681,15 +687,19 @@ struct FullPlayerView: View {
                     }
                 }
             }
+            Divider()
+            Button(String(localized: "Custom…")) {
+                showCustomPlaybackSpeed = true
+            }
         } primaryAction: {
             playback.cycleToNextSpeedPreset()
         } label: {
-            Text(String(format: "%.1f×", playback.rate))
+            Text(PlaybackService.formatPlaybackSpeed(playback.rate))
                 .font(.subheadline.weight(.semibold).monospacedDigit())
                 .frame(minWidth: 44)
         }
-        .accessibilityLabel("\(String(localized: "Playback speed")) \(String(format: "%.1f", playback.rate))")
-        .accessibilityHint(String(localized: "Cycles to the next speed. Long-press for full list."))
+        .accessibilityLabel("\(String(localized: "Playback speed")) \(PlaybackService.formatPlaybackSpeed(playback.rate))")
+        .accessibilityHint(String(localized: "Cycles to the next speed. Long-press for full list and Custom…"))
     }
 
     private var sleepTimerMenu: some View {

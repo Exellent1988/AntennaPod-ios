@@ -45,6 +45,7 @@ private enum StorageLimitPickerChoice: String, CaseIterable, Identifiable {
 /// Empty sections hide while filtering; empty state when no matches. NavigationLinks stay live for visible rows.
 struct SettingsView: View {
     @EnvironmentObject private var settings: AppSettings
+    @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var gpodder: GpodderSyncService
@@ -52,6 +53,7 @@ struct SettingsView: View {
 
     @State private var customMB: Int = 500
     @State private var showClearConfirmation = false
+    @State private var showCustomDefaultSpeed = false
     @State private var notificationAuthLabel = "Checking…"
     @State private var podcastIndexAPIKeyDraft = ""
     @State private var podcastIndexAPISecretDraft = ""
@@ -369,6 +371,11 @@ struct SettingsView: View {
                     "Deletes \(downloads.downloads.count) completed offline file(s) (\(DownloadStorageUsage.formatBytes(downloads.completedDownloadsByteSize()))), including favorited downloads. Uses the full Downloads catalog. Local files only — keeps played status, queue, favorites list, and history. Distinct from Delete played downloads and from Clear queue."
                 )
             }
+            .sheet(isPresented: $showCustomDefaultSpeed) {
+                CustomPlaybackSpeedSheet(mode: .defaultSpeed, initialSpeed: settings.defaultPlaybackSpeed)
+                    .environmentObject(playback)
+                    .environmentObject(settings)
+            }
         }
     }
 
@@ -479,7 +486,9 @@ struct SettingsView: View {
     private var matchesPlaybackSpeed: Bool {
         matchesSearch(
             "Default speed",
-            "New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list."
+            "Custom…",
+            "Custom default speed",
+            "New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list and Custom…. Custom… also available in Settings (0.50×–3.00×)."
         )
     }
 
@@ -671,10 +680,18 @@ struct SettingsView: View {
             if matchesPlaybackSpeed {
                 Picker("Default speed", selection: $settings.defaultPlaybackSpeed) {
                     ForEach(AppSettings.speedPresets, id: \.self) { speed in
-                        Text(String(format: "%.1f×", speed)).tag(speed)
+                        Text(PlaybackService.formatPlaybackSpeed(speed)).tag(speed)
+                    }
+                    if !AppSettings.speedPresets.contains(settings.defaultPlaybackSpeed) {
+                        Text(PlaybackService.formatPlaybackSpeed(settings.defaultPlaybackSpeed))
+                            .tag(settings.defaultPlaybackSpeed)
                     }
                 }
-                Text("New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list.")
+                Button(String(localized: "Custom…")) {
+                    showCustomDefaultSpeed = true
+                }
+                .accessibilityHint(String(localized: "Set a custom default playback speed between 0.50× and 3.00×."))
+                Text(String(localized: "New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list and Custom…. Custom… also available in Settings (0.50×–3.00×)."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

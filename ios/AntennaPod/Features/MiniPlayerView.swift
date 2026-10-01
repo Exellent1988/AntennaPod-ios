@@ -7,6 +7,7 @@ struct MiniPlayerView: View {
     @State private var showFullPlayer = false
     @State private var showFeedUnavailable = false
     @State private var showCustomSleepTimer = false
+    @State private var showCustomPlaybackSpeed = false
 
     var body: some View {
         if let episode = playback.currentEpisode {
@@ -74,7 +75,7 @@ struct MiniPlayerView: View {
                                 playback.setRate(speed)
                             } label: {
                                 HStack {
-                                    Text(String(format: "%.1f×", speed))
+                                    Text(PlaybackService.formatPlaybackSpeed(speed))
                                     if speed == settings.defaultPlaybackSpeed {
                                         Text("Default")
                                             .font(.caption2)
@@ -83,14 +84,18 @@ struct MiniPlayerView: View {
                                 }
                             }
                         }
+                        Divider()
+                        Button(String(localized: "Custom…")) {
+                            showCustomPlaybackSpeed = true
+                        }
                     } primaryAction: {
                         playback.cycleToNextSpeedPreset()
                     } label: {
-                        Text(String(format: "%.1f×", playback.rate))
+                        Text(PlaybackService.formatPlaybackSpeed(playback.rate))
                             .font(.caption.monospacedDigit())
                     }
-                    .accessibilityLabel("\(String(localized: "Playback speed")) \(String(format: "%.1f", playback.rate))")
-                    .accessibilityHint(String(localized: "Cycles to the next speed. Long-press for full list."))
+                    .accessibilityLabel("\(String(localized: "Playback speed")) \(PlaybackService.formatPlaybackSpeed(playback.rate))")
+                    .accessibilityHint(String(localized: "Cycles to the next speed. Long-press for full list and Custom…"))
 
                     Menu {
                         Button {
@@ -121,6 +126,11 @@ struct MiniPlayerView: View {
             .sheet(isPresented: $showCustomSleepTimer) {
                 CustomSleepTimerSheet()
                     .environmentObject(playback)
+            }
+            .sheet(isPresented: $showCustomPlaybackSpeed) {
+                CustomPlaybackSpeedSheet(mode: .session, initialSpeed: playback.rate)
+                    .environmentObject(playback)
+                    .environmentObject(settings)
             }
         }
     }

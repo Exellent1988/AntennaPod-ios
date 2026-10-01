@@ -1135,7 +1135,14 @@ final class AppSettings: ObservableObject {
         theme = AppTheme(rawValue: themeRaw) ?? .system
         if UserDefaults.standard.object(forKey: Keys.defaultPlaybackSpeed) != nil {
             let stored = UserDefaults.standard.float(forKey: Keys.defaultPlaybackSpeed)
-            defaultPlaybackSpeed = Self.speedPresets.contains(stored) ? stored : 1.0
+            // Presets or Custom… (0.5–3.0); out-of-range → 1.0.
+            if Self.speedPresets.contains(stored) {
+                defaultPlaybackSpeed = stored
+            } else if PlaybackService.customPlaybackSpeedRange.contains(stored) {
+                defaultPlaybackSpeed = PlaybackService.clampPlaybackSpeed(stored)
+            } else {
+                defaultPlaybackSpeed = 1.0
+            }
         } else {
             defaultPlaybackSpeed = 1.0
         }
@@ -1548,8 +1555,11 @@ final class AppSettings: ObservableObject {
     /// Apply prefs from an iOS JSON backup (writes through didSet → UserDefaults).
     func applyBackupSnapshot(_ snap: AppSettingsBackupSnapshot) {
         theme = AppTheme(rawValue: snap.theme) ?? .system
-        if AppSettings.speedPresets.contains(snap.defaultPlaybackSpeed) {
-            defaultPlaybackSpeed = snap.defaultPlaybackSpeed
+        let snapSpeed = snap.defaultPlaybackSpeed
+        if AppSettings.speedPresets.contains(snapSpeed) {
+            defaultPlaybackSpeed = snapSpeed
+        } else if PlaybackService.customPlaybackSpeedRange.contains(snapSpeed) {
+            defaultPlaybackSpeed = PlaybackService.clampPlaybackSpeed(snapSpeed)
         }
         switch Kind(rawValue: snap.storageLimitKind) {
         case .unlimited, .none:

@@ -22,6 +22,32 @@ final class PlaybackService: ObservableObject {
     static let clockPresetsMinutes: [Int] = [5, 10, 15, 30, 45, 60]
     /// Custom sleep timer UI range (minutes). Presets stay 5–60; fade unchanged.
     static let customSleepTimerMinutesRange: ClosedRange<Int> = 1...180
+    /// Custom playback speed UI / clamp range for stock `AVPlayer.rate`.
+    /// Honest: pitch-preserving quality is typically best ~0.5–2.0; 2.0–3.0 is allowed
+    /// (AntennaPod-like) but may sound worse. Not Android ExoPlayer.
+    static let customPlaybackSpeedRange: ClosedRange<Float> = 0.5...3.0
+    /// Step for Custom… sheet (Slider / Stepper).
+    static let customPlaybackSpeedStep: Float = 0.05
+
+    /// Clamp + snap to `customPlaybackSpeedStep` within `customPlaybackSpeedRange`.
+    static func clampPlaybackSpeed(_ rate: Float) -> Float {
+        let lo = customPlaybackSpeedRange.lowerBound
+        let hi = customPlaybackSpeedRange.upperBound
+        let clamped = min(max(rate, lo), hi)
+        let stepped = (clamped / customPlaybackSpeedStep).rounded() * customPlaybackSpeedStep
+        return min(max(stepped, lo), hi)
+    }
+
+    /// Display label: one decimal when on a 0.1 grid, else two (e.g. 1.25×).
+    static func formatPlaybackSpeed(_ rate: Float) -> String {
+        let snapped = clampPlaybackSpeed(rate)
+        let tenths = snapped * 10
+        if abs(tenths - tenths.rounded()) < 0.001 {
+            return String(format: "%.1f×", snapped)
+        }
+        return String(format: "%.2f×", snapped)
+    }
+
     /// Throttle lock-screen elapsed updates (system interpolates via rate + timestamp).
     private static let nowPlayingUpdateIntervalSeconds: Double = 5
 
@@ -128,7 +154,7 @@ final class PlaybackService: ObservableObject {
 
         // Fresh episode (or first play): feed override speed, else Settings default.
         if isFreshEpisode {
-            rate = resolvedPlaybackSpeed(for: episode)
+            rate = Self.clampPlaybackSpeed(resolvedPlaybackSpeed(for: episode))
         }
 
         // Keep an active sleep timer across episode changes (clock continues; EOE re-arms).
@@ -242,9 +268,10 @@ final class PlaybackService: ObservableObject {
     }
 
     func setRate(_ newRate: Float) {
-        rate = newRate
+        let clamped = Self.clampPlaybackSpeed(newRate)
+        rate = clamped
         if isPlaying {
-            player?.rate = newRate
+            player?.rate = clamped
         }
         updateNowPlayingInfo(force: true)
     }
