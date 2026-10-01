@@ -297,6 +297,12 @@ final class PodcastStore: ObservableObject {
         queue.move(fromOffsets: source, toOffset: destination)
     }
 
+    /// Remove every episode from the queue. Persists via `queue` `didSet`.
+    /// Does not stop playback, mark played, or delete downloads — only clears queue entries.
+    func clearQueue() {
+        queue = []
+    }
+
     // MARK: - Playback progress / played
 
     func playbackState(for episodeId: String) -> EpisodePlaybackState {

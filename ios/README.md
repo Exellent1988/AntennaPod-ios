@@ -25,7 +25,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
 - Sleep timer (clock presets + end of episode, fade-out)
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch; Feed detail **Download all** for unplayed/not-archived/not-downloaded, newest 50 soft cap)
-- Queue tab (JSON; swipe Remove + Archive; Edit drag reorder)
+- Queue tab (JSON; swipe Remove + Archive; Edit drag reorder; toolbar Clear queue with confirm)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
 - German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings headers, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript — **partial**, not full i18n)
 - Accessibility / VoiceOver (beta polish; EpisodeRow combined labels + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
@@ -38,7 +38,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Siri Shortcuts lite (App Intents Play/Pause / Skip forward/back + `antennapod://` URL schemes; opens app; needs current episode)
 - Homescreen widget (beta lite; WidgetKit Continue listening from App Group snapshot; tap → `antennapod://play`; empty placeholder; may be stale / no scrubber)
 - Apple Watch companion (beta lite; watchOS Continue listening from same snapshot via WC push; Play → iPhone `antennapod://play`; empty state; no independent playback / downloads / queue)
-- Swipe actions (Queue Remove+Archive + drag reorder; Downloads Delete; Inbox/Feed/History/Favorites/Archived/All Episodes useful swipes)
+- Swipe actions (Queue Remove+Archive + drag reorder + Clear queue confirm; Downloads Delete; Inbox/Feed/History/Favorites/Archived/All Episodes useful swipes)
 - Favorites / starred episodes (Subscriptions → Library → Favorites; optional Home preview via Home layout; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; auto-delete skips favorites)
 - Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived; bulk Archive all + Mark all as played in Inbox)
 - Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500; searchable title/feed filter; EpisodeRow actions; swipe Archive + Mark played)
@@ -248,7 +248,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 
 | Screen | Leading | Trailing | Extra |
 |--------|---------|----------|-------|
-| Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`) |
+| Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`); toolbar Clear queue (confirm) |
 | Downloads | — | Delete download | — |
 | Inbox | Mark played | Archive | Toolbar menu: Mark all as played (confirm) + Archive all |
 | Feed detail | Archive / Restore | Play Next + Queue + Share | Toolbar Download all (confirm) + EpisodeRow context: Play Next + Add to queue |

@@ -5,6 +5,8 @@ struct QueueView: View {
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
 
+    @State private var showClearQueueConfirm = false
+
     var body: some View {
         NavigationStack {
             List {
@@ -47,6 +49,31 @@ struct QueueView: View {
                     EditButton()
                         .disabled(store.queue.isEmpty)
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Menu {
+                        Button(role: .destructive) {
+                            showClearQueueConfirm = true
+                        } label: {
+                            Label("Clear queue", systemImage: "trash")
+                        }
+                        .disabled(store.queue.isEmpty)
+                    } label: {
+                        Label("Queue actions", systemImage: "ellipsis.circle")
+                    }
+                    .disabled(store.queue.isEmpty)
+                }
+            }
+            .confirmationDialog(
+                "Clear queue?",
+                isPresented: $showClearQueueConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Clear queue", role: .destructive) {
+                    store.clearQueue()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Removes \(store.queue.count) episodes from the queue. Does not stop playback, mark played, or delete downloads.")
             }
         }
     }

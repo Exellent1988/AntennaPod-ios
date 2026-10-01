@@ -4182,6 +4182,74 @@
           }
         }
       }
+    },
+    "Clear queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange leeren"
+          }
+        }
+      }
+    },
+    "Clear queue?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear queue?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange leeren?"
+          }
+        }
+      }
+    },
+    "Queue actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queue actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlangen-Aktionen"
+          }
+        }
+      }
+    },
+    "Removes %lld episodes from the queue. Does not stop playback, mark played, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld episodes from the queue. Does not stop playback, mark played, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld Episoden aus der Warteschlange. Stoppt die Wiedergabe nicht, markiert nicht als gehört und löscht keine Downloads."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
