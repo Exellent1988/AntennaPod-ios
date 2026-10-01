@@ -39,6 +39,31 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         return true
     }
 
+    /// Video episode when enclosure MIME is `video/*` or the media URL ends in a common video extension.
+    /// Used by the full player video surface (beta lite). Not every `video/mp4` feed is guaranteed playable.
+    var isVideo: Bool {
+        if let mime = mimeType?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
+           mime.hasPrefix("video/") {
+            return true
+        }
+        return Self.videoFileExtension(from: downloadUrl) != nil
+    }
+
+    private static let videoExtensions: Set<String> = ["mp4", "m4v", "mov", "webm"]
+
+    /// Lowercased path extension when it looks like a video file; ignores query/fragment.
+    private static func videoFileExtension(from urlString: String?) -> String? {
+        guard let urlString, !urlString.isEmpty else { return nil }
+        let path: String
+        if let url = URL(string: urlString) {
+            path = url.path
+        } else {
+            path = urlString.split(separator: "?", maxSplits: 1).first.map(String.init) ?? urlString
+        }
+        let ext = (path as NSString).pathExtension.lowercased()
+        return videoExtensions.contains(ext) ? ext : nil
+    }
+
     init(
         id: String,
         title: String,

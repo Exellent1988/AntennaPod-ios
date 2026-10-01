@@ -59,6 +59,9 @@ final class PlaybackService: ObservableObject {
     }
 
     private var player: AVPlayer?
+    /// Shared player for the full-player video surface (`AVPlayerLayer` / `EpisodeVideoSurface`).
+    /// Nil when nothing is loaded. Lockscreen / Now Playing stays metadata-only (no video).
+    var avPlayer: AVPlayer? { player }
     private var timeObserver: Any?
     private var statusCancellable: AnyCancellable?
     private var endObserver: NSObjectProtocol?

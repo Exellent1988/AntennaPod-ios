@@ -127,6 +127,10 @@ struct SettingsView: View {
                     Text(settings.playbackSourcePreference.helpText)
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Toggle("Play video as audio only", isOn: $settings.playVideoAsAudioOnly)
+                    Text("When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
                 refreshSection
                 autoDownloadSection

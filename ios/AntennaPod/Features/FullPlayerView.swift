@@ -1,3 +1,4 @@
+import AVFoundation
 import SwiftUI
 
 /// Full-screen / sheet player opened from the mini player (AntennaPod P0).
@@ -95,8 +96,10 @@ struct FullPlayerView: View {
             let side = min(geo.size.width - 48, 320)
             ScrollView {
                 VStack(spacing: 24) {
-                    artwork(side: side)
+                    mediaSurface(episode: episode, side: side)
                         .padding(.top, 8)
+                    videoAudioOnlyToggle(episode: episode)
+                        .padding(.horizontal)
                     VStack(spacing: 6) {
                         Text(episode.title)
                             .font(.title2.weight(.semibold))
@@ -208,6 +211,36 @@ struct FullPlayerView: View {
             .padding(.top, 8)
             .accessibilityLabel("Show transcript")
             .accessibilityHint("Opens the feed-provided transcript")
+        }
+    }
+
+    /// Show video when the episode is video and audio-only mode is off.
+    private func showsVideoSurface(for episode: PodcastEpisode) -> Bool {
+        let ep = resolvedEpisode ?? episode
+        return ep.isVideo && !settings.playVideoAsAudioOnly
+    }
+
+    @ViewBuilder
+    private func mediaSurface(episode: PodcastEpisode, side: CGFloat) -> some View {
+        if showsVideoSurface(for: episode), let player = playback.avPlayer {
+            EpisodeVideoSurface(player: player)
+                .frame(width: side, height: side * 9 / 16)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .shadow(color: .black.opacity(0.18), radius: 12, y: 6)
+                .accessibilityLabel("Video player")
+        } else {
+            artwork(side: side)
+        }
+    }
+
+    @ViewBuilder
+    private func videoAudioOnlyToggle(episode: PodcastEpisode) -> some View {
+        let ep = resolvedEpisode ?? episode
+        if ep.isVideo {
+            Toggle(isOn: $settings.playVideoAsAudioOnly) {
+                Label("Play video as audio only", systemImage: "speaker.wave.2")
+            }
+            .accessibilityHint("Hides the video surface and shows artwork instead. Lockscreen stays audio.")
         }
     }
 

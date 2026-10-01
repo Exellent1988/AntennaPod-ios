@@ -21,8 +21,8 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
 | Statistics | 2 | done | Totals from `playback.json`: played count, approx listening time (played→duration / in-progress→position), per-feed top podcasts; Library + Settings; honest approximation footnote |
 | Bottom nav / Drawer-Analog | 4 | done | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics / Echo), Queue, Downloads, Settings |
-| Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
-| Video Player | 1 | todo | P4, bewusst nachrangig |
+| Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork or video surface, scrubber, configurable skip, speed, sleep timer, mark/queue/download, video→audio-only toggle) |
+| Video Player | 1 | done | **Beta lite**: detect video via MIME `video/*` or enclosure ext mp4/m4v/mov/webm (`PodcastEpisode.isVideo`); full player shows `AVPlayerLayer` surface (replaces artwork) when not audio-only; shares `PlaybackService` AVPlayer. No PiP; no dedicated landscape chrome; Lockscreen stays audio metadata |
 | Settings | 5 | done | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + **new-episode action** + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + notifications (new eps / DL errors / sync errors) + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + Statistics / Echo + App Store rating prompt + Siri/Shortcuts note + Homescreen widget note + About (P0/P1); more prefs later |
 
 ## Subscriptions
@@ -60,7 +60,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Transcripts | 2 | done | Feed `podcast:transcript` URL+type (JSON>VTT>SRT preference); full player button → fetch + scrollable sheet; tap cue seek when timed; session memory/disk cache; **only when feed provides URL — no Whisper/on-device STT** |
 | Headset / Bluetooth pause | 4 | done | AVAudioSession interruption (pause / resume if shouldResume) + routeChange oldDeviceUnavailable (unplug); remotes/Now Playing unchanged |
 | Prefer stream vs download | 5 | done | Settings: Prefer download / Prefer stream / Automatic (default); `PlaybackService.play` resolves via `DownloadService.localURL`; mini + full player show Local/Stream |
-| Video → audio-only | 1 | todo | mit Video P4 |
+| Video → audio-only | 1 | done | **Beta lite**: Settings + full-player toggle **Play video as audio only** (`AppSettings.playVideoAsAudioOnly`, default off, persisted + backup); hides video surface → artwork. Same AVPlayer item (no track swap). Lockscreen / Now Playing unchanged (audio) |
 
 ## Downloads
 

@@ -193,7 +193,7 @@ enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
     ]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error / sync-error notifications, App Store rating prompt).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -244,6 +244,7 @@ final class AppSettings: ObservableObject {
         static let notifyOnSyncErrors = "settings.notifyOnSyncErrors"
         static let chartsCountryCode = "settings.chartsCountryCode"
         static let askForAppStoreRating = "settings.askForAppStoreRating"
+        static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
     }
 
     private enum Kind: String {
@@ -413,6 +414,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// When true, video episodes hide the full-player video surface and show artwork (audio-style).
+    /// Default off; Lockscreen / Now Playing stays audio either way. Media item is unchanged (lite).
+    @Published var playVideoAsAudioOnly: Bool {
+        didSet {
+            UserDefaults.standard.set(playVideoAsAudioOnly, forKey: Keys.playVideoAsAudioOnly)
+        }
+    }
+
     /// Resolved ISO country used for chart requests.
     var resolvedChartsCountryCode: String {
         let pref = ChartsCountryPreference.fromStorage(chartsCountryCode)
@@ -509,6 +518,12 @@ final class AppSettings: ObservableObject {
             askForAppStoreRating = UserDefaults.standard.bool(forKey: Keys.askForAppStoreRating)
         } else {
             askForAppStoreRating = true
+        }
+        if UserDefaults.standard.object(forKey: Keys.playVideoAsAudioOnly) != nil {
+            playVideoAsAudioOnly = UserDefaults.standard.bool(forKey: Keys.playVideoAsAudioOnly)
+        } else {
+            // Default off: show video surface when the episode is video.
+            playVideoAsAudioOnly = false
         }
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
@@ -623,6 +638,7 @@ final class AppSettings: ObservableObject {
             notifyOnDownloadErrors: notifyOnDownloadErrors,
             notifyOnSyncErrors: notifyOnSyncErrors,
             askForAppStoreRating: askForAppStoreRating,
+            playVideoAsAudioOnly: playVideoAsAudioOnly,
             chartsCountryCode: chartsCountryCode
         )
     }
@@ -675,6 +691,7 @@ final class AppSettings: ObservableObject {
         notifyOnDownloadErrors = snap.notifyOnDownloadErrors
         notifyOnSyncErrors = snap.notifyOnSyncErrors ?? true
         askForAppStoreRating = snap.askForAppStoreRating ?? true
+        playVideoAsAudioOnly = snap.playVideoAsAudioOnly ?? false
         chartsCountryCode = ChartsCountryPreference.fromStorage(snap.chartsCountryCode).storageValue
     }
 }
@@ -705,5 +722,7 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var notifyOnSyncErrors: Bool? = true
     /// Absent in older backups → treated as on (default).
     var askForAppStoreRating: Bool? = true
+    /// Absent in older backups → treated as off (show video when detected).
+    var playVideoAsAudioOnly: Bool? = false
     var chartsCountryCode: String
 }

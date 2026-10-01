@@ -12,7 +12,9 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Online feed preview (before subscribe: discovery rows + Feed URL → Preview via FeedRepository; episode count + first titles; Confirm Subscribe / Cancel; already subscribed → Open feed)
 - Episode list
 - Stream playback (AVPlayer, speed, configurable skip intervals)
-- Full player sheet (artwork, scrubber, transport; tap mini player to open)
+- Full player sheet (artwork or video surface, scrubber, transport; tap mini player to open)
+- Video player (beta lite; MIME video/* or mp4/m4v/mov/webm → AVPlayerLayer in full player; no PiP)
+- Video → audio only (Settings + full-player toggle; default off; Lockscreen stays audio)
 - Chapters (PSC / Podcast Index from feed; list in full player; tap to seek)
 - Transcripts (beta; feed `podcast:transcript` URL only — fetch VTT/SRT/JSON, scrollable sheet, tap cue seek; no Whisper/STT)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip using Settings intervals)
@@ -37,7 +39,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors / sync errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, App Store rating prompt, Siri/Shortcuts note, Homescreen widget note, About)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, play video as audio only, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors / sync errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, App Store rating prompt, Siri/Shortcuts note, Homescreen widget note, About)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -218,7 +220,19 @@ Share an **episode** (title + URL) or a **podcast** (title + feed URL) via the s
 
 ## Full player
 
-Tap the mini player title or progress bar to open a full-screen sheet: feed artwork, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed menu, sleep timer (same presets as mini), plus mark played / favorite / queue / download / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
+Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed menu, sleep timer (same presets as mini), plus mark played / favorite / queue / download / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
+
+## Video player (beta lite)
+
+**Detection:** `PodcastEpisode.isVideo` is true when enclosure MIME is `video/*` or the media URL path ends in `mp4` / `m4v` / `mov` / `webm` (query string ignored).
+
+**Full player:** When video and **Play video as audio only** is off, the artwork slot is replaced by an `AVPlayerLayer` (`EpisodeVideoSurface`) bound to the same `PlaybackService` `AVPlayer` — transport / scrub stay shared. Aspect-fit on a black rounded frame (16:9-ish height).
+
+**Audio only:** Toggle in **Settings → Playback** and on the full player (video episodes only). Default **off**. Hides the video surface and shows artwork; does **not** re-encode or swap to an audio-only track (same media item). Persisted in `AppSettings` / UserDefaults and included in iOS JSON backup.
+
+**Lockscreen / Now Playing:** Remains audio metadata + feed artwork (no video on lock screen). **Picture-in-picture** is **not** included in this lite slice.
+
+**Honest limits:** No dedicated landscape video chrome; no PiP; playback of exotic codecs depends on AVFoundation; local-folder feeds stay audio-extension-only.
 
 ## Chapters
 
