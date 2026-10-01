@@ -54,7 +54,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Archivieren / Wiederherstellen (Full secondary; EpisodeRow; sofort via `archived.json`; Inbox ausblenden) | ☐ Archive / restore (Full secondary; EpisodeRow; immediate via `archived.json`; hides from Inbox) |
 | ☐ Queue-Menü Full Player (Add ↔ Remove via `isInQueue`; Play Next wenn nicht schon next; gleiche Store-APIs) | ☐ Full Player Queue menu (Add ↔ Remove via `isInQueue`; Play Next when not already next; same store APIs) |
 | ☐ Full Player Download (nicht geladen → Laden; läuft → Abbrechen; geladen → Download löschen **mit Confirm** + Titel; lokal-Ordner ausgeblendet) | ☐ Full Player download (not downloaded → Download; in progress → Cancel; downloaded → Delete download **with confirm** + title; hidden for local-folder) |
-| ☐ Geschwindigkeit Tippen = nächste Preset (0.8…2.0 Wrap); Long-Press = Menü + Custom… (0,50–3,00× / 0,05; Sitzung bzw. Auch als Standard); Settings Default + Custom… | ☐ Speed tap = next preset (0.8…2.0 wrap); long-press = menu + Custom… (0.50–3.00× / 0.05; session or Also set as default); Settings default + Custom… |
+| ☐ Geschwindigkeit Tippen = nächste Preset (0.8…2.0 Wrap); Long-Press = Menü + Custom… (0,50–3,00× / 0,05; Sitzung bzw. Auch als Standard); Settings Default + Custom…; Per-Feed Speed + Custom… | ☐ Speed tap = next preset (0.8…2.0 wrap); long-press = menu + Custom… (0.50–3.00× / 0.05; session or Also set as default); Settings default + Custom…; per-feed speed + Custom… |
 | ☐ Sleep timer (Uhr / Ende der Episode / Custom… 1–180 Min.; Mini-Player Restzeit-Badge; Ende → lokale Benachrichtigung + Haptik wenn Vordergrund; Settings-Toggle Standard an) | ☐ Sleep timer (clock / end of episode / Custom… 1–180 min; mini player remaining badge; end → local notification + foreground haptic; Settings toggle default on) |
 | ☐ Chapters tippen → Seek (wenn im Feed) | ☐ Chapters tap → seek (when in feed) |
 | ☐ Kapitel Prev/Next (nur wenn Kapitel; Next → nächster Start; Prev → Anfang wenn >2s sonst vorheriges) | ☐ Chapter prev/next (only when chapters; Next → next start; Prev → restart if >2s else previous) |
@@ -220,7 +220,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Appearance Theme System/Hell/Dunkel (`preferredColorScheme`; Backup) | ☐ Appearance Theme System/Light/Dark (`preferredColorScheme`; backup) |
 | ☐ Settings: Suche (Titel / Fußnoten; leere Abschnitte aus; NavigationLinks bleiben) | ☐ Settings: search (titles / footnotes; empty sections hide; NavigationLinks stay) |
 | ☐ Notify new episodes (default aus; lokal; ein Banner; kein Push) | ☐ Notify new episodes (default off; local; one banner; no push) |
-| ☐ Per-feed settings (auto-DL / keep / notify / tags) | ☐ Per-feed settings (auto-DL / keep / notify / tags) |
+| ☐ Per-feed settings (auto-DL / keep / notify / tags; Speed Use global·Presets + Custom… 0,50–3,00×) | ☐ Per-feed settings (auto-DL / keep / notify / tags; Speed Use global·presets + Custom… 0.50–3.00×) |
 | ☐ Per-feed Keep updated → Never: Refresh all überspringt; Einzel-Refresh OK | ☐ Per-feed Keep updated → Never: Refresh all skips; single-feed refresh OK |
 | ☐ Feed refresh interval / Keep updated | ☐ Feed refresh interval / Keep updated |
 | ☐ New-episode action (Inbox / Queue) | ☐ New-episode action (Inbox / Queue) |

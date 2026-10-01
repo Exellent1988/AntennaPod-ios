@@ -380,7 +380,7 @@ Tap the mini player title or progress bar to open a full-screen sheet: feed artw
 
 ## Playback speed (presets + Custom…)
 
-Mini + full player speed control: **tap** advances to the next `AppSettings.speedPresets` value (`0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0`, wraps), AntennaPod-style. **Long-press** (Menu) lists every preset plus **Custom…**, which opens a medium sheet (TextField + Slider + Stepper, 0.50×–3.00× in 0.05 steps) and calls existing `PlaybackService.setRate` (clamped/snapped). Custom rates are **session-only** unless the sheet toggle **Also set as default** is on (or the user sets Custom… under Settings → Default speed). Settings Custom… persists `defaultPlaybackSpeed` only — it does **not** change the rate of what’s already playing. **Honest AVPlayer limits:** stock `AVPlayer.rate` (not Android ExoPlayer); pitch-preserving quality is typically best ~0.5–2.0 — above ~2× may sound worse. Per-feed speed overrides stay on the preset list only. Non-preset session rates jump to the first preset on the next tap-cycle (same as Android `setNextPlaybackSpeed`).
+Mini + full player speed control: **tap** advances to the next `AppSettings.speedPresets` value (`0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0`, wraps), AntennaPod-style. **Long-press** (Menu) lists every preset plus **Custom…**, which opens a medium sheet (TextField + Slider + Stepper, 0.50×–3.00× in 0.05 steps) and calls existing `PlaybackService.setRate` (clamped/snapped). Custom rates are **session-only** unless the sheet toggle **Also set as default** is on (or the user sets Custom… under Settings → Default speed). Settings Custom… persists `defaultPlaybackSpeed` only — it does **not** change the rate of what’s already playing. **Honest AVPlayer limits:** stock `AVPlayer.rate` (not Android ExoPlayer); pitch-preserving quality is typically best ~0.5–2.0 — above ~2× may sound worse. Per-feed speed overrides (Feed detail → gear) offer the same presets plus **Custom…** (persisted in `feed-settings.json`; applied on fresh episode start for that feed — does not change the rate already playing). Non-preset session rates jump to the first preset on the next tap-cycle (same as Android `setNextPlaybackSpeed`).
 
 ## Video player (beta lite)
 
@@ -598,7 +598,7 @@ Feed detail → **gear** opens a sheet with overrides:
 - **New episodes** — Use global / Inbox only / Add to Queue (Queue+download stays a global Settings choice).
 - **Notify on new episodes** — Use global / Always / Never; Always/Never beat the global notification toggle (system permission still required).
 - **Skip intro / Skip outro** — Use global / Off / 5 / 10 / 15 / 30 / 60 seconds (`nil` in the side map = Use global; explicit `0` = Off for this podcast). Same presets as Settings → Playback.
-- **Playback speed** — Use global / 0.8× / 1.0× / 1.1× / 1.2× / 1.3× / 1.5× / 2.0× (`nil` = Use global). Applied when starting a fresh episode for this podcast.
+- **Playback speed** — Use global / presets 0.8×…2.0× + **Custom…** (0.50×–3.00×, 0.05 steps; same sheet/clamp as Settings / player Custom…). `nil` = Use global. Applied when starting a **fresh** episode for this podcast (same as existing per-feed speed); does **not** change the rate already playing. Stored in `feed-settings.json`.
 
 Persisted as a side map keyed by stable `PodcastFeed.id` in Application Support `feed-settings.json` (survives feed refresh; cleared on unsubscribe). Reset to global defaults removes the map entry. `PlaybackService` resolves intro/outro/speed from the feed override when set, otherwise `AppSettings`.
 

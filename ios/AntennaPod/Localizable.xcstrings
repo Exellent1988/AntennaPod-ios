@@ -13707,6 +13707,108 @@
           }
         }
       }
+    },
+    "Custom feed playback speed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom feed playback speed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefinierte Feed-Wiedergabegeschwindigkeit"
+          }
+        }
+      }
+    },
+    "This podcast’s episodes start at this speed (0.50×–3.00×, 0.05 steps). Applied on a fresh episode start for this feed (same as existing per-feed speed). Does not change the rate of what’s already playing. Stock AVPlayer — quality may degrade above ~2×.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast’s episodes start at this speed (0.50×–3.00×, 0.05 steps). Applied on a fresh episode start for this feed (same as existing per-feed speed). Does not change the rate of what’s already playing. Stock AVPlayer — quality may degrade above ~2×."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden dieses Podcasts starten mit dieser Geschwindigkeit (0,50×–3,00×, Schritte 0,05). Wird bei frischem Episodenstart für diesen Feed angewendet (wie die bestehende Per-Feed-Geschwindigkeit). Ändert nicht die Rate der bereits laufenden Wiedergabe. Stock-AVPlayer — Qualität kann über ~2× nachlassen."
+          }
+        }
+      }
+    },
+    "Set a custom playback speed for this podcast between 0.50× and 3.00×.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set a custom playback speed for this podcast between 0.50× and 3.00×."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefinierte Wiedergabegeschwindigkeit für diesen Podcast zwischen 0,50× und 3,00× festlegen."
+          }
+        }
+      }
+    },
+    "Use global, a preset, or Custom… for this podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, a preset, or Custom… for this podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global, ein Preset oder Benutzerdefiniert… für diesen Podcast"
+          }
+        }
+      }
+    },
+    "This podcast starts at %@ instead of Settings → Default speed (currently %@). Applied on a fresh episode start for this feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast starts at %@ instead of Settings → Default speed (currently %@). Applied on a fresh episode start for this feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Podcast startet mit %@ statt Einstellungen → Standardgeschwindigkeit (aktuell %@). Wird bei frischem Episodenstart für diesen Feed angewendet."
+          }
+        }
+      }
+    },
+    "Follows Settings → Default speed (currently %@). Applied when starting a fresh episode for this podcast.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follows Settings → Default speed (currently %@). Applied when starting a fresh episode for this podcast."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folgt Einstellungen → Standardgeschwindigkeit (aktuell %@). Wird beim Start einer neuen Episode dieses Podcasts angewendet."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

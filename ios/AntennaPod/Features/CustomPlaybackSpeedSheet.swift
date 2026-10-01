@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Compact sheet: pick a custom playback speed (0.50×–3.00×, 0.05 steps), then
-/// `PlaybackService.setRate` (session) and/or `AppSettings.defaultPlaybackSpeed`.
+/// `PlaybackService.setRate` (session), `AppSettings.defaultPlaybackSpeed`, and/or
+/// per-feed override in `feed-settings.json`.
 /// Stock AVPlayer — not Android ExoPlayer; quality may degrade above ~2×.
 struct CustomPlaybackSpeedSheet: View {
     enum Mode {
@@ -9,6 +10,8 @@ struct CustomPlaybackSpeedSheet: View {
         case session
         /// Persist Settings default only — does **not** change the rate already playing.
         case defaultSpeed
+        /// Persist per-feed override only — does **not** change the rate already playing.
+        case feedOverride
     }
 
     @EnvironmentObject private var playback: PlaybackService
@@ -16,6 +19,8 @@ struct CustomPlaybackSpeedSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     let mode: Mode
+    /// Required when `mode == .feedOverride`: writes clamped speed into feed settings.
+    var onConfirmFeedOverride: ((Float) -> Void)? = nil
 
     @State private var speedText: String
     @State private var alsoSetAsDefault = false
@@ -23,8 +28,9 @@ struct CustomPlaybackSpeedSheet: View {
     private var range: ClosedRange<Float> { PlaybackService.customPlaybackSpeedRange }
     private var step: Float { PlaybackService.customPlaybackSpeedStep }
 
-    init(mode: Mode, initialSpeed: Float) {
+    init(mode: Mode, initialSpeed: Float, onConfirmFeedOverride: ((Float) -> Void)? = nil) {
         self.mode = mode
+        self.onConfirmFeedOverride = onConfirmFeedOverride
         let clamped = PlaybackService.clampPlaybackSpeed(initialSpeed)
         _speedText = State(initialValue: Self.fieldText(for: clamped))
     }
@@ -84,6 +90,8 @@ struct CustomPlaybackSpeedSheet: View {
             return String(localized: "Custom playback speed")
         case .defaultSpeed:
             return String(localized: "Custom default speed")
+        case .feedOverride:
+            return String(localized: "Custom feed playback speed")
         }
     }
 
@@ -93,6 +101,8 @@ struct CustomPlaybackSpeedSheet: View {
             return String(localized: "Applies to the current session only (0.50×–3.00×, 0.05 steps) unless Also set as default is on. Stock AVPlayer — quality may degrade above ~2×. Not Android ExoPlayer.")
         case .defaultSpeed:
             return String(localized: "New episodes start at this speed (0.50×–3.00×, 0.05 steps). Does not change the rate of what’s already playing. Stock AVPlayer — quality may degrade above ~2×.")
+        case .feedOverride:
+            return String(localized: "This podcast’s episodes start at this speed (0.50×–3.00×, 0.05 steps). Applied on a fresh episode start for this feed (same as existing per-feed speed). Does not change the rate of what’s already playing. Stock AVPlayer — quality may degrade above ~2×.")
         }
     }
 
@@ -127,6 +137,8 @@ struct CustomPlaybackSpeedSheet: View {
             }
         case .defaultSpeed:
             settings.defaultPlaybackSpeed = clamped
+        case .feedOverride:
+            onConfirmFeedOverride?(clamped)
         }
         dismiss()
     }

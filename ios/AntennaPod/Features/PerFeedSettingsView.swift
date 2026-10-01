@@ -4,6 +4,7 @@ import SwiftUI
 struct PerFeedSettingsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var appSettings: AppSettings
+    @EnvironmentObject private var playback: PlaybackService
 
     let feedId: UUID
     let feedTitle: String
@@ -13,6 +14,7 @@ struct PerFeedSettingsView: View {
     @State private var renameDraft = ""
     @State private var showRenameAlert = false
     @State private var tagPendingDelete: String?
+    @State private var showCustomFeedSpeed = false
 
     private var current: FeedSettings {
         store.feedSettings(for: feedId)
@@ -112,12 +114,24 @@ struct PerFeedSettingsView: View {
                 Picker("Playback speed", selection: playbackSpeedBinding) {
                     Text("Use global").tag(Optional<Float>.none)
                     ForEach(AppSettings.speedPresets, id: \.self) { speed in
-                        Text(String(format: "%.1f×", speed)).tag(Optional(speed))
+                        Text(PlaybackService.formatPlaybackSpeed(speed)).tag(Optional(speed))
+                    }
+                    if let override = current.playbackSpeed, !AppSettings.speedPresets.contains(override) {
+                        Text(PlaybackService.formatPlaybackSpeed(override))
+                            .tag(Optional(override))
                     }
                 }
+                .accessibilityLabel(String(localized: "Playback speed"))
+                .accessibilityHint(String(localized: "Use global, a preset, or Custom… for this podcast"))
+                .accessibilityValue(playbackSpeedAccessibilityValue)
+                Button(String(localized: "Custom…")) {
+                    showCustomFeedSpeed = true
+                }
+                .accessibilityHint(String(localized: "Set a custom playback speed for this podcast between 0.50× and 3.00×."))
                 Text(playbackSpeedHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .accessibilityLabel(playbackSpeedHelp)
             } header: {
                 Text("Playback")
             }
@@ -233,6 +247,16 @@ struct PerFeedSettingsView: View {
                 let count = store.feeds(withTag: tag).count
                 Text(String(format: String(localized: "Removes “%@” from %lld podcasts. Does not unsubscribe or delete downloads."), tag, count))
             }
+        }
+        .sheet(isPresented: $showCustomFeedSpeed) {
+            CustomPlaybackSpeedSheet(
+                mode: .feedOverride,
+                initialSpeed: current.playbackSpeed ?? appSettings.defaultPlaybackSpeed
+            ) { clamped in
+                store.updateFeedSettings(for: feedId) { $0.playbackSpeed = clamped }
+            }
+            .environmentObject(playback)
+            .environmentObject(appSettings)
         }
     }
 
@@ -370,10 +394,25 @@ struct PerFeedSettingsView: View {
     }
 
     private var playbackSpeedHelp: String {
-        let global = String(format: "%.1f×", appSettings.defaultPlaybackSpeed)
+        let global = PlaybackService.formatPlaybackSpeed(appSettings.defaultPlaybackSpeed)
         if let override = current.playbackSpeed {
-            return String(format: "This podcast starts at %.1f× instead of Settings → Default speed (currently %@).", override, global)
+            let label = PlaybackService.formatPlaybackSpeed(override)
+            return String(
+                format: String(localized: "This podcast starts at %@ instead of Settings → Default speed (currently %@). Applied on a fresh episode start for this feed."),
+                label,
+                global
+            )
         }
-        return "Follows Settings → Default speed (currently \(global)). Applied when starting a fresh episode for this podcast."
+        return String(
+            format: String(localized: "Follows Settings → Default speed (currently %@). Applied when starting a fresh episode for this podcast."),
+            global
+        )
+    }
+
+    private var playbackSpeedAccessibilityValue: String {
+        if let override = current.playbackSpeed {
+            return PlaybackService.formatPlaybackSpeed(override)
+        }
+        return String(localized: "Use global")
     }
 }

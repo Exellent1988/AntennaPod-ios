@@ -28,7 +28,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
     var skipIntroSeconds: Int?
     /// Skip outro seconds override; `nil` = Use global. Explicit `0` = Off for this feed.
     var skipOutroSeconds: Int?
-    /// Playback speed override; `nil` = Use global. Explicit value from `AppSettings.speedPresets`.
+    /// Playback speed override; `nil` = Use global. Presets or Custom… (0.50–3.00× @ 0.05).
     var playbackSpeed: Float?
 
     static let `default` = FeedSettings(
@@ -125,6 +125,9 @@ struct FeedSettings: Hashable, Codable, Equatable {
     private static let skipIntroOutroPresets: Set<Int> = [0, 5, 10, 15, 30, 60]
     /// Mirrors `AppSettings.speedPresets`.
     private static let speedPresets: Set<Float> = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
+    /// Mirrors `PlaybackService.customPlaybackSpeedRange` / step (local so Codable stays nonisolated).
+    private static let customSpeedRange: ClosedRange<Float> = 0.5...3.0
+    private static let customSpeedStep: Float = 0.05
 
     private static func normalizedSkipIntroOutro(_ value: Int?) -> Int? {
         guard let value else { return nil }
@@ -133,7 +136,15 @@ struct FeedSettings: Hashable, Codable, Equatable {
 
     private static func normalizedSpeed(_ value: Float?) -> Float? {
         guard let value else { return nil }
-        return speedPresets.contains(value) ? value : nil
+        if speedPresets.contains(value) {
+            return value
+        }
+        guard customSpeedRange.contains(value) else { return nil }
+        let lo = customSpeedRange.lowerBound
+        let hi = customSpeedRange.upperBound
+        let clamped = min(max(value, lo), hi)
+        let stepped = (clamped / customSpeedStep).rounded() * customSpeedStep
+        return min(max(stepped, lo), hi)
     }
 
     private enum CodingKeys: String, CodingKey {
