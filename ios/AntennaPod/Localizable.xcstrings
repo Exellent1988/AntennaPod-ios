@@ -12612,6 +12612,42 @@
           }
         }
       }
+    },
+    "Home Favorites remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Home Favorites preview info bar (episode count + remaining over visible soft-capped preview rows).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home Favorites remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Favoriten-Zeit auf dem Home %@"
+          }
+        }
+      }
+    },
+    "Home Favorites remaining time covers the preview only (first %lld), not the full Favorites list": {
+      "extractionState": "manual",
+      "comment": "VoiceOver soft-cap honesty when Home Favorites preview is capped below the full favorites catalog.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home Favorites remaining time covers the preview only (first %lld), not the full Favorites list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Verbleibende Zeit für Favoriten auf dem Home gilt nur für die Vorschau (erste %lld), nicht für die gesamte Favoritenliste"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

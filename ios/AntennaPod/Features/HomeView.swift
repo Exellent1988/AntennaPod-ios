@@ -301,6 +301,86 @@ struct HomeView: View {
         )
     }
 
+
+    /// AntennaPod-like info bar: episode count + remaining over the **visible Favorites preview**
+    /// rows only (`favoriteItems` = filter then soft-cap `previewLimit`). Remaining per episode =
+    /// `max(0, duration − position)` when duration known; unplayed with duration contributes full
+    /// duration; **played** (not current) → 0; **unknown duration skipped** (tilde when any
+    /// skipped). Currently playing uses live `PlaybackService` position/duration. Wall-clock only
+    /// (no playback-speed divide).
+    /// **Preview soft-cap honesty:** never claims remaining beyond the visible preview rows
+    /// (first `previewLimit` after search filter) — not the full `favoriteEpisodes` catalog /
+    /// Favorites screen sort+search filter / Clear favorites count.
+    /// Preview stays newest-favorited-first (does **not** follow Favorites `favoritesSort`).
+    private var favoritesRemainingInfoLabel: String? {
+        guard !favoriteItems.isEmpty else { return nil }
+        let summary = favoritesRemainingSummary
+        let episodesWord: String
+        if summary.episodeCount == 1 {
+            episodesWord = String(localized: "1 episode")
+        } else {
+            episodesWord = String(localized: "\(summary.episodeCount) episodes")
+        }
+        // All durations unknown — show count only (no invented time).
+        guard summary.knownCount > 0 else {
+            return episodesWord
+        }
+        let formatted = StatisticsView.formatDuration(summary.remainingSeconds)
+        let timePart: String
+        if summary.unknownCount > 0 {
+            timePart = String(localized: "~\(formatted)")
+        } else {
+            timePart = formatted
+        }
+        return String(localized: "\(episodesWord) • \(timePart) left")
+    }
+
+    private var favoritesRemainingAccessibilityLabel: String {
+        guard let label = favoritesRemainingInfoLabel else { return "" }
+        var parts = [String(localized: "Home Favorites remaining time \(label)")]
+        let unknown = favoritesRemainingSummary.unknownCount
+        if unknown > 0 {
+            parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
+        }
+        // Soft-cap: filtered favorites catalog longer than visible preview rows.
+        let filteredCatalogCount = filterEpisodes(store.favoriteEpisodes).count
+        if filteredCatalogCount > favoriteItems.count {
+            parts.append(
+                String(
+                    localized: "Home Favorites remaining time covers the preview only (first \(previewLimit)), not the full Favorites list"
+                )
+            )
+        }
+        return parts.joined(separator: ". ")
+    }
+
+    private var favoritesRemainingSummary: HomeFavoritesRemainingSummary {
+        var remaining = 0.0
+        var known = 0
+        var unknown = 0
+        for item in favoriteItems {
+            let episode = item.episode
+            guard let duration = knownDurationSeconds(for: episode) else {
+                unknown += 1
+                continue
+            }
+            known += 1
+            // Mark-played clears position; do not count full duration as still left
+            // (unless this is the live current episode — use live position instead).
+            if store.isPlayed(episode.id), playback.currentEpisode?.id != episode.id {
+                continue
+            }
+            let position = positionSeconds(for: episode)
+            remaining += max(0, duration - position)
+        }
+        return HomeFavoritesRemainingSummary(
+            episodeCount: favoriteItems.count,
+            remainingSeconds: remaining,
+            knownCount: known,
+            unknownCount: unknown
+        )
+    }
+
     /// Prefer live player duration when this episode is current; else feed `itunes:duration` /
     /// media; else saved playback duration. Never invents a length.
     private func knownDurationSeconds(for episode: PodcastEpisode) -> Double? {
@@ -627,6 +707,18 @@ struct HomeView: View {
     @ViewBuilder
     private var favoritesSection: some View {
         Section {
+            // AntennaPod-like Favorites preview info bar (visible preview rows remaining time).
+            // Soft-cap honesty: first `previewLimit` after search filter — not full Favorites / Clear count.
+            if let remainingLabel = favoritesRemainingInfoLabel {
+                Text(remainingLabel)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(favoritesRemainingAccessibilityLabel)
+                    .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            }
             ForEach(favoriteItems) { item in
                 EpisodeRow(
                     episode: item.episode,
@@ -728,6 +820,14 @@ private struct HomeInboxRemainingSummary {
 
 /// Sum of remaining seconds over the visible Home Queue preview rows (filter + soft-cap).
 private struct HomeQueueRemainingSummary {
+    var episodeCount: Int
+    var remainingSeconds: Double
+    var knownCount: Int
+    var unknownCount: Int
+}
+
+/// Sum of remaining seconds over the visible Home Favorites preview rows (filter + soft-cap).
+private struct HomeFavoritesRemainingSummary {
     var episodeCount: Int
     var remainingSeconds: Double
     var knownCount: Int
