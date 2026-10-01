@@ -1,6 +1,8 @@
 import AVFoundation
 import Combine
 import Foundation
+import MediaPlayer
+import UIKit
 
 /// Clock / end-of-episode sleep timer modes for beta (AntennaPod P0 basis).
 enum SleepTimerMode: Equatable {
@@ -18,6 +20,10 @@ final class PlaybackService: ObservableObject {
     static let fadeThresholdSeconds: Double = 10
 
     static let clockPresetsMinutes: [Int] = [5, 10, 15, 30, 45, 60]
+    /// Match mini player skip buttons.
+    static let skipDeltaSeconds: Double = 30
+    /// Throttle lock-screen elapsed updates (system interpolates via rate + timestamp).
+    private static let nowPlayingUpdateIntervalSeconds: Double = 5
 
     @Published var currentEpisode: PodcastEpisode?
     @Published var isPlaying = false
@@ -45,6 +51,11 @@ final class PlaybackService: ObservableObject {
     private var sleepTimerPausedRemaining: Double?
     private var sleepTimerDidFade = false
     private var sleepVolume: Float = 1.0
+
+    private var remoteCommandsConfigured = false
+    private var lastNowPlayingUpdateAt: Date = .distantPast
+    private var cachedArtworkURL: String?
+    private var cachedArtwork: MPMediaItemArtwork?
 
     func play(episode: PodcastEpisode, fileURL: URL? = nil) {
         if let current = currentEpisode, current.id != episode.id {
@@ -81,6 +92,7 @@ final class PlaybackService: ObservableObject {
                 Task { @MainActor in
                     guard let self, finished else { return }
                     self.positionSeconds = resumeAt
+                    self.updateNowPlayingInfo(force: true)
                 }
             }
             positionSeconds = resumeAt
@@ -91,7 +103,10 @@ final class PlaybackService: ObservableObject {
         newPlayer.play()
         isPlaying = true
         activateSession()
+        setupRemoteCommandsIfNeeded()
         resumeSleepTimerIfNeeded()
+        updateNowPlayingInfo(force: true)
+        loadArtworkIfNeeded()
     }
 
     func togglePlayPause() {
@@ -110,6 +125,7 @@ final class PlaybackService: ObservableObject {
             isPlaying = true
             resumeSleepTimerIfNeeded()
         }
+        updateNowPlayingInfo(force: true)
     }
 
     func stop() {
@@ -119,6 +135,7 @@ final class PlaybackService: ObservableObject {
         isPlaying = false
         positionSeconds = 0
         durationSeconds = 0
+        clearNowPlayingInfo()
     }
 
     func setRate(_ newRate: Float) {
@@ -126,6 +143,7 @@ final class PlaybackService: ObservableObject {
         if isPlaying {
             player?.rate = newRate
         }
+        updateNowPlayingInfo(force: true)
     }
 
     func seek(bySeconds delta: Double) {
@@ -133,10 +151,17 @@ final class PlaybackService: ObservableObject {
             return
         }
         let target = max(0, positionSeconds + delta)
-        let time = CMTime(seconds: target, preferredTimescale: 600)
+        let capped: Double
+        if durationSeconds.isFinite, durationSeconds > 0 {
+            capped = min(target, durationSeconds)
+        } else {
+            capped = target
+        }
+        let time = CMTime(seconds: capped, preferredTimescale: 600)
         player.seek(to: time)
-        positionSeconds = target
+        positionSeconds = capped
         persistProgress(force: true)
+        updateNowPlayingInfo(force: true)
     }
 
     // MARK: - Sleep timer
@@ -243,6 +268,7 @@ final class PlaybackService: ObservableObject {
                 }
                 self.persistProgress(force: false)
                 self.tickSleepTimer()
+                self.updateNowPlayingInfo(force: false)
             }
         }
         statusCancellable = player.publisher(for: \.timeControlStatus)
@@ -256,6 +282,7 @@ final class PlaybackService: ObservableObject {
                     self.resumeSleepTimerIfNeeded()
                 }
                 self.isPlaying = playing
+                self.updateNowPlayingInfo(force: true)
             }
 
         endObserver = NotificationCenter.default.addObserver(
@@ -278,6 +305,7 @@ final class PlaybackService: ObservableObject {
             currentEpisode = nil
             positionSeconds = 0
             durationSeconds = 0
+            clearNowPlayingInfo()
             return
         }
 
@@ -294,6 +322,7 @@ final class PlaybackService: ObservableObject {
             currentEpisode = nil
             positionSeconds = 0
             durationSeconds = 0
+            clearNowPlayingInfo()
         }
     }
 
@@ -377,6 +406,7 @@ final class PlaybackService: ObservableObject {
         }
         persistProgress(force: true)
         clearSleepTimerState(restoreVolume: true)
+        updateNowPlayingInfo(force: true)
     }
 
     private func pauseSleepTimerCountdown() {
@@ -435,9 +465,146 @@ final class PlaybackService: ObservableObject {
     private func activateSession() {
         do {
             let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .spokenAudio)
+            try session.setCategory(.playback, mode: .spokenAudio, options: [])
             try session.setActive(true)
         } catch {
+        }
+        UIApplication.shared.beginReceivingRemoteControlEvents()
+    }
+
+
+    // MARK: - Now Playing / remote commands
+
+    private func setupRemoteCommandsIfNeeded() {
+        guard !remoteCommandsConfigured else { return }
+        remoteCommandsConfigured = true
+        let center = MPRemoteCommandCenter.shared()
+
+        center.playCommand.isEnabled = true
+        center.playCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                if !self.isPlaying {
+                    self.togglePlayPause()
+                }
+            }
+            return .success
+        }
+
+        center.pauseCommand.isEnabled = true
+        center.pauseCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                if self.isPlaying {
+                    self.togglePlayPause()
+                }
+            }
+            return .success
+        }
+
+        center.togglePlayPauseCommand.isEnabled = true
+        center.togglePlayPauseCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                self?.togglePlayPause()
+            }
+            return .success
+        }
+
+        center.skipForwardCommand.isEnabled = true
+        center.skipForwardCommand.preferredIntervals = [NSNumber(value: Self.skipDeltaSeconds)]
+        center.skipForwardCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                self?.seek(bySeconds: Self.skipDeltaSeconds)
+            }
+            return .success
+        }
+
+        center.skipBackwardCommand.isEnabled = true
+        center.skipBackwardCommand.preferredIntervals = [NSNumber(value: Self.skipDeltaSeconds)]
+        center.skipBackwardCommand.addTarget { [weak self] _ in
+            Task { @MainActor in
+                self?.seek(bySeconds: -Self.skipDeltaSeconds)
+            }
+            return .success
+        }
+
+        center.changePlaybackPositionCommand.isEnabled = true
+        center.changePlaybackPositionCommand.addTarget { [weak self] event in
+            guard let positionEvent = event as? MPChangePlaybackPositionCommandEvent else {
+                return .commandFailed
+            }
+            let targetPosition = positionEvent.positionTime
+            Task { @MainActor in
+                guard let self else { return }
+                self.seek(bySeconds: targetPosition - self.positionSeconds)
+            }
+            return .success
+        }
+    }
+
+    private func updateNowPlayingInfo(force: Bool) {
+        guard currentEpisode != nil else {
+            clearNowPlayingInfo()
+            return
+        }
+        let now = Date()
+        if !force, now.timeIntervalSince(lastNowPlayingUpdateAt) < Self.nowPlayingUpdateIntervalSeconds {
+            return
+        }
+        lastNowPlayingUpdateAt = now
+
+        guard let episode = currentEpisode else { return }
+        let feed = store?.feed(containingEpisodeId: episode.id)
+
+        var info = [String: Any]()
+        info[MPMediaItemPropertyTitle] = episode.title
+        info[MPMediaItemPropertyArtist] = feed?.title ?? "Podcast"
+        info[MPMediaItemPropertyAlbumTitle] = feed?.title ?? "Podcast"
+        if durationSeconds.isFinite, durationSeconds > 0 {
+            info[MPMediaItemPropertyPlaybackDuration] = durationSeconds
+        }
+        info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = max(0, positionSeconds)
+        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? Double(rate) : 0
+        info[MPNowPlayingInfoPropertyDefaultPlaybackRate] = Double(rate)
+        if let artwork = cachedArtwork {
+            info[MPMediaItemPropertyArtwork] = artwork
+        }
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+
+    private func clearNowPlayingInfo() {
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+        cachedArtwork = nil
+        cachedArtworkURL = nil
+        lastNowPlayingUpdateAt = .distantPast
+    }
+
+    private func loadArtworkIfNeeded() {
+        guard let episode = currentEpisode else { return }
+        let imageUrl = store?.feed(containingEpisodeId: episode.id)?.imageUrl
+        guard let imageUrl, !imageUrl.isEmpty, imageUrl != cachedArtworkURL else {
+            if imageUrl == nil || imageUrl?.isEmpty == true {
+                cachedArtwork = nil
+                cachedArtworkURL = nil
+            }
+            return
+        }
+        guard let url = URL(string: imageUrl) else { return }
+        let episodeId = episode.id
+        Task {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                guard let image = UIImage(data: data) else { return }
+                let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
+                await MainActor.run {
+                    guard self.currentEpisode?.id == episodeId else { return }
+                    self.cachedArtworkURL = imageUrl
+                    self.cachedArtwork = artwork
+                    self.updateNowPlayingInfo(force: true)
+                }
+            } catch {
+                // Artwork is best-effort; playback continues without it.
+            }
         }
     }
 

@@ -46,7 +46,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
 | Stream playback | 5 | wip | AVPlayer skeleton |
-| Lockscreen / Now Playing | 5 | todo | |
+| Lockscreen / Now Playing | 5 | done | MPNowPlayingInfoCenter + remote play/pause/±30s/scrub; artwork from feed |
 | Variable speed | 5 | wip | Mini player rate menu |
 | Sleep timer (Basis) | 5 | done | Clock presets 5–60 min + end of episode; fade last 10s; mini-player menu |
 | Fortschritt speichern / fortsetzen | 5 | done | JSON `playback.json`; resume on play |

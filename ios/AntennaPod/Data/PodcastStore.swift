@@ -129,4 +129,11 @@ final class PodcastStore: ObservableObject {
         }
         return queue.first
     }
+
+    /// Feed that owns the episode (for Now Playing artist / artwork).
+    func feed(containingEpisodeId episodeId: String) -> PodcastFeed? {
+        feeds.first { feed in
+            feed.episodes.contains { $0.id == episodeId }
+        }
+    }
 }

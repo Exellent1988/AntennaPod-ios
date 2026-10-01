@@ -7,6 +7,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Subscribe by feed URL
 - Episode list
 - Stream playback (AVPlayer, speed, ±30s)
+- Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip)
 - Sleep timer (clock presets + end of episode, fade-out)
 - Offline download to Documents/downloads
 - Queue tab (JSON)

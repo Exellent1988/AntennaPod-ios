@@ -18,7 +18,7 @@ struct MiniPlayerView: View {
                     }
                     Spacer()
                     Button {
-                        playback.seek(bySeconds: -30)
+                        playback.seek(bySeconds: -PlaybackService.skipDeltaSeconds)
                     } label: {
                         Image(systemName: "gobackward.30")
                     }
@@ -28,7 +28,7 @@ struct MiniPlayerView: View {
                         Image(systemName: playback.isPlaying ? "pause.fill" : "play.fill")
                     }
                     Button {
-                        playback.seek(bySeconds: 30)
+                        playback.seek(bySeconds: PlaybackService.skipDeltaSeconds)
                     } label: {
                         Image(systemName: "goforward.30")
                     }
