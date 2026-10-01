@@ -55,6 +55,9 @@ final class PlaybackService: ObservableObject {
     private var sleepVolume: Float = 1.0
 
     private var remoteCommandsConfigured = false
+    private var audioSessionObserversConfigured = false
+    /// Set on interruption began when we were playing; honored on ended + shouldResume.
+    private var resumeAfterInterruption = false
     private var lastNowPlayingUpdateAt: Date = .distantPast
     private var cachedArtworkURL: String?
     private var cachedArtwork: MPMediaItemArtwork?
@@ -137,6 +140,7 @@ final class PlaybackService: ObservableObject {
     }
 
     func stop() {
+        resumeAfterInterruption = false
         finishCurrentEpisode(ended: false)
         tearDownPlayer(clearSleepTimer: true)
         currentEpisode = nil
@@ -483,8 +487,111 @@ final class PlaybackService: ObservableObject {
         } catch {
         }
         UIApplication.shared.beginReceivingRemoteControlEvents()
+        setupAudioSessionObserversIfNeeded()
     }
 
+
+    // MARK: - Audio session interruptions / route changes
+
+    /// Headset unplug + phone-call style interruptions. Bluetooth play/pause buttons
+    /// stay on MPRemoteCommandCenter — we only pause/resume AVPlayer and refresh Now Playing.
+    private func setupAudioSessionObserversIfNeeded() {
+        guard !audioSessionObserversConfigured else { return }
+        audioSessionObserversConfigured = true
+        let center = NotificationCenter.default
+        let session = AVAudioSession.sharedInstance()
+
+        center.addObserver(
+            forName: AVAudioSession.interruptionNotification,
+            object: session,
+            queue: .main
+        ) { [weak self] notification in
+            Task { @MainActor in
+                self?.handleAudioInterruption(notification)
+            }
+        }
+
+        center.addObserver(
+            forName: AVAudioSession.routeChangeNotification,
+            object: session,
+            queue: .main
+        ) { [weak self] notification in
+            Task { @MainActor in
+                self?.handleRouteChange(notification)
+            }
+        }
+    }
+
+    private func handleAudioInterruption(_ notification: Notification) {
+        guard
+            let info = notification.userInfo,
+            let typeValue = info[AVAudioSessionInterruptionTypeKey] as? UInt,
+            let type = AVAudioSession.InterruptionType(rawValue: typeValue)
+        else {
+            return
+        }
+
+        switch type {
+        case .began:
+            // Capture play intent before system-driven pause races the status publisher.
+            let wasPlaying = isPlaying || (player?.rate ?? 0) > 0
+            resumeAfterInterruption = wasPlaying
+            if wasPlaying {
+                pauseForAudioSessionEvent()
+            }
+        case .ended:
+            let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
+            let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+            let shouldResume = options.contains(.shouldResume)
+            if shouldResume, resumeAfterInterruption, currentEpisode != nil, player != nil, !isPlaying {
+                resumeAfterInterruption = false
+                resumeAfterAudioSessionEvent()
+            } else {
+                resumeAfterInterruption = false
+            }
+        @unknown default:
+            break
+        }
+    }
+
+    private func handleRouteChange(_ notification: Notification) {
+        guard
+            let info = notification.userInfo,
+            let reasonValue = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
+            let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue)
+        else {
+            return
+        }
+        // Headphones / wireless audio device became unavailable — standard pause.
+        // Do not treat newDeviceAvailable / category changes as pause.
+        guard reason == .oldDeviceUnavailable else { return }
+        resumeAfterInterruption = false
+        if isPlaying || (player?.rate ?? 0) > 0 {
+            pauseForAudioSessionEvent()
+        }
+    }
+
+    /// Pause via the same bookkeeping as user pause (progress, sleep timer, Now Playing).
+    private func pauseForAudioSessionEvent() {
+        guard player != nil else { return }
+        player?.pause()
+        if isPlaying {
+            isPlaying = false
+            persistProgress(force: true)
+            pauseSleepTimerCountdown()
+        }
+        updateNowPlayingInfo(force: true)
+    }
+
+    private func resumeAfterAudioSessionEvent() {
+        guard let player, currentEpisode != nil else { return }
+        activateSession()
+        player.play()
+        player.rate = rate
+        isPlaying = true
+        resumeSleepTimerIfNeeded()
+        updateNowPlayingInfo(force: true)
+    }
 
     // MARK: - Now Playing / remote commands
 

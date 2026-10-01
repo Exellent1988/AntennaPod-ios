@@ -57,7 +57,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Volume adaptation | 2 | todo | P3 |
 | Chapters | 4 | done | PSC inline (`psc:chapter`) + Podcast Index URL/JSON; full player list, tap seek, current highlight; hidden when none. Media-file tags later |
 | Transcripts | 2 | todo | P3 |
-| Headset / Bluetooth pause | 4 | todo | |
+| Headset / Bluetooth pause | 4 | done | AVAudioSession interruption (pause / resume if shouldResume) + routeChange oldDeviceUnavailable (unplug); remotes/Now Playing unchanged |
 | Prefer stream vs download | 5 | todo | |
 | Video → audio-only | 1 | todo | mit Video P4 |
 

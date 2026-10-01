@@ -11,6 +11,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Full player sheet (artwork, scrubber, transport; tap mini player to open)
 - Chapters (PSC / Podcast Index from feed; list in full player; tap to seek)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip)
+- Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
 - Sleep timer (clock presets + end of episode, fade-out)
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch)
 - Queue tab (JSON)
@@ -65,6 +66,10 @@ Tap the mini player title or progress bar to open a full-screen sheet: feed artw
 ## Chapters
 
 Feed-item chapters are parsed by the Swift `XMLParser` path (`NativeRssAtomParser`): Podlove Simple Chapters (`psc:chapter` / `sc:chapter` with `start`/`title`/`href`/`image`) on RSS items and Atom entries, plus Podcast Index `<podcast:chapters url="…">`. Remote Podcast Index JSON is fetched lazily when the full player opens if only a URL is present. Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`). Full player shows a chapter list (hidden when empty); tap seeks; the active chapter is highlighted from `PlaybackService.positionSeconds`. ID3/M4A/Vorbis media tags are not parsed yet.
+
+## Headset / Bluetooth pause
+
+`PlaybackService` observes `AVAudioSession` interruption notifications (pause on began; resume on ended when `shouldResume`) and route changes (pause when the old output is unavailable — headphones unplugged). Bluetooth headset play/pause buttons stay on `MPRemoteCommandCenter` / Now Playing; interruption handling only pauses or resumes `AVPlayer` and refreshes Now Playing info.
 
 ## Discovery
 
