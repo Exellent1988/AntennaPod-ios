@@ -105,6 +105,22 @@ struct ItunesPodcastResult: Identifiable, Hashable, Decodable {
         case artworkUrl600
     }
 
+    init(
+        collectionId: Int?,
+        collectionName: String,
+        artistName: String,
+        feedUrl: String,
+        artworkUrl100: String?,
+        artworkUrl600: String?
+    ) {
+        self.collectionId = collectionId
+        self.collectionName = collectionName
+        self.artistName = artistName
+        self.feedUrl = feedUrl
+        self.artworkUrl100 = artworkUrl100
+        self.artworkUrl600 = artworkUrl600
+    }
+
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         collectionId = try c.decodeIfPresent(Int.self, forKey: .collectionId)

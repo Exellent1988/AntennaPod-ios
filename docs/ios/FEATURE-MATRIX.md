@@ -17,7 +17,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | History | 3 | done | Played / in-progress across feeds, newest `lastPlayedAt` first; Subscriptions → Library → History; swipe remove / mark unplayed; tap via EpisodeRow |
 | Favorites | 3 | done | Starred episode ids in `favorites.json` side map; star toggle on EpisodeRow + full player; Subscriptions → Library → Favorites (newest first); swipe unfavorite; auto-delete skips favorited downloads |
 | Subscriptions | 5 | wip | List + subscribe sheet |
-| Add podcast | 5 | wip | URL + Apple Podcasts + Podcast Index search (Subscribe reuses feed URL pipeline) |
+| Add podcast | 5 | wip | URL + Apple Podcasts + Podcast Index search; charts via Discover (Subscribe reuses feed URL pipeline) |
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
 | Statistics | 2 | todo | P3 |
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / History), Queue, Downloads, Settings |
@@ -84,7 +84,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Apple Podcasts / iTunes Search | 4 | done | Native URLSession; Add sheet Search tab; debounced; feedUrl → subscribe |
 | Podcast Index | 4 | done | User-supplied API key+secret (Keychain); Settings → Discovery; Add sheet tab; auth sha1; Subscribe via feed URL; honest empty state if keys missing |
 | fyyd | 3 | todo | |
-| Top lists / Quick discovery | 4 | todo | |
+| Top lists / Quick discovery | 4 | done | Apple iTunes RSS charts (`/{country}/rss/toppodcasts/limit=25/json`); country Settings (auto→locale/`de`); Home preview + Subscriptions → Discover; batch lookup → feedUrl; Subscribe via existing pipeline; pull-to-refresh |
 | Online feed preview | 4 | wip | Subscribe fetches+parses feed (episodes) via FeedRepository; no separate preview screen yet |
 
 ## Sync & Import

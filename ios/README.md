@@ -7,6 +7,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Subscribe by feed URL
 - Apple Podcasts / iTunes Search discovery (Add sheet; debounced; Subscribe via feed URL)
 - Podcast Index discovery (Add sheet tab; user-supplied API key+secret in Keychain; Settings → Discovery; debounced; Subscribe via feed URL)
+- Top lists / Quick discovery (Apple iTunes RSS charts; Home preview + Subscriptions → Discover; country in Settings; pull-to-refresh; Subscribe via feed URL)
 - Episode list
 - Stream playback (AVPlayer, speed, configurable skip intervals)
 - Full player sheet (artwork, scrubber, transport; tap mini player to open)
@@ -25,7 +26,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, auto-delete after play, notify on new episodes, Podcast Index API keys, gpodder.net sync)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, auto-delete after play, notify on new episodes, Discovery charts country + Podcast Index API keys, gpodder.net sync)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -49,7 +50,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home, inbox, all episodes, history, favorites, library search, subscriptions, feed detail + per-feed settings, add/discover, player, downloads, queue, settings (+ gpodder sync), OPML, notifications
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, favorites, library search, subscriptions (+ Discover charts), feed detail + per-feed settings, add/discover, top lists, player, downloads, queue, settings (+ gpodder sync + charts country), OPML, notifications
 ```
 
 ## Local setup (Mac)
@@ -78,7 +79,9 @@ Primary root tab aggregating existing store data (no new persistence). Sections 
 - **Queue** — preview of queued episodes when the queue is non-empty; See all → Queue tab.
 - **Recently updated** — subscriptions sorted by newest episode `pubDateEpochMs`; tap → `FeedDetailView`; See all → Subscriptions.
 
-Pull-to-refresh calls `refreshAllFeeds()`. Empty library shows a welcome empty state. Section layout is fixed for this beta (not user-configurable like Android Home).
+- **Discover** — Apple iTunes top podcasts preview (charts country from Settings); See all → full charts list with Subscribe.
+
+Pull-to-refresh calls `refreshAllFeeds()` (Discover preview reloads on appear / country change). Empty library still shows Discover plus a welcome empty state. Section layout is fixed for this beta (not user-configurable like Android Home).
 
 ## Library search
 
@@ -160,6 +163,8 @@ Settings → **Notifications → Notify on new episodes** (default on). Uses `Us
 ## Discovery
 
 Add podcast sheet (**Subscriptions → +**) has three segments: **Apple Podcasts**, **Podcast Index**, and **Feed URL**.
+
+**Top lists / Charts** (**Home → Discover** preview, **Subscriptions → Library → Discover**, or See all charts): public Apple iTunes RSS `https://itunes.apple.com/{country}/rss/toppodcasts/limit=25/explicit=true/json` (no API key). Country defaults to the device region (fallback **de**); override under **Settings → Discovery → Charts country**. Entries are parsed for title / artist / artwork; collection ids are resolved to RSS `feedUrl` via a batch `itunes.apple.com/lookup` call. Pull-to-refresh reloads the list; network/country errors are shown honestly. **Subscribe** uses `PodcastStore.subscribe(feedUrl:)` (same pipeline as search / URL).
 
 **Apple Podcasts** uses the public iTunes Search API (`media=podcast`, no API key) via `URLSession` (`ItunesSearchService`). Results that include a `feedUrl` are listed with artwork, title, and artist; **Subscribe** runs the existing `PodcastStore.subscribe(feedUrl:)` / `FeedRepository` fetch+parse path (same as Add by URL). Search is lightly debounced (~400 ms). Empty results and network/decode errors are surfaced in the Add sheet.
 

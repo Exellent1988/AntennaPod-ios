@@ -159,6 +159,40 @@ enum PlaybackSourcePreference: String, CaseIterable, Identifiable {
     }
 }
 
+
+/// Charts country for iTunes top podcasts. Empty / `auto` → device locale (fallback `de`).
+enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
+    case automatic
+    case code(String)
+
+    var id: String {
+        switch self {
+        case .automatic: return "auto"
+        case .code(let c): return c.lowercased()
+        }
+    }
+
+    var storageValue: String {
+        switch self {
+        case .automatic: return "auto"
+        case .code(let c): return c.lowercased()
+        }
+    }
+
+    static func fromStorage(_ raw: String?) -> ChartsCountryPreference {
+        let v = (raw ?? "auto").trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if v.isEmpty || v == "auto" { return .automatic }
+        let code = ItunesTopListService.normalizedCountryCode(v)
+        return code.isEmpty ? .automatic : .code(code)
+    }
+
+    /// Curated picker list (ISO alpha-2); includes common AntennaPod locales.
+    static let pickerCodes: [String] = [
+        "de", "at", "ch", "us", "gb", "ie", "fr", "nl", "be", "es", "it",
+        "pt", "pl", "se", "no", "dk", "fi", "cz", "au", "ca", "jp", "br", "mx", "in"
+    ]
+}
+
 /// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source, auto-delete, skip intervals, skip intro/outro, new-episode notifications).
 @MainActor
 final class AppSettings: ObservableObject {
@@ -203,6 +237,7 @@ final class AppSettings: ObservableObject {
         static let skipIntroSeconds = "settings.skipIntroSeconds"
         static let skipOutroSeconds = "settings.skipOutroSeconds"
         static let notifyOnNewEpisodes = "settings.notifyOnNewEpisodes"
+        static let chartsCountryCode = "settings.chartsCountryCode"
     }
 
     private enum Kind: String {
@@ -320,6 +355,25 @@ final class AppSettings: ObservableObject {
         }
     }
 
+
+    /// iTunes top-lists country: `"auto"` (device locale → else `de`) or ISO alpha-2 (`de`, `us`, …).
+    @Published var chartsCountryCode: String {
+        didSet {
+            UserDefaults.standard.set(chartsCountryCode, forKey: Keys.chartsCountryCode)
+        }
+    }
+
+    /// Resolved ISO country used for chart requests.
+    var resolvedChartsCountryCode: String {
+        let pref = ChartsCountryPreference.fromStorage(chartsCountryCode)
+        switch pref {
+        case .automatic:
+            return ItunesTopListService.defaultCountryCode()
+        case .code(let c):
+            return c
+        }
+    }
+
     init() {
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
@@ -376,6 +430,8 @@ final class AppSettings: ObservableObject {
             // Default on; permission gate is separate (honest if denied).
             notifyOnNewEpisodes = true
         }
+        let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
+        chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh

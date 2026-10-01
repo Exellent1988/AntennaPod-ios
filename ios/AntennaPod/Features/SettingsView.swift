@@ -338,6 +338,16 @@ struct SettingsView: View {
     @ViewBuilder
     private var podcastIndexDiscoverySection: some View {
         Section {
+            Picker("Charts country", selection: chartsCountryBinding) {
+                Text(automaticCountryLabel).tag("auto")
+                ForEach(ChartsCountryPreference.pickerCodes, id: \.self) { code in
+                    Text(countryPickerLabel(code)).tag(code)
+                }
+            }
+            Text("Used by Home → Discover / Charts and Subscriptions → Discover. Apple iTunes RSS top podcasts (no API key). Automatic uses the device region, or de if unknown.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
             if podcastIndexKeysSaved {
                 LabeledContent("API key") {
                     Text("Stored in Keychain")
@@ -384,8 +394,27 @@ struct SettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
         } header: {
-            Text("Discovery / Podcast Index")
+            Text("Discovery")
         }
+    }
+
+    private var chartsCountryBinding: Binding<String> {
+        Binding(
+            get: { settings.chartsCountryCode },
+            set: { settings.chartsCountryCode = $0 }
+        )
+    }
+
+    private var automaticCountryLabel: String {
+        let resolved = ItunesTopListService.defaultCountryCode().uppercased()
+        let name = Locale.current.localizedString(forRegionCode: resolved) ?? resolved
+        return "Automatic (\(name) · \(resolved))"
+    }
+
+    private func countryPickerLabel(_ code: String) -> String {
+        let upper = code.uppercased()
+        let name = Locale.current.localizedString(forRegionCode: upper) ?? upper
+        return "\(name) (\(upper))"
     }
 
     private var podcastIndexHelpText: String {

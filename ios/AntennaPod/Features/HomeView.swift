@@ -31,11 +31,24 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    HomeTopListsPreview()
+                } header: {
+                    sectionHeader("Discover", systemImage: "chart.bar")
+                } footer: {
+                    NavigationLink {
+                        TopListsView()
+                    } label: {
+                        Text("See all charts")
+                            .font(.footnote)
+                    }
+                }
+
                 if !hasAnyContent {
                     ContentUnavailableView(
                         "Welcome",
                         systemImage: "house",
-                        description: Text("Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here.")
+                        description: Text("Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Or use Discover above for Apple Charts.")
                     )
                 } else {
                     if !continueItems.isEmpty {

@@ -31,12 +31,17 @@ struct SubscriptionsView: View {
                     } label: {
                         Label("History", systemImage: "clock.arrow.circlepath")
                     }
+                    NavigationLink {
+                        TopListsView()
+                    } label: {
+                        Label("Discover", systemImage: "chart.bar")
+                    }
                 }
                 if store.feeds.isEmpty {
                     ContentUnavailableView(
                         "No subscriptions",
                         systemImage: "dot.radiowaves.left.and.right",
-                        description: Text("Search Apple Podcasts, add by feed URL, or import an OPML file.")
+                        description: Text("Search Apple Podcasts, open Discover for charts, add by feed URL, or import an OPML file.")
                     )
                 } else if filteredFeeds.isEmpty {
                     ContentUnavailableView(
