@@ -405,6 +405,50 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Sort the **full** persisted queue by known episode duration (shortest or longest first).
+    /// Duration source honesty (same known-duration path as remaining-time helpers, without live
+    /// player): prefer feed `itunes:duration` / media via `PodcastEpisode.hasKnownDuration` /
+    /// `durationSeconds`; else saved `EpisodePlaybackState.durationSeconds` when finite & > 0.
+    /// Never invents a length. Episodes with **unknown** duration sort **last** in both modes;
+    /// equal durations (or both unknown) break ties by stable episode `id`.
+    /// Persists via `queue` `didSet` (same path as `moveQueue` / `shuffleQueue` / `reverseQueue` /
+    /// `sortQueueByPublishDate`). No-op when fewer than 2 items.
+    /// Does **not** change `PlaybackService.currentEpisode` identity, seek, or stop playback —
+    /// the currently playing episode (if any) **moves with its episode id** to its new list index
+    /// (it is not pinned at the same index). Continuous next still uses `nextQueueEpisode(after:)`
+    /// by id, so auto-next becomes whatever follows that id after the sort.
+    /// One-shot reorder of `queue.json` — **not** a persistent filter preference (unlike Inbox/`inboxSort`).
+    /// Callers must gate on queue unlock (reorder-only lock, same as Shuffle/Reverse/Sort by date) and confirm first.
+    func sortQueueByDuration(shortestFirst: Bool) {
+        guard queue.count >= 2 else { return }
+        queue = queue.sorted { lhs, rhs in
+            switch (knownDurationSecondsForQueueSort(lhs), knownDurationSecondsForQueueSort(rhs)) {
+            case let (l?, r?):
+                if l != r {
+                    return shortestFirst ? (l < r) : (l > r)
+                }
+                return lhs.id < rhs.id
+            case (_?, nil):
+                return true // known before unknown
+            case (nil, _?):
+                return false
+            case (nil, nil):
+                return lhs.id < rhs.id
+            }
+        }
+    }
+
+    /// Feed duration when known; else saved playback duration. Never invents a length.
+    /// Matches QueueView remaining-time known-duration path except live player (store has no PlaybackService).
+    private func knownDurationSecondsForQueueSort(_ episode: PodcastEpisode) -> Double? {
+        if episode.hasKnownDuration {
+            return episode.durationSeconds
+        }
+        let saved = playbackState(for: episode.id).durationSeconds
+        if saved.isFinite, saved > 0 { return saved }
+        return nil
+    }
+
     // MARK: - Playback progress / played
 
     func playbackState(for episodeId: String) -> EpisodePlaybackState {

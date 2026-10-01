@@ -1051,7 +1051,7 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// When true, Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Move playing to top, and EpisodeRow Move to top/bottom.
+    /// When true, Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Move playing to top, and EpisodeRow Move to top/bottom.
     /// Default **false** (unlocked). Enqueue / Play Next / Remove / Clear queue stay available (reorder lock only).
     /// Mirrors Android `prefQueueLocked` / `UserPreferences.isQueueLocked()`.
     @Published var queueLocked: Bool {
@@ -1063,7 +1063,7 @@ final class AppSettings: ObservableObject {
     /// Queue tab chip filter (All / Unplayed / Played via PodcastStore.isPlayed). Default All. Persisted.
     /// Applied before `.searchable`. Chip ≠ All (or non-empty search) disables Edit/`.onMove` like search alone —
     /// filtered indices would not map to the persisted queue. Move to top/bottom still uses episode id → full queue.
-    /// Shuffle / Shuffle (keep playing first) / Reverse order / Sort by date / Clear queue / Play Next stay full-queue scoped (Shuffle variants/Reverse/Sort still need unlock + count ≥ 2).
+    /// Shuffle / Shuffle (keep playing first) / Reverse order / Sort by date / Sort by duration / Clear queue / Play Next stay full-queue scoped (Shuffle variants/Reverse/Sort still need unlock + count ≥ 2).
     @Published var queueFilter: QueueFilter {
         didSet {
             UserDefaults.standard.set(queueFilter.rawValue, forKey: Keys.queueFilter)
