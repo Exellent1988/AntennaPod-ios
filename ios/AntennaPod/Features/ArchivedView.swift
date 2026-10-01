@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ArchivedView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var settings: AppSettings
 
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -10,19 +11,40 @@ struct ArchivedView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
-    /// Full archived catalog (newest first) — Restore all always uses this count.
+    /// Full archived catalog (store order: newest archived first) — Restore all always uses this count.
     private var items: [ArchivedEpisode] {
         store.archivedEpisodes
     }
 
-    /// Visible archived; empty query shows the full list.
+    /// Visible archived ordered by `AppSettings.archivedSort`.
+    /// Sort key: `ArchivedEpisode.archivedAtEpochMs` (`archivedAtById` / `archived.json`).
+    /// Empty query shows the full list; sort applies to search-filtered results too.
+    /// Does not mutate `PodcastStore.archivedEpisodes` (Restore all counts stay on newest-first catalog).
     private var filteredItems: [ArchivedEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base = items
-        if q.isEmpty { return base }
-        return base.filter { item in
-            if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
-            return item.feedTitle.localizedCaseInsensitiveContains(q)
+        let filtered: [ArchivedEpisode]
+        if q.isEmpty {
+            filtered = base
+        } else {
+            filtered = base.filter { item in
+                if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+                return item.feedTitle.localizedCaseInsensitiveContains(q)
+            }
+        }
+        return filtered.sorted { lhs, rhs in
+            switch settings.archivedSort {
+            case .newestFirst:
+                if lhs.archivedAtEpochMs != rhs.archivedAtEpochMs {
+                    return lhs.archivedAtEpochMs > rhs.archivedAtEpochMs
+                }
+                return lhs.episode.id < rhs.episode.id
+            case .oldestFirst:
+                if lhs.archivedAtEpochMs != rhs.archivedAtEpochMs {
+                    return lhs.archivedAtEpochMs < rhs.archivedAtEpochMs
+                }
+                return lhs.episode.id < rhs.episode.id
+            }
         }
     }
 
@@ -69,6 +91,21 @@ struct ArchivedView: View {
             debounceTask?.cancel()
         }
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Picker(selection: $settings.archivedSort) {
+                        ForEach(ArchivedSort.allCases) { sort in
+                            Label(sort.label, systemImage: sort.systemImage)
+                                .tag(sort)
+                        }
+                    } label: {
+                        Text("Sort")
+                    }
+                } label: {
+                    Label("Sort", systemImage: "arrow.up.arrow.down")
+                }
+                .accessibilityLabel("Sort archived")
+            }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {

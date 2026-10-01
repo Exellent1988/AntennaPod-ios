@@ -135,6 +135,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Favoriten: Favoriten leeren (Bestätigung) | ☐ Favorites: Clear favorites (confirm) |
 | ☐ Archive / Restore (Listen + Full Player; `archived.json`) | ☐ Archive / restore (lists + Full Player; `archived.json`) |
 | ☐ Archiviert: Suche (Titel / Feed) | ☐ Archived: search (title / feed) |
+| ☐ Archiviert: Sortierung (Neueste / Älteste; archivedAt; persistiert) | ☐ Archived: sort (Newest / Oldest; archivedAt; persisted) |
 | ☐ Archiviert: Alle wiederherstellen (Bestätigung) | ☐ Archived: Restore all (confirm) |
 | ☐ Library search (lokal) | ☐ Library search (local) |
 | ☐ Share Podcast / Episode (Player, Shownotes, EpisodeRow; URL: link→enclosure→feed; kein Deep-Link) | ☐ Share podcast / episode (Player, Shownotes, EpisodeRow; URL: link→enclosure→feed; no deep link) |

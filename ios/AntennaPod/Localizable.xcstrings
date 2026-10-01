@@ -9027,6 +9027,23 @@
           }
         }
       }
+    },
+    "Sort archived": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort archived"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert sortieren"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
