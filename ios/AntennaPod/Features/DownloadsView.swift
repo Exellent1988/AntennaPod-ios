@@ -102,7 +102,7 @@ struct DownloadErrorsView: View {
             } else {
                 ForEach(downloads.recentErrors) { entry in
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(entry.episodeTitle.isEmpty ? "Unknown episode" : entry.episodeTitle)
+                        Text(entry.episodeTitle.isEmpty ? String(localized: "Unknown episode") : entry.episodeTitle)
                             .font(.headline)
                         if !entry.feedTitle.isEmpty {
                             Text(entry.feedTitle)

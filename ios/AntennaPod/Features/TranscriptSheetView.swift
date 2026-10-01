@@ -128,7 +128,7 @@ struct TranscriptSheetView: View {
     @MainActor
     private func load() async {
         guard let url = episode.transcriptUrl, !url.isEmpty else {
-            errorMessage = "No transcript URL on this episode."
+            errorMessage = String(localized: "No transcript URL on this episode.")
             return
         }
         if let cached = TranscriptService.cached(forURL: url) {

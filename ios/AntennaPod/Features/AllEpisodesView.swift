@@ -42,7 +42,9 @@ struct AllEpisodesView: View {
                                 store.toggleArchived(item.episode.id)
                             } label: {
                                 Label(
-                                    store.isArchived(item.episode.id) ? "Restore" : "Archive",
+                                    store.isArchived(item.episode.id)
+                                        ? String(localized: "Restore")
+                                        : String(localized: "Archive"),
                                     systemImage: store.isArchived(item.episode.id)
                                         ? "arrow.uturn.backward" : "archivebox"
                                 )
@@ -54,7 +56,9 @@ struct AllEpisodesView: View {
                                 store.togglePlayed(item.episode.id)
                             } label: {
                                 Label(
-                                    store.isPlayed(item.episode.id) ? "Mark unplayed" : "Mark played",
+                                    store.isPlayed(item.episode.id)
+                                        ? String(localized: "Mark unplayed")
+                                        : String(localized: "Mark played"),
                                     systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
                                 )
                             }

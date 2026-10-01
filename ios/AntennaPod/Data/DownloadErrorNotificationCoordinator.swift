@@ -38,9 +38,9 @@ enum DownloadErrorNotificationCoordinator {
 
         let content = UNMutableNotificationContent()
         let title = entry.episodeTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-        content.title = title.isEmpty ? "Download failed" : title
+        content.title = title.isEmpty ? String(localized: "Download failed") : title
         let short = entry.message.trimmingCharacters(in: .whitespacesAndNewlines)
-        content.body = short.isEmpty ? "Download failed" : String(short.prefix(120))
+        content.body = short.isEmpty ? String(localized: "Download failed") : String(short.prefix(120))
         content.sound = .default
         content.categoryIdentifier = categoryId
         content.userInfo = [

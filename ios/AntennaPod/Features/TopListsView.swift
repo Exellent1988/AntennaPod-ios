@@ -24,6 +24,13 @@ struct TopListsView: View {
         return "\(name) (\(code))"
     }
 
+    private var chartsHelpText: String {
+        let template = String(
+            localized: "Top podcasts on Apple Charts for %@. No API key — public iTunes RSS. Change country under Settings → Discovery."
+        )
+        return String(format: template, locale: .current, countryLabel)
+    }
+
     var body: some View {
         List {
             Section {
@@ -55,7 +62,7 @@ struct TopListsView: View {
             }
 
             if !results.isEmpty {
-                Section("Top \(results.count)") {
+                Section(String(localized: "Top \(results.count)")) {
                     ForEach(Array(results.enumerated()), id: \.element.id) { index, item in
                         DiscoveryResultRow(
                             title: "\(index + 1). \(item.title)",

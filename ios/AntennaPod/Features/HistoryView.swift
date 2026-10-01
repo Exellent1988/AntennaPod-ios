@@ -21,7 +21,7 @@ struct HistoryView: View {
                         episode: item.episode,
                         feedTitle: item.feedTitle,
                         dateOverride: Date(timeIntervalSince1970: Double(item.lastPlayedAtEpochMs) / 1000),
-                        dateAccessibilityLabel: "Last played"
+                        dateAccessibilityLabel: String(localized: "Last played")
                     )
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {

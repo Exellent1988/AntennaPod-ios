@@ -21,7 +21,7 @@ struct FavoritesView: View {
                         episode: item.episode,
                         feedTitle: item.feedTitle,
                         dateOverride: Date(timeIntervalSince1970: Double(item.favoritedAtEpochMs) / 1000),
-                        dateAccessibilityLabel: "Favorited"
+                        dateAccessibilityLabel: String(localized: "Favorited")
                     )
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {

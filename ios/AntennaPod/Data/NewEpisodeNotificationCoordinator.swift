@@ -137,7 +137,7 @@ enum NewEpisodeNotificationCoordinator {
         if batch.episodes.count == 1 {
             content.body = batch.episodes[0].title
         } else {
-            content.body = "\(batch.episodes.count) new episodes"
+            content.body = String(localized: "\(batch.episodes.count) new episodes")
         }
         content.sound = .default
         content.categoryIdentifier = categoryId

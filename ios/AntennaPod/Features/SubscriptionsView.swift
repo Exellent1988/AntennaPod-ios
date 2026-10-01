@@ -156,8 +156,8 @@ struct SubscriptionsView: View {
                         systemImage: "magnifyingglass",
                         description: Text(
                             searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                                ? "No subscriptions match this tag filter."
-                                : "No subscriptions match your library search."
+                                ? String(localized: "No subscriptions match this tag filter.")
+                                : String(localized: "No subscriptions match your library search.")
                         )
                     )
                 } else {

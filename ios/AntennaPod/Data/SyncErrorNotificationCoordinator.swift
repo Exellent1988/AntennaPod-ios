@@ -39,7 +39,7 @@ enum SyncErrorNotificationCoordinator {
         guard status == .authorized || status == .provisional else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = "Sync failed"
+        content.title = String(localized: "Sync failed")
         content.body = String(short.prefix(120))
         content.sound = .default
         content.categoryIdentifier = categoryId

@@ -1,6 +1,40 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%lld episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Episoden"
+          }
+        }
+      }
+    },
+    "%lld new episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld new episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld neue Episoden"
+          }
+        }
+      }
+    },
     "About": {
       "extractionState": "manual",
       "localizations": {
@@ -48,6 +82,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Füge Episoden aus einem Podcast-Feed hinzu. Im Bearbeitungsmodus kannst du per Ziehen neu anordnen."
+          }
+        }
+      }
+    },
+    "Add podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast hinzufügen"
           }
         }
       }
@@ -103,6 +154,23 @@
         }
       }
     },
+    "API keys required": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API keys required"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API-Schlüssel erforderlich"
+          }
+        }
+      }
+    },
     "App Store": {
       "extractionState": "manual",
       "localizations": {
@@ -154,6 +222,23 @@
         }
       }
     },
+    "Apple": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple"
+          }
+        }
+      }
+    },
     "Apple Watch": {
       "extractionState": "manual",
       "localizations": {
@@ -201,6 +286,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alle archivieren"
+          }
+        }
+      }
+    },
+    "Archive hides episodes from Inbox without marking them played. Restore them here or from a feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archive hides episodes from Inbox without marking them played. Restore them here or from a feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivieren blendet Episoden aus dem Posteingang aus, ohne sie als gehört zu markieren. Stelle sie hier oder in einem Feed wieder her."
           }
         }
       }
@@ -290,6 +392,40 @@
         }
       }
     },
+    "Chapters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel"
+          }
+        }
+      }
+    },
+    "Choose folder…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose folder…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordner wählen…"
+          }
+        }
+      }
+    },
     "Clear": {
       "extractionState": "manual",
       "localizations": {
@@ -303,6 +439,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Löschen"
+          }
+        }
+      }
+    },
+    "Clear download errors?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear download errors?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-Fehler löschen?"
           }
         }
       }
@@ -337,6 +490,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fehler löschen"
+          }
+        }
+      }
+    },
+    "Clear search": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear search"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche löschen"
+          }
+        }
+      }
+    },
+    "Close player": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close player"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Player schließen"
           }
         }
       }
@@ -405,6 +592,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Löschen"
+          }
+        }
+      }
+    },
+    "Device id": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Device id"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geräte-ID"
+          }
+        }
+      }
+    },
+    "Device name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Device name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerätename"
+          }
+        }
+      }
+    },
+    "Disable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disable"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deaktivieren"
           }
         }
       }
@@ -511,6 +749,23 @@
         }
       }
     },
+    "Download failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download fehlgeschlagen"
+          }
+        }
+      }
+    },
     "Downloaded": {
       "extractionState": "manual",
       "localizations": {
@@ -613,6 +868,23 @@
         }
       }
     },
+    "Enable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktivieren"
+          }
+        }
+      }
+    },
     "End of episode": {
       "extractionState": "manual",
       "localizations": {
@@ -643,6 +915,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Episoden"
+          }
+        }
+      }
+    },
+    "Episodes from your subscriptions appear here, newest first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodes from your subscriptions appear here, newest first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden aus deinen Abonnements erscheinen hier — neueste zuerst."
+          }
+        }
+      }
+    },
+    "Episodes you play or mark as played appear here, newest first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodes you play or mark as played appear here, newest first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden, die du abspielst oder als gehört markierst, erscheinen hier — neueste zuerst."
           }
         }
       }
@@ -698,6 +1004,40 @@
         }
       }
     },
+    "Export OPML": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export OPML"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPML exportieren"
+          }
+        }
+      }
+    },
+    "Export subscriptions as HTML": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export subscriptions as HTML"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnements als HTML exportieren"
+          }
+        }
+      }
+    },
     "Export with media": {
       "extractionState": "manual",
       "localizations": {
@@ -728,6 +1068,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ohne Medien exportieren"
+          }
+        }
+      }
+    },
+    "Extend +10 min": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Extend +10 min"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+10 Min. verlängern"
+          }
+        }
+      }
+    },
+    "Extend +5 min": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Extend +5 min"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+5 Min. verlängern"
           }
         }
       }
@@ -766,6 +1140,23 @@
         }
       }
     },
+    "Favorited": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorited"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorisiert"
+          }
+        }
+      }
+    },
     "Favorites": {
       "extractionState": "manual",
       "localizations": {
@@ -779,6 +1170,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Favoriten"
+          }
+        }
+      }
+    },
+    "Feed URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-URL"
           }
         }
       }
@@ -800,6 +1208,23 @@
         }
       }
     },
+    "Filter by title or podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter by title or podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach Titel oder Podcast filtern"
+          }
+        }
+      }
+    },
     "Folder": {
       "extractionState": "manual",
       "localizations": {
@@ -813,6 +1238,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ordner"
+          }
+        }
+      }
+    },
+    "From feed URL only — no speech-to-text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From feed URL only — no speech-to-text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur von der Feed-URL — keine Spracherkennung"
+          }
+        }
+      }
+    },
+    "fyyd": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fyyd"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fyyd"
+          }
+        }
+      }
+    },
+    "fyyd.de podcast directory — no API key required.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fyyd.de podcast directory — no API key required."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Verzeichnis fyyd.de — kein API-Schlüssel nötig."
+          }
+        }
+      }
+    },
+    "Group by tag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Group by tag"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach Tag gruppieren"
           }
         }
       }
@@ -885,6 +1378,23 @@
         }
       }
     },
+    "Host": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Host"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Host"
+          }
+        }
+      }
+    },
     "Import / Export": {
       "extractionState": "manual",
       "localizations": {
@@ -915,6 +1425,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Datensicherung importieren"
+          }
+        }
+      }
+    },
+    "Import OPML": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import OPML"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPML importieren"
           }
         }
       }
@@ -1004,6 +1531,40 @@
         }
       }
     },
+    "Index": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Index"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Index"
+          }
+        }
+      }
+    },
+    "iTunes returned no podcasts for this country, or feed URLs could not be resolved. Try another country in Settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iTunes returned no podcasts for this country, or feed URLs could not be resolved. Try another country in Settings."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iTunes hat für dieses Land keine Podcasts geliefert, oder Feed-URLs konnten nicht aufgelöst werden. Probiere ein anderes Land in den Einstellungen."
+          }
+        }
+      }
+    },
     "Last download failed": {
       "extractionState": "manual",
       "localizations": {
@@ -1017,6 +1578,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Letzter Download fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "Last played": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last played"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zuletzt gehört"
+          }
+        }
+      }
+    },
+    "Last sync": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last sync"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letzter Sync"
           }
         }
       }
@@ -1055,6 +1650,57 @@
         }
       }
     },
+    "Loading chapters…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading chapters…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel werden geladen…"
+          }
+        }
+      }
+    },
+    "Loading charts…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading charts…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charts werden geladen…"
+          }
+        }
+      }
+    },
+    "Loading transcript…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading transcript…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript wird geladen…"
+          }
+        }
+      }
+    },
     "Local folder": {
       "extractionState": "manual",
       "localizations": {
@@ -1068,6 +1714,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lokaler Ordner"
+          }
+        }
+      }
+    },
+    "Local folder feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local folder feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokaler Ordner-Feed"
           }
         }
       }
@@ -1136,6 +1799,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Als gehört markieren"
+          }
+        }
+      }
+    },
+    "Mark unplayed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark unplayed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als ungehört markieren"
+          }
+        }
+      }
+    },
+    "Mode": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mode"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modus"
           }
         }
       }
@@ -1259,6 +1956,23 @@
         }
       }
     },
+    "No download errors": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No download errors"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Download-Fehler"
+          }
+        }
+      }
+    },
     "No downloads": {
       "extractionState": "manual",
       "localizations": {
@@ -1272,6 +1986,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Downloads"
+          }
+        }
+      }
+    },
+    "No episodes match your filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No episodes match your filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Episoden passen zu deinem Filter."
           }
         }
       }
@@ -1361,6 +2092,40 @@
         }
       }
     },
+    "No podcasts found": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No podcasts found"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Podcasts gefunden"
+          }
+        }
+      }
+    },
+    "No results": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No results"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Ergebnisse"
+          }
+        }
+      }
+    },
     "No statistics yet": {
       "extractionState": "manual",
       "localizations": {
@@ -1391,6 +2156,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Abonnements"
+          }
+        }
+      }
+    },
+    "No subscriptions match this tag filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match this tag filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu diesem Tag-Filter."
+          }
+        }
+      }
+    },
+    "No subscriptions match your library search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match your library search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu deiner Bibliothekssuche."
+          }
+        }
+      }
+    },
+    "No subscriptions or episodes match “%@”.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions or episodes match “%@”."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements oder Episoden passen zu „%@“."
           }
         }
       }
@@ -1429,6 +2245,23 @@
         }
       }
     },
+    "No transcript URL on this episode.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No transcript URL on this episode."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Transkript-URL bei dieser Episode."
+          }
+        }
+      }
+    },
     "Notifications": {
       "extractionState": "manual",
       "localizations": {
@@ -1442,6 +2275,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mitteilungen"
+          }
+        }
+      }
+    },
+    "Notify on download errors": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notify on download errors"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bei Download-Fehlern benachrichtigen"
+          }
+        }
+      }
+    },
+    "Notify on new episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notify on new episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bei neuen Episoden benachrichtigen"
+          }
+        }
+      }
+    },
+    "Notify on sync errors": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notify on sync errors"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bei Sync-Fehlern benachrichtigen"
+          }
+        }
+      }
+    },
+    "Open": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnen"
           }
         }
       }
@@ -1463,6 +2364,40 @@
         }
       }
     },
+    "Open subscribed podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open subscribed podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnierten Podcast öffnen"
+          }
+        }
+      }
+    },
+    "Opens the feed-provided transcript": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the feed-provided transcript"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das vom Feed bereitgestellte Transkript"
+          }
+        }
+      }
+    },
     "OPML": {
       "extractionState": "manual",
       "localizations": {
@@ -1476,6 +2411,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "OPML"
+          }
+        }
+      }
+    },
+    "OPML import": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPML import"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPML-Import"
+          }
+        }
+      }
+    },
+    "Password": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwort"
+          }
+        }
+      }
+    },
+    "Paste an RSS/Atom podcast feed URL, or use Apple / Index / fyyd search. Preview fetches the feed before you confirm subscribe.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste an RSS/Atom podcast feed URL, or use Apple / Index / fyyd search. Preview fetches the feed before you confirm subscribe."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge eine RSS/Atom-Podcast-Feed-URL ein, oder nutze Apple- / Index- / fyyd-Suche. Vorschau lädt den Feed, bevor du das Abonnement bestätigst."
           }
         }
       }
@@ -1510,6 +2496,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abspielen"
+          }
+        }
+      }
+    },
+    "Play video as audio only": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play video as audio only"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Video nur als Audio abspielen"
           }
         }
       }
@@ -1616,6 +2619,23 @@
         }
       }
     },
+    "Podcast Index needs a free API key and secret from podcastindex.org (API docs / register). Paste them under Settings → Discovery. Keys stay in the Keychain — nothing is hardcoded or shipped with the app.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast Index needs a free API key and secret from podcastindex.org (API docs / register). Paste them under Settings → Discovery. Keys stay in the Keychain — nothing is hardcoded or shipped with the app."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast Index braucht einen kostenlosen API-Schlüssel und ein Secret von podcastindex.org (API-Docs / Registrierung). Trage sie unter Einstellungen → Discovery ein. Schlüssel bleiben im Schlüsselbund — nichts ist fest verdrahtet oder mit der App ausgeliefert."
+          }
+        }
+      }
+    },
     "Podcast settings": {
       "extractionState": "manual",
       "localizations": {
@@ -1629,6 +2649,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Podcast-Einstellungen"
+          }
+        }
+      }
+    },
+    "Podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcasts"
           }
         }
       }
@@ -1667,6 +2704,23 @@
         }
       }
     },
+    "Preview podcast before subscribe": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview podcast before subscribe"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast vor dem Abonnieren in der Vorschau anzeigen"
+          }
+        }
+      }
+    },
     "Privacy": {
       "extractionState": "manual",
       "localizations": {
@@ -1680,6 +2734,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Datenschutz"
+          }
+        }
+      }
+    },
+    "Provider": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provider"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anbieter"
           }
         }
       }
@@ -1752,6 +2823,40 @@
         }
       }
     },
+    "Refreshing feeds…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refreshing feeds…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feeds werden aktualisiert…"
+          }
+        }
+      }
+    },
+    "Regenerate device id from name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regenerate device id from name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geräte-ID aus Name neu erzeugen"
+          }
+        }
+      }
+    },
     "Remove": {
       "extractionState": "manual",
       "localizations": {
@@ -1765,6 +2870,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entfernen"
+          }
+        }
+      }
+    },
+    "Removes the saved error log and the Downloads banner. Offline files are kept.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the saved error log and the Downloads banner. Offline files are kept."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht das gespeicherte Fehlerprotokoll und das Downloads-Banner. Offline-Dateien bleiben erhalten."
           }
         }
       }
@@ -1854,6 +2976,23 @@
         }
       }
     },
+    "Results": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Results"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ergebnisse"
+          }
+        }
+      }
+    },
     "Resume": {
       "extractionState": "manual",
       "localizations": {
@@ -1905,6 +3044,40 @@
         }
       }
     },
+    "Scanning folder…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scanning folder…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordner wird gescannt…"
+          }
+        }
+      }
+    },
+    "Search Apple Podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search Apple Podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Podcasts durchsuchen"
+          }
+        }
+      }
+    },
     "Search Apple Podcasts, open Discover for charts, add by feed URL, pick a local Folder, or import an OPML file.": {
       "extractionState": "manual",
       "localizations": {
@@ -1922,6 +3095,23 @@
         }
       }
     },
+    "Search fyyd": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search fyyd"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fyyd durchsuchen"
+          }
+        }
+      }
+    },
     "Search library": {
       "extractionState": "manual",
       "localizations": {
@@ -1935,6 +3125,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bibliothek durchsuchen"
+          }
+        }
+      }
+    },
+    "Search Podcast Index": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search Podcast Index"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast Index durchsuchen"
+          }
+        }
+      }
+    },
+    "Search subscriptions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search subscriptions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnements durchsuchen"
           }
         }
       }
@@ -2075,6 +3299,23 @@
         }
       }
     },
+    "Show transcript": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show transcript"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript anzeigen"
+          }
+        }
+      }
+    },
     "Siri / Shortcuts": {
       "extractionState": "manual",
       "localizations": {
@@ -2109,6 +3350,23 @@
         }
       }
     },
+    "Star episodes from a feed or the full player. Favorites keep their downloads when auto-delete after playing is on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Star episodes from a feed or the full player. Favorites keep their downloads when auto-delete after playing is on."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiere Episoden in einem Feed oder im Vollbild-Player mit einem Stern. Favoriten behalten ihre Downloads, wenn Auto-Löschen nach dem Abspielen aktiv ist."
+          }
+        }
+      }
+    },
     "Statistics": {
       "extractionState": "manual",
       "localizations": {
@@ -2122,6 +3380,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Statistiken"
+          }
+        }
+      }
+    },
+    "Stored in Keychain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stored in Keychain"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Schlüsselbund gespeichert"
           }
         }
       }
@@ -2245,6 +3520,23 @@
         }
       }
     },
+    "Sync failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync fehlgeschlagen"
+          }
+        }
+      }
+    },
     "Sync now": {
       "extractionState": "manual",
       "localizations": {
@@ -2279,6 +3571,40 @@
         }
       }
     },
+    "Tags / Folders": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags / Folders"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags / Ordner"
+          }
+        }
+      }
+    },
+    "The feed URL returned empty or unreadable content.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The feed URL returned empty or unreadable content."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Feed-URL lieferte leeren oder unlesbaren Inhalt."
+          }
+        }
+      }
+    },
     "This iOS fork": {
       "extractionState": "manual",
       "localizations": {
@@ -2292,6 +3618,125 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dieser iOS-Fork"
+          }
+        }
+      }
+    },
+    "Top %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top %lld"
+          }
+        }
+      }
+    },
+    "Top podcasts on Apple Charts for %@. No API key — public iTunes RSS. Change country under Settings → Discovery.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top podcasts on Apple Charts for %@. No API key — public iTunes RSS. Change country under Settings → Discovery."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top-Podcasts in den Apple Charts für %@. Kein API-Schlüssel — öffentliches iTunes-RSS. Land unter Einstellungen → Discovery ändern."
+          }
+        }
+      }
+    },
+    "Transcript": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript"
+          }
+        }
+      }
+    },
+    "Transcript unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript unavailable"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript nicht verfügbar"
+          }
+        }
+      }
+    },
+    "Try another name or artist, or switch to Index / fyyd / URL.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try another name or artist, or switch to Index / fyyd / URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probiere einen anderen Namen oder Künstler, oder wechsle zu Index / fyyd / URL."
+          }
+        }
+      }
+    },
+    "Try another name or author, or switch to Apple / fyyd / URL.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try another name or author, or switch to Apple / fyyd / URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probiere einen anderen Namen oder Autor, oder wechsle zu Apple / fyyd / URL."
+          }
+        }
+      }
+    },
+    "Try another name or author, or switch to Apple / Index / URL.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try another name or author, or switch to Apple / Index / URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probiere einen anderen Namen oder Autor, oder wechsle zu Apple / Index / URL."
           }
         }
       }
@@ -2330,6 +3775,40 @@
         }
       }
     },
+    "Unknown episode": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown episode"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbekannte Episode"
+          }
+        }
+      }
+    },
+    "Unlock": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entsperren"
+          }
+        }
+      }
+    },
     "Unofficial SwiftUI fork of the open-source AntennaPod podcast app. Local-first beta: subscribe, play, download, and manage your library on device.": {
       "extractionState": "manual",
       "localizations": {
@@ -2364,6 +3843,40 @@
         }
       }
     },
+    "URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL"
+          }
+        }
+      }
+    },
+    "Username": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzername"
+          }
+        }
+      }
+    },
     "Version": {
       "extractionState": "manual",
       "localizations": {
@@ -2381,19 +3894,19 @@
         }
       }
     },
-    "Working…": {
+    "Video player": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Working…"
+            "value": "Video player"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bitte warten…"
+            "value": "Videoplayer"
           }
         }
       }
@@ -2415,87 +3928,19 @@
         }
       }
     },
-    "Mark unplayed": {
+    "Working…": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mark unplayed"
+            "value": "Working…"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Als ungehört markieren"
-          }
-        }
-      }
-    },
-    "Refreshing feeds…": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Refreshing feeds…"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Feeds werden aktualisiert…"
-          }
-        }
-      }
-    },
-    "Enable": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enable"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aktivieren"
-          }
-        }
-      }
-    },
-    "Disable": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Disable"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deaktivieren"
-          }
-        }
-      }
-    },
-    "Unlock": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unlock"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entsperren"
+            "value": "Bitte warten…"
           }
         }
       }

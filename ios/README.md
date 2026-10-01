@@ -26,7 +26,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch)
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
-- German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings section headers, empty states, primary actions — **partial**, not full i18n)
+- German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings headers, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript — **partial**, not full i18n)
 - Accessibility / VoiceOver (beta polish; EpisodeRow combined labels + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
 - Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Archive all)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first)
@@ -139,19 +139,23 @@ Default order: Discover → Continue → Inbox → Queue → Recently updated �
 
 ## Localization (German, beta / partial)
 
-Development language remains **English** (`developmentRegion: en`). `ios/project.yml` `knownRegions` includes `en`, `de`, and `Base`. User-visible copy for this pass lives in **`ios/AntennaPod/Localizable.xcstrings`** (String Catalog; en source + de).
+Development language remains **English** (`developmentRegion: en`). `ios/project.yml` `knownRegions` includes `en`, `de`, and `Base`. User-visible copy lives in **`ios/AntennaPod/Localizable.xcstrings`** (String Catalog; en source + de).
 
-SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` string literals resolve via `LocalizedStringKey`. Plain `String` surfaces that need a lookup use `String(localized:)` (e.g. `HomeSectionId.label`, EpisodeRow Play/Resume, Home welcome empty-state copy, Parental PIN Save/Unlock defaults). About link titles use `LocalizedStringKey`.
+SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` string literals resolve via `LocalizedStringKey`. Plain `String` surfaces that need a lookup use `String(localized:)` (e.g. `HomeSectionId.label`, Add-mode / discovery ternaries, notification titles, charts help format string, Parental PIN Save/Unlock defaults).
 
 **Covered (partial):**
 
-- Tab bar + main navigation titles: Home, Inbox, Subscriptions, Queue, Downloads, Settings (+ About, Favorites, Discover, Download errors, Home layout)
+- Tab bar + main navigation titles: Home, Inbox, Subscriptions, Queue, Downloads, Settings (+ About, Favorites, History, Archived, Episodes, Discover, Download errors, Home layout, Add podcast, Transcript)
 - Settings section headers: Appearance, Home, Playback, Library, Privacy, About, Backup, Sync, Feeds / Keep updated, Auto-download, Network / Downloads, Notifications, Downloads / Storage, Discovery, App Store, Siri / Shortcuts, Homescreen widget, Apple Watch, CarPlay, Import / Export
-- Primary actions: Play, Pause, Resume, Download, Subscribe / Confirm Subscribe, Cancel, Save, Delete, Remove, Archive, Mark played / unplayed, common empty-state titles + main-tab empty descriptions
+- Discovery chrome: Add segmented modes (Apple / Index / fyyd / URL / Folder), search placeholders, empty/API-key states, Results / Feed URL / charts loading + help, OPML import/export labels, Preview/Open row actions
+- Primary actions: Play, Pause, Resume, Download, Subscribe / Confirm Subscribe, Cancel, Save, Delete, Remove, Archive, Mark played / unplayed, common empty-state titles + main-tab and library empty descriptions (History / Favorites / Archived / Episodes / Tags filters)
 - Home section labels (layout toggles + Home headers): Continue listening, New / Inbox, Queue, Discover, Recently updated, Favorites
-- Backup / Sync section labels and primary Backup buttons
+- Backup / Sync: section labels, primary Backup buttons, Sync form field labels (Host / Username / Password / Device / Login / Sync now), notification toggles
+- Download errors: banner title, Errors list title/empty, clear confirmation
+- Full player: Chapters / Transcript sheet titles + loading / unavailable copy
+- Local notifications: Download failed, Sync failed, “N new episodes”
 
-**Not covered in this pass (still English):** long Settings footnotes / help captions, discovery search chrome beyond titles, parental-controls copy beyond Save/Unlock/Enable/Disable, network/service error strings, notification bodies, Statistics/Echo detail rows, Widget / Watch UI strings, and most secondary toolbars. Regenerating XcodeGen on a Mac picks up the catalog + regions; device/simulator language German shows translated keys when present.
+**Still English (honest):** long Settings footnotes / help captions, parental-controls detail copy beyond Save/Unlock/Enable/Disable, OS/`localizedDescription` network errors, Statistics/Echo detail rows, Widget / Watch UI (separate targets — no shared String Catalog in this pass; leave English to avoid App Group build breakage), and many secondary accessibility hints. Regenerating XcodeGen on a Mac picks up the catalog + regions; device/simulator language German shows translated keys when present.
 
 ## Accessibility (VoiceOver, beta polish)
 

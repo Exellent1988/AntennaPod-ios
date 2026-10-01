@@ -49,12 +49,22 @@ struct AddFeedView: View {
     private let debounceNs: UInt64 = 400_000_000 // 400 ms
 
     private enum AddMode: String, CaseIterable, Identifiable {
-        case apple = "Apple"
-        case podcastIndex = "Index"
-        case fyyd = "fyyd"
-        case url = "URL"
-        case folder = "Folder"
+        case apple
+        case podcastIndex
+        case fyyd
+        case url
+        case folder
         var id: String { rawValue }
+
+        var title: LocalizedStringKey {
+            switch self {
+            case .apple: "Apple"
+            case .podcastIndex: "Index"
+            case .fyyd: "fyyd"
+            case .url: "URL"
+            case .folder: "Folder"
+            }
+        }
     }
 
     var body: some View {
@@ -62,7 +72,7 @@ struct AddFeedView: View {
             VStack(spacing: 0) {
                 Picker("Mode", selection: $mode) {
                     ForEach(AddMode.allCases) { m in
-                        Text(m.rawValue).tag(m)
+                        Text(m.title).tag(m)
                     }
                 }
                 .pickerStyle(.segmented)

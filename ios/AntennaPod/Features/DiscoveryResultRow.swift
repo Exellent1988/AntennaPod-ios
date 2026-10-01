@@ -25,7 +25,7 @@ struct DiscoveryResultRow: View {
                         .lineLimit(1)
                 }
                 Spacer(minLength: 8)
-                Text(isSubscribed ? "Open" : "Preview")
+                Text(isSubscribed ? String(localized: "Open") : String(localized: "Preview"))
                     .font(.subheadline.weight(.semibold))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
@@ -37,7 +37,7 @@ struct DiscoveryResultRow: View {
         }
         .buttonStyle(.plain)
         .disabled(feedUrl.isEmpty)
-        .accessibilityLabel(isSubscribed ? "Open subscribed podcast" : "Preview podcast before subscribe")
+        .accessibilityLabel(isSubscribed ? String(localized: "Open subscribed podcast") : String(localized: "Preview podcast before subscribe"))
     }
 
     @ViewBuilder

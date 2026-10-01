@@ -21,7 +21,7 @@ struct ArchivedView: View {
                         episode: item.episode,
                         feedTitle: item.feedTitle,
                         dateOverride: Date(timeIntervalSince1970: Double(item.archivedAtEpochMs) / 1000),
-                        dateAccessibilityLabel: "Archived"
+                        dateAccessibilityLabel: String(localized: "Archived")
                     )
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button {

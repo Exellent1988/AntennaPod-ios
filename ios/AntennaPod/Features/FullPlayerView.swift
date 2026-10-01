@@ -75,7 +75,7 @@ struct FullPlayerView: View {
                     } label: {
                         Image(systemName: "chevron.down")
                     }
-                    .accessibilityLabel("Close player")
+                    .accessibilityLabel(String(localized: "Close player"))
                 }
             }
         }
@@ -128,7 +128,7 @@ struct FullPlayerView: View {
                         )
                         .font(.caption)
                         .foregroundStyle(.tertiary)
-                        .accessibilityLabel(playback.isPlayingFromLocalFile ? "Playing from download" : "Streaming")
+                        .accessibilityLabel(playback.isPlayingFromLocalFile ? String(localized: "Playing from download") : String(localized: "Streaming"))
                     }
                     .padding(.horizontal)
 
@@ -222,8 +222,8 @@ struct FullPlayerView: View {
             }
             .buttonStyle(.bordered)
             .padding(.top, 8)
-            .accessibilityLabel("Show transcript")
-            .accessibilityHint("Opens the feed-provided transcript")
+            .accessibilityLabel(String(localized: "Show transcript"))
+            .accessibilityHint(String(localized: "Opens the feed-provided transcript"))
         }
     }
 
@@ -240,7 +240,7 @@ struct FullPlayerView: View {
                 .frame(width: side, height: side * 9 / 16)
                 .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .shadow(color: .black.opacity(0.18), radius: 12, y: 6)
-                .accessibilityLabel("Video player")
+                .accessibilityLabel(String(localized: "Video player"))
         } else {
             artwork(side: side)
         }
