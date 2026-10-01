@@ -13503,6 +13503,57 @@
           }
         }
       }
+    },
+    "Unsubscribe and delete %lld downloads (%@)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsubscribe and delete %lld downloads (%@)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abo beenden und %lld Downloads löschen (%@)"
+          }
+        }
+      }
+    },
+    "Unsubscribe from \"%@\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has %lld offline download(s) (%@). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Clear all downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsubscribe from \"%@\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has %lld offline download(s) (%@). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Clear all downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abo von „%@“ beenden? Entfernt diesen Podcast aus Abonnements, seine Feed-Einstellungen und Tags, Warteschlangen-Einträge dieses Feeds sowie Favoriten, Archiv und Wiedergabeverlauf seiner Episoden. Dieser Feed hat %lld Offline-Download(s) (%@). „Abo beenden“ behält diese Dateien; „Abo beenden und Downloads löschen“ entfernt nur die Offline-Dateien dieses Feeds (inkl. favorisierter). Löscht nicht Downloads anderer Podcasts und ist nicht „Alle Downloads löschen“."
+          }
+        }
+      }
+    },
+    "Opens unsubscribe confirmation; optional delete this feed’s downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens unsubscribe confirmation; optional delete this feed’s downloads"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Abo-beenden-Bestätigung; optional Downloads dieses Feeds löschen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

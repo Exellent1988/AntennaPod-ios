@@ -5,6 +5,7 @@ struct SubscriptionsView: View {
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var parental: ParentalControls
     @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var downloads: DownloadService
     @Environment(\.openURL) private var openURL
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
     @State private var path = NavigationPath()
@@ -456,17 +457,41 @@ struct SubscriptionsView: View {
                 titleVisibility: .visible,
                 presenting: feedPendingUnsubscribe
             ) { feed in
+                let feedDownloadCount = downloads.downloads(forFeed: feed).count
+                let feedDownloadSize = DownloadStorageUsage.formatBytes(
+                    downloads.downloadsByteSize(forFeed: feed)
+                )
                 Button("Unsubscribe", role: .destructive) {
                     store.unsubscribe(feed)
                     feedPendingUnsubscribe = nil
+                }
+                if feedDownloadCount > 0 {
+                    Button(
+                        "Unsubscribe and delete \(feedDownloadCount) downloads (\(feedDownloadSize))",
+                        role: .destructive
+                    ) {
+                        downloads.deleteDownloads(forFeed: feed)
+                        store.unsubscribe(feed)
+                        feedPendingUnsubscribe = nil
+                    }
                 }
                 Button("Cancel", role: .cancel) {
                     feedPendingUnsubscribe = nil
                 }
             } message: { feed in
-                Text(
-                    "Unsubscribe from \"\(feed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
+                let feedDownloadCount = downloads.downloads(forFeed: feed).count
+                let feedDownloadSize = DownloadStorageUsage.formatBytes(
+                    downloads.downloadsByteSize(forFeed: feed)
                 )
+                if feedDownloadCount > 0 {
+                    Text(
+                        "Unsubscribe from \"\(feed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has \(feedDownloadCount) offline download(s) (\(feedDownloadSize)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Clear all downloads."
+                    )
+                } else {
+                    Text(
+                        "Unsubscribe from \"\(feed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
+                    )
+                }
             }
         }
     }
@@ -574,6 +599,7 @@ struct SubscriptionsView: View {
             } label: {
                 Label("Unsubscribe", systemImage: "trash")
             }
+            .accessibilityHint(String(localized: "Opens unsubscribe confirmation; optional delete this feed’s downloads"))
         }
         .swipeActions(edge: .leading) {
             Button {

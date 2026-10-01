@@ -198,6 +198,16 @@ struct FeedDetailView: View {
         liveFeed.episodes.filter { !store.isInQueue($0.id) }.count
     }
 
+    /// Completed Downloads catalog rows for this feed’s episode ids (same set as
+    /// `DownloadService.deleteDownloads(forFeed:)`). Not chip/search filtered.
+    private var unsubscribeFeedDownloadsCount: Int {
+        downloads.downloads(forFeed: liveFeed).count
+    }
+
+    private var unsubscribeFeedDownloadsSizeLabel: String {
+        DownloadStorageUsage.formatBytes(downloads.downloadsByteSize(forFeed: liveFeed))
+    }
+
     var body: some View {
         List {
             if LocalFolderFeed.isLocalFolderFeed(liveFeed) {
@@ -411,6 +421,7 @@ struct FeedDetailView: View {
                         } label: {
                             Label("Unsubscribe", systemImage: "trash")
                         }
+                        .accessibilityHint(String(localized: "Opens unsubscribe confirmation; optional delete this feed’s downloads"))
                     } label: {
                         Label("Feed actions", systemImage: "ellipsis.circle")
                     }
@@ -477,11 +488,27 @@ struct FeedDetailView: View {
                 store.unsubscribe(liveFeed)
                 dismiss()
             }
+            if unsubscribeFeedDownloadsCount > 0 {
+                Button(
+                    "Unsubscribe and delete \(unsubscribeFeedDownloadsCount) downloads (\(unsubscribeFeedDownloadsSizeLabel))",
+                    role: .destructive
+                ) {
+                    downloads.deleteDownloads(forFeed: liveFeed)
+                    store.unsubscribe(liveFeed)
+                    dismiss()
+                }
+            }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text(
-                "Unsubscribe from \"\(liveFeed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
-            )
+            if unsubscribeFeedDownloadsCount > 0 {
+                Text(
+                    "Unsubscribe from \"\(liveFeed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has \(unsubscribeFeedDownloadsCount) offline download(s) (\(unsubscribeFeedDownloadsSizeLabel)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Clear all downloads."
+                )
+            } else {
+                Text(
+                    "Unsubscribe from \"\(liveFeed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
+                )
+            }
         }
         .alert(
             String(localized: "Copied"),

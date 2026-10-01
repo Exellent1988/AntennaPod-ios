@@ -406,6 +406,49 @@ final class DownloadService: ObservableObject {
         refreshStorageUsage()
     }
 
+    /// Completed downloads whose episode id appears in `feed.episodes` (this feed’s current catalog).
+    /// Does not include other podcasts’ files. Local-folder `file://` episodes are usually not in the
+    /// Downloads catalog (already on disk outside `Documents/downloads`).
+    func downloads(forFeed feed: PodcastFeed) -> [DownloadedEpisode] {
+        let ids = Set(feed.episodes.map(\.id))
+        guard !ids.isEmpty else { return [] }
+        return downloads.filter { ids.contains($0.id) }
+    }
+
+    /// Approximate total byte size of files that `deleteDownloads(forFeed:)` would remove.
+    /// Uses on-disk `fileSize` when readable; missing files contribute 0 (same honesty as Clear all).
+    func downloadsByteSize(forFeed feed: PodcastFeed) -> Int64 {
+        var total: Int64 = 0
+        for item in downloads(forFeed: feed) {
+            let values = try? item.localFileURL.resourceValues(forKeys: [.fileSizeKey])
+            total += Int64(values?.fileSize ?? 0)
+        }
+        return total
+    }
+
+    /// Deletes offline files for episodes currently listed on `feed`, and cancels in-flight downloads
+    /// for those episode ids. Walks the single-delete path (`delete(_:)`).
+    /// Does **not** unsubscribe, clear queue / favorites / history, mark played, or touch other feeds’
+    /// downloads. Confirmation and ordering vs `PodcastStore.unsubscribe` are UI responsibility —
+    /// call **before** unsubscribe so episode ids are still on the feed. Returns how many completed
+    /// catalog files were deleted.
+    @discardableResult
+    func deleteDownloads(forFeed feed: PodcastFeed) -> Int {
+        let ids = Set(feed.episodes.map(\.id))
+        guard !ids.isEmpty else { return 0 }
+        for id in ids {
+            cancelTask(for: id)
+        }
+        let victims = downloads.filter { ids.contains($0.id) }
+        for item in victims {
+            delete(item.episode)
+        }
+        for id in ids {
+            inProgress.remove(id)
+        }
+        return victims.count
+    }
+
     /// Recompute folder usage from disk + apply configured limit for the Settings display.
     @discardableResult
     func refreshStorageUsage() -> DownloadStorageUsage {
