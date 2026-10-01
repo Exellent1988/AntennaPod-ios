@@ -95,6 +95,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Inbox: Alle als gehört markieren (Bestätigung) | ☐ Inbox: Mark all as played (confirm) |
 | ☐ Queue: Remove, Archive, Reorder | ☐ Queue: remove, archive, reorder |
 | ☐ Queue: Warteschlange leeren (Bestätigung) | ☐ Queue: Clear queue (confirm) |
+| ☐ Queue: Suche (Titel / Feed; kein Reorder während Filter) | ☐ Queue: search (title / feed; no reorder while filtering) |
 | ☐ Subscriptions + Tags/Filter | ☐ Subscriptions + tags/filter |
 | ☐ Subscriptions: Sortierung (Zuletzt aktualisiert / Alphabetisch) | ☐ Subscriptions: sort (Recently updated / Alphabetical) |
 | ☐ Feed-Detail: Episoden-Sortierung (Neueste / Älteste zuerst) | ☐ Feed detail: episode sort (Newest / Oldest first) |

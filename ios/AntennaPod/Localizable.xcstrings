@@ -3163,6 +3163,23 @@
         }
       }
     },
+    "No matching queue episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No matching queue episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine passenden Warteschlangen-Episoden"
+          }
+        }
+      }
+    },
     "No podcasts found": {
       "extractionState": "manual",
       "localizations": {
@@ -3176,6 +3193,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Podcasts gefunden"
+          }
+        }
+      }
+    },
+    "No queue episodes match your search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No queue episodes match your search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Warteschlangen-Episoden passen zu deiner Suche."
           }
         }
       }
@@ -4587,6 +4621,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Podcast Index durchsuchen"
+          }
+        }
+      }
+    },
+    "Search queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange durchsuchen"
           }
         }
       }
@@ -6460,7 +6511,6 @@
           }
         }
       }
-
     }
   },
   "version": "1.0"

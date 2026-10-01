@@ -25,7 +25,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
 - Sleep timer (clock presets + end of episode, fade-out)
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch; Feed detail **Download all** for unplayed/not-archived/not-downloaded, newest 50 soft cap)
-- Queue tab (JSON; swipe Remove + Archive; Edit drag reorder; toolbar Clear queue with confirm)
+- Queue tab (JSON; swipe Remove + Archive; Edit drag reorder; `.searchable` title/feed filter with debounce; reorder disabled while filtering; toolbar Clear queue with confirm)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
 - German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings headers + footnotes/help captions, parental detail, Statistics + Echo, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript — **partial**, not full i18n)
 - Accessibility / VoiceOver (beta polish; EpisodeRow combined labels + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
@@ -66,6 +66,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Auto-delete after playing (global toggle; deletes offline file on mark played; keeps episode row)
 - Notifications for new episodes (local UserNotifications after refresh; Settings toggle; tap opens Inbox; no push)
 - Downloads tab search (`.searchable`; filter by episode title and/or feed title; light debounce; empty query = all; empty state when no matches)
+- Queue tab search (`.searchable`; filter by episode title and/or feed title; light debounce; empty query = all; empty state when no matches; **Edit/drag reorder disabled while filtering** — filtered indices would not map to full queue; Clear queue still clears full queue)
 - Download log / errors (ring buffer in Application Support; Downloads banner + errors list; Clear errors)
 - Notify on download / sync errors (local UserNotifications; Settings toggles default on; DL tap → Downloads; Sync tap → Settings Sync; no push)
 - Parental controls (beta; Settings → Parental controls; 4–6 digit PIN in Keychain; lock Add/Discover; optional Network/Downloads lock + hide explicit charts; session unlock until background)
@@ -87,7 +88,7 @@ ios/
     ├── AntennaPod.entitlements   # App Group
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers, WatchCompanionBridge
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ searchable + error log), queue, settings (+ Home layout + gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + Apple Watch note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ searchable + error log), queue (+ searchable; reorder off while filtering), settings (+ Home layout + gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + Apple Watch note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -177,13 +178,13 @@ Honest limits: not every screen/control audited; no custom rotor / reduce-motion
 
 ## Queue
 
-**Queue** tab lists enqueued episodes (JSON under Application Support). Swipe trailing **Remove**, leading **Archive**. **Edit** enables drag reorder via `PodcastStore.moveQueue(from:to:)` (persists with `queue.json`). With Settings **Continuous playback** on (default), finishing an episode advances with `nextQueueEpisode`; when off, playback stops without queue advance (progress / mark played still apply).
+**Queue** tab lists enqueued episodes (JSON under Application Support). Swipe trailing **Remove**, leading **Archive**. **Edit** enables drag reorder via `PodcastStore.moveQueue(from:to:)` (persists with `queue.json`). **Search** (`.searchable`, ~250 ms debounce) filters by episode title and/or feed title; empty query shows the full queue; empty state when nothing matches. **Honest:** while a filter is active, **Edit is disabled and drag reorder is off** — `onMove` indices would refer to the filtered list, not the persisted queue order. **Clear queue** still confirms and clears the **full** queue (count in the dialog is always `store.queue.count`); the action stays enabled whenever the queue is non-empty, even if the current filter shows no rows. With Settings **Continuous playback** on (default), finishing an episode advances with `nextQueueEpisode`; when off, playback stops without queue advance (progress / mark played still apply).
 
 **Add to Queue** (`PodcastStore.enqueue`) appends if absent. **Play Next** (`PodcastStore.playNext(_:currentlyPlayingId:)`) moves/inserts immediately after the currently playing queue item, or at the **head** when nothing is playing / the current episode is not in the queue — so auto-next after finish still hits that head item (honest: same as today’s append semantics when current is not queued). Entry points: EpisodeRow context menu, Feed detail swipe, Inbox swipe, full player (alongside Queue).
 
 ## Library search
 
-Local-only search over subscribed feeds and their episodes (title, feed title, feed description) — distinct from Apple Podcasts / iTunes discovery in Add podcast. **Inbox** uses `.searchable` with a short debounce (~250 ms): empty query keeps the unplayed Inbox; non-empty shows Podcasts + Episodes sections. Matching feeds navigate to `FeedDetailView`; episodes reuse `EpisodeRow` (play / download / queue / mark played). **Subscriptions** also filters the feed list via searchable. **Downloads** filters the offline catalog by episode title or feed title (same light debounce; empty query shows all downloads). Empty states when nothing matches.
+Local-only search over subscribed feeds and their episodes (title, feed title, feed description) — distinct from Apple Podcasts / iTunes discovery in Add podcast. **Inbox** uses `.searchable` with a short debounce (~250 ms): empty query keeps the unplayed Inbox; non-empty shows Podcasts + Episodes sections. Matching feeds navigate to `FeedDetailView`; episodes reuse `EpisodeRow` (play / download / queue / mark played). **Subscriptions** also filters the feed list via searchable. **Downloads** and **Queue** filter by episode title or feed title (same light debounce; empty query shows all). Queue disables Edit/reorder while filtering. Empty states when nothing matches.
 
 ## History
 
@@ -254,7 +255,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 
 | Screen | Leading | Trailing | Extra |
 |--------|---------|----------|-------|
-| Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`); toolbar Clear queue (confirm) |
+| Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`) when not filtering; `.searchable` title/feed; toolbar Clear queue (confirm, full queue) |
 | Downloads | — | Delete download | — |
 | Inbox | Mark played | Play Next + Add to queue + Archive | Toolbar menu: Mark all as played (confirm) + Archive all |
 | Feed detail | Archive / Restore | Play Next + Queue + Share | Toolbar Download all + Mark all as played (confirm) + EpisodeRow context: Play Next + Add to queue |
