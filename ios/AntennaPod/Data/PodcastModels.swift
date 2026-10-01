@@ -947,6 +947,80 @@ enum PodcastSoundbiteDisplay {
 
 
 
+
+
+/// Podcast Index `podcast:txt` — free-form text for a podcast or episode.
+/// Optional `purpose` attribute (e.g. transcript, peertube, verify, twitter) + element text.
+/// **Display-only:** Copy text; Open when value looks like http(s). No Social / Matrix / special clients.
+/// Feed-provided only — never invent purposes or text. Purpose shown as the raw feed string when set.
+struct PodcastTxt: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields.
+    var id: String { "\(purpose ?? "")|\(text)" }
+    /// Optional `purpose` attribute as provided by the feed. Nil when absent — never invent.
+    var purpose: String?
+    /// Element text content (required non-empty to keep).
+    var text: String
+
+    init(purpose: String? = nil, text: String) {
+        self.purpose = purpose
+        self.text = text
+    }
+
+    /// Trimmed non-empty purpose when the feed set it. Hidden when missing — never invent labels.
+    var displayPurpose: String? {
+        guard let purpose else { return nil }
+        let trimmed = purpose.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty text body. Nil when blank.
+    var displayText: String? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) URL when the text body looks like one. Nil otherwise — never invent.
+    var openURL: URL? {
+        guard let body = displayText else { return nil }
+        guard let parsed = URL(string: body) else { return nil }
+        let scheme = parsed.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return parsed
+    }
+}
+
+/// Display helpers for `podcast:txt` lists (channel or item). Feed-provided only; Copy + optional Open.
+enum PodcastTxtDisplay {
+    /// Soft UI cap — show first N after feed order; honesty footnote when more exist.
+    static let displayCap = 20
+
+    /// Entries with non-empty text. Feed order. No invented purposes / no special clients.
+    static func valid(_ items: [PodcastTxt]) -> [PodcastTxt] {
+        items.compactMap { item in
+            guard let body = item.displayText else { return nil }
+            return PodcastTxt(purpose: item.displayPurpose, text: body)
+        }
+    }
+
+    /// First `displayCap` + whether the feed listed more valid txt entries.
+    static func capped(_ items: [PodcastTxt]) -> (shown: [PodcastTxt], truncated: Bool) {
+        let list = valid(items)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+
+    /// Pasteboard line: optional purpose + text body.
+    static func copyText(_ item: PodcastTxt) -> String {
+        let body = item.displayText ?? item.text
+        if let purpose = item.displayPurpose {
+            return "\(purpose): \(body)"
+        }
+        return body
+    }
+}
+
 /// Podcast Index `podcast:contentLink` — fallback / alternate platform link under `podcast:liveItem` (or item).
 /// Element text = label; `href` required. Feed-provided only — never invent URLs.
 struct PodcastContentLink: Identifiable, Hashable, Codable {
@@ -1223,6 +1297,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Item-level Podcast Index `podcast:soundbite` (startTime + duration; optional title) when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. Seek via PlaybackService when this episode is current — **no** separate clip player.
     var soundbites: [PodcastSoundbite]
+    /// Item-level Podcast Index `podcast:txt` (optional purpose + text) when the feed provides them.
+    /// Empty when absent — never invent; UI hides when empty. **Display-only** — Copy / Open http(s); no Social / Matrix clients.
+    var texts: [PodcastTxt]
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -1278,7 +1355,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         socialInteracts: [PodcastSocialInteract] = [],
         values: [PodcastValue] = [],
         alternateEnclosures: [PodcastAlternateEnclosure] = [],
-        soundbites: [PodcastSoundbite] = []
+        soundbites: [PodcastSoundbite] = [],
+        texts: [PodcastTxt] = []
     ) {
         self.id = id
         self.title = title
@@ -1303,6 +1381,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.values = values
         self.alternateEnclosures = alternateEnclosures
         self.soundbites = soundbites
+        self.texts = texts
     }
 
     init(from decoder: Decoder) throws {
@@ -1330,6 +1409,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         values = try c.decodeIfPresent([PodcastValue].self, forKey: .values) ?? []
         alternateEnclosures = try c.decodeIfPresent([PodcastAlternateEnclosure].self, forKey: .alternateEnclosures) ?? []
         soundbites = try c.decodeIfPresent([PodcastSoundbite].self, forKey: .soundbites) ?? []
+        texts = try c.decodeIfPresent([PodcastTxt].self, forKey: .texts) ?? []
     }
 
     /// Non-empty named item-level `podcast:person` entries (hide when empty — never invent).
@@ -1365,6 +1445,11 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Valid item-level `podcast:soundbite` entries (hide when empty — never invent; seek when current episode / else Copy).
     var displaySoundbites: [PodcastSoundbite] {
         PodcastSoundbiteDisplay.valid(soundbites)
+    }
+
+    /// Valid item-level `podcast:txt` entries (hide when empty — never invent; display-only Copy / Open http(s)).
+    var displayTexts: [PodcastTxt] {
+        PodcastTxtDisplay.valid(texts)
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).
@@ -1477,6 +1562,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel-level Podcast Index `podcast:liveItem` entries when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — no live stream player / recording / chat.
     var liveItems: [PodcastLiveItem]
+    /// Channel-level Podcast Index `podcast:txt` (optional purpose + text) when the feed provides them.
+    /// Empty when absent — never invent; UI hides when empty. **Display-only** — Copy / Open http(s); no Social / Matrix clients.
+    var texts: [PodcastTxt]
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -1589,6 +1677,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastLiveItemDisplay.valid(liveItems)
     }
 
+    /// Valid channel-level `podcast:txt` entries (hide when empty — never invent; display-only Copy / Open http(s)).
+    var displayTexts: [PodcastTxt] {
+        PodcastTxtDisplay.valid(texts)
+    }
+
     init(
         id: UUID,
         title: String,
@@ -1611,6 +1704,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         socialInteracts: [PodcastSocialInteract] = [],
         values: [PodcastValue] = [],
         liveItems: [PodcastLiveItem] = [],
+        texts: [PodcastTxt] = [],
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -1634,6 +1728,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.socialInteracts = socialInteracts
         self.values = values
         self.liveItems = liveItems
+        self.texts = texts
         self.episodes = episodes
     }
 
@@ -1660,11 +1755,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         socialInteracts = try c.decodeIfPresent([PodcastSocialInteract].self, forKey: .socialInteracts) ?? []
         values = try c.decodeIfPresent([PodcastValue].self, forKey: .values) ?? []
         liveItems = try c.decodeIfPresent([PodcastLiveItem].self, forKey: .liveItems) ?? []
+        texts = try c.decodeIfPresent([PodcastTxt].self, forKey: .texts) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, episodes
     }
 }
 

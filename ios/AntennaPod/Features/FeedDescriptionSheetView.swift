@@ -89,6 +89,15 @@ struct FeedDescriptionSheetView: View {
         !displayLiveItems.isEmpty
     }
 
+    /// Channel podcast:txt when the feed provided them — empty → hide (display-only Copy / Open).
+    private var displayTexts: [PodcastTxt] {
+        feed.displayTexts
+    }
+
+    private var hasTexts: Bool {
+        !displayTexts.isEmpty
+    }
+
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
     private var paragraphs: [String] {
         let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -123,7 +132,7 @@ struct FeedDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasLiveItems {
+                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasLiveItems && !hasTexts {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "info.circle",
@@ -146,6 +155,9 @@ struct FeedDescriptionSheetView: View {
                             }
                             if hasLiveItems {
                                 PodcastLiveItemsListView(liveItems: displayLiveItems)
+                            }
+                            if hasTexts {
+                                PodcastTxtListView(texts: displayTexts)
                             }
                         }
                         .padding()
@@ -265,6 +277,9 @@ struct FeedDescriptionSheetView: View {
                     if hasLiveItems {
                         PodcastLiveItemsListView(liveItems: displayLiveItems)
                     }
+                    if hasTexts {
+                        PodcastTxtListView(texts: displayTexts)
+                    }
 
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
@@ -324,6 +339,9 @@ struct FeedDescriptionSheetView: View {
                     }
                     if hasLiveItems {
                         PodcastLiveItemsListView(liveItems: displayLiveItems)
+                    }
+                    if hasTexts {
+                        PodcastTxtListView(texts: displayTexts)
                     }
 
                     Text(plainDescription)

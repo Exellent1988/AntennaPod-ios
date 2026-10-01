@@ -16410,6 +16410,132 @@
         }
       },
       "comment": "Alert message after copying a soundbite summary."
+    },
+    "Text": {
+      "extractionState": "manual",
+      "comment": "Section title for podcast:txt list in Feed detail / description / Shownotes.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text"
+          }
+        }
+      }
+    },
+    "Purpose %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for podcast:txt purpose attribute (raw feed string).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Purpose %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zweck %@"
+          }
+        }
+      }
+    },
+    "These text entries come from the feed. Copy or open a URL in the system browser — there is no Social or Matrix client.": {
+      "extractionState": "manual",
+      "comment": "Honesty footnote for podcast:txt display-only list.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These text entries come from the feed. Copy or open a URL in the system browser — there is no Social or Matrix client."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Texteinträge stammen aus dem Feed. Kopieren oder URL im Systembrowser öffnen — kein Social- oder Matrix-Client."
+          }
+        }
+      }
+    },
+    "Showing first 20 text entries from the feed.": {
+      "extractionState": "manual",
+      "comment": "Truncation honesty when more than 20 podcast:txt entries.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first 20 text entries from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeige die ersten 20 Texteinträge aus dem Feed."
+          }
+        }
+      }
+    },
+    "Text copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Alert message after copying a podcast:txt entry.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the feed text entry to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy on podcast:txt row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed text entry to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den Feed-Texteintrag in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the URL from the feed text entry in the system browser": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Open on podcast:txt http(s) row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the URL from the feed text entry in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die URL aus dem Feed-Texteintrag im Systembrowser"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

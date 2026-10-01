@@ -58,6 +58,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var channelValues: [PodcastValue] = []
     /// Channel podcast:liveItem — feed-provided only; display-only (no live player / recording / chat).
     private var channelLiveItems: [PodcastLiveItem] = []
+    /// Channel podcast:txt — feed-provided only; display-only (Copy / Open http(s); no Social / Matrix clients).
+    private var channelTexts: [PodcastTxt] = []
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -108,6 +110,11 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var capturingSoundbite = false
     private var pendingSoundbiteStart: Double?
     private var pendingSoundbiteDuration: Double?
+    /// Item podcast:txt — feed-provided only; display-only (Copy / Open http(s); no Social / Matrix clients).
+    private var itemTexts: [PodcastTxt] = []
+    /// Capturing podcast:txt optional purpose + element text.
+    private var capturingTxt = false
+    private var pendingTxtPurpose: String?
     /// Capturing podcast:alternateEnclosure attributes + nested sources.
     private var capturingAlternateEnclosure = false
     private var pendingAltType: String?
@@ -209,6 +216,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             socialInteracts: channelSocialInteracts,
             values: channelValues,
             liveItems: channelLiveItems,
+            texts: channelTexts,
             episodes: episodes
         )
     }
@@ -266,6 +274,9 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             capturingSoundbite = false
             pendingSoundbiteStart = nil
             pendingSoundbiteDuration = nil
+            itemTexts = []
+            capturingTxt = false
+            pendingTxtPurpose = nil
             capturingAlternateEnclosure = false
             pendingAltType = nil
             pendingAltLength = nil
@@ -613,6 +624,13 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             } else {
                 pendingSoundbiteDuration = nil
             }
+        case "txt":
+            // Podcast Index: <podcast:txt purpose="…">text</podcast:txt>
+            // Channel and/or item. Element text required; purpose optional — never invent.
+            // Display-only: Copy / Open http(s). No Social / Matrix / special clients.
+            if inLiveItem { break }
+            capturingTxt = true
+            pendingTxtPurpose = Self.nonEmptyAttr(attributeDict["purpose"] ?? attributeDict["Purpose"])
         default:
             break
         }
@@ -723,6 +741,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishAlternateEnclosure()
             case "soundbite":
                 finishSoundbite(text: text)
+            case "txt":
+                finishTxt(text: text, intoItem: true)
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
@@ -748,7 +768,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     socialInteracts: itemSocialInteracts,
                     values: itemValues,
                     alternateEnclosures: itemAlternateEnclosures,
-                    soundbites: itemSoundbites
+                    soundbites: itemSoundbites,
+                    texts: itemTexts
                 )
                 episodes.append(episode)
                 inItem = false
@@ -834,6 +855,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishValueRecipient()
             case "value":
                 finishValue(intoItem: false)
+            case "txt":
+                finishTxt(text: text, intoItem: false)
             case "id":
                 break
             default:
@@ -927,6 +950,29 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 title: title.isEmpty ? nil : title
             )
         )
+    }
+
+    /// Finish podcast:txt — append when element text non-empty; optional purpose as provided.
+    /// Display-only Copy / Open http(s) — never invent; no Social / Matrix clients.
+    private func finishTxt(text: String, intoItem: Bool) {
+        defer {
+            capturingTxt = false
+            pendingTxtPurpose = nil
+        }
+        guard capturingTxt else { return }
+        if intoItem {
+            guard inItem else { return }
+        } else {
+            guard !inItem else { return }
+        }
+        let body = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !body.isEmpty else { return }
+        let entry = PodcastTxt(purpose: pendingTxtPurpose, text: body)
+        if intoItem {
+            itemTexts.append(entry)
+        } else {
+            channelTexts.append(entry)
+        }
     }
 
     /// Finish podcast:contentLink under liveItem — append when href present; never invent.
