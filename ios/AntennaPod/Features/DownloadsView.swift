@@ -438,10 +438,12 @@ private struct DownloadsFilterChip: View {
     }
 }
 
-/// Persisted download failures (ring buffer) with clear action and searchable filter
-/// over episode title / feed title / error message (already-saved log only).
+/// Persisted download failures (ring buffer) with clear action, searchable filter
+/// over episode title / feed title / error message (already-saved log only), and
+/// per-row **Retry** via existing `DownloadService.download(_:)` when resolvable.
 struct DownloadErrorsView: View {
     @EnvironmentObject private var downloads: DownloadService
+    @EnvironmentObject private var store: PodcastStore
     @State private var showClearConfirmation = false
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -482,23 +484,7 @@ struct DownloadErrorsView: View {
                 )
             } else {
                 ForEach(filteredErrors) { entry in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(entry.episodeTitle.isEmpty ? String(localized: "Unknown episode") : entry.episodeTitle)
-                            .font(.headline)
-                        if !entry.feedTitle.isEmpty {
-                            Text(entry.feedTitle)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                        Text(entry.message)
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                        Text(entry.timestamp, style: .relative)
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                    }
-                    .padding(.vertical, 2)
-                    .accessibilityElement(children: .combine)
+                    DownloadErrorRow(entry: entry)
                 }
             }
         }
@@ -546,5 +532,61 @@ struct DownloadErrorsView: View {
             guard !Task.isCancelled else { return }
             debouncedQuery = trimmed
         }
+    }
+}
+
+/// One download-error log row with optional **Retry** (existing `DownloadService.download`).
+private struct DownloadErrorRow: View {
+    @EnvironmentObject private var downloads: DownloadService
+    @EnvironmentObject private var store: PodcastStore
+    let entry: DownloadErrorEntry
+
+    private var canRetry: Bool {
+        downloads.canRetryDownloadError(entry, store: store)
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.episodeTitle.isEmpty ? String(localized: "Unknown episode") : entry.episodeTitle)
+                    .font(.headline)
+                if !entry.feedTitle.isEmpty {
+                    Text(entry.feedTitle)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                Text(entry.message)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                Text(entry.timestamp, style: .relative)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine)
+
+            Button("Retry") {
+                Task {
+                    await downloads.retryDownloadError(entry, store: store)
+                }
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+            .disabled(!canRetry)
+            .accessibilityLabel(String(localized: "Retry"))
+            .accessibilityHint(retryAccessibilityHint)
+        }
+        .padding(.vertical, 2)
+    }
+
+    /// VoiceOver hint — enabled vs disabled (missing / local-folder / in-flight).
+    private var retryAccessibilityHint: String {
+        if canRetry {
+            return String(localized: "Enqueues this episode again via the normal download path")
+        }
+        if downloads.inProgress.contains(entry.episodeId) {
+            return String(localized: "Download already in progress")
+        }
+        return String(localized: "Episode is no longer in the library or has no downloadable URL")
     }
 }

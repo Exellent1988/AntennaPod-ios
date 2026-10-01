@@ -14217,6 +14217,57 @@
           }
         }
       }
+    },
+    "Enqueues this episode again via the normal download path": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enqueues this episode again via the normal download path"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht diese Episode erneut über den normalen Download-Pfad ein"
+          }
+        }
+      }
+    },
+    "Download already in progress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download already in progress"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download läuft bereits"
+          }
+        }
+      }
+    },
+    "Episode is no longer in the library or has no downloadable URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode is no longer in the library or has no downloadable URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode ist nicht mehr in der Mediathek oder hat keine herunterladbare URL"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

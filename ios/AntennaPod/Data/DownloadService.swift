@@ -569,6 +569,44 @@ final class DownloadService: ObservableObject {
         PodcastPersistence.saveDownloadErrors([])
     }
 
+    /// Episode still in the library with a network-downloadable URL (not local-folder `file://`).
+    /// Returns `nil` when the episode was unsubscribed / dropped, has no media URL, or is a
+    /// local-folder file (already on disk — no network transfer to retry).
+    func episodeForDownloadErrorRetry(
+        _ entry: DownloadErrorEntry,
+        store: PodcastStore
+    ) -> PodcastEpisode? {
+        guard let episode = store.episode(id: entry.episodeId) else { return nil }
+        guard let raw = episode.downloadUrl, !raw.isEmpty else { return nil }
+        guard !LocalFolderFeed.isLocalFileDownloadURL(raw) else { return nil }
+        return episode
+    }
+
+    /// Whether **Retry** should be enabled for this log row.
+    func canRetryDownloadError(_ entry: DownloadErrorEntry, store: PodcastStore) -> Bool {
+        guard episodeForDownloadErrorRetry(entry, store: store) != nil else { return false }
+        return !inProgress.contains(entry.episodeId)
+    }
+
+    /// Removes one persisted error row and refreshes the Downloads banner from the newest
+    /// remaining entry (or clears it when the log is empty).
+    func removeDownloadError(_ entry: DownloadErrorEntry) {
+        let next = recentErrors.filter { $0.id != entry.id }
+        recentErrors = next
+        lastError = next.first?.message
+        PodcastPersistence.saveDownloadErrors(next)
+    }
+
+    /// Per-row **Retry**: drops this log entry, then enqueues via the normal manual
+    /// `download(_:)` path (Wi‑Fi / cellular gates, storage eviction, background session —
+    /// no invented retry queue). A later failure appends a **new** log entry.
+    func retryDownloadError(_ entry: DownloadErrorEntry, store: PodcastStore) async {
+        guard let episode = episodeForDownloadErrorRetry(entry, store: store) else { return }
+        guard !inProgress.contains(episode.id) else { return }
+        removeDownloadError(entry)
+        await download(episode, source: .manual)
+    }
+
     // MARK: - Error log
 
     private func recordFailure(episode: PodcastEpisode, message: String) {

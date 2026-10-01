@@ -114,6 +114,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Network / Downloads Wi‑Fi-only Gates | ☐ Network / Downloads Wi‑Fi-only gates |
 | ☐ Download-Fehlerbanner + Log | ☐ Download error banner + log |
 | ☐ Download-Fehler-Suche (Titel / Feed / Meldung; Debounce; leer bei keinen Treffern; nur gespeicherter Log; Clear = voller Log) | ☐ Download errors search (title / feed / message; debounce; empty when no matches; persisted log only; Clear = full log) |
+| ☐ Download-Fehler **Erneut versuchen** (pro Zeile; bestehender `download(_:)`; deaktiviert wenn Episode fehlt / Local-Folder / läuft; Zeile entfällt beim Einreihen; neuer Fehler = neuer Eintrag; Wi‑Fi-Gates) | ☐ Download errors **Retry** (per row; existing `download(_:)`; disabled when episode missing / local-folder / in-flight; row drops on enqueue; new failure = new entry; Wi‑Fi gates) |
 | ☐ Downloads: Suche (Titel / Feed) | ☐ Downloads: search (title / feed) |
 | ☐ Downloads: Sortierung (Neueste / Älteste; Download-Zeit sonst pubDate; persistiert) | ☐ Downloads: sort (Newest / Oldest; download time else pubDate; persisted) |
 | ☐ Downloads: Filter-Chips Alle / Ungehört / Gehört (persistiert; mit Suche + Sort) | ☐ Downloads: filter chips All / Unplayed / Played (persisted; with search + sort) |
