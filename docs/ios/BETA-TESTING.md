@@ -128,6 +128,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Library: Episodes (Filter All / Ungehört / Heruntergeladen / Favoriten) / History / Favorites / Archived / Statistics / Echo | ☐ Library: Episodes (filter All / Unplayed / Downloaded / Favorites) / History / Favorites / Archived / Statistics / Echo |
 | ☐ History: Verlauf leeren (Bestätigung) | ☐ History: Clear history (confirm) |
 | ☐ History: Suche (Titel / Feed) | ☐ History: search (title / feed) |
+| ☐ History: Sortierung (Neueste / Älteste; lastPlayedAt sonst updatedAt; persistiert) | ☐ History: sort (Newest / Oldest; lastPlayedAt else updatedAt; persisted) |
 | ☐ Favoriten (Stern; Full Player + EpisodeRow; VoiceOver Add/Remove) | ☐ Favorites (star; Full Player + EpisodeRow; VoiceOver Add/Remove) |
 | ☐ Favoriten: Suche (Titel / Feed) | ☐ Favorites: search (title / feed) |
 | ☐ Favoriten: Favoriten leeren (Bestätigung) | ☐ Favorites: Clear favorites (confirm) |

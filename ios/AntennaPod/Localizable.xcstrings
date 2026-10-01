@@ -1514,19 +1514,19 @@
         }
       }
     },
-    "Episodes you play or mark as played appear here, newest first.": {
+    "Episodes you play or mark as played appear here, ordered by last played.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Episodes you play or mark as played appear here, newest first."
+            "value": "Episodes you play or mark as played appear here, ordered by last played."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Episoden, die du abspielst oder als gehört markierst, erscheinen hier — neueste zuerst."
+            "value": "Episoden, die du abspielst oder als gehört markierst, erscheinen hier, sortiert nach zuletzt gehört."
           }
         }
       }
@@ -8990,6 +8990,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Downloads sortieren"
+          }
+        }
+      }
+    },
+    "Sort history": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort history"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf sortieren"
           }
         }
       }

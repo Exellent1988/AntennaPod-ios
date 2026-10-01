@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HistoryView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var settings: AppSettings
 
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -10,19 +11,40 @@ struct HistoryView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
-    /// Full history catalog (newest last-played first) — Clear history always uses this count.
+    /// Full history catalog (store order: newest last-played first) — Clear history always uses this count.
     private var items: [HistoryEpisode] {
         store.historyEpisodes
     }
 
-    /// Visible history; empty query shows the full list.
+    /// Visible history ordered by `AppSettings.historySort`.
+    /// Sort key: `HistoryEpisode.lastPlayedAtEpochMs` (`lastPlayedAt`, else `updatedAt` from playback state).
+    /// Empty query shows the full list; sort applies to search-filtered results too.
+    /// Does not mutate `PodcastStore.historyEpisodes` (Home Continue / Clear history stay newest-first catalog).
     private var filteredItems: [HistoryEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base = items
-        if q.isEmpty { return base }
-        return base.filter { item in
-            if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
-            return item.feedTitle.localizedCaseInsensitiveContains(q)
+        let filtered: [HistoryEpisode]
+        if q.isEmpty {
+            filtered = base
+        } else {
+            filtered = base.filter { item in
+                if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+                return item.feedTitle.localizedCaseInsensitiveContains(q)
+            }
+        }
+        return filtered.sorted { lhs, rhs in
+            switch settings.historySort {
+            case .newestFirst:
+                if lhs.lastPlayedAtEpochMs != rhs.lastPlayedAtEpochMs {
+                    return lhs.lastPlayedAtEpochMs > rhs.lastPlayedAtEpochMs
+                }
+                return lhs.episode.id < rhs.episode.id
+            case .oldestFirst:
+                if lhs.lastPlayedAtEpochMs != rhs.lastPlayedAtEpochMs {
+                    return lhs.lastPlayedAtEpochMs < rhs.lastPlayedAtEpochMs
+                }
+                return lhs.episode.id < rhs.episode.id
+            }
         }
     }
 
@@ -32,7 +54,7 @@ struct HistoryView: View {
                 ContentUnavailableView(
                     "No history yet",
                     systemImage: "clock",
-                    description: Text("Episodes you play or mark as played appear here, newest first.")
+                    description: Text("Episodes you play or mark as played appear here, ordered by last played.")
                 )
             } else if filteredItems.isEmpty {
                 ContentUnavailableView(
@@ -78,6 +100,21 @@ struct HistoryView: View {
             debounceTask?.cancel()
         }
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Picker(selection: $settings.historySort) {
+                        ForEach(HistorySort.allCases) { sort in
+                            Label(sort.label, systemImage: sort.systemImage)
+                                .tag(sort)
+                        }
+                    } label: {
+                        Text("Sort")
+                    }
+                } label: {
+                    Label("Sort", systemImage: "arrow.up.arrow.down")
+                }
+                .accessibilityLabel("Sort history")
+            }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button(role: .destructive) {
