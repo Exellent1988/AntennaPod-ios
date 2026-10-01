@@ -26,10 +26,18 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     var mimeType: String?
     var size: Int64
     var transcriptUrl: String?
+    /// Podcast Index transcript MIME (`application/json`, `text/vtt`, `application/srt`, …).
+    var transcriptType: String?
     /// Inline chapters (PSC / Atom) parsed from the feed item.
     var chapters: [PodcastChapter]
     /// Podcast Index `podcast:chapters` remote JSON URL (fetched lazily when needed).
     var podcastIndexChapterUrl: String?
+
+    /// Feed provides a remote transcript URL (no on-device STT).
+    var hasTranscriptURL: Bool {
+        guard let transcriptUrl, !transcriptUrl.isEmpty else { return false }
+        return true
+    }
 
     init(
         id: String,
@@ -40,6 +48,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         mimeType: String? = nil,
         size: Int64 = 0,
         transcriptUrl: String? = nil,
+        transcriptType: String? = nil,
         chapters: [PodcastChapter] = [],
         podcastIndexChapterUrl: String? = nil
     ) {
@@ -51,6 +60,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.mimeType = mimeType
         self.size = size
         self.transcriptUrl = transcriptUrl
+        self.transcriptType = transcriptType
         self.chapters = chapters
         self.podcastIndexChapterUrl = podcastIndexChapterUrl
     }
@@ -65,6 +75,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         mimeType = try c.decodeIfPresent(String.self, forKey: .mimeType)
         size = try c.decodeIfPresent(Int64.self, forKey: .size) ?? 0
         transcriptUrl = try c.decodeIfPresent(String.self, forKey: .transcriptUrl)
+        transcriptType = try c.decodeIfPresent(String.self, forKey: .transcriptType)
         chapters = try c.decodeIfPresent([PodcastChapter].self, forKey: .chapters) ?? []
         podcastIndexChapterUrl = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterUrl)
     }

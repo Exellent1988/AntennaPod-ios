@@ -13,6 +13,7 @@ struct FullPlayerView: View {
     /// Chapters loaded from Podcast Index JSON when the feed only had a URL.
     @State private var remoteChapters: [PodcastChapter] = []
     @State private var isLoadingRemoteChapters = false
+    @State private var showTranscript = false
 
     private var episode: PodcastEpisode? { playback.currentEpisode }
 
@@ -77,7 +78,14 @@ struct FullPlayerView: View {
             scrubSeconds = playback.positionSeconds
             isScrubbing = false
             remoteChapters = []
+            showTranscript = false
             Task { await loadRemoteChaptersIfNeeded() }
+        }
+        .sheet(isPresented: $showTranscript) {
+            if let episode = resolvedEpisode ?? episode {
+                TranscriptSheetView(episode: episode)
+                    .environmentObject(playback)
+            }
         }
     }
 
@@ -118,6 +126,9 @@ struct FullPlayerView: View {
                         .padding(.horizontal)
 
                     chaptersSection
+                        .padding(.horizontal)
+
+                    transcriptButton
                         .padding(.horizontal)
 
                     Spacer(minLength: 24)
@@ -181,6 +192,23 @@ struct FullPlayerView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         // No chapters → hide section entirely (no empty placeholder).
+    }
+
+    @ViewBuilder
+    private var transcriptButton: some View {
+        let ep = resolvedEpisode ?? episode
+        if let ep, ep.hasTranscriptURL {
+            Button {
+                showTranscript = true
+            } label: {
+                Label("Transcript", systemImage: "text.bubble")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .padding(.top, 8)
+            .accessibilityLabel("Show transcript")
+            .accessibilityHint("Opens the feed-provided transcript")
+        }
     }
 
     @ViewBuilder

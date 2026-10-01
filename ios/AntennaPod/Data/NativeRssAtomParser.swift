@@ -33,6 +33,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var enclosureType: String?
     private var enclosureLength: Int64 = 0
     private var transcriptUrl: String?
+    private var transcriptType: String?
+    private var transcriptPriority: Int = 0
     private var itemChapters: [PodcastChapter] = []
     private var podcastIndexChapterUrl: String?
     private var elementStack: [String] = []
@@ -89,6 +91,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             enclosureType = nil
             enclosureLength = 0
             transcriptUrl = nil
+            transcriptType = nil
+            transcriptPriority = 0
             itemChapters = []
             podcastIndexChapterUrl = nil
             if local.lowercased() == "entry", let href = attributeDict["href"] {
@@ -126,8 +130,21 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 link = href ?? link
             }
         case "transcript":
-            if inItem, transcriptUrl == nil {
-                transcriptUrl = attributeDict["url"]
+            // Podcast Index: <podcast:transcript url="…" type="application/json|text/vtt|application/srt"/>
+            // Prefer JSON > VTT > SRT (AntennaPod Android TranscriptType priority).
+            if inItem {
+                let href = attributeDict["url"] ?? attributeDict["href"]
+                let type = attributeDict["type"]
+                if let href, !href.isEmpty {
+                    let priority = TranscriptTypePreference.priority(forMime: type)
+                    // Accept unknown/missing type at lowest priority so a lone URL still works.
+                    let effective = priority > 0 ? priority : 1
+                    if transcriptUrl == nil || effective > transcriptPriority {
+                        transcriptUrl = href
+                        transcriptType = type
+                        transcriptPriority = effective
+                    }
+                }
             }
         case "chapters":
             // Podcast Index: <podcast:chapters url="https://…/chapters.json" type="application/json"/>
@@ -198,6 +215,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     mimeType: enclosureType,
                     size: enclosureLength,
                     transcriptUrl: transcriptUrl,
+                    transcriptType: transcriptType,
                     chapters: sorted,
                     podcastIndexChapterUrl: podcastIndexChapterUrl
                 )
@@ -301,5 +319,43 @@ enum ChapterTimeParsing {
         }
 
         return Double(trimmed)
+    }
+}
+
+/// Podcast Index transcript MIME preference (mirrors Android `TranscriptType`).
+enum TranscriptTypePreference {
+    /// Higher = preferred. JSON 4, VTT 3, SRT 2, unknown/empty 0.
+    static func priority(forMime type: String?) -> Int {
+        guard let raw = type?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
+              !raw.isEmpty else {
+            return 0
+        }
+        switch raw {
+        case "application/json":
+            return 4
+        case "text/vtt":
+            return 3
+        case "application/srt", "application/srr", "application/x-subrip", "text/srt":
+            return 2
+        default:
+            return 0
+        }
+    }
+
+    static func canonicalMime(from type: String?) -> String? {
+        guard let raw = type?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
+              !raw.isEmpty else {
+            return nil
+        }
+        switch raw {
+        case "application/json":
+            return "application/json"
+        case "text/vtt":
+            return "text/vtt"
+        case "application/srt", "application/srr", "application/x-subrip", "text/srt":
+            return "application/srt"
+        default:
+            return raw
+        }
     }
 }

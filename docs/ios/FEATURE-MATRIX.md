@@ -57,7 +57,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Skip silence | 2 | todo | P3, iOS-API-abhängig |
 | Volume adaptation | 2 | todo | P3 |
 | Chapters | 4 | done | PSC inline (`psc:chapter`) + Podcast Index URL/JSON; full player list, tap seek, current highlight; hidden when none. Media-file tags later |
-| Transcripts | 2 | todo | P3 |
+| Transcripts | 2 | done | Feed `podcast:transcript` URL+type (JSON>VTT>SRT preference); full player button → fetch + scrollable sheet; tap cue seek when timed; session memory/disk cache; **only when feed provides URL — no Whisper/on-device STT** |
 | Headset / Bluetooth pause | 4 | done | AVAudioSession interruption (pause / resume if shouldResume) + routeChange oldDeviceUnavailable (unplug); remotes/Now Playing unchanged |
 | Prefer stream vs download | 5 | done | Settings: Prefer download / Prefer stream / Automatic (default); `PlaybackService.play` resolves via `DownloadService.localURL`; mini + full player show Local/Stream |
 | Video → audio-only | 1 | todo | mit Video P4 |

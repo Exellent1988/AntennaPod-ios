@@ -244,6 +244,7 @@ enum LocalFolderScanner {
                     mimeType: LocalFolderFeed.mimeType(forExtension: ext),
                     size: size,
                     transcriptUrl: nil,
+                    transcriptType: nil,
                     chapters: [],
                     podcastIndexChapterUrl: nil
                 )

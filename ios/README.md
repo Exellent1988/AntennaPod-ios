@@ -14,6 +14,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Stream playback (AVPlayer, speed, configurable skip intervals)
 - Full player sheet (artwork, scrubber, transport; tap mini player to open)
 - Chapters (PSC / Podcast Index from feed; list in full player; tap to seek)
+- Transcripts (beta; feed `podcast:transcript` URL only — fetch VTT/SRT/JSON, scrollable sheet, tap cue seek; no Whisper/STT)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip using Settings intervals)
 - Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
 - Sleep timer (clock presets + end of episode, fade-out)
@@ -67,7 +68,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -191,6 +192,14 @@ Tap the mini player title or progress bar to open a full-screen sheet: feed artw
 ## Chapters
 
 Feed-item chapters are parsed by the Swift `XMLParser` path (`NativeRssAtomParser`): Podlove Simple Chapters (`psc:chapter` / `sc:chapter` with `start`/`title`/`href`/`image`) on RSS items and Atom entries, plus Podcast Index `<podcast:chapters url="…">`. Remote Podcast Index JSON is fetched lazily when the full player opens if only a URL is present. Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`). Full player shows a chapter list (hidden when empty); tap seeks; the active chapter is highlighted from `PlaybackService.positionSeconds`. ID3/M4A/Vorbis media tags are not parsed yet.
+
+## Transcripts (beta)
+
+**Only when the feed provides a URL** — no Whisper / on-device speech-to-text.
+
+- **Parse:** `NativeRssAtomParser` reads Podcast Index `<podcast:transcript url|href type="…">`. When several tags exist, prefer **JSON > VTT > SRT** (same priority as Android `TranscriptType`). Stores `transcriptUrl` + `transcriptType` on `PodcastEpisode`.
+- **Full player:** **Transcript** button appears when `hasTranscriptURL`. Opens a sheet that fetches the remote file (`TranscriptService`), best-effort parses JSON / WebVTT / SRT into timed cues (plain-text fallback if cues cannot be parsed). Tap a cue to **seek**; current cue highlight follows playback. Footer notes feed-URL-only honesty.
+- **Cache:** in-memory map (small cap) plus light Caches/`transcripts/` JSON files for the session — not a durable offline library.
 
 ## Headset / Bluetooth pause
 
