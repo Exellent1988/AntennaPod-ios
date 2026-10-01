@@ -3,6 +3,8 @@ import SwiftUI
 struct HistoryView: View {
     @EnvironmentObject private var store: PodcastStore
 
+    @State private var showClearHistoryConfirm = false
+
     private var items: [HistoryEpisode] {
         store.historyEpisodes
     }
@@ -45,5 +47,32 @@ struct HistoryView: View {
         }
         .navigationTitle("History")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button(role: .destructive) {
+                        showClearHistoryConfirm = true
+                    } label: {
+                        Label("Clear history", systemImage: "trash")
+                    }
+                    .disabled(items.isEmpty)
+                } label: {
+                    Label("History actions", systemImage: "ellipsis.circle")
+                }
+                .disabled(items.isEmpty)
+            }
+        }
+        .confirmationDialog(
+            "Clear history?",
+            isPresented: $showClearHistoryConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Clear history", role: .destructive) {
+                store.clearHistory()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Removes \(items.count) episodes from history. Does not unsubscribe, delete downloads, or clear the queue.")
+        }
     }
 }

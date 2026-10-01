@@ -4318,6 +4318,74 @@
           }
         }
       }
+    },
+    "Clear history": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear history"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf leeren"
+          }
+        }
+      }
+    },
+    "Clear history?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear history?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf leeren?"
+          }
+        }
+      }
+    },
+    "History actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlaufs-Aktionen"
+          }
+        }
+      }
+    },
+    "Removes %lld episodes from history. Does not unsubscribe, delete downloads, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld episodes from history. Does not unsubscribe, delete downloads, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld Episoden aus dem Verlauf. Deabonniert nicht, löscht keine Downloads und leert die Warteschlange nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -745,6 +745,21 @@ final class PodcastStore: ObservableObject {
         pendingAutoDeleteIds.remove(episodeId)
     }
 
+    /// Remove every history-listed episode's playback state (same as per-row Remove).
+    /// Drops the whole `playbackStates` entry (progress + `isPlayed` + `lastPlayedAt`) —
+    /// matching `removeFromHistory`. Does not unsubscribe feeds, delete downloads,
+    /// clear the queue, or unstar favorites. Persists via `playbackStates` didSet.
+    func clearHistory() {
+        let ids = Set(historyEpisodes.map(\.id))
+        guard !ids.isEmpty else { return }
+        var next = playbackStates
+        for id in ids {
+            next.removeValue(forKey: id)
+            pendingAutoDeleteIds.remove(id)
+        }
+        playbackStates = next
+    }
+
     // MARK: - Statistics (from playback.json)
 
     /// Totals + per-feed top list derived from saved playback state (honest approximation).
