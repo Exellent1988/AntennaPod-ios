@@ -50,6 +50,9 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var feedIsLocked = false
     private var lockedOwnerAttr: String?
     private var capturingLocked = false
+    /// Channel podcast:block / itunes:block — true when any yes/true. Display-only (directories; no subscribe/play enforcement).
+    private var feedIsBlocked = false
+    private var capturingBlock = false
     /// Channel podcast:guid — feed-provided UUIDv5 only; never invent / never generate from feed URL.
     private var podcastGuid: String?
     /// Channel podcast:person — feed-provided only; never invent people or default role/group.
@@ -243,6 +246,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             categories: Self.uniqueCategories(categoryTexts),
             isLocked: feedIsLocked,
             lockedOwner: lockedOwnerAttr,
+            isBlocked: feedIsBlocked,
             podcastGuid: podcastGuid,
             people: channelPeople,
             trailers: channelTrailers,
@@ -416,6 +420,12 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 if let owner, !owner.isEmpty {
                     lockedOwnerAttr = owner
                 }
+            }
+        case "block":
+            // podcast:block (optional id=platform) and/or itunes:block — channel directory hide request.
+            // Display-only — this app does not enforce (subscribe/play still allowed). Distinct from podcast:locked.
+            if !inItem && !inLiveItem && !inPodroll && !inPublisher {
+                capturingBlock = true
             }
         case "updatefrequency":
             // Podcast Index: <podcast:updateFrequency rrule="…" dtstart="…" complete="true|false">Weekly</podcast:updateFrequency>
@@ -910,6 +920,15 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     }
                     // Owner without a parseable yes/no stays stored but UI only shows when isLocked.
                     capturingLocked = false
+                }
+            case "block":
+                // podcast:block / itunes:block — yes/true → directory block metadata (OR across tags; no does not clear a prior yes).
+                // Optional podcast:block id=platform is ignored for the single isBlocked flag (display-only).
+                if capturingBlock {
+                    if let flagged = PodcastBlockParsing.parse(text), flagged {
+                        feedIsBlocked = true
+                    }
+                    capturingBlock = false
                 }
             case "funding":
                 // podcast:funding text node = creator label (optional; may be truncated by aggregators ~128 chars).
@@ -1670,6 +1689,24 @@ enum ItunesCompleteParsing {
 /// Podcast Index `podcast:locked` channel text nodes.
 /// Spec: `yes` / `no`. Also accept `true` / `false` for lenient feeds. Unknown/empty → nil (do not invent).
 enum PodcastLockedParsing {
+    static func parse(_ raw: String) -> Bool? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !trimmed.isEmpty else { return nil }
+        switch trimmed {
+        case "yes", "true":
+            return true
+        case "no", "false":
+            return false
+        default:
+            return nil
+        }
+    }
+}
+
+/// Channel `podcast:block` / `itunes:block` text nodes (directory hide request).
+/// Spec: `yes` / `no` (Apple often `Yes`). Also accept `true` / `false`. Unknown/empty → nil (do not invent).
+/// Display-only — directories may honor this; this app does not enforce subscribe/play.
+enum PodcastBlockParsing {
     static func parse(_ raw: String) -> Bool? {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !trimmed.isEmpty else { return nil }

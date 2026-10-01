@@ -141,6 +141,11 @@ struct FeedDetailView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver for podcast:block / itunes:block yes badge + honest directory display-only footnote.
+    private var feedBlockedAccessibilityLabel: String {
+        liveFeed.podcastBlockAccessibilityLabel
+    }
+
     /// Channel podcast:updateFrequency when present — hide when absent (never invent; display-only).
     private var displayUpdateFrequency: PodcastUpdateFrequency? {
         liveFeed.displayUpdateFrequency
@@ -375,6 +380,25 @@ struct FeedDetailView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(feedLockedAccessibilityLabel)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:block / itunes:block yes/true — display-only directory metadata; distinct from podcast:locked; no subscribe/play block.
+            if liveFeed.isBlocked {
+                Section {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(String(localized: "Blocked"))
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                        Text(String(localized: "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work."))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(feedBlockedAccessibilityLabel)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }

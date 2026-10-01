@@ -341,6 +341,22 @@ struct FeedDescriptionSheetView: View {
                         .accessibilityLabel(feed.itunesCompleteAccessibilityLabel)
                     }
 
+                    if feed.isBlocked {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(String(localized: "Blocked"))
+                                .font(.caption.weight(.semibold))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.secondary.opacity(0.2), in: Capsule())
+                            Text(String(localized: "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work."))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(feed.podcastBlockAccessibilityLabel)
+                    }
+
                     if !displayCategories.isEmpty {
                         FeedDescriptionCategoryChips(categories: displayCategories)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -452,6 +468,22 @@ struct FeedDescriptionSheetView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(feed.itunesCompleteAccessibilityLabel)
+                    }
+
+                    if feed.isBlocked {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(String(localized: "Blocked"))
+                                .font(.caption.weight(.semibold))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.secondary.opacity(0.2), in: Capsule())
+                            Text(String(localized: "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work."))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(feed.podcastBlockAccessibilityLabel)
                     }
 
                     if !displayCategories.isEmpty {

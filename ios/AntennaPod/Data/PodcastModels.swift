@@ -1884,6 +1884,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     var isLocked: Bool
     /// Optional `owner` email attribute on `podcast:locked` when the feed provides it. Nil when absent — never invent.
     var lockedOwner: String?
+    /// Channel `podcast:block` and/or `itunes:block` yes/true (OR across tags). `false` when absent/no — never invent; UI hides unless true.
+    /// Display-only directory metadata — this app does **not** enforce (subscribe/play still allowed). **Distinct** from `podcast:locked`.
+    var isBlocked: Bool
     /// Podcast Index channel `podcast:guid` (UUIDv5 string) when the feed provides it.
     /// Nil or blank when absent — **never invent** / never generate from feed URL; display/copy only (not subscription primary key).
     /// Distinct from per-episode RSS `guid` / Atom `id`.
@@ -2041,6 +2044,15 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// VoiceOver for channel podcast:block / itunes:block yes badge + honest display-only footnote.
+    /// Distinct from podcast:locked VoiceOver (both may appear).
+    var podcastBlockAccessibilityLabel: String {
+        [
+            String(localized: "Blocked"),
+            String(localized: "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work.")
+        ].joined(separator: ". ")
+    }
+
     /// Trimmed non-empty Podcast Index `podcast:guid` from the feed. Hidden when missing — never invent.
     var displayPodcastGuid: String? {
         guard let podcastGuid else { return nil }
@@ -2127,6 +2139,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         categories: [String] = [],
         isLocked: Bool = false,
         lockedOwner: String? = nil,
+        isBlocked: Bool = false,
         podcastGuid: String? = nil,
         people: [PodcastPerson] = [],
         trailers: [PodcastTrailer] = [],
@@ -2158,6 +2171,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.categories = categories
         self.isLocked = isLocked
         self.lockedOwner = lockedOwner
+        self.isBlocked = isBlocked
         self.podcastGuid = podcastGuid
         self.people = people
         self.trailers = trailers
@@ -2192,6 +2206,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         categories = try c.decodeIfPresent([String].self, forKey: .categories) ?? []
         isLocked = try c.decodeIfPresent(Bool.self, forKey: .isLocked) ?? false
         lockedOwner = try c.decodeIfPresent(String.self, forKey: .lockedOwner)
+        isBlocked = try c.decodeIfPresent(Bool.self, forKey: .isBlocked) ?? false
         podcastGuid = try c.decodeIfPresent(String.self, forKey: .podcastGuid)
         people = try c.decodeIfPresent([PodcastPerson].self, forKey: .people) ?? []
         trailers = try c.decodeIfPresent([PodcastTrailer].self, forKey: .trailers) ?? []
@@ -2207,7 +2222,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, licenses, podrollItems, publisherItems, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, isBlocked, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, licenses, podrollItems, publisherItems, episodes
     }
 }
 

@@ -17183,6 +17183,42 @@
           }
         }
       }
+    },
+    "Blocked": {
+      "extractionState": "manual",
+      "comment": "Badge when channel podcast:block or itunes:block is yes/true (Feed detail / description). Hidden when absent/no — display-only directory metadata; this app does not enforce (subscribe/play still work). Distinct from podcast:locked.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blocked"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blockiert"
+          }
+        }
+      }
+    },
+    "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work.": {
+      "extractionState": "manual",
+      "comment": "Honest footnote under Blocked badge — podcast:block / itunes:block display-only for directories; no subscribe/play enforcement. Distinct from podcast:locked.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Feed markiert podcast:block oder itunes:block für Verzeichnisse. Diese App setzt das nicht durch — Abonnieren und Abspielen funktionieren weiterhin."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
