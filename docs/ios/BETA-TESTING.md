@@ -104,8 +104,9 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ gpodder.net: Login + Sync (Subscriptions MVP) | ☐ gpodder.net: login + sync (subscriptions MVP) |
 | ☐ Nextcloud Gpodder: Base-URL + Sync | ☐ Nextcloud Gpodder: base URL + sync |
 | ☐ Sync-Fehler-Notification (lokal) | ☐ Sync error notification (local) |
-| ☐ Backup export ZIP (ohne Keychain-Secrets) | ☐ Backup export ZIP (no Keychain secrets) |
-| ☐ Backup import (Warnung + Reload) | ☐ Backup import (warn + reload) |
+| ☐ Backup export ZIP (ohne Keychain-Secrets; default ohne Media) | ☐ Backup export ZIP (no Keychain secrets; default no media) |
+| ☐ Backup: Include downloaded episode files (Warnung Größe/Zeit) | ☐ Backup: Include downloaded episode files (size/time warning) |
+| ☐ Backup import (Warnung + Reload; Media-Merge wenn vorhanden) | ☐ Backup import (warn + reload; media merge when present) |
 | ☐ OPML / HTML export | ☐ OPML / HTML export |
 
 ---

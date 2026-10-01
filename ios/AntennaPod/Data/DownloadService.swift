@@ -426,7 +426,8 @@ final class DownloadService: ObservableObject {
         inProgress = Set(pending.map(\.episode.id))
     }
 
-    /// After backup import: prune catalog to media files present on this device (MVP exports catalog only).
+    /// After backup import: prune catalog to media files present on this device
+    /// (media may have been restored from ZIP `downloads/` when the backup included them).
     /// Clears in-flight pending map (not restored across backup). Refreshes storage usage.
     func reloadAfterBackupImport() {
         // Drop stale pending mappings from before restore.

@@ -1,17 +1,19 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Settings → Backup: export / import iOS JSON Application Support backup (beta).
+/// Settings → Backup: export / import iOS JSON Application Support backup (beta); optional offline media.
 struct DataBackupSection: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var gpodder: GpodderSyncService
 
+    @State private var includeDownloadedMedia = false
     @State private var shareURL: URL?
     @State private var showShare = false
     @State private var showImporter = false
     @State private var showReplaceConfirm = false
+    @State private var showExportMediaConfirm = false
     @State private var pendingImportURL: URL?
     @State private var statusMessage: String?
     @State private var errorMessage: String?
@@ -19,8 +21,19 @@ struct DataBackupSection: View {
 
     var body: some View {
         Section {
+            Toggle(isOn: $includeDownloadedMedia) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Include downloaded episode files")
+                    Text(mediaToggleCaption)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            .disabled(isBusy)
+
             Button {
-                exportBackup()
+                requestExport()
             } label: {
                 Label("Export data backup", systemImage: "externaldrive.badge.timemachine")
             }
@@ -80,24 +93,85 @@ struct DataBackupSection: View {
                 clearPendingImportAccess()
             }
         } message: {
-            Text("This replaces subscriptions, queue, playback, favorites, archive, tags, feed settings, download catalog, and Settings prefs with the backup. Download media files are not in the backup (re-download). Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup.")
+            Text(importConfirmMessage)
+        }
+        .confirmationDialog(
+            "Include media in this export?",
+            isPresented: $showExportMediaConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Export with media") {
+                exportBackup(includeMedia: true)
+            }
+            Button("Export without media") {
+                includeDownloadedMedia = false
+                exportBackup(includeMedia: false)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(exportMediaConfirmMessage)
         }
     }
 
-    private var helpText: String {
-        "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Catalog only for downloads — offline media not included. gpodder password and Podcast Index keys stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML."
+    private var mediaEstimate: (fileCount: Int, bytes: Int64) {
+        DataBackupService.estimateMediaPayload()
     }
 
-    private func exportBackup() {
+    private var mediaToggleCaption: String {
+        let est = mediaEstimate
+        if est.fileCount == 0 {
+            return "Default off — keeps the ZIP small (JSON catalog only). No offline files on device right now."
+        }
+        let size = DataBackupService.formatBytes(est.bytes)
+        return "Default off — keeps the ZIP small. On: adds ~\(est.fileCount) file(s) (~\(size)) under downloads/ — larger ZIP, slower export/share/import (STORE, no compression)."
+    }
+
+    private var exportMediaConfirmMessage: String {
+        let est = mediaEstimate
+        let size = DataBackupService.formatBytes(est.bytes)
+        return "This will pack \(est.fileCount) offline episode file(s) (~\(size)) into the ZIP under downloads/. Export and sharing can take a long time and use a lot of storage. Keychain secrets are still omitted."
+    }
+
+    private var importConfirmMessage: String {
+        "This replaces subscriptions, queue, playback, favorites, archive, tags, feed settings, download catalog, and Settings prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup."
+    }
+
+    private var helpText: String {
+        "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Optional offline media via the toggle (ZIP folder downloads/ ↔ Documents/downloads). gpodder password and Podcast Index keys stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML."
+    }
+
+    private func requestExport() {
+        errorMessage = nil
+        statusMessage = nil
+        if includeDownloadedMedia {
+            let est = mediaEstimate
+            if est.fileCount > 0 {
+                showExportMediaConfirm = true
+                return
+            }
+        }
+        exportBackup(includeMedia: includeDownloadedMedia)
+    }
+
+    private func exportBackup(includeMedia: Bool) {
         errorMessage = nil
         statusMessage = nil
         isBusy = true
         defer { isBusy = false }
         do {
-            let url = try DataBackupService.exportTemporaryZip(settings: settings, gpodder: gpodder)
+            let url = try DataBackupService.exportTemporaryZip(
+                settings: settings,
+                gpodder: gpodder,
+                includeMedia: includeMedia
+            )
             shareURL = url
             showShare = true
-            statusMessage = "Backup ready to share (JSON ZIP, no media / no Keychain secrets)."
+            if includeMedia {
+                let est = mediaEstimate
+                statusMessage = "Backup ready (JSON + \(est.fileCount) media file(s) under downloads/; no Keychain secrets)."
+            } else {
+                statusMessage = "Backup ready to share (JSON ZIP, no media / no Keychain secrets)."
+            }
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -141,7 +215,7 @@ struct DataBackupSection: View {
                 gpodder: gpodder
             )
             try? FileManager.default.removeItem(at: temp)
-            statusMessage = "Import finished. Download media was not in the backup — re-download offline files if needed. Re-enter gpodder / Podcast Index secrets if Keychain empty."
+            statusMessage = "Import finished. Media restored when present under downloads/ in the ZIP; otherwise re-download offline files. Re-enter gpodder / Podcast Index secrets if Keychain empty."
         } catch {
             errorMessage = error.localizedDescription
         }
