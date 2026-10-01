@@ -9,7 +9,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Home (konfigurierbare Sektionen) | 4 | done | Primary tab: Continue listening, Inbox preview, Queue preview, recently updated feeds (by newest ep pubDate); See all → other tabs; pull-to-refresh; not configurable yet |
+| Home (konfigurierbare Sektionen) | 4 | done | Primary tab driven by Settings → Home layout: ordered section ids + visibility (Continue, Inbox, Queue, Discover/Top lists, Recently updated, Favorites optional/default-off). Empty optional sections still hide; Discover keeps charts preview when enabled; Edit/drag reorder + Reset; pull-to-refresh; See all → other tabs |
 | Queue | 5 | done | JSON persistence; swipe Remove + Archive; Edit → drag reorder (`moveQueue`) |
 | Inbox | 4 | done | Unplayed across feeds (`!isPlayed` && not archived), newest first; tab + pull-to-refresh; swipe Archive + Mark played + Archive all |
 | Episodes (Alle) | 4 | done | Flat list across subscriptions, newest pubDate first; Subscriptions → Library → Episodes; feed title + EpisodeRow actions; swipe Archive/Restore + Mark played; `.searchable` title/feed filter; soft cap newest 500 |
@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | done | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics / Echo), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork or video surface, scrubber, configurable skip, speed, sleep timer, mark/queue/download, video→audio-only toggle) |
 | Video Player | 1 | done | **Beta lite**: detect video via MIME `video/*` or enclosure ext mp4/m4v/mov/webm (`PodcastEpisode.isVideo`); full player shows `AVPlayerLayer` surface (replaces artwork) when not audio-only; shares `PlaybackService` AVPlayer. No PiP; no dedicated landscape chrome; Lockscreen stays audio metadata |
-| Settings | 5 | done | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + volume adaptation + skip silence (pref only) + playback source + play video as audio only + download storage limit + refresh interval + **new-episode action** + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + notifications (new eps / DL errors / sync errors) + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + Statistics / Echo + App Store rating prompt + Siri/Shortcuts note + Homescreen widget note + About (P0/P1); more prefs later |
+| Settings | 5 | done | Tab: theme + **Home layout** (section show/hide + reorder) + default speed + rewind/FF intervals + skip intro/outro + volume adaptation + skip silence (pref only) + playback source + play video as audio only + download storage limit + refresh interval + **new-episode action** + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + notifications (new eps / DL errors / sync errors) + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + Statistics / Echo + App Store rating prompt + Siri/Shortcuts note + Homescreen widget note + About (P0/P1); more prefs later |
 
 ## Subscriptions
 

@@ -84,6 +84,16 @@ struct SettingsView: View {
                         }
                     }
                 }
+                Section("Home") {
+                    NavigationLink {
+                        HomeLayoutSettingsView()
+                    } label: {
+                        Label("Home layout", systemImage: "rectangle.grid.1x2")
+                    }
+                    Text("Show, hide, and reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, Favorites). Empty optional sections still hide when they have no items.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 Section("Playback") {
                     Picker("Default speed", selection: $settings.defaultPlaybackSpeed) {
                         ForEach(AppSettings.speedPresets, id: \.self) { speed in

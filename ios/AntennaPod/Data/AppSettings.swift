@@ -193,7 +193,50 @@ enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
     ]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only).
+
+/// Configurable Home tab sections (order + show/hide). Mirrors Android HomePreferences lite.
+enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
+    case continueListening
+    case inbox
+    case queue
+    case discover
+    case recentlyUpdated
+    case favorites
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .continueListening: return "Continue listening"
+        case .inbox: return "New / Inbox"
+        case .queue: return "Queue"
+        case .discover: return "Discover"
+        case .recentlyUpdated: return "Recently updated"
+        case .favorites: return "Favorites"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .continueListening: return "play.circle"
+        case .inbox: return "tray.fill"
+        case .queue: return "list.bullet"
+        case .discover: return "chart.bar"
+        case .recentlyUpdated: return "dot.radiowaves.left.and.right"
+        case .favorites: return "star"
+        }
+    }
+
+    /// Default order matches the previous fixed Home layout (Discover first).
+    static let defaultOrder: [HomeSectionId] = [
+        .discover, .continueListening, .inbox, .queue, .recentlyUpdated, .favorites
+    ]
+
+    /// Favorites starts hidden so enabling it is opt-in (optional Home preview).
+    static let defaultHidden: Set<HomeSectionId> = [.favorites]
+}
+
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Home section order/visibility).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -247,6 +290,8 @@ final class AppSettings: ObservableObject {
         static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
         static let volumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
+        static let homeSectionOrder = "settings.home.sectionOrder"
+        static let homeHiddenSections = "settings.home.hiddenSections"
     }
 
     private enum Kind: String {
@@ -440,6 +485,55 @@ final class AppSettings: ObservableObject {
         }
     }
 
+
+    /// Ordered Home section ids (all known sections; hidden ones stay in order for Settings reorder).
+    @Published var homeSectionOrder: [HomeSectionId] {
+        didSet {
+            UserDefaults.standard.set(
+                homeSectionOrder.map(\.rawValue).joined(separator: ","),
+                forKey: Keys.homeSectionOrder
+            )
+        }
+    }
+
+    /// Section ids hidden from Home (still listed in Home layout Settings).
+    @Published var homeHiddenSections: Set<HomeSectionId> {
+        didSet {
+            let raw = homeHiddenSections.map(\.rawValue).sorted().joined(separator: ",")
+            UserDefaults.standard.set(raw, forKey: Keys.homeHiddenSections)
+        }
+    }
+
+    /// Visible sections in display order (hidden filtered out).
+    var visibleHomeSections: [HomeSectionId] {
+        homeSectionOrder.filter { !homeHiddenSections.contains($0) }
+    }
+
+    func isHomeSectionVisible(_ id: HomeSectionId) -> Bool {
+        !homeHiddenSections.contains(id)
+    }
+
+    func setHomeSectionVisible(_ id: HomeSectionId, _ visible: Bool) {
+        var next = homeHiddenSections
+        if visible {
+            next.remove(id)
+        } else {
+            next.insert(id)
+        }
+        homeHiddenSections = next
+    }
+
+    func moveHomeSection(from source: IndexSet, to destination: Int) {
+        var order = homeSectionOrder
+        order.move(fromOffsets: source, toOffset: destination)
+        homeSectionOrder = order
+    }
+
+    func resetHomeLayout() {
+        homeSectionOrder = HomeSectionId.defaultOrder
+        homeHiddenSections = HomeSectionId.defaultHidden
+    }
+
     /// Resolved ISO country used for chart requests.
     var resolvedChartsCountryCode: String {
         let pref = ChartsCountryPreference.fromStorage(chartsCountryCode)
@@ -557,6 +651,8 @@ final class AppSettings: ObservableObject {
         }
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
+        homeSectionOrder = Self.loadHomeSectionOrder()
+        homeHiddenSections = Self.loadHomeHiddenSections()
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh
@@ -611,6 +707,37 @@ final class AppSettings: ObservableObject {
     /// Label for Settings pickers (`Off` when 0).
     static func skipIntroOutroLabel(_ seconds: Int) -> String {
         seconds == 0 ? "Off" : "\(seconds) seconds"
+    }
+
+
+    private static func loadHomeSectionOrder() -> [HomeSectionId] {
+        let raw = UserDefaults.standard.string(forKey: Keys.homeSectionOrder) ?? ""
+        let parsed = raw.split(separator: ",").compactMap { HomeSectionId(rawValue: String($0)) }
+        var order: [HomeSectionId] = []
+        var seen = Set<HomeSectionId>()
+        for id in parsed where !seen.contains(id) {
+            order.append(id)
+            seen.insert(id)
+        }
+        for id in HomeSectionId.defaultOrder where !seen.contains(id) {
+            order.append(id)
+            seen.insert(id)
+        }
+        // Drop unknown leftovers already handled; ensure every CaseIterable id present.
+        for id in HomeSectionId.allCases where !seen.contains(id) {
+            order.append(id)
+        }
+        return order
+    }
+
+    private static func loadHomeHiddenSections() -> Set<HomeSectionId> {
+        guard UserDefaults.standard.object(forKey: Keys.homeHiddenSections) != nil else {
+            return HomeSectionId.defaultHidden
+        }
+        let raw = UserDefaults.standard.string(forKey: Keys.homeHiddenSections) ?? ""
+        let parsed = Set(raw.split(separator: ",").compactMap { HomeSectionId(rawValue: String($0)) })
+        // Ignore ids that are no longer known.
+        return parsed.intersection(Set(HomeSectionId.allCases))
     }
 
     private static func loadStorageLimit() -> DownloadStorageLimit {
@@ -671,7 +798,9 @@ final class AppSettings: ObservableObject {
             playVideoAsAudioOnly: playVideoAsAudioOnly,
             volumeAdaptationEnabled: volumeAdaptationEnabled,
             skipSilenceEnabled: skipSilenceEnabled,
-            chartsCountryCode: chartsCountryCode
+            chartsCountryCode: chartsCountryCode,
+            homeSectionOrder: homeSectionOrder.map(\.rawValue),
+            homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted()
         )
     }
 
@@ -727,6 +856,27 @@ final class AppSettings: ObservableObject {
         volumeAdaptationEnabled = snap.volumeAdaptationEnabled ?? false
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
         chartsCountryCode = ChartsCountryPreference.fromStorage(snap.chartsCountryCode).storageValue
+        if let orderRaw = snap.homeSectionOrder, !orderRaw.isEmpty {
+            var order: [HomeSectionId] = []
+            var seen = Set<HomeSectionId>()
+            for raw in orderRaw {
+                guard let id = HomeSectionId(rawValue: raw), !seen.contains(id) else { continue }
+                order.append(id)
+                seen.insert(id)
+            }
+            for id in HomeSectionId.defaultOrder where !seen.contains(id) {
+                order.append(id)
+                seen.insert(id)
+            }
+            for id in HomeSectionId.allCases where !seen.contains(id) {
+                order.append(id)
+            }
+            homeSectionOrder = order
+        }
+        if let hiddenRaw = snap.homeHiddenSections {
+            homeHiddenSections = Set(hiddenRaw.compactMap { HomeSectionId(rawValue: $0) })
+                .intersection(Set(HomeSectionId.allCases))
+        }
     }
 }
 
@@ -763,4 +913,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     /// Absent in older backups → treated as off (preference only; no AVPlayer skip).
     var skipSilenceEnabled: Bool? = false
     var chartsCountryCode: String
+    /// Absent in older backups → default order.
+    var homeSectionOrder: [String]? = nil
+    /// Absent in older backups → default hidden (Favorites).
+    var homeHiddenSections: [String]? = nil
 }

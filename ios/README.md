@@ -25,7 +25,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Sleep timer (clock presets + end of episode, fade-out)
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch)
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder)
-- Home tab (Continue listening, Inbox / Queue previews, recently updated feeds; pull-to-refresh)
+- Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
 - Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Archive all)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first)
 - Statistics (beta; Subscriptions → Library → Statistics + Settings; totals + top podcasts from `playback.json`; approx time)
@@ -36,14 +36,14 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Homescreen widget (beta lite; WidgetKit Continue listening from App Group snapshot; tap → `antennapod://play`; empty placeholder; may be stale / no scrubber)
 - Apple Watch companion (beta lite; watchOS Continue listening from same snapshot via WC push; Play → iPhone `antennapod://play`; empty state; no independent playback / downloads / queue)
 - Swipe actions (Queue Remove+Archive + drag reorder; Downloads Delete; Inbox/Feed/History/Favorites/Archived/All Episodes useful swipes)
-- Favorites / starred episodes (Subscriptions → Library → Favorites; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; auto-delete skips favorites)
+- Favorites / starred episodes (Subscriptions → Library → Favorites; optional Home preview via Home layout; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; auto-delete skips favorites)
 - Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived; bulk Archive all in Inbox)
 - Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500; searchable title/feed filter; EpisodeRow actions; swipe Archive + Mark played)
 - Share podcast / episode (FeedDetail toolbar share feed URL; EpisodeRow ShareLink / context menu / FeedDetail swipe; full player; prefer page link else enclosure)
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, volume adaptation, skip silence preference, playback source, play video as audio only, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors / sync errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, App Store rating prompt, Siri/Shortcuts note, Homescreen widget note, Apple Watch note, CarPlay note, About)
+- Settings tab (theme light/dark/system, **Home layout** (show/hide + reorder), default playback speed, rewind/FF intervals, skip intro/outro, volume adaptation, skip silence preference, playback source, play video as audio only, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors / sync errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, App Store rating prompt, Siri/Shortcuts note, Homescreen widget note, Apple Watch note, CarPlay note, About)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -81,7 +81,7 @@ ios/
     ├── AntennaPod.entitlements   # App Group
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers, WatchCompanionBridge
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + Apple Watch note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ error log), queue, settings (+ Home layout + gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + Apple Watch note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -121,16 +121,18 @@ Not a full device parental lock / Screen Time substitute.
 
 ## Home
 
-Primary root tab aggregating existing store data (no new persistence). Sections (hidden when empty):
+Primary root tab aggregating existing store data (no new persistence). **Settings → Home layout** configures section **order** and **visibility** (persisted in `AppSettings` / UserDefaults; included in iOS JSON backup).
 
-- **Continue listening** — in-progress episodes (`positionSeconds > 1`, not played), newest `lastPlayedAt` first; rows reuse `EpisodeRow` (resume / download / queue / mark).
-- **New / Inbox** — preview of unplayed, non-archived episodes (same as Inbox, capped); chevron / See all switches to the Inbox tab.
-- **Queue** — preview of queued episodes when the queue is non-empty; See all → Queue tab.
-- **Recently updated** — subscriptions sorted by newest episode `pubDateEpochMs`; tap → `FeedDetailView`; See all → Subscriptions.
+Available sections:
 
-- **Discover** — Apple iTunes top podcasts preview (charts country from Settings); See all → full charts list with Preview → Confirm Subscribe.
+- **Discover** — Apple iTunes top podcasts preview (charts country from Settings); See all → full charts list with Preview → Confirm Subscribe. When enabled, always shows the charts preview (not empty-hidden).
+- **Continue listening** — in-progress episodes (`positionSeconds > 1`, not played), newest `lastPlayedAt` first; rows reuse `EpisodeRow` (resume / download / queue / mark). Hidden when empty.
+- **New / Inbox** — preview of unplayed, non-archived episodes (same as Inbox, capped); chevron / See all switches to the Inbox tab. Hidden when empty.
+- **Queue** — preview of queued episodes when the queue is non-empty; See all → Queue tab. Hidden when empty.
+- **Recently updated** — subscriptions sorted by newest episode `pubDateEpochMs`; tap → `FeedDetailView`; See all → Subscriptions. Hidden when empty.
+- **Favorites** (optional) — starred episodes preview; See all → Library Favorites. **Off by default**; enable under Home layout. Hidden when empty.
 
-Pull-to-refresh calls `refreshAllFeeds()` (Discover preview reloads on appear / country change). Empty library still shows Discover plus a welcome empty state. Section layout is fixed for this beta (not user-configurable like Android Home).
+Default order: Discover → Continue → Inbox → Queue → Recently updated → Favorites (hidden). Home layout supports toggles, Edit/drag reorder, and Reset to defaults. Pull-to-refresh calls `refreshAllFeeds()` (Discover preview reloads on appear / country change). Empty library shows a welcome empty state (and Discover when that section is enabled).
 
 ## Queue
 
@@ -220,7 +222,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 
 ## Favorites
 
-**Subscriptions → Library → Favorites** (no extra root tab; no Home preview in this slice). Starred episode IDs live in Application Support `favorites.json` (episode id → `favoritedAtEpochMs`), independent of `playback.json` so clearing History does not unstar. Toggle from **EpisodeRow** (star icon) or the **full player** secondary actions. List is newest-favorited first across feeds; swipe **Unfavorite**. When **Delete episode after playing** is on, auto-delete **skips** favorited episodes (keeps the offline file). Unsubscribing a feed clears that feed’s favorite entries.
+**Subscriptions → Library → Favorites** (no extra root tab; optional Home preview via **Settings → Home layout**, off by default). Starred episode IDs live in Application Support `favorites.json` (episode id → `favoritedAtEpochMs`), independent of `playback.json` so clearing History does not unstar. Toggle from **EpisodeRow** (star icon) or the **full player** secondary actions. List is newest-favorited first across feeds; swipe **Unfavorite**. When **Delete episode after playing** is on, auto-delete **skips** favorited episodes (keeps the offline file). Unsubscribing a feed clears that feed’s favorite entries.
 
 ## Archive / restore
 
