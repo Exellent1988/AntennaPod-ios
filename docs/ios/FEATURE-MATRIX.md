@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (5): Inbox, Subscriptions, Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, ±30s, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | wip | Tab: theme + default speed + download storage limit (P0); more prefs later |
+| Settings | 5 | wip | Tab: theme + default speed + download storage limit + refresh interval (P0); more prefs later |
 
 ## Subscriptions
 
@@ -31,12 +31,12 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 |---------|---------|------------|---------|
 | Subscribe / Unsubscribe (URL) | 5 | wip | Subscribe-by-URL skeleton |
 | OPML Import/Export | 5 | done | Pure Swift XML (fork `ios/`); Settings + Subscriptions; batch subscribe with progress/errors |
-| Feed aktualisieren | 5 | wip | Fetch + parse on subscribe |
+| Feed aktualisieren | 5 | done | Fetch + parse on subscribe; pull-to-refresh all; auto refresh by Settings interval |
 | Episodenliste / Feed-Seite | 5 | wip | |
 | Archive / restore | 3 | todo | |
 | Tags / Folders | 3 | todo | |
 | Per-feed settings | 4 | todo | Auto-DL, Speed, Skip Intro |
-| Keep updated | 4 | todo | |
+| Keep updated | 4 | done | Global via Settings refresh interval (all subscribed feeds on launch/foreground when due); per-feed toggle later |
 | New-episode action (Inbox/Queue) | 4 | todo | Regeln → KMP |
 | Local folder feeds | 2 | todo | iOS DocumentPicker |
 | Share podcast/episode | 3 | todo | |
@@ -103,7 +103,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Theme light/dark/auto | 5 | done | UserDefaults; `preferredColorScheme` system/light/dark |
 | Default playback speed | 5 | done | UserDefaults; applied on fresh episode start; mini-player marks Default |
 | FF/Rewind seconds | 4 | todo | |
-| Refresh interval | 4 | todo | |
+| Refresh interval | 4 | done | UserDefaults presets: manual / 1h / 4h / 12h / 24h; due-check on launch + foreground → `refreshAllFeeds()`; BGAppRefreshTask stubbed (no `fetch` in Info.plist) |
 | Swipe actions | 3 | todo | |
 | Parental controls | 2 | todo | |
 | Notifications (DL/Sync errors) | 4 | todo | |

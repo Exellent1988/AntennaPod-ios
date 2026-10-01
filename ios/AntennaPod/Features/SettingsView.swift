@@ -81,6 +81,7 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+                refreshSection
                 storageSection
                 OpmlImportExportSection()
             }
@@ -104,6 +105,40 @@ struct SettingsView: View {
                 Text("Removes \(downloads.downloads.count) offline episode file(s). Playback history is kept.")
             }
         }
+    }
+
+    @ViewBuilder
+    private var refreshSection: some View {
+        Section {
+            Picker("Refresh interval", selection: $settings.refreshInterval) {
+                ForEach(FeedRefreshInterval.allCases) { interval in
+                    Text(interval.label).tag(interval)
+                }
+            }
+            if let last = settings.lastFeedRefreshAt {
+                LabeledContent("Last refresh") {
+                    Text(last, style: .relative)
+                        .foregroundStyle(.secondary)
+                }
+            } else {
+                LabeledContent("Last refresh") {
+                    Text("Never")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Text(refreshHelpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("Feeds / Keep updated")
+        }
+    }
+
+    private var refreshHelpText: String {
+        if settings.refreshInterval == .manual {
+            return "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode)."
+        }
+        return "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch."
     }
 
     @ViewBuilder

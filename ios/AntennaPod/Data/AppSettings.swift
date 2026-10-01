@@ -75,7 +75,39 @@ enum DownloadStorageLimit: Equatable, Hashable, Identifiable {
     ]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit).
+/// How often subscribed feeds are auto-refreshed (global; all feeds).
+enum FeedRefreshInterval: String, CaseIterable, Identifiable {
+    case manual
+    case oneHour
+    case fourHours
+    case twelveHours
+    case twentyFourHours
+
+    var id: String { rawValue }
+
+    /// `nil` means never auto-refresh (manual / pull-to-refresh only).
+    var timeInterval: TimeInterval? {
+        switch self {
+        case .manual: return nil
+        case .oneHour: return 60 * 60
+        case .fourHours: return 4 * 60 * 60
+        case .twelveHours: return 12 * 60 * 60
+        case .twentyFourHours: return 24 * 60 * 60
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .manual: return "Manual only"
+        case .oneHour: return "Every 1 hour"
+        case .fourHours: return "Every 4 hours"
+        case .twelveHours: return "Every 12 hours"
+        case .twentyFourHours: return "Every 24 hours"
+        }
+    }
+}
+
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -86,6 +118,8 @@ final class AppSettings: ObservableObject {
         static let defaultPlaybackSpeed = "settings.defaultPlaybackSpeed"
         static let storageLimitKind = "settings.storageLimit.kind"
         static let storageLimitValue = "settings.storageLimit.value"
+        static let refreshInterval = "settings.refreshInterval"
+        static let lastFeedRefreshAt = "settings.lastFeedRefreshAt"
     }
 
     private enum Kind: String {
@@ -113,6 +147,24 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Global auto-refresh cadence for all subscribed feeds (Keep updated).
+    @Published var refreshInterval: FeedRefreshInterval {
+        didSet {
+            UserDefaults.standard.set(refreshInterval.rawValue, forKey: Keys.refreshInterval)
+        }
+    }
+
+    /// Wall-clock of the last completed `refreshAllFeeds()` (manual or automatic).
+    @Published var lastFeedRefreshAt: Date? {
+        didSet {
+            if let lastFeedRefreshAt {
+                UserDefaults.standard.set(lastFeedRefreshAt.timeIntervalSince1970, forKey: Keys.lastFeedRefreshAt)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Keys.lastFeedRefreshAt)
+            }
+        }
+    }
+
     init() {
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
@@ -123,6 +175,28 @@ final class AppSettings: ObservableObject {
             defaultPlaybackSpeed = 1.0
         }
         downloadStorageLimit = Self.loadStorageLimit()
+        let intervalRaw = UserDefaults.standard.string(forKey: Keys.refreshInterval)
+            ?? FeedRefreshInterval.manual.rawValue
+        refreshInterval = FeedRefreshInterval(rawValue: intervalRaw) ?? .manual
+        if UserDefaults.standard.object(forKey: Keys.lastFeedRefreshAt) != nil {
+            let epoch = UserDefaults.standard.double(forKey: Keys.lastFeedRefreshAt)
+            lastFeedRefreshAt = Date(timeIntervalSince1970: epoch)
+        } else {
+            lastFeedRefreshAt = nil
+        }
+    }
+
+    /// `true` when interval is not manual and enough time has passed since the last refresh
+    /// (or never refreshed yet).
+    var isFeedRefreshDue: Bool {
+        guard let interval = refreshInterval.timeInterval else { return false }
+        guard let last = lastFeedRefreshAt else { return true }
+        return Date().timeIntervalSince(last) >= interval
+    }
+
+    /// Record a completed full refresh so the next due-check starts from now.
+    func markFeedRefreshCompleted(at date: Date = Date()) {
+        lastFeedRefreshAt = date
     }
 
     /// Apply a custom MB budget from the Settings stepper / text field.

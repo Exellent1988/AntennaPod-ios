@@ -16,6 +16,9 @@ final class PodcastStore: ObservableObject {
     @Published var lastError: String?
     @Published var opmlImport = OpmlImportState()
 
+    /// Optional settings for stamping last feed-refresh time after `refreshAllFeeds()`.
+    weak var settings: AppSettings?
+
     private let repository = FeedRepository()
 
     init() {
@@ -181,7 +184,7 @@ final class PodcastStore: ObservableObject {
         return items
     }
 
-    /// Refresh every subscribed feed (used by Inbox pull-to-refresh). Continues on per-feed errors.
+    /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
     func refreshAllFeeds() async {
         lastError = nil
         isLoading = true
@@ -194,6 +197,8 @@ final class PodcastStore: ObservableObject {
                 lastError = error.localizedDescription
             }
         }
+        // Stamp even if some feeds failed — avoids hammering on every foreground.
+        settings?.markFeedRefreshCompleted()
     }
 
     // MARK: - Library search (local only)
