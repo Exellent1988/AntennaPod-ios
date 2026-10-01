@@ -3078,6 +3078,23 @@
         }
       }
     },
+    "No favorites match your search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No favorites match your search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Favoriten passen zu deiner Suche."
+          }
+        }
+      }
+    },
     "No favorites yet": {
       "extractionState": "manual",
       "localizations": {
@@ -3142,6 +3159,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine passenden Episoden"
+          }
+        }
+      }
+    },
+    "No matching favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No matching favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine passenden Favoriten"
           }
         }
       }
@@ -4570,6 +4604,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Downloads durchsuchen"
+          }
+        }
+      }
+    },
+    "Search favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten durchsuchen"
           }
         }
       }

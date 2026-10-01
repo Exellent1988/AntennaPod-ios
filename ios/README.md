@@ -39,7 +39,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Homescreen widget (beta lite; WidgetKit Continue listening from App Group snapshot; tap → `antennapod://play`; empty placeholder; may be stale / no scrubber)
 - Apple Watch companion (beta lite; watchOS Continue listening from same snapshot via WC push; Play → iPhone `antennapod://play`; empty state; no independent playback / downloads / queue)
 - Swipe actions (Queue Remove+Archive + drag reorder + Clear queue confirm; Downloads Delete + toolbar Delete played downloads confirm; Inbox Archive+Mark played+Play Next+Add to queue; Feed/History(+ Clear history confirm)/Favorites(+ Clear favorites confirm)/Archived/All Episodes useful swipes)
-- Favorites / starred episodes (Subscriptions → Library → Favorites; optional Home preview via Home layout; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; toolbar Clear favorites with confirm; auto-delete skips favorites)
+- Favorites / starred episodes (Subscriptions → Library → Favorites; optional Home preview via Home layout; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; `.searchable` title/feed filter with debounce; toolbar Clear favorites with confirm on full list; auto-delete skips favorites)
 - Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived; bulk Archive all + Mark all as played in Inbox)
 - Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500 then All/Unplayed/Downloaded chips + searchable title/feed; EpisodeRow actions; swipe Archive + Mark played; filter persisted in AppSettings)
 - Share podcast / episode (FeedDetail toolbar share feed URL; EpisodeRow ShareLink / context menu / FeedDetail swipe; full player; prefer page link else enclosure)
@@ -68,6 +68,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Notifications for new episodes (local UserNotifications after refresh; Settings toggle; tap opens Inbox; no push)
 - Downloads tab search (`.searchable`; filter by episode title and/or feed title; light debounce; empty query = all; empty state when no matches) + toolbar **Delete played downloads** (confirm count/size; skips favorites; keeps unplayed)
 - Queue tab search (`.searchable`; filter by episode title and/or feed title; light debounce; empty query = all; empty state when no matches; **Edit/drag reorder disabled while filtering** — filtered indices would not map to full queue; Clear queue still clears full queue)
+- Favorites search (`.searchable`; filter by episode title and/or feed title; light debounce; empty query = all; empty state when no matches; **Clear favorites still clears full favorites list** — count in confirm is always full list; enabled whenever favorites non-empty even if filter shows no rows)
 - Download log / errors (ring buffer in Application Support; Downloads banner + errors list; Clear errors)
 - Notify on download / sync errors (local UserNotifications; Settings toggles default on; DL tap → Downloads; Sync tap → Settings Sync; no push)
 - Parental controls (beta; Settings → Parental controls; 4–6 digit PIN in Keychain; lock Add/Discover; optional Network/Downloads lock + hide explicit charts; session unlock until background)
@@ -267,13 +268,13 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 | Inbox | Mark played | Play Next + Add to queue + Archive | Toolbar menu: Mark all as played (confirm) + Archive all |
 | Feed detail | Archive / Restore | Play Next + Queue + Share | Toolbar Download all + Mark all as played (confirm) + EpisodeRow context: Play Next + Add to queue |
 | History | Mark unplayed (if played) | Remove playback state | Toolbar Clear history (confirm) |
-| Favorites | Archive | Unfavorite | Toolbar Clear favorites (confirm) |
+| Favorites | Archive | Unfavorite | `.searchable` title/feed; toolbar Clear favorites (confirm, full list) |
 | Archived | — | Restore | — |
 | All Episodes | Mark played / unplayed | Archive / Restore | — |
 
 ## Favorites
 
-**Subscriptions → Library → Favorites** (no extra root tab; optional Home preview via **Settings → Home layout**, off by default). Starred episode IDs live in Application Support `favorites.json` (episode id → `favoritedAtEpochMs`), independent of `playback.json` so clearing History does not unstar. Toggle from **EpisodeRow** (star icon) or the **full player** secondary actions. List is newest-favorited first across feeds; swipe **Unfavorite**. Toolbar menu **Clear favorites** confirms with the current count, then `clearFavorites()` clears the whole `favoriteAtById` side map — same honesty as per-row Unfavorite (downloads, archive, played state, and queue stay; no auto-delete on unfavorite). Disabled when empty. When **Delete episode after playing** is on, auto-delete **skips** favorited episodes (keeps the offline file). Unsubscribing a feed clears that feed’s favorite entries.
+**Subscriptions → Library → Favorites** (no extra root tab; optional Home preview via **Settings → Home layout**, off by default). Starred episode IDs live in Application Support `favorites.json` (episode id → `favoritedAtEpochMs`), independent of `playback.json` so clearing History does not unstar. Toggle from **EpisodeRow** (star icon) or the **full player** secondary actions. List is newest-favorited first across feeds; swipe **Unfavorite** + **Archive**. **Search** (`.searchable`, ~250 ms debounce) filters by episode title and/or feed title; empty query shows the full list; empty state when nothing matches. Toolbar menu **Clear favorites** confirms with the **full** favorites count (`items.count` / `store.favoriteEpisodes`), then `clearFavorites()` clears the whole `favoriteAtById` side map — same honesty as per-row Unfavorite (downloads, archive, played state, and queue stay; no auto-delete on unfavorite). The action stays enabled whenever favorites are non-empty, even if the current filter shows no rows. Disabled when empty. When **Delete episode after playing** is on, auto-delete **skips** favorited episodes (keeps the offline file). Unsubscribing a feed clears that feed’s favorite entries.
 
 ## Archive / restore
 
