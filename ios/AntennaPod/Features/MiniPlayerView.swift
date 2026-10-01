@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MiniPlayerView: View {
     @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var settings: AppSettings
 
     var body: some View {
         if let episode = playback.currentEpisode {
@@ -34,13 +35,22 @@ struct MiniPlayerView: View {
                     }
                     sleepTimerMenu
                     Menu {
-                        ForEach([0.8, 1.0, 1.2, 1.5, 2.0], id: \.self) { rate in
-                            Button("\(rate, specifier: "%.1f")×") {
-                                playback.setRate(Float(rate))
+                        ForEach(AppSettings.speedPresets, id: \.self) { speed in
+                            Button {
+                                playback.setRate(speed)
+                            } label: {
+                                HStack {
+                                    Text(String(format: "%.1f×", speed))
+                                    if speed == settings.defaultPlaybackSpeed {
+                                        Text("Default")
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
                             }
                         }
                     } label: {
-                        Text("\(playback.rate, specifier: "%.1f")×")
+                        Text(String(format: "%.1f×", playback.rate))
                             .font(.caption.monospacedDigit())
                     }
                 }

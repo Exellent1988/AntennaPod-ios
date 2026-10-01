@@ -15,6 +15,10 @@ struct RootTabView: View {
                 .tabItem {
                     Label("Queue", systemImage: "list.bullet")
                 }
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape")
+                }
         }
         .safeAreaInset(edge: .bottom) {
             MiniPlayerView()

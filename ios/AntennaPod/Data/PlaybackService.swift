@@ -40,6 +40,8 @@ final class PlaybackService: ObservableObject {
     weak var store: PodcastStore?
     /// Bound so continuous playback prefers offline files when present.
     weak var downloads: DownloadService?
+    /// Bound for default playback speed on new episode starts.
+    weak var settings: AppSettings?
 
     private var player: AVPlayer?
     private var timeObserver: Any?
@@ -58,8 +60,14 @@ final class PlaybackService: ObservableObject {
     private var cachedArtwork: MPMediaItemArtwork?
 
     func play(episode: PodcastEpisode, fileURL: URL? = nil) {
+        let isFreshEpisode = currentEpisode?.id != episode.id
         if let current = currentEpisode, current.id != episode.id {
             finishCurrentEpisode(ended: false)
+        }
+
+        // Fresh episode (or first play): use Settings default speed.
+        if isFreshEpisode {
+            rate = settings?.defaultPlaybackSpeed ?? 1.0
         }
 
         let resolvedFile = fileURL ?? downloads?.localURL(for: episode)

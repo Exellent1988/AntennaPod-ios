@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs |
 | Miniplayer + Full Player | 5 | wip | Mini player only |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | todo | Basis in P0 |
+| Settings | 5 | wip | Tab: theme + default speed (P0); more prefs later |
 
 ## Subscriptions
 
@@ -100,8 +100,8 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Theme light/dark/auto | 5 | todo | |
-| Default playback speed | 5 | todo | |
+| Theme light/dark/auto | 5 | done | UserDefaults; `preferredColorScheme` system/light/dark |
+| Default playback speed | 5 | done | UserDefaults; applied on fresh episode start; mini-player marks Default |
 | FF/Rewind seconds | 4 | todo | |
 | Refresh interval | 4 | todo | |
 | Swipe actions | 3 | todo | |
