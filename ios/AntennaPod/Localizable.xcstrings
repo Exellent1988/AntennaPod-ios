@@ -205,6 +205,40 @@
         }
       }
     },
+    "Author A–Z": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Author A–Z"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autor A–Z"
+          }
+        }
+      }
+    },
+    "Language A–Z": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language A–Z"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprache A–Z"
+          }
+        }
+      }
+    },
     "Always stream from the network URL, even if the episode is downloaded.": {
       "extractionState": "manual",
       "localizations": {

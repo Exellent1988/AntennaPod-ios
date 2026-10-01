@@ -25,6 +25,7 @@ struct SubscriptionsView: View {
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
     /// Client-side list order after search/tag filters (no drag-reorder of subscriptions).
+    /// Author / language: A–Z by feed-provided `displayAuthor` / `displayLanguage`; missing values last; title tiebreak.
     private func sortedFeeds(_ feeds: [PodcastFeed]) -> [PodcastFeed] {
         switch settings.subscriptionsSort {
         case .recentlyUpdated:
@@ -37,6 +38,36 @@ struct SubscriptionsView: View {
         case .alphabetical:
             return feeds.sorted {
                 $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
+        case .byAuthor:
+            return feeds.sorted { lhs, rhs in
+                switch (lhs.displayAuthor, rhs.displayAuthor) {
+                case (nil, nil):
+                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                case (nil, _):
+                    return false
+                case (_, nil):
+                    return true
+                case let (l?, r?):
+                    let cmp = l.localizedCaseInsensitiveCompare(r)
+                    if cmp != .orderedSame { return cmp == .orderedAscending }
+                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                }
+            }
+        case .byLanguage:
+            return feeds.sorted { lhs, rhs in
+                switch (lhs.displayLanguage, rhs.displayLanguage) {
+                case (nil, nil):
+                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                case (nil, _):
+                    return false
+                case (_, nil):
+                    return true
+                case let (l?, r?):
+                    let cmp = l.localizedCaseInsensitiveCompare(r)
+                    if cmp != .orderedSame { return cmp == .orderedAscending }
+                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                }
             }
         }
     }

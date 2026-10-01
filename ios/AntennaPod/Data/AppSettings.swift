@@ -199,6 +199,8 @@ enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
 enum SubscriptionsSort: String, CaseIterable, Identifiable {
     case recentlyUpdated
     case alphabetical
+    case byAuthor
+    case byLanguage
 
     var id: String { rawValue }
 
@@ -206,6 +208,8 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
         switch self {
         case .recentlyUpdated: return String(localized: "Recently updated")
         case .alphabetical: return String(localized: "Alphabetical A–Z")
+        case .byAuthor: return String(localized: "Author A–Z")
+        case .byLanguage: return String(localized: "Language A–Z")
         }
     }
 
@@ -213,6 +217,8 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
         switch self {
         case .recentlyUpdated: return "clock.arrow.circlepath"
         case .alphabetical: return "textformat.abc"
+        case .byAuthor: return "person"
+        case .byLanguage: return "globe"
         }
     }
 }
@@ -592,7 +598,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, subscriptions category filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History size limit, Favorites sort, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History size limit, Favorites sort, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
