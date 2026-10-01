@@ -699,8 +699,13 @@ struct FullPlayerView: View {
             .tint(favorited ? .yellow : nil)
             .accessibilityLabel(
                 favorited
-                    ? String(localized: "Unfavorite")
-                    : String(localized: "Favorite")
+                    ? String(localized: "Remove from favorites")
+                    : String(localized: "Add to favorites")
+            )
+            .accessibilityHint(
+                favorited
+                    ? String(localized: "Removes this episode from favorites")
+                    : String(localized: "Adds this episode to favorites")
             )
 
             Button {

@@ -481,8 +481,8 @@ struct EpisodeRow: View {
                 .tint(store.isFavorite(episode.id) ? .yellow : nil)
                 .accessibilityLabel(
                     store.isFavorite(episode.id)
-                        ? String(localized: "Unfavorite")
-                        : String(localized: "Favorite")
+                        ? String(localized: "Remove from favorites")
+                        : String(localized: "Add to favorites")
                 )
 
                 Button {
@@ -534,6 +534,11 @@ struct EpisodeRow: View {
                     systemImage: store.isFavorite(episode.id) ? "star.slash" : "star"
                 )
             }
+            .accessibilityLabel(
+                store.isFavorite(episode.id)
+                    ? String(localized: "Remove from favorites")
+                    : String(localized: "Add to favorites")
+            )
             Button {
                 store.toggleArchived(episode.id)
             } label: {

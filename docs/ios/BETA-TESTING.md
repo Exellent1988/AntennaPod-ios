@@ -48,6 +48,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Scrubber / Seek | ☐ Scrubber / seek |
 | ☐ Jump to position (Full: mm:ss / Min+Sek → Seek; disabled ohne Dauer) | ☐ Jump to position (Full: mm:ss / min+sec → seek; disabled without duration) |
 | ☐ Play from beginning (Full secondary: Seek 0 + Play; EpisodeRow Kontext; kein Unplayed-Flag) | ☐ Play from beginning (Full secondary: seek 0 + play; EpisodeRow context; no unplayed flag) |
+| ☐ Favorit umschalten (Full secondary Stern; EpisodeRow; sofort via `favorites.json`) | ☐ Favorite toggle (Full secondary star; EpisodeRow; immediate via `favorites.json`) |
 | ☐ Geschwindigkeit Tippen = nächste Preset (0.8…2.0 Wrap); Long-Press = Menü; Default aus Settings | ☐ Speed tap = next preset (0.8…2.0 wrap); long-press = menu; default from Settings |
 | ☐ Sleep timer (Uhr / Ende der Episode / Custom… 1–180 Min.) | ☐ Sleep timer (clock / end of episode / Custom… 1–180 min) |
 | ☐ Chapters tippen → Seek (wenn im Feed) | ☐ Chapters tap → seek (when in feed) |
@@ -116,7 +117,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Library: Episodes (Filter All / Ungehört / Heruntergeladen) / History / Favorites / Archived / Statistics / Echo | ☐ Library: Episodes (filter All / Unplayed / Downloaded) / History / Favorites / Archived / Statistics / Echo |
 | ☐ History: Verlauf leeren (Bestätigung) | ☐ History: Clear history (confirm) |
 | ☐ History: Suche (Titel / Feed) | ☐ History: search (title / feed) |
-| ☐ Favoriten (Stern) | ☐ Favorites (star) |
+| ☐ Favoriten (Stern; Full Player + EpisodeRow; VoiceOver Add/Remove) | ☐ Favorites (star; Full Player + EpisodeRow; VoiceOver Add/Remove) |
 | ☐ Favoriten: Suche (Titel / Feed) | ☐ Favorites: search (title / feed) |
 | ☐ Favoriten: Favoriten leeren (Bestätigung) | ☐ Favorites: Clear favorites (confirm) |
 | ☐ Archive / Restore | ☐ Archive / restore |
