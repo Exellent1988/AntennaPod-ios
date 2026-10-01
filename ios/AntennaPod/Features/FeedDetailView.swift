@@ -321,8 +321,8 @@ struct EpisodeRow: View {
 
     private var resumeLabel: String {
         if !state.isPlayed, state.positionSeconds > 1 {
-            return "Resume"
+            return String(localized: "Resume")
         }
-        return "Play"
+        return String(localized: "Play")
     }
 }

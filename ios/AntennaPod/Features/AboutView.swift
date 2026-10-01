@@ -85,7 +85,7 @@ struct AboutView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func aboutLink(title: String, subtitle: String, systemImage: String, url: URL) -> some View {
+    private func aboutLink(title: LocalizedStringKey, subtitle: String, systemImage: String, url: URL) -> some View {
         Link(destination: url) {
             Label {
                 VStack(alignment: .leading, spacing: 2) {

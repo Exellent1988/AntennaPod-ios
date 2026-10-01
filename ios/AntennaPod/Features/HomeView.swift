@@ -115,9 +115,9 @@ struct HomeView: View {
 
     private var welcomeDescription: String {
         if settings.isHomeSectionVisible(.discover) {
-            return "Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Or use Discover for Apple Charts. Customize sections under Settings → Home layout."
+            return String(localized: "Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Or use Discover for Apple Charts. Customize sections under Settings → Home layout.")
         }
-        return "Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Customize sections under Settings → Home layout."
+        return String(localized: "Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Customize sections under Settings → Home layout.")
     }
 
     @ViewBuilder

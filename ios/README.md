@@ -26,6 +26,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch)
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
+- German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings section headers, empty states, primary actions — **partial**, not full i18n)
 - Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Archive all)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first)
 - Statistics (beta; Subscriptions → Library → Statistics + Settings; totals + top podcasts from `playback.json`; approx time)
@@ -133,6 +134,23 @@ Available sections:
 - **Favorites** (optional) — starred episodes preview; See all → Library Favorites. **Off by default**; enable under Home layout. Hidden when empty.
 
 Default order: Discover → Continue → Inbox → Queue → Recently updated → Favorites (hidden). Home layout supports toggles, Edit/drag reorder, and Reset to defaults. Pull-to-refresh calls `refreshAllFeeds()` (Discover preview reloads on appear / country change). Empty library shows a welcome empty state (and Discover when that section is enabled).
+
+
+## Localization (German, beta / partial)
+
+Development language remains **English** (`developmentRegion: en`). `ios/project.yml` `knownRegions` includes `en`, `de`, and `Base`. User-visible copy for this pass lives in **`ios/AntennaPod/Localizable.xcstrings`** (String Catalog; en source + de).
+
+SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` string literals resolve via `LocalizedStringKey`. Plain `String` surfaces that need a lookup use `String(localized:)` (e.g. `HomeSectionId.label`, EpisodeRow Play/Resume, Home welcome empty-state copy, Parental PIN Save/Unlock defaults). About link titles use `LocalizedStringKey`.
+
+**Covered (partial):**
+
+- Tab bar + main navigation titles: Home, Inbox, Subscriptions, Queue, Downloads, Settings (+ About, Favorites, Discover, Download errors, Home layout)
+- Settings section headers: Appearance, Home, Playback, Library, Privacy, About, Backup, Sync, Feeds / Keep updated, Auto-download, Network / Downloads, Notifications, Downloads / Storage, Discovery, App Store, Siri / Shortcuts, Homescreen widget, Apple Watch, CarPlay, Import / Export
+- Primary actions: Play, Pause, Resume, Download, Subscribe / Confirm Subscribe, Cancel, Save, Delete, Remove, Archive, Mark played / unplayed, common empty-state titles + main-tab empty descriptions
+- Home section labels (layout toggles + Home headers): Continue listening, New / Inbox, Queue, Discover, Recently updated, Favorites
+- Backup / Sync section labels and primary Backup buttons
+
+**Not covered in this pass (still English):** long Settings footnotes / help captions, discovery search chrome beyond titles, parental-controls copy beyond Save/Unlock/Enable/Disable, network/service error strings, notification bodies, Statistics/Echo detail rows, Widget / Watch UI strings, and most secondary toolbars. Regenerating XcodeGen on a Mac picks up the catalog + regions; device/simulator language German shows translated keys when present.
 
 ## Queue
 

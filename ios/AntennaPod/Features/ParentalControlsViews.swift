@@ -58,7 +58,7 @@ struct ParentalControlsSettingsView: View {
         .sheet(isPresented: $showSetPIN) {
             ParentalSetPINSheet(
                 title: "Set PIN",
-                confirmLabel: "Enable",
+                confirmLabel: String(localized: "Enable"),
                 onCancel: {
                     showSetPIN = false
                 },
@@ -90,7 +90,7 @@ struct ParentalControlsSettingsView: View {
             ParentalPINPromptSheet(
                 title: "Disable parental controls",
                 message: "Enter your PIN to turn off parental controls and remove the stored PIN.",
-                confirmLabel: "Disable",
+                confirmLabel: String(localized: "Disable"),
                 onCancel: { showDisablePIN = false },
                 onSuccess: { pin in
                     do {
@@ -140,7 +140,7 @@ struct ParentalControlsSettingsView: View {
 struct ParentalPINPromptSheet: View {
     let title: String
     var message: String = "Enter your parental controls PIN to continue."
-    var confirmLabel: String = "Unlock"
+    var confirmLabel: String = String(localized: "Unlock")
     let onCancel: () -> Void
     /// Return `true` to dismiss (caller may also unlock session). Return `false` on wrong PIN.
     let onSuccess: (String) -> Bool
@@ -198,7 +198,7 @@ struct ParentalPINPromptSheet: View {
 
 struct ParentalSetPINSheet: View {
     let title: String
-    var confirmLabel: String = "Save"
+    var confirmLabel: String = String(localized: "Save")
     let onCancel: () -> Void
     let onSave: (String) -> Void
 

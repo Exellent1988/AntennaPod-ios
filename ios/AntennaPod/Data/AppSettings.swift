@@ -207,12 +207,12 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
 
     var label: String {
         switch self {
-        case .continueListening: return "Continue listening"
-        case .inbox: return "New / Inbox"
-        case .queue: return "Queue"
-        case .discover: return "Discover"
-        case .recentlyUpdated: return "Recently updated"
-        case .favorites: return "Favorites"
+        case .continueListening: return String(localized: "Continue listening")
+        case .inbox: return String(localized: "New / Inbox")
+        case .queue: return String(localized: "Queue")
+        case .discover: return String(localized: "Discover")
+        case .recentlyUpdated: return String(localized: "Recently updated")
+        case .favorites: return String(localized: "Favorites")
         }
     }
 
