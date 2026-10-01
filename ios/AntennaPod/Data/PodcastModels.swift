@@ -1499,7 +1499,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     var seasonNumber: Int?
     /// iTunes episode number from `itunes:episode`. `nil` = not in feed — never invent sequential episode numbers.
     var episodeNumber: Int?
-    /// iTunes episode type from `itunes:episodeType` (`full` / `trailer` / `bonus`). `nil` = not in feed.
+    /// iTunes episode type from `itunes:episodeType` (raw feed string: `full` / `trailer` / `bonus` / …).
+    /// `nil` = not in feed — never invent. Display localizes known; unknown → show raw; hide when missing.
     var episodeType: String?
     /// `itunes:explicit` yes/true/explicit on the item (or inherited from channel when item omits it).
     /// `false` when missing, clean/no/false, or unknown — never invent; UI hides badge unless true.
@@ -1741,23 +1742,49 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         }
     }
 
-    /// Localized Trailer / Bonus when `itunes:episodeType` is trailer or bonus.
-    /// `full` and unknown/missing stay hidden (full is the default).
-    var episodeTypeCaption: String? {
-        guard let raw = episodeType?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
-              !raw.isEmpty else {
-            return nil
-        }
-        switch raw {
+    /// Trimmed non-empty `itunes:episodeType` from the feed. Hidden when missing — never invent.
+    var episodeTypeCode: String? {
+        guard let episodeType else { return nil }
+        let trimmed = episodeType.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Capsule / row label for `itunes:episodeType`: localized Full / Trailer / Bonus when known; else raw feed string.
+    /// `nil` when missing — never invent. Display-only (does not filter episode lists).
+    /// Distinct from channel `podcast:trailer` (Feed detail teaser).
+    var displayEpisodeType: String? {
+        guard let code = episodeTypeCode else { return nil }
+        switch code.lowercased() {
+        case "full":
+            return String(localized: "Full")
         case "trailer":
             return String(localized: "Trailer")
         case "bonus":
             return String(localized: "Bonus")
         default:
-            return nil
+            return code
         }
     }
+
+    /// VoiceOver for item `itunes:episodeType` (localized known values; "Episode type …" for unknown raw).
+    var episodeTypeAccessibilityLabel: String? {
+        guard let code = episodeTypeCode else { return nil }
+        switch code.lowercased() {
+        case "full":
+            return String(localized: "Full")
+        case "trailer":
+            return String(localized: "Trailer")
+        case "bonus":
+            return String(localized: "Bonus")
+        default:
+            return String(localized: "Episode type \(code)")
+        }
+    }
+
+    /// Alias for `displayEpisodeType` (EpisodeRow / legacy caption call sites).
+    var episodeTypeCaption: String? { displayEpisodeType }
 }
+
 
 /// Podcast Index channel `podcast:updateFrequency` (Podcasting 2.0).
 /// Free-form display text (node value, typically ≤128 chars) + optional attributes:

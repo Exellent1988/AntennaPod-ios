@@ -106,6 +106,24 @@ struct EpisodeDescriptionSheetView: View {
         !episode.displayLicenses.isEmpty
     }
 
+    /// Item itunes:episodeType when set — Full/Trailer/Bonus or raw; hide when missing (never invent).
+    private var displayEpisodeType: String? {
+        episode.displayEpisodeType
+    }
+
+    private var hasEpisodeType: Bool {
+        displayEpisodeType != nil
+    }
+
+    /// Compact S2 E5 when itunes:season / itunes:episode present.
+    private var seasonEpisodeCaption: String? {
+        episode.seasonEpisodeCaption
+    }
+
+    private var hasEpisodeMeta: Bool {
+        hasEpisodeType || seasonEpisodeCaption != nil || episode.isExplicit || episode.displayMedium != nil
+    }
+
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
     private var paragraphs: [String] {
         let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -172,7 +190,7 @@ struct EpisodeDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasAlternateEnclosures && !hasSoundbites && !hasTexts && !hasLicenses {
+                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasAlternateEnclosures && !hasSoundbites && !hasTexts && !hasLicenses && !hasEpisodeMeta {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "doc.text",
@@ -181,6 +199,7 @@ struct EpisodeDescriptionSheetView: View {
                 } else if plainDescription.isEmpty {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
+                            episodeMetaCapsules
                             if hasPeople {
                                 PodcastPeopleListView(people: displayPeople)
                             }
@@ -319,6 +338,7 @@ struct EpisodeDescriptionSheetView: View {
         } else if isFiltering {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 16) {
+                    episodeMetaCapsules
                     if hasPeople {
                         PodcastPeopleListView(people: displayPeople)
                     }
@@ -356,6 +376,7 @@ struct EpisodeDescriptionSheetView: View {
         } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
+                    episodeMetaCapsules
                     if hasPeople {
                         PodcastPeopleListView(people: displayPeople)
                     }
@@ -387,6 +408,48 @@ struct EpisodeDescriptionSheetView: View {
                 }
                 .padding()
             }
+        }
+    }
+
+    @ViewBuilder
+    private var episodeMetaCapsules: some View {
+        if hasEpisodeMeta {
+            HStack(spacing: 8) {
+                if let seasonEpisodeCaption {
+                    Text(seasonEpisodeCaption)
+                        .font(.caption.weight(.semibold))
+                        .monospacedDigit()
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.15), in: Capsule())
+                        .accessibilityLabel(episode.seasonEpisodeAccessibilityLabel ?? seasonEpisodeCaption)
+                }
+                if episode.isExplicit {
+                    Text(String(localized: "Explicit"))
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.15), in: Capsule())
+                        .accessibilityLabel(String(localized: "Explicit"))
+                }
+                if let medium = episode.displayMedium {
+                    Text(medium)
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.15), in: Capsule())
+                        .accessibilityLabel(String(localized: "Medium \(medium)"))
+                }
+                if let episodeType = displayEpisodeType {
+                    Text(episodeType)
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.15), in: Capsule())
+                        .accessibilityLabel(episode.episodeTypeAccessibilityLabel ?? episodeType)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 

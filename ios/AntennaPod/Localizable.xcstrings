@@ -14508,8 +14508,27 @@
         }
       }
     },
+    "Full": {
+      "extractionState": "manual",
+      "comment": "Capsule when item itunes:episodeType is full (Apple Podcasts). Hidden when missing — never invent. Display-only; does not filter lists.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vollständig"
+          }
+        }
+      }
+    },
     "Trailer": {
       "extractionState": "manual",
+      "comment": "Capsule when item itunes:episodeType is trailer (Apple Podcasts). Distinct from channel podcast:trailer. Hidden when missing — never invent. Display-only.",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -14527,6 +14546,7 @@
     },
     "Bonus": {
       "extractionState": "manual",
+      "comment": "Capsule when item itunes:episodeType is bonus (Apple Podcasts). Hidden when missing — never invent. Display-only.",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -14538,6 +14558,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bonus"
+          }
+        }
+      }
+    },
+    "Episode type %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for item itunes:episodeType when the feed provides an unknown/non-canonical value (show raw). Known full/trailer/bonus use their own keys. Never invent.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode type %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodentyp %@"
           }
         }
       }

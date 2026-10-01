@@ -116,7 +116,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itemSeasonNumber: Int?
     /// itunes:episode — nil when absent / unparsable.
     private var itemEpisodeNumber: Int?
-    /// itunes:episodeType (`full` / `trailer` / `bonus`) — nil when absent / unknown.
+    /// itunes:episodeType — raw feed string (full/trailer/bonus/…); nil when absent. Display localizes known; unknown → raw.
     private var itemEpisodeType: String?
     /// Item itunes:explicit override; nil = inherit channel (or false when channel unmarked).
     private var itemExplicitOverride: Bool?
@@ -809,8 +809,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     itemEpisodeNumber = n
                 }
             case "episodetype":
-                // itunes:episodeType — full | trailer | bonus (Apple Podcasts).
-                if let t = ItunesSeasonEpisodeParsing.episodeType(from: text) {
+                // itunes:episodeType — store non-empty raw (full/trailer/bonus/…); never invent. Display localizes known.
+                if let t = ItunesSeasonEpisodeParsing.nonEmptyEpisodeType(from: text) {
                     itemEpisodeType = t
                 }
             case "explicit":
@@ -1618,7 +1618,14 @@ enum ItunesSeasonEpisodeParsing {
         return n
     }
 
-    /// Canonical lowercase `full` / `trailer` / `bonus`, or `nil` when absent/unknown.
+    /// Non-empty trimmed raw `itunes:episodeType` text, or `nil` when blank.
+    /// Stores as provided (full/trailer/bonus/unknown); never invents. Display localizes known values.
+    static func nonEmptyEpisodeType(from raw: String) -> String? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Canonical lowercase `full` / `trailer` / `bonus`, or `nil` when absent/unknown (caller may still store raw).
     static func episodeType(from raw: String) -> String? {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         switch trimmed {

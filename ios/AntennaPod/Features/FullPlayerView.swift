@@ -354,6 +354,15 @@ struct FullPlayerView: View {
                                 ? String(localized: "Podcast unavailable")
                                 : String(localized: "Opens this episode's podcast in Subscriptions")
                         )
+                        // itunes:episodeType capsule when set — Full/Trailer/Bonus or raw; hide when missing (≠ channel podcast:trailer).
+                        if let episodeType = episode.displayEpisodeType {
+                            Text(episodeType)
+                                .font(.caption.weight(.semibold))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Color.secondary.opacity(0.15), in: Capsule())
+                                .accessibilityLabel(episode.episodeTypeAccessibilityLabel ?? episodeType)
+                        }
                         if let chapterTitle = currentChapterTitle {
                             Text(chapterTitle)
                                 .font(.subheadline.weight(.medium))
