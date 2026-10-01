@@ -4,6 +4,7 @@ struct FeedDetailView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
+    @EnvironmentObject private var settings: AppSettings
     let feed: PodcastFeed
     @State private var showPerFeedSettings = false
     @State private var showDownloadAllConfirm = false
@@ -16,6 +17,25 @@ struct FeedDetailView: View {
 
     private var feedTags: [String] {
         store.tags(for: liveFeed.id)
+    }
+
+    /// Episodes for this feed ordered by `AppSettings.feedEpisodeSort` (`pubDateEpochMs`).
+    /// Missing dates sort last in both modes. Does not mutate stored feed order.
+    private var sortedEpisodes: [PodcastEpisode] {
+        liveFeed.episodes.sorted { lhs, rhs in
+            switch settings.feedEpisodeSort {
+            case .newestFirst:
+                let l = lhs.pubDateEpochMs ?? Int64.min
+                let r = rhs.pubDateEpochMs ?? Int64.min
+                if l != r { return l > r }
+                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+            case .oldestFirst:
+                let l = lhs.pubDateEpochMs ?? Int64.max
+                let r = rhs.pubDateEpochMs ?? Int64.max
+                if l != r { return l < r }
+                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+            }
+        }
     }
 
     /// Unplayed, not archived, not downloaded — newest first, soft-capped.
@@ -48,7 +68,7 @@ struct FeedDetailView: View {
                 }
             }
             Section("Episodes") {
-                ForEach(liveFeed.episodes) { episode in
+                ForEach(sortedEpisodes) { episode in
                     EpisodeRow(episode: episode, feedTitle: liveFeed.title)
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
                             Button {
@@ -90,6 +110,21 @@ struct FeedDetailView: View {
         }
         .navigationTitle(liveFeed.title)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Picker(selection: $settings.feedEpisodeSort) {
+                        ForEach(FeedEpisodeSort.allCases) { sort in
+                            Label(sort.label, systemImage: sort.systemImage)
+                                .tag(sort)
+                        }
+                    } label: {
+                        Text("Sort")
+                    }
+                } label: {
+                    Label("Sort", systemImage: "arrow.up.arrow.down")
+                }
+                .accessibilityLabel("Sort episodes")
+            }
             ToolbarItem(placement: .primaryAction) {
                 HStack(spacing: 12) {
                     if let url = liveFeed.shareURL {

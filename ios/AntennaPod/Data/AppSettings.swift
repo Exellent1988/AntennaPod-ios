@@ -218,6 +218,29 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
 }
 
 
+
+/// How Feed detail orders episodes in one podcast (client-side; Inbox / All Episodes unchanged).
+enum FeedEpisodeSort: String, CaseIterable, Identifiable {
+    case newestFirst
+    case oldestFirst
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .newestFirst: return String(localized: "Newest first")
+        case .oldestFirst: return String(localized: "Oldest first")
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .newestFirst: return "arrow.down"
+        case .oldestFirst: return "arrow.up"
+        }
+    }
+}
+
 /// Filter chips on Library → Episodes (All Episodes). Applied after the newest-500 soft cap.
 enum AllEpisodesFilter: String, CaseIterable, Identifiable {
     case all
@@ -277,7 +300,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Home section order/visibility, subscriptions list sort, All Episodes filter chips).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -336,6 +359,7 @@ final class AppSettings: ObservableObject {
         static let homeSectionOrder = "settings.home.sectionOrder"
         static let homeHiddenSections = "settings.home.hiddenSections"
         static let subscriptionsSort = "settings.subscriptionsSort"
+        static let feedEpisodeSort = "settings.feedEpisodeSort"
         static let allEpisodesFilter = "settings.allEpisodesFilter"
     }
 
@@ -573,6 +597,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Feed detail episode list order by `pubDateEpochMs`: newest first (default) or oldest first.
+    /// Global preference (not per-feed) for simplicity. Does not change Inbox / All Episodes.
+    @Published var feedEpisodeSort: FeedEpisodeSort {
+        didSet {
+            UserDefaults.standard.set(feedEpisodeSort.rawValue, forKey: Keys.feedEpisodeSort)
+        }
+    }
+
     /// Library → Episodes chip filter (All / Unplayed / Downloaded). Default All. Persisted.
     @Published var allEpisodesFilter: AllEpisodesFilter {
         didSet {
@@ -744,6 +776,9 @@ final class AppSettings: ObservableObject {
         let sortRaw = UserDefaults.standard.string(forKey: Keys.subscriptionsSort)
             ?? SubscriptionsSort.recentlyUpdated.rawValue
         subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
+        let feedEpSortRaw = UserDefaults.standard.string(forKey: Keys.feedEpisodeSort)
+            ?? FeedEpisodeSort.newestFirst.rawValue
+        feedEpisodeSort = FeedEpisodeSort(rawValue: feedEpSortRaw) ?? .newestFirst
         let episodesFilterRaw = UserDefaults.standard.string(forKey: Keys.allEpisodesFilter)
             ?? AllEpisodesFilter.all.rawValue
         allEpisodesFilter = AllEpisodesFilter(rawValue: episodesFilterRaw) ?? .all
@@ -898,6 +933,7 @@ final class AppSettings: ObservableObject {
             homeSectionOrder: homeSectionOrder.map(\.rawValue),
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
             subscriptionsSort: subscriptionsSort.rawValue,
+            feedEpisodeSort: feedEpisodeSort.rawValue,
             allEpisodesFilter: allEpisodesFilter.rawValue
         )
     }
@@ -980,6 +1016,9 @@ final class AppSettings: ObservableObject {
         if let sortRaw = snap.subscriptionsSort {
             subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
         }
+        if let feedEpSortRaw = snap.feedEpisodeSort {
+            feedEpisodeSort = FeedEpisodeSort(rawValue: feedEpSortRaw) ?? .newestFirst
+        }
         if let filterRaw = snap.allEpisodesFilter {
             allEpisodesFilter = AllEpisodesFilter(rawValue: filterRaw) ?? .all
         }
@@ -1029,6 +1068,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var homeHiddenSections: [String]? = nil
     /// Absent in older backups → recentlyUpdated (default).
     var subscriptionsSort: String? = nil
+    /// Absent in older backups → newestFirst (default).
+    var feedEpisodeSort: String? = nil
     /// Absent in older backups → all (default).
     var allEpisodesFilter: String? = nil
 }
