@@ -52,6 +52,11 @@ struct FeedDetailView: View {
         liveFeed.displayLanguage
     }
 
+    /// itunes:category texts when the feed provided them — empty → hide (never invent taxonomy).
+    private var displayCategories: [String] {
+        liveFeed.displayCategories
+    }
+
     /// Episodes for this feed ordered by `AppSettings.feedEpisodeSort` (`pubDateEpochMs`).
     /// Missing dates sort last in both modes. Does not mutate stored feed order.
     private var sortedEpisodes: [PodcastEpisode] {
@@ -205,6 +210,18 @@ struct FeedDetailView: View {
                         .background(Color.secondary.opacity(0.2), in: Capsule())
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityLabel(String(localized: "Explicit"))
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Feed itunes:category chips (parent + nested text attrs); hide when none — never invent.
+            if !displayCategories.isEmpty {
+                Section {
+                    FeedCategoryChips(categories: displayCategories)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(
+                            String(localized: "Categories \(displayCategories.joined(separator: ", "))")
+                        )
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -596,6 +613,24 @@ private struct FeedEpisodeFilterChip: View {
         .accessibilityLabel(title)
         .accessibilityHint(String(localized: "Filters the Feed episodes list"))
         .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+}
+
+/// Wrapping itunes:category chips (Feed detail / description). Feed text only — no taxonomy mapping.
+private struct FeedCategoryChips: View {
+    let categories: [String]
+
+    var body: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: 8)], alignment: .leading, spacing: 8) {
+            ForEach(categories, id: \.self) { name in
+                Text(name)
+                    .font(.caption)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(Color.secondary.opacity(0.15), in: Capsule())
+                    .accessibilityLabel(String(localized: "Category \(name)"))
+            }
+        }
     }
 }
 

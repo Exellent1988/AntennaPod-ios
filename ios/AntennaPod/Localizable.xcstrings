@@ -14594,6 +14594,42 @@
           }
         }
       }
+    },
+    "Category %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for a single itunes:category text attribute from the feed. Feed text only — never invent taxonomy.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Category %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategorie %@"
+          }
+        }
+      }
+    },
+    "Categories %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for feed itunes:category list (parent + nested text). Feed text only — never invent App Store taxonomy.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Categories %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategorien %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

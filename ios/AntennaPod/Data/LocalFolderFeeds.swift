@@ -269,6 +269,7 @@ enum LocalFolderScanner {
             language: nil,
             fundingUrl: nil,
             fundingLabel: nil,
+            categories: [],
             episodes: episodes
         )
     }

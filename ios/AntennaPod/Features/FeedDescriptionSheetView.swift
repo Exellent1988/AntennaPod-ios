@@ -3,7 +3,7 @@ import UIKit
 
 /// Scrollable podcast / feed description sheet (plain text; HTML stripped for beta).
 /// Parallel to `EpisodeDescriptionSheetView` shownotes. Uses `PodcastFeed.descriptionText`
-/// plus optional `author` / `language` under the title when the feed provided them (hidden when missing).
+/// plus optional `author` / `language` / `categories` under the title when the feed provided them (hidden when missing).
 /// Supports `.searchable` filter over already-loaded plain paragraphs/lines (case-insensitive,
 /// ~250 ms debounce). Does not fetch remote HTML beyond the feed's description field —
 /// no WebView / rich HTML renderer.
@@ -38,6 +38,10 @@ struct FeedDescriptionSheetView: View {
 
     private var displayLanguage: String? {
         feed.displayLanguage
+    }
+
+    private var displayCategories: [String] {
+        feed.displayCategories
     }
 
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
@@ -170,6 +174,15 @@ struct FeedDescriptionSheetView: View {
                             .accessibilityLabel(String(localized: "Language \(language)"))
                     }
 
+                    if !displayCategories.isEmpty {
+                        FeedDescriptionCategoryChips(categories: displayCategories)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(
+                                String(localized: "Categories \(displayCategories.joined(separator: ", "))")
+                            )
+                    }
+
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
                             .font(.body)
@@ -204,6 +217,15 @@ struct FeedDescriptionSheetView: View {
                             .accessibilityLabel(String(localized: "Language \(language)"))
                     }
 
+                    if !displayCategories.isEmpty {
+                        FeedDescriptionCategoryChips(categories: displayCategories)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(
+                                String(localized: "Categories \(displayCategories.joined(separator: ", "))")
+                            )
+                    }
+
                     Text(plainDescription)
                         .font(.body)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -234,6 +256,24 @@ struct FeedDescriptionSheetView: View {
             try? await Task.sleep(nanoseconds: debounceNs)
             guard !Task.isCancelled else { return }
             debouncedQuery = trimmed
+        }
+    }
+}
+
+
+/// itunes:category chips for the description sheet (feed text only).
+private struct FeedDescriptionCategoryChips: View {
+    let categories: [String]
+
+    var body: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: 8)], alignment: .leading, spacing: 8) {
+            ForEach(categories, id: \.self) { name in
+                Text(name)
+                    .font(.caption)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(Color.secondary.opacity(0.15), in: Capsule())
+            }
         }
     }
 }

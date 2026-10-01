@@ -557,6 +557,14 @@ struct SubscriptionsView: View {
                             .lineLimit(1)
                             .accessibilityHidden(true)
                     }
+                    // itunes:category caption when present; hide when none — never invent.
+                    if let cats = feed.categoriesCaption {
+                        Text(cats)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .accessibilityHidden(true)
+                    }
                     HStack(spacing: 6) {
                         Text("\(feed.episodes.count) episodes")
                             .font(.subheadline)
@@ -654,6 +662,9 @@ struct SubscriptionsView: View {
         }
         if let language = feed.displayLanguage {
             parts.append(String(localized: "Language \(language)"))
+        }
+        if let cats = feed.categoriesCaption {
+            parts.append(String(localized: "Categories \(cats)"))
         }
         let epCount = feed.episodes.count
         if epCount == 1 {

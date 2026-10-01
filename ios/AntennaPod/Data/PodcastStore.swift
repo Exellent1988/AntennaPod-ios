@@ -1475,7 +1475,7 @@ final class PodcastStore: ObservableObject {
 
     // MARK: - Library search (local only)
 
-    /// Matching subscriptions by feed title, optional descriptionText, author, or language code/name (case-insensitive).
+    /// Matching subscriptions by feed title, optional descriptionText, author, language, or categories (case-insensitive).
     func matchingFeeds(query: String) -> [PodcastFeed] {
         let q = Self.normalizedQuery(query)
         guard !q.isEmpty else { return [] }
@@ -1485,6 +1485,7 @@ final class PodcastStore: ObservableObject {
                 || Self.matches(feed.author, query: q)
                 || Self.matches(feed.language, query: q)
                 || Self.matches(feed.displayLanguage, query: q)
+                || feed.displayCategories.contains(where: { Self.matches($0, query: q) })
         }
         .sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
     }

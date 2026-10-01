@@ -31,6 +31,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var fundingLabel: String?
     private var fundingFromPodcastTag = false
     private var capturingFundingLabel = false
+    /// Channel itunes:category `text` attributes (parent + nested), feed order; de-duped when building feed.
+    private var categoryTexts: [String] = []
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -97,6 +99,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             ),
             fundingUrl: fundingUrl,
             fundingLabel: fundingLabel,
+            categories: Self.uniqueCategories(categoryTexts),
             episodes: episodes
         )
     }
@@ -196,6 +199,16 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 }
             } else if rel.isEmpty || rel == "alternate" {
                 link = href ?? link
+            }
+        case "category":
+            // itunes:category text="Technology" — parent and nested subcategory both fire here.
+            // Channel-level only; store attribute text as provided — never invent App Store taxonomy.
+            if !inItem {
+                let raw = (attributeDict["text"] ?? attributeDict["Text"])?
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                if let raw, !raw.isEmpty {
+                    categoryTexts.append(raw)
+                }
             }
         case "funding":
             // Podcast Index: <podcast:funding url="https://…">Support the show!</podcast:funding>
@@ -451,6 +464,21 @@ extension XMLFeedParser {
             }
         }
         return nil
+    }
+
+    /// Trim + case-insensitive de-dupe of itunes:category texts, preserving first-seen order.
+    fileprivate static func uniqueCategories(_ raw: [String]) -> [String] {
+        var seen = Set<String>()
+        var result: [String] = []
+        for item in raw {
+            let trimmed = item.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty else { continue }
+            let key = trimmed.lowercased()
+            guard !seen.contains(key) else { continue }
+            seen.insert(key)
+            result.append(trimmed)
+        }
+        return result
     }
 
     /// Capture `xml:lang` (or bare `lang`) once from root/channel attributes when still unset.

@@ -217,6 +217,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     var fundingUrl: String?
     /// Optional creator-supplied label for the funding link (`podcast:funding` text). Nil when absent / Atom payment-only.
     var fundingLabel: String?
+    /// Channel `itunes:category` `text` attributes (parent + nested subcategory), feed order, de-duped.
+    /// Empty when absent — never invent App Store taxonomy; UI hides when empty.
+    var categories: [String]
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -253,6 +256,28 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// Non-empty trimmed category strings from the feed (`itunes:category` text). Empty → hide UI.
+    var displayCategories: [String] {
+        var seen = Set<String>()
+        var result: [String] = []
+        for raw in categories {
+            let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty else { continue }
+            let key = trimmed.lowercased()
+            guard !seen.contains(key) else { continue }
+            seen.insert(key)
+            result.append(trimmed)
+        }
+        return result
+    }
+
+    /// Caption joining display categories with " · " for compact rows / VoiceOver. Nil when none.
+    var categoriesCaption: String? {
+        let list = displayCategories
+        guard !list.isEmpty else { return nil }
+        return list.joined(separator: " · ")
+    }
+
     init(
         id: UUID,
         title: String,
@@ -265,6 +290,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         language: String? = nil,
         fundingUrl: String? = nil,
         fundingLabel: String? = nil,
+        categories: [String] = [],
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -278,6 +304,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.language = language
         self.fundingUrl = fundingUrl
         self.fundingLabel = fundingLabel
+        self.categories = categories
         self.episodes = episodes
     }
 
@@ -294,11 +321,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         language = try c.decodeIfPresent(String.self, forKey: .language)
         fundingUrl = try c.decodeIfPresent(String.self, forKey: .fundingUrl)
         fundingLabel = try c.decodeIfPresent(String.self, forKey: .fundingLabel)
+        categories = try c.decodeIfPresent([String].self, forKey: .categories) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, episodes
     }
 }
 
