@@ -350,6 +350,20 @@ final class PodcastStore: ObservableObject {
         queue = shuffled
     }
 
+    /// Shuffle the **full** persisted queue, then move the currently playing episode to **index 0**
+    /// when it is in the queue. Composes `shuffleQueue()` + `moveQueueItemToTop(_:)`.
+    /// If `currentEpisode` is `nil` or not queued, behaves like plain `shuffleQueue`
+    /// (`moveQueueItemToTop` no-ops when not queued / already first).
+    /// Persists via `queue` `didSet` (same path as `moveQueue` / `shuffleQueue`). No-op when fewer than 2 items.
+    /// Does **not** change `PlaybackService.currentEpisode` identity, seek, or stop playback.
+    /// Callers must gate on queue unlock (reorder-only lock, same as Shuffle) and confirm first.
+    func shuffleQueueKeepingPlayingFirst(currentEpisode: PodcastEpisode?) {
+        shuffleQueue()
+        if let currentEpisode {
+            moveQueueItemToTop(currentEpisode)
+        }
+    }
+
     /// Reverse the **full** persisted queue order (first ↔ last).
     /// Persists via `queue` `didSet` (same path as `moveQueue` / `shuffleQueue`). No-op when fewer than 2 items.
     /// Does **not** change `PlaybackService.currentEpisode` identity, seek, or stop playback —

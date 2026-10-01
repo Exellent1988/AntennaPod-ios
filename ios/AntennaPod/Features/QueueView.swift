@@ -12,6 +12,7 @@ struct QueueView: View {
     @State private var debounceTask: Task<Void, Never>?
     @State private var showClearQueueConfirm = false
     @State private var showShuffleQueueConfirm = false
+    @State private var showShuffleKeepPlayingFirstConfirm = false
     @State private var showReverseQueueConfirm = false
     @State private var showSortNewestQueueConfirm = false
     @State private var showSortOldestQueueConfirm = false
@@ -296,8 +297,8 @@ struct QueueView: View {
                     )
                     .accessibilityHint(
                         settings.queueLocked
-                            ? String(localized: "Allows drag reorder, Shuffle, Reverse order, Sort by date, Move playing to top, and Move to top or bottom")
-                            : String(localized: "Disables drag reorder, Shuffle, Reverse order, Sort by date, Move playing to top, and Move to top or bottom")
+                            ? String(localized: "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Move playing to top, and Move to top or bottom")
+                            : String(localized: "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Move playing to top, and Move to top or bottom")
                     )
                     .accessibilityAddTraits(.isButton)
                 }
@@ -319,6 +320,19 @@ struct QueueView: View {
                         .disabled(!canShuffle)
                         .accessibilityHint(
                             String(localized: "Asks for confirmation, then randomly reorders the entire queue")
+                        )
+                        Button {
+                            // Always confirm before shuffleQueueKeepingPlayingFirst — full-list shuffle + pin playing.
+                            showShuffleKeepPlayingFirstConfirm = true
+                        } label: {
+                            Label("Shuffle (keep playing first)", systemImage: "shuffle")
+                        }
+                        // Same gates as plain Shuffle: full queue, locked blocks, count < 2 disabled.
+                        // Reuses shuffleQueue + moveQueueItemToTop; if nothing playing / not queued → plain shuffle.
+                        .disabled(!canShuffle)
+                        .accessibilityLabel(String(localized: "Shuffle keep playing first"))
+                        .accessibilityHint(
+                            String(localized: "Asks for confirmation, then shuffles the entire queue and keeps the currently playing episode first when it is in the queue")
                         )
                         Button {
                             // Always confirm before reverseQueue() — reorders the full list.
@@ -391,7 +405,7 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Shuffle, reverse, sort by date, move playing to top, or clear the entire queue")
+                        String(localized: "Shuffle, shuffle keep playing first, reverse, sort by date, move playing to top, or clear the entire queue")
                     )
                 }
             }
@@ -421,6 +435,20 @@ struct QueueView: View {
             } message: {
                 Text(
                     "Randomly reorders all \(store.queue.count) episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+                )
+            }
+            .confirmationDialog(
+                "Shuffle queue (keep playing first)?",
+                isPresented: $showShuffleKeepPlayingFirstConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Shuffle (keep playing first)") {
+                    store.shuffleQueueKeepingPlayingFirst(currentEpisode: playback.currentEpisode)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Randomly reorders all \(store.queue.count) episodes in the entire queue (not only the current filter), then moves the currently playing episode to the start when it is in the queue. If nothing is playing or the current episode is not queued, behaves like Shuffle. Does not stop playback, change progress, mark played, or delete downloads."
                 )
             }
             .confirmationDialog(
