@@ -12334,6 +12334,42 @@
           }
         }
       }
+    },
+    "Continue listening remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Home Continue preview info bar (episode count + remaining over visible soft-capped preview rows).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue listening remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Weiterhören-Zeit %@"
+          }
+        }
+      }
+    },
+    "Home Continue remaining time covers the preview only (first %lld), not the full continue catalog": {
+      "extractionState": "manual",
+      "comment": "VoiceOver soft-cap honesty when Home Continue preview is capped below the full continue catalog.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home Continue remaining time covers the preview only (first %lld), not the full continue catalog"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Verbleibende Zeit für Weiterhören auf dem Home gilt nur für die Vorschau (erste %lld), nicht für den gesamten Weiterhören-Katalog"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
