@@ -395,6 +395,16 @@ struct FullPlayerView: View {
                 }
             }
             .disabled(episode.downloadUrl == nil || downloads.inProgress.contains(episode.id))
+
+            if let url = episode.shareURL {
+                ShareLink(
+                    item: url,
+                    subject: Text(episode.title),
+                    message: Text(episode.title)
+                ) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+            }
         }
         .buttonStyle(.bordered)
         .labelStyle(.titleAndIcon)

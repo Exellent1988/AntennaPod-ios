@@ -39,7 +39,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Keep updated | 4 | done | Global via Settings refresh interval; per-feed Keep updated Never skips that feed in refresh-all (single-feed refresh still OK) |
 | New-episode action (Inbox/Queue) | 4 | todo | Regeln → KMP |
 | Local folder feeds | 2 | todo | iOS DocumentPicker |
-| Share podcast/episode | 3 | todo | |
+| Share podcast/episode | 3 | done | Episode: title + page link (else enclosure) via ShareLink; podcast: title + feed URL from FeedDetail toolbar; EpisodeRow button/context menu + FeedDetail swipe; full player ShareLink |
 
 ## Playback
 

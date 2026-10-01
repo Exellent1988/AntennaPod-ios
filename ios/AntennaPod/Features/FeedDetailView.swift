@@ -15,16 +15,40 @@ struct FeedDetailView: View {
     var body: some View {
         List(liveFeed.episodes) { episode in
             EpisodeRow(episode: episode, feedTitle: liveFeed.title)
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                    if let url = episode.shareURL {
+                        ShareLink(
+                            item: url,
+                            subject: Text(episode.title),
+                            message: Text(episode.title)
+                        ) {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                        }
+                        .tint(.indigo)
+                    }
+                }
         }
         .navigationTitle(liveFeed.title)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showPerFeedSettings = true
-                } label: {
-                    Image(systemName: "gearshape")
+                HStack(spacing: 12) {
+                    if let url = liveFeed.shareURL {
+                        ShareLink(
+                            item: url,
+                            subject: Text(liveFeed.title),
+                            message: Text(liveFeed.title)
+                        ) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel("Share podcast")
+                    }
+                    Button {
+                        showPerFeedSettings = true
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                    .accessibilityLabel("Podcast settings")
                 }
-                .accessibilityLabel("Podcast settings")
             }
         }
         .sheet(isPresented: $showPerFeedSettings) {
@@ -140,10 +164,64 @@ struct EpisodeRow: View {
                 }
                 .buttonStyle(.bordered)
                 .tint(store.isFavorite(episode.id) ? .yellow : nil)
+
+                episodeShareControl
             }
             .labelStyle(.iconOnly)
         }
         .padding(.vertical, 4)
+        .contextMenu {
+            if let url = episode.shareURL {
+                ShareLink(
+                    item: url,
+                    subject: Text(episode.title),
+                    message: Text(episode.title)
+                ) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+            }
+            Button {
+                store.toggleFavorite(episode.id)
+            } label: {
+                Label(
+                    store.isFavorite(episode.id) ? "Unfavorite" : "Favorite",
+                    systemImage: store.isFavorite(episode.id) ? "star.slash" : "star"
+                )
+            }
+            Button {
+                store.togglePlayed(episode.id)
+            } label: {
+                Label(
+                    state.isPlayed ? "Mark unplayed" : "Mark played",
+                    systemImage: state.isPlayed ? "circle" : "checkmark.circle"
+                )
+            }
+            Button {
+                store.enqueue(episode)
+            } label: {
+                Label("Add to queue", systemImage: "text.append")
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var episodeShareControl: some View {
+        if let url = episode.shareURL {
+            ShareLink(
+                item: url,
+                subject: Text(episode.title),
+                message: Text(episode.title)
+            ) {
+                Label("Share", systemImage: "square.and.arrow.up")
+            }
+            .buttonStyle(.bordered)
+        } else {
+            Button {} label: {
+                Label("Share", systemImage: "square.and.arrow.up")
+            }
+            .buttonStyle(.bordered)
+            .disabled(true)
+        }
     }
 
     private var progressFraction: Double {

@@ -19,6 +19,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Inbox tab (unplayed across subscriptions; pull-to-refresh refreshes all feeds)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first)
 - Favorites / starred episodes (Subscriptions → Library → Favorites; star on EpisodeRow + full player; `favorites.json`; auto-delete skips favorites)
+- Share podcast / episode (FeedDetail toolbar share feed URL; EpisodeRow ShareLink / context menu / FeedDetail swipe; full player; prefer page link else enclosure)
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
@@ -88,9 +89,13 @@ Local-only search over subscribed feeds and their episodes (title, feed title, f
 
 **Subscriptions → Library → Favorites** (no extra root tab; no Home preview in this slice). Starred episode IDs live in Application Support `favorites.json` (episode id → `favoritedAtEpochMs`), independent of `playback.json` so clearing History does not unstar. Toggle from **EpisodeRow** (star icon) or the **full player** secondary actions. List is newest-favorited first across feeds; swipe **Unfavorite**. When **Delete episode after playing** is on, auto-delete **skips** favorited episodes (keeps the offline file). Unsubscribing a feed clears that feed’s favorite entries.
 
+## Share
+
+Share an **episode** (title + URL) or a **podcast** (title + feed URL) via the system share sheet (`ShareLink` / `UIActivityViewController`). Episode URL prefers the item page/`link`, then the enclosure/`downloadUrl`. **Feed detail** toolbar shares the feed URL; episode rows expose Share as a button and in the context menu (Feed detail also offers a trailing swipe Share). The **full player** secondary actions include Share when a URL is available. No cloud / social deep links beyond the system sheet.
+
 ## Full player
 
-Tap the mini player title or progress bar to open a full-screen sheet: feed artwork, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed menu, sleep timer (same presets as mini), plus mark played / favorite / queue / download. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
+Tap the mini player title or progress bar to open a full-screen sheet: feed artwork, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed menu, sleep timer (same presets as mini), plus mark played / favorite / queue / download / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
 
 ## Chapters
 
