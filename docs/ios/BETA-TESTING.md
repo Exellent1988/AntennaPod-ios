@@ -50,6 +50,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Play from beginning (Full secondary: Seek 0 + Play; EpisodeRow Kontext; kein Unplayed-Flag) | ☐ Play from beginning (Full secondary: seek 0 + play; EpisodeRow context; no unplayed flag) |
 | ☐ Favorit umschalten (Full secondary Stern; EpisodeRow; sofort via `favorites.json`) | ☐ Favorite toggle (Full secondary star; EpisodeRow; immediate via `favorites.json`) |
 | ☐ Archivieren / Wiederherstellen (Full secondary; EpisodeRow; sofort via `archived.json`; Inbox ausblenden) | ☐ Archive / restore (Full secondary; EpisodeRow; immediate via `archived.json`; hides from Inbox) |
+| ☐ Full Player Download (nicht geladen → Laden; läuft → Abbrechen; geladen → Download löschen; kein Confirm; lokal-Ordner ausgeblendet) | ☐ Full Player download (not downloaded → Download; in progress → Cancel; downloaded → Delete download; no confirm; hidden for local-folder) |
 | ☐ Geschwindigkeit Tippen = nächste Preset (0.8…2.0 Wrap); Long-Press = Menü; Default aus Settings | ☐ Speed tap = next preset (0.8…2.0 wrap); long-press = menu; default from Settings |
 | ☐ Sleep timer (Uhr / Ende der Episode / Custom… 1–180 Min.) | ☐ Sleep timer (clock / end of episode / Custom… 1–180 min) |
 | ☐ Chapters tippen → Seek (wenn im Feed) | ☐ Chapters tap → seek (when in feed) |
@@ -86,6 +87,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | DE | EN |
 |----|----|
 | ☐ Episode manuell laden | ☐ Manual download |
+| ☐ Full Player: Download / Abbrechen / Download löschen (gleiche DownloadService-APIs; Wi‑Fi-Gate; kein Confirm) | ☐ Full Player: Download / Cancel / Delete download (same DownloadService APIs; Wi‑Fi gate; no confirm) |
 | ☐ Feed: Alle herunterladen (Bestätigung + Cap) | ☐ Feed: Download all (confirm + cap) |
 | ☐ Feed: Alle als gehört markieren (Bestätigung) | ☐ Feed: Mark all as played (confirm) |
 | ☐ Background-Download überlebt Suspend | ☐ Background download survives suspend |

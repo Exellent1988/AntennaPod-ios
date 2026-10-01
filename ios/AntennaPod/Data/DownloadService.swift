@@ -284,6 +284,12 @@ final class DownloadService: ObservableObject {
         refreshStorageUsage()
     }
 
+    /// Cancels an in-flight background download for `episode`. No-op if none is pending.
+    /// Does not remove a completed offline file (use `delete`).
+    func cancelDownload(_ episode: PodcastEpisode) {
+        cancelTask(for: episode.id)
+    }
+
     /// Completed downloads marked **played**, excluding favorited / starred episodes.
     /// Matches auto-delete-after-playing favorite protection (`PodcastStore.isFavorite`).
     /// Unplayed downloads are never included.

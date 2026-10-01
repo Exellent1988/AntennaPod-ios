@@ -12,7 +12,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Online feed preview (before subscribe: discovery rows + Feed URL → Preview via FeedRepository; episode count + first titles; Confirm Subscribe / Cancel; already subscribed → Open feed)
 - Episode list
 - Stream playback (AVPlayer, speed tap-cycle presets + long-press menu, configurable skip intervals)
-- Full player sheet (artwork or video surface, scrubber, **Jump to position** (mm:ss / min+sec → seek), **Play from beginning** (seek to 0 + play), **Previous/Next chapter** when chapters exist, transport, **Shownotes** (plain text / HTML stripped); tap mini player to open; **Open podcast** → dismiss → Subscriptions Feed detail; orphan → disabled / unavailable alert; mini ⋯ menu same)
+- Full player sheet (artwork or video surface, scrubber, **Jump to position** (mm:ss / min+sec → seek), **Play from beginning** (seek to 0 + play), **Previous/Next chapter** when chapters exist, transport, **Shownotes** (plain text / HTML stripped); secondary **Download / Cancel download / Delete download** via `DownloadService` (hidden for local-folder `file://`; no single-delete confirm — matches Downloads swipe; manual Wi‑Fi gate); tap mini player to open; **Open podcast** → dismiss → Subscriptions Feed detail; orphan → disabled / unavailable alert; mini ⋯ menu same)
 - Video player (beta lite; MIME video/* or mp4/m4v/mov/webm → AVPlayerLayer in full player; PiP beta lite)
 - Video → audio only (Settings + full-player toggle; default off; Lockscreen stays audio)
 - Volume adaptation (Settings; default off; iOS AVAudioSession spokenAudio / speech optimize — not Android loudness gain)
@@ -26,7 +26,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - CarPlay (honest partial: system Now Playing / remotes + background audio; **no** custom CPTemplate / CarPlay entitlement)
 - Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
 - Sleep timer (clock presets + end of episode + Custom… 1–180 min, fade-out)
-- Offline download to Documents/downloads (background URLSession; survives suspend/relaunch; Feed detail **Download all** for unplayed/not-archived/not-downloaded, newest 50 soft cap)
+- Offline download to Documents/downloads (background URLSession; survives suspend/relaunch; Feed detail **Download all** for unplayed/not-archived/not-downloaded, newest 50 soft cap; **Full player** Download / Cancel / Delete via same `DownloadService.download` / `cancelDownload` / `delete`)
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder; EpisodeRow context **Move to top** / **Move to bottom** via `moveQueue`; `.searchable` title/feed filter with debounce; reorder disabled while filtering; toolbar Clear queue with confirm)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
 - German localization (beta; main `Localizable.xcstrings` en+de + per-target Widget/Watch catalogs; tabs/nav, Settings headers + footnotes/help captions, parental detail, Statistics + Echo, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript, Homescreen Widget + Apple Watch UI — **partial**, not full i18n)
