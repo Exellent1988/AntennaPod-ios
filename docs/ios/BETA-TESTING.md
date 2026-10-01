@@ -31,6 +31,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Local folder feed (Datei-Ordner) | ☐ Local folder feed |
 | ☐ OPML import (mehrere Feeds) | ☐ OPML import (batch) |
 | ☐ Bereits abonniert → Open feed | ☐ Already subscribed → Open feed |
+| ☐ Abo beenden: Swipe auf Subscriptions (Bestätigung + Titel; Downloads bleiben) | ☐ Unsubscribe: Subscriptions swipe (confirm + title; downloads kept) |
+| ☐ Abo beenden: Feed-Detail ⋯ (Bestätigung; pop nach Confirm) | ☐ Unsubscribe: Feed detail ⋯ (confirm; pop after confirm) |
 
 ---
 

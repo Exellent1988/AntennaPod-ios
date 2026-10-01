@@ -10,7 +10,9 @@ struct FeedDetailView: View {
     @State private var showPerFeedSettings = false
     @State private var showDownloadAllConfirm = false
     @State private var showMarkAllPlayedConfirm = false
+    @State private var showUnsubscribeConfirm = false
     @State private var showFeedURLCopied = false
+    @Environment(\.dismiss) private var dismiss
     @State private var copyFeedURLFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -202,6 +204,12 @@ struct FeedDetailView: View {
                             Label("Mark all as played", systemImage: "checkmark.circle")
                         }
                         .disabled(markAllPlayedCandidates.isEmpty)
+
+                        Button(role: .destructive) {
+                            showUnsubscribeConfirm = true
+                        } label: {
+                            Label("Unsubscribe", systemImage: "trash")
+                        }
                     } label: {
                         Label("Feed actions", systemImage: "ellipsis.circle")
                     }
@@ -243,6 +251,21 @@ struct FeedDetailView: View {
         } message: {
             Text(
                 "Marks \(markAllPlayedCandidates.count) unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled."
+            )
+        }
+        .confirmationDialog(
+            "Unsubscribe?",
+            isPresented: $showUnsubscribeConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Unsubscribe", role: .destructive) {
+                store.unsubscribe(liveFeed)
+                dismiss()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Unsubscribe from \"\(liveFeed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
             )
         }
         .alert(

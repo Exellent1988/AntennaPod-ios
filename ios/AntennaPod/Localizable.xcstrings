@@ -7837,6 +7837,40 @@
           }
         }
       }
+    },
+    "Unsubscribe?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsubscribe?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abo beenden?"
+          }
+        }
+      }
+    },
+    "Unsubscribe from \"%@\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsubscribe from \"%@\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abo von „%@“ beenden? Entfernt diesen Podcast aus Abonnements, seine Feed-Einstellungen und Tags, Warteschlangen-Einträge dieses Feeds sowie Favoriten, Archiv und Wiedergabeverlauf seiner Episoden. Heruntergeladene Dateien bleiben erhalten."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

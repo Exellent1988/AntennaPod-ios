@@ -95,6 +95,11 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Remove a subscription.
+    /// Clears the feed from the list, per-feed settings, tags, queue items from this feed,
+    /// and favorites / archive / playback-history entries for its episodes.
+    /// Local-folder feeds also release the security-scoped bookmark.
+    /// Does **not** delete downloaded episode files (Downloads catalog / offline media kept).
     func unsubscribe(_ feed: PodcastFeed) {
         if LocalFolderFeed.isLocalFolderFeed(feed) {
             LocalFolderBookmarkStore.release(feedId: feed.id)

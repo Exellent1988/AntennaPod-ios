@@ -15,6 +15,7 @@ struct SubscriptionsView: View {
     @State private var searchText = ""
     @State private var tagFilter: SubscriptionTagFilter = .all
     @State private var groupByTag = true
+    @State private var feedPendingUnsubscribe: PodcastFeed?
 
     /// Client-side list order after search/tag filters (no drag-reorder of subscriptions).
     private func sortedFeeds(_ feeds: [PodcastFeed]) -> [PodcastFeed] {
@@ -311,6 +312,27 @@ struct SubscriptionsView: View {
             .onChange(of: notificationDeepLink.feedOpenToken) { _, _ in
                 consumePendingFeedOpenIfNeeded()
             }
+            .confirmationDialog(
+                "Unsubscribe?",
+                isPresented: Binding(
+                    get: { feedPendingUnsubscribe != nil },
+                    set: { if !$0 { feedPendingUnsubscribe = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: feedPendingUnsubscribe
+            ) { feed in
+                Button("Unsubscribe", role: .destructive) {
+                    store.unsubscribe(feed)
+                    feedPendingUnsubscribe = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    feedPendingUnsubscribe = nil
+                }
+            } message: { feed in
+                Text(
+                    "Unsubscribe from \"\(feed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
+                )
+            }
         }
     }
 
@@ -367,9 +389,9 @@ struct SubscriptionsView: View {
                 }
             }
         }
-        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button(role: .destructive) {
-                store.unsubscribe(feed)
+                feedPendingUnsubscribe = feed
             } label: {
                 Label("Unsubscribe", systemImage: "trash")
             }

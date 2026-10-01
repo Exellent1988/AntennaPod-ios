@@ -60,6 +60,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Mobile / Wi‑Fi policy (auto / manual download / stream Wi‑Fi-only toggles; shared NWPathMonitor)
 - Per-feed settings (Feed detail → gear: Auto-download, Keep updated, New episodes, Notify, Skip intro/outro, Playback speed overrides)
 - Tags / Folders for subscriptions (side map `feed-tags.json`; manage on per-feed settings; Subscriptions filter chips + optional group-by-tag; untagged)
+- Unsubscribe confirm (Subscriptions trailing swipe + Feed detail ⋯; destructive dialog with podcast title; removes feed + feed-settings + tags + queue items from that feed + favorites/archive/playback history for its episodes; **keeps downloaded files**; local-folder releases bookmark; dismisses Feed detail after confirm)
 - Subscriptions list sort (toolbar: Recently updated default / Alphabetical A–Z; `subscriptionsSort` pref + backup; client-side only, no drag-reorder)
 - Feed episode list sort (Feed detail toolbar: Newest first default / Oldest first by `pubDateEpochMs`; global `feedEpisodeSort` + backup; Inbox/All Episodes unchanged)
 - Local folder feeds (beta; Add podcast → Folder via fileImporter; security-scoped bookmark; synthetic feed from mp3/m4a/aac/wav/flac; refresh re-scans; no RSS/network; Folder badge; unsubscribe releases bookmark)
@@ -270,10 +271,11 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 
 | Screen | Leading | Trailing | Extra |
 |--------|---------|----------|-------|
+| Subscriptions | Refresh | Unsubscribe (confirm) | Destructive confirm shows podcast title; keeps downloads; no full-swipe |
 | Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`) when not filtering; `.searchable` title/feed; toolbar Clear queue (confirm, full queue) |
 | Downloads | — | Play Next + Add to queue + Delete download | — |
 | Inbox | Mark played | Play Next + Add to queue + Archive | Toolbar menu: Mark all as played (confirm) + Archive all |
-| Feed detail | Archive / Restore | Play Next + Queue + Share | `.searchable` episode title; toolbar Download all + Mark all as played (confirm, full-feed eligibility) + EpisodeRow context: Play Next + Add to queue |
+| Feed detail | Archive / Restore | Play Next + Queue + Share | `.searchable` episode title; toolbar Download all + Mark all as played (confirm, full-feed eligibility) + **Unsubscribe** (destructive confirm + dismiss) + EpisodeRow context: Play Next + Add to queue |
 | History | Mark unplayed (if played) | Remove playback state | `.searchable` title/feed; toolbar Clear history (confirm, full list) |
 | Favorites | Archive | Unfavorite | `.searchable` title/feed; toolbar Clear favorites (confirm, full list) |
 | Archived | — | Restore | `.searchable` title/feed; toolbar Restore all (confirm, full list) |
@@ -482,6 +484,11 @@ The same sheet also manages **Tags / Folders** (see below).
 **Synthetic feed:** `PodcastFeed` with `feedUrl` scheme `local-folder://{uuid}`. Episodes = audio files in that folder (**mp3 / m4a / aac / wav / flac**, non-recursive); **title** = filename without extension; `downloadUrl` = `file://…` so `DownloadService.localURL` / play treat them as **already local** (no network download).
 
 **Refresh** (Subscriptions swipe or Keep-updated bulk) **re-scans** the folder via the bookmark. **Unsubscribe** deletes the bookmark and ends scoped access.
+
+## Unsubscribe
+
+**Subscriptions** trailing swipe and **Feed detail** ⋯ menu both open a destructive **Unsubscribe?** confirmation that includes the podcast title and an honesty line: removes the feed from Subscriptions, per-feed settings (`feed-settings.json`), tags (`feed-tags.json`), queue items from that feed, and favorites / archive / playback-history entries for its episodes; **downloaded files are kept** (Downloads catalog / offline media unchanged). Local-folder feeds also release the security-scoped bookmark. Confirm on Feed detail calls `PodcastStore.unsubscribe` then `dismiss()` so the detail pops. Swipe does **not** allow full-swipe (deliberate tap → confirm). Does **not** expand delete-downloads scope.
+
 
 **Honest limits:** no RSS/Atom; no network feed refresh; not pushed to gpodder / Nextcloud; omitted from OPML and HTML export. Shown in **Subscriptions** with a **Folder** badge. Bookmarks in JSON backup may not work on another device — re-pick the folder after import.
 
