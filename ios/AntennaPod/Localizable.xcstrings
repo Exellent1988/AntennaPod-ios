@@ -8160,6 +8160,74 @@
           }
         }
       }
+    },
+    "Move to top": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to top"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An Anfang verschieben"
+          }
+        }
+      }
+    },
+    "Move to bottom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to bottom"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ans Ende verschieben"
+          }
+        }
+      }
+    },
+    "Places this episode at the start of the queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Places this episode at the start of the queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt diese Episode an den Anfang der Warteschlange"
+          }
+        }
+      }
+    },
+    "Places this episode at the end of the queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Places this episode at the end of the queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt diese Episode an das Ende der Warteschlange"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

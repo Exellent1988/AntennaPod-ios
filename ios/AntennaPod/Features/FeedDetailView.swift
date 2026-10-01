@@ -378,6 +378,11 @@ struct EpisodeRow: View {
         store.playbackState(for: episode.id)
     }
 
+    /// Index in the persisted queue, or `nil` when not queued (drives Move to top/bottom visibility).
+    private var queueIndex: Int? {
+        store.queue.firstIndex(where: { $0.id == episode.id })
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             VStack(alignment: .leading, spacing: 4) {
@@ -574,6 +579,26 @@ struct EpisodeRow: View {
                 store.enqueue(episode)
             } label: {
                 Label("Add to queue", systemImage: "text.append")
+            }
+            if let qi = queueIndex {
+                if qi > 0 {
+                    Button {
+                        store.moveQueueItemToTop(episode)
+                    } label: {
+                        Label("Move to top", systemImage: "arrow.up.to.line")
+                    }
+                    .accessibilityLabel(String(localized: "Move to top"))
+                    .accessibilityHint(String(localized: "Places this episode at the start of the queue"))
+                }
+                if qi < store.queue.count - 1 {
+                    Button {
+                        store.moveQueueItemToBottom(episode)
+                    } label: {
+                        Label("Move to bottom", systemImage: "arrow.down.to.line")
+                    }
+                    .accessibilityLabel(String(localized: "Move to bottom"))
+                    .accessibilityHint(String(localized: "Places this episode at the end of the queue"))
+                }
             }
             Button {
                 showDescription = true

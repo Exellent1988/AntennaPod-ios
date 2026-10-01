@@ -302,6 +302,23 @@ final class PodcastStore: ObservableObject {
         queue.move(fromOffsets: source, toOffset: destination)
     }
 
+    /// AntennaPod-style **Move to top**: place a queued episode at **index 0** (literal head
+    /// of the queue list — same as Android `queue.add(0, …)`). Distinct from **Play Next**,
+    /// which inserts after the currently playing item. No-op if not queued or already first.
+    /// Reuses `moveQueue` so persistence stays one source of truth (`queue` `didSet`).
+    func moveQueueItemToTop(_ episode: PodcastEpisode) {
+        guard let index = queue.firstIndex(where: { $0.id == episode.id }), index > 0 else { return }
+        moveQueue(from: IndexSet(integer: index), to: 0)
+    }
+
+    /// AntennaPod-style **Move to bottom**: place a queued episode at the **end** of the list.
+    /// No-op if not queued or already last. Reuses `moveQueue` → `queue` `didSet`.
+    func moveQueueItemToBottom(_ episode: PodcastEpisode) {
+        guard let index = queue.firstIndex(where: { $0.id == episode.id }),
+              index < queue.count - 1 else { return }
+        moveQueue(from: IndexSet(integer: index), to: queue.count)
+    }
+
     /// Remove every episode from the queue. Persists via `queue` `didSet`.
     /// Does not stop playback, mark played, or delete downloads — only clears queue entries.
     func clearQueue() {
