@@ -1,6 +1,8 @@
 import SwiftUI
 
 /// Scrollable transcript sheet opened from the full player when the feed provides a URL.
+/// Cue list supports `.searchable` filter over already-loaded cue text (case-insensitive,
+/// ~250 ms debounce). Does not fetch or generate transcripts; feed URL only — no STT.
 struct TranscriptSheetView: View {
     @EnvironmentObject private var playback: PlaybackService
     @Environment(\.dismiss) private var dismiss
@@ -11,10 +13,32 @@ struct TranscriptSheetView: View {
     @State private var isLoading = false
     @State private var errorMessage: String?
 
+    @State private var searchText = ""
+    @State private var debouncedQuery = ""
+    @State private var debounceTask: Task<Void, Never>?
+
+    private let debounceNs: UInt64 = 250_000_000 // 250 ms
+
     private var cues: [TranscriptCue] { transcript?.cues ?? [] }
+
+    /// Visible cues after light-debounced case-insensitive filter on cue text (+ speaker when set).
+    private var filteredCues: [TranscriptCue] {
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !q.isEmpty else { return cues }
+        return cues.filter { cue in
+            if cue.text.localizedCaseInsensitiveContains(q) { return true }
+            if let speaker = cue.speaker, speaker.localizedCaseInsensitiveContains(q) { return true }
+            return false
+        }
+    }
 
     private var currentCueIndex: Int? {
         TranscriptCueIndexing.currentIndex(in: cues, at: playback.positionSeconds)
+    }
+
+    private var currentCueId: String? {
+        guard let index = currentCueIndex, cues.indices.contains(index) else { return nil }
+        return cues[index].id
     }
 
     var body: some View {
@@ -58,15 +82,50 @@ struct TranscriptSheetView: View {
         .task(id: episode.transcriptUrl) {
             await load()
         }
+        .onDisappear {
+            debounceTask?.cancel()
+        }
     }
 
     @ViewBuilder
     private func content(_ transcript: ParsedTranscript) -> some View {
         if transcript.hasSeekableCues {
+            cueList
+                .searchable(text: $searchText, prompt: "Search transcript")
+                .onChange(of: searchText) { _, newValue in
+                    scheduleFilter(for: newValue)
+                }
+        } else if let plain = transcript.plainText, !plain.isEmpty {
+            ScrollView {
+                Text(plain)
+                    .font(.body)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .textSelection(.enabled)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var cueList: some View {
+        if cues.isEmpty {
+            ContentUnavailableView(
+                "No transcript text",
+                systemImage: "text.bubble",
+                description: Text("The feed URL returned empty or unreadable content.")
+            )
+        } else if filteredCues.isEmpty {
+            ContentUnavailableView(
+                "No matching cues",
+                systemImage: "magnifyingglass",
+                description: Text("No cues match your search.")
+            )
+        } else {
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 4) {
-                        ForEach(Array(cues.enumerated()), id: \.element.id) { index, cue in
+                        ForEach(filteredCues) { cue in
+                            let isCurrent = cue.id == currentCueId
                             Button {
                                 playback.seek(toSeconds: cue.startTimeSeconds)
                             } label: {
@@ -82,8 +141,8 @@ struct TranscriptSheetView: View {
                                                 .foregroundStyle(.secondary)
                                         }
                                         Text(cue.text)
-                                            .font(.subheadline.weight(index == currentCueIndex ? .semibold : .regular))
-                                            .foregroundStyle(index == currentCueIndex ? .primary : .secondary)
+                                            .font(.subheadline.weight(isCurrent ? .semibold : .regular))
+                                            .foregroundStyle(isCurrent ? .primary : .secondary)
                                             .multilineTextAlignment(.leading)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                     }
@@ -92,36 +151,43 @@ struct TranscriptSheetView: View {
                                 .padding(.horizontal, 10)
                                 .background {
                                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                        .fill(index == currentCueIndex ? Color.accentColor.opacity(0.12) : Color.clear)
+                                        .fill(isCurrent ? Color.accentColor.opacity(0.12) : Color.clear)
                                 }
                             }
                             .buttonStyle(.plain)
-                            .id(index)
+                            .id(cue.id)
                             .accessibilityLabel(
                                 "\(cue.speaker.map { $0 + ", " } ?? "")\(cue.text), \(format(cue.startTimeSeconds))"
                             )
                             .accessibilityHint(String(localized: "Seeks playback to this time"))
-                            .accessibilityAddTraits(index == currentCueIndex ? .isSelected : [])
+                            .accessibilityAddTraits(isCurrent ? .isSelected : [])
                         }
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 8)
                 }
-                .onChange(of: currentCueIndex) { _, newIndex in
-                    guard let newIndex else { return }
+                .onChange(of: currentCueId) { _, newId in
+                    guard let newId,
+                          filteredCues.contains(where: { $0.id == newId }) else { return }
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        proxy.scrollTo(newIndex, anchor: .center)
+                        proxy.scrollTo(newId, anchor: .center)
                     }
                 }
             }
-        } else if let plain = transcript.plainText, !plain.isEmpty {
-            ScrollView {
-                Text(plain)
-                    .font(.body)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                    .textSelection(.enabled)
-            }
+        }
+    }
+
+    private func scheduleFilter(for term: String) {
+        debounceTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            debouncedQuery = ""
+            return
+        }
+        debounceTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: debounceNs)
+            guard !Task.isCancelled else { return }
+            debouncedQuery = trimmed
         }
     }
 
