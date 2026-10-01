@@ -42,6 +42,7 @@ final class PodcastStore: ObservableObject {
             var feed = try await repository.fetchAndParse(feedUrl: feedUrl)
             feed.feedUrl = feedUrl
             if let index = feeds.firstIndex(where: { $0.feedUrl == feedUrl }) {
+                feed.id = feeds[index].id // keep stable identity across refresh
                 feeds[index] = feed
             } else {
                 feeds.append(feed)
@@ -64,7 +65,18 @@ final class PodcastStore: ObservableObject {
         guard !feed.feedUrl.isEmpty else {
             return
         }
+        let existingIds = Set(feed.episodes.map(\.id))
+        let wasSubscribed = feeds.contains(where: { $0.feedUrl == feed.feedUrl })
         await subscribe(feedUrl: feed.feedUrl)
+        if wasSubscribed, let updated = feeds.first(where: { $0.feedUrl == feed.feedUrl }) {
+            let newcomers = updated.episodes.filter { !existingIds.contains($0.id) }
+            if !newcomers.isEmpty {
+                await NewEpisodeNotificationCoordinator.handleNewEpisodes(
+                    [NewEpisodeBatch(feedTitle: updated.title, feedId: updated.id, feedUrl: updated.feedUrl, episodes: newcomers)],
+                    settings: settings
+                )
+            }
+        }
         await AutoDownloadCoordinator.enqueueAfterRefresh(
             store: self,
             downloads: downloads,
@@ -296,21 +308,37 @@ final class PodcastStore: ObservableObject {
         pendingAutoDeleteIds.remove(episodeId)
     }
 
-        /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
+    /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
     func refreshAllFeeds() async {
         lastError = nil
         isLoading = true
         defer { isLoading = false }
         let snapshot = feeds
+        var newBatches: [NewEpisodeBatch] = []
         for feed in snapshot where !feed.feedUrl.isEmpty {
+            let existingIds = Set(feed.episodes.map(\.id))
             do {
                 try await subscribeQuietly(feedUrl: feed.feedUrl)
+                if let updated = feeds.first(where: { $0.feedUrl == feed.feedUrl }) {
+                    let newcomers = updated.episodes.filter { !existingIds.contains($0.id) }
+                    if !newcomers.isEmpty {
+                        newBatches.append(
+                            NewEpisodeBatch(
+                                feedTitle: updated.title,
+                                feedId: updated.id,
+                                feedUrl: updated.feedUrl,
+                                episodes: newcomers
+                            )
+                        )
+                    }
+                }
             } catch {
                 lastError = error.localizedDescription
             }
         }
         // Stamp even if some feeds failed — avoids hammering on every foreground.
         settings?.markFeedRefreshCompleted()
+        await NewEpisodeNotificationCoordinator.handleNewEpisodes(newBatches, settings: settings)
         await AutoDownloadCoordinator.enqueueAfterRefresh(
             store: self,
             downloads: downloads,
@@ -429,11 +457,12 @@ final class PodcastStore: ObservableObject {
         opmlImport = state
     }
 
-    /// Subscribe without flipping the global `isLoading` overlay (used by OPML batch).
+    /// Subscribe without flipping the global `isLoading` overlay (used by OPML batch / refresh).
     func subscribeQuietly(feedUrl: String) async throws {
         var feed = try await repository.fetchAndParse(feedUrl: feedUrl)
         feed.feedUrl = feedUrl
         if let index = feeds.firstIndex(where: { $0.feedUrl == feedUrl }) {
+            feed.id = feeds[index].id // keep stable identity across refresh
             feeds[index] = feed
         } else {
             feeds.append(feed)

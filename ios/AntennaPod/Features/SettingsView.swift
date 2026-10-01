@@ -47,6 +47,7 @@ struct SettingsView: View {
 
     @State private var customMB: Int = 500
     @State private var showClearConfirmation = false
+    @State private var notificationAuthLabel = "Checking…"
 
     private var pickerChoice: Binding<StorageLimitPickerChoice> {
         Binding(
@@ -104,6 +105,7 @@ struct SettingsView: View {
                 }
                 refreshSection
                 autoDownloadSection
+                notificationsSection
                 storageSection
                 OpmlImportExportSection()
             }
@@ -113,6 +115,14 @@ struct SettingsView: View {
                     customMB = mb
                 }
                 downloads.runStorageMaintenance()
+                Task { await refreshNotificationAuthLabel() }
+            }
+            .onChange(of: settings.notifyOnNewEpisodes) { _, enabled in
+                guard enabled else { return }
+                Task {
+                    await NewEpisodeNotificationCoordinator.requestPermissionIfNeeded()
+                    await refreshNotificationAuthLabel()
+                }
             }
             .confirmationDialog(
                 "Clear all downloads?",
@@ -192,6 +202,55 @@ struct SettingsView: View {
             ? " On cellular, auto-download is skipped (NWPathMonitor); manual downloads still work."
             : " Auto-download may use cellular."
         return "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to \(settings.autoDownloadEpisodesPerFeed.rawValue) newest unplayed episode(s) per feed. Per-feed toggles come later.\(wifi)"
+    }
+
+    @ViewBuilder
+    private var notificationsSection: some View {
+        Section {
+            Toggle("Notify on new episodes", isOn: $settings.notifyOnNewEpisodes)
+            LabeledContent("Permission") {
+                Text(notificationAuthLabel)
+                    .foregroundStyle(.secondary)
+            }
+            if notificationAuthLabel == "Denied" {
+                Button("Open iOS Settings") {
+                    NewEpisodeNotificationCoordinator.openSystemNotificationSettings()
+                }
+            }
+            Text(notificationsHelpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("Notifications")
+        }
+    }
+
+    private var notificationsHelpText: String {
+        if !settings.notifyOnNewEpisodes {
+            return "When enabled, a local notification appears after a feed refresh that finds new episodes (title = podcast, body = episode title or “N new episodes”). No push server."
+        }
+        if notificationAuthLabel == "Denied" {
+            return "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. The toggle stays on so your preference is clear."
+        }
+        if notificationAuthLabel == "Not determined" {
+            return "Permission is requested when you turn this on, or when a refresh first finds new episodes. Local only — no push."
+        }
+        return "After Inbox pull-to-refresh, Keep updated, or a single podcast refresh, new episodes trigger a local notification. Tap opens Inbox (best-effort). No APNs / push."
+    }
+
+    @MainActor
+    private func refreshNotificationAuthLabel() async {
+        let status = await NewEpisodeNotificationCoordinator.authorizationStatus()
+        switch status {
+        case .authorized, .provisional, .ephemeral:
+            notificationAuthLabel = "Allowed"
+        case .denied:
+            notificationAuthLabel = "Denied"
+        case .notDetermined:
+            notificationAuthLabel = "Not determined"
+        @unknown default:
+            notificationAuthLabel = "Unknown"
+        }
     }
 
     @ViewBuilder

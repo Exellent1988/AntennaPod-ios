@@ -71,7 +71,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
 }
 
 struct PodcastFeed: Identifiable, Hashable, Codable {
-    let id: UUID
+    var id: UUID
     var title: String
     var feedUrl: String
     var siteLink: String?

@@ -1,33 +1,44 @@
 import SwiftUI
 
+private enum RootTab: Hashable {
+    case inbox, subscriptions, queue, downloads, settings
+}
+
 struct RootTabView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var playback: PlaybackService
     @Environment(\.scenePhase) private var scenePhase
+    @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
+    @State private var selectedTab: RootTab = .inbox
 
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             InboxView()
                 .tabItem {
                     Label("Inbox", systemImage: "tray.fill")
                 }
+                .tag(RootTab.inbox)
             SubscriptionsView()
                 .tabItem {
                     Label("Subscriptions", systemImage: "square.stack.fill")
                 }
+                .tag(RootTab.subscriptions)
             QueueView()
                 .tabItem {
                     Label("Queue", systemImage: "list.bullet")
                 }
+                .tag(RootTab.queue)
             DownloadsView()
                 .tabItem {
                     Label("Downloads", systemImage: "arrow.down.circle")
                 }
+                .tag(RootTab.downloads)
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape")
                 }
+                .tag(RootTab.settings)
         }
         .safeAreaInset(edge: .bottom) {
             MiniPlayerView()
@@ -50,6 +61,10 @@ struct RootTabView: View {
         }
         .onChange(of: settings.fastForwardSeconds) { _, _ in
             playback.applyRemoteSkipIntervals()
+        }
+        .onChange(of: notificationDeepLink.inboxOpenToken) { _, token in
+            guard token != nil else { return }
+            selectedTab = .inbox
         }
     }
 }

@@ -159,7 +159,7 @@ enum PlaybackSourcePreference: String, CaseIterable, Identifiable {
     }
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source, auto-delete, skip intervals).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source, auto-delete, skip intervals, new-episode notifications).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -196,6 +196,7 @@ final class AppSettings: ObservableObject {
         static let autoDeleteAfterPlaying = "settings.autoDelete.afterPlaying"
         static let rewindSeconds = "settings.rewindSeconds"
         static let fastForwardSeconds = "settings.fastForwardSeconds"
+        static let notifyOnNewEpisodes = "settings.notifyOnNewEpisodes"
     }
 
     private enum Kind: String {
@@ -291,6 +292,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Notify when feed refresh discovers new episodes (local UserNotifications; no push).
+    /// Defaults on; actual delivery still requires system permission (Settings stays honest if denied).
+    @Published var notifyOnNewEpisodes: Bool {
+        didSet {
+            UserDefaults.standard.set(notifyOnNewEpisodes, forKey: Keys.notifyOnNewEpisodes)
+        }
+    }
+
     init() {
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
@@ -339,6 +348,12 @@ final class AppSettings: ObservableObject {
             key: Keys.fastForwardSeconds,
             defaultValue: Self.defaultFastForwardSeconds
         )
+        if UserDefaults.standard.object(forKey: Keys.notifyOnNewEpisodes) != nil {
+            notifyOnNewEpisodes = UserDefaults.standard.bool(forKey: Keys.notifyOnNewEpisodes)
+        } else {
+            // Default on; permission gate is separate (honest if denied).
+            notifyOnNewEpisodes = true
+        }
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh
