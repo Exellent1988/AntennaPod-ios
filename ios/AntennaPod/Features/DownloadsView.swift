@@ -8,6 +8,7 @@ struct DownloadsView: View {
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
+    @State private var showDeletePlayedConfirm = false
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -21,6 +22,15 @@ struct DownloadsView: View {
             let feedTitle = store.feed(containingEpisodeId: item.episode.id)?.title ?? ""
             return feedTitle.localizedCaseInsensitiveContains(q)
         }
+    }
+
+    /// Played offline files eligible for bulk delete (skips favorites — matches auto-delete).
+    private var playedDownloadsForDelete: [DownloadedEpisode] {
+        downloads.playedDownloadsEligibleForDelete(store: store)
+    }
+
+    private var playedDownloadsDeleteSizeLabel: String {
+        DownloadStorageUsage.formatBytes(downloads.playedDownloadsEligibleByteSize(store: store))
     }
 
     var body: some View {
@@ -113,6 +123,33 @@ struct DownloadsView: View {
                     }
                     .accessibilityLabel("Download errors")
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Menu {
+                        Button(role: .destructive) {
+                            showDeletePlayedConfirm = true
+                        } label: {
+                            Label("Delete played downloads", systemImage: "trash")
+                        }
+                        .disabled(playedDownloadsForDelete.isEmpty)
+                    } label: {
+                        Label("Downloads actions", systemImage: "ellipsis.circle")
+                    }
+                    .disabled(playedDownloadsForDelete.isEmpty)
+                }
+            }
+            .confirmationDialog(
+                "Delete played downloads?",
+                isPresented: $showDeletePlayedConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Delete played downloads", role: .destructive) {
+                    downloads.deletePlayedDownloads(store: store)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Deletes \(playedDownloadsForDelete.count) played offline file(s) (\(playedDownloadsDeleteSizeLabel)). Keeps unplayed downloads and favorites. Does not mark unplayed, clear the queue, or clear all downloads."
+                )
             }
         }
     }

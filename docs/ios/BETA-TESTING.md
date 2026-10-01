@@ -83,6 +83,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Network / Downloads Wi‑Fi-only Gates | ☐ Network / Downloads Wi‑Fi-only gates |
 | ☐ Download-Fehlerbanner + Log | ☐ Download error banner + log |
 | ☐ Downloads: Suche (Titel / Feed) | ☐ Downloads: search (title / feed) |
+| ☐ Downloads: Gehörte löschen (Bestätigung; Favoriten überspringen) | ☐ Downloads: Delete played (confirm; skip favorites) |
 
 ---
 

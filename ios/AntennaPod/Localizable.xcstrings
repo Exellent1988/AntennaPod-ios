@@ -6630,6 +6630,74 @@
           }
         }
       }
+    },
+    "Delete played downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete played downloads"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gehörte Downloads löschen"
+          }
+        }
+      }
+    },
+    "Delete played downloads?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete played downloads?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gehörte Downloads löschen?"
+          }
+        }
+      }
+    },
+    "Downloads actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-Aktionen"
+          }
+        }
+      }
+    },
+    "Deletes %lld played offline file(s) (%@). Keeps unplayed downloads and favorites. Does not mark unplayed, clear the queue, or clear all downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes %lld played offline file(s) (%@). Keeps unplayed downloads and favorites. Does not mark unplayed, clear the queue, or clear all downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht %lld gehörte Offline-Datei(en) (%@). Behält ungehörte Downloads und Favoriten. Markiert nicht als ungehört, leert die Warteschlange nicht und löscht nicht alle Downloads."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -284,6 +284,41 @@ final class DownloadService: ObservableObject {
         refreshStorageUsage()
     }
 
+    /// Completed downloads marked **played**, excluding favorited / starred episodes.
+    /// Matches auto-delete-after-playing favorite protection (`PodcastStore.isFavorite`).
+    /// Unplayed downloads are never included.
+    func playedDownloadsEligibleForDelete(store: PodcastStore? = nil) -> [DownloadedEpisode] {
+        let s = store ?? self.store
+        return downloads.filter { item in
+            guard s?.isPlayed(item.id) == true else { return false }
+            // Same as auto-delete-after-playing: keep favorited offline files.
+            guard s?.isFavorite(item.id) != true else { return false }
+            return true
+        }
+    }
+
+    /// Approximate total byte size of files that `deletePlayedDownloads` would remove.
+    func playedDownloadsEligibleByteSize(store: PodcastStore? = nil) -> Int64 {
+        var total: Int64 = 0
+        for item in playedDownloadsEligibleForDelete(store: store) {
+            let values = try? item.localFileURL.resourceValues(forKeys: [.fileSizeKey])
+            total += Int64(values?.fileSize ?? 0)
+        }
+        return total
+    }
+
+    /// Deletes local files for played (non-favorite) downloads via the single-delete path (`delete(_:)`).
+    /// Does **not** mark unplayed, clear the queue, or remove unplayed / favorited downloads.
+    /// Confirmation is UI responsibility. Returns how many files were deleted.
+    @discardableResult
+    func deletePlayedDownloads(store: PodcastStore? = nil) -> Int {
+        let victims = playedDownloadsEligibleForDelete(store: store)
+        for item in victims {
+            delete(item.episode)
+        }
+        return victims.count
+    }
+
     /// Deletes every completed download (confirmation is UI responsibility). Cancels in-flight tasks.
     func clearAllDownloads() {
         let episodeIds = downloads.map(\.id)
