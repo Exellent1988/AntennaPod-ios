@@ -42,7 +42,8 @@ struct SubscriptionsView: View {
     }
 
     /// Visible subscriptions after search; empty query shows full list under current sort.
-    /// Matches feed **title**, optional **descriptionText**, optional **author**, and optional **language** (`PodcastStore.matchingFeeds`).
+    /// Matches feed **title**, optional **descriptionText**, optional **author**, optional **language**,
+    /// and optional **categories** (`PodcastStore.matchingFeeds`).
     private var searchFilteredFeeds: [PodcastFeed] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base: [PodcastFeed]
@@ -58,8 +59,31 @@ struct SubscriptionsView: View {
         !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    private var tagFilteredFeeds: [PodcastFeed] {
+    /// Bound category chip from `AppSettings` (empty = All). Library categories only — never invent.
+    private var categoryFilter: SubscriptionCategoryFilter {
+        SubscriptionCategoryFilter.fromStorage(settings.subscriptionsCategoryFilter)
+    }
+
+    private var isCategoryFiltering: Bool {
+        if case .category = categoryFilter { return true }
+        return false
+    }
+
+    /// Unique `itunes:category` texts present on stored feeds (after refresh). Empty → hide category chips.
+    private var libraryCategories: [String] {
+        FeedTags.uniqueSorted(store.feeds.flatMap(\.displayCategories))
+    }
+
+    /// Search → category (AND). Feeds with empty categories never match a specific category chip.
+    private var categoryFilteredFeeds: [PodcastFeed] {
         let base = searchFilteredFeeds
+        guard isCategoryFiltering else { return base }
+        return base.filter { categoryFilter.matches($0) }
+    }
+
+    /// Search → category → tag (AND). Remaining-time / unplayed bars use this visible set.
+    private var tagFilteredFeeds: [PodcastFeed] {
+        let base = categoryFilteredFeeds
         switch tagFilter {
         case .all:
             return base
@@ -73,21 +97,21 @@ struct SubscriptionsView: View {
     }
 
     /// Sections when grouping is on and filter is All (multi-tag feeds appear under each tag).
-    /// Feeds within each section follow `subscriptionsSort` (inherited from `searchFilteredFeeds`).
+    /// Feeds within each section follow `subscriptionsSort` (inherited from `categoryFilteredFeeds`).
     private var groupedSections: [(title: String, feeds: [PodcastFeed])] {
         guard tagFilter == .all, groupByTag, !store.allTags.isEmpty else {
             return [("Podcasts", tagFilteredFeeds)]
         }
         var sections: [(title: String, feeds: [PodcastFeed])] = []
         for tag in store.allTags {
-            let feeds = searchFilteredFeeds.filter { feed in
+            let feeds = categoryFilteredFeeds.filter { feed in
                 store.tags(for: feed.id).contains(where: { FeedTags.equal($0, tag) })
             }
             if !feeds.isEmpty {
                 sections.append((tag, feeds))
             }
         }
-        let untagged = searchFilteredFeeds.filter { store.tags(for: $0.id).isEmpty }
+        let untagged = categoryFilteredFeeds.filter { store.tags(for: $0.id).isEmpty }
         if !untagged.isEmpty {
             sections.append(("Untagged", untagged))
         }
@@ -103,6 +127,12 @@ struct SubscriptionsView: View {
         return chips
     }
 
+    private var categoryFilterChips: [SubscriptionCategoryFilter] {
+        var chips: [SubscriptionCategoryFilter] = [.all]
+        chips.append(contentsOf: libraryCategories.map { .category($0) })
+        return chips
+    }
+
     /// Single-pass map from `PodcastStore.unplayedRemainingByFeedId()` (missing = 0 /
     /// no remaining). Supplies both per-row unplayed **badge** counts and **per-feed remaining**.
     /// Touches live `PlaybackService` so remaining refreshes while listening (store reads the
@@ -115,7 +145,7 @@ struct SubscriptionsView: View {
     }
 
     /// AntennaPod-like info bar: unplayed count + remaining over unplayed episodes of
-    /// **visible** subscriptions (search + tag). Built by summing per-feed summaries from
+    /// **visible** subscriptions (search + category + tag). Built by summing per-feed summaries from
     /// `unplayedRemainingByFeedId` over **unique** `tagFilteredFeeds` (multi-tag Group by tag
     /// does not double-count). Same `!isPlayed && !isArchived` definition as per-row badges /
     /// Inbox / per-feed row remaining. Full stored feed catalogs — **not** the All Episodes
@@ -135,8 +165,8 @@ struct SubscriptionsView: View {
         if unknown > 0 {
             parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
         }
-        if isSearchFiltering || tagFilter != .all {
-            parts.append(String(localized: "Subscriptions remaining time covers visible podcasts only (search or tag filter), not the full library"))
+        if isSearchFiltering || isCategoryFiltering || tagFilter != .all {
+            parts.append(String(localized: "Subscriptions remaining time covers visible podcasts only (search, tag, or category filter), not the full library"))
         }
         return parts.joined(separator: ". ")
     }
@@ -233,6 +263,28 @@ struct SubscriptionsView: View {
                     .tint(.primary)
                 }
 
+                if !store.feeds.isEmpty, !libraryCategories.isEmpty || isCategoryFiltering {
+                    Section {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(categoryFilterChips) { chip in
+                                    TagFilterChip(
+                                        title: chip.label,
+                                        selected: categoryFilter == chip,
+                                        accessibilityHint: String(localized: "Filters the Subscriptions list by category")
+                                    ) {
+                                        settings.subscriptionsCategoryFilter = chip.storageValue
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    } header: {
+                        Text("Categories")
+                    }
+                }
+
                 if !store.feeds.isEmpty, !store.allTags.isEmpty || tagFilter != .all {
                     Section {
                         ScrollView(.horizontal, showsIndicators: false) {
@@ -240,7 +292,8 @@ struct SubscriptionsView: View {
                                 ForEach(filterChips) { chip in
                                     TagFilterChip(
                                         title: chip.label,
-                                        selected: tagFilter == chip
+                                        selected: tagFilter == chip,
+                                        accessibilityHint: String(localized: "Filters the Subscriptions list by tag")
                                     ) {
                                         tagFilter = chip
                                     }
@@ -268,11 +321,7 @@ struct SubscriptionsView: View {
                     ContentUnavailableView(
                         "No matching podcasts",
                         systemImage: "magnifyingglass",
-                        description: Text(
-                            isSearchFiltering
-                                ? String(localized: "No subscriptions match your search.")
-                                : String(localized: "No subscriptions match this tag filter.")
-                        )
+                        description: Text(subscriptionsEmptyFilterMessage)
                     )
                 } else {
                     ForEach(groupedSections, id: \.title) { section in
@@ -424,6 +473,13 @@ struct SubscriptionsView: View {
                     tagFilter = .all
                 }
             }
+            .onChange(of: store.feeds) { _, _ in
+                // Drop category filter if that category is no longer present on any stored feed.
+                if case .category(let name) = categoryFilter,
+                   !libraryCategories.contains(where: { FeedTags.equal($0, name) }) {
+                    settings.subscriptionsCategoryFilter = ""
+                }
+            }
             .onAppear {
                 consumePendingFeedOpenIfNeeded()
             }
@@ -504,6 +560,17 @@ struct SubscriptionsView: View {
             guard !Task.isCancelled else { return }
             debouncedQuery = trimmed
         }
+    }
+
+    /// Prefer search copy, then category, then tag — honest about which filter emptied the list.
+    private var subscriptionsEmptyFilterMessage: String {
+        if isSearchFiltering {
+            return String(localized: "No subscriptions match your search.")
+        }
+        if isCategoryFiltering {
+            return String(localized: "No subscriptions match this category filter.")
+        }
+        return String(localized: "No subscriptions match this tag filter.")
     }
 
     @ViewBuilder
@@ -713,6 +780,7 @@ private struct OpenPodcastWebsiteContextMenu: ViewModifier {
 private struct TagFilterChip: View {
     let title: String
     let selected: Bool
+    let accessibilityHint: String
     let action: () -> Void
 
     var body: some View {
@@ -725,5 +793,8 @@ private struct TagFilterChip: View {
                 .foregroundStyle(selected ? Color.white : Color.primary)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(accessibilityHint)
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

@@ -15728,6 +15728,96 @@
         }
       },
       "comment": "VoiceOver for a non-http(s) valueRecipient address shown as text."
+    },
+    "Categories": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Categories"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategorien"
+          }
+        }
+      },
+      "comment": "Subscriptions list section header for itunes:category filter chips (library categories only)."
+    },
+    "No subscriptions match this category filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match this category filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu diesem Kategorie-Filter."
+          }
+        }
+      },
+      "comment": "Empty state when Subscriptions category chip (not search/tag) yields no feeds."
+    },
+    "Filters the Subscriptions list by category": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Subscriptions list by category"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Abonnementliste nach Kategorie"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Subscriptions category filter chips."
+    },
+    "Filters the Subscriptions list by tag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Subscriptions list by tag"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Abonnementliste nach Tag"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Subscriptions tag filter chips."
+    },
+    "Subscriptions remaining time covers visible podcasts only (search, tag, or category filter), not the full library": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions remaining time covers visible podcasts only (search, tag, or category filter), not the full library"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Verbleibende Zeit in Abonnements gilt nur für sichtbare Podcasts (Suche, Tag- oder Kategorie-Filter), nicht für die gesamte Bibliothek"
+          }
+        }
+      },
+      "comment": "VoiceOver honesty when Subscriptions search, tag, or category filter narrows visible podcasts for the remaining-time sum."
     }
   },
   "version": "1.0"

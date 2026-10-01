@@ -52,3 +52,48 @@ enum SubscriptionTagFilter: Hashable, Identifiable {
         }
     }
 }
+
+
+/// Category chip selection on the Subscriptions list (feed `itunes:category` text only — never invent).
+enum SubscriptionCategoryFilter: Hashable, Identifiable {
+    case all
+    case category(String)
+
+    var id: String {
+        switch self {
+        case .all: return "__all__"
+        case .category(let name): return "cat:\(name.lowercased())"
+        }
+    }
+
+    var label: String {
+        switch self {
+        case .all: return String(localized: "All")
+        case .category(let name): return name
+        }
+    }
+
+    /// Persistable raw value: empty = All; otherwise the category display name.
+    var storageValue: String {
+        switch self {
+        case .all: return ""
+        case .category(let name): return name
+        }
+    }
+
+    static func fromStorage(_ raw: String?) -> SubscriptionCategoryFilter {
+        guard let raw else { return .all }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? .all : .category(trimmed)
+    }
+
+    /// Case-insensitive match against a feed's `displayCategories` (empty categories never match a specific chip).
+    func matches(_ feed: PodcastFeed) -> Bool {
+        switch self {
+        case .all:
+            return true
+        case .category(let name):
+            return feed.displayCategories.contains { FeedTags.equal($0, name) }
+        }
+    }
+}
