@@ -12,7 +12,7 @@ struct SubscriptionsView: View {
                     ContentUnavailableView(
                         "No subscriptions",
                         systemImage: "dot.radiowaves.left.and.right",
-                        description: Text("Add a podcast by feed URL, or import an OPML file.")
+                        description: Text("Search Apple Podcasts, add by feed URL, or import an OPML file.")
                     )
                 } else {
                     ForEach(store.feeds) { feed in

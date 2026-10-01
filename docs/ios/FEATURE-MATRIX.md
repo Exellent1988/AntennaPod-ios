@@ -17,7 +17,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | History | 3 | todo | |
 | Favorites | 3 | todo | |
 | Subscriptions | 5 | wip | List + subscribe sheet |
-| Add podcast | 5 | wip | URL + Discovery |
+| Add podcast | 5 | wip | URL + Apple Podcasts search (Subscribe reuses feed URL pipeline) |
 | Search (Bibliothek) | 4 | todo | |
 | Statistics | 2 | todo | P3 |
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (5): Inbox, Subscriptions, Queue, Downloads, Settings |
@@ -79,12 +79,12 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Add by RSS URL | 5 | wip | |
-| Apple Podcasts / iTunes Search | 4 | todo | KMP-Client |
+| Add by RSS URL | 5 | wip | Add sheet Feed URL tab |
+| Apple Podcasts / iTunes Search | 4 | done | Native URLSession; Add sheet Search tab; debounced; feedUrl → subscribe |
 | Podcast Index | 4 | todo | |
 | fyyd | 3 | todo | |
 | Top lists / Quick discovery | 4 | todo | |
-| Online feed preview | 4 | todo | |
+| Online feed preview | 4 | wip | Subscribe fetches+parses feed (episodes) via FeedRepository; no separate preview screen yet |
 
 ## Sync & Import
 

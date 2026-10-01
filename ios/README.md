@@ -5,6 +5,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 ## Status (Phase 1 skeleton)
 
 - Subscribe by feed URL
+- Apple Podcasts / iTunes Search discovery (Add sheet; debounced; Subscribe via feed URL)
 - Episode list
 - Stream playback (AVPlayer, speed, ±30s)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip)
@@ -30,7 +31,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # inbox, subscriptions, add feed, player, downloads, queue, settings, OPML
+    └── Features/…           # inbox, subscriptions, add/discover, player, downloads, queue, settings, OPML
 ```
 
 ## Local setup (Mac)
@@ -47,6 +48,10 @@ See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
 ## Persistence
 
 Subscriptions, queue, and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `playback.json`). Inbox is derived from that state (unplayed episodes across feeds, newest first). Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme and default playback speed live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`) and in-flight background task↔episode map (`pending-downloads.json`). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
+
+## Discovery
+
+Apple Podcasts search uses the public iTunes Search API (`media=podcast`, no API key) via `URLSession` (`ItunesSearchService`). Results that include a `feedUrl` are listed with artwork, title, and artist; **Subscribe** runs the existing `PodcastStore.subscribe(feedUrl:)` / `FeedRepository` fetch+parse path (same as Add by URL). Search is lightly debounced (~400 ms). Empty results and network/decode errors are surfaced in the Add sheet. Entry: **Subscriptions → +** (Search / Feed URL segmented control).
 
 ## OPML
 
