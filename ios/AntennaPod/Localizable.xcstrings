@@ -18173,6 +18173,193 @@
           }
         }
       }
+    },
+    "Current network": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current network"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktuelles Netzwerk"
+          }
+        }
+      }
+    },
+    "Offline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline"
+          }
+        }
+      }
+    },
+    "Wi‑Fi": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi‑Fi"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi‑Fi"
+          }
+        }
+      }
+    },
+    "Ethernet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ethernet"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ethernet"
+          }
+        }
+      }
+    },
+    "Cellular": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cellular"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mobilfunk"
+          }
+        }
+      }
+    },
+    "Other network": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other network"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anderes Netzwerk"
+          }
+        }
+      }
+    },
+    "Live status from the system path monitor. Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular does not. No VPN or proxy detection.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live status from the system path monitor. Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular does not. No VPN or proxy detection."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Status vom System-Pfadmonitor. Wi‑Fi und Ethernet erlauben Nur-Wi‑Fi-Aktionen; Mobilfunk nicht. Keine VPN-/Proxy-Erkennung."
+          }
+        }
+      }
+    },
+    "When on (default), auto-download after refresh skips cellular. Does not block manual downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on (default), auto-download after refresh skips cellular. Does not block manual downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv (Standard), überspringt Auto-Download nach dem Refresh Mobilfunk. Blockiert keine manuellen Downloads."
+          }
+        }
+      }
+    },
+    "When on, user-initiated downloads are refused on cellular and an error is recorded. Default off — manual downloads may use mobile data.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, user-initiated downloads are refused on cellular and an error is recorded. Default off — manual downloads may use mobile data."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, werden manuelle Downloads im Mobilfunk abgelehnt und ein Fehler protokolliert. Standard aus — manuelle Downloads dürfen Mobilfunk nutzen."
+          }
+        }
+      }
+    },
+    "When on, network streaming is blocked on cellular; local offline files still play. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, network streaming is blocked on cellular; local offline files still play. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, ist Netzwerk-Streaming im Mobilfunk gesperrt; lokale Offline-Dateien spielen weiter. Standard aus."
+          }
+        }
+      }
+    },
+    "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi‑Fi / Ethernet vs. Mobilfunk (System-Pfadmonitor — keine VPN-/Proxy-Erkennung). Auto-Download nur Wi‑Fi standardmäßig an — überspringt Auto-Einreihen im Mobilfunk. Manuelle Downloads erlauben Mobilfunk standardmäßig; Manueller Download nur Wi‑Fi lehnt manuelle Downloads im Mobilfunk ab und protokolliert einen Fehler. Stream nur Wi‑Fi (Standard aus) sperrt Netzwerk-Stream-URLs im Mobilfunk; lokale Offline-Dateien spielen weiter. Schalter aus = Mobilfunk für diese Aktion erlaubt."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

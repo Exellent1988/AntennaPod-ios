@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import Network
 
@@ -102,17 +103,41 @@ enum AutoDownloadCoordinator {
 
 // MARK: - NWPathMonitor gate
 
+/// Coarse network kind for Settings → Network / Downloads status (honesty only — not VPN/proxy).
+enum NetworkPathKind: Equatable {
+    case offline
+    case wifi
+    case ethernet
+    case cellular
+    case other
+
+    var statusLabel: String {
+        switch self {
+        case .offline: return String(localized: "Offline")
+        case .wifi: return String(localized: "Wi‑Fi")
+        case .ethernet: return String(localized: "Ethernet")
+        case .cellular: return String(localized: "Cellular")
+        case .other: return String(localized: "Other network")
+        }
+    }
+
+    var accessibilityLabel: String {
+        String(localized: "Current network") + ": " + statusLabel
+    }
+}
+
 /// Shared path monitor for Settings → Network / Downloads Wi‑Fi-only policies
-/// (auto-download, manual download, streaming).
+/// (auto-download, manual download, streaming). Publishes path changes for Settings status.
 @MainActor
-final class NetworkPathGate {
+final class NetworkPathGate: ObservableObject {
     static let shared = NetworkPathGate()
 
     private let monitor = NWPathMonitor()
     private var started = false
     /// Optimistic defaults until the first path callback (avoids blocking cold start).
-    private(set) var pathSatisfied = true
-    private(set) var isWifiOrEthernet = true
+    @Published private(set) var pathSatisfied = true
+    @Published private(set) var isWifiOrEthernet = true
+    @Published private(set) var kind: NetworkPathKind = .wifi
 
     private init() {}
 
@@ -122,12 +147,28 @@ final class NetworkPathGate {
         monitor.pathUpdateHandler = { [weak self] path in
             Task { @MainActor in
                 guard let self else { return }
-                self.pathSatisfied = path.status == .satisfied
-                self.isWifiOrEthernet =
-                    path.usesInterfaceType(.wifi) || path.usesInterfaceType(.wiredEthernet)
+                self.apply(path)
             }
         }
         monitor.start(queue: DispatchQueue(label: "de.danoeh.antennapod.ios.network-path", qos: .utility))
+    }
+
+    private func apply(_ path: NWPath) {
+        pathSatisfied = path.status == .satisfied
+        let wifi = path.usesInterfaceType(.wifi)
+        let ethernet = path.usesInterfaceType(.wiredEthernet)
+        isWifiOrEthernet = wifi || ethernet
+        if !pathSatisfied {
+            kind = .offline
+        } else if wifi {
+            kind = .wifi
+        } else if ethernet {
+            kind = .ethernet
+        } else if path.usesInterfaceType(.cellular) {
+            kind = .cellular
+        } else {
+            kind = .other
+        }
     }
 
     /// When `wifiOnly` is true, requires a satisfied Wi‑Fi or Ethernet path.

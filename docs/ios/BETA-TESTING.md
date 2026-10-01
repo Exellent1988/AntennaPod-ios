@@ -140,7 +140,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Auto-download nach Refresh (nur neue IDs, Cap 1/2/3/5, Wi‑Fi, Per-Feed, kein Local-Folder; kein separates BGAppRefresh) | ☐ Auto-download after refresh (new IDs only, cap 1/2/3/5, Wi‑Fi, per-feed, skip local-folder; no separate BGAppRefresh) |
 | ☐ Storage-Limit / Eviction | ☐ Storage limit / eviction |
 | ☐ Auto-delete after play (global + Per-Feed Use global/Always/Never; Favoriten bleiben) | ☐ Auto-delete after play (global + per-feed Use global/Always/Never; favorites kept) |
-| ☐ Network / Downloads Wi‑Fi-only Gates | ☐ Network / Downloads Wi‑Fi-only gates |
+| ☐ Network / Downloads: Current network status + Wi‑Fi-only Gates (Auto / Manual / Stream; Auto default on; Manual/Stream default off; kein VPN/Proxy) | ☐ Network / Downloads: Current network status + Wi‑Fi-only gates (Auto / Manual / Stream; Auto default on; Manual/Stream default off; no VPN/proxy) |
 | ☐ Download-Fehlerbanner + Log | ☐ Download error banner + log |
 | ☐ Download-Fehler-Suche (Titel / Feed / Meldung; Debounce; leer bei keinen Treffern; nur gespeicherter Log; Clear = voller Log) | ☐ Download errors search (title / feed / message; debounce; empty when no matches; persisted log only; Clear = full log) |
 | ☐ Download-Fehler **Erneut versuchen** (pro Zeile; bestehender `download(_:)`; deaktiviert wenn Episode fehlt / Local-Folder / läuft; Zeile entfällt beim Einreihen; neuer Fehler = neuer Eintrag; Wi‑Fi-Gates) | ☐ Download errors **Retry** (per row; existing `download(_:)`; disabled when episode missing / local-folder / in-flight; row drops on enqueue; new failure = new entry; Wi‑Fi gates) |

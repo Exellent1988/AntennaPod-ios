@@ -93,7 +93,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
 - New-episode action (Inbox only / Add to Queue / Add to Queue and download; per-feed Use global / Inbox / Queue; after refresh newcomers only)
 - Auto-download (global on/off + episodes-per-feed cap; **new episode IDs after refresh only**; Wi‑Fi only under Network / Downloads; per-feed Use global / Always / Never; skips local-folder)
-- Mobile / Wi‑Fi policy (auto / manual download / stream Wi‑Fi-only toggles; shared NWPathMonitor)
+- Mobile / Wi‑Fi policy (Current network status + auto / manual download / stream Wi‑Fi-only toggles; shared NWPathMonitor; no VPN/proxy)
 - Per-feed settings (Feed detail → gear: Auto-download, Keep updated, New episodes, Notify, Skip intro/outro, Playback speed overrides)
 - Tags / Folders for subscriptions (side map `feed-tags.json`; assign on per-feed settings; **Manage tags** in Settings → Library + Subscriptions toolbar — searchable list with counts, rename, delete with confirm; filter chips + optional group-by-tag; untagged)
 - Unsubscribe confirm (Subscriptions trailing swipe + Feed detail ⋯; destructive dialog with podcast title; removes feed + feed-settings + tags + queue items from that feed + favorites/archive/bookmarks/playback history for its episodes; **Unsubscribe** keeps downloaded files; optional **Unsubscribe and delete N downloads (~size)** deletes only this feed’s offline files via `deleteDownloads(forFeed:)` before unsubscribe — incl. favorited; cancels in-flight; not Clear all; local-folder releases bookmark; dismisses Feed detail after confirm)
@@ -887,11 +887,12 @@ Settings → **Network / Downloads** (shared `NWPathMonitor` via `NetworkPathGat
 
 | Preference | Default | Behavior |
 |------------|---------|----------|
-| **Auto-download Wi‑Fi only** (`autoDownloadWifiOnly`) | on | Auto-download enqueue skipped on cellular / when path unsatisfied |
-| **Manual download Wi‑Fi only** (`manualDownloadWifiOnly`) | off | User Download buttons refused on cellular; error recorded (`lastError` + download-errors log) |
+| **Current network** (status) | live | Shows Wi‑Fi / Ethernet / Cellular / Offline / Other from the system path monitor. Honesty only — **no** VPN or proxy detection. |
+| **Auto-download Wi‑Fi only** (`autoDownloadWifiOnly`) | on | **Auto** enqueue after refresh skipped on cellular / when path unsatisfied. Does **not** block manual downloads. |
+| **Manual download Wi‑Fi only** (`manualDownloadWifiOnly`) | off | User-initiated Download buttons refused on cellular; error recorded (`lastError` + download-errors log). Default off = manual may use mobile data. |
 | **Stream Wi‑Fi only** (`streamWifiOnly`) | off | `PlaybackService` refuses network stream URLs on cellular; local offline files still play; honest alert (“Cannot stream”) |
 
-Wi‑Fi / Ethernet satisfy the gate; cellular does not. Turn a toggle off to allow cellular for that action.
+Wi‑Fi / Ethernet satisfy Wi‑Fi-only gates; cellular does not. Turn a toggle off to allow cellular for that action. Auto / manual / stream are gated **separately**.
 
 
 

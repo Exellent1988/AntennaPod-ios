@@ -64,6 +64,7 @@ struct SettingsView: View {
     @State private var showNetworkPINGate = false
     @State private var pendingNetworkUnlockAction: (() -> Void)?
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
+    @ObservedObject private var networkPath = NetworkPathGate.shared
     @State private var ratingPromptUITick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -166,8 +167,15 @@ struct SettingsView: View {
                     "Auto-download Wi‑Fi only",
                     "Manual download Wi‑Fi only",
                     "Stream Wi‑Fi only",
+                    "Current network",
+                    "Wi‑Fi",
+                    "Cellular",
+                    "mobile data",
+                    "Mobilfunk",
+                    "Ethernet",
+                    "Offline",
                     "Network / Downloads settings are locked. Enter the parental PIN to change these toggles.",
-                    "Uses NWPathMonitor (Wi‑Fi / Ethernet vs cellular). Auto-download Wi‑Fi only defaults on — skips enqueue on cellular. Manual download Wi‑Fi only (default off) refuses user downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action."
+                    "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action."
                 ) {
                     networkDownloadsSection
                 }
@@ -924,22 +932,37 @@ struct SettingsView: View {
     @ViewBuilder
     private var networkDownloadsSection: some View {
         Section {
+            LabeledContent(String(localized: "Current network")) {
+                Text(networkPath.kind.statusLabel)
+                    .foregroundStyle(.secondary)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(networkPath.kind.accessibilityLabel)
+            .accessibilityHint(String(localized: "Live status from the system path monitor. Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular does not. No VPN or proxy detection."))
+
             Toggle(String(localized: "Auto-download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.autoDownloadWifiOnly))
-                .accessibilityHint(String(localized: "When on, auto-download skips cellular networks."))
+                .accessibilityLabel(String(localized: "Auto-download Wi‑Fi only"))
+                .accessibilityHint(String(localized: "When on (default), auto-download after refresh skips cellular. Does not block manual downloads."))
             Toggle(String(localized: "Manual download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.manualDownloadWifiOnly))
-                .accessibilityHint(String(localized: "When on, user downloads are refused on cellular."))
+                .accessibilityLabel(String(localized: "Manual download Wi‑Fi only"))
+                .accessibilityHint(String(localized: "When on, user-initiated downloads are refused on cellular and an error is recorded. Default off — manual downloads may use mobile data."))
             Toggle(String(localized: "Stream Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.streamWifiOnly))
-                .accessibilityHint(String(localized: "When on, network streaming is blocked on cellular; local files still play."))
+                .accessibilityLabel(String(localized: "Stream Wi‑Fi only"))
+                .accessibilityHint(String(localized: "When on, network streaming is blocked on cellular; local offline files still play. Default off."))
             if parental.isEnabled && parental.lockNetworkDownloadsSettings && parental.isLocked {
-                Text("Network / Downloads settings are locked. Enter the parental PIN to change these toggles.")
+                Text(String(localized: "Network / Downloads settings are locked. Enter the parental PIN to change these toggles."))
                     .font(.caption)
                     .foregroundStyle(.orange)
             }
             Text(networkDownloadsHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .accessibilityLabel(networkDownloadsHelpText)
         } header: {
-            Text("Network / Downloads")
+            Text(String(localized: "Network / Downloads"))
+        }
+        .onAppear {
+            AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
         }
         .sheet(isPresented: $showNetworkPINGate) {
             ParentalPINPromptSheet(
@@ -978,7 +1001,7 @@ struct SettingsView: View {
     }
 
     private var networkDownloadsHelpText: String {
-        String(localized: "Uses NWPathMonitor (Wi‑Fi / Ethernet vs cellular). Auto-download Wi‑Fi only defaults on — skips enqueue on cellular. Manual download Wi‑Fi only (default off) refuses user downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action.")
+        String(localized: "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action.")
     }
 
     @ViewBuilder
