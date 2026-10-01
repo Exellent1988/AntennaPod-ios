@@ -109,6 +109,17 @@ struct FeedDetailView: View {
                         EpisodeRow(episode: episode, feedTitle: liveFeed.title)
                             .swipeActions(edge: .leading, allowsFullSwipe: true) {
                                 Button {
+                                    store.togglePlayed(episode.id)
+                                } label: {
+                                    Label(
+                                        store.isPlayed(episode.id)
+                                            ? String(localized: "Mark unplayed")
+                                            : String(localized: "Mark played"),
+                                        systemImage: store.isPlayed(episode.id) ? "circle" : "checkmark.circle"
+                                    )
+                                }
+                                .tint(.blue)
+                                Button {
                                     store.toggleArchived(episode.id)
                                 } label: {
                                     Label(

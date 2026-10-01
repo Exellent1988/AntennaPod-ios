@@ -60,7 +60,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; Route kann ignorieren) | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; route may ignore) |
 | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; Pause ≥1s → Seek zurück; kein Cold-Play) | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; pause ≥1s → seek back; not on cold play) |
 | ☐ Progress speichern / Resume | ☐ Progress save / resume |
-| ☐ Mark played / unplayed (+ Smart mark Settings Off/15/30/60/120, default 30) | ☐ Mark played / unplayed (+ Smart mark Settings Off/15/30/60/120, default 30) |
+| ☐ Mark played / unplayed (EpisodeRow, Feed-Swipe, Full Player, Alle Episoden; Smart mark Off/15/30/60/120, default 30) | ☐ Mark played / unplayed (EpisodeRow, Feed swipe, Full Player, All Episodes; Smart mark Off/15/30/60/120, default 30) |
 | ☐ Skip intro / outro (wenn > 0) | ☐ Skip intro / outro (when > 0) |
 
 ---
