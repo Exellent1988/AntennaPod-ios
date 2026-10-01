@@ -11308,6 +11308,24 @@
           }
         }
       }
+    },
+    "Inbox remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Inbox info bar (episode count + remaining duration).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inbox remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Posteingangszeit %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
