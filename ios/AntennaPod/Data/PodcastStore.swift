@@ -259,6 +259,26 @@ final class PodcastStore: ObservableObject {
         return items
     }
 
+    // MARK: - Home sections
+
+    /// In-progress (not played) episodes with meaningful progress, newest `lastPlayedAt` first.
+    var continueListeningEpisodes: [HistoryEpisode] {
+        historyEpisodes.filter { item in
+            let state = playbackState(for: item.episode.id)
+            return !state.isPlayed && state.positionSeconds > 1
+        }
+    }
+
+    /// Subscriptions ordered by newest episode `pubDateEpochMs` (proxy for recently updated).
+    var recentlyUpdatedFeeds: [PodcastFeed] {
+        feeds.sorted { lhs, rhs in
+            let l = lhs.episodes.compactMap(\.pubDateEpochMs).max() ?? Int64.min
+            let r = rhs.episodes.compactMap(\.pubDateEpochMs).max() ?? Int64.min
+            if l != r { return l > r }
+            return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+        }
+    }
+
     // MARK: - History (played / in-progress)
 
     /// Episodes marked played or with meaningful progress, newest `lastPlayedAt` first.

@@ -1,7 +1,7 @@
 import SwiftUI
 
-private enum RootTab: Hashable {
-    case inbox, subscriptions, queue, downloads, settings
+enum RootTab: Hashable {
+    case home, inbox, subscriptions, queue, downloads, settings
 }
 
 struct RootTabView: View {
@@ -10,10 +10,15 @@ struct RootTabView: View {
     @EnvironmentObject private var playback: PlaybackService
     @Environment(\.scenePhase) private var scenePhase
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
-    @State private var selectedTab: RootTab = .inbox
+    @State private var selectedTab: RootTab = .home
 
     var body: some View {
         TabView(selection: $selectedTab) {
+            HomeView(selectedTab: $selectedTab)
+                .tabItem {
+                    Label("Home", systemImage: "house.fill")
+                }
+                .tag(RootTab.home)
             InboxView()
                 .tabItem {
                     Label("Inbox", systemImage: "tray.fill")

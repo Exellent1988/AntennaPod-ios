@@ -9,7 +9,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Home (konfigurierbare Sektionen) | 4 | todo | Queue, Inbox, Downloads, … |
+| Home (konfigurierbare Sektionen) | 4 | done | Primary tab: Continue listening, Inbox preview, Queue preview, recently updated feeds (by newest ep pubDate); See all → other tabs; pull-to-refresh; not configurable yet |
 | Queue | 5 | wip | JSON persistence |
 | Inbox | 4 | done | Unplayed across feeds (`!isPlayed`), newest first; tab + pull-to-refresh all feeds |
 | Episodes (Alle) | 4 | todo | |
@@ -20,7 +20,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Add podcast | 5 | wip | URL + Apple Podcasts search (Subscribe reuses feed URL pipeline) |
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
 | Statistics | 2 | todo | P3 |
-| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (5): Inbox, Subscriptions (+ Library → History), Queue, Downloads, Settings |
+| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → History), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
 | Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + playback source + download storage limit + refresh interval + auto-download + auto-delete after play + new-episode notifications (P0/P1); more prefs later |

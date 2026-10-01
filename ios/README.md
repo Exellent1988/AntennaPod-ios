@@ -15,6 +15,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Sleep timer (clock presets + end of episode, fade-out)
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch)
 - Queue tab (JSON)
+- Home tab (Continue listening, Inbox / Queue previews, recently updated feeds; pull-to-refresh)
 - Inbox tab (unplayed across subscriptions; pull-to-refresh refreshes all feeds)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first)
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
@@ -30,7 +31,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Auto-delete after playing (global toggle; deletes offline file on mark played; keeps episode row)
 - Notifications for new episodes (local UserNotifications after refresh; Settings toggle; tap opens Inbox; no push)
 
-Root tabs (5): **Inbox**, Subscriptions, Queue, Downloads, Settings.
+Root tabs (6): **Home**, Inbox, Subscriptions, Queue, Downloads, Settings.
 
 ## Layout
 
@@ -42,7 +43,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # inbox, history, library search, subscriptions, add/discover, player, downloads, queue, settings, OPML, notifications
+    └── Features/…           # home, inbox, history, library search, subscriptions, add/discover, player, downloads, queue, settings, OPML, notifications
 ```
 
 ## Local setup (Mac)
@@ -61,13 +62,25 @@ See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
 Subscriptions, queue, and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`, `lastPlayedAtEpochMs`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `playback.json`). Inbox is derived from that state (unplayed episodes across feeds, newest first). History lists played or in-progress episodes (newest `lastPlayedAt` first); swipe removes playback state or marks unplayed. Older `playback.json` without `lastPlayedAt` migrates from `updatedAt` when played/in-progress. Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme, default playback speed, rewind/fast-forward intervals, playback source preference, feed refresh interval, auto-download, auto-delete-after-playing, and notify-on-new-episodes prefs live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts / mini+full+Now Playing skip / `PlaybackService.play` source resolution / launch+foreground due-check / post-refresh enqueue / mark-played download cleanup. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`) and in-flight background task↔episode map (`pending-downloads.json`). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
 
 
+
+## Home
+
+Primary root tab aggregating existing store data (no new persistence). Sections (hidden when empty):
+
+- **Continue listening** — in-progress episodes (`positionSeconds > 1`, not played), newest `lastPlayedAt` first; rows reuse `EpisodeRow` (resume / download / queue / mark).
+- **New / Inbox** — preview of unplayed episodes (same as Inbox, capped); chevron / See all switches to the Inbox tab.
+- **Queue** — preview of queued episodes when the queue is non-empty; See all → Queue tab.
+- **Recently updated** — subscriptions sorted by newest episode `pubDateEpochMs`; tap → `FeedDetailView`; See all → Subscriptions.
+
+Pull-to-refresh calls `refreshAllFeeds()`. Empty library shows a welcome empty state. Section layout is fixed for this beta (not user-configurable like Android Home).
+
 ## Library search
 
 Local-only search over subscribed feeds and their episodes (title, feed title, feed description) — distinct from Apple Podcasts / iTunes discovery in Add podcast. **Inbox** uses `.searchable` with a short debounce (~250 ms): empty query keeps the unplayed Inbox; non-empty shows Podcasts + Episodes sections. Matching feeds navigate to `FeedDetailView`; episodes reuse `EpisodeRow` (play / download / queue / mark played). **Subscriptions** also filters the feed list via searchable. Empty states when nothing matches.
 
 ## History
 
-**Subscriptions → Library → History** (no extra root tab). Lists episodes that are marked played or have progress (`positionSeconds > 1`), sorted by `lastPlayedAtEpochMs` descending. Rows show feed title and a relative last-played date; tap actions reuse `EpisodeRow` (play / download / queue / mark played). Swipe trailing **Remove** clears that episode’s playback state (leaves the feed row). Swipe leading **Mark unplayed** when played (episode drops out of History if there is no remaining progress). Root tabs stay at five.
+**Subscriptions → Library → History** (no extra root tab). Lists episodes that are marked played or have progress (`positionSeconds > 1`), sorted by `lastPlayedAtEpochMs` descending. Rows show feed title and a relative last-played date; tap actions reuse `EpisodeRow` (play / download / queue / mark played). Swipe trailing **Remove** clears that episode’s playback state (leaves the feed row). Swipe leading **Mark unplayed** when played (episode drops out of History if there is no remaining progress). Root tabs stay at six (Home first).
 
 ## Full player
 
