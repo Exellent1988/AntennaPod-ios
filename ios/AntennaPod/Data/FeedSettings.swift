@@ -22,21 +22,26 @@ struct FeedSettings: Hashable, Codable, Equatable {
     var autoDownload: PerFeedOverride
     var keepUpdated: PerFeedOverride
     var notifyOnNewEpisodes: PerFeedOverride
+    /// New-episode action override (Use global / Inbox / Queue). Download is global-only.
+    var newEpisodeAction: PerFeedNewEpisodeAction
 
     static let `default` = FeedSettings(
         autoDownload: .useGlobal,
         keepUpdated: .useGlobal,
-        notifyOnNewEpisodes: .useGlobal
+        notifyOnNewEpisodes: .useGlobal,
+        newEpisodeAction: .useGlobal
     )
 
     init(
         autoDownload: PerFeedOverride = .useGlobal,
         keepUpdated: PerFeedOverride = .useGlobal,
-        notifyOnNewEpisodes: PerFeedOverride = .useGlobal
+        notifyOnNewEpisodes: PerFeedOverride = .useGlobal,
+        newEpisodeAction: PerFeedNewEpisodeAction = .useGlobal
     ) {
         self.autoDownload = autoDownload
         self.keepUpdated = keepUpdated
         self.notifyOnNewEpisodes = notifyOnNewEpisodes
+        self.newEpisodeAction = newEpisodeAction
     }
 
     init(from decoder: Decoder) throws {
@@ -44,6 +49,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         autoDownload = try c.decodeIfPresent(PerFeedOverride.self, forKey: .autoDownload) ?? .useGlobal
         keepUpdated = try c.decodeIfPresent(PerFeedOverride.self, forKey: .keepUpdated) ?? .useGlobal
         notifyOnNewEpisodes = try c.decodeIfPresent(PerFeedOverride.self, forKey: .notifyOnNewEpisodes) ?? .useGlobal
+        newEpisodeAction = try c.decodeIfPresent(PerFeedNewEpisodeAction.self, forKey: .newEpisodeAction) ?? .useGlobal
     }
 
     /// Whether auto-download may enqueue for this feed (override beats global).
@@ -77,6 +83,6 @@ struct FeedSettings: Hashable, Codable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case autoDownload, keepUpdated, notifyOnNewEpisodes
+        case autoDownload, keepUpdated, notifyOnNewEpisodes, newEpisodeAction
     }
 }

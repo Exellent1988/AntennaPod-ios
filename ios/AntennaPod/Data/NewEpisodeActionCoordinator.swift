@@ -1,0 +1,113 @@
+import Foundation
+
+/// What to do with episodes that first appear on an **existing** subscription after refresh.
+///
+/// Distinct from Inbox (always derived: unplayed + not archived) and from global Auto-download
+/// (newest unplayed cap). This action only touches **newly discovered** episode IDs.
+enum NewEpisodeAction: String, CaseIterable, Identifiable, Codable, Hashable {
+    /// Leave in Inbox only (default). No queue / download side effects.
+    case inboxOnly
+    /// Explicitly enqueue on the Queue tab (Inbox still lists them while unplayed).
+    case addToQueue
+    /// Enqueue on Queue and start a download via `DownloadService` (Wi‑Fi auto-DL gate).
+    case addToQueueAndDownload
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .inboxOnly: return "Inbox only"
+        case .addToQueue: return "Add to Queue"
+        case .addToQueueAndDownload: return "Add to Queue and download"
+        }
+    }
+
+    var helpText: String {
+        switch self {
+        case .inboxOnly:
+            return "New episodes stay in Inbox (unplayed list). Nothing is added to Queue automatically."
+        case .addToQueue:
+            return "After refresh, newly appeared episodes are enqueued on Queue. Inbox still shows them while unplayed."
+        case .addToQueueAndDownload:
+            return "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules still apply to newest unplayed caps."
+        }
+    }
+}
+
+/// Per-feed override for new-episode action (Use global / Inbox / Queue).
+/// Queue here means add-to-queue only — download stays a global choice when using Use global.
+enum PerFeedNewEpisodeAction: String, CaseIterable, Identifiable, Codable, Hashable {
+    case useGlobal
+    case inboxOnly
+    case addToQueue
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .useGlobal: return "Use global"
+        case .inboxOnly: return "Inbox only"
+        case .addToQueue: return "Add to Queue"
+        }
+    }
+
+    /// Resolve against the global Settings preference.
+    func resolved(global: NewEpisodeAction) -> NewEpisodeAction {
+        switch self {
+        case .useGlobal: return global
+        case .inboxOnly: return .inboxOnly
+        case .addToQueue: return .addToQueue
+        }
+    }
+}
+
+/// Applies Inbox / Queue / Queue+download for newly discovered episodes after refresh.
+@MainActor
+enum NewEpisodeActionCoordinator {
+    private static var isApplyInFlight = false
+
+    /// Call after refresh collected `NewEpisodeBatch`es (existing subscriptions only).
+    static func apply(
+        _ batches: [NewEpisodeBatch],
+        store: PodcastStore,
+        downloads: DownloadService?,
+        settings: AppSettings?
+    ) async {
+        guard let settings else { return }
+        let flat = batches.filter { !$0.episodes.isEmpty }
+        guard !flat.isEmpty else { return }
+        guard !isApplyInFlight else { return }
+        isApplyInFlight = true
+        defer { isApplyInFlight = false }
+
+        var downloadCandidates: [PodcastEpisode] = []
+
+        for batch in flat {
+            let action = store.feedSettings(for: batch.feedId)
+                .newEpisodeAction
+                .resolved(global: settings.newEpisodeAction)
+            guard action != .inboxOnly else { continue }
+
+            for episode in batch.episodes {
+                store.enqueue(episode)
+                if action == .addToQueueAndDownload {
+                    downloadCandidates.append(episode)
+                }
+            }
+        }
+
+        guard !downloadCandidates.isEmpty, let downloads else { return }
+
+        AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
+        guard NetworkPathGate.shared.allowsAutoDownload(wifiOnly: settings.autoDownloadWifiOnly) else {
+            return
+        }
+
+        for episode in downloadCandidates {
+            guard let url = episode.downloadUrl, !url.isEmpty else { continue }
+            guard !downloads.isDownloaded(episode) else { continue }
+            guard !downloads.inProgress.contains(episode.id) else { continue }
+            await downloads.download(episode, source: .automatic)
+        }
+    }
+}

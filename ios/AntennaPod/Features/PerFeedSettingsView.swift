@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Per-subscription overrides (Auto-download / Keep updated / Notifications) + tags.
+/// Per-subscription overrides (Auto-download / Keep updated / New episodes / Notifications) + tags.
 struct PerFeedSettingsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var appSettings: AppSettings
@@ -53,6 +53,19 @@ struct PerFeedSettingsView: View {
                     .foregroundStyle(.secondary)
             } header: {
                 Text("Refresh")
+            }
+
+            Section {
+                Picker("New episodes", selection: newEpisodeActionBinding) {
+                    ForEach(PerFeedNewEpisodeAction.allCases) { option in
+                        Text(option.label).tag(option)
+                    }
+                }
+                Text(newEpisodeActionHelp)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } header: {
+                Text("New episodes")
             }
 
             Section {
@@ -185,6 +198,27 @@ struct PerFeedSettingsView: View {
                 store.updateFeedSettings(for: feedId) { $0.notifyOnNewEpisodes = value }
             }
         )
+    }
+
+    private var newEpisodeActionBinding: Binding<PerFeedNewEpisodeAction> {
+        Binding(
+            get: { current.newEpisodeAction },
+            set: { value in
+                store.updateFeedSettings(for: feedId) { $0.newEpisodeAction = value }
+            }
+        )
+    }
+
+    private var newEpisodeActionHelp: String {
+        let global = appSettings.newEpisodeAction.label
+        switch current.newEpisodeAction {
+        case .useGlobal:
+            return "Follows Settings → New episodes (currently \(global)). Queue+download is only available as the global choice."
+        case .inboxOnly:
+            return "New episodes for this podcast stay in Inbox only — not added to Queue, even when global adds to Queue."
+        case .addToQueue:
+            return "Newly appeared episodes for this podcast are added to Queue (no auto-download from this override). Inbox still lists them while unplayed."
+        }
     }
 
     private var autoDownloadHelp: String {

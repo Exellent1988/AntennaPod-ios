@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + About (P0/P1); more prefs later |
+| Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + **new-episode action** + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + About (P0/P1); more prefs later |
 
 ## Subscriptions
 
@@ -35,9 +35,9 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Episodenliste / Feed-Seite | 5 | wip | |
 | Archive / restore | 3 | done | Side map `archived.json` (id → archivedAt); archived ≠ played. Hide from Inbox (+ Home New preview). EpisodeRow button/context + Feed/Inbox/Queue/Favorites/All Episodes swipes; Inbox Archive all; Library → Archived (restore). Feed lists keep archived with dim/badge (not removed) |
 | Tags / Folders | 3 | done | Side map `feed-tags.json` (feed id → string tags, 0..n); manage on Feed detail → gear (Per-feed settings): add existing/new, remove, rename/delete globally; empty tags disappear. Subscriptions: filter chips All / each tag / Untagged + optional Group by tag sections (multi-tag feeds listed under each). Not Android drawer folders / nested hierarchy |
-| Per-feed settings | 4 | done | Feed detail → gear sheet: Auto-download / Keep updated / Notify Use global·Always·Never; side map `feed-settings.json`; Speed / Skip Intro·Outro per feed later (global skip intro/outro in Settings) |
+| Per-feed settings | 4 | done | Feed detail → gear sheet: Auto-download / Keep updated / New episodes (Use global·Inbox·Queue) / Notify Use global·Always·Never; side map `feed-settings.json`; Speed / Skip Intro·Outro per feed later (global skip intro/outro in Settings) |
 | Keep updated | 4 | done | Global via Settings refresh interval; per-feed Keep updated Never skips that feed in refresh-all (single-feed refresh still OK) |
-| New-episode action (Inbox/Queue) | 4 | todo | Regeln → KMP |
+| New-episode action (Inbox/Queue) | 4 | done | **Simple beta**: Settings → New episodes Inbox only (default) / Add to Queue / Add to Queue and download; applies to newly appeared eps after refresh (existing subs). Per-feed Use global / Inbox / Queue. Inbox stays derived unplayed list; Queue gets explicit adds. Download uses auto-DL Wi‑Fi gate. **Not** full Android filter rules → KMP later |
 | Local folder feeds | 2 | todo | iOS DocumentPicker |
 | Share podcast/episode | 3 | done | Episode: title + page link (else enclosure) via ShareLink; podcast: title + feed URL from FeedDetail toolbar; EpisodeRow button/context menu + FeedDetail swipe; full player ShareLink |
 

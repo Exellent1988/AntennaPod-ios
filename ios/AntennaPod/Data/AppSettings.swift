@@ -193,7 +193,7 @@ enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
     ]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error notifications).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error notifications).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -227,6 +227,7 @@ final class AppSettings: ObservableObject {
         static let storageLimitValue = "settings.storageLimit.value"
         static let refreshInterval = "settings.refreshInterval"
         static let lastFeedRefreshAt = "settings.lastFeedRefreshAt"
+        static let newEpisodeAction = "settings.newEpisodeAction"
         static let autoDownloadEnabled = "settings.autoDownload.enabled"
         static let autoDownloadEpisodesPerFeed = "settings.autoDownload.episodesPerFeed"
         static let autoDownloadWifiOnly = "settings.autoDownload.wifiOnly"
@@ -286,6 +287,12 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Global action for newly discovered episodes after refresh (Inbox only / Queue / Queue+download).
+    @Published var newEpisodeAction: NewEpisodeAction {
+        didSet {
+            UserDefaults.standard.set(newEpisodeAction.rawValue, forKey: Keys.newEpisodeAction)
+        }
+    }
 
     /// Global auto-download after feed refresh (newest unplayed, not yet downloaded).
     @Published var autoDownloadEnabled: Bool {
@@ -417,6 +424,9 @@ final class AppSettings: ObservableObject {
         } else {
             lastFeedRefreshAt = nil
         }
+        let actionRaw = UserDefaults.standard.string(forKey: Keys.newEpisodeAction)
+            ?? NewEpisodeAction.inboxOnly.rawValue
+        newEpisodeAction = NewEpisodeAction(rawValue: actionRaw) ?? .inboxOnly
         if UserDefaults.standard.object(forKey: Keys.autoDownloadEnabled) != nil {
             autoDownloadEnabled = UserDefaults.standard.bool(forKey: Keys.autoDownloadEnabled)
         } else {
@@ -567,6 +577,7 @@ final class AppSettings: ObservableObject {
             storageLimitValue: storageValue,
             refreshInterval: refreshInterval.rawValue,
             lastFeedRefreshAtEpoch: lastFeedRefreshAt?.timeIntervalSince1970,
+            newEpisodeAction: newEpisodeAction.rawValue,
             autoDownloadEnabled: autoDownloadEnabled,
             autoDownloadEpisodesPerFeed: autoDownloadEpisodesPerFeed.rawValue,
             autoDownloadWifiOnly: autoDownloadWifiOnly,
@@ -606,6 +617,7 @@ final class AppSettings: ObservableObject {
         } else {
             lastFeedRefreshAt = nil
         }
+        newEpisodeAction = NewEpisodeAction(rawValue: snap.newEpisodeAction ?? "") ?? .inboxOnly
         autoDownloadEnabled = snap.autoDownloadEnabled
         autoDownloadEpisodesPerFeed =
             AutoDownloadEpisodesPerFeed(rawValue: snap.autoDownloadEpisodesPerFeed) ?? .two
@@ -641,6 +653,7 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var storageLimitValue: Int?
     var refreshInterval: String
     var lastFeedRefreshAtEpoch: Double?
+    var newEpisodeAction: String?
     var autoDownloadEnabled: Bool
     var autoDownloadEpisodesPerFeed: Int
     var autoDownloadWifiOnly: Bool

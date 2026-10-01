@@ -218,10 +218,24 @@ final class PodcastStore: ObservableObject {
         if wasSubscribed, let updated = feeds.first(where: { $0.feedUrl == feed.feedUrl }) {
             let newcomers = updated.episodes.filter { !existingIds.contains($0.id) }
             if !newcomers.isEmpty {
+                let batches = [
+                    NewEpisodeBatch(
+                        feedTitle: updated.title,
+                        feedId: updated.id,
+                        feedUrl: updated.feedUrl,
+                        episodes: newcomers
+                    )
+                ]
                 await NewEpisodeNotificationCoordinator.handleNewEpisodes(
-                    [NewEpisodeBatch(feedTitle: updated.title, feedId: updated.id, feedUrl: updated.feedUrl, episodes: newcomers)],
+                    batches,
                     settings: settings,
                     store: self
+                )
+                await NewEpisodeActionCoordinator.apply(
+                    batches,
+                    store: self,
+                    downloads: downloads,
+                    settings: settings
                 )
             }
         }
@@ -756,6 +770,12 @@ final class PodcastStore: ObservableObject {
         // Stamp even if some feeds failed — avoids hammering on every foreground.
         settings?.markFeedRefreshCompleted()
         await NewEpisodeNotificationCoordinator.handleNewEpisodes(newBatches, settings: settings, store: self)
+        await NewEpisodeActionCoordinator.apply(
+            newBatches,
+            store: self,
+            downloads: downloads,
+            settings: settings
+        )
         await AutoDownloadCoordinator.enqueueAfterRefresh(
             store: self,
             downloads: downloads,

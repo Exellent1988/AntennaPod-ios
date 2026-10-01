@@ -220,6 +220,14 @@ struct SettingsView: View {
             Text(refreshHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            Picker("New episodes", selection: $settings.newEpisodeAction) {
+                ForEach(NewEpisodeAction.allCases) { action in
+                    Text(action.label).tag(action)
+                }
+            }
+            Text(settings.newEpisodeAction.helpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
         } header: {
             Text("Feeds / Keep updated")
         }
