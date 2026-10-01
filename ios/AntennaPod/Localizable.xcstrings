@@ -9044,6 +9044,40 @@
           }
         }
       }
+    },
+    "Filters the Downloads list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Downloads list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Downloads-Liste"
+          }
+        }
+      }
+    },
+    "No downloads match your filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No downloads match your filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Downloads passen zu deinem Filter."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

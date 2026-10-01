@@ -353,6 +353,23 @@ enum ArchivedSort: String, CaseIterable, Identifiable {
     }
 }
 
+/// Filter chips on Downloads tab. Uses PodcastStore.isPlayed on downloaded episodes.
+enum DownloadsFilter: String, CaseIterable, Identifiable {
+    case all
+    case unplayed
+    case played
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .all: return String(localized: "All")
+        case .unplayed: return String(localized: "Unplayed")
+        case .played: return String(localized: "Played")
+        }
+    }
+}
+
 /// Filter chips on Library → Episodes (All Episodes). Applied after the newest-500 soft cap.
 enum AllEpisodesFilter: String, CaseIterable, Identifiable {
     case all
@@ -414,7 +431,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, Inbox sort, Downloads sort, History sort, Favorites sort, Archived sort, All Episodes filter chips, queue lock).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, Inbox sort, Downloads sort, History sort, Favorites sort, Archived sort, All Episodes filter chips, Downloads filter chips, queue lock).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -490,6 +507,7 @@ final class AppSettings: ObservableObject {
         static let feedEpisodeSort = "settings.feedEpisodeSort"
         static let inboxSort = "settings.inboxSort"
         static let downloadsSort = "settings.downloadsSort"
+        static let downloadsFilter = "settings.downloadsFilter"
         static let historySort = "settings.historySort"
         static let favoritesSort = "settings.favoritesSort"
         static let archivedSort = "settings.archivedSort"
@@ -790,6 +808,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Downloads tab chip filter (All / Unplayed / Played via PodcastStore.isPlayed). Default All. Persisted.
+    /// Applied before `.searchable`; `downloadsSort` still orders the filtered list.
+    @Published var downloadsFilter: DownloadsFilter {
+        didSet {
+            UserDefaults.standard.set(downloadsFilter.rawValue, forKey: Keys.downloadsFilter)
+        }
+    }
+
     /// History list order by `HistoryEpisode.lastPlayedAtEpochMs`: newest first (default) or oldest first.
     /// That field is `playbackStates.lastPlayedAtEpochMs`, else `updatedAtEpochMs` (same as store History catalog).
     /// Stable tiebreaker is episode `id`. Client-side re-sort in HistoryView only — `PodcastStore.historyEpisodes`
@@ -1023,6 +1049,9 @@ final class AppSettings: ObservableObject {
         let downloadsSortRaw = UserDefaults.standard.string(forKey: Keys.downloadsSort)
             ?? DownloadsSort.newestFirst.rawValue
         downloadsSort = DownloadsSort(rawValue: downloadsSortRaw) ?? .newestFirst
+        let downloadsFilterRaw = UserDefaults.standard.string(forKey: Keys.downloadsFilter)
+            ?? DownloadsFilter.all.rawValue
+        downloadsFilter = DownloadsFilter(rawValue: downloadsFilterRaw) ?? .all
         let historySortRaw = UserDefaults.standard.string(forKey: Keys.historySort)
             ?? HistorySort.newestFirst.rawValue
         historySort = HistorySort(rawValue: historySortRaw) ?? .newestFirst
@@ -1253,6 +1282,7 @@ final class AppSettings: ObservableObject {
             feedEpisodeSort: feedEpisodeSort.rawValue,
             inboxSort: inboxSort.rawValue,
             downloadsSort: downloadsSort.rawValue,
+            downloadsFilter: downloadsFilter.rawValue,
             historySort: historySort.rawValue,
             favoritesSort: favoritesSort.rawValue,
             archivedSort: archivedSort.rawValue,
@@ -1358,6 +1388,9 @@ final class AppSettings: ObservableObject {
         if let downloadsSortRaw = snap.downloadsSort {
             downloadsSort = DownloadsSort(rawValue: downloadsSortRaw) ?? .newestFirst
         }
+        if let downloadsFilterRaw = snap.downloadsFilter {
+            downloadsFilter = DownloadsFilter(rawValue: downloadsFilterRaw) ?? .all
+        }
         if let historySortRaw = snap.historySort {
             historySort = HistorySort(rawValue: historySortRaw) ?? .newestFirst
         }
@@ -1431,6 +1464,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var inboxSort: String? = nil
     /// Absent in older backups → newestFirst (default).
     var downloadsSort: String? = nil
+    /// Absent in older backups → all (default).
+    var downloadsFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var historySort: String? = nil
     /// Absent in older backups → newestFirst (default).

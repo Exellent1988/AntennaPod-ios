@@ -101,8 +101,9 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Download-Fehlerbanner + Log | ☐ Download error banner + log |
 | ☐ Downloads: Suche (Titel / Feed) | ☐ Downloads: search (title / feed) |
 | ☐ Downloads: Sortierung (Neueste / Älteste; Download-Zeit sonst pubDate; persistiert) | ☐ Downloads: sort (Newest / Oldest; download time else pubDate; persisted) |
+| ☐ Downloads: Filter-Chips Alle / Ungehört / Gehört (persistiert; mit Suche + Sort) | ☐ Downloads: filter chips All / Unplayed / Played (persisted; with search + sort) |
 | ☐ Downloads: Swipes (Play Next / Queue / Delete) | ☐ Downloads: swipes (Play Next / Add to queue / Delete) |
-| ☐ Downloads: Gehörte löschen (Bestätigung; Favoriten überspringen) | ☐ Downloads: Delete played (confirm; skip favorites) |
+| ☐ Downloads: Gehörte löschen (Bestätigung; Favoriten überspringen; global — nicht nur sichtbarer Filter) | ☐ Downloads: Delete played (confirm; skip favorites; global — not visible filter only) |
 
 ---
 

@@ -13,11 +13,20 @@ struct DownloadsView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
-    /// Visible downloaded episodes; empty query shows the full catalog.
-    /// Sorted by `AppSettings.downloadsSort`: prefer `downloadedAtEpochMs`, else `pubDateEpochMs`.
+    /// Visible downloaded episodes: chip filter → search → sort.
+    /// Chip uses `PodcastStore.isPlayed`. Sort by `AppSettings.downloadsSort`
+    /// (prefer `downloadedAtEpochMs`, else `pubDateEpochMs`).
     private var filteredDownloads: [DownloadedEpisode] {
+        var base = downloads.downloads
+        switch settings.downloadsFilter {
+        case .all:
+            break
+        case .unplayed:
+            base = base.filter { !store.isPlayed($0.episode.id) }
+        case .played:
+            base = base.filter { store.isPlayed($0.episode.id) }
+        }
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-        let base = downloads.downloads
         let filtered: [DownloadedEpisode]
         if q.isEmpty {
             filtered = base
@@ -44,7 +53,14 @@ struct DownloadsView: View {
         }
     }
 
+    private var isFiltering: Bool {
+        settings.downloadsFilter != .all
+            || !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     /// Played offline files eligible for bulk delete (skips favorites — matches auto-delete).
+    /// **Global** across the full Downloads catalog — not scoped to the visible chip/search filter
+    /// (same honesty as Clear history / Clear favorites / Restore all).
     private var playedDownloadsForDelete: [DownloadedEpisode] {
         downloads.playedDownloadsEligibleForDelete(store: store)
     }
@@ -84,6 +100,23 @@ struct DownloadsView: View {
                     }
                 }
 
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(DownloadsFilter.allCases) { chip in
+                                DownloadsFilterChip(
+                                    title: chip.label,
+                                    selected: settings.downloadsFilter == chip
+                                ) {
+                                    settings.downloadsFilter = chip
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                }
+
                 if downloads.downloads.isEmpty {
                     ContentUnavailableView(
                         "No downloads",
@@ -94,7 +127,11 @@ struct DownloadsView: View {
                     ContentUnavailableView(
                         "No matching downloads",
                         systemImage: "magnifyingglass",
-                        description: Text("No downloads match your search.")
+                        description: Text(
+                            isFiltering
+                                ? String(localized: "No downloads match your filter.")
+                                : String(localized: "No downloads match your search.")
+                        )
                     )
                 } else {
                     Section {
@@ -216,6 +253,27 @@ struct DownloadsView: View {
             guard !Task.isCancelled else { return }
             debouncedQuery = trimmed
         }
+    }
+}
+
+private struct DownloadsFilterChip: View {
+    let title: String
+    let selected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline.weight(selected ? .semibold : .regular))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(selected ? Color.accentColor : Color.secondary.opacity(0.15), in: Capsule())
+                .foregroundStyle(selected ? Color.white : Color.primary)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(String(localized: "Filters the Downloads list"))
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }
 
