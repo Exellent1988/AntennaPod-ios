@@ -606,8 +606,21 @@ final class PodcastStore: ObservableObject {
         performAutoDeleteAfterPlaying(episodeId)
     }
 
+    /// Resolves global + per-feed Use global / Always / Never for auto-delete after play.
+    /// Orphan episodes (no owning feed) follow the global toggle only.
+    private func shouldAutoDeleteAfterPlaying(episodeId: String) -> Bool {
+        let global = settings?.autoDeleteAfterPlaying == true
+        guard let feed = feed(containingEpisodeId: episodeId) else {
+            return global
+        }
+        return feedSettings(for: feed.id).allowsAutoDeleteAfterPlaying(globalEnabled: global)
+    }
+
     private func enqueueAutoDeleteAfterPlaying(_ episodeId: String) {
-        guard settings?.autoDeleteAfterPlaying == true else { return }
+        guard shouldAutoDeleteAfterPlaying(episodeId: episodeId) else {
+            pendingAutoDeleteIds.remove(episodeId)
+            return
+        }
         guard !isFavorite(episodeId) else {
             pendingAutoDeleteIds.remove(episodeId)
             return
@@ -621,7 +634,7 @@ final class PodcastStore: ObservableObject {
     }
 
     private func performAutoDeleteAfterPlaying(_ episodeId: String) {
-        guard settings?.autoDeleteAfterPlaying == true else { return }
+        guard shouldAutoDeleteAfterPlaying(episodeId: episodeId) else { return }
         // Favorited / starred episodes keep their offline file.
         guard !isFavorite(episodeId) else { return }
         guard let downloads else { return }

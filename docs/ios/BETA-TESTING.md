@@ -139,7 +139,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Background-Download überlebt Suspend | ☐ Background download survives suspend |
 | ☐ Auto-download nach Refresh (nur neue IDs, Cap 1/2/3/5, Wi‑Fi, Per-Feed, kein Local-Folder; kein separates BGAppRefresh) | ☐ Auto-download after refresh (new IDs only, cap 1/2/3/5, Wi‑Fi, per-feed, skip local-folder; no separate BGAppRefresh) |
 | ☐ Storage-Limit / Eviction | ☐ Storage limit / eviction |
-| ☐ Auto-delete after play | ☐ Auto-delete after play |
+| ☐ Auto-delete after play (global + Per-Feed Use global/Always/Never; Favoriten bleiben) | ☐ Auto-delete after play (global + per-feed Use global/Always/Never; favorites kept) |
 | ☐ Network / Downloads Wi‑Fi-only Gates | ☐ Network / Downloads Wi‑Fi-only gates |
 | ☐ Download-Fehlerbanner + Log | ☐ Download error banner + log |
 | ☐ Download-Fehler-Suche (Titel / Feed / Meldung; Debounce; leer bei keinen Treffern; nur gespeicherter Log; Clear = voller Log) | ☐ Download errors search (title / feed / message; debounce; empty when no matches; persisted log only; Clear = full log) |

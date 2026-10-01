@@ -18020,6 +18020,159 @@
           }
         }
       }
+    },
+    "Delete after playing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete after playing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach dem Abspielen löschen"
+          }
+        }
+      }
+    },
+    "Use global, Always, or Never for deleting this podcast’s offline file when an episode is marked played. Favorites are always kept.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, Always, or Never for deleting this podcast’s offline file when an episode is marked played. Favorites are always kept."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global verwenden, Immer oder Nie: Offline-Datei dieses Podcasts löschen, wenn eine Episode als gehört markiert wird. Favoriten bleiben immer erhalten."
+          }
+        }
+      }
+    },
+    "Follows Settings → Delete episode after playing (currently %@). Favorites still keep their offline files. Defers while that local file is the active player item.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follows Settings → Delete episode after playing (currently %@). Favorites still keep their offline files. Defers while that local file is the active player item."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folgt Einstellungen → Episode nach dem Abspielen löschen (aktuell %@). Favoriten behalten ihre Offline-Dateien. Verschiebt das Löschen, solange diese lokale Datei das aktive Player-Element ist."
+          }
+        }
+      }
+    },
+    "Always delete this podcast’s offline file when an episode is marked played, even when the global toggle is off. Favorites still keep their offline files.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Always delete this podcast’s offline file when an episode is marked played, even when the global toggle is off. Favorites still keep their offline files."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht die Offline-Datei dieses Podcasts immer, wenn eine Episode als gehört markiert wird — auch wenn der globale Schalter aus ist. Favoriten behalten ihre Offline-Dateien."
+          }
+        }
+      }
+    },
+    "Never auto-delete this podcast’s offline files after playing, even when the global toggle is on. Manual Delete download still works.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never auto-delete this podcast’s offline files after playing, even when the global toggle is on. Manual Delete download still works."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht Offline-Dateien dieses Podcasts nach dem Abspielen nie automatisch — auch wenn der globale Schalter an ist. Manuelles Download löschen funktioniert weiter."
+          }
+        }
+      }
+    },
+    "Delete episode after playing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete episode after playing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode nach dem Abspielen löschen"
+          }
+        }
+      }
+    },
+    "Removes the offline file when marked played; favorites are kept. Per-podcast override available in Feed settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the offline file when marked played; favorites are kept. Per-podcast override available in Feed settings."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt die Offline-Datei beim Gehört-Markieren; Favoriten bleiben. Per-Podcast-Überschreibung in den Feed-Einstellungen."
+          }
+        }
+      }
+    },
+    "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item, and skips favorited / starred episodes. Per-podcast Feed settings can override with Always / Never.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item, and skips favorited / starred episodes. Per-podcast Feed settings can override with Always / Never."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn eine Episode als gehört markiert wird (manuell oder nach Wiedergabeende), wird die Offline-Datei über DownloadService gelöscht. Episodenzeile und Gehört-Status bleiben. Überspringt, solange diese lokale Datei noch das aktive Player-Element ist, und überspringt favorisierte / mit Stern markierte Episoden. Per-Podcast-Feed-Einstellungen können mit Immer / Nie überschreiben."
+          }
+        }
+      }
+    },
+    "When enabled, offline files are removed after an episode is marked played. Episode metadata and played status are kept. Per-podcast Feed settings can still Always delete for one feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When enabled, offline files are removed after an episode is marked played. Episode metadata and played status are kept. Per-podcast Feed settings can still Always delete for one feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, werden Offline-Dateien entfernt, nachdem eine Episode als gehört markiert wurde. Episoden-Metadaten und Gehört-Status bleiben. Per-Podcast-Feed-Einstellungen können für einen Feed weiterhin Immer löschen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

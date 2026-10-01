@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Per-subscription overrides (Auto-download / Keep updated / New episodes / Notifications / Skip intro·outro / Speed) + tags.
+/// Per-subscription overrides (Auto-download / Auto-delete after play / Keep updated / New episodes / Notifications / Skip intro·outro / Speed) + tags.
 struct PerFeedSettingsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var appSettings: AppSettings
@@ -41,6 +41,19 @@ struct PerFeedSettingsView: View {
                 Text(autoDownloadHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+
+                Picker("Delete after playing", selection: autoDeleteBinding) {
+                    ForEach(PerFeedOverride.allCases) { option in
+                        Text(option.label).tag(option)
+                    }
+                }
+                .accessibilityLabel(String(localized: "Delete after playing"))
+                .accessibilityHint(String(localized: "Use global, Always, or Never for deleting this podcast’s offline file when an episode is marked played. Favorites are always kept."))
+                .accessibilityValue(current.autoDeleteAfterPlaying.label)
+                Text(autoDeleteHelp)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel(autoDeleteHelp)
             } header: {
                 Text("Downloads")
             }
@@ -276,6 +289,15 @@ struct PerFeedSettingsView: View {
         )
     }
 
+    private var autoDeleteBinding: Binding<PerFeedOverride> {
+        Binding(
+            get: { current.autoDeleteAfterPlaying },
+            set: { value in
+                store.updateFeedSettings(for: feedId) { $0.autoDeleteAfterPlaying = value }
+            }
+        )
+    }
+
     private var keepUpdatedBinding: Binding<PerFeedOverride> {
         Binding(
             get: { current.keepUpdated },
@@ -324,6 +346,21 @@ struct PerFeedSettingsView: View {
             return String(localized: "Always enqueue newly appeared episodes after refresh for this podcast, even when global Auto-download is off. Cap and Wi‑Fi-only still apply.")
         case .never:
             return String(localized: "Never auto-download this podcast, even when global Auto-download is on. Manual Download still works.")
+        }
+    }
+
+    private var autoDeleteHelp: String {
+        let global = appSettings.autoDeleteAfterPlaying ? String(localized: "on") : String(localized: "off")
+        switch current.autoDeleteAfterPlaying {
+        case .useGlobal:
+            return String(
+                format: String(localized: "Follows Settings → Delete episode after playing (currently %@). Favorites still keep their offline files. Defers while that local file is the active player item."),
+                global
+            )
+        case .always:
+            return String(localized: "Always delete this podcast’s offline file when an episode is marked played, even when the global toggle is off. Favorites still keep their offline files.")
+        case .never:
+            return String(localized: "Never auto-delete this podcast’s offline files after playing, even when the global toggle is on. Manual Delete download still works.")
         }
     }
 

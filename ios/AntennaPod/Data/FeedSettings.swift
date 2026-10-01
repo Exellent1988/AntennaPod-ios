@@ -22,6 +22,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
     var autoDownload: PerFeedOverride
     var keepUpdated: PerFeedOverride
     var notifyOnNewEpisodes: PerFeedOverride
+    /// Auto-delete after playing override (Use global / Always / Never). Favorites still skipped.
+    var autoDeleteAfterPlaying: PerFeedOverride
     /// New-episode action override (Use global / Inbox / Queue). Download is global-only.
     var newEpisodeAction: PerFeedNewEpisodeAction
     /// Skip intro seconds override; `nil` = Use global. Explicit `0` = Off for this feed.
@@ -35,6 +37,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         autoDownload: .useGlobal,
         keepUpdated: .useGlobal,
         notifyOnNewEpisodes: .useGlobal,
+        autoDeleteAfterPlaying: .useGlobal,
         newEpisodeAction: .useGlobal,
         skipIntroSeconds: nil,
         skipOutroSeconds: nil,
@@ -45,6 +48,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         autoDownload: PerFeedOverride = .useGlobal,
         keepUpdated: PerFeedOverride = .useGlobal,
         notifyOnNewEpisodes: PerFeedOverride = .useGlobal,
+        autoDeleteAfterPlaying: PerFeedOverride = .useGlobal,
         newEpisodeAction: PerFeedNewEpisodeAction = .useGlobal,
         skipIntroSeconds: Int? = nil,
         skipOutroSeconds: Int? = nil,
@@ -53,6 +57,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         self.autoDownload = autoDownload
         self.keepUpdated = keepUpdated
         self.notifyOnNewEpisodes = notifyOnNewEpisodes
+        self.autoDeleteAfterPlaying = autoDeleteAfterPlaying
         self.newEpisodeAction = newEpisodeAction
         self.skipIntroSeconds = Self.normalizedSkipIntroOutro(skipIntroSeconds)
         self.skipOutroSeconds = Self.normalizedSkipIntroOutro(skipOutroSeconds)
@@ -64,6 +69,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         autoDownload = try c.decodeIfPresent(PerFeedOverride.self, forKey: .autoDownload) ?? .useGlobal
         keepUpdated = try c.decodeIfPresent(PerFeedOverride.self, forKey: .keepUpdated) ?? .useGlobal
         notifyOnNewEpisodes = try c.decodeIfPresent(PerFeedOverride.self, forKey: .notifyOnNewEpisodes) ?? .useGlobal
+        autoDeleteAfterPlaying = try c.decodeIfPresent(PerFeedOverride.self, forKey: .autoDeleteAfterPlaying) ?? .useGlobal
         newEpisodeAction = try c.decodeIfPresent(PerFeedNewEpisodeAction.self, forKey: .newEpisodeAction) ?? .useGlobal
         skipIntroSeconds = Self.normalizedSkipIntroOutro(
             try c.decodeIfPresent(Int.self, forKey: .skipIntroSeconds)
@@ -96,6 +102,16 @@ struct FeedSettings: Hashable, Codable, Equatable {
     /// Whether new-episode local notifications may fire for this feed (override beats global).
     func allowsNotify(globalEnabled: Bool) -> Bool {
         switch notifyOnNewEpisodes {
+        case .useGlobal: return globalEnabled
+        case .always: return true
+        case .never: return false
+        }
+    }
+
+    /// Whether auto-delete after playing may remove this feed's offline file (override beats global).
+    /// Favorites / active-player deferral are enforced separately in PodcastStore.
+    func allowsAutoDeleteAfterPlaying(globalEnabled: Bool) -> Bool {
+        switch autoDeleteAfterPlaying {
         case .useGlobal: return globalEnabled
         case .always: return true
         case .never: return false
@@ -148,7 +164,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case autoDownload, keepUpdated, notifyOnNewEpisodes, newEpisodeAction
+        case autoDownload, keepUpdated, notifyOnNewEpisodes, autoDeleteAfterPlaying, newEpisodeAction
         case skipIntroSeconds, skipOutroSeconds, playbackSpeed
     }
 }
