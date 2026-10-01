@@ -9231,6 +9231,23 @@
           }
         }
       }
+    },
+    "Filters the Feed episodes list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Feed episodes list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Feed-Episodenliste"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

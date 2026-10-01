@@ -49,16 +49,32 @@ struct FeedDetailView: View {
         }
     }
 
-    /// Visible episodes after search; empty query shows the full sorted list.
+    /// Visible episodes: sort → chip filter → search.
+    /// Chip via `AppSettings.feedEpisodeFilter` (`isPlayed`; Unplayed also excludes archived,
+    /// same spirit as All Episodes Unplayed). Empty query shows the chip-filtered sorted list.
     /// Matches title and optional episode descriptionText (raw feed text / HTML).
     private var filteredEpisodes: [PodcastEpisode] {
+        var base = sortedEpisodes
+        switch settings.feedEpisodeFilter {
+        case .all:
+            break
+        case .unplayed:
+            // Same spirit as All Episodes Unplayed / Inbox: not played and not archived.
+            base = base.filter { !store.isPlayed($0.id) && !store.isArchived($0.id) }
+        case .played:
+            base = base.filter { store.isPlayed($0.id) }
+        }
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-        let base = sortedEpisodes
         if q.isEmpty { return base }
         return base.filter {
             $0.title.localizedCaseInsensitiveContains(q)
                 || ($0.descriptionText?.localizedCaseInsensitiveContains(q) ?? false)
         }
+    }
+
+    private var isFiltering: Bool {
+        settings.feedEpisodeFilter != .all
+            || !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// Unplayed, not archived, not downloaded — newest first, soft-capped.
@@ -92,6 +108,23 @@ struct FeedDetailView: View {
                     }
                 }
             }
+            Section {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(FeedEpisodeFilter.allCases) { chip in
+                            FeedEpisodeFilterChip(
+                                title: chip.label,
+                                selected: settings.feedEpisodeFilter == chip
+                            ) {
+                                settings.feedEpisodeFilter = chip
+                            }
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+
             Section("Episodes") {
                 if liveFeed.episodes.isEmpty {
                     ContentUnavailableView(
@@ -103,7 +136,11 @@ struct FeedDetailView: View {
                     ContentUnavailableView(
                         "No matching episodes",
                         systemImage: "magnifyingglass",
-                        description: Text("No episodes match your search.")
+                        description: Text(
+                            isFiltering
+                                ? String(localized: "No episodes match your filter.")
+                                : String(localized: "No episodes match your search.")
+                        )
                     )
                 } else {
                     ForEach(filteredEpisodes) { episode in
@@ -353,6 +390,29 @@ struct FeedDetailView: View {
     }
 }
 
+
+
+/// Filter chip for Feed detail All / Unplayed / Played (mirrors Downloads / All Episodes).
+private struct FeedEpisodeFilterChip: View {
+    let title: String
+    let selected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline.weight(selected ? .semibold : .regular))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(selected ? Color.accentColor : Color.secondary.opacity(0.15), in: Capsule())
+                .foregroundStyle(selected ? Color.white : Color.primary)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(String(localized: "Filters the Feed episodes list"))
+        .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+}
 
 /// Simple wrapping tag chips (Feed detail header).
 private struct FlowTagRow: View {
