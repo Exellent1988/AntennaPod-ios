@@ -16411,6 +16411,114 @@
         }
       }
     },
+    "License": {
+      "extractionState": "manual",
+      "comment": "Section title for podcast:license list in Feed detail / description / Shownotes.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "License"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lizenz"
+          }
+        }
+      }
+    },
+    "These licenses come from the feed. Display only — this app does not enforce DRM or license terms.": {
+      "extractionState": "manual",
+      "comment": "Honesty footnote for podcast:license display-only list (no DRM).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These licenses come from the feed. Display only — this app does not enforce DRM or license terms."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Lizenzen stammen aus dem Feed. Nur Anzeige — diese App setzt weder DRM noch Lizenzbedingungen durch."
+          }
+        }
+      }
+    },
+    "Showing first 5 licenses from the feed.": {
+      "extractionState": "manual",
+      "comment": "Truncation honesty when more than 5 podcast:license entries.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first 5 licenses from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeige die ersten 5 Lizenzen aus dem Feed."
+          }
+        }
+      }
+    },
+    "License copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Alert message after copying a podcast:license entry.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "License copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lizenz in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the license text to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy on podcast:license row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the license text to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den Lizenztext in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the license URL in the system browser": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Open on podcast:license row when url is http(s).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the license URL in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Lizenz-URL im Systembrowser"
+          }
+        }
+      }
+    },
     "Purpose %@": {
       "extractionState": "manual",
       "comment": "VoiceOver for podcast:txt purpose attribute (raw feed string).",

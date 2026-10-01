@@ -41,6 +41,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Alternate Enclosure (beta; parse item Podcast Index `podcast:alternateEnclosure` + nested `podcast:source` type/uri (+ length/bitrate/height/lang/title/rel/codecs/default) into `PodcastEpisode.alternateEnclosures`; episode Shownotes list type + bitrate/length/title/lang when set; http(s) → **Open URL**; else **Copy**; first 20 + honesty; **feed-provided only** — never invent; **display-only** — **no** PlaybackService switch to alternate streams; **hide when none**; refresh to populate existing feeds)
 - Soundbite (beta; parse item Podcast Index `podcast:soundbite` startTime+duration (+ optional title) into `PodcastEpisode.soundbites`; Shownotes + Full player list start/duration + title when set; **Seek to start** via existing `PlaybackService.seek(toSeconds:)` when this episode is current — else **Copy**; first 20 + honesty; **feed-provided only** — never invent; **no** separate clip player / end trim; **hide when none**; refresh to populate existing feeds)
 - Text / `podcast:txt` (beta; parse channel and/or item Podcast Index `podcast:txt` optional purpose + text into `PodcastFeed.texts` / `PodcastEpisode.texts`; Feed detail + description sheet + episode Shownotes: purpose as raw feed string when set + text body; **Copy**; **Open** when value looks like http(s); first 20 + honesty; **feed-provided only** — never invent purposes; **display-only** — **no** Social / Matrix / special clients; **hide when none**; refresh to populate existing feeds)
+- License / `podcast:license` (beta; parse channel and/or item Podcast Index `podcast:license` text and/or optional url into `PodcastFeed.licenses` / `PodcastEpisode.licenses`; Feed detail + description sheet + episode Shownotes: license text; **Open** http(s) URL / **Copy**; first 5 + honesty; **feed-provided only** — never invent; **display-only** — **no DRM** / does not enforce license terms; **hide when none**; refresh to populate existing feeds)
 - Podroll / `podcast:podroll` (beta; parse channel Podcast Index `podcast:podroll` / nested `podcast:remoteItem` feedGuid and/or feedUrl (+ optional title/medium/itemGuid) into `PodcastFeed.podrollItems`; Feed detail + description: title + url/guid when present; **Open** http(s); **Copy**; **Subscribe** via existing feed preview when feedUrl; first 20 + honesty; **feed-provided only** — never invent recommendations; **no** Podcast Index GUID resolve; **hide when none**; refresh to populate existing feeds)
 - Publisher / `podcast:publisher` (beta; parse channel Podcast Index `podcast:publisher` / nested `podcast:remoteItem` feedGuid and/or feedUrl (+ optional title/medium/itemGuid) into `PodcastFeed.publisherItems`; Feed detail + description: publisher name + url/guid when present; **Open** http(s); **Copy**; **Subscribe** via existing feed preview when feedUrl; GUID-only → Copy; first 1 + honesty; **feed-provided only** — never invent publishers; **no** Podcast Index GUID resolve; **hide when none**; refresh to populate existing feeds)
 - Medium / `podcast:medium` (beta; parse channel and/or item Podcast Index `podcast:medium` into `PodcastFeed.medium` / `PodcastEpisode.medium` as **raw feed string**; Feed detail + description + preview + Subscriptions + EpisodeRow capsule when set; VoiceOver **Medium …**; **feed-provided only** — never invent or remap; **display-only** — **no** playback pipeline change; **hide when missing**; refresh to populate existing feeds)
@@ -684,6 +685,15 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 - **Local-folder feeds:** no `podcast:txt` (no RSS).
 - EN / DE + VoiceOver.
 
+
+
+## License / `podcast:license` (beta)
+
+- **Parse:** `NativeRssAtomParser` stores channel and/or item Podcast Index **`podcast:license`** (element text identifier and/or optional `url` attribute) into `PodcastFeed.licenses` / `PodcastEpisode.licenses`. **Feed-provided only** — never invent. Populated on subscribe / refresh — **existing subscriptions need a feed refresh**.
+- **UI:** Feed detail (+ description sheet) + episode **Shownotes**: license text; **Open** when `url` is http(s); **Copy** text (+ URL when present). Cap first **5** + honesty footnote when more.
+- **Honesty:** **Display-only.** This app does **not** enforce DRM or license terms. Do not treat shown licenses as playback gating.
+- **Local-folder feeds:** no `podcast:license` (no RSS).
+- EN / DE + VoiceOver.
 
 
 ## Podroll / `podcast:podroll` (beta)

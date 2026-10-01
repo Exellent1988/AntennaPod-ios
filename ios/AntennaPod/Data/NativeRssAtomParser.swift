@@ -73,6 +73,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var channelLiveItems: [PodcastLiveItem] = []
     /// Channel podcast:txt — feed-provided only; display-only (Copy / Open http(s); no Social / Matrix clients).
     private var channelTexts: [PodcastTxt] = []
+    /// Channel podcast:license — feed-provided only; display-only (text + Open http(s) / Copy; no DRM).
+    private var channelLicenses: [PodcastLicense] = []
     /// Channel podcast:podroll / nested remoteItem — feed-provided only; display-only (Open / Copy / Subscribe preview).
     private var channelPodrollItems: [PodcastRemoteItem] = []
     /// Inside channel podcast:podroll — capture nested remoteItem only; do not invent recommendations.
@@ -138,6 +140,11 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     /// Capturing podcast:txt optional purpose + element text.
     private var capturingTxt = false
     private var pendingTxtPurpose: String?
+    /// Item podcast:license — feed-provided only; display-only (text + Open http(s) / Copy; no DRM).
+    private var itemLicenses: [PodcastLicense] = []
+    /// Capturing podcast:license optional url + element text.
+    private var capturingLicense = false
+    private var pendingLicenseUrl: String?
     /// Capturing podcast:alternateEnclosure attributes + nested sources.
     private var capturingAlternateEnclosure = false
     private var pendingAltType: String?
@@ -244,6 +251,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             values: channelValues,
             liveItems: channelLiveItems,
             texts: channelTexts,
+            licenses: channelLicenses,
             podrollItems: channelPodrollItems,
             publisherItems: channelPublisherItems,
             episodes: episodes
@@ -307,6 +315,9 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemTexts = []
             capturingTxt = false
             pendingTxtPurpose = nil
+            itemLicenses = []
+            capturingLicense = false
+            pendingLicenseUrl = nil
             capturingAlternateEnclosure = false
             pendingAltType = nil
             pendingAltLength = nil
@@ -697,6 +708,13 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             if inPodroll || inPublisher { break }
             capturingTxt = true
             pendingTxtPurpose = Self.nonEmptyAttr(attributeDict["purpose"] ?? attributeDict["Purpose"])
+        case "license":
+            // Podcast Index: <podcast:license url="https://…">cc-by-4.0</podcast:license>
+            // Channel and/or item. Text and/or url; display-only — no DRM enforcement.
+            if inLiveItem { break }
+            if inPodroll || inPublisher { break }
+            capturingLicense = true
+            pendingLicenseUrl = Self.nonEmptyAttr(attributeDict["url"] ?? attributeDict["href"])
         default:
             break
         }
@@ -809,6 +827,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishSoundbite(text: text)
             case "txt":
                 finishTxt(text: text, intoItem: true)
+            case "license":
+                finishLicense(text: text, intoItem: true)
             case "medium":
                 // Podcast Index <podcast:medium>…</podcast:medium> on item — store raw string; never invent/remap.
                 // Distinct from media:content@medium and podcast:remoteItem medium attribute.
@@ -842,7 +862,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     values: itemValues,
                     alternateEnclosures: itemAlternateEnclosures,
                     soundbites: itemSoundbites,
-                    texts: itemTexts
+                    texts: itemTexts,
+                    licenses: itemLicenses
                 )
                 episodes.append(episode)
                 inItem = false
@@ -973,6 +994,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishValue(intoItem: false)
             case "txt":
                 finishTxt(text: text, intoItem: false)
+            case "license":
+                finishLicense(text: text, intoItem: false)
             case "podroll":
                 inPodroll = false
             case "publisher":
@@ -1135,6 +1158,34 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemTexts.append(entry)
         } else {
             channelTexts.append(entry)
+        }
+    }
+
+    /// Finish podcast:license — append when text and/or http(s) url present; never invent; no DRM.
+    private func finishLicense(text: String, intoItem: Bool) {
+        defer {
+            capturingLicense = false
+            pendingLicenseUrl = nil
+        }
+        guard capturingLicense else { return }
+        if intoItem {
+            guard inItem else { return }
+        } else {
+            guard !inItem else { return }
+        }
+        let body = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let urlAttr = pendingLicenseUrl
+        let openable: Bool = {
+            guard let urlAttr, let u = URL(string: urlAttr) else { return false }
+            let scheme = u.scheme?.lowercased()
+            return scheme == "http" || scheme == "https"
+        }()
+        guard !body.isEmpty || openable else { return }
+        let entry = PodcastLicense(url: urlAttr, text: body)
+        if intoItem {
+            itemLicenses.append(entry)
+        } else {
+            channelLicenses.append(entry)
         }
     }
 

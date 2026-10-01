@@ -109,6 +109,11 @@ struct FeedDetailView: View {
         liveFeed.displayTexts
     }
 
+    /// Channel podcast:license when the feed provided them — empty → hide (display-only; no DRM).
+    private var displayLicenses: [PodcastLicense] {
+        liveFeed.displayLicenses
+    }
+
     /// Channel podcast:podroll when the feed provided remoteItems — empty → hide (never invent recommendations).
     private var displayPodrollItems: [PodcastRemoteItem] {
         liveFeed.displayPodrollItems
@@ -462,6 +467,14 @@ struct FeedDetailView: View {
             if !displayTexts.isEmpty {
                 Section {
                     PodcastTxtListView(texts: displayTexts)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:license — text + optional url; Open http(s) / Copy; hide when none.
+            // Display-only — no DRM enforcement. Never invent licenses.
+            if !displayLicenses.isEmpty {
+                Section {
+                    PodcastLicenseListView(licenses: displayLicenses)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }

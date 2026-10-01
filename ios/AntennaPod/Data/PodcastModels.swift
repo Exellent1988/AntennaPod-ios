@@ -1022,6 +1022,82 @@ enum PodcastTxtDisplay {
 }
 
 
+/// Podcast Index `podcast:license` — license identifier text and/or optional `url` attribute.
+/// Channel and/or item. Namespace count is typically single; we still store a list and cap display.
+/// **Display-only:** show license text; Open http(s) URL / Copy. **No DRM enforcement.**
+/// Feed-provided only — never invent licenses or URLs.
+struct PodcastLicense: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields.
+    var id: String { "\(url ?? "")|\(text)" }
+    /// Optional `url` attribute pointing at the full license text. Nil when absent — never invent.
+    var url: String?
+    /// Element text (license identifier / abbreviation). May be empty when only url is present.
+    var text: String
+
+    init(url: String? = nil, text: String) {
+        self.url = url
+        self.text = text
+    }
+
+    /// Trimmed non-empty license text when the feed set it. Hidden when blank.
+    var displayText: String? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) URL from the `url` attribute when valid. Nil otherwise — never invent.
+    var openURL: URL? {
+        guard let url else { return nil }
+        let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let parsed = URL(string: trimmed) else { return nil }
+        let scheme = parsed.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return parsed
+    }
+}
+
+/// Display helpers for `podcast:license` lists (channel or item). Feed-provided only; Copy + optional Open.
+enum PodcastLicenseDisplay {
+    /// Soft UI cap — namespace is typically single; show first N if a feed lists more + honesty footnote.
+    static let displayCap = 5
+
+    /// Entries with non-empty text and/or a valid http(s) url. Feed order. No invented licenses.
+    static func valid(_ items: [PodcastLicense]) -> [PodcastLicense] {
+        items.compactMap { item in
+            let body = item.displayText
+            let open = item.openURL
+            guard body != nil || open != nil else { return nil }
+            return PodcastLicense(url: open?.absoluteString ?? item.url, text: body ?? "")
+        }
+    }
+
+    /// First `displayCap` + whether the feed listed more valid license entries.
+    static func capped(_ items: [PodcastLicense]) -> (shown: [PodcastLicense], truncated: Bool) {
+        let list = valid(items)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+
+    /// Pasteboard line: license text + optional URL.
+    static func copyText(_ item: PodcastLicense) -> String {
+        let body = item.displayText
+        let url = item.openURL?.absoluteString
+        switch (body, url) {
+        case let (b?, u?):
+            return "\(b)\n\(u)"
+        case let (b?, nil):
+            return b
+        case let (nil, u?):
+            return u
+        default:
+            return item.text
+        }
+    }
+}
+
+
 /// Podcast Index `podcast:remoteItem` under channel `podcast:podroll` or `podcast:publisher`.
 /// Attributes: `feedGuid` (required by namespace), optional `feedUrl` / `title` / `medium` / `itemGuid`.
 /// **Display-only:** title + url/guid; Open http(s) feed URL / Copy / Subscribe via existing preview when URL present.
@@ -1452,6 +1528,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Item-level Podcast Index `podcast:txt` (optional purpose + text) when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — Copy / Open http(s); no Social / Matrix clients.
     var texts: [PodcastTxt]
+    /// Item-level Podcast Index `podcast:license` (text and/or optional url) when the feed provides them.
+    /// Empty when absent — never invent; UI hides when empty. **Display-only** — show text; Open http(s) / Copy; **no DRM**.
+    var licenses: [PodcastLicense]
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -1509,7 +1588,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         values: [PodcastValue] = [],
         alternateEnclosures: [PodcastAlternateEnclosure] = [],
         soundbites: [PodcastSoundbite] = [],
-        texts: [PodcastTxt] = []
+        texts: [PodcastTxt] = [],
+        licenses: [PodcastLicense] = []
     ) {
         self.id = id
         self.title = title
@@ -1536,6 +1616,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.alternateEnclosures = alternateEnclosures
         self.soundbites = soundbites
         self.texts = texts
+        self.licenses = licenses
     }
 
     init(from decoder: Decoder) throws {
@@ -1565,6 +1646,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         alternateEnclosures = try c.decodeIfPresent([PodcastAlternateEnclosure].self, forKey: .alternateEnclosures) ?? []
         soundbites = try c.decodeIfPresent([PodcastSoundbite].self, forKey: .soundbites) ?? []
         texts = try c.decodeIfPresent([PodcastTxt].self, forKey: .texts) ?? []
+        licenses = try c.decodeIfPresent([PodcastLicense].self, forKey: .licenses) ?? []
     }
 
     /// Trimmed non-empty item `podcast:medium` from the feed. Hidden when missing — never invent / never remap.
@@ -1612,6 +1694,11 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Valid item-level `podcast:txt` entries (hide when empty — never invent; display-only Copy / Open http(s)).
     var displayTexts: [PodcastTxt] {
         PodcastTxtDisplay.valid(texts)
+    }
+
+    /// Valid item-level `podcast:license` entries (hide when empty — never invent; display-only; no DRM).
+    var displayLicenses: [PodcastLicense] {
+        PodcastLicenseDisplay.valid(licenses)
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).
@@ -1823,6 +1910,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel-level Podcast Index `podcast:txt` (optional purpose + text) when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — Copy / Open http(s); no Social / Matrix clients.
     var texts: [PodcastTxt]
+    /// Channel-level Podcast Index `podcast:license` (text and/or optional url) when the feed provides them.
+    /// Empty when absent — never invent; UI hides when empty. **Display-only** — show text; Open http(s) / Copy; **no DRM**.
+    var licenses: [PodcastLicense]
     /// Channel-level Podcast Index `podcast:podroll` / nested `podcast:remoteItem` when the feed provides them.
     /// Empty when absent — never invent recommendations; UI hides when empty. **Display-only** — Open / Copy / Subscribe-by-URL preview.
     var podrollItems: [PodcastRemoteItem]
@@ -2003,6 +2093,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastTxtDisplay.valid(texts)
     }
 
+    /// Valid channel-level `podcast:license` entries (hide when empty — never invent; display-only; no DRM).
+    var displayLicenses: [PodcastLicense] {
+        PodcastLicenseDisplay.valid(licenses)
+    }
+
     /// Channel-level `podcast:podroll` remote items (hide when empty — never invent recommendations; display-only).
     var displayPodrollItems: [PodcastRemoteItem] {
         PodcastPodrollDisplay.valid(podrollItems)
@@ -2040,6 +2135,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         values: [PodcastValue] = [],
         liveItems: [PodcastLiveItem] = [],
         texts: [PodcastTxt] = [],
+        licenses: [PodcastLicense] = [],
         podrollItems: [PodcastRemoteItem] = [],
         publisherItems: [PodcastRemoteItem] = [],
         episodes: [PodcastEpisode]
@@ -2070,6 +2166,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.values = values
         self.liveItems = liveItems
         self.texts = texts
+        self.licenses = licenses
         self.podrollItems = podrollItems
         self.publisherItems = publisherItems
         self.episodes = episodes
@@ -2103,13 +2200,14 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         values = try c.decodeIfPresent([PodcastValue].self, forKey: .values) ?? []
         liveItems = try c.decodeIfPresent([PodcastLiveItem].self, forKey: .liveItems) ?? []
         texts = try c.decodeIfPresent([PodcastTxt].self, forKey: .texts) ?? []
+        licenses = try c.decodeIfPresent([PodcastLicense].self, forKey: .licenses) ?? []
         podrollItems = try c.decodeIfPresent([PodcastRemoteItem].self, forKey: .podrollItems) ?? []
         publisherItems = try c.decodeIfPresent([PodcastRemoteItem].self, forKey: .publisherItems) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, publisherItems, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, licenses, podrollItems, publisherItems, episodes
     }
 }
 

@@ -110,6 +110,15 @@ struct FeedDescriptionSheetView: View {
         !displayTexts.isEmpty
     }
 
+    /// Channel podcast:license when the feed provided them — empty → hide (display-only; no DRM).
+    private var displayLicenses: [PodcastLicense] {
+        feed.displayLicenses
+    }
+
+    private var hasLicenses: Bool {
+        !displayLicenses.isEmpty
+    }
+
     /// Channel podcast:podroll when the feed provided remoteItems — empty → hide (never invent).
     private var displayPodrollItems: [PodcastRemoteItem] {
         feed.displayPodrollItems
@@ -162,7 +171,7 @@ struct FeedDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasLiveItems && !hasTexts {
+                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasLiveItems && !hasTexts && !hasLicenses {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "info.circle",
@@ -188,6 +197,9 @@ struct FeedDescriptionSheetView: View {
                             }
                             if hasTexts {
                                 PodcastTxtListView(texts: displayTexts)
+                            }
+                            if hasLicenses {
+                                PodcastLicenseListView(licenses: displayLicenses)
                             }
                             if hasPodroll {
                                 PodcastPodrollListView(items: displayPodrollItems)
@@ -357,6 +369,9 @@ struct FeedDescriptionSheetView: View {
                     if hasTexts {
                         PodcastTxtListView(texts: displayTexts)
                     }
+                    if hasLicenses {
+                        PodcastLicenseListView(licenses: displayLicenses)
+                    }
                     if hasPodroll {
                         PodcastPodrollListView(items: displayPodrollItems)
                     }
@@ -466,6 +481,9 @@ struct FeedDescriptionSheetView: View {
                     }
                     if hasTexts {
                         PodcastTxtListView(texts: displayTexts)
+                    }
+                    if hasLicenses {
+                        PodcastLicenseListView(licenses: displayLicenses)
                     }
                     if hasPodroll {
                         PodcastPodrollListView(items: displayPodrollItems)

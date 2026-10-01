@@ -97,6 +97,15 @@ struct EpisodeDescriptionSheetView: View {
         !episode.displayTexts.isEmpty
     }
 
+    /// Item podcast:license when the feed provided entries — empty → hide (display-only; no DRM).
+    private var displayLicenses: [PodcastLicense] {
+        episode.licenses
+    }
+
+    private var hasLicenses: Bool {
+        !episode.displayLicenses.isEmpty
+    }
+
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
     private var paragraphs: [String] {
         let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -163,7 +172,7 @@ struct EpisodeDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasAlternateEnclosures && !hasSoundbites && !hasTexts {
+                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasAlternateEnclosures && !hasSoundbites && !hasTexts && !hasLicenses {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "doc.text",
@@ -192,6 +201,9 @@ struct EpisodeDescriptionSheetView: View {
                             }
                             if hasTexts {
                                 PodcastTxtListView(texts: displayTexts)
+                            }
+                            if hasLicenses {
+                                PodcastLicenseListView(licenses: displayLicenses)
                             }
                         }
                         .padding()
@@ -328,6 +340,9 @@ struct EpisodeDescriptionSheetView: View {
                     if hasTexts {
                         PodcastTxtListView(texts: displayTexts)
                     }
+                    if hasLicenses {
+                        PodcastLicenseListView(licenses: displayLicenses)
+                    }
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
                             .font(.body)
@@ -361,6 +376,9 @@ struct EpisodeDescriptionSheetView: View {
                     }
                     if hasTexts {
                         PodcastTxtListView(texts: displayTexts)
+                    }
+                    if hasLicenses {
+                        PodcastLicenseListView(licenses: displayLicenses)
                     }
                     Text(plainDescription)
                         .font(.body)
