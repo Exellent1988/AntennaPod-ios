@@ -538,10 +538,12 @@ final class PodcastStore: ObservableObject {
     // MARK: - All Episodes (catalog)
 
     /// Soft cap for All Episodes (newest by pubDate). Keeps List honest without lazy paging.
+    /// AllEpisodesView may re-sort via `allEpisodesSort`; Oldest only reorders within this cap.
     static let allEpisodesSoftLimit = 500
 
     /// All episodes across subscriptions, newest `pubDateEpochMs` first (soft-capped).
     /// Distinct from Inbox (unplayed only): played / in-progress are included.
+    /// Store order stays newest-first; AllEpisodesView applies `allEpisodesSort` client-side.
     var allEpisodes: [InboxEpisode] {
         var items: [InboxEpisode] = []
         for feed in feeds {

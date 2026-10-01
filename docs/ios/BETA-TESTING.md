@@ -144,6 +144,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Feed-Detail: Suche (Episodentitel) | ☐ Feed detail: search (episode title) |
 | ☐ Feed-Detail: Filterchips Alle / Ungehört / Gehört (persistiert; Bulk bleibt full-feed) | ☐ Feed detail: filter chips All / Unplayed / Played (persisted; bulk stays full-feed) |
 | ☐ Library: Episodes (Filter All / Ungehört / Heruntergeladen / Favoriten) / History / Favorites / Archived / Statistics (Zeitraum Woche/Monat/Jahr/Gesamt) / Echo (gleicher Zeitraum) | ☐ Library: Episodes (filter All / Unplayed / Downloaded / Favorites) / History / Favorites / Archived / Statistics (time range Week/Month/Year/All) / Echo (same range) |
+| ☐ Alle Episoden: Sortierung (Neueste / Älteste zuerst; pubDate; Soft-Cap 500 — Älteste nur innerhalb Cap; persistiert) | ☐ All Episodes: sort (Newest / Oldest first; pubDate; soft cap 500 — Oldest only within cap; persisted) |
 | ☐ History: Verlauf leeren (Bestätigung) | ☐ History: Clear history (confirm) |
 | ☐ History: Suche (Titel / Feed) | ☐ History: search (title / feed) |
 | ☐ History: Sortierung (Neueste / Älteste; lastPlayedAt sonst updatedAt; persistiert) | ☐ History: sort (Newest / Oldest; lastPlayedAt else updatedAt; persisted) |

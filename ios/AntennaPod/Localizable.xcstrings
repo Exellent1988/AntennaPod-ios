@@ -11240,6 +11240,23 @@
           }
         }
       }
+    },
+    "Sort all episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort all episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Episoden sortieren"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

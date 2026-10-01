@@ -6,10 +6,26 @@ struct AllEpisodesView: View {
     @EnvironmentObject private var downloads: DownloadService
     @State private var searchText = ""
 
-    /// Cap first (newest 500 via `store.allEpisodes`), then chip filter + search.
-    /// Matches soft-cap honesty: filters never pull older episodes from beyond the cap.
+    /// Soft cap first (newest 500 via `store.allEpisodes`), then sort → chip → search.
+    /// **Honesty:** `store.allEpisodes` is already the newest-500 by `pubDateEpochMs`.
+    /// Oldest first only reorders within that capped set — it does **not** pull older
+    /// episodes from beyond the soft limit. Missing dates sort last; stable tiebreaker
+    /// is episode `id` (same as Inbox).
     private var items: [InboxEpisode] {
-        var base = store.allEpisodes
+        var base = store.allEpisodes.sorted { lhs, rhs in
+            switch settings.allEpisodesSort {
+            case .newestFirst:
+                let l = lhs.episode.pubDateEpochMs ?? Int64.min
+                let r = rhs.episode.pubDateEpochMs ?? Int64.min
+                if l != r { return l > r }
+                return lhs.episode.id < rhs.episode.id
+            case .oldestFirst:
+                let l = lhs.episode.pubDateEpochMs ?? Int64.max
+                let r = rhs.episode.pubDateEpochMs ?? Int64.max
+                if l != r { return l < r }
+                return lhs.episode.id < rhs.episode.id
+            }
+        }
         switch settings.allEpisodesFilter {
         case .all:
             break
@@ -103,6 +119,23 @@ struct AllEpisodesView: View {
         }
         .navigationTitle("Episodes")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Picker(selection: $settings.allEpisodesSort) {
+                        ForEach(AllEpisodesSort.allCases) { sort in
+                            Label(sort.label, systemImage: sort.systemImage)
+                                .tag(sort)
+                        }
+                    } label: {
+                        Text("Sort")
+                    }
+                } label: {
+                    Label("Sort", systemImage: "arrow.up.arrow.down")
+                }
+                .accessibilityLabel("Sort all episodes")
+            }
+        }
         .searchable(text: $searchText, prompt: "Filter by title or podcast")
     }
 }
