@@ -746,6 +746,22 @@ final class PodcastStore: ObservableObject {
         favoriteAtById = [:]
     }
 
+    /// Append every favorite episode that is not already queued (bulk).
+    /// Uses store `favoriteEpisodes` order (**newest-first** by `favoritedAtEpochMs` — same catalog as
+    /// Clear favorites / Home Favorites preview). Does **not** follow UI `favoritesSort` or searchable filter.
+    /// Skips already-queued ids (no duplicates). Uses `enqueue` (append), not `playNext`.
+    /// Safe while queue lock is on (reorder-only — enqueue stays allowed).
+    /// Callers must confirm first (Favorites toolbar `confirmationDialog`).
+    /// - Returns: number of episodes newly appended.
+    @discardableResult
+    func enqueueAllFavorites() -> Int {
+        let candidates = favoriteEpisodes.map(\.episode).filter { !isInQueue($0.id) }
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
     /// Starred episodes across feeds, newest favorited first.
     var favoriteEpisodes: [FavoriteEpisode] {
         var items: [FavoriteEpisode] = []

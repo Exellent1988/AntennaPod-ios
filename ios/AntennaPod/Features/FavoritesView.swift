@@ -9,12 +9,20 @@ struct FavoritesView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
     @State private var showClearFavoritesConfirm = false
+    @State private var showEnqueueAllConfirm = false
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
     /// Full favorites catalog (store order: newest favorited first) — Clear favorites always uses this count.
     private var items: [FavoriteEpisode] {
         store.favoriteEpisodes
+    }
+
+    /// Episodes from the **full Favorites catalog** (`store.favoriteEpisodes`, newest-favorited first) that are
+    /// not already queued — same catalog as Clear favorites, **not** the searchable filtered list.
+    /// Confirm count and `enqueueAllFavorites()` share this eligibility.
+    private var enqueueAllFavoritesCandidatesCount: Int {
+        items.filter { !store.isInQueue($0.episode.id) }.count
     }
 
     /// Visible favorites ordered by `AppSettings.favoritesSort`.
@@ -221,6 +229,14 @@ struct FavoritesView: View {
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
+                    Button {
+                        showEnqueueAllConfirm = true
+                    } label: {
+                        Label("Add all to queue", systemImage: "text.append")
+                    }
+                    .disabled(enqueueAllFavoritesCandidatesCount == 0)
+                    .accessibilityHint("Appends favorite episodes not already queued")
+
                     Button(role: .destructive) {
                         showClearFavoritesConfirm = true
                     } label: {
@@ -233,6 +249,18 @@ struct FavoritesView: View {
                 }
                 .disabled(items.isEmpty)
             }
+        }
+        .confirmationDialog(
+            "Add all to queue?",
+            isPresented: $showEnqueueAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all to queue") {
+                store.enqueueAllFavorites()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllFavoritesCandidatesCount) favorite episodes to the end of the queue (newest favorited first). Already queued episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the searchable filter. Queue lock does not block enqueue.")
         }
         .confirmationDialog(
             "Clear favorites?",

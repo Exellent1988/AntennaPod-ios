@@ -11484,6 +11484,40 @@
           }
         }
       }
+    },
+    "Appends favorite episodes not already queued": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends favorite episodes not already queued"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht Favoriten-Episoden ein, die noch nicht in der Warteschlange sind"
+          }
+        }
+      }
+    },
+    "Appends %lld favorite episodes to the end of the queue (newest favorited first). Already queued episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the searchable filter. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld favorite episodes to the end of the queue (newest favorited first). Already queued episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the searchable filter. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld Favoriten-Episoden am Ende der Warteschlange ein (zuletzt favorisiert zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Favoriten-Katalog (wie Favoriten leeren), nicht die Suchfilterung. Warteschlangen-Sperre blockiert Einreihen nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
