@@ -6,6 +6,7 @@ struct InboxView: View {
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
+    @State private var showMarkAllPlayedConfirm = false
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -53,12 +54,37 @@ struct InboxView: View {
             .navigationTitle("Inbox")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    if !items.isEmpty, !isSearching {
-                        Button("Archive all") {
-                            store.archiveAllInbox()
+                    Menu {
+                        Button {
+                            showMarkAllPlayedConfirm = true
+                        } label: {
+                            Label("Mark all as played", systemImage: "checkmark.circle")
                         }
+                        .disabled(items.isEmpty)
+
+                        Button {
+                            store.archiveAllInbox()
+                        } label: {
+                            Label("Archive all", systemImage: "archivebox")
+                        }
+                        .disabled(items.isEmpty)
+                    } label: {
+                        Label("Inbox actions", systemImage: "ellipsis.circle")
                     }
+                    .disabled(items.isEmpty || isSearching)
                 }
+            }
+            .confirmationDialog(
+                "Mark all as played?",
+                isPresented: $showMarkAllPlayedConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Mark all as played") {
+                    store.markAllInboxPlayed()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Marks \(items.count) Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled.")
             }
             .navigationDestination(for: PodcastFeed.self) { feed in
                 FeedDetailView(feed: feed)

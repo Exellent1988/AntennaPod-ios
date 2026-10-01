@@ -28,7 +28,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
 - German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings headers, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript — **partial**, not full i18n)
 - Accessibility / VoiceOver (beta polish; EpisodeRow combined labels + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
-- Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Archive all)
+- Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played; toolbar menu Archive all + Mark all as played with confirm)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first)
 - Statistics (beta; Subscriptions → Library → Statistics + Settings; totals + top podcasts from `playback.json`; approx time)
 - Echo / Year in Review (beta lite; Library + Settings; current calendar year from playback/favorites; ShareLink text)
@@ -39,7 +39,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Apple Watch companion (beta lite; watchOS Continue listening from same snapshot via WC push; Play → iPhone `antennapod://play`; empty state; no independent playback / downloads / queue)
 - Swipe actions (Queue Remove+Archive + drag reorder; Downloads Delete; Inbox/Feed/History/Favorites/Archived/All Episodes useful swipes)
 - Favorites / starred episodes (Subscriptions → Library → Favorites; optional Home preview via Home layout; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; auto-delete skips favorites)
-- Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived; bulk Archive all in Inbox)
+- Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived; bulk Archive all + Mark all as played in Inbox)
 - Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500; searchable title/feed filter; EpisodeRow actions; swipe Archive + Mark played)
 - Share podcast / episode (FeedDetail toolbar share feed URL; EpisodeRow ShareLink / context menu / FeedDetail swipe; full player; prefer page link else enclosure)
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
@@ -148,7 +148,7 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` s
 - Tab bar + main navigation titles: Home, Inbox, Subscriptions, Queue, Downloads, Settings (+ About, Favorites, History, Archived, Episodes, Discover, Download errors, Home layout, Add podcast, Transcript)
 - Settings section headers: Appearance, Home, Playback, Library, Privacy, About, Backup, Sync, Feeds / Keep updated, Auto-download, Network / Downloads, Notifications, Downloads / Storage, Discovery, App Store, Siri / Shortcuts, Homescreen widget, Apple Watch, CarPlay, Import / Export
 - Discovery chrome: Add segmented modes (Apple / Index / fyyd / URL / Folder), search placeholders, empty/API-key states, Results / Feed URL / charts loading + help, OPML import/export labels, Preview/Open row actions
-- Primary actions: Play, Pause, Resume, Download, Subscribe / Confirm Subscribe, Cancel, Save, Delete, Remove, Archive, Mark played / unplayed, common empty-state titles + main-tab and library empty descriptions (History / Favorites / Archived / Episodes / Tags filters)
+- Primary actions: Play, Pause, Resume, Download, Subscribe / Confirm Subscribe, Cancel, Save, Delete, Remove, Archive, Mark played / unplayed, Mark all as played, common empty-state titles + main-tab and library empty descriptions (History / Favorites / Archived / Episodes / Tags filters)
 - Home section labels (layout toggles + Home headers): Continue listening, New / Inbox, Queue, Discover, Recently updated, Favorites
 - Backup / Sync: section labels, primary Backup buttons, Sync form field labels (Host / Username / Password / Device / Login / Sync now), notification toggles
 - Download errors: banner title, Errors list title/empty, clear confirmation
@@ -249,7 +249,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 |--------|---------|----------|-------|
 | Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`) |
 | Downloads | — | Delete download | — |
-| Inbox | Mark played | Archive | Toolbar Archive all |
+| Inbox | Mark played | Archive | Toolbar menu: Mark all as played (confirm) + Archive all |
 | Feed detail | Archive / Restore | Play Next + Queue + Share | EpisodeRow context: Play Next + Add to queue |
 | History | Mark unplayed (if played) | Remove playback state | — |
 | Favorites | Archive | Unfavorite | — |
@@ -262,7 +262,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 
 ## Archive / restore
 
-**Subscriptions → Library → Archived** (no extra root tab). Archived episode IDs live in Application Support `archived.json` (episode id → `archivedAtEpochMs`), independent of played status (`playback.json`). Archive **hides** episodes from **Inbox** and the Home **New / Inbox** preview without marking them played. **Feed** episode lists still show archived items (dimmed + archivebox badge). Toggle from **EpisodeRow** (button + context menu), **Feed detail** leading swipe, **Inbox** trailing swipe, or Inbox toolbar **Archive all**. Library → Archived lists newest-archived first; swipe **Restore**. Unsubscribing a feed clears that feed’s archive entries.
+**Subscriptions → Library → Archived** (no extra root tab). Archived episode IDs live in Application Support `archived.json` (episode id → `archivedAtEpochMs`), independent of played status (`playback.json`). Archive **hides** episodes from **Inbox** and the Home **New / Inbox** preview without marking them played. **Feed** episode lists still show archived items (dimmed + archivebox badge). Toggle from **EpisodeRow** (button + context menu), **Feed detail** leading swipe, **Inbox** trailing swipe, or Inbox toolbar menu **Archive all** / **Mark all as played**. Library → Archived lists newest-archived first; swipe **Restore**. Unsubscribing a feed clears that feed’s archive entries.
 
 ## Episodes (All)
 

@@ -88,6 +88,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 |----|----|
 | ☐ Home (Continue / Inbox / Queue / Discover) | ☐ Home (Continue / Inbox / Queue / Discover) |
 | ☐ Inbox (unplayed) + Swipes | ☐ Inbox (unplayed) + swipes |
+| ☐ Inbox: Alle als gehört markieren (Bestätigung) | ☐ Inbox: Mark all as played (confirm) |
 | ☐ Queue: Remove, Archive, Reorder | ☐ Queue: remove, archive, reorder |
 | ☐ Subscriptions + Tags/Filter | ☐ Subscriptions + tags/filter |
 | ☐ Library: Episodes / History / Favorites / Archived / Statistics / Echo | ☐ Library: Episodes / History / Favorites / Archived / Statistics / Echo |

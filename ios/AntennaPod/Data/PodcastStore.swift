@@ -577,6 +577,16 @@ final class PodcastStore: ObservableObject {
         archivedAtById = map
     }
 
+    /// Mark every episode currently in the Inbox list as played (bulk).
+    /// Snapshots Inbox ids first, then calls `markPlayed` per id so auto-delete-after-playing
+    /// and queue removal side effects still apply. Does not touch All Episodes / History lists.
+    func markAllInboxPlayed() {
+        let ids = inboxEpisodes.map(\.episode.id)
+        for id in ids {
+            markPlayed(id)
+        }
+    }
+
     /// Archived episodes across feeds, newest archived first.
     var archivedEpisodes: [ArchivedEpisode] {
         var items: [ArchivedEpisode] = []
