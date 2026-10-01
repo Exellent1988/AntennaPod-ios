@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Landing tab: honest previews driven by Settings → Home layout (order + visibility).
+/// `.searchable` filters visible section episode/podcast previews (title + feed); empty sections hide while filtering.
 struct HomeView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
@@ -8,31 +9,60 @@ struct HomeView: View {
     @Binding var selectedTab: RootTab
     @State private var showDiscoverPINGate = false
     @State private var navigateToDiscover = false
+    @State private var searchText = ""
+    @State private var debouncedQuery = ""
+    @State private var debounceTask: Task<Void, Never>?
 
     private let previewLimit = 5
     private let feedsLimit = 5
+    private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
+    private var isSearchFiltering: Bool {
+        !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Continue preview: filter full continue catalog by title/feed, then cap (matches while searching beyond first 5).
     private var continueItems: [HistoryEpisode] {
-        Array(store.continueListeningEpisodes.prefix(previewLimit))
+        Array(filterEpisodes(store.continueListeningEpisodes).prefix(previewLimit))
     }
 
     private var inboxItems: [InboxEpisode] {
-        Array(store.inboxEpisodes.prefix(previewLimit))
+        Array(filterEpisodes(store.inboxEpisodes).prefix(previewLimit))
     }
 
     private var queueItems: [PodcastEpisode] {
-        Array(store.queue.prefix(previewLimit))
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let base = store.queue
+        let filtered: [PodcastEpisode]
+        if q.isEmpty {
+            filtered = base
+        } else {
+            filtered = base.filter { episode in
+                if episode.title.localizedCaseInsensitiveContains(q) { return true }
+                let feedTitle = store.feed(containingEpisodeId: episode.id)?.title ?? ""
+                return feedTitle.localizedCaseInsensitiveContains(q)
+            }
+        }
+        return Array(filtered.prefix(previewLimit))
     }
 
     private var recentFeeds: [PodcastFeed] {
-        Array(store.recentlyUpdatedFeeds.prefix(feedsLimit))
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let base = store.recentlyUpdatedFeeds
+        let filtered: [PodcastFeed]
+        if q.isEmpty {
+            filtered = base
+        } else {
+            filtered = base.filter { $0.title.localizedCaseInsensitiveContains(q) }
+        }
+        return Array(filtered.prefix(feedsLimit))
     }
 
     private var favoriteItems: [FavoriteEpisode] {
-        Array(store.favoriteEpisodes.prefix(previewLimit))
+        Array(filterEpisodes(store.favoriteEpisodes).prefix(previewLimit))
     }
 
-    /// Library content that would appear under visible non-Discover sections.
+    /// Library content that would appear under visible non-Discover sections (respects search filter).
     private var hasVisibleLibraryContent: Bool {
         for id in settings.visibleHomeSections {
             switch id {
@@ -60,7 +90,13 @@ struct HomeView: View {
                     homeSection(for: sectionId)
                 }
 
-                if !hasVisibleLibraryContent {
+                if isSearchFiltering && !hasVisibleLibraryContent {
+                    ContentUnavailableView(
+                        "No matching home items",
+                        systemImage: "magnifyingglass",
+                        description: Text("No episodes or podcasts on Home match your search.")
+                    )
+                } else if !isSearchFiltering && !hasVisibleLibraryContent {
                     ContentUnavailableView(
                         "Welcome",
                         systemImage: "house",
@@ -69,6 +105,13 @@ struct HomeView: View {
                 }
             }
             .navigationTitle("Home")
+            .searchable(text: $searchText, prompt: "Search home")
+            .onChange(of: searchText) { _, newValue in
+                scheduleFilter(for: newValue)
+            }
+            .onDisappear {
+                debounceTask?.cancel()
+            }
             .navigationDestination(for: PodcastFeed.self) { feed in
                 FeedDetailView(feed: feed)
             }
@@ -124,7 +167,10 @@ struct HomeView: View {
     private func homeSection(for id: HomeSectionId) -> some View {
         switch id {
         case .discover:
-            discoverSection
+            // Charts preview is not title-filtered; hide while searching so empty state can show.
+            if !isSearchFiltering {
+                discoverSection
+            }
         case .continueListening:
             if !continueItems.isEmpty {
                 continueSection
@@ -329,4 +375,38 @@ struct HomeView: View {
             .accessibilityLabel("Open \(title)")
         }
     }
+
+    /// Episode-like items with `episode.title` + `feedTitle` (Continue / Inbox / Favorites).
+    private func filterEpisodes<T>(_ items: [T]) -> [T] where T: HomeSearchableEpisode {
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !q.isEmpty else { return items }
+        return items.filter { item in
+            if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+            return item.feedTitle.localizedCaseInsensitiveContains(q)
+        }
+    }
+
+    private func scheduleFilter(for term: String) {
+        debounceTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            debouncedQuery = ""
+            return
+        }
+        debounceTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: debounceNs)
+            guard !Task.isCancelled else { return }
+            debouncedQuery = trimmed
+        }
+    }
 }
+
+/// Shared title/feed fields for Home section episode previews (Continue / Inbox / Favorites).
+private protocol HomeSearchableEpisode {
+    var episode: PodcastEpisode { get }
+    var feedTitle: String { get }
+}
+
+extension HistoryEpisode: HomeSearchableEpisode {}
+extension InboxEpisode: HomeSearchableEpisode {}
+extension FavoriteEpisode: HomeSearchableEpisode {}

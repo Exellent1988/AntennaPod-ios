@@ -10814,6 +10814,57 @@
           }
         }
       }
+    },
+    "Search home": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search home"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home durchsuchen"
+          }
+        }
+      }
+    },
+    "No matching home items": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No matching home items"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine passenden Home-Einträge"
+          }
+        }
+      }
+    },
+    "No episodes or podcasts on Home match your search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No episodes or podcasts on Home match your search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Episoden oder Podcasts auf Home passen zu deiner Suche."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

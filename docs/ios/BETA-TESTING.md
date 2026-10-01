@@ -117,6 +117,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | DE | EN |
 |----|----|
 | ☐ Home (Continue / Inbox / Queue / Discover) | ☐ Home (Continue / Inbox / Queue / Discover) |
+| ☐ Home: Suche (Titel / Feed; leere Abschnitte aus; Discover ausgeblendet während Suche) | ☐ Home: search (title / feed; empty sections hide; Discover hidden while searching) |
 | ☐ Inbox (unplayed) + Swipes (Archive / Mark played / Play Next / Queue) | ☐ Inbox (unplayed) + swipes (Archive / Mark played / Play Next / Add to queue) |
 | ☐ Inbox: Alle als gehört markieren (Bestätigung) | ☐ Inbox: Mark all as played (confirm) |
 | ☐ Inbox: Sortierung (Neueste / Älteste zuerst; persistiert) | ☐ Inbox: sort (Newest / Oldest first; persisted) |
