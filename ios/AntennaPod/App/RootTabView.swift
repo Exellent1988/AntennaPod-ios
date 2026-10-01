@@ -3,17 +3,21 @@ import SwiftUI
 struct RootTabView: View {
     var body: some View {
         TabView {
+            InboxView()
+                .tabItem {
+                    Label("Inbox", systemImage: "tray.fill")
+                }
             SubscriptionsView()
                 .tabItem {
                     Label("Subscriptions", systemImage: "square.stack.fill")
                 }
-            DownloadsView()
-                .tabItem {
-                    Label("Downloads", systemImage: "arrow.down.circle")
-                }
             QueueView()
                 .tabItem {
                     Label("Queue", systemImage: "list.bullet")
+                }
+            DownloadsView()
+                .tabItem {
+                    Label("Downloads", systemImage: "arrow.down.circle")
                 }
             SettingsView()
                 .tabItem {

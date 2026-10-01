@@ -11,7 +11,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 |---------|---------|------------|---------|
 | Home (konfigurierbare Sektionen) | 4 | todo | Queue, Inbox, Downloads, … |
 | Queue | 5 | wip | JSON persistence |
-| Inbox | 4 | todo | Neue Episoden |
+| Inbox | 4 | done | Unplayed across feeds (`!isPlayed`), newest first; tab + pull-to-refresh all feeds |
 | Episodes (Alle) | 4 | todo | |
 | Downloads-Liste | 5 | wip | P0, local files + persisted catalog |
 | History | 3 | todo | |
@@ -20,7 +20,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Add podcast | 5 | wip | URL + Discovery |
 | Search (Bibliothek) | 4 | todo | |
 | Statistics | 2 | todo | P3 |
-| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs |
+| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (5): Inbox, Subscriptions, Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | wip | Mini player only |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
 | Settings | 5 | wip | Tab: theme + default speed + download storage limit (P0); more prefs later |

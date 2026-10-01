@@ -37,3 +37,10 @@ struct EpisodePlaybackState: Hashable, Codable {
         )
     }
 }
+
+/// Episode row for the Inbox tab (cross-feed unplayed list).
+struct InboxEpisode: Identifiable, Hashable {
+    var id: String { episode.id }
+    let episode: PodcastEpisode
+    let feedTitle: String
+}

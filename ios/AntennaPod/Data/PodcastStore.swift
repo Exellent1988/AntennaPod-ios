@@ -137,6 +137,42 @@ final class PodcastStore: ObservableObject {
             feed.episodes.contains { $0.id == episodeId }
         }
     }
+
+    // MARK: - Inbox (new / unplayed)
+
+    /// Unplayed episodes across all subscriptions, newest first (by `pubDateEpochMs`).
+    /// "New" matches playback state: not `isPlayed` (in-progress still counts as inbox).
+    var inboxEpisodes: [InboxEpisode] {
+        var items: [InboxEpisode] = []
+        for feed in feeds {
+            for episode in feed.episodes where !isPlayed(episode.id) {
+                items.append(InboxEpisode(episode: episode, feedTitle: feed.title))
+            }
+        }
+        items.sort { lhs, rhs in
+            let l = lhs.episode.pubDateEpochMs ?? Int64.min
+            let r = rhs.episode.pubDateEpochMs ?? Int64.min
+            if l != r { return l > r }
+            return lhs.episode.title.localizedCaseInsensitiveCompare(rhs.episode.title) == .orderedAscending
+        }
+        return items
+    }
+
+    /// Refresh every subscribed feed (used by Inbox pull-to-refresh). Continues on per-feed errors.
+    func refreshAllFeeds() async {
+        lastError = nil
+        isLoading = true
+        defer { isLoading = false }
+        let snapshot = feeds
+        for feed in snapshot where !feed.feedUrl.isEmpty {
+            do {
+                try await subscribeQuietly(feedUrl: feed.feedUrl)
+            } catch {
+                lastError = error.localizedDescription
+            }
+        }
+    }
+
     // MARK: - OPML import / export
 
     func exportOpmlXML() -> String {
@@ -214,3 +250,4 @@ final class PodcastStore: ObservableObject {
     }
 
 }
+

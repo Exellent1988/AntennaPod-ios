@@ -16,7 +16,10 @@ struct QueueView: View {
                     )
                 } else {
                     ForEach(store.queue) { episode in
-                        EpisodeRow(episode: episode, feedTitle: "")
+                        EpisodeRow(
+                            episode: episode,
+                            feedTitle: store.feed(containingEpisodeId: episode.id)?.title ?? ""
+                        )
                     }
                     .onDelete { indexSet in
                         for index in indexSet {

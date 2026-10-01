@@ -37,6 +37,12 @@ struct EpisodeRow: View {
                         .accessibilityLabel("Played")
                 }
             }
+            if !feedTitle.isEmpty {
+                Text(feedTitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
             if let ms = episode.pubDateEpochMs {
                 Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .date)
                     .font(.caption)
