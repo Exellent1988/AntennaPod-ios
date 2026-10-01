@@ -11,7 +11,7 @@ struct EchoView: View {
         List {
             if summary.isEmpty {
                 ContentUnavailableView(
-                    "No Echo for \(summary.year) yet",
+                    String(localized: "No Echo for \(summary.year) yet"),
                     systemImage: "sparkles.rectangle.stack",
                     description: Text(
                         "Play episodes and mark them played this calendar year. Echo uses the same approximate playback data as Statistics."
@@ -92,39 +92,39 @@ struct EchoView: View {
         }
     }
 
-    private static let approximationFootnote =
-        "Approximate: played episodes this year use lastPlayedAt (else updatedAt) and saved duration from playback.json — same limits as Statistics. Does not count rewinds, playback speed, or re-listens. Calendar year follows the device calendar."
+    private static var approximationFootnote: String {
+        String(localized: "Approximate: played episodes this year use lastPlayedAt (else updatedAt) and saved duration from playback.json — same limits as Statistics. Does not count rewinds, playback speed, or re-listens. Calendar year follows the device calendar.")
+    }
 
     private static func feedSubtitle(_ feed: EchoFeedStats) -> String {
-        feed.playedEpisodeCount == 1
-            ? "1 played"
-            : "\(feed.playedEpisodeCount) played"
+        String(localized: "\(feed.playedEpisodeCount) played")
     }
 
     static func shareText(for summary: EchoYearSummary) -> String {
         var lines: [String] = [
-            "AntennaPod Echo \(summary.year)",
+            String(localized: "AntennaPod Echo \(summary.year)"),
             "",
-            "Played episodes: \(summary.playedEpisodeCount)",
-            "Approx. listening time: \(StatisticsView.formatDuration(summary.approximateListenedSeconds))",
+            String(localized: "Played episodes: \(summary.playedEpisodeCount)"),
+            String(localized: "Approx. listening time: \(StatisticsView.formatDuration(summary.approximateListenedSeconds))"),
         ]
         if summary.favoritesCountThisYear > 0 || summary.favoritesTotalCount > 0 {
-            lines.append("Favorites this year: \(summary.favoritesCountThisYear)")
+            lines.append(String(localized: "Favorites this year: \(summary.favoritesCountThisYear)"))
             if summary.favoritesTotalCount != summary.favoritesCountThisYear {
-                lines.append("Favorites total: \(summary.favoritesTotalCount)")
+                lines.append(String(localized: "Favorites total: \(summary.favoritesTotalCount)"))
             }
         }
         if !summary.topPodcasts.isEmpty {
             lines.append("")
-            lines.append("Top podcasts:")
+            lines.append(String(localized: "Top podcasts:"))
             for (index, feed) in summary.topPodcasts.enumerated() {
+                let duration = StatisticsView.formatDuration(feed.approximateListenedSeconds)
                 lines.append(
-                    "\(index + 1). \(feed.feedTitle) — \(StatisticsView.formatDuration(feed.approximateListenedSeconds)) (\(feed.playedEpisodeCount) played)"
+                    String(localized: "\(index + 1). \(feed.feedTitle) — \(duration) (\(feed.playedEpisodeCount) played)")
                 )
             }
         }
         lines.append("")
-        lines.append("(Approximate — same limits as AntennaPod Statistics.)")
+        lines.append(String(localized: "(Approximate — same limits as AntennaPod Statistics.)"))
         return lines.joined(separator: "\n")
     }
 }

@@ -71,42 +71,35 @@ struct StatisticsView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private static let approximationFootnote =
-        "Approximate: played episodes use saved duration (position is cleared when marked played); in-progress use saved position. Does not count rewinds, playback speed, or re-listens. Derived from playback.json — no separate cumulative counter."
+    private static var approximationFootnote: String {
+        String(localized: "Approximate: played episodes use saved duration (position is cleared when marked played); in-progress use saved position. Does not count rewinds, playback speed, or re-listens. Derived from playback.json — no separate cumulative counter.")
+    }
 
     private static func feedSubtitle(_ feed: FeedListeningStats) -> String {
         var parts: [String] = []
         if feed.playedEpisodeCount > 0 {
-            parts.append(
-                feed.playedEpisodeCount == 1
-                    ? "1 played"
-                    : "\(feed.playedEpisodeCount) played"
-            )
+            parts.append(String(localized: "\(feed.playedEpisodeCount) played"))
         }
         if feed.inProgressEpisodeCount > 0 {
-            parts.append(
-                feed.inProgressEpisodeCount == 1
-                    ? "1 in progress"
-                    : "\(feed.inProgressEpisodeCount) in progress"
-            )
+            parts.append(String(localized: "\(feed.inProgressEpisodeCount) in progress"))
         }
         return parts.joined(separator: " · ")
     }
 
-    /// Human-readable duration for stats (hours / minutes).
+    /// Human-readable duration for stats (hours / minutes). Integers via String Catalog (`%lld`); no hardcoded decimal commas.
     static func formatDuration(_ seconds: Double) -> String {
         let total = max(0, Int(seconds.rounded()))
         let hours = total / 3600
         let minutes = (total % 3600) / 60
         if hours > 0 {
-            return "\(hours)h \(minutes)m"
+            return String(localized: "\(hours)h \(minutes)m")
         }
         if minutes > 0 {
-            return "\(minutes) min"
+            return String(localized: "\(minutes) min")
         }
         if total > 0 {
-            return "\(total)s"
+            return String(localized: "\(total)s")
         }
-        return "0 min"
+        return String(localized: "0 min")
     }
 }

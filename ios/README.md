@@ -27,7 +27,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch; Feed detail **Download all** for unplayed/not-archived/not-downloaded, newest 50 soft cap)
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder; toolbar Clear queue with confirm)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
-- German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings headers + footnotes/help captions, parental detail, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript — **partial**, not full i18n)
+- German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings headers + footnotes/help captions, parental detail, Statistics + Echo, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript — **partial**, not full i18n)
 - Accessibility / VoiceOver (beta polish; EpisodeRow combined labels + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
 - Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Play Next + Add to queue; toolbar menu Archive all + Mark all as played with confirm)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first; toolbar Clear history with confirm)
@@ -159,8 +159,9 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` s
 - Local notifications: Download failed, Sync failed, “N new episodes”
 - Settings footnotes / help captions: Playback (speed, skip, video-as-audio, volume adaptation, skip silence, keep screen on, continuous playback, playback source), Feeds / Keep updated, Auto-download, Network / Downloads, Notifications, Downloads / Storage, Discovery, Sync provider blurbs, Backup help + media captions, Home layout footer, App Store rating / Siri / Widget / Watch / CarPlay notes
 - Parental controls detail: enable/options help, PIN sheet copy, lock status, common PIN errors
+- Statistics + Echo (Year in Review): navigation titles (already), empty states, totals/year section headers, row labels (played / in progress / listening time / favorites), top-podcasts footers, approximation footnotes, duration units (`%lldh %lldm` / Min. / s), feed subtitles, Echo ShareLink text
 
-**Still English (honest):** Widget / Watch UI (separate targets — no shared String Catalog; leave English to avoid App Group build breakage), Statistics/Echo detail rows, OS/`localizedDescription` network errors, and many secondary accessibility hints. Regenerating XcodeGen on a Mac picks up the catalog + regions; device/simulator language German shows translated keys when present.
+**Still English (honest):** Widget / Watch UI (separate targets — no shared String Catalog; leave English to avoid App Group build breakage), OS/`localizedDescription` network errors, and many secondary accessibility hints. Regenerating XcodeGen on a Mac picks up the catalog + regions; device/simulator language German shows translated keys when present.
 
 ## Accessibility (VoiceOver, beta polish)
 
