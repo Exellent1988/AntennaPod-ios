@@ -82,6 +82,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Auto-delete after play | ☐ Auto-delete after play |
 | ☐ Network / Downloads Wi‑Fi-only Gates | ☐ Network / Downloads Wi‑Fi-only gates |
 | ☐ Download-Fehlerbanner + Log | ☐ Download error banner + log |
+| ☐ Downloads: Suche (Titel / Feed) | ☐ Downloads: search (title / feed) |
 
 ---
 

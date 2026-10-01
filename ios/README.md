@@ -64,6 +64,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Download storage limit (Settings: usage + max size; auto-evict played first)
 - Auto-delete after playing (global toggle; deletes offline file on mark played; keeps episode row)
 - Notifications for new episodes (local UserNotifications after refresh; Settings toggle; tap opens Inbox; no push)
+- Downloads tab search (`.searchable`; filter by episode title and/or feed title; light debounce; empty query = all; empty state when no matches)
 - Download log / errors (ring buffer in Application Support; Downloads banner + errors list; Clear errors)
 - Notify on download / sync errors (local UserNotifications; Settings toggles default on; DL tap → Downloads; Sync tap → Settings Sync; no push)
 - Parental controls (beta; Settings → Parental controls; 4–6 digit PIN in Keychain; lock Add/Discover; optional Network/Downloads lock + hide explicit charts; session unlock until background)
@@ -85,7 +86,7 @@ ios/
     ├── AntennaPod.entitlements   # App Group
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers, WatchCompanionBridge
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ error log), queue, settings (+ Home layout + gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + Apple Watch note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ searchable + error log), queue, settings (+ Home layout + gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + Apple Watch note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -178,7 +179,7 @@ Honest limits: not every screen/control audited; no custom rotor / reduce-motion
 
 ## Library search
 
-Local-only search over subscribed feeds and their episodes (title, feed title, feed description) — distinct from Apple Podcasts / iTunes discovery in Add podcast. **Inbox** uses `.searchable` with a short debounce (~250 ms): empty query keeps the unplayed Inbox; non-empty shows Podcasts + Episodes sections. Matching feeds navigate to `FeedDetailView`; episodes reuse `EpisodeRow` (play / download / queue / mark played). **Subscriptions** also filters the feed list via searchable. Empty states when nothing matches.
+Local-only search over subscribed feeds and their episodes (title, feed title, feed description) — distinct from Apple Podcasts / iTunes discovery in Add podcast. **Inbox** uses `.searchable` with a short debounce (~250 ms): empty query keeps the unplayed Inbox; non-empty shows Podcasts + Episodes sections. Matching feeds navigate to `FeedDetailView`; episodes reuse `EpisodeRow` (play / download / queue / mark played). **Subscriptions** also filters the feed list via searchable. **Downloads** filters the offline catalog by episode title or feed title (same light debounce; empty query shows all downloads). Empty states when nothing matches.
 
 ## History
 

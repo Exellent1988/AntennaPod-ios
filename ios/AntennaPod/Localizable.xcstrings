@@ -1990,6 +1990,23 @@
         }
       }
     },
+    "No downloads match your search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No downloads match your search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Downloads passen zu deiner Suche."
+          }
+        }
+      }
+    },
     "No episodes match your filter.": {
       "extractionState": "manual",
       "localizations": {
@@ -2054,6 +2071,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Noch kein Verlauf"
+          }
+        }
+      }
+    },
+    "No matching downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No matching downloads"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine passenden Downloads"
           }
         }
       }
@@ -3091,6 +3125,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Durchsuche Apple Podcasts, öffne Entdecken für Charts, füge per Feed-URL hinzu, wähle einen lokalen Ordner oder importiere eine OPML-Datei."
+          }
+        }
+      }
+    },
+    "Search downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search downloads"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads durchsuchen"
           }
         }
       }

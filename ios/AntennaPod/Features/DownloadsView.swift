@@ -3,6 +3,25 @@ import SwiftUI
 struct DownloadsView: View {
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var store: PodcastStore
+
+    @State private var searchText = ""
+    @State private var debouncedQuery = ""
+    @State private var debounceTask: Task<Void, Never>?
+
+    private let debounceNs: UInt64 = 250_000_000 // 250 ms
+
+    /// Visible downloaded episodes; empty query shows the full catalog.
+    private var filteredDownloads: [DownloadedEpisode] {
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let base = downloads.downloads
+        if q.isEmpty { return base }
+        return base.filter { item in
+            if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+            let feedTitle = store.feed(containingEpisodeId: item.episode.id)?.title ?? ""
+            return feedTitle.localizedCaseInsensitiveContains(q)
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -41,9 +60,15 @@ struct DownloadsView: View {
                         systemImage: "arrow.down.circle",
                         description: Text("Downloaded episodes will appear here for offline playback.")
                     )
+                } else if filteredDownloads.isEmpty {
+                    ContentUnavailableView(
+                        "No matching downloads",
+                        systemImage: "magnifyingglass",
+                        description: Text("No downloads match your search.")
+                    )
                 } else {
                     Section {
-                        ForEach(downloads.downloads) { item in
+                        ForEach(filteredDownloads) { item in
                             HStack {
                                 VStack(alignment: .leading) {
                                     Text(item.episode.title)
@@ -72,6 +97,13 @@ struct DownloadsView: View {
                 }
             }
             .navigationTitle("Downloads")
+            .searchable(text: $searchText, prompt: "Search downloads")
+            .onChange(of: searchText) { _, newValue in
+                scheduleFilter(for: newValue)
+            }
+            .onDisappear {
+                debounceTask?.cancel()
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
@@ -82,6 +114,20 @@ struct DownloadsView: View {
                     .accessibilityLabel("Download errors")
                 }
             }
+        }
+    }
+
+    private func scheduleFilter(for term: String) {
+        debounceTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            debouncedQuery = ""
+            return
+        }
+        debounceTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: debounceNs)
+            guard !Task.isCancelled else { return }
+            debouncedQuery = trimmed
         }
     }
 }
