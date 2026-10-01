@@ -562,6 +562,14 @@ final class PodcastStore: ObservableObject {
         archivedAtById.removeValue(forKey: episodeId)
     }
 
+    /// Un-archive every id in `archived.json` (same as per-row Restore).
+    /// Clears the whole `archivedAtById` side map; does not mark unplayed,
+    /// delete downloads, or clear the queue. Persists via didSet.
+    func restoreAllArchived() {
+        guard !archivedAtById.isEmpty else { return }
+        archivedAtById = [:]
+    }
+
     func toggleArchived(_ episodeId: String) {
         if isArchived(episodeId) {
             restore(episodeId)

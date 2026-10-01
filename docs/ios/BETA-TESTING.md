@@ -107,6 +107,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Favoriten: Suche (Titel / Feed) | ☐ Favorites: search (title / feed) |
 | ☐ Favoriten: Favoriten leeren (Bestätigung) | ☐ Favorites: Clear favorites (confirm) |
 | ☐ Archive / Restore | ☐ Archive / restore |
+| ☐ Archiviert: Suche (Titel / Feed) | ☐ Archived: search (title / feed) |
+| ☐ Archiviert: Alle wiederherstellen (Bestätigung) | ☐ Archived: Restore all (confirm) |
 | ☐ Library search (lokal) | ☐ Library search (local) |
 | ☐ Share Podcast / Episode | ☐ Share podcast / episode |
 
