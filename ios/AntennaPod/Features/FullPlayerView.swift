@@ -301,8 +301,9 @@ struct FullPlayerView: View {
         }
         .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
         .sheet(isPresented: $showCustomSleepTimer) {
-            CustomSleepTimerSheet()
+            CustomSleepTimerSheet(initialMinutes: settings.lastCustomSleepTimerMinutes)
                 .environmentObject(playback)
+                .environmentObject(settings)
         }
         .sheet(isPresented: $showCustomPlaybackSpeed) {
             CustomPlaybackSpeedSheet(mode: .session, initialSpeed: playback.rate)

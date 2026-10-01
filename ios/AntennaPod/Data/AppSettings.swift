@@ -746,7 +746,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -768,6 +768,8 @@ final class AppSettings: ObservableObject {
     static let defaultSmartMarkAsPlayedSeconds: Int = 30
     /// Fixed rewind after a real pause (honest beta; not Android's elapsed-tier util). Default 2.
     static let defaultRewindAfterPauseSeconds: Int = 2
+    /// Last Custom… sleep timer minutes (Android SleepTimerPreferences LastValue default 15).
+    static let defaultLastCustomSleepTimerMinutes: Int = 15
     /// Minimum pause duration before rewind-after-pause applies (avoids accidental pause/play).
     static let rewindAfterPauseMinimumPauseSeconds: Double = 1
     static let customStorageMBRange = 50...100_000
@@ -806,6 +808,7 @@ final class AppSettings: ObservableObject {
         static let notifyOnDownloadErrors = "settings.notifyOnDownloadErrors"
         static let notifyOnSyncErrors = "settings.notifyOnSyncErrors"
         static let notifyOnSleepTimerEnd = "settings.notifyOnSleepTimerEnd"
+        static let lastCustomSleepTimerMinutes = "settings.lastCustomSleepTimerMinutes"
         static let chartsCountryCode = "settings.chartsCountryCode"
         static let askForAppStoreRating = "settings.askForAppStoreRating"
         static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
@@ -999,6 +1002,14 @@ final class AppSettings: ObservableObject {
     @Published var notifyOnSleepTimerEnd: Bool {
         didSet {
             UserDefaults.standard.set(notifyOnSleepTimerEnd, forKey: Keys.notifyOnSleepTimerEnd)
+        }
+    }
+
+    /// Last duration chosen in the Custom… sleep timer sheet (1–180). Seeds the next Custom… open.
+    /// AntennaPod Android `SleepTimerPreferences` LastValue honesty — presets unchanged; fade unchanged.
+    @Published var lastCustomSleepTimerMinutes: Int {
+        didSet {
+            UserDefaults.standard.set(lastCustomSleepTimerMinutes, forKey: Keys.lastCustomSleepTimerMinutes)
         }
     }
 
@@ -1460,6 +1471,7 @@ final class AppSettings: ObservableObject {
             // Default on; same permission gate as DL / sync error alerts.
             notifyOnSleepTimerEnd = true
         }
+        lastCustomSleepTimerMinutes = Self.loadLastCustomSleepTimerMinutes()
         if UserDefaults.standard.object(forKey: Keys.askForAppStoreRating) != nil {
             askForAppStoreRating = UserDefaults.standard.bool(forKey: Keys.askForAppStoreRating)
         } else {
@@ -1608,6 +1620,17 @@ final class AppSettings: ObservableObject {
             UserDefaults.standard.set(Kind.customMegabytes.rawValue, forKey: Keys.storageLimitKind)
             UserDefaults.standard.set(mb, forKey: Keys.storageLimitValue)
         }
+    }
+
+    /// Clamp persisted / backup Custom… sleep minutes into `PlaybackService.customSleepTimerMinutesRange`.
+    private static func loadLastCustomSleepTimerMinutes() -> Int {
+        let range = PlaybackService.customSleepTimerMinutesRange
+        let fallback = defaultLastCustomSleepTimerMinutes
+        guard UserDefaults.standard.object(forKey: Keys.lastCustomSleepTimerMinutes) != nil else {
+            return fallback
+        }
+        let stored = UserDefaults.standard.integer(forKey: Keys.lastCustomSleepTimerMinutes)
+        return min(max(stored, range.lowerBound), range.upperBound)
     }
 
     private static func loadSkipSeconds(key: String, defaultValue: Int) -> Int {
@@ -1771,6 +1794,7 @@ final class AppSettings: ObservableObject {
             notifyOnDownloadErrors: notifyOnDownloadErrors,
             notifyOnSyncErrors: notifyOnSyncErrors,
             notifyOnSleepTimerEnd: notifyOnSleepTimerEnd,
+            lastCustomSleepTimerMinutes: lastCustomSleepTimerMinutes,
             askForAppStoreRating: askForAppStoreRating,
             playVideoAsAudioOnly: playVideoAsAudioOnly,
             volumeAdaptationEnabled: volumeAdaptationEnabled,
@@ -1860,6 +1884,9 @@ final class AppSettings: ObservableObject {
         notifyOnDownloadErrors = snap.notifyOnDownloadErrors
         notifyOnSyncErrors = snap.notifyOnSyncErrors ?? true
         notifyOnSleepTimerEnd = snap.notifyOnSleepTimerEnd ?? true
+        let customSleep = snap.lastCustomSleepTimerMinutes ?? Self.defaultLastCustomSleepTimerMinutes
+        let sleepRange = PlaybackService.customSleepTimerMinutesRange
+        lastCustomSleepTimerMinutes = min(max(customSleep, sleepRange.lowerBound), sleepRange.upperBound)
         askForAppStoreRating = snap.askForAppStoreRating ?? true
         playVideoAsAudioOnly = snap.playVideoAsAudioOnly ?? false
         volumeAdaptationEnabled = snap.volumeAdaptationEnabled ?? false
@@ -1991,6 +2018,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var notifyOnSyncErrors: Bool? = true
     /// Absent in older backups → treated as on (default).
     var notifyOnSleepTimerEnd: Bool? = true
+    /// Absent in older backups → 15 (Android LastValue default). Clamped 1–180 on restore.
+    var lastCustomSleepTimerMinutes: Int? = 15
     /// Absent in older backups → treated as on (default).
     var askForAppStoreRating: Bool? = true
     /// Absent in older backups → treated as off (show video when detected).

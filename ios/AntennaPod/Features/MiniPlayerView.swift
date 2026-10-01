@@ -131,8 +131,9 @@ struct MiniPlayerView: View {
                 Text(String(localized: "This episode is not linked to a subscribed podcast."))
             }
             .sheet(isPresented: $showCustomSleepTimer) {
-                CustomSleepTimerSheet()
+                CustomSleepTimerSheet(initialMinutes: settings.lastCustomSleepTimerMinutes)
                     .environmentObject(playback)
+                    .environmentObject(settings)
             }
             .sheet(isPresented: $showCustomPlaybackSpeed) {
                 CustomPlaybackSpeedSheet(mode: .session, initialSpeed: playback.rate)
