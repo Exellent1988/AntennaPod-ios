@@ -17257,6 +17257,125 @@
           }
         }
       }
+    },
+    "Chapters URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapters URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel-URL"
+          }
+        }
+      }
+    },
+    "Open chapters URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open chapters URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel-URL öffnen"
+          }
+        }
+      }
+    },
+    "Opens the feed chapters file in the system browser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the feed chapters file in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Kapitel-Datei aus dem Feed im Systembrowser"
+          }
+        }
+      }
+    },
+    "Copy chapters URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy chapters URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel-URL kopieren"
+          }
+        }
+      }
+    },
+    "Copies the feed chapters URL to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed chapters URL to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die Kapitel-URL aus dem Feed in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Chapters URL copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapters URL copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel-URL in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — Open / Copy only opens or copies this URL.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — Open / Copy only opens or copies this URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote-Kapitel-URL aus dem Feed. Die In-App-Kapitelliste nutzt weiterhin Podlove Simple Chapters, verzögert geladenes Podcast-Index-JSON beim Öffnen des Vollplayers oder lokale Mediendatei-Tags — Öffnen / Kopieren öffnet oder kopiert nur diese URL."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

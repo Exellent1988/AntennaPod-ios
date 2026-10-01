@@ -1489,6 +1489,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     var chapters: [PodcastChapter]
     /// Podcast Index `podcast:chapters` remote JSON URL (fetched lazily when needed).
     var podcastIndexChapterUrl: String?
+    /// Podcast Index `podcast:chapters` MIME `type` attribute when the feed provides it (e.g. application/json).
+    /// `nil` when absent — never invent. Display-only caption; fetch still uses `PodcastIndexChapterParser`.
+    var podcastIndexChapterType: String?
     /// Episode shownotes / description from RSS (`description` / `content:encoded` / Atom `summary` / `content`).
     /// May contain HTML; UI strips tags to plain text for beta display.
     var descriptionText: String?
@@ -1539,6 +1542,30 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         return true
     }
 
+    /// Feed provides a Podcast Index `podcast:chapters` remote URL (Open / Copy + lazy JSON fetch).
+    var hasPodcastIndexChapterURL: Bool {
+        guard let podcastIndexChapterUrl, !podcastIndexChapterUrl.isEmpty else { return false }
+        return true
+    }
+
+    /// Trimmed non-empty `podcast:chapters` type attribute. Hidden when missing — never invent MIME.
+    var displayPodcastIndexChapterType: String? {
+        guard let podcastIndexChapterType else { return nil }
+        let trimmed = podcastIndexChapterType.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) chapters URL for Open / Copy when the feed provided one.
+    var podcastIndexChapterOpenURL: URL? {
+        guard let raw = podcastIndexChapterUrl?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty,
+              let url = URL(string: raw),
+              let scheme = url.scheme?.lowercased(),
+              scheme == "http" || scheme == "https" else {
+            return nil
+        }
+        return url
+    }
+
     /// Video episode when enclosure MIME is `video/*` or the media URL ends in a common video extension.
     /// Used by the full player video surface (beta lite). Not every `video/mp4` feed is guaranteed playable.
     var isVideo: Bool {
@@ -1576,6 +1603,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         transcriptType: String? = nil,
         chapters: [PodcastChapter] = [],
         podcastIndexChapterUrl: String? = nil,
+        podcastIndexChapterType: String? = nil,
         descriptionText: String? = nil,
         durationSeconds: Double = 0,
         seasonNumber: Int? = nil,
@@ -1603,6 +1631,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.transcriptType = transcriptType
         self.chapters = chapters
         self.podcastIndexChapterUrl = podcastIndexChapterUrl
+        self.podcastIndexChapterType = podcastIndexChapterType
         self.descriptionText = descriptionText
         self.durationSeconds = durationSeconds
         self.seasonNumber = seasonNumber
@@ -1633,6 +1662,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         transcriptType = try c.decodeIfPresent(String.self, forKey: .transcriptType)
         chapters = try c.decodeIfPresent([PodcastChapter].self, forKey: .chapters) ?? []
         podcastIndexChapterUrl = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterUrl)
+        podcastIndexChapterType = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterType)
         descriptionText = try c.decodeIfPresent(String.self, forKey: .descriptionText)
         durationSeconds = try c.decodeIfPresent(Double.self, forKey: .durationSeconds) ?? 0
         seasonNumber = try c.decodeIfPresent(Int.self, forKey: .seasonNumber)

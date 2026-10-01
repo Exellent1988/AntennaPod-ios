@@ -415,13 +415,21 @@ struct FullPlayerView: View {
     }
 
     @ViewBuilder
+    @ViewBuilder
     private var chaptersSection: some View {
+        let chaptersEpisode = resolvedEpisode ?? episode
+        let showChaptersURL = chaptersEpisode?.hasPodcastIndexChapterURL == true
         if isLoadingChapters && chapters.isEmpty {
-            HStack {
-                ProgressView()
-                Text("Loading chapters…")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    ProgressView()
+                    Text("Loading chapters…")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                if let ep = chaptersEpisode, showChaptersURL {
+                    PodcastChaptersURLView(episode: ep, showsSectionTitle: true)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.top, 8)
@@ -478,11 +486,20 @@ struct FullPlayerView: View {
                         .accessibilityAddTraits(index == currentChapterIndex ? .isSelected : [])
                     }
                 }
+                if let ep = chaptersEpisode, showChaptersURL {
+                    PodcastChaptersURLView(episode: ep, showsSectionTitle: true)
+                        .padding(.top, 4)
+                }
             }
             .padding(.top, 8)
             .frame(maxWidth: .infinity, alignment: .leading)
+        } else if let ep = chaptersEpisode, showChaptersURL {
+            // URL present but no loaded chapters (fetch failed / empty) — still offer Open / Copy.
+            PodcastChaptersURLView(episode: ep, showsSectionTitle: true)
+                .padding(.top, 8)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        // No chapters → hide section entirely (no empty placeholder).
+        // No chapters and no remote URL → hide section entirely (no empty placeholder).
     }
 
     /// Item podcast:soundbite — feed-provided only; seek via PlaybackService (current episode); no clip player.

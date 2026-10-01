@@ -110,6 +110,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var transcriptPriority: Int = 0
     private var itemChapters: [PodcastChapter] = []
     private var podcastIndexChapterUrl: String?
+    private var podcastIndexChapterType: String?
     /// itunes:duration / media:content@duration → seconds; 0 = unknown.
     private var itemDurationSeconds: Double = 0
     /// itunes:season — nil when absent / unparsable.
@@ -301,6 +302,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             transcriptPriority = 0
             itemChapters = []
             podcastIndexChapterUrl = nil
+            podcastIndexChapterType = nil
             itemDurationSeconds = 0
             itemSeasonNumber = nil
             itemEpisodeNumber = nil
@@ -476,6 +478,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 let url = attributeDict["url"] ?? attributeDict["href"]
                 if let url, !url.isEmpty {
                     podcastIndexChapterUrl = url
+                    podcastIndexChapterType = Self.nonEmptyAttr(attributeDict["type"] ?? attributeDict["Type"])
                 }
             }
         case "chapter":
@@ -859,6 +862,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     transcriptType: transcriptType,
                     chapters: sorted,
                     podcastIndexChapterUrl: podcastIndexChapterUrl,
+                    podcastIndexChapterType: podcastIndexChapterType,
                     descriptionText: itemDescription,
                     durationSeconds: itemDurationSeconds,
                     seasonNumber: itemSeasonNumber,

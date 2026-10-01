@@ -106,6 +106,11 @@ struct EpisodeDescriptionSheetView: View {
         !episode.displayLicenses.isEmpty
     }
 
+    /// Item podcast:chapters remote URL when set — Open / Copy; hide when missing (never invent).
+    private var hasChaptersURL: Bool {
+        episode.hasPodcastIndexChapterURL
+    }
+
     /// Item itunes:episodeType when set — Full/Trailer/Bonus or raw; hide when missing (never invent).
     private var displayEpisodeType: String? {
         episode.displayEpisodeType
@@ -190,7 +195,7 @@ struct EpisodeDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasAlternateEnclosures && !hasSoundbites && !hasTexts && !hasLicenses && !hasEpisodeMeta {
+                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasAlternateEnclosures && !hasSoundbites && !hasTexts && !hasLicenses && !hasChaptersURL && !hasEpisodeMeta {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "doc.text",
@@ -223,6 +228,9 @@ struct EpisodeDescriptionSheetView: View {
                             }
                             if hasLicenses {
                                 PodcastLicenseListView(licenses: displayLicenses)
+                            }
+                            if hasChaptersURL {
+                                PodcastChaptersURLView(episode: episode)
                             }
                         }
                         .padding()
@@ -363,6 +371,9 @@ struct EpisodeDescriptionSheetView: View {
                     if hasLicenses {
                         PodcastLicenseListView(licenses: displayLicenses)
                     }
+                    if hasChaptersURL {
+                        PodcastChaptersURLView(episode: episode)
+                    }
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
                             .font(.body)
@@ -400,6 +411,9 @@ struct EpisodeDescriptionSheetView: View {
                     }
                     if hasLicenses {
                         PodcastLicenseListView(licenses: displayLicenses)
+                    }
+                    if hasChaptersURL {
+                        PodcastChaptersURLView(episode: episode)
                     }
                     Text(plainDescription)
                         .font(.body)
