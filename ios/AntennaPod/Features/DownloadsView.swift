@@ -137,13 +137,24 @@ struct DownloadsView: View {
                     Section {
                         ForEach(filteredDownloads) { item in
                             HStack {
-                                VStack(alignment: .leading) {
+                                VStack(alignment: .leading, spacing: 2) {
                                     Text(item.episode.title)
                                         .font(.headline)
-                                    Text(item.localFileURL.lastPathComponent)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
+                                    HStack(spacing: 6) {
+                                        Text(item.localFileURL.lastPathComponent)
+                                            .lineLimit(1)
+                                        if let sizeLabel = item.formattedKnownByteSize {
+                                            Text("·")
+                                                .accessibilityHidden(true)
+                                            Text(sizeLabel)
+                                                .monospacedDigit()
+                                        }
+                                    }
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
                                 }
+                                .accessibilityElement(children: .ignore)
+                                .accessibilityLabel(downloadsRowAccessibilityLabel(for: item))
                                 Spacer()
                                 Button {
                                     playback.play(episode: item.episode)
@@ -151,6 +162,7 @@ struct DownloadsView: View {
                                     Image(systemName: "play.fill")
                                 }
                                 .buttonStyle(.bordered)
+                                .accessibilityLabel(String(localized: "Play"))
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button {
@@ -202,6 +214,17 @@ struct DownloadsView: View {
                     }
                     .accessibilityLabel("Sort downloads")
                 }
+                ToolbarItem(placement: .status) {
+                    if !downloads.downloads.isEmpty, downloads.storageUsage.fileCount > 0 {
+                        Text(downloads.storageUsage.usedFormatted)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                            .accessibilityLabel(
+                                String(localized: "Total downloads size \(downloads.storageUsage.usedFormatted)")
+                            )
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
                         DownloadErrorsView()
@@ -239,6 +262,16 @@ struct DownloadsView: View {
                 )
             }
         }
+    }
+
+    /// VoiceOver: title, size when known, file name.
+    private func downloadsRowAccessibilityLabel(for item: DownloadedEpisode) -> String {
+        var parts: [String] = [item.episode.title]
+        if let sizeLabel = item.formattedKnownByteSize {
+            parts.append(String(localized: "Size \(sizeLabel)"))
+        }
+        parts.append(item.localFileURL.lastPathComponent)
+        return parts.joined(separator: ", ")
     }
 
     private func scheduleFilter(for term: String) {

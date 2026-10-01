@@ -35,6 +35,34 @@ struct DownloadedEpisode: Identifiable, Hashable, Codable {
         }
         return Int64(date.timeIntervalSince1970 * 1000)
     }
+
+    /// Bytes on disk for the offline file (`fileSize` resource value). `nil` if missing or unreadable.
+    func localFileByteSize() -> Int64? {
+        let values = try? localFileURL.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
+        guard values?.isRegularFile != false,
+              let size = values?.fileSize,
+              size > 0 else {
+            return nil
+        }
+        return Int64(size)
+    }
+
+    /// Prefer local file size; else feed enclosure `PodcastEpisode.size` when > 0. Hide when unknown.
+    func knownByteSize() -> Int64? {
+        if let local = localFileByteSize() {
+            return local
+        }
+        if episode.size > 0 {
+            return episode.size
+        }
+        return nil
+    }
+
+    /// Compact KB/MB/GB via `DownloadStorageUsage.formatBytes` when `knownByteSize` is set.
+    var formattedKnownByteSize: String? {
+        guard let bytes = knownByteSize() else { return nil }
+        return DownloadStorageUsage.formatBytes(bytes)
+    }
 }
 
 /// Persisted in-flight background task ↔ episode mapping.

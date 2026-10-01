@@ -106,6 +106,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Downloads: Filter-Chips Alle / Ungehört / Gehört (persistiert; mit Suche + Sort) | ☐ Downloads: filter chips All / Unplayed / Played (persisted; with search + sort) |
 | ☐ Downloads: Swipes (Play Next / Queue / Delete) | ☐ Downloads: swipes (Play Next / Add to queue / Delete) |
 | ☐ Downloads: Gehörte löschen (Bestätigung; Favoriten überspringen; global — nicht nur sichtbarer Filter) | ☐ Downloads: Delete played (confirm; skip favorites; global — not visible filter only) |
+| ☐ Downloads: Dateigröße in Zeile (Datei auf Disk bevorzugt, sonst Enclosure-Größe; ausblenden wenn unbekannt) + Toolbar-Gesamtgröße | ☐ Downloads: row file size (disk preferred, else enclosure; hide when unknown) + toolbar total |
 
 ---
 

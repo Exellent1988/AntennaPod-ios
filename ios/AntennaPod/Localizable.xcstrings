@@ -9588,6 +9588,40 @@
           }
         }
       }
+    },
+    "Size %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Size %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Größe %@"
+          }
+        }
+      }
+    },
+    "Total downloads size %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total downloads size %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesamtgröße Downloads %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
