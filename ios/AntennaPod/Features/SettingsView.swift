@@ -131,6 +131,14 @@ struct SettingsView: View {
                     Text("When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Toggle("Volume adaptation", isOn: $settings.volumeAdaptationEnabled)
+                    Text("Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Toggle("Skip silence", isOn: $settings.skipSilenceEnabled)
+                    Text("Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
                 refreshSection
                 autoDownloadSection

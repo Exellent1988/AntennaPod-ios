@@ -193,7 +193,7 @@ enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
     ]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -245,6 +245,8 @@ final class AppSettings: ObservableObject {
         static let chartsCountryCode = "settings.chartsCountryCode"
         static let askForAppStoreRating = "settings.askForAppStoreRating"
         static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
+        static let volumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
+        static let skipSilenceEnabled = "settings.skipSilenceEnabled"
     }
 
     private enum Kind: String {
@@ -422,6 +424,22 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// When true, `PlaybackService` sets `AVAudioSession` mode to `.spokenAudio` (speech-oriented session mode).
+    /// Default off. This is an **iOS session mode**, not Android's LoudnessEnhancer gain curve.
+    @Published var volumeAdaptationEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(volumeAdaptationEnabled, forKey: Keys.volumeAdaptationEnabled)
+        }
+    }
+
+    /// Preference for skip-silence (AntennaPod Android / ExoPlayer). Default off.
+    /// **Not applied** on stock `AVPlayer` — needs a custom `AVAudioEngine` graph (would break shared video / Now Playing). Toggle is honest UI + future hook only.
+    @Published var skipSilenceEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(skipSilenceEnabled, forKey: Keys.skipSilenceEnabled)
+        }
+    }
+
     /// Resolved ISO country used for chart requests.
     var resolvedChartsCountryCode: String {
         let pref = ChartsCountryPreference.fromStorage(chartsCountryCode)
@@ -524,6 +542,18 @@ final class AppSettings: ObservableObject {
         } else {
             // Default off: show video surface when the episode is video.
             playVideoAsAudioOnly = false
+        }
+        if UserDefaults.standard.object(forKey: Keys.volumeAdaptationEnabled) != nil {
+            volumeAdaptationEnabled = UserDefaults.standard.bool(forKey: Keys.volumeAdaptationEnabled)
+        } else {
+            // Default off: use .default / .moviePlayback session mode (not spokenAudio).
+            volumeAdaptationEnabled = false
+        }
+        if UserDefaults.standard.object(forKey: Keys.skipSilenceEnabled) != nil {
+            skipSilenceEnabled = UserDefaults.standard.bool(forKey: Keys.skipSilenceEnabled)
+        } else {
+            // Default off; preference only — PlaybackService does not skip silence on AVPlayer.
+            skipSilenceEnabled = false
         }
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
@@ -639,6 +669,8 @@ final class AppSettings: ObservableObject {
             notifyOnSyncErrors: notifyOnSyncErrors,
             askForAppStoreRating: askForAppStoreRating,
             playVideoAsAudioOnly: playVideoAsAudioOnly,
+            volumeAdaptationEnabled: volumeAdaptationEnabled,
+            skipSilenceEnabled: skipSilenceEnabled,
             chartsCountryCode: chartsCountryCode
         )
     }
@@ -692,6 +724,8 @@ final class AppSettings: ObservableObject {
         notifyOnSyncErrors = snap.notifyOnSyncErrors ?? true
         askForAppStoreRating = snap.askForAppStoreRating ?? true
         playVideoAsAudioOnly = snap.playVideoAsAudioOnly ?? false
+        volumeAdaptationEnabled = snap.volumeAdaptationEnabled ?? false
+        skipSilenceEnabled = snap.skipSilenceEnabled ?? false
         chartsCountryCode = ChartsCountryPreference.fromStorage(snap.chartsCountryCode).storageValue
     }
 }
@@ -724,5 +758,9 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var askForAppStoreRating: Bool? = true
     /// Absent in older backups → treated as off (show video when detected).
     var playVideoAsAudioOnly: Bool? = false
+    /// Absent in older backups → treated as off (default / moviePlayback session mode).
+    var volumeAdaptationEnabled: Bool? = false
+    /// Absent in older backups → treated as off (preference only; no AVPlayer skip).
+    var skipSilenceEnabled: Bool? = false
     var chartsCountryCode: String
 }

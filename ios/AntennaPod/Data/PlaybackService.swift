@@ -600,12 +600,43 @@ final class PlaybackService: ObservableObject {
         player = nil
     }
 
+    /// Re-apply `AVAudioSession` category/mode after Settings changes (volume adaptation / video→audio-only)
+    /// while a player item is loaded. No-op when nothing is playing or loaded.
+    func applyAudioSessionConfiguration() {
+        guard player != nil else { return }
+        activateSession()
+    }
+
+    /// Choose session mode from Settings + current media:
+    /// - Volume adaptation on → `.spokenAudio` (speech-oriented; **not** Android loudness gain)
+    /// - Off + video surface path → `.moviePlayback`
+    /// - Off + audio / audio-only video → `.default`
+    private func preferredAudioSessionMode() -> AVAudioSession.Mode {
+        if settings?.volumeAdaptationEnabled == true {
+            return .spokenAudio
+        }
+        if let episode = currentEpisode, episode.isVideo, settings?.playVideoAsAudioOnly != true {
+            return .moviePlayback
+        }
+        return .default
+    }
+
     private func activateSession() {
+        let session = AVAudioSession.sharedInstance()
+        let mode = preferredAudioSessionMode()
         do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .spokenAudio, options: [])
+            try session.setCategory(.playback, mode: mode, options: [])
             try session.setActive(true)
         } catch {
+            // `.spokenAudio` should work with `.playback`; if the mode is rejected, fall back to `.voiceChat`
+            // when volume adaptation is on, else `.default`.
+            let fallback: AVAudioSession.Mode =
+                settings?.volumeAdaptationEnabled == true ? .voiceChat : .default
+            do {
+                try session.setCategory(.playback, mode: fallback, options: [])
+                try session.setActive(true)
+            } catch {
+            }
         }
         UIApplication.shared.beginReceivingRemoteControlEvents()
         setupAudioSessionObserversIfNeeded()

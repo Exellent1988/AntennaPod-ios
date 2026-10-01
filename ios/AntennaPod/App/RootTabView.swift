@@ -72,6 +72,12 @@ struct RootTabView: View {
         .onChange(of: settings.fastForwardSeconds) { _, _ in
             playback.applyRemoteSkipIntervals()
         }
+        .onChange(of: settings.volumeAdaptationEnabled) { _, _ in
+            playback.applyAudioSessionConfiguration()
+        }
+        .onChange(of: settings.playVideoAsAudioOnly) { _, _ in
+            playback.applyAudioSessionConfiguration()
+        }
         .onChange(of: notificationDeepLink.inboxOpenToken) { _, token in
             guard token != nil else { return }
             selectedTab = .inbox
