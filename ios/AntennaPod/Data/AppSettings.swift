@@ -127,7 +127,39 @@ enum AutoDownloadEpisodesPerFeed: Int, CaseIterable, Identifiable {
     }
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download).
+
+/// Preferred media source when starting playback (P0 Prefer stream vs download).
+enum PlaybackSourcePreference: String, CaseIterable, Identifiable {
+    /// Use local file when present; otherwise stream.
+    case preferDownload
+    /// Always use the network media URL, even if a download exists.
+    case preferStream
+    /// Default: local file if present, else stream (same resolution as prefer download).
+    case automatic
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .preferDownload: return "Prefer download"
+        case .preferStream: return "Prefer stream"
+        case .automatic: return "Automatic"
+        }
+    }
+
+    var helpText: String {
+        switch self {
+        case .preferDownload:
+            return "Play the offline file when available; otherwise stream from the network."
+        case .preferStream:
+            return "Always stream from the network URL, even if the episode is downloaded."
+        case .automatic:
+            return "Use the local file when it exists; otherwise stream. Default."
+        }
+    }
+}
+
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -143,6 +175,7 @@ final class AppSettings: ObservableObject {
         static let autoDownloadEnabled = "settings.autoDownload.enabled"
         static let autoDownloadEpisodesPerFeed = "settings.autoDownload.episodesPerFeed"
         static let autoDownloadWifiOnly = "settings.autoDownload.wifiOnly"
+        static let playbackSourcePreference = "settings.playbackSourcePreference"
     }
 
     private enum Kind: String {
@@ -210,6 +243,13 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Prefer local download, always stream, or automatic (local if present).
+    @Published var playbackSourcePreference: PlaybackSourcePreference {
+        didSet {
+            UserDefaults.standard.set(playbackSourcePreference.rawValue, forKey: Keys.playbackSourcePreference)
+        }
+    }
+
     init() {
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
@@ -242,6 +282,9 @@ final class AppSettings: ObservableObject {
         } else {
             autoDownloadWifiOnly = true
         }
+        let sourceRaw = UserDefaults.standard.string(forKey: Keys.playbackSourcePreference)
+            ?? PlaybackSourcePreference.automatic.rawValue
+        playbackSourcePreference = PlaybackSourcePreference(rawValue: sourceRaw) ?? .automatic
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh

@@ -19,7 +19,9 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, feed refresh interval, auto-download)
+- Settings tab (theme light/dark/system, default playback speed, playback source, feed refresh interval, auto-download)
+- Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
+- Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
 - Auto-download (global on/off + episodes-per-feed cap; after refresh; optional Wi‑Fi only)
 - OPML import/export (Settings + Subscriptions; share sheet / file picker; batch subscribe)
@@ -53,7 +55,7 @@ See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
 
 ## Persistence
 
-Subscriptions, queue, and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `playback.json`). Inbox is derived from that state (unplayed episodes across feeds, newest first). Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme, default playback speed, feed refresh interval, and auto-download prefs live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts / launch+foreground due-check / post-refresh enqueue. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`) and in-flight background task↔episode map (`pending-downloads.json`). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
+Subscriptions, queue, and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `playback.json`). Inbox is derived from that state (unplayed episodes across feeds, newest first). Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme, default playback speed, playback source preference, feed refresh interval, and auto-download prefs live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts / `PlaybackService.play` source resolution / launch+foreground due-check / post-refresh enqueue. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`) and in-flight background task↔episode map (`pending-downloads.json`). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
 
 
 ## Library search
@@ -82,6 +84,12 @@ Settings → **Feeds / Keep updated** offers refresh presets: Manual only, Every
 ## Auto-download
 
 Settings → **Auto-download**: global on/off (default off), **Episodes per feed** cap (1 / 2 / 3 / 5, default 2), and **Wi‑Fi only** (default on; `NWPathMonitor` allows Wi‑Fi/Ethernet, skips cellular). After every feed refresh (`refreshAllFeeds`, single-podcast refresh, Inbox pull-to-refresh, Keep updated), `AutoDownloadCoordinator` picks the newest unplayed episodes that are not already downloaded or in-flight and enqueues them through `DownloadService.download`. Storage-limit eviction after successful downloads is unchanged. **Per-feed** auto-download toggles are not in this slice.
+
+
+
+## Prefer stream vs download
+
+Settings → **Playback → Playback source**: **Prefer download** (local file via `DownloadService.localURL` when present), **Prefer stream** (always the episode network URL even if downloaded), or **Automatic** (default: local if the file exists, else stream). `PlaybackService.play` and continuous queue auto-next honor this; EpisodeRow / Downloads play buttons no longer force a local URL. Mini player and full player show a small **Local** / **Stream** indicator for the active item.
 
 ## Discovery
 

@@ -54,8 +54,7 @@ struct EpisodeRow: View {
             }
             HStack {
                 Button {
-                    let local = downloads.localURL(for: episode)
-                    playback.play(episode: episode, fileURL: local)
+                    playback.play(episode: episode)
                 } label: {
                     Label(resumeLabel, systemImage: "play.fill")
                 }

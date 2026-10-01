@@ -98,6 +98,13 @@ struct FullPlayerView: View {
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .lineLimit(2)
+                        Label(
+                            playback.isPlayingFromLocalFile ? "Playing from download" : "Streaming",
+                            systemImage: playback.isPlayingFromLocalFile ? "internaldrive" : "wifi"
+                        )
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                        .accessibilityLabel(playback.isPlayingFromLocalFile ? "Playing from download" : "Streaming")
                     }
                     .padding(.horizontal)
 

@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (5): Inbox, Subscriptions, Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, ±30s, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | wip | Tab: theme + default speed + download storage limit + refresh interval + auto-download (P0/P1); more prefs later |
+| Settings | 5 | wip | Tab: theme + default speed + playback source + download storage limit + refresh interval + auto-download (P0/P1); more prefs later |
 
 ## Subscriptions
 
@@ -51,14 +51,14 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Sleep timer (Basis) | 5 | done | Clock presets 5–60 min + end of episode; fade last 10s; mini + full player menu |
 | Fortschritt speichern / fortsetzen | 5 | done | JSON `playback.json`; resume on play |
 | Mark played / unplayed | 5 | done | Manual + smart-mark last 30s (AntennaPod default) |
-| Continuous playback (Queue) | 5 | wip | Auto-next from queue on end |
+| Continuous playback (Queue) | 5 | done | Auto-next from queue on episode end (`nextQueueEpisode`); end-of-episode sleep timer still stops without advancing |
 | FF / Rewind deltas | 4 | wip | ±30s in mini + full player |
 | Skip silence | 2 | todo | P3, iOS-API-abhängig |
 | Volume adaptation | 2 | todo | P3 |
 | Chapters | 4 | done | PSC inline (`psc:chapter`) + Podcast Index URL/JSON; full player list, tap seek, current highlight; hidden when none. Media-file tags later |
 | Transcripts | 2 | todo | P3 |
 | Headset / Bluetooth pause | 4 | done | AVAudioSession interruption (pause / resume if shouldResume) + routeChange oldDeviceUnavailable (unplug); remotes/Now Playing unchanged |
-| Prefer stream vs download | 5 | todo | |
+| Prefer stream vs download | 5 | done | Settings: Prefer download / Prefer stream / Automatic (default); `PlaybackService.play` resolves via `DownloadService.localURL`; mini + full player show Local/Stream |
 | Video → audio-only | 1 | todo | mit Video P4 |
 
 ## Downloads
@@ -102,6 +102,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 |---------|---------|------------|---------|
 | Theme light/dark/auto | 5 | done | UserDefaults; `preferredColorScheme` system/light/dark |
 | Default playback speed | 5 | done | UserDefaults; applied on fresh episode start; mini-player marks Default |
+| Prefer stream vs download | 5 | done | UserDefaults; Prefer download / Prefer stream / Automatic; honored in `PlaybackService.play` |
 | FF/Rewind seconds | 4 | todo | |
 | Refresh interval | 4 | done | UserDefaults presets: manual / 1h / 4h / 12h / 24h; due-check on launch + foreground → `refreshAllFeeds()`; BGAppRefreshTask stubbed (no `fetch` in Info.plist) |
 | Swipe actions | 3 | todo | |

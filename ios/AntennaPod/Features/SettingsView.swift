@@ -80,6 +80,14 @@ struct SettingsView: View {
                     Text("New episodes start at this speed. You can still change speed in the mini player.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Picker("Playback source", selection: $settings.playbackSourcePreference) {
+                        ForEach(PlaybackSourcePreference.allCases) { pref in
+                            Text(pref.label).tag(pref)
+                        }
+                    }
+                    Text(settings.playbackSourcePreference.helpText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
                 refreshSection
                 autoDownloadSection

@@ -25,7 +25,7 @@ struct DownloadsView: View {
                             }
                             Spacer()
                             Button {
-                                playback.play(episode: item.episode, fileURL: item.localFileURL)
+                                playback.play(episode: item.episode)
                             } label: {
                                 Image(systemName: "play.fill")
                             }

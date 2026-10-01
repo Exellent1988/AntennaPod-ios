@@ -35,6 +35,8 @@ final class PlaybackService: ObservableObject {
     @Published private(set) var sleepTimerRemainingSeconds: Double?
     @Published private(set) var sleepTimerMode: SleepTimerMode?
     @Published private(set) var isSleepTimerActive = false
+    /// `true` when the current AVPlayer item is a local file URL (offline); `false` when streaming.
+    @Published private(set) var isPlayingFromLocalFile = false
 
     /// Bound from the app for progress / played / continuous queue.
     weak var store: PodcastStore?
@@ -73,22 +75,15 @@ final class PlaybackService: ObservableObject {
             rate = settings?.defaultPlaybackSpeed ?? 1.0
         }
 
-        let resolvedFile = fileURL ?? downloads?.localURL(for: episode)
-        let source: URL?
-        if let resolvedFile {
-            source = resolvedFile
-        } else if let remote = episode.downloadUrl {
-            source = URL(string: remote)
-        } else {
-            source = nil
-        }
-        guard let url = source else {
+        guard let url = resolvePlaybackURL(for: episode, preferredFileURL: fileURL) else {
             return
         }
+        let playingLocal = url.isFileURL
 
         // Keep an active sleep timer across episode changes (clock continues; EOE re-arms).
         tearDownPlayer(clearSleepTimer: false)
         currentEpisode = episode
+        isPlayingFromLocalFile = playingLocal
         let item = AVPlayerItem(url: url)
         let newPlayer = AVPlayer(playerItem: item)
         newPlayer.rate = rate
@@ -144,6 +139,7 @@ final class PlaybackService: ObservableObject {
         finishCurrentEpisode(ended: false)
         tearDownPlayer(clearSleepTimer: true)
         currentEpisode = nil
+        isPlayingFromLocalFile = false
         isPlaying = false
         positionSeconds = 0
         durationSeconds = 0
@@ -260,6 +256,27 @@ final class PlaybackService: ObservableObject {
 
     // MARK: - Private
 
+
+    /// Honor Settings playback-source preference via `DownloadService.localURL`.
+    /// - Prefer download / Automatic: local file when present, else network URL.
+    /// - Prefer stream: always network URL when available (falls back to local if no remote).
+    /// Optional `preferredFileURL` is treated as a known local path (same as `localURL`) and
+    /// still subject to Prefer stream.
+    private func resolvePlaybackURL(for episode: PodcastEpisode, preferredFileURL: URL?) -> URL? {
+        let preference = settings?.playbackSourcePreference ?? .automatic
+        let local = preferredFileURL ?? downloads?.localURL(for: episode)
+        let remote = episode.downloadUrl.flatMap { URL(string: $0) }
+
+        switch preference {
+        case .preferStream:
+            if let remote { return remote }
+            return local
+        case .preferDownload, .automatic:
+            if let local { return local }
+            return remote
+        }
+    }
+
     /// Resume when there is progress and the episode is not already marked played.
     private func resumePosition(for episodeId: String) -> Double {
         guard let store else {
@@ -320,6 +337,7 @@ final class PlaybackService: ObservableObject {
             expireSleepTimer()
             tearDownPlayer(clearSleepTimer: false)
             currentEpisode = nil
+            isPlayingFromLocalFile = false
             positionSeconds = 0
             durationSeconds = 0
             clearNowPlayingInfo()
@@ -331,12 +349,13 @@ final class PlaybackService: ObservableObject {
         let next = finishedId.flatMap { store?.nextQueueEpisode(after: $0) }
         finishCurrentEpisode(ended: true)
         if let next {
-            play(episode: next, fileURL: downloads?.localURL(for: next))
+            play(episode: next)
         } else {
             isPlaying = false
             pauseSleepTimerCountdown()
             tearDownPlayer(clearSleepTimer: false)
             currentEpisode = nil
+            isPlayingFromLocalFile = false
             positionSeconds = 0
             durationSeconds = 0
             clearNowPlayingInfo()

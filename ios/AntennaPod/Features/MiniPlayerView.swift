@@ -25,9 +25,12 @@ struct MiniPlayerView: View {
                                 .font(.subheadline.weight(.semibold))
                                 .lineLimit(1)
                                 .foregroundStyle(.primary)
-                            Text(timeLabel)
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
+                            HStack(spacing: 6) {
+                                Text(timeLabel)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                                sourceIndicator
+                            }
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .contentShape(Rectangle())
@@ -117,6 +120,17 @@ struct MiniPlayerView: View {
         .accessibilityLabel(playback.isSleepTimerActive
             ? "Sleep timer \(playback.sleepTimerStatusLabel ?? "active")"
             : "Sleep timer")
+    }
+
+    private var sourceIndicator: some View {
+        Label(
+            playback.isPlayingFromLocalFile ? "Local" : "Stream",
+            systemImage: playback.isPlayingFromLocalFile ? "internaldrive" : "wifi"
+        )
+        .font(.caption2)
+        .foregroundStyle(.tertiary)
+        .labelStyle(.titleAndIcon)
+        .accessibilityLabel(playback.isPlayingFromLocalFile ? "Playing from download" : "Streaming")
     }
 
     private var timeLabel: String {
