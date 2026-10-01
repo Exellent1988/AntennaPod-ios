@@ -10797,6 +10797,24 @@
         }
       }
     },
+    "Downloads remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Downloads info bar (episode count + remaining duration).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Download-Zeit %@"
+          }
+        }
+      }
+    },
     "Remaining time excludes %lld episode(s) with unknown duration": {
       "extractionState": "manual",
       "comment": "VoiceOver hint when some queue episodes lack duration.",

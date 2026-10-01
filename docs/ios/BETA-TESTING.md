@@ -110,6 +110,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Downloads: Gehörte löschen (Bestätigung; Favoriten überspringen; global — nicht nur sichtbarer Filter) | ☐ Downloads: Delete played (confirm; skip favorites; global — not visible filter only) |
 | ☐ Downloads: Dateigröße in Zeile (Datei auf Disk bevorzugt, sonst Enclosure-Größe; ausblenden wenn unbekannt) + Toolbar-Gesamtgröße | ☐ Downloads: row file size (disk preferred, else enclosure; hide when unknown) + toolbar total |
 | ☐ Downloads: Tab-Badge (volle Katalog-Länge; nicht Chip/Suche/in-progress; 0 ausgeblendet; System-VoiceOver) | ☐ Downloads: tab badge (full catalog length; not chip/search/in-progress; hide when 0; system VoiceOver) |
+| ☐ Downloads: Verbleibende Zeit (Info-Leiste; gefilterte Liste; ~ bei unbekannten Dauern; nicht Tab-Badge-Katalog) | ☐ Downloads: remaining time (info bar; visible filtered list; ~ when unknowns; not tab-badge catalog) |
 
 ---
 
@@ -218,6 +219,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Queue played filter: chips **All** / **Unplayed** / **Played** via `isPlayed` (not archive-aware); persists `AppSettings.queueFilter` (default All). Pipeline chip → search. Edit/drag reorder off when chip ≠ All or search active (same as search alone); Move to top/bottom stays id-based when unlocked; **Clear queue** stays full-queue.
 - Queue remaining time: Info-Leiste unter Chips — Summe `max(0, Dauer − Position)` über **sichtbare** Chip+Suche-Liste; unbekannte Dauern ausgelassen (`~`); live Position für aktuelle Episode; Wanduhr (kein Speed); EN/DE a11y.
   Queue remaining time: info bar under chips — sum `max(0, duration − position)` over **visible** chip+search list; unknown durations omitted (`~`); live position for current episode; wall-clock (no speed); EN/DE a11y.
+- Downloads remaining time: Info-Leiste unter Chips — Summe `max(0, Dauer − Position)` über **sichtbare** Chip+Suche-Liste (**nicht** voller Offline-Katalog / Tab-Badge); unbekannte Dauern ausgelassen (`~`); live Position für aktuelle Episode; Wanduhr (kein Speed); EN/DE a11y.
+  Downloads remaining time: info bar under chips — sum `max(0, duration − position)` over **visible** chip+search list (**not** full offline catalog / tab badge); unknown durations omitted (`~`); live position for current episode; wall-clock (no speed); EN/DE a11y.
 - Queue lock: Toolbar Lock/Unlock (`lock.fill` / `lock.open`) + Settings → Queue Toggle; persistiert `AppSettings.queueLocked` (Default aus). Gesperrt = kein Edit/Ziehen-Reorder und kein Move to top/bottom; **Einreihen / Play Next / Remove / Archive-Swipe / Clear queue bleiben** (nur Reihenfolge-Sperre, wie Android `prefQueueLocked`).
   Queue lock: toolbar Lock/Unlock (`lock.fill` / `lock.open`) + Settings → Queue toggle; persists `AppSettings.queueLocked` (default off). Locked = no Edit/drag reorder and no Move to top/bottom; **enqueue / Play Next / Remove / Archive swipe / Clear queue still work** (reorder lock only, mirrors Android `prefQueueLocked`).
 - Continuous playback: Toggle Standard **an**; aus = Episode-Ende ohne Queue-Advance (Mark played / Progress bleiben); Sleep-Timer Ende der Episode stoppt weiterhin ohne Advance.  
