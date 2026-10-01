@@ -28,6 +28,10 @@ final class PodcastStore: ObservableObject {
     @Published var archivedAtById: [String: Int64] = [:] {
         didSet { PodcastPersistence.saveArchived(archivedAtById) }
     }
+    /// Episode id → user bookmarks (`bookmarks.json`). Local-only wall-clock positions; not gpodder.
+    @Published var bookmarksByEpisodeId: [String: [EpisodeBookmark]] = [:] {
+        didSet { PodcastPersistence.saveBookmarks(bookmarksByEpisodeId) }
+    }
     /// Feed id → tag names (`feed-tags.json` side map). Tags exist only while assigned.
     @Published var tagsByFeedId: [UUID: [String]] = [:] {
         didSet { PodcastPersistence.saveFeedTags(tagsByFeedId) }
@@ -61,6 +65,7 @@ final class PodcastStore: ObservableObject {
         feedSettingsById = PodcastPersistence.loadFeedSettings()
         favoriteAtById = PodcastPersistence.loadFavorites()
         archivedAtById = PodcastPersistence.loadArchived()
+        bookmarksByEpisodeId = PodcastPersistence.loadBookmarks()
         tagsByFeedId = PodcastPersistence.loadFeedTags()
         LocalFolderBookmarkStore.reloadFromPersistence()
         rescanLocalFolderFeedsBestEffort()
@@ -75,6 +80,7 @@ final class PodcastStore: ObservableObject {
         feedSettingsById = PodcastPersistence.loadFeedSettings()
         favoriteAtById = PodcastPersistence.loadFavorites()
         archivedAtById = PodcastPersistence.loadArchived()
+        bookmarksByEpisodeId = PodcastPersistence.loadBookmarks()
         tagsByFeedId = PodcastPersistence.loadFeedTags()
         LocalFolderBookmarkStore.reloadFromPersistence()
         pendingAutoDeleteIds = []
@@ -104,7 +110,7 @@ final class PodcastStore: ObservableObject {
 
     /// Remove a subscription.
     /// Clears the feed from the list, per-feed settings, tags, queue items from this feed,
-    /// and favorites / archive / playback-history entries for its episodes.
+    /// and favorites / archive / bookmarks / playback-history entries for its episodes.
     /// Local-folder feeds also release the security-scoped bookmark.
     /// Does **not** delete downloaded episode files by itself — UI may call
     /// `DownloadService.deleteDownloads(forFeed:)` **before** this when the user chooses
@@ -122,6 +128,7 @@ final class PodcastStore: ObservableObject {
             playbackStates.removeValue(forKey: id)
             favoriteAtById.removeValue(forKey: id)
             archivedAtById.removeValue(forKey: id)
+            bookmarksByEpisodeId.removeValue(forKey: id)
         }
     }
 
@@ -1007,6 +1014,63 @@ final class PodcastStore: ObservableObject {
     }
 
     // MARK: - Favorites (starred)
+
+
+    // MARK: - Episode bookmarks (local-only)
+
+    /// Newest-first bookmarks for an episode (empty when none).
+    func bookmarks(for episodeId: String) -> [EpisodeBookmark] {
+        EpisodeBookmarkStore.sortedNewestFirst(bookmarksByEpisodeId[episodeId] ?? [])
+    }
+
+    /// Number of bookmarks for an episode.
+    func bookmarkCount(for episodeId: String) -> Int {
+        bookmarksByEpisodeId[episodeId]?.count ?? 0
+    }
+
+    /// Whether the episode is at the per-episode bookmark cap.
+    func isBookmarkCapReached(for episodeId: String) -> Bool {
+        bookmarkCount(for: episodeId) >= EpisodeBookmarkStore.maxPerEpisode
+    }
+
+    /// Add a bookmark at `positionSeconds` with optional note.
+    /// Returns `false` when the per-episode cap (`EpisodeBookmarkStore.maxPerEpisode`) is reached.
+    @discardableResult
+    func addBookmark(episodeId: String, positionSeconds: Double, note: String = "") -> Bool {
+        guard positionSeconds.isFinite, positionSeconds >= 0 else { return false }
+        var list = bookmarksByEpisodeId[episodeId] ?? []
+        guard list.count < EpisodeBookmarkStore.maxPerEpisode else { return false }
+        let bookmark = EpisodeBookmark(
+            positionSeconds: positionSeconds,
+            note: EpisodeBookmarkStore.trimNote(note)
+        )
+        list.append(bookmark)
+        var map = bookmarksByEpisodeId
+        map[episodeId] = list
+        bookmarksByEpisodeId = map
+        return true
+    }
+
+    /// Remove one bookmark by id. No-op when missing.
+    func removeBookmark(episodeId: String, bookmarkId: UUID) {
+        guard var list = bookmarksByEpisodeId[episodeId] else { return }
+        list.removeAll { $0.id == bookmarkId }
+        var map = bookmarksByEpisodeId
+        if list.isEmpty {
+            map.removeValue(forKey: episodeId)
+        } else {
+            map[episodeId] = list
+        }
+        bookmarksByEpisodeId = map
+    }
+
+    /// Remove every bookmark for an episode.
+    func clearBookmarks(for episodeId: String) {
+        guard bookmarksByEpisodeId[episodeId] != nil else { return }
+        var map = bookmarksByEpisodeId
+        map.removeValue(forKey: episodeId)
+        bookmarksByEpisodeId = map
+    }
 
     func isFavorite(_ episodeId: String) -> Bool {
         favoriteAtById[episodeId] != nil

@@ -8,6 +8,7 @@ struct MiniPlayerView: View {
     @State private var showFeedUnavailable = false
     @State private var showCustomSleepTimer = false
     @State private var showCustomPlaybackSpeed = false
+    @State private var showBookmarks = false
 
     var body: some View {
         if let episode = playback.currentEpisode {
@@ -104,6 +105,12 @@ struct MiniPlayerView: View {
                             Label("Open podcast", systemImage: "dot.radiowaves.left.and.right")
                         }
                         .disabled(feedForCurrentEpisode == nil)
+                        Button {
+                            showBookmarks = true
+                        } label: {
+                            Label("Bookmarks", systemImage: "bookmark")
+                        }
+                        .accessibilityHint(String(localized: "Lists bookmarks for this episode and saves the current position"))
                     } label: {
                         Image(systemName: "ellipsis.circle")
                     }
@@ -131,6 +138,11 @@ struct MiniPlayerView: View {
                 CustomPlaybackSpeedSheet(mode: .session, initialSpeed: playback.rate)
                     .environmentObject(playback)
                     .environmentObject(settings)
+            }
+            .sheet(isPresented: $showBookmarks) {
+                EpisodeBookmarksSheet(episodeId: episode.id)
+                    .environmentObject(playback)
+                    .environmentObject(store)
             }
         }
     }

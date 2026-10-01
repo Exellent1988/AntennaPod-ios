@@ -15117,6 +15117,329 @@
         }
       },
       "comment": "VoiceOver accountId label for a podcast:socialInteract row when feed provided it."
+    },
+    "Bookmarks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmarks"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesezeichen"
+          }
+        }
+      }
+    },
+    "No bookmarks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No bookmarks"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Lesezeichen"
+          }
+        }
+      }
+    },
+    "No bookmarks for this episode yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No bookmarks for this episode yet."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch keine Lesezeichen für diese Episode."
+          }
+        }
+      }
+    },
+    "Seeks playback to this bookmark": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks playback to this bookmark"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt die Wiedergabe zu diesem Lesezeichen"
+          }
+        }
+      }
+    },
+    "Optional note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional note"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optionale Notiz"
+          }
+        }
+      }
+    },
+    "Short note saved with the bookmark, up to 120 characters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Short note saved with the bookmark, up to 120 characters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kurze Notiz zum Lesezeichen, bis zu 120 Zeichen"
+          }
+        }
+      }
+    },
+    "Bookmark current position": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmark current position"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktuelle Position speichern"
+          }
+        }
+      }
+    },
+    "Bookmark limit reached": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmark limit reached"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesezeichen-Limit erreicht"
+          }
+        }
+      }
+    },
+    "This episode already has 50 bookmarks. Delete one to add another.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This episode already has 50 bookmarks. Delete one to add another."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Episode hat bereits 50 Lesezeichen. Lösche eines, um ein weiteres hinzuzufügen."
+          }
+        }
+      }
+    },
+    "Limit of 50 bookmarks per episode reached.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Limit of 50 bookmarks per episode reached."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Limit von 50 Lesezeichen pro Episode erreicht."
+          }
+        }
+      }
+    },
+    "Limit reached — delete a bookmark first": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Limit reached — delete a bookmark first"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Limit erreicht — zuerst ein Lesezeichen löschen"
+          }
+        }
+      }
+    },
+    "Saves the current playback position as a bookmark": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saves the current playback position as a bookmark"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert die aktuelle Wiedergabeposition als Lesezeichen"
+          }
+        }
+      }
+    },
+    "Lists bookmarks for this episode and saves the current position": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lists bookmarks for this episode and saves the current position"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listet Lesezeichen für diese Episode und speichert die aktuelle Position"
+          }
+        }
+      }
+    },
+    "%lld bookmarks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld bookmarks"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Lesezeichen"
+          }
+        }
+      }
+    },
+    "%lld of 50 bookmarks. Limit reached — delete one to add another. Local only; not synced via gpodder. Distinct from chapters and Share with position.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of 50 bookmarks. Limit reached — delete one to add another. Local only; not synced via gpodder. Distinct from chapters and Share with position."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld von 50 Lesezeichen. Limit erreicht — lösche eines, um ein weiteres hinzuzufügen. Nur lokal; nicht über gpodder synchronisiert. Anders als Kapitel und Mit Position teilen."
+          }
+        }
+      }
+    },
+    "%lld of 50 bookmarks. Local only; wall-clock positions; not synced via gpodder. Distinct from chapters and Share with position.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of 50 bookmarks. Local only; wall-clock positions; not synced via gpodder. Distinct from chapters and Share with position."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld von 50 Lesezeichen. Nur lokal; Wanduhr-Positionen; nicht über gpodder synchronisiert. Anders als Kapitel und Mit Position teilen."
+          }
+        }
+      }
+    },
+    "Saves the current position (%@) with an optional short note.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saves the current position (%@) with an optional short note."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert die aktuelle Position (%@) mit optionaler kurzer Notiz."
+          }
+        }
+      }
+    },
+    "Bookmark %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmark %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesezeichen %@"
+          }
+        }
+      }
+    },
+    "This replaces subscriptions, queue, playback, favorites, archive, bookmarks, tags, feed settings, download catalog, and Settings prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This replaces subscriptions, queue, playback, favorites, archive, bookmarks, tags, feed settings, download catalog, and Settings prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ersetzt Abonnements, Warteschlange, Wiedergabe, Favoriten, Archiv, Lesezeichen, Tags, Feed-Einstellungen, Download-Katalog und Einstellungen durch das Backup. Wenn die ZIP downloads/ enthält, werden diese Episodendateien nach Documents/downloads geschrieben (gleiche Namen überschrieben; andere lokale Dateien bleiben). Katalog-only-Backups brauchen fehlende Medien erneut. Keychain-Passwörter/Schlüssel werden nicht ersetzt. Nicht rückgängig außer durch ein anderes Backup."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -25,6 +25,7 @@ struct FullPlayerView: View {
     @State private var showCustomSleepTimer = false
     @State private var showCustomPlaybackSpeed = false
     @State private var showJumpToPosition = false
+    @State private var showBookmarks = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyURLFeedbackTick = 0
@@ -307,6 +308,17 @@ struct FullPlayerView: View {
                     scrubSeconds = playback.positionSeconds
                     isScrubbing = false
                 }
+        }
+        .sheet(isPresented: $showBookmarks) {
+            if let episode {
+                EpisodeBookmarksSheet(episodeId: episode.id)
+                    .environmentObject(playback)
+                    .environmentObject(store)
+                    .onDisappear {
+                        scrubSeconds = playback.positionSeconds
+                        isScrubbing = false
+                    }
+            }
         }
     }
 
@@ -926,6 +938,15 @@ struct FullPlayerView: View {
             .accessibilityHint(String(localized: "Seeks to the start of this episode and plays"))
 
             Button {
+                showBookmarks = true
+            } label: {
+                Label("Bookmarks", systemImage: "bookmark")
+            }
+            .accessibilityLabel(String(localized: "Bookmarks"))
+            .accessibilityHint(String(localized: "Lists bookmarks for this episode and saves the current position"))
+            .accessibilityValue(bookmarksAccessibilityValue(for: episode.id))
+
+            Button {
                 store.togglePlayed(episode.id)
             } label: {
                 Label(
@@ -1263,6 +1284,14 @@ struct FullPlayerView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
             NewEpisodeNotificationCoordinator.deepLink.openFeed(id: id)
         }
+    }
+
+    private func bookmarksAccessibilityValue(for episodeId: String) -> String {
+        let count = store.bookmarkCount(for: episodeId)
+        if count == 0 {
+            return String(localized: "No bookmarks")
+        }
+        return String(localized: "\(count) bookmarks")
     }
 
     private func format(_ seconds: Double) -> String {

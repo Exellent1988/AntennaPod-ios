@@ -19,6 +19,7 @@ enum PodcastPersistence {
     private static var feedTagsURL: URL { directory.appendingPathComponent("feed-tags.json") }
     private static var downloadErrorsURL: URL { directory.appendingPathComponent("download-errors.json") }
     private static var localFolderBookmarksURL: URL { directory.appendingPathComponent("local-folder-bookmarks.json") }
+    private static var bookmarksURL: URL { directory.appendingPathComponent("bookmarks.json") }
 
     /// Application Support/AntennaPod directory (created if needed).
     static var applicationSupportDirectory: URL { directory }
@@ -151,6 +152,17 @@ enum PodcastPersistence {
 
     static func saveLocalFolderBookmarks(_ map: [String: String]) {
         encode(map, to: localFolderBookmarksURL)
+    }
+
+    /// Episode id → user bookmarks (position + optional note). Local-only; not gpodder.
+    static func loadBookmarks() -> [String: [EpisodeBookmark]] {
+        decode(bookmarksURL) ?? [:]
+    }
+
+    static func saveBookmarks(_ map: [String: [EpisodeBookmark]]) {
+        // Drop empty episode keys so the file stays tidy.
+        let cleaned = map.filter { !$0.value.isEmpty }
+        encode(cleaned, to: bookmarksURL)
     }
 
     private static func decode<T: Decodable>(_ url: URL) -> T? {
