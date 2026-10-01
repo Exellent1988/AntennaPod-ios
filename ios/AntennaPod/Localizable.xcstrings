@@ -11977,6 +11977,142 @@
           }
         }
       }
+    },
+    "Move playing to top": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move playing to top"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktuelle Wiedergabe an den Anfang"
+          }
+        }
+      }
+    },
+    "Moves the currently playing episode to the start of the queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moves the currently playing episode to the start of the queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verschiebt die aktuell spielende Episode an den Anfang der Warteschlange"
+          }
+        }
+      }
+    },
+    "Shuffle, reverse, move playing to top, or clear the entire queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shuffle, reverse, move playing to top, or clear the entire queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mischen, umkehren, aktuelle Wiedergabe an den Anfang, oder gesamte Warteschlange leeren"
+          }
+        }
+      }
+    },
+    "Opens add, remove, Play Next, and Move playing to top queue actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens add, remove, Play Next, and Move playing to top queue actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet Aktionen zum Hinzufügen, Entfernen, Als Nächstes spielen und Aktuelle Wiedergabe an den Anfang"
+          }
+        }
+      }
+    },
+    "Allows drag reorder, Shuffle, Reverse order, Move playing to top, and Move to top or bottom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allows drag reorder, Shuffle, Reverse order, Move playing to top, and Move to top or bottom"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ermöglicht Ziehen-Neuordnen, Mischen, Umkehren, Aktuelle Wiedergabe an den Anfang und An Anfang/Ende"
+          }
+        }
+      }
+    },
+    "Disables drag reorder, Shuffle, Reverse order, Move playing to top, and Move to top or bottom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disables drag reorder, Shuffle, Reverse order, Move playing to top, and Move to top or bottom"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deaktiviert Ziehen-Neuordnen, Mischen, Umkehren, Aktuelle Wiedergabe an den Anfang und An Anfang/Ende"
+          }
+        }
+      }
+    },
+    "When on, disables Queue drag reorder, Shuffle, Reverse order, Move playing to top, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, disables Queue drag reorder, Shuffle, Reverse order, Move playing to top, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, deaktiviert Warteschlangen-Ziehen-Neuordnen, Mischen, Umkehren, Aktuelle Wiedergabe an den Anfang und An Anfang/Ende. Einreihen, Als Nächstes, Entfernen und Leeren funktionieren weiter. Standard aus."
+          }
+        }
+      }
+    },
+    "When on, the Queue tab disables Edit drag reorder, Shuffle, Reverse order, Move playing to top, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, the Queue tab disables Edit drag reorder, Shuffle, Reverse order, Move playing to top, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, deaktiviert der Warteschlangen-Tab Bearbeiten-Ziehen-Neuordnen, Mischen, Umkehren, Aktuelle Wiedergabe an den Anfang und blendet EpisodeRow An Anfang/Ende aus. Einreihen, Als Nächstes, Entfernen, Archivieren-Wischen und Leeren bleiben verfügbar (nur Reihenfolge-Sperre — wie AntennaPod Android Queue-Sperre). Gleiche Einstellung wie der Warteschlangen-Toolbar-Sperrknopf. Standard aus."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

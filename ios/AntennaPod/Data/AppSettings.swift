@@ -1051,7 +1051,7 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// When true, Queue tab disables Edit drag reorder, Shuffle, Reverse order, and EpisodeRow Move to top/bottom.
+    /// When true, Queue tab disables Edit drag reorder, Shuffle, Reverse order, Move playing to top, and EpisodeRow Move to top/bottom.
     /// Default **false** (unlocked). Enqueue / Play Next / Remove / Clear queue stay available (reorder lock only).
     /// Mirrors Android `prefQueueLocked` / `UserPreferences.isQueueLocked()`.
     @Published var queueLocked: Bool {

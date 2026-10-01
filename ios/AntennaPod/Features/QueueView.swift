@@ -42,6 +42,18 @@ struct QueueView: View {
         !settings.queueLocked && store.queue.count >= 2
     }
 
+    /// Move the **currently playing** episode to queue index 0 (`moveQueueItemToTop`).
+    /// Enabled when unlocked, current episode is in the queue, and not already first.
+    /// Distinct from per-row EpisodeRow Move to top — this is a toolbar shortcut for *playing*.
+    private var canMovePlayingToTop: Bool {
+        guard !settings.queueLocked,
+              let current = playback.currentEpisode,
+              let index = store.queue.firstIndex(where: { $0.id == current.id }) else {
+            return false
+        }
+        return index > 0
+    }
+
     /// Visible queue rows: chip (`isPlayed`) → search. Empty query shows the chip-filtered queue order.
     /// Clear queue / Play Next stay full-queue scoped (not the visible subset).
     private var filteredQueue: [PodcastEpisode] {
@@ -276,8 +288,8 @@ struct QueueView: View {
                     )
                     .accessibilityHint(
                         settings.queueLocked
-                            ? String(localized: "Allows drag reorder, Shuffle, Reverse order, and Move to top or bottom")
-                            : String(localized: "Disables drag reorder, Shuffle, Reverse order, and Move to top or bottom")
+                            ? String(localized: "Allows drag reorder, Shuffle, Reverse order, Move playing to top, and Move to top or bottom")
+                            : String(localized: "Disables drag reorder, Shuffle, Reverse order, Move playing to top, and Move to top or bottom")
                     )
                     .accessibilityAddTraits(.isButton)
                 }
@@ -312,6 +324,21 @@ struct QueueView: View {
                         .accessibilityHint(
                             String(localized: "Asks for confirmation, then reverses the entire queue order")
                         )
+                        Button {
+                            // Reuse moveQueueItemToTop — no seek/stop; no confirm (single-item reorder).
+                            if let current = playback.currentEpisode {
+                                store.moveQueueItemToTop(current)
+                            }
+                        } label: {
+                            Label("Move playing to top", systemImage: "arrow.up.to.line")
+                        }
+                        // Enabled only when current episode is queued and not already first;
+                        // blocked when Queue locked (reorder-only, same as Shuffle/Reverse/Move to top).
+                        .disabled(!canMovePlayingToTop)
+                        .accessibilityLabel(String(localized: "Move playing to top"))
+                        .accessibilityHint(
+                            String(localized: "Moves the currently playing episode to the start of the queue")
+                        )
                         Button(role: .destructive) {
                             // Always confirm before clearQueue() — never clear from the menu alone.
                             showClearQueueConfirm = true
@@ -330,7 +357,7 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Shuffle, reverse, or clear the entire queue after confirmation")
+                        String(localized: "Shuffle, reverse, move playing to top, or clear the entire queue")
                     )
                 }
             }

@@ -945,10 +945,12 @@ struct FullPlayerView: View {
         .controlSize(.small)
     }
 
-    /// Full-player Queue menu: Add/Remove toggle + optional Play Next (hidden when already next).
+    /// Full-player Queue menu: Add/Remove toggle + optional Play Next (hidden when already next)
+    /// + optional **Move playing to top** (when queued, not already first, queue unlocked).
     @ViewBuilder
     private func queueActionsMenu(episode: PodcastEpisode) -> some View {
         let inQueue = store.isInQueue(episode.id)
+        let canMovePlayingToTop = canMovePlayingEpisodeToTop(episode)
         Menu {
             Button {
                 if inQueue {
@@ -983,6 +985,20 @@ struct FullPlayerView: View {
                 .accessibilityLabel(String(localized: "Play Next"))
                 .accessibilityHint(String(localized: "Places this episode to play next in the queue"))
             }
+
+            // Toolbar/player shortcut for the *current* playing item (reuses moveQueueItemToTop).
+            // Hidden when not queued / already first / locked — same reorder-only gate as EpisodeRow.
+            if canMovePlayingToTop {
+                Button {
+                    store.moveQueueItemToTop(episode)
+                } label: {
+                    Label("Move playing to top", systemImage: "arrow.up.to.line")
+                }
+                .accessibilityLabel(String(localized: "Move playing to top"))
+                .accessibilityHint(
+                    String(localized: "Moves the currently playing episode to the start of the queue")
+                )
+            }
         } label: {
             Label(
                 inQueue ? "In queue" : "Queue",
@@ -995,7 +1011,17 @@ struct FullPlayerView: View {
                 ? String(localized: "In queue")
                 : String(localized: "Not in queue")
         )
-        .accessibilityHint(String(localized: "Opens add, remove, and Play Next queue actions"))
+        .accessibilityHint(String(localized: "Opens add, remove, Play Next, and Move playing to top queue actions"))
+    }
+
+    /// True when Full Player can offer **Move playing to top**: episode is in the queue,
+    /// not already at index 0, and Queue lock is off (reorder-only). Does not seek/stop.
+    private func canMovePlayingEpisodeToTop(_ episode: PodcastEpisode) -> Bool {
+        guard !settings.queueLocked,
+              let index = store.queue.firstIndex(where: { $0.id == episode.id }) else {
+            return false
+        }
+        return index > 0
     }
 
     /// True when Play Next would leave queue order unchanged (already in the play-next slot).
