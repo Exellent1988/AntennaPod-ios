@@ -17006,7 +17006,7 @@
     },
     "Complete": {
       "extractionState": "manual",
-      "comment": "Capsule when podcast:updateFrequency complete=true (no further episodes claimed). Display-only; does not change Keep updated/refresh. Distinct from other Complete UI if any.",
+      "comment": "Capsule when itunes:complete is yes/true, or when podcast:updateFrequency complete=true (no further episodes claimed). Display-only; does not change Keep updated/refresh. Both sources may show separately — do not collapse incorrectly.",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -17024,7 +17024,7 @@
     },
     "This podcast claims it will not release further episodes. This does not change Keep updated or refresh.": {
       "extractionState": "manual",
-      "comment": "Honest footnote under podcast:updateFrequency complete=true — display-only; no auto Keep updated/refresh change.",
+      "comment": "Honest footnote under podcast:updateFrequency complete=true — display-only; no auto Keep updated/refresh change. Distinct from itunes:complete footnote.",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -17054,6 +17054,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wiederholung %@"
+          }
+        }
+      }
+    },
+    "This podcast marks itunes:complete. The publisher claims no further episodes. This does not change Keep updated or refresh.": {
+      "extractionState": "manual",
+      "comment": "Honest footnote under itunes:complete=yes — display-only; no Keep updated/refresh change. Distinct from podcast:updateFrequency complete footnote.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast marks itunes:complete. The publisher claims no further episodes. This does not change Keep updated or refresh."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Podcast markiert itunes:complete. Der Herausgeber gibt an, keine weiteren Episoden zu veröffentlichen. Das ändert weder „Aktualisiert halten“ noch das Aktualisierungsintervall."
           }
         }
       }

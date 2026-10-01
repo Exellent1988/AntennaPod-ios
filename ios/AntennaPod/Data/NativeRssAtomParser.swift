@@ -36,6 +36,9 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var pendingUpdateFrequencyRrule: String?
     private var pendingUpdateFrequencyDtstart: String?
     private var pendingUpdateFrequencyComplete: Bool?
+    /// Channel itunes:complete — true only for yes/true. Display-only; never invent; does not change Keep updated/refresh.
+    /// Distinct from podcast:updateFrequency complete attribute.
+    private var feedIsItunesComplete = false
     /// Prefer channel `podcast:funding` (url + optional text) over Atom `link rel="payment"`.
     private var fundingUrl: String?
     private var fundingLabel: String?
@@ -227,6 +230,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             medium: channelMedium,
             itunesType: channelItunesType,
             updateFrequency: channelUpdateFrequency,
+            isItunesComplete: feedIsItunesComplete,
             fundingUrl: fundingUrl,
             fundingLabel: fundingLabel,
             categories: Self.uniqueCategories(categoryTexts),
@@ -934,6 +938,14 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     pendingUpdateFrequencyDtstart = nil
                     pendingUpdateFrequencyComplete = nil
                 }
+            case "complete":
+                // itunes:complete — Yes/yes/true → complete (Apple Podcasts). Channel only.
+                // Distinct from podcast:updateFrequency@complete (attribute on updateFrequency element).
+                // Display-only — does not change Keep updated / refresh.
+                if inItem || inLiveItem || inPodroll || inPublisher { break }
+                if let flagged = ItunesCompleteParsing.parse(text) {
+                    feedIsItunesComplete = flagged
+                }
             case "url" where inImage:
                 imageUrl = text
             case "logo", "icon":
@@ -1580,6 +1592,24 @@ enum ItunesTypeParsing {
         switch trimmed {
         case "episodic", "serial":
             return trimmed
+        default:
+            return nil
+        }
+    }
+}
+
+/// Apple Podcasts `itunes:complete` channel text nodes.
+/// Spec: `Yes` / `No`. Also accept `true` / `false` / lowercase yes/no. Unknown/empty → nil (do not invent).
+/// Distinct from `podcast:updateFrequency` `complete` attribute (`PodcastUpdateFrequencyParsing.parseComplete`).
+enum ItunesCompleteParsing {
+    static func parse(_ raw: String) -> Bool? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !trimmed.isEmpty else { return nil }
+        switch trimmed {
+        case "yes", "true":
+            return true
+        case "no", "false":
+            return false
         default:
             return nil
         }

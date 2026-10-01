@@ -317,6 +317,25 @@ struct FeedDetailView: View {
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
+            // Channel itunes:complete yes/true only — display-only Apple claim; distinct from podcast:updateFrequency complete; no Keep updated/refresh change.
+            if liveFeed.isItunesComplete {
+                Section {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(String(localized: "Complete"))
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                        Text(String(localized: "This podcast marks itunes:complete. The publisher claims no further episodes. This does not change Keep updated or refresh."))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(liveFeed.itunesCompleteAccessibilityLabel)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
             // Channel itunes:explicit only — hide when feed does not mark explicit (never invent).
             if liveFeed.isExplicit {
                 Section {

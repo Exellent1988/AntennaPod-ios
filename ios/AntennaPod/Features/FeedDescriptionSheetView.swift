@@ -313,6 +313,22 @@ struct FeedDescriptionSheetView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
+                    if feed.isItunesComplete {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(String(localized: "Complete"))
+                                .font(.caption.weight(.semibold))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.secondary.opacity(0.2), in: Capsule())
+                            Text(String(localized: "This podcast marks itunes:complete. The publisher claims no further episodes. This does not change Keep updated or refresh."))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(feed.itunesCompleteAccessibilityLabel)
+                    }
+
                     if !displayCategories.isEmpty {
                         FeedDescriptionCategoryChips(categories: displayCategories)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -405,6 +421,22 @@ struct FeedDescriptionSheetView: View {
                     if let uf = displayUpdateFrequency {
                         FeedUpdateFrequencyDetailBlock(frequency: uf)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    if feed.isItunesComplete {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(String(localized: "Complete"))
+                                .font(.caption.weight(.semibold))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.secondary.opacity(0.2), in: Capsule())
+                            Text(String(localized: "This podcast marks itunes:complete. The publisher claims no further episodes. This does not change Keep updated or refresh."))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(feed.itunesCompleteAccessibilityLabel)
                     }
 
                     if !displayCategories.isEmpty {

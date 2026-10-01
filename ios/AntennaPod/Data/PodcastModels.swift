@@ -1781,6 +1781,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel Podcast Index `podcast:updateFrequency` when the feed provides it (text + optional rrule/dtstart/complete).
     /// Nil when absent — never invent schedule; UI hides unless present. Display-only — does **not** change Keep updated / refresh.
     var updateFrequency: PodcastUpdateFrequency?
+    /// Channel Apple Podcasts `itunes:complete` yes/true. `false` when missing/no — never invent; UI hides unless true.
+    /// Display-only — does **not** change Keep updated / refresh. **Distinct** from `podcast:updateFrequency` `complete` (both may show).
+    var isItunesComplete: Bool
     /// Podcast Index `podcast:funding` / Atom `link rel="payment"` URL when the feed provides it.
     /// Nil or blank when absent — never invent; UI hides unless http(s) valid.
     var fundingUrl: String?
@@ -1903,6 +1906,15 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         return updateFrequency
     }
 
+    /// VoiceOver for channel `itunes:complete=yes` badge + honest display-only footnote.
+    /// Distinct from `podcast:updateFrequency` complete VoiceOver (both may appear).
+    var itunesCompleteAccessibilityLabel: String {
+        [
+            String(localized: "Complete"),
+            String(localized: "This podcast marks itunes:complete. The publisher claims no further episodes. This does not change Keep updated or refresh.")
+        ].joined(separator: ". ")
+    }
+
     /// Trimmed non-empty funding label from the feed when provided. Hidden/fallback when missing.
     var displayFundingLabel: String? {
         guard let fundingLabel else { return nil }
@@ -2014,6 +2026,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         medium: String? = nil,
         itunesType: String? = nil,
         updateFrequency: PodcastUpdateFrequency? = nil,
+        isItunesComplete: Bool = false,
         fundingUrl: String? = nil,
         fundingLabel: String? = nil,
         categories: [String] = [],
@@ -2043,6 +2056,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.medium = medium
         self.itunesType = itunesType
         self.updateFrequency = updateFrequency
+        self.isItunesComplete = isItunesComplete
         self.fundingUrl = fundingUrl
         self.fundingLabel = fundingLabel
         self.categories = categories
@@ -2075,6 +2089,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         medium = try c.decodeIfPresent(String.self, forKey: .medium)
         itunesType = try c.decodeIfPresent(String.self, forKey: .itunesType)
         updateFrequency = try c.decodeIfPresent(PodcastUpdateFrequency.self, forKey: .updateFrequency)
+        isItunesComplete = try c.decodeIfPresent(Bool.self, forKey: .isItunesComplete) ?? false
         fundingUrl = try c.decodeIfPresent(String.self, forKey: .fundingUrl)
         fundingLabel = try c.decodeIfPresent(String.self, forKey: .fundingLabel)
         categories = try c.decodeIfPresent([String].self, forKey: .categories) ?? []
@@ -2094,7 +2109,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, publisherItems, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, publisherItems, episodes
     }
 }
 
