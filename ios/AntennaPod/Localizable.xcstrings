@@ -11671,6 +11671,40 @@
           }
         }
       }
+    },
+    "Appends feed episodes not already queued": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends feed episodes not already queued"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht Feed-Episoden ein, die noch nicht in der Warteschlange sind"
+          }
+        }
+      }
+    },
+    "Appends %lld episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld Episoden dieses Podcasts am Ende der Warteschlange ein (neuestes Erscheinungsdatum zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Feed-Episodenkatalog (gleiche Ehrlichkeit wie Alle herunterladen / Alle als gehört markieren), nicht Chip- oder Suchfilter. Einschließlich gehört und archiviert. Warteschlangen-Sperre blockiert Einreihen nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

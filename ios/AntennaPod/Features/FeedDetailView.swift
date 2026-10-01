@@ -11,6 +11,7 @@ struct FeedDetailView: View {
     @State private var showPerFeedSettings = false
     @State private var showDownloadAllConfirm = false
     @State private var showMarkAllPlayedConfirm = false
+    @State private var showEnqueueAllConfirm = false
     @State private var showUnsubscribeConfirm = false
     @State private var showFeedURLCopied = false
     @State private var showFeedDescription = false
@@ -93,7 +94,7 @@ struct FeedDetailView: View {
     /// duration known; unplayed with duration contributes full duration; **played** (not current)
     /// → 0; **unknown duration skipped** (tilde when any skipped). Currently playing uses live
     /// `PlaybackService` position/duration. Wall-clock only (no playback-speed divide).
-    /// Distinct from **Download all** / **Mark all as played** full-feed eligibility counts.
+    /// Distinct from **Download all** / **Mark all as played** / **Add all to queue** full-feed eligibility counts.
     private var feedRemainingInfoLabel: String? {
         guard !filteredEpisodes.isEmpty else { return nil }
         let summary = feedRemainingSummary
@@ -189,6 +190,14 @@ struct FeedDetailView: View {
         liveFeed.episodes.filter { !store.isPlayed($0.id) && !store.isArchived($0.id) }
     }
 
+    /// Full feed episode catalog minus already queued — Add all to queue always uses this,
+    /// **not** the chip/search filtered visible list (`filteredEpisodes`). Same full-feed
+    /// honesty as Download all / Mark all as played (eligibility not limited to visible filter).
+    /// Confirm count and `enqueueAllFromFeed` share this eligibility (played/archived included).
+    private var enqueueAllFromFeedCandidatesCount: Int {
+        liveFeed.episodes.filter { !store.isInQueue($0.id) }.count
+    }
+
     var body: some View {
         List {
             if LocalFolderFeed.isLocalFolderFeed(liveFeed) {
@@ -226,7 +235,7 @@ struct FeedDetailView: View {
             }
 
             // AntennaPod-like Feed detail info bar (visible sort→chip→search list remaining time).
-            // Distinct from Download all / Mark all as played full-feed eligibility counts.
+            // Distinct from Download all / Mark all as played / Add all to queue full-feed eligibility counts.
             if let remainingLabel = feedRemainingInfoLabel {
                 Section {
                     Text(remainingLabel)
@@ -389,6 +398,14 @@ struct FeedDetailView: View {
                         }
                         .disabled(markAllPlayedCandidates.isEmpty)
 
+                        Button {
+                            showEnqueueAllConfirm = true
+                        } label: {
+                            Label("Add all to queue", systemImage: "text.append")
+                        }
+                        .disabled(enqueueAllFromFeedCandidatesCount == 0)
+                        .accessibilityHint("Appends feed episodes not already queued")
+
                         Button(role: .destructive) {
                             showUnsubscribeConfirm = true
                         } label: {
@@ -435,6 +452,20 @@ struct FeedDetailView: View {
         } message: {
             Text(
                 "Marks \(markAllPlayedCandidates.count) unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled."
+            )
+        }
+        .confirmationDialog(
+            "Add all to queue?",
+            isPresented: $showEnqueueAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all to queue") {
+                store.enqueueAllFromFeed(liveFeed)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Appends \(enqueueAllFromFeedCandidatesCount) episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue."
             )
         }
         .confirmationDialog(

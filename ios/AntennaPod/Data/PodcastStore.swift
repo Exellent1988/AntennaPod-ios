@@ -720,6 +720,31 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Append every episode from one feed that is not already queued (bulk).
+    /// Uses the **full** stored feed episode catalog (`feed.episodes`), sorted **newest-first**
+    /// by `pubDateEpochMs` (missing dates last; title tiebreak — same spirit as Feed Download all).
+    /// Does **not** follow UI `feedEpisodeSort`, chip filter (`feedEpisodeFilter`), or searchable filter
+    /// — same full-feed honesty as Mark all as played / Download all.
+    /// Includes played and archived episodes (unlike Download all / Mark all eligibility).
+    /// Skips already-queued ids (no duplicates). Uses `enqueue` (append), not `playNext`.
+    /// Safe while queue lock is on (reorder-only — enqueue stays allowed).
+    /// Callers must confirm first (Feed detail toolbar `confirmationDialog`).
+    /// - Returns: number of episodes newly appended.
+    @discardableResult
+    func enqueueAllFromFeed(_ feed: PodcastFeed) -> Int {
+        let sorted = feed.episodes.sorted { lhs, rhs in
+            let l = lhs.pubDateEpochMs ?? Int64.min
+            let r = rhs.pubDateEpochMs ?? Int64.min
+            if l != r { return l > r }
+            return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+        }
+        let candidates = sorted.filter { !isInQueue($0.id) }
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
     /// Archived episodes across feeds, newest archived first.
     var archivedEpisodes: [ArchivedEpisode] {
         var items: [ArchivedEpisode] = []
