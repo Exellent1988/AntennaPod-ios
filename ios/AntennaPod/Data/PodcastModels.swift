@@ -38,6 +38,12 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Feed-declared duration in seconds (`itunes:duration` / Media RSS `media:content@duration`).
     /// `0` = unknown / missing. Prefer this for list rows; playback may refine via `EpisodePlaybackState.durationSeconds`.
     var durationSeconds: Double
+    /// iTunes season number from `itunes:season`. `nil` = not in feed — never invent sequential seasons.
+    var seasonNumber: Int?
+    /// iTunes episode number from `itunes:episode`. `nil` = not in feed — never invent sequential episode numbers.
+    var episodeNumber: Int?
+    /// iTunes episode type from `itunes:episodeType` (`full` / `trailer` / `bonus`). `nil` = not in feed.
+    var episodeType: String?
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -83,7 +89,10 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         chapters: [PodcastChapter] = [],
         podcastIndexChapterUrl: String? = nil,
         descriptionText: String? = nil,
-        durationSeconds: Double = 0
+        durationSeconds: Double = 0,
+        seasonNumber: Int? = nil,
+        episodeNumber: Int? = nil,
+        episodeType: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -98,6 +107,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.podcastIndexChapterUrl = podcastIndexChapterUrl
         self.descriptionText = descriptionText
         self.durationSeconds = durationSeconds
+        self.seasonNumber = seasonNumber
+        self.episodeNumber = episodeNumber
+        self.episodeType = episodeType
     }
 
     init(from decoder: Decoder) throws {
@@ -115,6 +127,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         podcastIndexChapterUrl = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterUrl)
         descriptionText = try c.decodeIfPresent(String.self, forKey: .descriptionText)
         durationSeconds = try c.decodeIfPresent(Double.self, forKey: .durationSeconds) ?? 0
+        seasonNumber = try c.decodeIfPresent(Int.self, forKey: .seasonNumber)
+        episodeNumber = try c.decodeIfPresent(Int.self, forKey: .episodeNumber)
+        episodeType = try c.decodeIfPresent(String.self, forKey: .episodeType)
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).
@@ -126,6 +141,52 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Finite feed duration greater than zero (hide when unknown).
     var hasKnownDuration: Bool {
         durationSeconds.isFinite && durationSeconds > 0
+    }
+
+    /// Compact season/episode from iTunes tags only (`S2 E5`, `S2`, or `E5`).
+    /// `nil` when neither season nor episode is in the feed — never invents numbers.
+    var seasonEpisodeCaption: String? {
+        switch (seasonNumber, episodeNumber) {
+        case let (season?, episode?):
+            return "S\(season) E\(episode)"
+        case let (season?, nil):
+            return "S\(season)"
+        case let (nil, episode?):
+            return "E\(episode)"
+        default:
+            return nil
+        }
+    }
+
+    /// VoiceOver phrasing for season/episode numbers when present.
+    var seasonEpisodeAccessibilityLabel: String? {
+        switch (seasonNumber, episodeNumber) {
+        case let (season?, episode?):
+            return String(localized: "Season \(season), Episode \(episode)")
+        case let (season?, nil):
+            return String(localized: "Season \(season)")
+        case let (nil, episode?):
+            return String(localized: "Episode \(episode)")
+        default:
+            return nil
+        }
+    }
+
+    /// Localized Trailer / Bonus when `itunes:episodeType` is trailer or bonus.
+    /// `full` and unknown/missing stay hidden (full is the default).
+    var episodeTypeCaption: String? {
+        guard let raw = episodeType?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased(),
+              !raw.isEmpty else {
+            return nil
+        }
+        switch raw {
+        case "trailer":
+            return String(localized: "Trailer")
+        case "bonus":
+            return String(localized: "Bonus")
+        default:
+            return nil
+        }
     }
 }
 

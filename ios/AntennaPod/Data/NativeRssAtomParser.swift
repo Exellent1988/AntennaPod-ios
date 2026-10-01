@@ -39,6 +39,12 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var podcastIndexChapterUrl: String?
     /// itunes:duration / media:content@duration → seconds; 0 = unknown.
     private var itemDurationSeconds: Double = 0
+    /// itunes:season — nil when absent / unparsable.
+    private var itemSeasonNumber: Int?
+    /// itunes:episode — nil when absent / unparsable.
+    private var itemEpisodeNumber: Int?
+    /// itunes:episodeType (`full` / `trailer` / `bonus`) — nil when absent / unknown.
+    private var itemEpisodeType: String?
     private var elementStack: [String] = []
 
     init(data: Data) {
@@ -98,6 +104,9 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemChapters = []
             podcastIndexChapterUrl = nil
             itemDurationSeconds = 0
+            itemSeasonNumber = nil
+            itemEpisodeNumber = nil
+            itemEpisodeType = nil
             if local.lowercased() == "entry", let href = attributeDict["href"] {
                 itemLink = href
             }
@@ -232,6 +241,21 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 if let seconds = EpisodeDurationParsing.seconds(from: text), seconds > 0 {
                     itemDurationSeconds = seconds
                 }
+            case "season":
+                // itunes:season — non-negative integer only; hide when missing/unparsable (never invent).
+                if let n = ItunesSeasonEpisodeParsing.nonNegativeInt(from: text) {
+                    itemSeasonNumber = n
+                }
+            case "episode":
+                // itunes:episode — non-negative integer only; hide when missing/unparsable (never invent).
+                if let n = ItunesSeasonEpisodeParsing.nonNegativeInt(from: text) {
+                    itemEpisodeNumber = n
+                }
+            case "episodetype":
+                // itunes:episodeType — full | trailer | bonus (Apple Podcasts).
+                if let t = ItunesSeasonEpisodeParsing.episodeType(from: text) {
+                    itemEpisodeType = t
+                }
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
@@ -247,7 +271,10 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     chapters: sorted,
                     podcastIndexChapterUrl: podcastIndexChapterUrl,
                     descriptionText: itemDescription,
-                    durationSeconds: itemDurationSeconds
+                    durationSeconds: itemDurationSeconds,
+                    seasonNumber: itemSeasonNumber,
+                    episodeNumber: itemEpisodeNumber,
+                    episodeType: itemEpisodeType
                 )
                 episodes.append(episode)
                 inItem = false
@@ -357,6 +384,27 @@ enum ChapterTimeParsing {
 enum EpisodeDurationParsing {
     static func seconds(from raw: String) -> Double? {
         ChapterTimeParsing.seconds(from: raw)
+    }
+}
+
+/// iTunes season / episode numbers and episodeType from feed text nodes.
+/// Integers only (Apple Podcasts: non-negative). No sequential fabrication when absent.
+enum ItunesSeasonEpisodeParsing {
+    static func nonNegativeInt(from raw: String) -> Int? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let n = Int(trimmed), n >= 0 else { return nil }
+        return n
+    }
+
+    /// Canonical lowercase `full` / `trailer` / `bonus`, or `nil` when absent/unknown.
+    static func episodeType(from raw: String) -> String? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        switch trimmed {
+        case "full", "trailer", "bonus":
+            return trimmed
+        default:
+            return nil
+        }
     }
 }
 

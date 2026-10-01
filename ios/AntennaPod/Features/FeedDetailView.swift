@@ -615,17 +615,44 @@ struct EpisodeRow: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
-                if dateOverride != nil || episode.pubDateEpochMs != nil || formattedKnownDuration != nil || formattedKnownByteSize != nil {
+                if seasonEpisodeCaptionText != nil
+                    || episodeTypeCaptionText != nil
+                    || dateOverride != nil
+                    || episode.pubDateEpochMs != nil
+                    || formattedKnownDuration != nil
+                    || formattedKnownByteSize != nil {
                     HStack(spacing: 6) {
+                        if let seasonEpisodeCaptionText {
+                            Text(seasonEpisodeCaptionText)
+                                .monospacedDigit()
+                        }
+                        if let episodeTypeCaptionText {
+                            if seasonEpisodeCaptionText != nil {
+                                Text("·")
+                                    .accessibilityHidden(true)
+                            }
+                            Text(episodeTypeCaptionText)
+                        }
                         if let dateOverride {
                             // History / Favorites / Archived: live relative (hours matter).
+                            if seasonEpisodeCaptionText != nil || episodeTypeCaptionText != nil {
+                                Text("·")
+                                    .accessibilityHidden(true)
+                            }
                             Text(dateOverride, style: .relative)
                         } else if let caption = formattedPubDateCaption {
                             // Publish date: Today / Yesterday / N days ago / absolute.
+                            if seasonEpisodeCaptionText != nil || episodeTypeCaptionText != nil {
+                                Text("·")
+                                    .accessibilityHidden(true)
+                            }
                             Text(caption)
                         }
                         if let formattedKnownDuration {
-                            if dateOverride != nil || episode.pubDateEpochMs != nil {
+                            if seasonEpisodeCaptionText != nil
+                                || episodeTypeCaptionText != nil
+                                || dateOverride != nil
+                                || episode.pubDateEpochMs != nil {
                                 Text("·")
                                     .accessibilityHidden(true)
                             }
@@ -633,7 +660,11 @@ struct EpisodeRow: View {
                                 .monospacedDigit()
                         }
                         if let formattedKnownByteSize {
-                            if dateOverride != nil || episode.pubDateEpochMs != nil || formattedKnownDuration != nil {
+                            if seasonEpisodeCaptionText != nil
+                                || episodeTypeCaptionText != nil
+                                || dateOverride != nil
+                                || episode.pubDateEpochMs != nil
+                                || formattedKnownDuration != nil {
                                 Text("·")
                                     .accessibilityHidden(true)
                             }
@@ -965,11 +996,17 @@ struct EpisodeRow: View {
         return String(localized: "Download")
     }
 
-    /// VoiceOver summary: title, feed, date, duration, size, played / percent (+ remaining) or position-only, downloaded (+ favorite/archived).
+    /// VoiceOver summary: title, feed, season/episode, type, date, duration, size, played / percent (+ remaining) or position-only, downloaded (+ favorite/archived).
     private var episodeAccessibilityLabel: String {
         var parts: [String] = [episode.title]
         if !feedTitle.isEmpty {
             parts.append(feedTitle)
+        }
+        if let seasonA11y = episode.seasonEpisodeAccessibilityLabel {
+            parts.append(seasonA11y)
+        }
+        if let typeCaption = episodeTypeCaptionText {
+            parts.append(typeCaption)
         }
         if let dateOverride, let custom = dateAccessibilityLabel {
             parts.append(custom)
@@ -1009,6 +1046,16 @@ struct EpisodeRow: View {
             parts.append(String(localized: "Archived"))
         }
         return parts.joined(separator: ", ")
+    }
+
+    /// Compact iTunes season/episode (`S2 E5`) when feed provides numbers; nil when unknown.
+    private var seasonEpisodeCaptionText: String? {
+        episode.seasonEpisodeCaption
+    }
+
+    /// Trailer / Bonus when `itunes:episodeType` is trailer/bonus; nil for full/missing.
+    private var episodeTypeCaptionText: String? {
+        episode.episodeTypeCaption
     }
 
     /// Publish-date caption: Today / Yesterday / N days ago (≤7) / medium absolute.
