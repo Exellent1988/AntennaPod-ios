@@ -78,11 +78,18 @@ struct SettingsView: View {
             ScrollViewReader { proxy in
             Form {
                 Section("Appearance") {
-                    Picker("Theme", selection: $settings.theme) {
+                    Picker(String(localized: "Theme"), selection: $settings.theme) {
                         ForEach(AppTheme.allCases) { theme in
                             Text(theme.label).tag(theme)
                         }
                     }
+                    .accessibilityLabel(String(localized: "Theme"))
+                    .accessibilityValue(settings.theme.label)
+                    .accessibilityHint(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
+                    Text(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .accessibilityLabel(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
                 }
                 Section("Home") {
                     NavigationLink {
