@@ -6,6 +6,7 @@ struct FeedDetailView: View {
     @EnvironmentObject private var downloads: DownloadService
     let feed: PodcastFeed
     @State private var showPerFeedSettings = false
+    @State private var showDownloadAllConfirm = false
 
     /// Live feed from the store when available (episodes refresh after pull/refresh).
     private var liveFeed: PodcastFeed {
@@ -14,6 +15,11 @@ struct FeedDetailView: View {
 
     private var feedTags: [String] {
         store.tags(for: liveFeed.id)
+    }
+
+    /// Unplayed, not archived, not downloaded — newest first, soft-capped.
+    private var downloadAllCandidates: [PodcastEpisode] {
+        downloads.eligibleForFeedDownloadAll(in: liveFeed, store: store)
     }
 
     var body: some View {
@@ -90,6 +96,16 @@ struct FeedDetailView: View {
                         }
                         .accessibilityLabel("Share podcast")
                     }
+                    Menu {
+                        Button {
+                            showDownloadAllConfirm = true
+                        } label: {
+                            Label("Download all", systemImage: "arrow.down.circle")
+                        }
+                        .disabled(downloadAllCandidates.isEmpty)
+                    } label: {
+                        Label("Feed actions", systemImage: "ellipsis.circle")
+                    }
                     Button {
                         showPerFeedSettings = true
                     } label: {
@@ -99,6 +115,23 @@ struct FeedDetailView: View {
                 }
             }
         }
+        .confirmationDialog(
+            "Download all?",
+            isPresented: $showDownloadAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Download all") {
+                let episodes = downloadAllCandidates
+                Task {
+                    await downloads.downloadAllManual(episodes)
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Queues download of \(downloadAllCandidates.count) unplayed episodes (newest first, max \(DownloadService.feedDownloadAllCap)). Played, archived, and already downloaded are skipped. Manual download Wi‑Fi only still applies."
+            )
+        }
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: liveFeed.title)
@@ -107,6 +140,16 @@ struct FeedDetailView: View {
                             Button("Done") { showPerFeedSettings = false }
                         }
                     }
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            if let error = downloads.lastError {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity)
+                    .padding(8)
+                    .background(.ultraThinMaterial)
             }
         }
     }

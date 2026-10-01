@@ -4097,6 +4097,74 @@
           }
         }
       }
+    },
+    "Download all": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download all"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle herunterladen"
+          }
+        }
+      }
+    },
+    "Download all?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download all?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle herunterladen?"
+          }
+        }
+      }
+    },
+    "Feed actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-Aktionen"
+          }
+        }
+      }
+    },
+    "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, and already downloaded are skipped. Manual download Wi‑Fi only still applies.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, and already downloaded are skipped. Manual download Wi‑Fi only still applies."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stellt den Download von %lld ungehörten Episoden in die Warteschlange (neueste zuerst, max. %lld). Gehörte, archivierte und bereits heruntergeladene werden übersprungen. „Manueller Download nur per WLAN“ gilt weiterhin."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -23,7 +23,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - CarPlay (honest partial: system Now Playing / remotes + background audio; **no** custom CPTemplate / CarPlay entitlement)
 - Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
 - Sleep timer (clock presets + end of episode, fade-out)
-- Offline download to Documents/downloads (background URLSession; survives suspend/relaunch)
+- Offline download to Documents/downloads (background URLSession; survives suspend/relaunch; Feed detail **Download all** for unplayed/not-archived/not-downloaded, newest 50 soft cap)
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
 - German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings headers, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript — **partial**, not full i18n)
@@ -148,7 +148,7 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` s
 - Tab bar + main navigation titles: Home, Inbox, Subscriptions, Queue, Downloads, Settings (+ About, Favorites, History, Archived, Episodes, Discover, Download errors, Home layout, Add podcast, Transcript)
 - Settings section headers: Appearance, Home, Playback, Library, Privacy, About, Backup, Sync, Feeds / Keep updated, Auto-download, Network / Downloads, Notifications, Downloads / Storage, Discovery, App Store, Siri / Shortcuts, Homescreen widget, Apple Watch, CarPlay, Import / Export
 - Discovery chrome: Add segmented modes (Apple / Index / fyyd / URL / Folder), search placeholders, empty/API-key states, Results / Feed URL / charts loading + help, OPML import/export labels, Preview/Open row actions
-- Primary actions: Play, Pause, Resume, Download, Subscribe / Confirm Subscribe, Cancel, Save, Delete, Remove, Archive, Mark played / unplayed, Mark all as played, common empty-state titles + main-tab and library empty descriptions (History / Favorites / Archived / Episodes / Tags filters)
+- Primary actions: Play, Pause, Resume, Download, Download all, Subscribe / Confirm Subscribe, Cancel, Save, Delete, Remove, Archive, Mark played / unplayed, Mark all as played, common empty-state titles + main-tab and library empty descriptions (History / Favorites / Archived / Episodes / Tags filters)
 - Home section labels (layout toggles + Home headers): Continue listening, New / Inbox, Queue, Discover, Recently updated, Favorites
 - Backup / Sync: section labels, primary Backup buttons, Sync form field labels (Host / Username / Password / Device / Login / Sync now), notification toggles
 - Download errors: banner title, Errors list title/empty, clear confirmation
@@ -250,7 +250,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 | Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`) |
 | Downloads | — | Delete download | — |
 | Inbox | Mark played | Archive | Toolbar menu: Mark all as played (confirm) + Archive all |
-| Feed detail | Archive / Restore | Play Next + Queue + Share | EpisodeRow context: Play Next + Add to queue |
+| Feed detail | Archive / Restore | Play Next + Queue + Share | Toolbar Download all (confirm) + EpisodeRow context: Play Next + Add to queue |
 | History | Mark unplayed (if played) | Remove playback state | — |
 | Favorites | Archive | Unfavorite | — |
 | Archived | — | Restore | — |
@@ -354,6 +354,8 @@ Settings → **Feeds / Keep updated → New episodes**: **Inbox only** (default)
 
 
 ## Auto-download
+
+**Download all (Feed detail):** toolbar menu **Download all** with confirmation showing the eligible count. Eligible = unplayed, not archived, not already downloaded / in-flight, remote media URL (skips local-folder files). Soft cap **newest 50**. Enqueues via `DownloadService.downloadAllManual` (`.manual` path); honors **Manual download Wi‑Fi only** once up front — on block shows the same `lastError` / error-log feedback as a single manual download (banner on Feed detail). Does not download played/archived and does not wipe existing downloads.
 
 Settings → **Auto-download**: global on/off (default off) and **Episodes per feed** cap (1 / 2 / 3 / 5, default 2). **Wi‑Fi only** for auto-download lives under **Network / Downloads** (default on). After every feed refresh (`refreshAllFeeds`, single-podcast refresh, Inbox pull-to-refresh, Keep updated), `AutoDownloadCoordinator` picks the newest unplayed episodes that are not already downloaded or in-flight and enqueues them through `DownloadService.download` (`.automatic` source skips the manual Wi‑Fi gate). Storage-limit eviction after successful downloads is unchanged. **Per-feed** Auto-download (Use global / Always / Never) is on each podcast’s settings sheet (Feed detail → gear); Always enqueues even when global is off; Never skips that feed; episode cap and Wi‑Fi-only remain global.
 

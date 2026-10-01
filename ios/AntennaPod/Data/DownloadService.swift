@@ -172,6 +172,59 @@ final class DownloadService: ObservableObject {
     static let manualCellularBlockedMessage =
         "Manual downloads are Wi‑Fi only. Connect to Wi‑Fi or Ethernet, or turn off Manual download Wi‑Fi only in Settings → Network / Downloads."
 
+    /// Soft cap for Feed detail **Download all** (newest eligible first).
+    static let feedDownloadAllCap = 50
+
+    /// Episodes on `feed` eligible for manual bulk download: unplayed, not archived,
+    /// not already downloaded / in-flight, with a remote media URL (skips local-folder files).
+    /// Newest `pubDateEpochMs` first, limited to `cap` (default `feedDownloadAllCap`).
+    func eligibleForFeedDownloadAll(
+        in feed: PodcastFeed,
+        store: PodcastStore,
+        cap: Int = DownloadService.feedDownloadAllCap
+    ) -> [PodcastEpisode] {
+        let sorted = feed.episodes.sorted { lhs, rhs in
+            let l = lhs.pubDateEpochMs ?? Int64.min
+            let r = rhs.pubDateEpochMs ?? Int64.min
+            if l != r { return l > r }
+            return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+        }
+        var picked: [PodcastEpisode] = []
+        for episode in sorted {
+            guard picked.count < cap else { break }
+            guard let raw = episode.downloadUrl, !raw.isEmpty else { continue }
+            guard !LocalFolderFeed.isLocalFileDownloadURL(raw) else { continue }
+            guard !store.isPlayed(episode.id) else { continue }
+            guard !store.isArchived(episode.id) else { continue }
+            guard !isDownloaded(episode) else { continue }
+            guard !inProgress.contains(episode.id) else { continue }
+            picked.append(episode)
+        }
+        return picked
+    }
+
+    /// Enqueues manual downloads for many episodes. Honors `manualDownloadWifiOnly` **once**
+    /// up front — on block sets the same `lastError` / error-log path as a single manual
+    /// download and does not enqueue. Does not delete existing downloads.
+    func downloadAllManual(_ episodes: [PodcastEpisode]) async {
+        guard !episodes.isEmpty else { return }
+        if settings?.manualDownloadWifiOnly == true {
+            AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
+            if !NetworkPathGate.shared.allowsTransfer(wifiOnly: true) {
+                // Same feedback path as `download(_:source: .manual)` cellular block.
+                if let first = episodes.first {
+                    recordFailure(episode: first, message: Self.manualCellularBlockedMessage)
+                } else {
+                    lastError = Self.manualCellularBlockedMessage
+                }
+                return
+            }
+        }
+        for episode in episodes {
+            await download(episode, source: .manual)
+        }
+    }
+
     /// Starts a background `URLSession` download task. Continues while the app is suspended
     /// (system-permitting); mapping is persisted for relaunch.
     /// - Parameter source: `.manual` (default) honors `manualDownloadWifiOnly`; `.automatic`

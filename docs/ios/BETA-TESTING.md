@@ -73,6 +73,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | DE | EN |
 |----|----|
 | ☐ Episode manuell laden | ☐ Manual download |
+| ☐ Feed: Alle herunterladen (Bestätigung + Cap) | ☐ Feed: Download all (confirm + cap) |
 | ☐ Background-Download überlebt Suspend | ☐ Background download survives suspend |
 | ☐ Auto-download nach Refresh (Cap + Wi‑Fi) | ☐ Auto-download after refresh (cap + Wi‑Fi) |
 | ☐ Storage-Limit / Eviction | ☐ Storage limit / eviction |
