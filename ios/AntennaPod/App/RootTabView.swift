@@ -14,6 +14,7 @@ struct RootTabView: View {
     @State private var selectedTab: RootTab = .home
 
     var body: some View {
+        // Tab bar VoiceOver names come from Label titles (Localizable.xcstrings).
         TabView(selection: $selectedTab) {
             HomeView(selectedTab: $selectedTab)
                 .tabItem {

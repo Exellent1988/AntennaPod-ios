@@ -15,6 +15,8 @@ struct MiniPlayerView: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Open full player")
+                .accessibilityHint("Shows the full player with scrubber and more controls")
+                .accessibilityValue(timeLabel)
 
                 HStack {
                     Button {
@@ -49,6 +51,7 @@ struct MiniPlayerView: View {
                     } label: {
                         Image(systemName: playback.isPlaying ? "pause.fill" : "play.fill")
                     }
+                    .accessibilityLabel(playback.isPlaying ? String(localized: "Pause") : String(localized: "Play"))
                     Button {
                         playback.seek(bySeconds: playback.fastForwardSeconds)
                     } label: {
@@ -75,6 +78,8 @@ struct MiniPlayerView: View {
                         Text(String(format: "%.1f×", playback.rate))
                             .font(.caption.monospacedDigit())
                     }
+                    .accessibilityLabel("\(String(localized: "Playback speed")) \(String(format: "%.1f", playback.rate))")
+                    .accessibilityHint("Chooses playback speed")
                 }
             }
             .padding()
@@ -120,8 +125,9 @@ struct MiniPlayerView: View {
             }
         }
         .accessibilityLabel(playback.isSleepTimerActive
-            ? "Sleep timer \(playback.sleepTimerStatusLabel ?? "active")"
-            : "Sleep timer")
+            ? "\(String(localized: "Sleep timer")) \(playback.sleepTimerStatusLabel ?? "active")"
+            : String(localized: "Sleep timer"))
+        .accessibilityHint("Sets or turns off the sleep timer")
     }
 
     private var sourceIndicator: some View {

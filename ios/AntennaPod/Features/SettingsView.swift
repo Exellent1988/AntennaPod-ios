@@ -138,14 +138,17 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Toggle("Play video as audio only", isOn: $settings.playVideoAsAudioOnly)
+                        .accessibilityHint("Hides the video surface and shows artwork instead. Lockscreen stays audio.")
                     Text("When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Toggle("Volume adaptation", isOn: $settings.volumeAdaptationEnabled)
+                        .accessibilityHint("Optimizes the audio session for speech. Not Android loudness gain.")
                     Text("Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Toggle("Skip silence", isOn: $settings.skipSilenceEnabled)
+                        .accessibilityHint("Preference only; not applied on stock AVPlayer in this beta.")
                     Text("Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
@@ -298,6 +301,7 @@ struct SettingsView: View {
     private var autoDownloadSection: some View {
         Section {
             Toggle("Auto-download", isOn: $settings.autoDownloadEnabled)
+                .accessibilityHint("Downloads newest unplayed episodes after a feed refresh when enabled.")
             if settings.autoDownloadEnabled {
                 Picker("Episodes per feed", selection: $settings.autoDownloadEpisodesPerFeed) {
                     ForEach(AutoDownloadEpisodesPerFeed.allCases) { cap in
@@ -324,8 +328,11 @@ struct SettingsView: View {
     private var networkDownloadsSection: some View {
         Section {
             Toggle("Auto-download Wi‑Fi only", isOn: gatedWifiToggle(\AppSettings.autoDownloadWifiOnly))
+                .accessibilityHint("When on, auto-download skips cellular networks.")
             Toggle("Manual download Wi‑Fi only", isOn: gatedWifiToggle(\AppSettings.manualDownloadWifiOnly))
+                .accessibilityHint("When on, user downloads are refused on cellular.")
             Toggle("Stream Wi‑Fi only", isOn: gatedWifiToggle(\AppSettings.streamWifiOnly))
+                .accessibilityHint("When on, network streaming is blocked on cellular; local files still play.")
             if parental.isEnabled && parental.lockNetworkDownloadsSettings && parental.isLocked {
                 Text("Network / Downloads settings are locked. Enter the parental PIN to change these toggles.")
                     .font(.caption)
@@ -381,8 +388,11 @@ struct SettingsView: View {
     private var notificationsSection: some View {
         Section {
             Toggle("Notify on new episodes", isOn: $settings.notifyOnNewEpisodes)
+                .accessibilityHint("Local notifications only; no push server.")
             Toggle("Notify on download errors", isOn: $settings.notifyOnDownloadErrors)
+                .accessibilityHint("Local notifications when a download fails.")
             Toggle("Notify on sync errors", isOn: $settings.notifyOnSyncErrors)
+                .accessibilityHint("Local notifications when gpodder or Nextcloud sync fails.")
             LabeledContent("Permission") {
                 Text(notificationAuthLabel)
                     .foregroundStyle(.secondary)
@@ -454,6 +464,7 @@ struct SettingsView: View {
     private var storageSection: some View {
         Section {
             Toggle("Delete episode after playing", isOn: $settings.autoDeleteAfterPlaying)
+                .accessibilityHint("Removes the offline file when marked played; favorites are kept.")
             Text(autoDeleteHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -613,6 +624,7 @@ struct SettingsView: View {
     private var appStoreRatingSection: some View {
         Section {
             Toggle("Ask for App Store rating", isOn: $settings.askForAppStoreRating)
+                .accessibilityHint("May show a review prompt after ten mark-played events once per install.")
             LabeledContent("Mark-played count") {
                 Text("\(RatingPromptCoordinator.successfulMarkPlayedCount)/\(RatingPromptCoordinator.threshold)")
                     .foregroundStyle(.secondary)

@@ -27,6 +27,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
 - German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings section headers, empty states, primary actions — **partial**, not full i18n)
+- Accessibility / VoiceOver (beta polish; EpisodeRow combined labels + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
 - Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Archive all)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first)
 - Statistics (beta; Subscriptions → Library → Statistics + Settings; totals + top podcasts from `playback.json`; approx time)
@@ -151,6 +152,17 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` string liter
 - Backup / Sync section labels and primary Backup buttons
 
 **Not covered in this pass (still English):** long Settings footnotes / help captions, discovery search chrome beyond titles, parental-controls copy beyond Save/Unlock/Enable/Disable, network/service error strings, notification bodies, Statistics/Echo detail rows, Widget / Watch UI strings, and most secondary toolbars. Regenerating XcodeGen on a Mac picks up the catalog + regions; device/simulator language German shows translated keys when present.
+
+## Accessibility (VoiceOver, beta polish)
+
+VoiceOver-oriented polish on the existing beta UI (not a full accessibility audit / Dynamic Type pass):
+
+- **EpisodeRow** — combined `accessibilityLabel` (title, feed, played / percent progress, downloaded, favorite, archived) with `.isStaticText`; icon-only Play / Download / Queue / Mark played / Favorite / Archive / Share buttons get explicit localized labels (+ `.startsMediaSession` on Play).
+- **Mini + full player** — play/pause, rewind/forward (interval seconds), speed menu, sleep timer, and scrubber / progress (value + hint). Secondary full-player actions labeled like EpisodeRow.
+- **Main tabs** — VoiceOver names from `Label` titles in `RootTabView` (String Catalog en+de).
+- **Settings toggles** — bindings unchanged; short `accessibilityHint` on playback / network / notification / storage / rating toggles where the on-screen caption is long.
+
+Honest limits: not every screen/control audited; no custom rotor / reduce-motion work in this pass.
 
 ## Queue
 

@@ -141,46 +141,48 @@ struct EpisodeRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(episode.title)
-                    .font(.headline)
-                Spacer(minLength: 8)
-                if store.isFavorite(episode.id) {
-                    Image(systemName: "star.fill")
-                        .foregroundStyle(.yellow)
-                        .accessibilityLabel("Favorite")
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .firstTextBaseline) {
+                    Text(episode.title)
+                        .font(.headline)
+                    Spacer(minLength: 8)
+                    if store.isFavorite(episode.id) {
+                        Image(systemName: "star.fill")
+                            .foregroundStyle(.yellow)
+                    }
+                    if store.isArchived(episode.id) {
+                        Image(systemName: "archivebox.fill")
+                            .foregroundStyle(.orange)
+                    }
+                    if state.isPlayed {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
                 }
-                if store.isArchived(episode.id) {
-                    Image(systemName: "archivebox.fill")
-                        .foregroundStyle(.orange)
-                        .accessibilityLabel("Archived")
-                }
-                if state.isPlayed {
-                    Image(systemName: "checkmark.circle.fill")
+                if !feedTitle.isEmpty {
+                    Text(feedTitle)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
-                        .accessibilityLabel("Played")
+                        .lineLimit(1)
+                }
+                if let dateOverride {
+                    Text(dateOverride, style: .relative)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else if let ms = episode.pubDateEpochMs {
+                    Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .date)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                if progressFraction > 0, !state.isPlayed {
+                    ProgressView(value: progressFraction)
+                        .tint(.accentColor)
                 }
             }
-            if !feedTitle.isEmpty {
-                Text(feedTitle)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-            }
-            if let dateOverride {
-                Text(dateOverride, style: .relative)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .accessibilityLabel(dateAccessibilityLabel ?? "Date")
-            } else if let ms = episode.pubDateEpochMs {
-                Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .date)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            if progressFraction > 0, !state.isPlayed {
-                ProgressView(value: progressFraction)
-                    .tint(.accentColor)
-            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(episodeAccessibilityLabel)
+            .accessibilityAddTraits(.isStaticText)
+
             HStack {
                 Button {
                     playback.play(episode: episode)
@@ -188,6 +190,8 @@ struct EpisodeRow: View {
                     Label(resumeLabel, systemImage: "play.fill")
                 }
                 .buttonStyle(.bordered)
+                .accessibilityLabel(resumeLabel)
+                .accessibilityAddTraits(.startsMediaSession)
 
                 Button {
                     Task { await downloads.download(episode) }
@@ -202,6 +206,7 @@ struct EpisodeRow: View {
                 }
                 .buttonStyle(.bordered)
                 .disabled(episode.downloadUrl == nil || downloads.inProgress.contains(episode.id))
+                .accessibilityLabel(downloadAccessibilityLabel)
 
                 Button {
                     store.enqueue(episode)
@@ -209,6 +214,7 @@ struct EpisodeRow: View {
                     Label("Queue", systemImage: "text.append")
                 }
                 .buttonStyle(.bordered)
+                .accessibilityLabel(String(localized: "Queue"))
 
                 Button {
                     store.togglePlayed(episode.id)
@@ -219,6 +225,11 @@ struct EpisodeRow: View {
                     )
                 }
                 .buttonStyle(.bordered)
+                .accessibilityLabel(
+                    state.isPlayed
+                        ? String(localized: "Mark unplayed")
+                        : String(localized: "Mark played")
+                )
 
                 Button {
                     store.toggleFavorite(episode.id)
@@ -230,6 +241,11 @@ struct EpisodeRow: View {
                 }
                 .buttonStyle(.bordered)
                 .tint(store.isFavorite(episode.id) ? .yellow : nil)
+                .accessibilityLabel(
+                    store.isFavorite(episode.id)
+                        ? String(localized: "Unfavorite")
+                        : String(localized: "Favorite")
+                )
 
                 Button {
                     store.toggleArchived(episode.id)
@@ -241,6 +257,11 @@ struct EpisodeRow: View {
                 }
                 .buttonStyle(.bordered)
                 .tint(store.isArchived(episode.id) ? .orange : nil)
+                .accessibilityLabel(
+                    store.isArchived(episode.id)
+                        ? String(localized: "Restore")
+                        : String(localized: "Archive")
+                )
 
                 episodeShareControl
             }
@@ -301,12 +322,14 @@ struct EpisodeRow: View {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
             .buttonStyle(.bordered)
+            .accessibilityLabel(String(localized: "Share"))
         } else {
             Button {} label: {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
             .buttonStyle(.bordered)
             .disabled(true)
+            .accessibilityLabel(String(localized: "Share"))
         }
     }
 
@@ -324,5 +347,44 @@ struct EpisodeRow: View {
             return String(localized: "Resume")
         }
         return String(localized: "Play")
+    }
+
+    private var downloadAccessibilityLabel: String {
+        if downloads.inProgress.contains(episode.id) {
+            return String(localized: "Downloading")
+        }
+        if downloads.isDownloaded(episode) {
+            return String(localized: "Downloaded")
+        }
+        return String(localized: "Download")
+    }
+
+    /// VoiceOver summary: title, feed, played/progress, downloaded (+ favorite/archived).
+    private var episodeAccessibilityLabel: String {
+        var parts: [String] = [episode.title]
+        if !feedTitle.isEmpty {
+            parts.append(feedTitle)
+        }
+        if let dateOverride, let custom = dateAccessibilityLabel {
+            parts.append(custom)
+        }
+        if state.isPlayed {
+            parts.append(String(localized: "Played"))
+        } else if progressFraction > 0 {
+            let pct = Int((progressFraction * 100).rounded())
+            parts.append("\(pct) percent played")
+        }
+        if downloads.isDownloaded(episode) {
+            parts.append(String(localized: "Downloaded"))
+        } else if downloads.inProgress.contains(episode.id) {
+            parts.append(String(localized: "Downloading"))
+        }
+        if store.isFavorite(episode.id) {
+            parts.append(String(localized: "Favorite"))
+        }
+        if store.isArchived(episode.id) {
+            parts.append(String(localized: "Archived"))
+        }
+        return parts.joined(separator: ", ")
     }
 }

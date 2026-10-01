@@ -545,6 +545,23 @@
         }
       }
     },
+    "Downloading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloading"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird heruntergeladen"
+          }
+        }
+      }
+    },
     "Downloads": {
       "extractionState": "manual",
       "localizations": {
@@ -1531,6 +1548,40 @@
         }
       }
     },
+    "Playback position": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback position"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedergabeposition"
+          }
+        }
+      }
+    },
+    "Playback speed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback speed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedergabegeschwindigkeit"
+          }
+        }
+      }
+    },
     "Played": {
       "extractionState": "manual",
       "localizations": {
@@ -1786,6 +1837,23 @@
         }
       }
     },
+    "Restore": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederherstellen"
+          }
+        }
+      }
+    },
     "Resume": {
       "extractionState": "manual",
       "localizations": {
@@ -1973,6 +2041,23 @@
         }
       }
     },
+    "Share": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilen"
+          }
+        }
+      }
+    },
     "Share podcast": {
       "extractionState": "manual",
       "localizations": {
@@ -2003,6 +2088,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Siri / Kurzbefehle"
+          }
+        }
+      }
+    },
+    "Sleep timer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep timer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlaf-Timer"
           }
         }
       }
@@ -2207,6 +2309,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ausschalten"
+          }
+        }
+      }
+    },
+    "Unfavorite": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unfavorite"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorit entfernen"
           }
         }
       }

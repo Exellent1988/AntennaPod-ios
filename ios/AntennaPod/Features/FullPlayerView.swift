@@ -305,7 +305,9 @@ struct FullPlayerView: View {
                     }
                 }
             )
-            .accessibilityLabel("Playback position")
+            .accessibilityLabel(String(localized: "Playback position"))
+            .accessibilityValue(format(displayPosition))
+            .accessibilityHint("Adjusts playback position")
             HStack {
                 Text(format(displayPosition))
                     .font(.caption.monospacedDigit())
@@ -335,7 +337,7 @@ struct FullPlayerView: View {
                 Image(systemName: playback.isPlaying ? "pause.circle.fill" : "play.circle.fill")
                     .font(.system(size: 64))
             }
-            .accessibilityLabel(playback.isPlaying ? "Pause" : "Play")
+            .accessibilityLabel(playback.isPlaying ? String(localized: "Pause") : String(localized: "Play"))
 
             Button {
                 playback.seek(bySeconds: playback.fastForwardSeconds)
@@ -371,7 +373,8 @@ struct FullPlayerView: View {
                 .font(.subheadline.weight(.semibold).monospacedDigit())
                 .frame(minWidth: 44)
         }
-        .accessibilityLabel("Playback speed \(String(format: "%.1f", playback.rate))")
+        .accessibilityLabel("\(String(localized: "Playback speed")) \(String(format: "%.1f", playback.rate))")
+        .accessibilityHint("Chooses playback speed")
     }
 
     private var sleepTimerMenu: some View {
@@ -411,8 +414,9 @@ struct FullPlayerView: View {
             }
         }
         .accessibilityLabel(playback.isSleepTimerActive
-            ? "Sleep timer \(playback.sleepTimerStatusLabel ?? "active")"
-            : "Sleep timer")
+            ? "\(String(localized: "Sleep timer")) \(playback.sleepTimerStatusLabel ?? "active")"
+            : String(localized: "Sleep timer"))
+        .accessibilityHint("Sets or turns off the sleep timer")
     }
 
     private func secondaryActions(episode: PodcastEpisode) -> some View {
@@ -427,6 +431,11 @@ struct FullPlayerView: View {
                     systemImage: played ? "circle" : "checkmark.circle"
                 )
             }
+            .accessibilityLabel(
+                played
+                    ? String(localized: "Mark unplayed")
+                    : String(localized: "Mark played")
+            )
 
             Button {
                 store.toggleFavorite(episode.id)
@@ -437,12 +446,18 @@ struct FullPlayerView: View {
                 )
             }
             .tint(favorited ? .yellow : nil)
+            .accessibilityLabel(
+                favorited
+                    ? String(localized: "Unfavorite")
+                    : String(localized: "Favorite")
+            )
 
             Button {
                 store.enqueue(episode)
             } label: {
                 Label("Queue", systemImage: "text.append")
             }
+            .accessibilityLabel(String(localized: "Queue"))
 
             Button {
                 Task { await downloads.download(episode) }
@@ -456,6 +471,13 @@ struct FullPlayerView: View {
                 }
             }
             .disabled(episode.downloadUrl == nil || downloads.inProgress.contains(episode.id))
+            .accessibilityLabel(
+                downloads.inProgress.contains(episode.id)
+                    ? String(localized: "Downloading")
+                    : downloads.isDownloaded(episode)
+                        ? String(localized: "Downloaded")
+                        : String(localized: "Download")
+            )
 
             if let url = episode.shareURL {
                 ShareLink(
@@ -465,6 +487,7 @@ struct FullPlayerView: View {
                 ) {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
+                .accessibilityLabel(String(localized: "Share"))
             }
         }
         .buttonStyle(.bordered)
