@@ -41,6 +41,12 @@ struct FeedDetailView: View {
                             .tint(store.isArchived(episode.id) ? .green : .orange)
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button {
+                                store.enqueue(episode)
+                            } label: {
+                                Label("Queue", systemImage: "text.append")
+                            }
+                            .tint(.purple)
                             if let url = episode.shareURL {
                                 ShareLink(
                                     item: url,

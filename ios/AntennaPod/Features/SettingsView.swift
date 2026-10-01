@@ -135,6 +135,13 @@ struct SettingsView: View {
                         Label("Statistics", systemImage: "chart.bar.doc.horizontal")
                     }
                 }
+                Section("About") {
+                    NavigationLink {
+                        AboutView()
+                    } label: {
+                        Label("About", systemImage: "info.circle")
+                    }
+                }
                 OpmlImportExportSection()
             }
             .navigationTitle("Settings")

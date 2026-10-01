@@ -229,6 +229,11 @@ final class PodcastStore: ObservableObject {
         queue.removeAll { $0.id == episode.id }
     }
 
+    /// Drag-reorder queue rows (List `onMove`). Persists via `queue` `didSet`.
+    func moveQueue(from source: IndexSet, to destination: Int) {
+        queue.move(fromOffsets: source, toOffset: destination)
+    }
+
     // MARK: - Playback progress / played
 
     func playbackState(for episodeId: String) -> EpisodePlaybackState {

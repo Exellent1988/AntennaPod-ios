@@ -30,6 +30,14 @@ struct FavoritesView: View {
                             Label("Unfavorite", systemImage: "star.slash")
                         }
                     }
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button {
+                            store.archive(item.episode.id)
+                        } label: {
+                            Label("Archive", systemImage: "archivebox")
+                        }
+                        .tint(.orange)
+                    }
                 }
             }
         }

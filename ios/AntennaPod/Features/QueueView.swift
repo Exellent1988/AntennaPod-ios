@@ -12,7 +12,7 @@ struct QueueView: View {
                     ContentUnavailableView(
                         "Queue empty",
                         systemImage: "list.bullet",
-                        description: Text("Add episodes from a podcast feed.")
+                        description: Text("Add episodes from a podcast feed. Edit mode lets you drag to reorder.")
                     )
                 } else {
                     ForEach(store.queue) { episode in
@@ -20,15 +20,34 @@ struct QueueView: View {
                             episode: episode,
                             feedTitle: store.feed(containingEpisodeId: episode.id)?.title ?? ""
                         )
-                    }
-                    .onDelete { indexSet in
-                        for index in indexSet {
-                            store.removeFromQueue(store.queue[index])
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                store.removeFromQueue(episode)
+                            } label: {
+                                Label("Remove", systemImage: "minus.circle")
+                            }
                         }
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button {
+                                store.archive(episode.id)
+                            } label: {
+                                Label("Archive", systemImage: "archivebox")
+                            }
+                            .tint(.orange)
+                        }
+                    }
+                    .onMove { source, destination in
+                        store.moveQueue(from: source, to: destination)
                     }
                 }
             }
             .navigationTitle("Queue")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    EditButton()
+                        .disabled(store.queue.isEmpty)
+                }
+            }
         }
     }
 }

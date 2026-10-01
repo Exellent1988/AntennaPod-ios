@@ -39,6 +39,14 @@ struct InboxView: View {
                                 }
                                 .tint(.orange)
                             }
+                            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                                Button {
+                                    store.markPlayed(item.episode.id)
+                                } label: {
+                                    Label("Mark played", systemImage: "checkmark.circle")
+                                }
+                                .tint(.blue)
+                            }
                     }
                 }
             }

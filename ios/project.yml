@@ -21,3 +21,5 @@ targets:
       INFOPLIST_KEY_CFBundleDisplayName: AntennaPod
       INFOPLIST_KEY_UILaunchScreen_Generation: YES
       ENABLE_PREVIEWS: YES
+      MARKETING_VERSION: "0.1.0"
+      CURRENT_PROJECT_VERSION: "1"

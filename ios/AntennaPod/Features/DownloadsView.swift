@@ -60,10 +60,12 @@ struct DownloadsView: View {
                                 }
                                 .buttonStyle(.bordered)
                             }
-                        }
-                        .onDelete { indexSet in
-                            for index in indexSet {
-                                downloads.delete(downloads.downloads[index].episode)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    downloads.delete(item.episode)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
                             }
                         }
                     }

@@ -10,12 +10,12 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
 | Home (konfigurierbare Sektionen) | 4 | done | Primary tab: Continue listening, Inbox preview, Queue preview, recently updated feeds (by newest ep pubDate); See all → other tabs; pull-to-refresh; not configurable yet |
-| Queue | 5 | wip | JSON persistence |
-| Inbox | 4 | done | Unplayed across feeds (`!isPlayed` && not archived), newest first; tab + pull-to-refresh; swipe Archive + Archive all |
-| Episodes (Alle) | 4 | done | Flat list across subscriptions, newest pubDate first; Subscriptions → Library → Episodes; feed title + EpisodeRow actions; `.searchable` title/feed filter; soft cap newest 500 |
-| Downloads-Liste | 5 | wip | P0, local files + persisted catalog |
+| Queue | 5 | done | JSON persistence; swipe Remove + Archive; Edit → drag reorder (`moveQueue`) |
+| Inbox | 4 | done | Unplayed across feeds (`!isPlayed` && not archived), newest first; tab + pull-to-refresh; swipe Archive + Mark played + Archive all |
+| Episodes (Alle) | 4 | done | Flat list across subscriptions, newest pubDate first; Subscriptions → Library → Episodes; feed title + EpisodeRow actions; swipe Archive/Restore + Mark played; `.searchable` title/feed filter; soft cap newest 500 |
+| Downloads-Liste | 5 | done | Local files + persisted catalog; swipe Delete download; error log + notify |
 | History | 3 | done | Played / in-progress across feeds, newest `lastPlayedAt` first; Subscriptions → Library → History; swipe remove / mark unplayed; tap via EpisodeRow |
-| Favorites | 3 | done | Starred episode ids in `favorites.json` side map; star toggle on EpisodeRow + full player; Subscriptions → Library → Favorites (newest first); swipe unfavorite; auto-delete skips favorited downloads |
+| Favorites | 3 | done | Starred episode ids in `favorites.json` side map; star toggle on EpisodeRow + full player; Subscriptions → Library → Favorites (newest first); swipe Unfavorite + Archive; auto-delete skips favorited downloads |
 | Subscriptions | 5 | wip | List + subscribe sheet |
 | Add podcast | 5 | wip | URL + Apple Podcasts + Podcast Index search; charts via Discover (Subscribe reuses feed URL pipeline) |
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync (P0/P1); more prefs later |
+| Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync + About (P0/P1); more prefs later |
 
 ## Subscriptions
 
@@ -33,7 +33,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | OPML Import/Export | 5 | done | Pure Swift XML (fork `ios/`); Settings + Subscriptions; batch subscribe with progress/errors |
 | Feed aktualisieren | 5 | done | Fetch + parse on subscribe; pull-to-refresh all; auto refresh by Settings interval |
 | Episodenliste / Feed-Seite | 5 | wip | |
-| Archive / restore | 3 | done | Side map `archived.json` (id → archivedAt); archived ≠ played. Hide from Inbox (+ Home New preview). EpisodeRow button/context + Feed swipe; Inbox swipe + Archive all; Library → Archived list (restore). Feed lists keep archived with dim/badge (not removed) |
+| Archive / restore | 3 | done | Side map `archived.json` (id → archivedAt); archived ≠ played. Hide from Inbox (+ Home New preview). EpisodeRow button/context + Feed/Inbox/Queue/Favorites/All Episodes swipes; Inbox Archive all; Library → Archived (restore). Feed lists keep archived with dim/badge (not removed) |
 | Tags / Folders | 3 | done | Side map `feed-tags.json` (feed id → string tags, 0..n); manage on Feed detail → gear (Per-feed settings): add existing/new, remove, rename/delete globally; empty tags disappear. Subscriptions: filter chips All / each tag / Untagged + optional Group by tag sections (multi-tag feeds listed under each). Not Android drawer folders / nested hierarchy |
 | Per-feed settings | 4 | done | Feed detail → gear sheet: Auto-download / Keep updated / Notify Use global·Always·Never; side map `feed-settings.json`; Speed / Skip Intro·Outro per feed later (global skip intro/outro in Settings) |
 | Keep updated | 4 | done | Global via Settings refresh interval; per-feed Keep updated Never skips that feed in refresh-all (single-feed refresh still OK) |
@@ -108,11 +108,11 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | FF/Rewind seconds | 4 | done | UserDefaults `rewindSeconds` / `fastForwardSeconds`; presets 5–60; wired to players + MPRemoteCommandCenter |
 | Skip intro / Skip outro | 3 | done | UserDefaults `skipIntroSeconds` / `skipOutroSeconds`; presets 0/5/10/15/30/60 (0=off); PlaybackService seeks intro on fresh start; outro once/session → finished + queue next; global only (per-feed later) |
 | Refresh interval | 4 | done | UserDefaults presets: manual / 1h / 4h / 12h / 24h; due-check on launch + foreground → `refreshAllFeeds()`; BGAppRefreshTask stubbed (no `fetch` in Info.plist) |
-| Swipe actions | 3 | todo | |
+| Swipe actions | 3 | done | Queue: Remove + Archive (+ Edit drag reorder). Downloads: Delete. Inbox: Archive + Mark played. Feed: Archive/Restore + Queue + Share. History: Remove + Mark unplayed. Favorites: Unfavorite + Archive. Archived: Restore. All Episodes: Archive/Restore + Mark played. EpisodeRow buttons remain for play/download/queue/favorite/share |
 | Parental controls | 2 | todo | |
 | Notifications (new episodes) | 4 | done | Local UserNotifications after feed refresh; Settings toggle (default on; honest if denied); per-feed Always/Never override; permission from Settings or first new-eps refresh; tap → Inbox; no push |
 | Notifications (DL/Sync errors) | 4 | partial | **DL done**: Settings “Notify on download errors” (default on; same UNUserNotificationCenter permission as new episodes); local banner on failure (episode title + short error); tap → Downloads. **Sync errors later** (no push) |
-| About / contribute links | 2 | todo | |
+| About / contribute links | 2 | done | Settings → About: AntennaPod iOS fork blurb; version from Bundle (placeholder fallback); Links → antennapod.org, GitHub AntennaPod, contribute, docs, this fork (`Exellent1988/AntennaPod-ios`) via Safari `Link` |
 
 ## Extras
 

@@ -37,6 +37,29 @@ struct AllEpisodesView: View {
             } else {
                 ForEach(items) { item in
                     EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button {
+                                store.toggleArchived(item.episode.id)
+                            } label: {
+                                Label(
+                                    store.isArchived(item.episode.id) ? "Restore" : "Archive",
+                                    systemImage: store.isArchived(item.episode.id)
+                                        ? "arrow.uturn.backward" : "archivebox"
+                                )
+                            }
+                            .tint(store.isArchived(item.episode.id) ? .green : .orange)
+                        }
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button {
+                                store.togglePlayed(item.episode.id)
+                            } label: {
+                                Label(
+                                    store.isPlayed(item.episode.id) ? "Mark unplayed" : "Mark played",
+                                    systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
+                                )
+                            }
+                            .tint(.blue)
+                        }
                 }
             }
         }
