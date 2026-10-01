@@ -2823,19 +2823,19 @@
         }
       }
     },
-    "New episodes start at this speed. You can still change speed in the mini player.": {
+    "New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "New episodes start at this speed. You can still change speed in the mini player."
+            "value": "New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Neue Episoden starten mit dieser Geschwindigkeit. Im Mini-Player kannst du sie weiterhin ändern."
+            "value": "Neue Episoden starten mit dieser Geschwindigkeit. Im Mini-/Vollplayer: Tippen wechselt Presets; lange drücken öffnet die volle Liste."
           }
         }
       }
@@ -7239,6 +7239,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiv, fordert Mono-Ausgabe über `AVAudioSession.setPreferredOutputNumberOfChannels(1)` an (aus: bis zu 2 Kanäle). **Best Effort** — das System kann je nach Route (eingebauter Lautsprecher, Bluetooth, CarPlay usw.) ignorieren. Behält den Standard-`AVPlayer` (Videofläche, PiP, Now Playing). Kein Android-ExoPlayer-Stereo→Mono-Remix. Standard aus."
+          }
+        }
+      }
+    },
+    "Cycles to the next speed. Long-press for full list.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cycles to the next speed. Long-press for full list."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wechselt zur nächsten Geschwindigkeit. Lange drücken für die volle Liste."
           }
         }
       }

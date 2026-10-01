@@ -11,7 +11,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Top lists / Quick discovery (Apple iTunes RSS charts; Home preview + Subscriptions → Discover; country in Settings; pull-to-refresh; Subscribe via feed URL)
 - Online feed preview (before subscribe: discovery rows + Feed URL → Preview via FeedRepository; episode count + first titles; Confirm Subscribe / Cancel; already subscribed → Open feed)
 - Episode list
-- Stream playback (AVPlayer, speed, configurable skip intervals)
+- Stream playback (AVPlayer, speed tap-cycle presets + long-press menu, configurable skip intervals)
 - Full player sheet (artwork or video surface, scrubber, transport; tap mini player to open)
 - Video player (beta lite; MIME video/* or mp4/m4v/mov/webm → AVPlayerLayer in full player; PiP beta lite)
 - Video → audio only (Settings + full-player toggle; default off; Lockscreen stays audio)
@@ -182,7 +182,7 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` s
 VoiceOver-oriented polish on the existing beta UI (not a full accessibility audit / Dynamic Type pass):
 
 - **EpisodeRow** — combined `accessibilityLabel` (title, feed, played / percent progress, downloaded, favorite, archived) with `.isStaticText`; icon-only Play / Download / Queue / Mark played / Favorite / Archive / Share buttons get explicit localized labels (+ `.startsMediaSession` on Play).
-- **Mini + full player** — play/pause, rewind/forward (interval seconds), speed menu, sleep timer, and scrubber / progress (value + hint). Secondary full-player actions labeled like EpisodeRow.
+- **Mini + full player** — play/pause, rewind/forward (interval seconds), speed (tap cycles presets; long-press full menu), sleep timer, and scrubber / progress (value + hint). Secondary full-player actions labeled like EpisodeRow.
 - **Main tabs** — VoiceOver names from `Label` titles in `RootTabView` (String Catalog en+de).
 - **Settings toggles** — bindings unchanged; short `accessibilityHint` on playback / network / notification / storage / rating toggles where the on-screen caption is long.
 
@@ -298,7 +298,11 @@ Share an **episode** (title + URL) or a **podcast** (title + feed URL) via the s
 
 ## Full player
 
-Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed menu, sleep timer (same presets as mini), plus mark played / favorite / queue / download / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
+Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed (**tap** cycles `0.8 / 1.0 / 1.1 / 1.2 / 1.3 / 1.5 / 2.0`, wrap; **long-press** keeps the full preset menu — same on mini player), sleep timer (same presets as mini), plus mark played / favorite / queue / download / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
+
+## Playback speed preset cycle
+
+Mini + full player speed control: **tap** advances to the next `AppSettings.speedPresets` value (`0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0`, wraps), AntennaPod-style. **Long-press** (Menu) still lists every preset for direct pick — finer control is not removed. Session rate uses existing `PlaybackService.setRate` / `cycleToNextSpeedPreset`; Settings **Default speed** and per-feed speed overrides are unchanged (same preset list).
 
 ## Video player (beta lite)
 
@@ -454,7 +458,7 @@ Feed detail → **gear** opens a sheet with overrides:
 - **New episodes** — Use global / Inbox only / Add to Queue (Queue+download stays a global Settings choice).
 - **Notify on new episodes** — Use global / Always / Never; Always/Never beat the global notification toggle (system permission still required).
 - **Skip intro / Skip outro** — Use global / Off / 5 / 10 / 15 / 30 / 60 seconds (`nil` in the side map = Use global; explicit `0` = Off for this podcast). Same presets as Settings → Playback.
-- **Playback speed** — Use global / 0.8× / 1.0× / 1.2× / 1.5× / 2.0× (`nil` = Use global). Applied when starting a fresh episode for this podcast.
+- **Playback speed** — Use global / 0.8× / 1.0× / 1.1× / 1.2× / 1.3× / 1.5× / 2.0× (`nil` = Use global). Applied when starting a fresh episode for this podcast.
 
 Persisted as a side map keyed by stable `PodcastFeed.id` in Application Support `feed-settings.json` (survives feed refresh; cleared on unsubscribe). Reset to global defaults removes the map entry. `PlaybackService` resolves intro/outro/speed from the feed override when set, otherwise `AppSettings`.
 

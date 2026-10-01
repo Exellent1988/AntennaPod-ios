@@ -242,6 +242,18 @@ final class PlaybackService: ObservableObject {
         updateNowPlayingInfo(force: true)
     }
 
+    /// AntennaPod-style: advance session rate to the next `AppSettings.speedPresets` value (wraps).
+    /// If the current rate is not a preset, jumps to the first preset (same as Android `setNextPlaybackSpeed`).
+    func cycleToNextSpeedPreset() {
+        let presets = AppSettings.speedPresets
+        guard !presets.isEmpty else { return }
+        if let idx = presets.firstIndex(of: rate), idx + 1 < presets.count {
+            setRate(presets[idx + 1])
+        } else {
+            setRate(presets[0])
+        }
+    }
+
     func seek(bySeconds delta: Double) {
         seek(toSeconds: positionSeconds + delta)
     }

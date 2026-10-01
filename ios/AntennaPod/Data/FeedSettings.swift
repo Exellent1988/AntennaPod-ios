@@ -124,7 +124,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
     /// Mirrors `AppSettings.skipIntroOutroPresets` (kept local so Codable stays nonisolated).
     private static let skipIntroOutroPresets: Set<Int> = [0, 5, 10, 15, 30, 60]
     /// Mirrors `AppSettings.speedPresets`.
-    private static let speedPresets: Set<Float> = [0.8, 1.0, 1.2, 1.5, 2.0]
+    private static let speedPresets: Set<Float> = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
 
     private static func normalizedSkipIntroOutro(_ value: Int?) -> Int? {
         guard let value else { return nil }

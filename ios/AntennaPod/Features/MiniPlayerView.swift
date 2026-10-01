@@ -74,12 +74,14 @@ struct MiniPlayerView: View {
                                 }
                             }
                         }
+                    } primaryAction: {
+                        playback.cycleToNextSpeedPreset()
                     } label: {
                         Text(String(format: "%.1f×", playback.rate))
                             .font(.caption.monospacedDigit())
                     }
                     .accessibilityLabel("\(String(localized: "Playback speed")) \(String(format: "%.1f", playback.rate))")
-                    .accessibilityHint("Chooses playback speed")
+                    .accessibilityHint(String(localized: "Cycles to the next speed. Long-press for full list."))
                 }
             }
             .padding()

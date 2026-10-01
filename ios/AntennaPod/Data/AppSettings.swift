@@ -303,7 +303,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
 /// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips).
 @MainActor
 final class AppSettings: ObservableObject {
-    static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
+    static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
     /// Common AntennaPod-style skip presets (Settings pickers + player buttons).
     static let skipIntervalPresets: [Int] = [5, 10, 15, 20, 30, 60]
     /// Skip intro / outro presets (0 = off). Matches common AntennaPod values.

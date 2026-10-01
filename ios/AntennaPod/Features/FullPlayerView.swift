@@ -453,13 +453,15 @@ struct FullPlayerView: View {
                     }
                 }
             }
+        } primaryAction: {
+            playback.cycleToNextSpeedPreset()
         } label: {
             Text(String(format: "%.1f×", playback.rate))
                 .font(.subheadline.weight(.semibold).monospacedDigit())
                 .frame(minWidth: 44)
         }
         .accessibilityLabel("\(String(localized: "Playback speed")) \(String(format: "%.1f", playback.rate))")
-        .accessibilityHint("Chooses playback speed")
+        .accessibilityHint(String(localized: "Cycles to the next speed. Long-press for full list."))
     }
 
     private var sleepTimerMenu: some View {

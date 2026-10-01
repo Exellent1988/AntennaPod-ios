@@ -100,7 +100,7 @@ struct SettingsView: View {
                             Text(String(format: "%.1f×", speed)).tag(speed)
                         }
                     }
-                    Text("New episodes start at this speed. You can still change speed in the mini player.")
+                    Text("New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Picker("Rewind", selection: $settings.rewindSeconds) {
