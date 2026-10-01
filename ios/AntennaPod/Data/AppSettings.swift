@@ -159,16 +159,20 @@ enum PlaybackSourcePreference: String, CaseIterable, Identifiable {
     }
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source, auto-delete, skip intervals, new-episode notifications).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source, auto-delete, skip intervals, skip intro/outro, new-episode notifications).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
     /// Common AntennaPod-style skip presets (Settings pickers + player buttons).
     static let skipIntervalPresets: [Int] = [5, 10, 15, 20, 30, 60]
+    /// Skip intro / outro presets (0 = off). Matches common AntennaPod values.
+    static let skipIntroOutroPresets: [Int] = [0, 5, 10, 15, 30, 60]
     /// Android `prefRewindSecs` default.
     static let defaultRewindSeconds: Int = 10
     /// Android `prefFastForwardSecs` default.
     static let defaultFastForwardSeconds: Int = 30
+    /// Global skip intro / outro default (off).
+    static let defaultSkipIntroOutroSeconds: Int = 0
     static let customStorageMBRange = 50...100_000
 
     /// SF Symbol for skip buttons (`gobackward.10`, `goforward.30`, …). Falls back to unnumbered glyph when no preset icon exists (e.g. 20s).
@@ -196,6 +200,8 @@ final class AppSettings: ObservableObject {
         static let autoDeleteAfterPlaying = "settings.autoDelete.afterPlaying"
         static let rewindSeconds = "settings.rewindSeconds"
         static let fastForwardSeconds = "settings.fastForwardSeconds"
+        static let skipIntroSeconds = "settings.skipIntroSeconds"
+        static let skipOutroSeconds = "settings.skipOutroSeconds"
         static let notifyOnNewEpisodes = "settings.notifyOnNewEpisodes"
     }
 
@@ -292,6 +298,20 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Seconds to skip at the start of an episode on a fresh play (0 = off). Global only in this beta.
+    @Published var skipIntroSeconds: Int {
+        didSet {
+            UserDefaults.standard.set(skipIntroSeconds, forKey: Keys.skipIntroSeconds)
+        }
+    }
+
+    /// When remaining playback ≤ this many seconds, treat the episode as finished (0 = off). Global only.
+    @Published var skipOutroSeconds: Int {
+        didSet {
+            UserDefaults.standard.set(skipOutroSeconds, forKey: Keys.skipOutroSeconds)
+        }
+    }
+
     /// Notify when feed refresh discovers new episodes (local UserNotifications; no push).
     /// Defaults on; actual delivery still requires system permission (Settings stays honest if denied).
     @Published var notifyOnNewEpisodes: Bool {
@@ -348,6 +368,8 @@ final class AppSettings: ObservableObject {
             key: Keys.fastForwardSeconds,
             defaultValue: Self.defaultFastForwardSeconds
         )
+        skipIntroSeconds = Self.loadSkipIntroOutroSeconds(key: Keys.skipIntroSeconds)
+        skipOutroSeconds = Self.loadSkipIntroOutroSeconds(key: Keys.skipOutroSeconds)
         if UserDefaults.standard.object(forKey: Keys.notifyOnNewEpisodes) != nil {
             notifyOnNewEpisodes = UserDefaults.standard.bool(forKey: Keys.notifyOnNewEpisodes)
         } else {
@@ -395,6 +417,19 @@ final class AppSettings: ObservableObject {
         }
         let stored = UserDefaults.standard.integer(forKey: key)
         return skipIntervalPresets.contains(stored) ? stored : defaultValue
+    }
+
+    private static func loadSkipIntroOutroSeconds(key: String) -> Int {
+        guard UserDefaults.standard.object(forKey: key) != nil else {
+            return defaultSkipIntroOutroSeconds
+        }
+        let stored = UserDefaults.standard.integer(forKey: key)
+        return skipIntroOutroPresets.contains(stored) ? stored : defaultSkipIntroOutroSeconds
+    }
+
+    /// Label for Settings pickers (`Off` when 0).
+    static func skipIntroOutroLabel(_ seconds: Int) -> String {
+        seconds == 0 ? "Off" : "\(seconds) seconds"
     }
 
     private static func loadStorageLimit() -> DownloadStorageLimit {

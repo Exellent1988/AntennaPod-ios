@@ -94,6 +94,19 @@ struct SettingsView: View {
                     Text("Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward).")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Picker("Skip intro", selection: $settings.skipIntroSeconds) {
+                        ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
+                            Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
+                        }
+                    }
+                    Picker("Skip outro", selection: $settings.skipOutroSeconds) {
+                        ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
+                            Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
+                        }
+                    }
+                    Text("Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Global only; per-feed override later.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     Picker("Playback source", selection: $settings.playbackSourcePreference) {
                         ForEach(PlaybackSourcePreference.allCases) { pref in
                             Text(pref.label).tag(pref)

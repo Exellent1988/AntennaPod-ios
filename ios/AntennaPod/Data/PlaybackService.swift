@@ -72,6 +72,11 @@ final class PlaybackService: ObservableObject {
     private var cachedArtworkURL: String?
     private var cachedArtwork: MPMediaItemArtwork?
 
+    /// Skip-intro applied once for this play session (fresh start only).
+    private var didApplySkipIntroForSession = false
+    /// Skip-outro fired once per episode play session (avoids observer re-entry / loops).
+    private var didTriggerSkipOutroForSession = false
+
     func play(episode: PodcastEpisode, fileURL: URL? = nil) {
         let isFreshEpisode = currentEpisode?.id != episode.id
         var leavingEpisodeId: String?
@@ -105,6 +110,10 @@ final class PlaybackService: ObservableObject {
         player = newPlayer
         observe(player: newPlayer, item: item)
 
+        // New play session for this episode item — reset intro/outro once-guards.
+        didApplySkipIntroForSession = false
+        didTriggerSkipOutroForSession = false
+
         let resumeAt = resumePosition(for: episode.id)
         if resumeAt > 1 {
             let time = CMTime(seconds: resumeAt, preferredTimescale: 600)
@@ -117,7 +126,23 @@ final class PlaybackService: ObservableObject {
             }
             positionSeconds = resumeAt
         } else {
-            positionSeconds = 0
+            // Fresh start (position ≈ 0): skip intro once when configured.
+            let intro = Double(settings?.skipIntroSeconds ?? 0)
+            if intro > 0 {
+                let time = CMTime(seconds: intro, preferredTimescale: 600)
+                newPlayer.seek(to: time) { [weak self] finished in
+                    Task { @MainActor in
+                        guard let self, finished else { return }
+                        self.positionSeconds = intro
+                        self.didApplySkipIntroForSession = true
+                        self.updateNowPlayingInfo(force: true)
+                    }
+                }
+                positionSeconds = intro
+                didApplySkipIntroForSession = true
+            } else {
+                positionSeconds = 0
+            }
         }
 
         newPlayer.play()
@@ -326,6 +351,7 @@ final class PlaybackService: ObservableObject {
                 }
                 self.persistProgress(force: false)
                 self.tickSleepTimer()
+                self.checkSkipOutro()
                 self.updateNowPlayingInfo(force: false)
             }
         }
@@ -403,6 +429,20 @@ final class PlaybackService: ObservableObject {
         if ended || almostEnded(position: positionSeconds, duration: durationSeconds) {
             store.markPlayed(episode.id, removeFromQueue: true)
         }
+    }
+
+    /// When remaining ≤ skipOutroSeconds (duration known), finish once like natural end.
+    private func checkSkipOutro() {
+        guard !didTriggerSkipOutroForSession else { return }
+        let outro = Double(settings?.skipOutroSeconds ?? 0)
+        guard outro > 0 else { return }
+        guard durationSeconds.isFinite, durationSeconds > 0 else { return }
+        // Avoid firing at t≈0 before any real progress (short media + large outro).
+        guard positionSeconds > 1 else { return }
+        let remaining = durationSeconds - positionSeconds
+        guard remaining.isFinite, remaining <= outro else { return }
+        didTriggerSkipOutroForSession = true
+        handlePlaybackEnded()
     }
 
     private func almostEnded(position: Double, duration: Double) -> Bool {
