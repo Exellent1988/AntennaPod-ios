@@ -155,10 +155,15 @@ final class PlaybackService: ObservableObject {
     }
 
     func seek(bySeconds delta: Double) {
+        seek(toSeconds: positionSeconds + delta)
+    }
+
+    /// Absolute seek for scrubber / Now Playing position changes.
+    func seek(toSeconds seconds: Double) {
         guard let player else {
             return
         }
-        let target = max(0, positionSeconds + delta)
+        let target = max(0, seconds)
         let capped: Double
         if durationSeconds.isFinite, durationSeconds > 0 {
             capped = min(target, durationSeconds)
@@ -543,8 +548,7 @@ final class PlaybackService: ObservableObject {
             }
             let targetPosition = positionEvent.positionTime
             Task { @MainActor in
-                guard let self else { return }
-                self.seek(bySeconds: targetPosition - self.positionSeconds)
+                self?.seek(toSeconds: targetPosition)
             }
             return .success
         }

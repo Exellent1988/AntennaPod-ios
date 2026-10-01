@@ -3,21 +3,38 @@ import SwiftUI
 struct MiniPlayerView: View {
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var settings: AppSettings
+    @State private var showFullPlayer = false
 
     var body: some View {
         if let episode = playback.currentEpisode {
             VStack(spacing: 8) {
-                ProgressView(value: playback.durationSeconds > 0 ? playback.positionSeconds / playback.durationSeconds : 0)
+                Button {
+                    showFullPlayer = true
+                } label: {
+                    ProgressView(value: playback.durationSeconds > 0 ? playback.positionSeconds / playback.durationSeconds : 0)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Open full player")
+
                 HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(episode.title)
-                            .font(.subheadline.weight(.semibold))
-                            .lineLimit(1)
-                        Text(timeLabel)
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
+                    Button {
+                        showFullPlayer = true
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(episode.title)
+                                .font(.subheadline.weight(.semibold))
+                                .lineLimit(1)
+                                .foregroundStyle(.primary)
+                            Text(timeLabel)
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
                     }
-                    Spacer()
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Open full player, \(episode.title)")
+
                     Button {
                         playback.seek(bySeconds: -PlaybackService.skipDeltaSeconds)
                     } label: {
@@ -57,6 +74,9 @@ struct MiniPlayerView: View {
             }
             .padding()
             .background(.bar)
+            .sheet(isPresented: $showFullPlayer) {
+                FullPlayerView()
+            }
         }
     }
 

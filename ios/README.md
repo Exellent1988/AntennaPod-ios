@@ -8,6 +8,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Apple Podcasts / iTunes Search discovery (Add sheet; debounced; Subscribe via feed URL)
 - Episode list
 - Stream playback (AVPlayer, speed, ±30s)
+- Full player sheet (artwork, scrubber, transport; tap mini player to open)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip)
 - Sleep timer (clock presets + end of episode, fade-out)
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch)
@@ -54,6 +55,11 @@ Subscriptions, queue, and per-episode playback state (`positionSeconds`, `durati
 ## Library search
 
 Local-only search over subscribed feeds and their episodes (title, feed title, feed description) — distinct from Apple Podcasts / iTunes discovery in Add podcast. **Inbox** uses `.searchable` with a short debounce (~250 ms): empty query keeps the unplayed Inbox; non-empty shows Podcasts + Episodes sections. Matching feeds navigate to `FeedDetailView`; episodes reuse `EpisodeRow` (play / download / queue / mark played). **Subscriptions** also filters the feed list via searchable. Empty states when nothing matches.
+
+
+## Full player
+
+Tap the mini player title or progress bar to open a full-screen sheet: feed artwork, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, ±30s, speed menu, sleep timer (same presets as mini), plus mark played / queue / download. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
 
 ## Discovery
 

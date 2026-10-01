@@ -21,7 +21,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
 | Statistics | 2 | todo | P3 |
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (5): Inbox, Subscriptions, Queue, Downloads, Settings |
-| Miniplayer + Full Player | 5 | wip | Mini player only |
+| Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, ±30s, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
 | Settings | 5 | wip | Tab: theme + default speed + download storage limit (P0); more prefs later |
 
@@ -47,12 +47,12 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 |---------|---------|------------|---------|
 | Stream playback | 5 | wip | AVPlayer skeleton |
 | Lockscreen / Now Playing | 5 | done | MPNowPlayingInfoCenter + remote play/pause/±30s/scrub; artwork from feed |
-| Variable speed | 5 | wip | Mini player rate menu |
-| Sleep timer (Basis) | 5 | done | Clock presets 5–60 min + end of episode; fade last 10s; mini-player menu |
+| Variable speed | 5 | wip | Mini + full player rate menu |
+| Sleep timer (Basis) | 5 | done | Clock presets 5–60 min + end of episode; fade last 10s; mini + full player menu |
 | Fortschritt speichern / fortsetzen | 5 | done | JSON `playback.json`; resume on play |
 | Mark played / unplayed | 5 | done | Manual + smart-mark last 30s (AntennaPod default) |
 | Continuous playback (Queue) | 5 | wip | Auto-next from queue on end |
-| FF / Rewind deltas | 4 | wip | ±30s in mini player |
+| FF / Rewind deltas | 4 | wip | ±30s in mini + full player |
 | Skip silence | 2 | todo | P3, iOS-API-abhängig |
 | Volume adaptation | 2 | todo | P3 |
 | Chapters | 4 | todo | Feed + Media-Tags |
