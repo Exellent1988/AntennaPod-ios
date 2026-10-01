@@ -12,6 +12,7 @@ struct QueueView: View {
     @State private var debounceTask: Task<Void, Never>?
     @State private var showClearQueueConfirm = false
     @State private var showShuffleQueueConfirm = false
+    @State private var showReverseQueueConfirm = false
     /// Single episode pending swipe-remove confirmation (nil = dialog dismissed).
     @State private var episodePendingRemove: PodcastEpisode?
 
@@ -32,6 +33,12 @@ struct QueueView: View {
     /// Shuffle always targets the **full** persisted queue (not chip/search). Allowed when unlocked
     /// and at least two items — filter state does not matter (unlike Edit/`onMove` index mapping).
     private var canShuffle: Bool {
+        !settings.queueLocked && store.queue.count >= 2
+    }
+
+    /// Reverse order always targets the **full** persisted queue (not chip/search). Same gate as Shuffle:
+    /// unlocked and at least two items — filter state does not matter.
+    private var canReverse: Bool {
         !settings.queueLocked && store.queue.count >= 2
     }
 
@@ -269,8 +276,8 @@ struct QueueView: View {
                     )
                     .accessibilityHint(
                         settings.queueLocked
-                            ? String(localized: "Allows drag reorder, Shuffle, and Move to top or bottom")
-                            : String(localized: "Disables drag reorder, Shuffle, and Move to top or bottom")
+                            ? String(localized: "Allows drag reorder, Shuffle, Reverse order, and Move to top or bottom")
+                            : String(localized: "Disables drag reorder, Shuffle, Reverse order, and Move to top or bottom")
                     )
                     .accessibilityAddTraits(.isButton)
                 }
@@ -293,6 +300,18 @@ struct QueueView: View {
                         .accessibilityHint(
                             String(localized: "Asks for confirmation, then randomly reorders the entire queue")
                         )
+                        Button {
+                            // Always confirm before reverseQueue() — reorders the full list.
+                            showReverseQueueConfirm = true
+                        } label: {
+                            Label("Reverse order", systemImage: "arrow.up.arrow.down")
+                        }
+                        // Reverse always targets the full queue (not the filtered subset).
+                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                        .disabled(!canReverse)
+                        .accessibilityHint(
+                            String(localized: "Asks for confirmation, then reverses the entire queue order")
+                        )
                         Button(role: .destructive) {
                             // Always confirm before clearQueue() — never clear from the menu alone.
                             showClearQueueConfirm = true
@@ -311,7 +330,7 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Shuffle or clear the entire queue after confirmation")
+                        String(localized: "Shuffle, reverse, or clear the entire queue after confirmation")
                     )
                 }
             }
@@ -341,6 +360,20 @@ struct QueueView: View {
             } message: {
                 Text(
                     "Randomly reorders all \(store.queue.count) episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+                )
+            }
+            .confirmationDialog(
+                "Reverse queue?",
+                isPresented: $showReverseQueueConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Reverse order") {
+                    store.reverseQueue()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Reverses all \(store.queue.count) episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
                 )
             }
             .confirmationDialog(

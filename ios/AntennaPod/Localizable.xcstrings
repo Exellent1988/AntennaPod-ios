@@ -11757,19 +11757,19 @@
         }
       }
     },
-    "Shuffle or clear the entire queue after confirmation": {
+    "Shuffle, reverse, or clear the entire queue after confirmation": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Shuffle or clear the entire queue after confirmation"
+            "value": "Shuffle, reverse, or clear the entire queue after confirmation"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mischt oder leert die gesamte Warteschlange nach Bestätigung"
+            "value": "Mischt, kehrt um oder leert die gesamte Warteschlange nach Bestätigung"
           }
         }
       }
@@ -11791,70 +11791,70 @@
         }
       }
     },
-    "Allows drag reorder, Shuffle, and Move to top or bottom": {
+    "Allows drag reorder, Shuffle, Reverse order, and Move to top or bottom": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Allows drag reorder, Shuffle, and Move to top or bottom"
+            "value": "Allows drag reorder, Shuffle, Reverse order, and Move to top or bottom"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Erlaubt Ziehen zum Sortieren, Mischen sowie An Anfang oder Ans Ende"
+            "value": "Erlaubt Ziehen zum Sortieren, Mischen, Umkehren sowie An Anfang oder Ans Ende"
           }
         }
       }
     },
-    "Disables drag reorder, Shuffle, and Move to top or bottom": {
+    "Disables drag reorder, Shuffle, Reverse order, and Move to top or bottom": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Disables drag reorder, Shuffle, and Move to top or bottom"
+            "value": "Disables drag reorder, Shuffle, Reverse order, and Move to top or bottom"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deaktiviert Ziehen zum Sortieren, Mischen sowie An Anfang oder Ans Ende"
+            "value": "Deaktiviert Ziehen zum Sortieren, Mischen, Umkehren sowie An Anfang oder Ans Ende"
           }
         }
       }
     },
-    "When on, disables Queue drag reorder, Shuffle, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off.": {
+    "When on, disables Queue drag reorder, Shuffle, Reverse order, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "When on, disables Queue drag reorder, Shuffle, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off."
+            "value": "When on, disables Queue drag reorder, Shuffle, Reverse order, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wenn an: kein Ziehen zum Sortieren, kein Mischen und kein An Anfang/Ans Ende. Einreihen, Als Nächstes, Entfernen und Warteschlange leeren bleiben. Standard aus."
+            "value": "Wenn an: kein Ziehen zum Sortieren, kein Mischen, kein Umkehren und kein An Anfang/Ans Ende. Einreihen, Als Nächstes, Entfernen und Warteschlange leeren bleiben. Standard aus."
           }
         }
       }
     },
-    "When on, the Queue tab disables Edit drag reorder, Shuffle, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.": {
+    "When on, the Queue tab disables Edit drag reorder, Shuffle, Reverse order, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "When on, the Queue tab disables Edit drag reorder, Shuffle, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off."
+            "value": "When on, the Queue tab disables Edit drag reorder, Shuffle, Reverse order, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wenn an: Queue-Tab ohne Edit/Ziehen-Reorder und ohne Mischen; An Anfang / Ans Ende ausgeblendet. Einreihen, Als Nächstes, Entfernen, Archiv-Swipe und Warteschlange leeren bleiben (nur Reihenfolge-Sperre — wie AntennaPod Android). Gleiche Einstellung wie der Queue-Toolbar-Sperr-Button. Standard aus."
+            "value": "Wenn an: Queue-Tab ohne Edit/Ziehen-Reorder, ohne Mischen und ohne Umkehren; An Anfang / Ans Ende ausgeblendet. Einreihen, Als Nächstes, Entfernen, Archiv-Swipe und Warteschlange leeren bleiben (nur Reihenfolge-Sperre — wie AntennaPod Android). Gleiche Einstellung wie der Queue-Toolbar-Sperr-Button. Standard aus."
           }
         }
       }
@@ -11906,6 +11906,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und entfernt dann diese Episode aus der Warteschlange"
+          }
+        }
+      }
+    },
+    "Reverse order": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reverse order"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reihenfolge umkehren"
+          }
+        }
+      }
+    },
+    "Reverse queue?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reverse queue?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange umkehren?"
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then reverses the entire queue order": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then reverses the entire queue order"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und kehrt dann die gesamte Warteschlangenreihenfolge um"
+          }
+        }
+      }
+    },
+    "Reverses all %lld episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reverses all %lld episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kehrt alle %lld Episoden der gesamten Warteschlange um (nicht nur dem aktuellen Filter). Stoppt die Wiedergabe nicht, ändert den Fortschritt nicht, markiert nicht als gehört und löscht keine Downloads. Die aktuell spielende Episode bleibt dieselbe und wandert mit ihrer neuen Position in der Liste."
           }
         }
       }

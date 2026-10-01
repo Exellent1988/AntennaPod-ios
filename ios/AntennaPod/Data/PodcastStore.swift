@@ -350,6 +350,18 @@ final class PodcastStore: ObservableObject {
         queue = shuffled
     }
 
+    /// Reverse the **full** persisted queue order (first ↔ last).
+    /// Persists via `queue` `didSet` (same path as `moveQueue` / `shuffleQueue`). No-op when fewer than 2 items.
+    /// Does **not** change `PlaybackService.currentEpisode` identity, seek, or stop playback —
+    /// the currently playing episode (if any) **moves with its episode id** to the mirrored list index
+    /// (it is not pinned at the same index). Continuous next still uses `nextQueueEpisode(after:)`
+    /// by id, so auto-next becomes whatever follows that id after the reverse.
+    /// Callers must gate on queue unlock (reorder-only lock, same as Edit/`onMove` / Shuffle) and confirm first.
+    func reverseQueue() {
+        guard queue.count >= 2 else { return }
+        queue = Array(queue.reversed())
+    }
+
     // MARK: - Playback progress / played
 
     func playbackState(for episodeId: String) -> EpisodePlaybackState {
