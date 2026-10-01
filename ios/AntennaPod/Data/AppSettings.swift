@@ -217,6 +217,24 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
     }
 }
 
+
+/// Filter chips on Library → Episodes (All Episodes). Applied after the newest-500 soft cap.
+enum AllEpisodesFilter: String, CaseIterable, Identifiable {
+    case all
+    case unplayed
+    case downloaded
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .all: return String(localized: "All")
+        case .unplayed: return String(localized: "Unplayed")
+        case .downloaded: return String(localized: "Downloaded")
+        }
+    }
+}
+
 /// Configurable Home tab sections (order + show/hide). Mirrors Android HomePreferences lite.
 enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     case continueListening
@@ -259,7 +277,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Home section order/visibility, subscriptions list sort).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Home section order/visibility, subscriptions list sort, All Episodes filter chips).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -317,6 +335,7 @@ final class AppSettings: ObservableObject {
         static let homeSectionOrder = "settings.home.sectionOrder"
         static let homeHiddenSections = "settings.home.hiddenSections"
         static let subscriptionsSort = "settings.subscriptionsSort"
+        static let allEpisodesFilter = "settings.allEpisodesFilter"
     }
 
     private enum Kind: String {
@@ -545,6 +564,13 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Library → Episodes chip filter (All / Unplayed / Downloaded). Default All. Persisted.
+    @Published var allEpisodesFilter: AllEpisodesFilter {
+        didSet {
+            UserDefaults.standard.set(allEpisodesFilter.rawValue, forKey: Keys.allEpisodesFilter)
+        }
+    }
+
     /// Visible sections in display order (hidden filtered out).
     var visibleHomeSections: [HomeSectionId] {
         homeSectionOrder.filter { !homeHiddenSections.contains($0) }
@@ -703,6 +729,9 @@ final class AppSettings: ObservableObject {
         let sortRaw = UserDefaults.standard.string(forKey: Keys.subscriptionsSort)
             ?? SubscriptionsSort.recentlyUpdated.rawValue
         subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
+        let episodesFilterRaw = UserDefaults.standard.string(forKey: Keys.allEpisodesFilter)
+            ?? AllEpisodesFilter.all.rawValue
+        allEpisodesFilter = AllEpisodesFilter(rawValue: episodesFilterRaw) ?? .all
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh
@@ -852,7 +881,8 @@ final class AppSettings: ObservableObject {
             chartsCountryCode: chartsCountryCode,
             homeSectionOrder: homeSectionOrder.map(\.rawValue),
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
-            subscriptionsSort: subscriptionsSort.rawValue
+            subscriptionsSort: subscriptionsSort.rawValue,
+            allEpisodesFilter: allEpisodesFilter.rawValue
         )
     }
 
@@ -933,6 +963,9 @@ final class AppSettings: ObservableObject {
         if let sortRaw = snap.subscriptionsSort {
             subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
         }
+        if let filterRaw = snap.allEpisodesFilter {
+            allEpisodesFilter = AllEpisodesFilter(rawValue: filterRaw) ?? .all
+        }
     }
 }
 
@@ -977,4 +1010,6 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var homeHiddenSections: [String]? = nil
     /// Absent in older backups → recentlyUpdated (default).
     var subscriptionsSort: String? = nil
+    /// Absent in older backups → all (default).
+    var allEpisodesFilter: String? = nil
 }
