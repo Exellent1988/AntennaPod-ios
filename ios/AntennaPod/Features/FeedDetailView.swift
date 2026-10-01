@@ -69,6 +69,11 @@ struct FeedDetailView: View {
         liveFeed.displayLocations
     }
 
+    /// Channel podcast:socialInteract when the feed provided openable http(s) — empty → hide (never invent).
+    private var displaySocialInteracts: [PodcastSocialInteract] {
+        liveFeed.displaySocialInteracts
+    }
+
     /// Most recent channel podcast:trailer when the feed provided one — hide when missing (never invent).
     /// Distinct from item itunes:episodeType=trailer (EpisodeRow badge).
     private var displayTrailer: PodcastTrailer? {
@@ -324,6 +329,14 @@ struct FeedDetailView: View {
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
+            // Channel podcast:socialInteract — Discuss opens http(s) uri in system browser; hide when none / disabled.
+            // Feed-provided only — never invent URLs; no in-app Fediverse client / posting.
+            if !displaySocialInteracts.isEmpty {
+                Section {
+                    PodcastSocialInteractListView(socialInteracts: displaySocialInteracts)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
             // Channel podcast:trailer — title + Play (enclosure-like http(s) via PlaybackService) or Open URL; hide when none.
             // Distinct from itunes:episodeType=trailer on items (EpisodeRow Trailer badge).
             if let trailer = displayTrailer {
@@ -507,6 +520,17 @@ struct FeedDetailView: View {
                             }
                             .accessibilityLabel(liveFeed.supportAccessibilityLabel)
                             .accessibilityHint(String(localized: "Opens the funding page in the system browser"))
+                        }
+
+                        if let interact = liveFeed.preferredSocialInteract,
+                           let url = interact.discussionURL {
+                            Button {
+                                openURL(url)
+                            } label: {
+                                Label("Discuss", systemImage: "bubble.left.and.bubble.right")
+                            }
+                            .accessibilityLabel(String(localized: "Discuss"))
+                            .accessibilityHint(String(localized: "Opens the discussion link from the feed in the system browser"))
                         }
 
                         Button {

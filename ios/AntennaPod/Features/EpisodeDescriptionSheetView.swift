@@ -52,6 +52,15 @@ struct EpisodeDescriptionSheetView: View {
         !displayLocations.isEmpty
     }
 
+    /// Item podcast:socialInteract when the feed provided openable http(s) — empty → hide (never invent).
+    private var displaySocialInteracts: [PodcastSocialInteract] {
+        episode.displaySocialInteracts
+    }
+
+    private var hasSocialInteracts: Bool {
+        !displaySocialInteracts.isEmpty
+    }
+
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
     private var paragraphs: [String] {
         let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -118,7 +127,7 @@ struct EpisodeDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople && !hasLocations {
+                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "doc.text",
@@ -132,6 +141,9 @@ struct EpisodeDescriptionSheetView: View {
                             }
                             if hasLocations {
                                 PodcastLocationsListView(locations: displayLocations)
+                            }
+                            if hasSocialInteracts {
+                                PodcastSocialInteractListView(socialInteracts: displaySocialInteracts)
                             }
                         }
                         .padding()
@@ -253,6 +265,9 @@ struct EpisodeDescriptionSheetView: View {
                     if hasLocations {
                         PodcastLocationsListView(locations: displayLocations)
                     }
+                    if hasSocialInteracts {
+                        PodcastSocialInteractListView(socialInteracts: displaySocialInteracts)
+                    }
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
                             .font(.body)
@@ -271,6 +286,9 @@ struct EpisodeDescriptionSheetView: View {
                     }
                     if hasLocations {
                         PodcastLocationsListView(locations: displayLocations)
+                    }
+                    if hasSocialInteracts {
+                        PodcastSocialInteractListView(socialInteracts: displaySocialInteracts)
                     }
                     Text(plainDescription)
                         .font(.body)

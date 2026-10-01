@@ -15027,6 +15027,96 @@
         }
       },
       "comment": "VoiceOver note when podcast:location geo parsed to lat,lon (Open in Maps available)."
+    },
+    "Discuss": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discuss"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diskutieren"
+          }
+        }
+      },
+      "comment": "Button / section for podcast:socialInteract — opens feed http(s) uri in system browser. Hidden when absent/disabled."
+    },
+    "Showing first 20 discussion links from the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first 20 discussion links from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es werden die ersten 20 Diskussionslinks aus dem Feed angezeigt."
+          }
+        }
+      },
+      "comment": "Honesty footnote when podcast:socialInteract list is truncated to the first 20."
+    },
+    "Opens the discussion link from the feed in the system browser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the discussion link from the feed in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den Diskussionslink aus dem Feed im Systembrowser"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Discuss / podcast:socialInteract openURL action."
+    },
+    "Protocol %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protocol %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protokoll %@"
+          }
+        }
+      },
+      "comment": "VoiceOver protocol label for a podcast:socialInteract row."
+    },
+    "Account %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto %@"
+          }
+        }
+      },
+      "comment": "VoiceOver accountId label for a podcast:socialInteract row when feed provided it."
     }
   },
   "version": "1.0"

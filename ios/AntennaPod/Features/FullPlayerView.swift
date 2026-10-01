@@ -1034,6 +1034,19 @@ struct FullPlayerView: View {
                 .accessibilityHint(String(localized: "Copies the episode webpage URL to the pasteboard"))
             }
 
+            // Item podcast:socialInteract — Discuss opens highest-priority http(s) uri; hide when none.
+            // Feed-provided only — never invent; openURL only (no Fediverse client / posting).
+            if let interact = episode.preferredSocialInteract,
+               let url = interact.discussionURL {
+                Button {
+                    openURL(url)
+                } label: {
+                    Label("Discuss", systemImage: "bubble.left.and.bubble.right")
+                }
+                .accessibilityLabel(String(localized: "Discuss"))
+                .accessibilityHint(String(localized: "Opens the discussion link from the feed in the system browser"))
+            }
+
             if let url = episode.mediaURL {
                 Button {
                     copyMediaURL(url)

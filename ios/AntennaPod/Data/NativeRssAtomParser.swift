@@ -52,6 +52,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var pendingTrailerSeason: Int?
     /// Channel podcast:location — feed-provided only; never invent / never geocode.
     private var channelLocations: [PodcastLocation] = []
+    /// Channel podcast:socialInteract — feed-provided only; never invent discussion URLs.
+    private var channelSocialInteracts: [PodcastSocialInteract] = []
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -88,6 +90,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itemPeople: [PodcastPerson] = []
     /// Item podcast:location — feed-provided only; never invent / never geocode.
     private var itemLocations: [PodcastLocation] = []
+    /// Item podcast:socialInteract — feed-provided only; never invent discussion URLs.
+    private var itemSocialInteracts: [PodcastSocialInteract] = []
     /// Capturing podcast:person element text (name) + pending attributes.
     private var capturingPerson = false
     private var pendingPersonRole: String?
@@ -99,6 +103,12 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var pendingLocationGeo: String?
     private var pendingLocationOsm: String?
     private var pendingLocationRel: String?
+    /// Capturing podcast:socialInteract (self-closing or with optional text URI fallback).
+    private var capturingSocialInteract = false
+    private var pendingSocialProtocol: String?
+    private var pendingSocialUri: String?
+    private var pendingSocialAccountId: String?
+    private var pendingSocialPriority: Int?
     private var elementStack: [String] = []
 
     init(data: Data) {
@@ -140,6 +150,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             people: channelPeople,
             trailers: channelTrailers,
             locations: channelLocations,
+            socialInteracts: channelSocialInteracts,
             episodes: episodes
         )
     }
@@ -188,6 +199,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemExplicitOverride = nil
             itemPeople = []
             itemLocations = []
+            itemSocialInteracts = []
             if local.lowercased() == "entry", let href = attributeDict["href"] {
                 itemLink = href
             }
@@ -354,6 +366,24 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             pendingLocationGeo = Self.nonEmptyAttr(attributeDict["geo"])
             pendingLocationOsm = Self.nonEmptyAttr(attributeDict["osm"])
             pendingLocationRel = Self.nonEmptyAttr(attributeDict["rel"])
+        case "socialinteract":
+            // Podcast Index: <podcast:socialInteract protocol="…" uri="…" accountId="…" priority="…"/>
+            // Channel and/or item. protocol + uri/url required for Discuss; accountId/priority optional.
+            // protocol=disabled → stored but UI hides (no Discuss). Never invent URLs / no Fediverse client.
+            capturingSocialInteract = true
+            pendingSocialProtocol = Self.nonEmptyAttr(attributeDict["protocol"] ?? attributeDict["Protocol"])
+            pendingSocialUri = Self.nonEmptyAttr(
+                attributeDict["uri"] ?? attributeDict["url"] ?? attributeDict["href"]
+            )
+            pendingSocialAccountId = Self.nonEmptyAttr(
+                attributeDict["accountId"] ?? attributeDict["accountid"] ?? attributeDict["account"]
+            )
+            if let rawPri = Self.nonEmptyAttr(attributeDict["priority"]),
+               let pri = Int(rawPri) {
+                pendingSocialPriority = pri
+            } else {
+                pendingSocialPriority = nil
+            }
         default:
             break
         }
@@ -431,6 +461,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishPerson(text: text, intoItem: true)
             case "location":
                 finishLocation(text: text, intoItem: true)
+            case "socialinteract":
+                finishSocialInteract(text: text, intoItem: true)
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
@@ -452,7 +484,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     episodeType: itemEpisodeType,
                     isExplicit: itemExplicitOverride ?? feedIsExplicit,
                     people: itemPeople,
-                    locations: itemLocations
+                    locations: itemLocations,
+                    socialInteracts: itemSocialInteracts
                 )
                 episodes.append(episode)
                 inItem = false
@@ -532,6 +565,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishTrailer(text: text)
             case "location":
                 finishLocation(text: text, intoItem: false)
+            case "socialinteract":
+                finishSocialInteract(text: text, intoItem: false)
             case "id":
                 break
             default:
@@ -624,6 +659,45 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         }
     }
 
+
+    /// Finish a podcast:socialInteract — append when protocol present; uri from attr or http(s) element text.
+    /// `protocol=disabled` may omit uri (still stored so UI can hide). Never invent URLs.
+    private func finishSocialInteract(text: String, intoItem: Bool) {
+        defer {
+            capturingSocialInteract = false
+            pendingSocialProtocol = nil
+            pendingSocialUri = nil
+            pendingSocialAccountId = nil
+            pendingSocialPriority = nil
+        }
+        guard capturingSocialInteract else { return }
+        guard let proto = pendingSocialProtocol,
+              !proto.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        var uri = pendingSocialUri?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        // Older feeds put the URL in element text; accept only when it looks like http(s).
+        if uri.isEmpty {
+            let body = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            if let parsed = URL(string: body),
+               let scheme = parsed.scheme?.lowercased(),
+               scheme == "http" || scheme == "https" {
+                uri = body
+            }
+        }
+        let isDisabled = proto.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "disabled"
+        // Disabled may have empty uri; openable entries need a uri string (UI still requires http(s)).
+        if !isDisabled && uri.isEmpty { return }
+        let interact = PodcastSocialInteract(
+            protocolName: proto,
+            uri: uri,
+            accountId: pendingSocialAccountId,
+            priority: pendingSocialPriority
+        )
+        if intoItem {
+            itemSocialInteracts.append(interact)
+        } else {
+            channelSocialInteracts.append(interact)
+        }
+    }
     private func localName(_ name: String) -> String {
         if let index = name.lastIndex(of: ":") {
             return String(name[name.index(after: index)...])

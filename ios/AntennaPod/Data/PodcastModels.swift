@@ -370,6 +370,115 @@ enum PodcastLocationDisplay {
     }
 }
 
+
+/// Podcast Index `podcast:socialInteract` — feed-provided discussion root only (never invent URLs).
+/// Required: `protocol` + `uri` (or `url`); optional `accountId` / `priority` (lower = higher priority).
+/// **openURL only** — no in-app Fediverse client, no posting / API. `protocol=disabled` → no Discuss UI.
+struct PodcastSocialInteract: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields.
+    var id: String { "\(protocolName)|\(uri)|\(accountId ?? "")|\(priority.map(String.init) ?? "")" }
+    /// Protocol name from feed (`activitypub`, `twitter`, …). Stored as `protocolName` because `protocol` is reserved.
+    var protocolName: String
+    /// Root-post URI/URL string from `uri` / `url` (or element text when it is http(s)).
+    var uri: String
+    /// Optional account id on the commenting platform (e.g. `@user@host`).
+    var accountId: String?
+    /// Optional priority — lower integer = higher priority when several tags exist. Nil when absent.
+    var priority: Int?
+
+    init(protocolName: String, uri: String, accountId: String? = nil, priority: Int? = nil) {
+        self.protocolName = protocolName
+        self.uri = uri
+        self.accountId = accountId
+        self.priority = priority
+    }
+
+    /// True when feed sets `protocol` to `disabled` (opt out of public comments) — hide Discuss.
+    var isDisabled: Bool {
+        protocolName.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "disabled"
+    }
+
+    /// Trimmed non-empty protocol when usable (not disabled / not blank). Nil when missing.
+    var displayProtocol: String? {
+        let trimmed = protocolName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        if trimmed.lowercased() == "disabled" { return nil }
+        return trimmed
+    }
+
+    /// Trimmed non-empty accountId when the feed set it. Hidden when missing — never invent.
+    var displayAccountId: String? {
+        guard let accountId else { return nil }
+        let trimmed = accountId.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) discussion URL from feed `uri` only. Nil when missing / non-http(s) — never invent.
+    var discussionURL: URL? {
+        let trimmed = uri.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let parsed = URL(string: trimmed) else { return nil }
+        let scheme = parsed.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return parsed
+    }
+}
+
+/// Display helpers for `podcast:socialInteract` lists (channel or item). Feed-provided only; openURL only.
+enum PodcastSocialInteractDisplay {
+    /// Soft UI cap — show first N after priority sort; honesty footnote when more exist in the feed.
+    static let displayCap = 20
+
+    /// Openable (http(s) URI + non-disabled protocol) entries, sorted by priority (lower first; nil last), feed order for ties.
+    /// No invented URLs / no Fediverse client.
+    static func valid(_ items: [PodcastSocialInteract]) -> [PodcastSocialInteract] {
+        var indexed: [(Int, PodcastSocialInteract)] = []
+        for (index, item) in items.enumerated() {
+            guard !item.isDisabled else { continue }
+            guard let proto = item.displayProtocol else { continue }
+            let uri = item.uri.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !uri.isEmpty else { continue }
+            let candidate = PodcastSocialInteract(
+                protocolName: proto,
+                uri: uri,
+                accountId: item.displayAccountId,
+                priority: item.priority
+            )
+            guard candidate.discussionURL != nil else { continue }
+            indexed.append((index, candidate))
+        }
+        // Sort by priority ascending (nil last), stable by original feed order.
+        indexed.sort { lhs, rhs in
+            let lp = lhs.1.priority
+            let rp = rhs.1.priority
+            switch (lp, rp) {
+            case let (l?, r?) where l != r:
+                return l < r
+            case (_?, nil):
+                return true
+            case (nil, _?):
+                return false
+            default:
+                return lhs.0 < rhs.0
+            }
+        }
+        return indexed.map(\.1)
+    }
+
+    /// Highest-priority openable socialInteract (lowest priority Int). Nil when none.
+    static func preferred(_ items: [PodcastSocialInteract]) -> PodcastSocialInteract? {
+        valid(items).first
+    }
+
+    /// First `displayCap` after priority sort + whether the feed listed more openable entries.
+    static func capped(_ items: [PodcastSocialInteract]) -> (shown: [PodcastSocialInteract], truncated: Bool) {
+        let list = valid(items)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+}
+
 struct PodcastEpisode: Identifiable, Hashable, Codable {
     let id: String
     var title: String
@@ -406,6 +515,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Item-level Podcast Index `podcast:location` entries when the feed provides them.
     /// Empty when absent — never invent locations / never geocode names; UI hides when empty.
     var locations: [PodcastLocation]
+    /// Item-level Podcast Index `podcast:socialInteract` entries when the feed provides them.
+    /// Empty when absent — never invent discussion URLs; UI hides when empty / disabled. openURL only.
+    var socialInteracts: [PodcastSocialInteract]
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -457,7 +569,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         episodeType: String? = nil,
         isExplicit: Bool = false,
         people: [PodcastPerson] = [],
-        locations: [PodcastLocation] = []
+        locations: [PodcastLocation] = [],
+        socialInteracts: [PodcastSocialInteract] = []
     ) {
         self.id = id
         self.title = title
@@ -478,6 +591,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.isExplicit = isExplicit
         self.people = people
         self.locations = locations
+        self.socialInteracts = socialInteracts
     }
 
     init(from decoder: Decoder) throws {
@@ -501,6 +615,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         isExplicit = try c.decodeIfPresent(Bool.self, forKey: .isExplicit) ?? false
         people = try c.decodeIfPresent([PodcastPerson].self, forKey: .people) ?? []
         locations = try c.decodeIfPresent([PodcastLocation].self, forKey: .locations) ?? []
+        socialInteracts = try c.decodeIfPresent([PodcastSocialInteract].self, forKey: .socialInteracts) ?? []
     }
 
     /// Non-empty named item-level `podcast:person` entries (hide when empty — never invent).
@@ -511,6 +626,16 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Non-empty named item-level `podcast:location` entries (hide when empty — never invent / never geocode).
     var displayLocations: [PodcastLocation] {
         PodcastLocationDisplay.valid(locations)
+    }
+
+    /// Openable item-level `podcast:socialInteract` entries (hide when empty / disabled — never invent URLs).
+    var displaySocialInteracts: [PodcastSocialInteract] {
+        PodcastSocialInteractDisplay.valid(socialInteracts)
+    }
+
+    /// Highest-priority openable item socialInteract (openURL Discuss). Nil when none.
+    var preferredSocialInteract: PodcastSocialInteract? {
+        PodcastSocialInteractDisplay.preferred(socialInteracts)
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).
@@ -614,6 +739,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel-level Podcast Index `podcast:location` entries when the feed provides them.
     /// Empty when absent — never invent locations / never geocode names; UI hides when empty.
     var locations: [PodcastLocation]
+    /// Channel-level Podcast Index `podcast:socialInteract` entries when the feed provides them.
+    /// Empty when absent — never invent discussion URLs; UI hides when empty / disabled. openURL only.
+    var socialInteracts: [PodcastSocialInteract]
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -706,6 +834,16 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastLocationDisplay.valid(locations)
     }
 
+    /// Openable channel-level `podcast:socialInteract` entries (hide when empty / disabled — never invent URLs).
+    var displaySocialInteracts: [PodcastSocialInteract] {
+        PodcastSocialInteractDisplay.valid(socialInteracts)
+    }
+
+    /// Highest-priority openable channel socialInteract (openURL Discuss). Nil when none.
+    var preferredSocialInteract: PodcastSocialInteract? {
+        PodcastSocialInteractDisplay.preferred(socialInteracts)
+    }
+
     init(
         id: UUID,
         title: String,
@@ -725,6 +863,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         people: [PodcastPerson] = [],
         trailers: [PodcastTrailer] = [],
         locations: [PodcastLocation] = [],
+        socialInteracts: [PodcastSocialInteract] = [],
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -745,6 +884,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.people = people
         self.trailers = trailers
         self.locations = locations
+        self.socialInteracts = socialInteracts
         self.episodes = episodes
     }
 
@@ -768,11 +908,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         people = try c.decodeIfPresent([PodcastPerson].self, forKey: .people) ?? []
         trailers = try c.decodeIfPresent([PodcastTrailer].self, forKey: .trailers) ?? []
         locations = try c.decodeIfPresent([PodcastLocation].self, forKey: .locations) ?? []
+        socialInteracts = try c.decodeIfPresent([PodcastSocialInteract].self, forKey: .socialInteracts) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, episodes
     }
 }
 
