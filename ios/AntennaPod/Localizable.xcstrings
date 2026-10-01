@@ -11380,6 +11380,24 @@
           }
         }
       }
+    },
+    "Feed remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Feed detail info bar (episode count + remaining duration over visible sort→chip→search list; not Download all / Mark all played counts).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Feed-Zeit %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
