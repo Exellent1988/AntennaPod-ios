@@ -142,14 +142,31 @@ struct MiniPlayerView: View {
     }
 
     private var timeLabel: String {
-        "\(format(playback.positionSeconds)) / \(format(playback.durationSeconds))"
+        "\(format(playback.positionSeconds)) / \(rightTimeLabel)"
+    }
+
+    /// Duration, or −remaining when Settings → Show remaining time is on.
+    private var rightTimeLabel: String {
+        if settings.showRemainingTime {
+            return formatRemaining(playback.durationSeconds - playback.positionSeconds)
+        }
+        return format(playback.durationSeconds)
     }
 
     private func format(_ seconds: Double) -> String {
         guard seconds.isFinite else {
             return "--:--"
         }
-        let total = Int(seconds)
+        let total = max(0, Int(seconds))
         return String(format: "%d:%02d", total / 60, total % 60)
+    }
+
+    /// Remaining time with a leading minus (−m:ss).
+    private func formatRemaining(_ seconds: Double) -> String {
+        guard seconds.isFinite else {
+            return "--:--"
+        }
+        let total = max(0, Int(seconds.rounded(.down)))
+        return String(format: "-%d:%02d", total / 60, total % 60)
     }
 }

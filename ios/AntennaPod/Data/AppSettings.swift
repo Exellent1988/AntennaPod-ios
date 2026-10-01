@@ -300,7 +300,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -366,6 +366,7 @@ final class AppSettings: ObservableObject {
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
         static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
         static let continuousPlaybackEnabled = "settings.continuousPlaybackEnabled"
+        static let showRemainingTime = "settings.showRemainingTime"
         static let rewindAfterPauseSeconds = "settings.rewindAfterPauseSeconds"
         static let smartMarkAsPlayedSeconds = "settings.smartMarkAsPlayedSeconds"
         static let homeSectionOrder = "settings.home.sectionOrder"
@@ -583,6 +584,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// When true, player time labels show remaining (−m:ss) instead of total duration. Default **false** (Android `pref_show_remain_time`).
+    /// Mini + full player: left stays position; right shows duration or −remaining. Full player tap on the right label toggles this setting.
+    @Published var showRemainingTime: Bool {
+        didSet {
+            UserDefaults.standard.set(showRemainingTime, forKey: Keys.showRemainingTime)
+        }
+    }
+
     /// Seconds to seek backward when resuming after a pause ≥ 1s (0 = off). Default **2**.
     /// Honest beta: fixed amount (not Android `RewindAfterPauseUtils` elapsed tiers). Only after an actual pause of the current item — not cold play / first start.
     @Published var rewindAfterPauseSeconds: Int {
@@ -796,6 +805,12 @@ final class AppSettings: ObservableObject {
         } else {
             // Default on: auto-advance to next queue episode on end (AntennaPod continuous playback).
             continuousPlaybackEnabled = true
+        }
+        if UserDefaults.standard.object(forKey: Keys.showRemainingTime) != nil {
+            showRemainingTime = UserDefaults.standard.bool(forKey: Keys.showRemainingTime)
+        } else {
+            // Default off: show total duration (Android pref_show_remain_time unchecked).
+            showRemainingTime = false
         }
         rewindAfterPauseSeconds = Self.loadRewindAfterPauseSeconds()
         smartMarkAsPlayedSeconds = Self.loadSmartMarkAsPlayedSeconds()
@@ -1013,6 +1028,7 @@ final class AppSettings: ObservableObject {
             skipSilenceEnabled: skipSilenceEnabled,
             keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
             continuousPlaybackEnabled: continuousPlaybackEnabled,
+            showRemainingTime: showRemainingTime,
             rewindAfterPauseSeconds: rewindAfterPauseSeconds,
             smartMarkAsPlayedSeconds: smartMarkAsPlayedSeconds,
             chartsCountryCode: chartsCountryCode,
@@ -1077,6 +1093,7 @@ final class AppSettings: ObservableObject {
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
         keepScreenOnWhilePlaying = snap.keepScreenOnWhilePlaying ?? false
         continuousPlaybackEnabled = snap.continuousPlaybackEnabled ?? true
+        showRemainingTime = snap.showRemainingTime ?? false
         let rewindAfter = snap.rewindAfterPauseSeconds ?? Self.defaultRewindAfterPauseSeconds
         rewindAfterPauseSeconds = Self.rewindAfterPausePresets.contains(rewindAfter)
             ? rewindAfter
@@ -1155,6 +1172,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var keepScreenOnWhilePlaying: Bool? = false
     /// Absent in older backups → treated as on (auto-next from queue).
     var continuousPlaybackEnabled: Bool? = true
+    /// Absent in older backups → treated as off (show total duration).
+    var showRemainingTime: Bool? = false
     /// Absent in older backups → treated as 2 (honest beta default).
     var rewindAfterPauseSeconds: Int? = 2
     /// Absent in older backups → treated as 30 (AntennaPod default).

@@ -375,12 +375,34 @@ struct FullPlayerView: View {
                 Text(format(displayPosition))
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(.secondary)
+                    .accessibilityLabel(String(localized: "Playback position"))
                 Spacer()
-                Text(format(playback.durationSeconds))
-                    .font(.caption.monospacedDigit())
-                    .foregroundStyle(.secondary)
+                Button {
+                    settings.showRemainingTime.toggle()
+                } label: {
+                    Text(rightTimeLabel)
+                        .font(.caption.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(
+                    settings.showRemainingTime
+                        ? String(localized: "Remaining time")
+                        : String(localized: "Duration")
+                )
+                .accessibilityHint(String(localized: "Toggles between remaining time and total duration"))
+                .accessibilityValue(rightTimeLabel)
             }
         }
+    }
+
+    /// Right scrubber label: total duration, or −remaining when Show remaining time is on.
+    private var rightTimeLabel: String {
+        if settings.showRemainingTime {
+            let remaining = playback.durationSeconds - displayPosition
+            return formatRemaining(remaining)
+        }
+        return format(playback.durationSeconds)
     }
 
     private var transportControls: some View {
@@ -640,5 +662,20 @@ struct FullPlayerView: View {
             return String(format: "%d:%02d:%02d", h, m, s)
         }
         return String(format: "%d:%02d", m, s)
+    }
+
+    /// Remaining time with a leading minus (−m:ss or −h:mm:ss).
+    private func formatRemaining(_ seconds: Double) -> String {
+        guard seconds.isFinite else {
+            return "--:--"
+        }
+        let total = max(0, Int(seconds.rounded(.down)))
+        let h = total / 3600
+        let m = (total % 3600) / 60
+        let s = total % 60
+        if h > 0 {
+            return String(format: "-%d:%02d:%02d", h, m, s)
+        }
+        return String(format: "-%d:%02d", m, s)
     }
 }

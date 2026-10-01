@@ -162,6 +162,11 @@ struct SettingsView: View {
                     Text("When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Toggle("Show remaining time", isOn: $settings.showRemainingTime)
+                        .accessibilityHint("When on, player time labels show time left instead of total duration. Default off.")
+                    Text("When on, the mini and full player show remaining time (−m:ss) on the right instead of total duration. Left stays current position. Tap the full-player duration/remaining label to toggle. Default off.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     Picker("Rewind after pause", selection: $settings.rewindAfterPauseSeconds) {
                         ForEach(AppSettings.rewindAfterPausePresets, id: \.self) { secs in
                             Text(AppSettings.rewindAfterPauseLabel(secs)).tag(secs)
