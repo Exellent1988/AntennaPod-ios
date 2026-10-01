@@ -23,6 +23,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Archive all)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first)
 - Statistics (beta; Subscriptions → Library → Statistics + Settings; totals + top podcasts from `playback.json`; approx time)
+- Echo / Year in Review (beta lite; Library + Settings; current calendar year from playback/favorites; ShareLink text)
 - About / contribute links (Settings → About; fork blurb; Bundle version; antennapod.org / GitHub / contribute / docs / this fork)
 - Swipe actions (Queue Remove+Archive + drag reorder; Downloads Delete; Inbox/Feed/History/Favorites/Archived/All Episodes useful swipes)
 - Favorites / starred episodes (Subscriptions → Library → Favorites; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; auto-delete skips favorites)
@@ -32,7 +33,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics link, About)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, About)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -66,7 +67,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -134,8 +135,19 @@ Local-only search over subscribed feeds and their episodes (title, feed title, f
 - **Approx. listening time** — sum of estimates: **played** use saved `durationSeconds` (position is cleared on mark-played); **in-progress** use `positionSeconds`. Footnote on screen: does **not** count rewinds, speed, or re-listens.
 - **Top podcasts** — per-feed rollup sorted by approximate time, then play count.
 
-Empty state when there is no played / in-progress playback data. Echo / Year in Review remains todo.
+Empty state when there is no played / in-progress playback data.
 
+## Echo (Year in Review)
+
+**Subscriptions → Library → Echo** (also **Settings → Library → Echo**). Beta lite year summary for the **current calendar year** (device `Calendar.current` — Europe/Berlin when the device is set that way).
+
+- **Played episodes** — `isPlayed` with `lastPlayedAt` (else `updatedAt`) in this year.
+- **Approx. listening time** — same estimate as Statistics (played → saved duration).
+- **Top podcasts** — per-feed rollup for that year (up to 10).
+- **Favorites** — count starred this year from `favorites.json` (plus total if different).
+- **Share** — toolbar `ShareLink` with a plain-text summary when there is data.
+
+Honest empty state when little/no year data. Footnote: approximate — same limits as Statistics (no rewinds / speed / re-listens; derived from `playback.json`).
 
 ## About
 

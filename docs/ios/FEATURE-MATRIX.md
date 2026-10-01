@@ -16,23 +16,23 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Downloads-Liste | 5 | done | Local files + persisted catalog; swipe Delete download; error log + notify |
 | History | 3 | done | Played / in-progress across feeds, newest `lastPlayedAt` first; Subscriptions → Library → History; swipe remove / mark unplayed; tap via EpisodeRow |
 | Favorites | 3 | done | Starred episode ids in `favorites.json` side map; star toggle on EpisodeRow + full player; Subscriptions → Library → Favorites (newest first); swipe Unfavorite + Archive; auto-delete skips favorited downloads |
-| Subscriptions | 5 | wip | List + subscribe sheet; local folder feeds show Folder badge |
-| Add podcast | 5 | wip | URL + Apple Podcasts + Podcast Index + fyyd search + **Folder** (local); charts via Discover; discovery/URL → online Preview then Confirm Subscribe |
+| Subscriptions | 5 | done | List + subscribe sheet; tags filter/group; Discover; Library links; local folder feeds show Folder badge; OPML/HTML import-export |
+| Add podcast | 5 | done | URL + Apple Podcasts + Podcast Index + fyyd search + **Folder** (local); charts via Discover; discovery/URL → online Preview then Confirm Subscribe |
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
-| Statistics | 2 | done | Totals from `playback.json`: played count, approx listening time (played→duration / in-progress→position), per-feed top podcasts; Library + Settings; honest approximation footnote; Echo still separate |
-| Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics), Queue, Downloads, Settings |
+| Statistics | 2 | done | Totals from `playback.json`: played count, approx listening time (played→duration / in-progress→position), per-feed top podcasts; Library + Settings; honest approximation footnote |
+| Bottom nav / Drawer-Analog | 4 | done | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics / Echo), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + **new-episode action** + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + About (P0/P1); more prefs later |
+| Settings | 5 | done | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + **new-episode action** + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + notifications + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + Statistics / Echo + About (P0/P1); more prefs later |
 
 ## Subscriptions
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Subscribe / Unsubscribe (URL) | 5 | wip | Subscribe-by-URL skeleton |
+| Subscribe / Unsubscribe (URL) | 5 | done | Subscribe by feed URL (+ discovery / local folder); unsubscribe from feed detail; local-folder releases bookmark |
 | OPML Import/Export | 5 | done | Pure Swift XML (fork `ios/`); Settings + Subscriptions; batch subscribe with progress/errors |
 | Feed aktualisieren | 5 | done | Fetch + parse on subscribe; pull-to-refresh all; auto refresh by Settings interval |
-| Episodenliste / Feed-Seite | 5 | wip | |
+| Episodenliste / Feed-Seite | 5 | done | Feed detail episodes + EpisodeRow; swipe Archive/Queue/Share; per-feed gear; pull refresh via Subscriptions; Folder badge for local |
 | Archive / restore | 3 | done | Side map `archived.json` (id → archivedAt); archived ≠ played. Hide from Inbox (+ Home New preview). EpisodeRow button/context + Feed/Inbox/Queue/Favorites/All Episodes swipes; Inbox Archive all; Library → Archived (restore). Feed lists keep archived with dim/badge (not removed) |
 | Tags / Folders | 3 | done | Side map `feed-tags.json` (feed id → string tags, 0..n); manage on Feed detail → gear (Per-feed settings): add existing/new, remove, rename/delete globally; empty tags disappear. Subscriptions: filter chips All / each tag / Untagged + optional Group by tag sections (multi-tag feeds listed under each). Not Android drawer folders / nested hierarchy |
 | Per-feed settings | 4 | done | Feed detail → gear sheet: Auto-download / Keep updated / New episodes (Use global·Inbox·Queue) / Notify Use global·Always·Never; side map `feed-settings.json`; Speed / Skip Intro·Outro per feed later (global skip intro/outro in Settings) |
@@ -45,9 +45,9 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Stream playback | 5 | wip | AVPlayer skeleton |
+| Stream playback | 5 | done | AVPlayer stream + local; mini + full player; continuous queue; Wi‑Fi stream gate optional |
 | Lockscreen / Now Playing | 5 | done | MPNowPlayingInfoCenter + remote play/pause/skip (Settings intervals)/scrub; artwork from feed |
-| Variable speed | 5 | wip | Mini + full player rate menu |
+| Variable speed | 5 | done | Mini + full player rate menu; default speed from Settings on fresh start |
 | Sleep timer (Basis) | 5 | done | Clock presets 5–60 min + end of episode; fade last 10s; mini + full player menu |
 | Fortschritt speichern / fortsetzen | 5 | done | JSON `playback.json` (`position` / `duration` / `isPlayed` / `lastPlayedAt`); resume on play |
 | Mark played / unplayed | 5 | done | Manual + smart-mark last 30s (AntennaPod default) |
@@ -118,8 +118,8 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Statistics | 2 | done | Same as Navigation: derived from playback progress; no Echo / year-in-review |
-| Echo (Year in Review) | 2 | todo | |
+| Statistics | 2 | done | Same as Navigation: derived from playback progress |
+| Echo (Year in Review) | 2 | done | **Beta lite**: current calendar year (device calendar); played count via `lastPlayedAt`; approx listening time + top podcasts from `playback.json`; favorites this year from `favorites.json`; Library + Settings; empty state; ShareLink text; same approximation limits as Statistics |
 | Homescreen Widget | 1 | todo | WidgetKit |
 | CarPlay | 1 | todo | |
 | Siri Shortcuts | 1 | todo | |

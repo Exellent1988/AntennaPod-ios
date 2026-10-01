@@ -138,6 +138,11 @@ struct SettingsView: View {
                     } label: {
                         Label("Statistics", systemImage: "chart.bar.doc.horizontal")
                     }
+                    NavigationLink {
+                        EchoView()
+                    } label: {
+                        Label("Echo", systemImage: "sparkles.rectangle.stack")
+                    }
                 }
                 Section("Privacy") {
                     NavigationLink {

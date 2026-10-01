@@ -91,6 +91,11 @@ struct SubscriptionsView: View {
                     } label: {
                         Label("Statistics", systemImage: "chart.bar.doc.horizontal")
                     }
+                    NavigationLink {
+                        EchoView()
+                    } label: {
+                        Label("Echo", systemImage: "sparkles.rectangle.stack")
+                    }
                     Button {
                         if parental.needsPINForAddDiscover {
                             showDiscoverPINGate = true

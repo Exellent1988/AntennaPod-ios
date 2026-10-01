@@ -242,3 +242,40 @@ struct ListeningStatistics: Hashable {
         topPodcasts: []
     )
 }
+
+/// Per-podcast rollup for Echo (year in review).
+struct EchoFeedStats: Identifiable, Hashable {
+    let id: UUID
+    let feedTitle: String
+    let playedEpisodeCount: Int
+    let approximateListenedSeconds: Double
+}
+
+/// Calendar-year summary from playback / favorites (honest approximation; same limits as Statistics).
+struct EchoYearSummary: Hashable {
+    /// Calendar year (e.g. 2026).
+    var year: Int
+    /// Episodes with `isPlayed` whose `lastPlayedAt` falls in this year.
+    var playedEpisodeCount: Int
+    var approximateListenedSeconds: Double
+    var topPodcasts: [EchoFeedStats]
+    /// Favorites whose favorited-at timestamp falls in this year (`favorites.json`).
+    var favoritesCountThisYear: Int
+    /// All currently starred episodes (any year).
+    var favoritesTotalCount: Int
+
+    var isEmpty: Bool {
+        playedEpisodeCount == 0 && approximateListenedSeconds <= 0 && favoritesCountThisYear == 0
+    }
+
+    static func empty(year: Int) -> EchoYearSummary {
+        EchoYearSummary(
+            year: year,
+            playedEpisodeCount: 0,
+            approximateListenedSeconds: 0,
+            topPodcasts: [],
+            favoritesCountThisYear: 0,
+            favoritesTotalCount: 0
+        )
+    }
+}

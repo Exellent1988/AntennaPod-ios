@@ -749,6 +749,98 @@ final class PodcastStore: ObservableObject {
         )
     }
 
+    // MARK: - Echo (Year in Review)
+
+    /// Calendar-year listening summary from `playback.json` + `favorites.json`.
+    /// Uses the device calendar (Europe/Berlin when the device is set that way).
+    /// Played episodes counted when `isPlayed` and `lastPlayedAt` (else `updatedAt`) falls in `year`.
+    func echoYearSummary(
+        for year: Int? = nil,
+        calendar: Calendar = .current
+    ) -> EchoYearSummary {
+        let resolvedYear = year ?? calendar.component(.year, from: Date())
+        guard
+            let start = calendar.date(from: DateComponents(year: resolvedYear, month: 1, day: 1)),
+            let end = calendar.date(from: DateComponents(year: resolvedYear + 1, month: 1, day: 1))
+        else {
+            return .empty(year: resolvedYear)
+        }
+        let startMs = Int64(start.timeIntervalSince1970 * 1000)
+        let endMs = Int64(end.timeIntervalSince1970 * 1000)
+
+        func inYear(_ epochMs: Int64) -> Bool {
+            epochMs >= startMs && epochMs < endMs
+        }
+
+        var played = 0
+        var totalSeconds: Double = 0
+        var perFeed: [UUID: (title: String, played: Int, seconds: Double)] = [:]
+
+        func consider(episodeId: String, feedId: UUID?, feedTitle: String) {
+            let state = playbackState(for: episodeId)
+            guard state.isPlayed else { return }
+            let lastPlayed = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
+            guard inYear(lastPlayed) else { return }
+            played += 1
+            let secs = ListeningTimeEstimate.seconds(for: state)
+            totalSeconds += secs
+            guard let feedId else { return }
+            var entry = perFeed[feedId] ?? (feedTitle, 0, 0)
+            entry.played += 1
+            entry.seconds += secs
+            perFeed[feedId] = entry
+        }
+
+        for feed in feeds {
+            for episode in feed.episodes {
+                consider(episodeId: episode.id, feedId: feed.id, feedTitle: feed.title)
+            }
+        }
+        let knownEpisodeIds = Set(feeds.flatMap { $0.episodes.map(\.id) })
+        for episode in queue where !knownEpisodeIds.contains(episode.id) {
+            let feed = feed(containingEpisodeId: episode.id)
+            consider(
+                episodeId: episode.id,
+                feedId: feed?.id,
+                feedTitle: feed?.title ?? ""
+            )
+        }
+
+        let top = perFeed.map { (id, v) in
+            EchoFeedStats(
+                id: id,
+                feedTitle: v.title,
+                playedEpisodeCount: v.played,
+                approximateListenedSeconds: v.seconds
+            )
+        }
+        .sorted { lhs, rhs in
+            if lhs.approximateListenedSeconds != rhs.approximateListenedSeconds {
+                return lhs.approximateListenedSeconds > rhs.approximateListenedSeconds
+            }
+            if lhs.playedEpisodeCount != rhs.playedEpisodeCount {
+                return lhs.playedEpisodeCount > rhs.playedEpisodeCount
+            }
+            return lhs.feedTitle.localizedCaseInsensitiveCompare(rhs.feedTitle) == .orderedAscending
+        }
+
+        var favoritesThisYear = 0
+        for (_, favoritedAt) in favoriteAtById {
+            if inYear(favoritedAt) {
+                favoritesThisYear += 1
+            }
+        }
+
+        return EchoYearSummary(
+            year: resolvedYear,
+            playedEpisodeCount: played,
+            approximateListenedSeconds: totalSeconds,
+            topPodcasts: Array(top.prefix(10)),
+            favoritesCountThisYear: favoritesThisYear,
+            favoritesTotalCount: favoriteAtById.count
+        )
+    }
+
     /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
     func refreshAllFeeds() async {
         lastError = nil
