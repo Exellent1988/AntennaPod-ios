@@ -212,6 +212,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Feed language BCP-47 / ISO 639 code when the feed provides it (`itunes:language` / RSS `language` / `xml:lang`).
     /// Nil or blank when absent — never invent; UI hides unless present.
     var language: String?
+    /// Podcast Index `podcast:funding` / Atom `link rel="payment"` URL when the feed provides it.
+    /// Nil or blank when absent — never invent; UI hides unless http(s) valid.
+    var fundingUrl: String?
+    /// Optional creator-supplied label for the funding link (`podcast:funding` text). Nil when absent / Atom payment-only.
+    var fundingLabel: String?
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -241,6 +246,13 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         return FeedLanguageFormatting.displayName(for: code)
     }
 
+    /// Trimmed non-empty funding label from the feed when provided. Hidden/fallback when missing.
+    var displayFundingLabel: String? {
+        guard let fundingLabel else { return nil }
+        let trimmed = fundingLabel.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     init(
         id: UUID,
         title: String,
@@ -251,6 +263,8 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         author: String? = nil,
         isExplicit: Bool = false,
         language: String? = nil,
+        fundingUrl: String? = nil,
+        fundingLabel: String? = nil,
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -262,6 +276,8 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.author = author
         self.isExplicit = isExplicit
         self.language = language
+        self.fundingUrl = fundingUrl
+        self.fundingLabel = fundingLabel
         self.episodes = episodes
     }
 
@@ -276,11 +292,13 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         author = try c.decodeIfPresent(String.self, forKey: .author)
         isExplicit = try c.decodeIfPresent(Bool.self, forKey: .isExplicit) ?? false
         language = try c.decodeIfPresent(String.self, forKey: .language)
+        fundingUrl = try c.decodeIfPresent(String.self, forKey: .fundingUrl)
+        fundingLabel = try c.decodeIfPresent(String.self, forKey: .fundingLabel)
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, episodes
     }
 }
 

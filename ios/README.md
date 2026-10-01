@@ -28,6 +28,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Episode season / episode number on list rows (beta; parse `itunes:season` / `itunes:episode` / `itunes:episodeType` into `PodcastEpisode`; EpisodeRow caption `S2 E5` · optional Trailer/Bonus · date · duration · size when feed provides them; hide when absent — **never invent sequential numbers**; VoiceOver EN/DE **Season N, Episode M** / Trailer / Bonus; no Settings toggle)
 - Explicit badge (beta; parse channel/item `itunes:explicit` yes/true/explicit into `PodcastFeed.isExplicit` / `PodcastEpisode.isExplicit`; item inherits channel when item omits tag; EpisodeRow + Subscriptions + Feed detail + preview capsule when true; **hide otherwise** — never invent; not a fuller content-rating claim; VoiceOver EN/DE **Explicit** / **Explizit**; distinct from parental hide-explicit charts)
 - Feed / podcast language (beta; parse `itunes:language` / RSS `language` / `xml:lang` into `PodcastFeed.language`; Feed detail header + description sheet + optional Subscriptions subtitle show localized name via `Locale.current` or raw code; **hide when missing** — never invent codes; VoiceOver EN/DE **Language …** / **Sprache …**; refresh to populate existing feeds)
+- Support / Funding (beta; parse channel `podcast:funding` url + optional text, else Atom `link rel="payment"`, into `PodcastFeed.fundingUrl` / `fundingLabel`; Feed detail ⋯ opens http(s) in system browser — **not** in-app payment; **hide when missing** — never invent Patreon/URLs; menu uses creator label or **Support** / **Unterstützen**; refresh to populate existing feeds)
 - Shared list/Home **remaining-time** helper (`EpisodeRemainingTime`): one wall-clock sum (`max(0, duration − position)`, unknowns → `~`, live current, played→0); call sites keep their own episode scopes (visible filtered / Home preview soft-cap / Subscriptions unplayed map / library search episode hits). No user-facing behavior change; EN/DE strings unchanged.
 - Relative publish dates on list rows (beta; EpisodeRow `pubDateEpochMs` via `EpisodeDateFormatting`: Today / Yesterday / N days ago for ≤7 calendar days (`RelativeDateTimeFormatter` locale-aware EN/DE), else medium absolute; caption `S2 E5 · Trailer/Bonus · date · duration · size` (omit unknown parts); History/Favorites/Archived `dateOverride` stays live SwiftUI `.relative`; VoiceOver includes publish caption; no Settings toggle)
 - EpisodeRow in-progress playback (beta polish; thin `ProgressView` under caption when `playback.json` `positionSeconds > 1` and not `isPlayed` and duration known — fraction = position/duration; duration from playback state or feed `itunes:duration`/media; hide when unplayed, played, or duration unknown; VoiceOver EN/DE **N percent played** + remaining, or **At m:ss** if duration unknown; no Settings toggle)
@@ -345,7 +346,7 @@ Share an **episode** or a **podcast** via the **system share sheet** only (`Shar
 
 **Share with position:** second action on the **full player** (and **Shownotes** toolbar when the shownotes episode is the **current playback item**). Same URL precedence; message appends a human-readable timestamp from `PlaybackService.positionSeconds` — e.g. `Title — Podcast (12:34)` (`m:ss` / `h:mm:ss`, same as the scrubber). **Text timestamp only** — does **not** invent AntennaPod deep links or append `#t=` media fragments. Hidden when position is unknown or the episode is not current (list rows keep plain Share only).
 
-**Entry points:** full player secondary Share + Share with position; **Shownotes** sheet toolbar (Share + position when current); EpisodeRow button + context menu; Feed detail trailing swipe Share. **Feed detail** toolbar shares the **podcast** (title + feed URL); the ⋯ **Feed actions** menu also offers **Open podcast website** (http(s) `siteLink` → system browser; hidden when missing) and **Copy feed URL** (`UIPasteboard.general` + brief **Copied** alert / haptic). Local-folder feeds disable Copy / podcast Share — no network RSS URL. See also **Copy episode link** (webpage only) under Open episode website and **Open podcast website** (`siteLink`).
+**Entry points:** full player secondary Share + Share with position; **Shownotes** sheet toolbar (Share + position when current); EpisodeRow button + context menu; Feed detail trailing swipe Share. **Feed detail** toolbar shares the **podcast** (title + feed URL); the ⋯ **Feed actions** menu also offers **Open podcast website** (http(s) `siteLink` → system browser; hidden when missing), **Support / Funding** (http(s) funding URL → system browser; creator label or Support; hidden when missing — never invent), and **Copy feed URL** (`UIPasteboard.general` + brief **Copied** alert / haptic). Local-folder feeds disable Copy / podcast Share — no network RSS URL. See also **Copy episode link** (webpage only) under Open episode website and **Open podcast website** (`siteLink`).
 
 ## Open episode website
 
@@ -365,6 +366,15 @@ Opens the podcast’s homepage (`PodcastFeed.siteLink`) in the **system browser*
 - **Distinct from** in-app **Open podcast** (full/mini player → Subscriptions → Feed detail) and from **Open episode website** (episode `link`).
 - **Entry points:** Feed detail ⋯ **Feed actions** menu; Subscriptions row context menu.
 - EN / DE + VoiceOver label **Open podcast website** / **Podcast-Website öffnen** and hint **Opens the podcast webpage in the system browser**.
+
+## Support / Funding (beta)
+
+Opens a feed-provided funding / donation page in the **system browser** via SwiftUI `openURL` — **not** in-app payment, **not** a WebView, and **never** an invented Patreon or other support URL.
+
+- **Parse:** `NativeRssAtomParser` stores channel-level funding as `PodcastFeed.fundingUrl` + optional `fundingLabel`. Preference: first **`podcast:funding`** (`url` / `href` attribute + element text label) → Atom / `atom:link` **`rel="payment"`** (url only). Blank / missing / non-http(s) → hidden.
+- **UI:** Feed detail ⋯ **Feed actions** → **Support** (or the creator-supplied label when present). Same honesty as **Open podcast website**.
+- **Existing subscriptions** need a **feed refresh** to pick up funding fields. Local-folder feeds have none.
+- EN / DE + VoiceOver: label **Support** / **Unterstützen** (or feed text) and hint **Opens the funding page in the system browser**.
 
 ## Copy episode link
 

@@ -14560,6 +14560,40 @@
           }
         }
       }
+    },
+    "Support": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Support"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unterstützen"
+          }
+        }
+      }
+    },
+    "Opens the funding page in the system browser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the funding page in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Finanzierungsseite im Systembrowser"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

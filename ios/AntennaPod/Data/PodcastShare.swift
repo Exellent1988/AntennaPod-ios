@@ -136,4 +136,26 @@ extension PodcastFeed {
         guard scheme == "http" || scheme == "https" else { return nil }
         return url
     }
+
+    /// Funding / Support page from feed `fundingUrl` only (`http` / `https`).
+    /// From Podcast Index `podcast:funding` or Atom `link rel="payment"` — never invents Patreon/etc.
+    /// Distinct from `websiteURL` (homepage) and feed RSS/`feedUrl`. Nil when missing or non-http(s).
+    var fundingURL: URL? {
+        guard let fundingUrl else { return nil }
+        let trimmed = fundingUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return url
+    }
+
+    /// Menu title for Support / Funding: feed-provided label when present, else localized **Support**.
+    var supportActionTitle: String {
+        displayFundingLabel ?? String(localized: "Support")
+    }
+
+    /// VoiceOver label: prefer feed label, else **Support**.
+    var supportAccessibilityLabel: String {
+        displayFundingLabel ?? String(localized: "Support")
+    }
 }

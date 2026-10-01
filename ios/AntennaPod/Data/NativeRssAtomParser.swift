@@ -26,6 +26,11 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     /// Prefer itunes:language / RSS language element → xml:lang on rss/feed/channel.
     private var languageElement: String?
     private var xmlLang: String?
+    /// Prefer channel `podcast:funding` (url + optional text) over Atom `link rel="payment"`.
+    private var fundingUrl: String?
+    private var fundingLabel: String?
+    private var fundingFromPodcastTag = false
+    private var capturingFundingLabel = false
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -90,6 +95,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 languageElement: languageElement,
                 xmlLang: xmlLang
             ),
+            fundingUrl: fundingUrl,
+            fundingLabel: fundingLabel,
             episodes: episodes
         )
     }
@@ -179,8 +186,29 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 } else if rel.isEmpty || rel == "alternate" {
                     itemLink = href ?? itemLink
                 }
+            } else if rel == "payment" {
+                // Atom / atom:link rel="payment" — channel funding fallback when podcast:funding absent.
+                if !fundingFromPodcastTag,
+                   let href, !href.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    if fundingUrl == nil {
+                        fundingUrl = href.trimmingCharacters(in: .whitespacesAndNewlines)
+                    }
+                }
             } else if rel.isEmpty || rel == "alternate" {
                 link = href ?? link
+            }
+        case "funding":
+            // Podcast Index: <podcast:funding url="https://…">Support the show!</podcast:funding>
+            // Channel-level; first podcast:funding wins (may replace earlier Atom payment). Never invent URLs.
+            if !inItem, !fundingFromPodcastTag {
+                let href = (attributeDict["url"] ?? attributeDict["href"])?
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                if let href, !href.isEmpty {
+                    fundingUrl = href
+                    fundingLabel = nil
+                    fundingFromPodcastTag = true
+                    capturingFundingLabel = true
+                }
             }
         case "transcript":
             // Podcast Index: <podcast:transcript url="…" type="application/json|text/vtt|application/srt"/>
@@ -353,6 +381,14 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 // Channel itunes:explicit — only yes/true/explicit marks the feed.
                 if let flagged = ItunesExplicitParsing.parse(text) {
                     feedIsExplicit = flagged
+                }
+            case "funding":
+                // podcast:funding text node = creator label (optional; may be truncated by aggregators ~128 chars).
+                if capturingFundingLabel {
+                    if !text.isEmpty {
+                        fundingLabel = text
+                    }
+                    capturingFundingLabel = false
                 }
             case "language":
                 // RSS <language> / itunes:language — store as provided (never invent). Prefer over xml:lang.

@@ -375,6 +375,16 @@ struct FeedDetailView: View {
                             .accessibilityHint(String(localized: "Opens the podcast webpage in the system browser"))
                         }
 
+                        if let url = liveFeed.fundingURL {
+                            Button {
+                                openURL(url)
+                            } label: {
+                                Label(liveFeed.supportActionTitle, systemImage: "heart.circle")
+                            }
+                            .accessibilityLabel(liveFeed.supportAccessibilityLabel)
+                            .accessibilityHint(String(localized: "Opens the funding page in the system browser"))
+                        }
+
                         Button {
                             copyFeedURL()
                         } label: {
