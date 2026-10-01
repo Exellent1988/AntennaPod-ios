@@ -149,10 +149,20 @@ final class DownloadService: ObservableObject {
     }
 
     func localURL(for episode: PodcastEpisode) -> URL? {
-        guard let item = downloads.first(where: { $0.id == episode.id }) else { return nil }
-        let url = item.localFileURL
-        guard FileManager.default.fileExists(atPath: url.path) else { return nil }
-        return url
+        if let item = downloads.first(where: { $0.id == episode.id }) {
+            let url = item.localFileURL
+            if FileManager.default.fileExists(atPath: url.path) {
+                return url
+            }
+        }
+        // Local folder feeds: enclosure is already a file:// URL on disk.
+        if let raw = episode.downloadUrl,
+           let url = URL(string: raw),
+           url.isFileURL,
+           FileManager.default.fileExists(atPath: url.path) {
+            return url
+        }
+        return nil
     }
 
     func isDownloaded(_ episode: PodcastEpisode) -> Bool {
@@ -169,6 +179,15 @@ final class DownloadService: ObservableObject {
     func download(_ episode: PodcastEpisode, source: DownloadEnqueueSource = .manual) async {
         guard let remote = episode.downloadUrl, let url = URL(string: remote) else {
             recordFailure(episode: episode, message: "Episode has no media URL")
+            return
+        }
+        // Already-local folder files — treat as present; do not start a network transfer.
+        if url.isFileURL {
+            if FileManager.default.fileExists(atPath: url.path) {
+                lastError = nil
+            } else {
+                recordFailure(episode: episode, message: "Local file missing")
+            }
             return
         }
         if inProgress.contains(episode.id) {

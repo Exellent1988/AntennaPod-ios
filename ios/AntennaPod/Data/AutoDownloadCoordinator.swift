@@ -43,7 +43,7 @@ enum AutoDownloadCoordinator {
 
         let cap = settings.autoDownloadEpisodesPerFeed.rawValue
         var candidates: [PodcastEpisode] = []
-        for feed in eligibleFeeds {
+        for feed in eligibleFeeds where !LocalFolderFeed.isLocalFolderFeed(feed) {
             candidates.append(contentsOf: eligibleEpisodes(in: feed, store: store, downloads: downloads, cap: cap))
         }
         for episode in candidates {
@@ -68,6 +68,7 @@ enum AutoDownloadCoordinator {
         for episode in sorted {
             guard picked.count < cap else { break }
             guard episode.downloadUrl != nil, !(episode.downloadUrl ?? "").isEmpty else { continue }
+            guard !LocalFolderFeed.isLocalFileDownloadURL(episode.downloadUrl) else { continue }
             guard !store.isPlayed(episode.id) else { continue }
             guard !downloads.isDownloaded(episode) else { continue }
             guard !downloads.inProgress.contains(episode.id) else { continue }

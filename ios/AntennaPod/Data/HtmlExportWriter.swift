@@ -31,6 +31,7 @@ enum HtmlExportWriter {
         body += "  <ul class=\"feeds\">\n"
         for feed in sorted {
             guard !feed.feedUrl.isEmpty else { continue }
+            guard !LocalFolderFeed.isLocalFolderFeed(feed) else { continue }
             body += feedItemHTML(feed: feed, includeEpisodeCount: includeEpisodeCount)
         }
         body += "  </ul>\n"

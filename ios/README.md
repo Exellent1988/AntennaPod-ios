@@ -41,6 +41,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Mobile / Wi‑Fi policy (auto / manual download / stream Wi‑Fi-only toggles; shared NWPathMonitor)
 - Per-feed settings (Feed detail → gear: Auto-download, Keep updated, New episodes, Notify overrides)
 - Tags / Folders for subscriptions (side map `feed-tags.json`; manage on per-feed settings; Subscriptions filter chips + optional group-by-tag; untagged)
+- Local folder feeds (beta; Add podcast → Folder via fileImporter; security-scoped bookmark; synthetic feed from mp3/m4a/aac/wav/flac; refresh re-scans; no RSS/network; Folder badge; unsubscribe releases bookmark)
 - OPML import/export (Settings + Subscriptions; share sheet / file picker; batch subscribe)
 - HTML subscription export (Settings + Subscriptions Import / Export; share sheet `.html`)
 - Local data backup import/export (Settings → Backup; iOS JSON ZIP of Application Support maps + Settings + gpodder prefs; catalog-only downloads; no Keychain secrets; not Android DB)
@@ -65,7 +66,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview), top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -232,6 +233,16 @@ Feed detail → **gear** opens a sheet with overrides:
 Persisted as a side map keyed by stable `PodcastFeed.id` in Application Support `feed-settings.json` (survives feed refresh; cleared on unsubscribe). Reset to global defaults removes the map entry. Speed / skip-intro·outro per feed are not in this slice (global skip intro/outro lives in Settings → Playback).
 
 The same sheet also manages **Tags / Folders** (see below).
+
+## Local folder feeds (beta)
+
+**Add podcast → Folder → Choose folder…** uses SwiftUI `fileImporter` (UIDocumentPicker) to pick a directory. A **security-scoped bookmark** is stored in Application Support `local-folder-bookmarks.json`.
+
+**Synthetic feed:** `PodcastFeed` with `feedUrl` scheme `local-folder://{uuid}`. Episodes = audio files in that folder (**mp3 / m4a / aac / wav / flac**, non-recursive); **title** = filename without extension; `downloadUrl` = `file://…` so `DownloadService.localURL` / play treat them as **already local** (no network download).
+
+**Refresh** (Subscriptions swipe or Keep-updated bulk) **re-scans** the folder via the bookmark. **Unsubscribe** deletes the bookmark and ends scoped access.
+
+**Honest limits:** no RSS/Atom; no network feed refresh; not pushed to gpodder / Nextcloud; omitted from OPML and HTML export. Shown in **Subscriptions** with a **Folder** badge. Bookmarks in JSON backup may not work on another device — re-pick the folder after import.
 
 ## Tags / Folders
 

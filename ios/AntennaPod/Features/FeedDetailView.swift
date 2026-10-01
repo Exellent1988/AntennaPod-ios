@@ -18,6 +18,15 @@ struct FeedDetailView: View {
 
     var body: some View {
         List {
+            if LocalFolderFeed.isLocalFolderFeed(liveFeed) {
+                Section {
+                    Label("Local folder feed", systemImage: "folder.fill")
+                        .foregroundStyle(.orange)
+                    Text("Episodes are audio files in a picked folder (mp3 / m4a / aac / wav / flac). No RSS and no network refresh — pull Refresh (swipe on Subscriptions) to re-scan. Unsubscribe releases folder access.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
             if !feedTags.isEmpty {
                 Section("Tags") {
                     FlowTagRow(tags: feedTags)

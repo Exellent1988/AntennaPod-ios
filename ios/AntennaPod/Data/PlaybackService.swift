@@ -332,6 +332,10 @@ final class PlaybackService: ObservableObject {
     private func resolvePlaybackURL(for episode: PodcastEpisode, preferredFileURL: URL?) -> URL? {
         let preference = settings?.playbackSourcePreference ?? .automatic
         let local = preferredFileURL ?? downloads?.localURL(for: episode)
+        // Local folder episodes need security-scoped access before AVPlayer can open the file.
+        if let local, local.isFileURL, let store {
+            LocalFolderAccess.ensureAccessForEpisodeFileURL(local, feeds: store.feeds)
+        }
         let remote = episode.downloadUrl.flatMap { URL(string: $0) }
 
         switch preference {

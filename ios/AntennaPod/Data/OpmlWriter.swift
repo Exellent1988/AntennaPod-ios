@@ -15,6 +15,7 @@ enum OpmlWriter {
         lines.append("<body>")
         for feed in feeds {
             guard !feed.feedUrl.isEmpty else { continue }
+            guard !LocalFolderFeed.isLocalFolderFeed(feed) else { continue }
             var attrs = [
                 "text=\"\(escapeAttr(feed.title))\"",
                 "title=\"\(escapeAttr(feed.title))\"",

@@ -16,8 +16,8 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Downloads-Liste | 5 | done | Local files + persisted catalog; swipe Delete download; error log + notify |
 | History | 3 | done | Played / in-progress across feeds, newest `lastPlayedAt` first; Subscriptions → Library → History; swipe remove / mark unplayed; tap via EpisodeRow |
 | Favorites | 3 | done | Starred episode ids in `favorites.json` side map; star toggle on EpisodeRow + full player; Subscriptions → Library → Favorites (newest first); swipe Unfavorite + Archive; auto-delete skips favorited downloads |
-| Subscriptions | 5 | wip | List + subscribe sheet |
-| Add podcast | 5 | wip | URL + Apple Podcasts + Podcast Index + fyyd search; charts via Discover; discovery/URL → online Preview then Confirm Subscribe |
+| Subscriptions | 5 | wip | List + subscribe sheet; local folder feeds show Folder badge |
+| Add podcast | 5 | wip | URL + Apple Podcasts + Podcast Index + fyyd search + **Folder** (local); charts via Discover; discovery/URL → online Preview then Confirm Subscribe |
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
 | Statistics | 2 | done | Totals from `playback.json`: played count, approx listening time (played→duration / in-progress→position), per-feed top podcasts; Library + Settings; honest approximation footnote; Echo still separate |
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics), Queue, Downloads, Settings |
@@ -38,7 +38,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Per-feed settings | 4 | done | Feed detail → gear sheet: Auto-download / Keep updated / New episodes (Use global·Inbox·Queue) / Notify Use global·Always·Never; side map `feed-settings.json`; Speed / Skip Intro·Outro per feed later (global skip intro/outro in Settings) |
 | Keep updated | 4 | done | Global via Settings refresh interval; per-feed Keep updated Never skips that feed in refresh-all (single-feed refresh still OK) |
 | New-episode action (Inbox/Queue) | 4 | done | **Simple beta**: Settings → New episodes Inbox only (default) / Add to Queue / Add to Queue and download; applies to newly appeared eps after refresh (existing subs). Per-feed Use global / Inbox / Queue. Inbox stays derived unplayed list; Queue gets explicit adds. Download uses auto-DL Wi‑Fi gate. **Not** full Android filter rules → KMP later |
-| Local folder feeds | 2 | todo | iOS DocumentPicker |
+| Local folder feeds | 2 | done | **Beta**: Add podcast → Folder (fileImporter); security-scoped bookmark in local-folder-bookmarks.json; synthetic PodcastFeed (local-folder://) from audio files (mp3/m4a/aac/wav/flac); title=filename; file:// already-local; refresh re-scans; unsubscribe releases bookmark; Folder badge; no RSS/network; excluded from OPML/HTML/gpodder |
 | Share podcast/episode | 3 | done | Episode: title + page link (else enclosure) via ShareLink; podcast: title + feed URL from FeedDetail toolbar; EpisodeRow button/context menu + FeedDetail swipe; full player ShareLink |
 
 ## Playback
@@ -93,7 +93,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 |---------|---------|------------|---------|
 | gpodder.net sync | 4 | done | **P1 MVP**: Settings → Sync; provider gpodder.net; Keychain password; device id+name; login/logout/sync now; URLSession API2 auth + device + subscription get/upload; pull missing feeds + push local URLs; **additive merge** (remote removes do not wipe local); episode actions stub/not synced |
 | Nextcloud Gpodder sync | 4 | done | **P1 MVP**: same Settings Sync section; provider Nextcloud; base URL (server root or `…/index.php/apps/gpoddersync/`); reuses Keychain + Login/Sync; client composes Nextcloud paths (`subscriptions`, `subscription_change/create`); login probes GET subscriptions (no device API); **additive** subscriptions only — episode actions not synced |
-| AntennaPod DB backup import/export | 3 | partial | **iOS JSON backup** (not Android DB): Settings → Backup export/import ZIP of Application Support maps (feeds/queue/playback/downloads catalog/favorites/archived/feed-settings/tags/download-errors) + app-settings + gpodder prefs; **no Keychain secrets**; **catalog only** for downloads (re-download media); replace warn + store refresh. HTML export is separate (Import / Export) |
+| AntennaPod DB backup import/export | 3 | partial | **iOS JSON backup** (not Android DB): Settings → Backup export/import ZIP of Application Support maps (feeds/queue/playback/downloads catalog/favorites/archived/feed-settings/tags/download-errors/local-folder-bookmarks) + app-settings + gpodder prefs; **no Keychain secrets**; **catalog only** for downloads (re-download media); replace warn + store refresh. HTML export is separate (Import / Export) |
 | HTML export | 2 | done | Settings → Import / Export → **Export subscriptions as HTML**; self-contained list (title, feed URL link, episode count); share sheet `.html`; AntennaPod-style lite; distinct from OPML + JSON backup |
 | Wear OS companion | 1 | n/a | → Watch später P4 |
 

@@ -143,7 +143,7 @@ struct SubscriptionsView: View {
                     ContentUnavailableView(
                         "No subscriptions",
                         systemImage: "dot.radiowaves.left.and.right",
-                        description: Text("Search Apple Podcasts, open Discover for charts, add by feed URL, or import an OPML file.")
+                        description: Text("Search Apple Podcasts, open Discover for charts, add by feed URL, pick a local Folder, or import an OPML file.")
                     )
                 } else if tagFilteredFeeds.isEmpty {
                     ContentUnavailableView(
@@ -264,21 +264,38 @@ struct SubscriptionsView: View {
     @ViewBuilder
     private func feedRow(_ feed: PodcastFeed) -> some View {
         NavigationLink(value: feed) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(feed.title)
-                    .font(.headline)
-                HStack(spacing: 6) {
-                    Text("\(feed.episodes.count) episodes")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                    let tags = store.tags(for: feed.id)
-                    if !tags.isEmpty, tagFilter == .all, !groupByTag {
-                        Text("·")
-                            .foregroundStyle(.tertiary)
-                        Text(tags.joined(separator: ", "))
-                            .font(.caption)
+            HStack(alignment: .center, spacing: 12) {
+                if LocalFolderFeed.isLocalFolderFeed(feed) {
+                    Image(systemName: "folder.fill")
+                        .foregroundStyle(.orange)
+                        .accessibilityLabel("Local folder")
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Text(feed.title)
+                            .font(.headline)
+                        if LocalFolderFeed.isLocalFolderFeed(feed) {
+                            Text("Folder")
+                                .font(.caption2.weight(.semibold))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.orange.opacity(0.2), in: Capsule())
+                                .foregroundStyle(.orange)
+                        }
+                    }
+                    HStack(spacing: 6) {
+                        Text("\(feed.episodes.count) episodes")
+                            .font(.subheadline)
                             .foregroundStyle(.secondary)
-                            .lineLimit(1)
+                        let tags = store.tags(for: feed.id)
+                        if !tags.isEmpty, tagFilter == .all, !groupByTag {
+                            Text("·")
+                                .foregroundStyle(.tertiary)
+                            Text(tags.joined(separator: ", "))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                        }
                     }
                 }
             }

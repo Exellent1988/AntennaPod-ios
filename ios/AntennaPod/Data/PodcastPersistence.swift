@@ -18,6 +18,7 @@ enum PodcastPersistence {
     private static var archivedURL: URL { directory.appendingPathComponent("archived.json") }
     private static var feedTagsURL: URL { directory.appendingPathComponent("feed-tags.json") }
     private static var downloadErrorsURL: URL { directory.appendingPathComponent("download-errors.json") }
+    private static var localFolderBookmarksURL: URL { directory.appendingPathComponent("local-folder-bookmarks.json") }
 
     /// Application Support/AntennaPod directory (created if needed).
     static var applicationSupportDirectory: URL { directory }
@@ -141,6 +142,15 @@ enum PodcastPersistence {
 
     static func saveDownloadErrors(_ items: [DownloadErrorEntry]) {
         encode(items, to: downloadErrorsURL)
+    }
+
+    /// Feed id (uuid string) → base64 security-scoped bookmark for local folder feeds.
+    static func loadLocalFolderBookmarks() -> [String: String] {
+        decode(localFolderBookmarksURL) ?? [:]
+    }
+
+    static func saveLocalFolderBookmarks(_ map: [String: String]) {
+        encode(map, to: localFolderBookmarksURL)
     }
 
     private static func decode<T: Decodable>(_ url: URL) -> T? {

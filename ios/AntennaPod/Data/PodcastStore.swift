@@ -52,6 +52,8 @@ final class PodcastStore: ObservableObject {
         favoriteAtById = PodcastPersistence.loadFavorites()
         archivedAtById = PodcastPersistence.loadArchived()
         tagsByFeedId = PodcastPersistence.loadFeedTags()
+        LocalFolderBookmarkStore.reloadFromPersistence()
+        rescanLocalFolderFeedsBestEffort()
     }
 
     /// Reload all Application Support maps after a data backup import (didSet re-persists).
@@ -63,8 +65,10 @@ final class PodcastStore: ObservableObject {
         favoriteAtById = PodcastPersistence.loadFavorites()
         archivedAtById = PodcastPersistence.loadArchived()
         tagsByFeedId = PodcastPersistence.loadFeedTags()
+        LocalFolderBookmarkStore.reloadFromPersistence()
         pendingAutoDeleteIds = []
         lastError = nil
+        rescanLocalFolderFeedsBestEffort()
     }
 
     func subscribe(feedUrl: String) async {
@@ -86,6 +90,9 @@ final class PodcastStore: ObservableObject {
     }
 
     func unsubscribe(_ feed: PodcastFeed) {
+        if LocalFolderFeed.isLocalFolderFeed(feed) {
+            LocalFolderBookmarkStore.release(feedId: feed.id)
+        }
         feeds.removeAll { $0.id == feed.id }
         feedSettingsById.removeValue(forKey: feed.id)
         tagsByFeedId.removeValue(forKey: feed.id)
@@ -210,6 +217,10 @@ final class PodcastStore: ObservableObject {
 
     func refresh(_ feed: PodcastFeed) async {
         guard !feed.feedUrl.isEmpty else {
+            return
+        }
+        if LocalFolderFeed.isLocalFolderFeed(feed) {
+            await refreshLocalFolderFeed(feed)
             return
         }
         let existingIds = Set(feed.episodes.map(\.id))
@@ -747,6 +758,26 @@ final class PodcastStore: ObservableObject {
         var newBatches: [NewEpisodeBatch] = []
         for feed in snapshot where !feed.feedUrl.isEmpty {
             guard feedSettings(for: feed.id).participatesInBulkRefresh else { continue }
+            if LocalFolderFeed.isLocalFolderFeed(feed) {
+                let existingIds = Set(feed.episodes.map(\.id))
+                do {
+                    let updated = try rescanLocalFolderFeed(feed)
+                    let newcomers = updated.episodes.filter { !existingIds.contains($0.id) }
+                    if !newcomers.isEmpty {
+                        newBatches.append(
+                            NewEpisodeBatch(
+                                feedTitle: updated.title,
+                                feedId: updated.id,
+                                feedUrl: updated.feedUrl,
+                                episodes: newcomers
+                            )
+                        )
+                    }
+                } catch {
+                    lastError = error.localizedDescription
+                }
+                continue
+            }
             let existingIds = Set(feed.episodes.map(\.id))
             do {
                 try await subscribeQuietly(feedUrl: feed.feedUrl)
@@ -827,6 +858,104 @@ final class PodcastStore: ObservableObject {
     private static func matches(_ value: String?, query: String) -> Bool {
         guard let value, !value.isEmpty else { return false }
         return value.localizedCaseInsensitiveContains(query)
+    }
+
+    // MARK: - Local folder feeds (beta)
+
+    /// Subscribe to a user-picked folder: persist security-scoped bookmark + synthetic feed.
+    /// Call while the picker URL still has security-scoped access (`fileImporter`).
+    func subscribeLocalFolder(folderURL: URL) throws {
+        lastError = nil
+        var isDir: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: folderURL.path, isDirectory: &isDir), isDir.boolValue else {
+            throw LocalFolderFeedError.notAFolder
+        }
+        let feedId = UUID()
+        let accessed = folderURL.startAccessingSecurityScopedResource()
+        defer {
+            if accessed {
+                folderURL.stopAccessingSecurityScopedResource()
+            }
+        }
+        try LocalFolderBookmarkStore.saveBookmark(forFolderURL: folderURL, feedId: feedId)
+        let feed: PodcastFeed
+        do {
+            // Prefer tracked access for later playback; fall back to picker URL for the initial scan.
+            let folder = (try? LocalFolderAccess.beginAccess(feedId: feedId)) ?? folderURL
+            feed = try LocalFolderScanner.buildFeed(feedId: feedId, folderURL: folder)
+        } catch {
+            LocalFolderBookmarkStore.release(feedId: feedId)
+            throw error
+        }
+        feeds.append(feed)
+    }
+
+    /// Re-scan one local folder feed (manual Refresh swipe).
+    func refreshLocalFolderFeed(_ feed: PodcastFeed) async {
+        lastError = nil
+        isLoading = true
+        defer { isLoading = false }
+        let existingIds = Set(feed.episodes.map(\.id))
+        do {
+            let updated = try rescanLocalFolderFeed(feed)
+            let newcomers = updated.episodes.filter { !existingIds.contains($0.id) }
+            if !newcomers.isEmpty {
+                let batches = [
+                    NewEpisodeBatch(
+                        feedTitle: updated.title,
+                        feedId: updated.id,
+                        feedUrl: updated.feedUrl,
+                        episodes: newcomers
+                    )
+                ]
+                await NewEpisodeNotificationCoordinator.handleNewEpisodes(
+                    batches,
+                    settings: settings,
+                    store: self
+                )
+                await NewEpisodeActionCoordinator.apply(
+                    batches,
+                    store: self,
+                    downloads: downloads,
+                    settings: settings
+                )
+            }
+            await AutoDownloadCoordinator.enqueueAfterRefresh(
+                store: self,
+                downloads: downloads,
+                settings: settings
+            )
+        } catch {
+            lastError = error.localizedDescription
+        }
+    }
+
+    /// Best-effort re-scan of all local folder feeds (launch / backup import) so file:// paths stay current.
+    private func rescanLocalFolderFeedsBestEffort() {
+        let locals = feeds.filter { LocalFolderFeed.isLocalFolderFeed($0) }
+        for feed in locals {
+            _ = try? rescanLocalFolderFeed(feed)
+        }
+    }
+
+    /// Re-scan folder from bookmark; preserves feed id + title; updates episode list.
+    @discardableResult
+    func rescanLocalFolderFeed(_ feed: PodcastFeed) throws -> PodcastFeed {
+        let folder = try LocalFolderAccess.beginAccess(feedId: feed.id)
+        var updated = try LocalFolderScanner.buildFeed(
+            feedId: feed.id,
+            folderURL: folder,
+            existingTitle: feed.title
+        )
+        if !feed.title.isEmpty {
+            updated.title = feed.title
+        }
+        if let index = feeds.firstIndex(where: { $0.id == feed.id }) {
+            feeds[index] = updated
+        } else {
+            feeds.append(updated)
+        }
+        return updated
     }
 
     // MARK: - OPML import / export

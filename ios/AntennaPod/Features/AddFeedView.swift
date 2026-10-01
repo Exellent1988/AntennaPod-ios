@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// Add podcast: Apple Podcasts / Podcast Index / fyyd search + preview-by-URL (confirm subscribe).
 struct AddFeedView: View {
@@ -36,6 +37,12 @@ struct AddFeedView: View {
 
     @State private var previewRequest: FeedPreviewRequest?
 
+    // Local folder
+    @State private var showFolderPicker = false
+    @State private var folderError: String?
+    @State private var folderStatus: String?
+    @State private var isAddingFolder = false
+
     private let itunesSearcher = ItunesSearchService()
     private let podcastIndexSearcher = PodcastIndexSearchService()
     private let fyydSearcher = FyydSearchService()
@@ -46,6 +53,7 @@ struct AddFeedView: View {
         case podcastIndex = "Index"
         case fyyd = "fyyd"
         case url = "URL"
+        case folder = "Folder"
         var id: String { rawValue }
     }
 
@@ -70,6 +78,8 @@ struct AddFeedView: View {
                     fyydSearchContent
                 case .url:
                     urlContent
+                case .folder:
+                    folderContent
                 }
             }
             .navigationTitle("Add podcast")
@@ -315,6 +325,75 @@ struct AddFeedView: View {
         .onAppear {
             if mode == .url {
                 urlFocused = true
+            }
+        }
+    }
+
+    // MARK: - Local folder
+
+    private var folderContent: some View {
+        List {
+            Section {
+                Button {
+                    folderError = nil
+                    folderStatus = nil
+                    showFolderPicker = true
+                } label: {
+                    Label("Choose folder…", systemImage: "folder.badge.plus")
+                }
+                .disabled(isAddingFolder)
+
+                if isAddingFolder {
+                    ProgressView("Scanning folder…")
+                }
+                if let folderStatus {
+                    Text(folderStatus)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                if let folderError {
+                    Text(folderError)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+            } header: {
+                Text("Local folder feed")
+            } footer: {
+                Text("Beta: pick a folder of audio files (mp3, m4a, aac, wav, flac). Creates a synthetic subscription — no RSS, no network refresh. Access is kept via a security-scoped bookmark; unsubscribe releases it. Refresh re-scans the folder.")
+            }
+        }
+        .listStyle(.insetGrouped)
+        .fileImporter(
+            isPresented: $showFolderPicker,
+            allowedContentTypes: [.folder],
+            allowsMultipleSelection: false
+        ) { result in
+            handleFolderPick(result)
+        }
+    }
+
+    private func handleFolderPick(_ result: Result<[URL], Error>) {
+        switch result {
+        case .failure(let error):
+            folderError = error.localizedDescription
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            isAddingFolder = true
+            folderError = nil
+            folderStatus = nil
+            defer { isAddingFolder = false }
+            let accessed = url.startAccessingSecurityScopedResource()
+            defer {
+                if accessed {
+                    url.stopAccessingSecurityScopedResource()
+                }
+            }
+            do {
+                try store.subscribeLocalFolder(folderURL: url)
+                folderStatus = "Added “\(url.lastPathComponent)” as a local folder feed."
+                dismiss()
+            } catch {
+                folderError = error.localizedDescription
             }
         }
     }
