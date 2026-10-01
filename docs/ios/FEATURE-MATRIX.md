@@ -48,7 +48,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Stream playback | 5 | wip | AVPlayer skeleton |
 | Lockscreen / Now Playing | 5 | todo | |
 | Variable speed | 5 | wip | Mini player rate menu |
-| Sleep timer (Basis) | 5 | todo | |
+| Sleep timer (Basis) | 5 | done | Clock presets 5–60 min + end of episode; fade last 10s; mini-player menu |
 | Fortschritt speichern / fortsetzen | 5 | done | JSON `playback.json`; resume on play |
 | Mark played / unplayed | 5 | done | Manual + smart-mark last 30s (AntennaPod default) |
 | Continuous playback (Queue) | 5 | wip | Auto-next from queue on end |

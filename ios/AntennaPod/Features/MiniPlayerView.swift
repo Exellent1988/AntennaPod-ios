@@ -32,6 +32,7 @@ struct MiniPlayerView: View {
                     } label: {
                         Image(systemName: "goforward.30")
                     }
+                    sleepTimerMenu
                     Menu {
                         ForEach([0.8, 1.0, 1.2, 1.5, 2.0], id: \.self) { rate in
                             Button("\(rate, specifier: "%.1f")×") {
@@ -47,6 +48,45 @@ struct MiniPlayerView: View {
             .padding()
             .background(.bar)
         }
+    }
+
+    private var sleepTimerMenu: some View {
+        Menu {
+            if playback.isSleepTimerActive {
+                if let label = playback.sleepTimerStatusLabel {
+                    Text("Active · \(label)")
+                }
+                Button("Extend +5 min") {
+                    playback.extendSleepTimer(byMinutes: 5)
+                }
+                Button("Extend +10 min") {
+                    playback.extendSleepTimer(byMinutes: 10)
+                }
+                Button("Turn off", role: .destructive) {
+                    playback.disableSleepTimer()
+                }
+                Divider()
+            }
+            ForEach(PlaybackService.clockPresetsMinutes, id: \.self) { minutes in
+                Button("\(minutes) min") {
+                    playback.setSleepTimer(minutes: minutes)
+                }
+            }
+            Button("End of episode") {
+                playback.setSleepTimerEndOfEpisode()
+            }
+        } label: {
+            if playback.isSleepTimerActive, let label = playback.sleepTimerStatusLabel {
+                Text(label)
+                    .font(.caption2.monospacedDigit())
+                    .lineLimit(1)
+            } else {
+                Image(systemName: "moon.zzz")
+            }
+        }
+        .accessibilityLabel(playback.isSleepTimerActive
+            ? "Sleep timer \(playback.sleepTimerStatusLabel ?? "active")"
+            : "Sleep timer")
     }
 
     private var timeLabel: String {
