@@ -26,6 +26,9 @@ struct RootTabView: View {
                     Label("Inbox", systemImage: "tray.fill")
                 }
                 .tag(RootTab.inbox)
+                // Same source as Inbox list (`PodcastStore.inboxEpisodes`).
+                // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
+                .badge(store.inboxEpisodes.count)
             SubscriptionsView()
                 .tabItem {
                     Label("Subscriptions", systemImage: "square.stack.fill")

@@ -35,7 +35,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh; `.searchable` title/feed on section episode previews + Recently updated podcast titles with debounce; empty sections hide while filtering; Discover hidden while searching; empty state when no matches)
 - German localization (beta; main `Localizable.xcstrings` en+de + per-target Widget/Watch catalogs; tabs/nav, Settings headers + footnotes/help captions, parental detail, Statistics + Echo, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript, Homescreen Widget + Apple Watch UI — **partial**, not full i18n)
 - Accessibility / VoiceOver (beta polish; EpisodeRow combined labels (incl. relative publish date + duration + in-progress percent/remaining when known) + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
-- Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Play Next + Add to queue; toolbar **Sort** Newest/Oldest first by `pubDateEpochMs` (`inboxSort`); toolbar menu Archive all + Mark all as played with confirm)
+- Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Play Next + Add to queue; toolbar **Sort** Newest/Oldest first by `pubDateEpochMs` (`inboxSort`); toolbar menu Archive all + Mark all as played with confirm; **tab badge** = `inboxEpisodes.count`, hidden when 0)
 - History (played / in-progress; Subscriptions → Library → History; toolbar **Sort** Newest/Oldest first by `lastPlayedAtEpochMs` (`historySort`); `.searchable` title/feed filter with debounce; toolbar Clear history with confirm on full list)
 - Statistics (beta; Subscriptions → Library → Statistics + Settings; totals + top podcasts from `playback.json`; approx time; **time range** This week / This month / This year / All time)
 - Echo / Year in Review (beta lite; Library + Settings; shared Statistics time range on playback/favorites; ShareLink text)
@@ -95,7 +95,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Parental controls (beta; Settings → Parental controls; 4–6 digit PIN in Keychain; lock Add/Discover; optional Network/Downloads lock + hide explicit charts; session unlock until background)
 - gpodder.net / Nextcloud Gpodder sync (subscriptions MVP: provider picker; Keychain; pull+push feed URLs; additive merge; episode actions later)
 
-Root tabs (6): **Home**, Inbox, Subscriptions, Queue, Downloads, Settings.
+Root tabs (6): **Home**, Inbox (count badge when `inboxEpisodes.count` > 0), Subscriptions, Queue, Downloads, Settings.
 
 ## Layout
 
@@ -111,7 +111,7 @@ ios/
     ├── AntennaPod.entitlements   # App Group
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers, WatchCompanionBridge
-    └── Features/…           # home (+ charts preview + searchable), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts + Manage tags + unplayed badge), feed detail + per-feed settings (+ tags), ManageTagsView, add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ filter chips + searchable + error log), queue (+ searchable; reorder off while filtering), settings (+ searchable titles/footnotes; Home layout + Manage tags + gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + Apple Watch note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview + searchable), inbox (+ tab badge), all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts + Manage tags + unplayed badge), feed detail + per-feed settings (+ tags), ManageTagsView, add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ filter chips + searchable + error log), queue (+ searchable; reorder off while filtering), settings (+ searchable titles/footnotes; Home layout + Manage tags + gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + Apple Watch note + CarPlay note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
