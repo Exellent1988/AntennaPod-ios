@@ -29,6 +29,8 @@ struct FullPlayerView: View {
     @State private var copyURLFeedbackTick = 0
     /// Single download pending Full Player delete confirmation (nil = dialog dismissed).
     @State private var episodePendingDeleteDownload: PodcastEpisode?
+    /// Single episode pending Full Player Remove-from-queue confirmation (nil = dialog dismissed).
+    @State private var episodePendingRemoveFromQueue: PodcastEpisode?
 
     private var episode: PodcastEpisode? { playback.currentEpisode }
 
@@ -219,6 +221,27 @@ struct FullPlayerView: View {
         } message: { episode in
             Text(
                 "Delete download for \"\(episode.title)\"? Removes the local offline file only. Keeps played status, queue, and favorites."
+            )
+        }
+        .confirmationDialog(
+            "Remove from queue?",
+            isPresented: Binding(
+                get: { episodePendingRemoveFromQueue != nil },
+                set: { if !$0 { episodePendingRemoveFromQueue = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: episodePendingRemoveFromQueue
+        ) { episode in
+            Button("Remove from queue", role: .destructive) {
+                store.removeFromQueue(episode)
+                episodePendingRemoveFromQueue = nil
+            }
+            Button("Cancel", role: .cancel) {
+                episodePendingRemoveFromQueue = nil
+            }
+        } message: { episode in
+            Text(
+                "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
             )
         }
         .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
@@ -929,7 +952,8 @@ struct FullPlayerView: View {
         Menu {
             Button {
                 if inQueue {
-                    store.removeFromQueue(episode)
+                    // Same path as Queue tab swipe Remove — confirm first.
+                    episodePendingRemoveFromQueue = episode
                 } else {
                     store.enqueue(episode)
                 }
@@ -946,7 +970,7 @@ struct FullPlayerView: View {
             )
             .accessibilityHint(
                 inQueue
-                    ? String(localized: "Removes this episode from the queue")
+                    ? String(localized: "Asks for confirmation, then removes this episode from the queue")
                     : String(localized: "Adds this episode to the queue")
             )
 

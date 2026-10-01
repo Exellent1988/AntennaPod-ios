@@ -300,6 +300,9 @@ final class PodcastStore: ObservableObject {
         queue.insert(episode, at: min(insertIndex, queue.count))
     }
 
+    /// Drop one episode from the queue. Persists via `queue` `didSet`.
+    /// Does not stop playback, change progress, mark played, or delete downloads — queue entry only.
+    /// UI callers (Queue swipe Remove, Full Player Remove from queue) must confirm first.
     func removeFromQueue(_ episode: PodcastEpisode) {
         queue.removeAll { $0.id == episode.id }
     }

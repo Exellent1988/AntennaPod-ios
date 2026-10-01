@@ -12,6 +12,8 @@ struct QueueView: View {
     @State private var debounceTask: Task<Void, Never>?
     @State private var showClearQueueConfirm = false
     @State private var showShuffleQueueConfirm = false
+    /// Single episode pending swipe-remove confirmation (nil = dialog dismissed).
+    @State private var episodePendingRemove: PodcastEpisode?
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -204,10 +206,14 @@ struct QueueView: View {
                         )
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
-                                store.removeFromQueue(episode)
+                                // Same path as Full Player Remove from queue — confirm first.
+                                episodePendingRemove = episode
                             } label: {
                                 Label("Remove", systemImage: "minus.circle")
                             }
+                            .accessibilityHint(
+                                String(localized: "Asks for confirmation, then removes this episode from the queue")
+                            )
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
                             Button {
@@ -335,6 +341,27 @@ struct QueueView: View {
             } message: {
                 Text(
                     "Randomly reorders all \(store.queue.count) episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+                )
+            }
+            .confirmationDialog(
+                "Remove from queue?",
+                isPresented: Binding(
+                    get: { episodePendingRemove != nil },
+                    set: { if !$0 { episodePendingRemove = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: episodePendingRemove
+            ) { episode in
+                Button("Remove from queue", role: .destructive) {
+                    store.removeFromQueue(episode)
+                    episodePendingRemove = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    episodePendingRemove = nil
+                }
+            } message: { episode in
+                Text(
+                    "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
                 )
             }
         }
