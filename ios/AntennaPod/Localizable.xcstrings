@@ -13265,6 +13265,91 @@
           }
         }
       }
+    },
+    "Clear all downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear all downloads"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Downloads löschen"
+          }
+        }
+      }
+    },
+    "Clear all downloads?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear all downloads?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Downloads löschen?"
+          }
+        }
+      }
+    },
+    "Deletes every completed offline file including favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes every completed offline file including favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht jede abgeschlossene Offline-Datei einschließlich Favoriten"
+          }
+        }
+      }
+    },
+    "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Local files only — keeps played status, queue, favorites list, and history. Distinct from Delete played downloads and from Clear queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Local files only — keeps played status, queue, favorites list, and history. Distinct from Delete played downloads and from Clear queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht %lld abgeschlossene Offline-Datei(en) (%@), einschließlich favorisierter Downloads. Nutzt den gesamten Downloads-Katalog — nicht den Chip-/Suche-Filter. Nur lokale Dateien — Wiedergabestatus, Warteschlange, Favoritenliste und Verlauf bleiben. Unterschiedlich von „Gehörte Downloads löschen“ und „Warteschlange leeren“."
+          }
+        }
+      }
+    },
+    "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog. Local files only — keeps played status, queue, favorites list, and history. Distinct from Delete played downloads and from Clear queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog. Local files only — keeps played status, queue, favorites list, and history. Distinct from Delete played downloads and from Clear queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht %lld abgeschlossene Offline-Datei(en) (%@), einschließlich favorisierter Downloads. Nutzt den gesamten Downloads-Katalog. Nur lokale Dateien — Wiedergabestatus, Warteschlange, Favoritenliste und Verlauf bleiben. Unterschiedlich von „Gehörte Downloads löschen“ und „Warteschlange leeren“."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

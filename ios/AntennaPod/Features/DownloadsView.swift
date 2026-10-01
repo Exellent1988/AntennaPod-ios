@@ -10,6 +10,7 @@ struct DownloadsView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
     @State private var showDeletePlayedConfirm = false
+    @State private var showClearAllConfirm = false
     @State private var showEnqueueAllConfirm = false
     /// Single download pending swipe-delete confirmation (nil = dialog dismissed).
     @State private var episodePendingDelete: PodcastEpisode?
@@ -70,6 +71,11 @@ struct DownloadsView: View {
 
     private var playedDownloadsDeleteSizeLabel: String {
         DownloadStorageUsage.formatBytes(downloads.playedDownloadsEligibleByteSize(store: store))
+    }
+
+    /// Full completed catalog size for Clear all confirmation (not chip/search filtered).
+    private var clearAllDownloadsSizeLabel: String {
+        DownloadStorageUsage.formatBytes(downloads.completedDownloadsByteSize())
     }
 
     /// Episodes from the **full completed Downloads catalog** (`DownloadService.downloads`,
@@ -363,11 +369,19 @@ struct DownloadsView: View {
                             Label("Delete played downloads", systemImage: "trash")
                         }
                         .disabled(playedDownloadsForDelete.isEmpty)
+
+                        Button(role: .destructive) {
+                            showClearAllConfirm = true
+                        } label: {
+                            Label("Clear all downloads", systemImage: "trash.fill")
+                        }
+                        .disabled(downloads.downloads.isEmpty)
+                        .accessibilityHint(String(localized: "Deletes every completed offline file including favorites"))
                     } label: {
                         Label("Downloads actions", systemImage: "ellipsis.circle")
                     }
-                    // Menu available whenever the completed catalog is non-empty (Add all / Delete played
-                    // each disable independently — same honesty as Favorites Add all + Clear).
+                    // Menu available whenever the completed catalog is non-empty (Add all / Delete played /
+                    // Clear all each disable independently — same honesty as Favorites Add all + Clear).
                     .disabled(downloads.downloads.isEmpty)
                 }
             }
@@ -395,6 +409,20 @@ struct DownloadsView: View {
             } message: {
                 Text(
                     "Deletes \(playedDownloadsForDelete.count) played offline file(s) (\(playedDownloadsDeleteSizeLabel)). Keeps unplayed downloads and favorites. Does not mark unplayed, clear the queue, or clear all downloads."
+                )
+            }
+            .confirmationDialog(
+                "Clear all downloads?",
+                isPresented: $showClearAllConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Clear all downloads", role: .destructive) {
+                    downloads.clearAllDownloads()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(clearAllDownloadsSizeLabel)), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Local files only — keeps played status, queue, favorites list, and history. Distinct from Delete played downloads and from Clear queue."
                 )
             }
             .confirmationDialog(

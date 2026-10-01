@@ -365,7 +365,9 @@ struct SettingsView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Removes \(downloads.downloads.count) offline episode file(s). Playback history is kept.")
+                Text(
+                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(DownloadStorageUsage.formatBytes(downloads.completedDownloadsByteSize()))), including favorited downloads. Uses the full Downloads catalog. Local files only — keeps played status, queue, favorites list, and history. Distinct from Delete played downloads and from Clear queue."
+                )
             }
         }
     }

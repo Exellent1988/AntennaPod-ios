@@ -378,7 +378,21 @@ final class DownloadService: ObservableObject {
         return victims.count
     }
 
-    /// Deletes every completed download (confirmation is UI responsibility). Cancels in-flight tasks.
+    /// Approximate total byte size of files that `clearAllDownloads` would remove (full completed catalog).
+    /// Uses on-disk `fileSize` when readable; missing files contribute 0 (same honesty as played-delete size).
+    func completedDownloadsByteSize() -> Int64 {
+        var total: Int64 = 0
+        for item in downloads {
+            let values = try? item.localFileURL.resourceValues(forKeys: [.fileSizeKey])
+            total += Int64(values?.fileSize ?? 0)
+        }
+        return total
+    }
+
+    /// Deletes **every** completed offline file in the Downloads catalog — including favorited / starred
+    /// episodes (unlike `deletePlayedDownloads` / auto-delete, which skip favorites). Local files only:
+    /// does **not** mark unplayed, clear the queue, remove favorites/history entries, or stop playback.
+    /// Cancels in-flight tasks for catalog episode ids. Confirmation is UI responsibility.
     func clearAllDownloads() {
         let episodeIds = downloads.map(\.id)
         for id in episodeIds {
