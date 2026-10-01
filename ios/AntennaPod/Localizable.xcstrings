@@ -8636,6 +8636,91 @@
           }
         }
       }
+    },
+    "Open full player": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open full player"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vollbild-Player öffnen"
+          }
+        }
+      }
+    },
+    "Shows the full player with scrubber and more controls": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shows the full player with scrubber and more controls"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den Vollbild-Player mit Scrubber und weiteren Steuerelementen"
+          }
+        }
+      }
+    },
+    "Open full player, %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open full player, %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vollbild-Player öffnen, %@"
+          }
+        }
+      }
+    },
+    "Open full player, %@, chapter %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open full player, %@, chapter %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vollbild-Player öffnen, %@, Kapitel %@"
+          }
+        }
+      }
+    },
+    "Chapter %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -17,8 +17,8 @@ struct MiniPlayerView: View {
                     ProgressView(value: playback.durationSeconds > 0 ? playback.positionSeconds / playback.durationSeconds : 0)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Open full player")
-                .accessibilityHint("Shows the full player with scrubber and more controls")
+                .accessibilityLabel(String(localized: "Open full player"))
+                .accessibilityHint(String(localized: "Shows the full player with scrubber and more controls"))
                 .accessibilityValue(timeLabel)
 
                 HStack {
@@ -30,6 +30,12 @@ struct MiniPlayerView: View {
                                 .font(.subheadline.weight(.semibold))
                                 .lineLimit(1)
                                 .foregroundStyle(.primary)
+                            if let chapterTitle = currentChapterTitle {
+                                Text(chapterTitle)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(1)
+                            }
                             HStack(spacing: 6) {
                                 Text(timeLabel)
                                     .font(.caption2)
@@ -41,7 +47,7 @@ struct MiniPlayerView: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Open full player, \(episode.title)")
+                    .accessibilityLabel(openFullPlayerAccessibilityLabel(for: episode))
 
                     Button {
                         playback.seek(bySeconds: -playback.rewindSeconds)
@@ -117,6 +123,30 @@ struct MiniPlayerView: View {
                     .environmentObject(playback)
             }
         }
+    }
+
+    /// Chapters already on the store/player episode (PSC / persisted Podcast Index / media).
+    /// Mini player does not fetch remote or media chapters — Full Player does that lazily.
+    private var chapters: [PodcastChapter] {
+        guard let episode = playback.currentEpisode else { return [] }
+        let resolved = store.episode(id: episode.id) ?? episode
+        return resolved.chapters
+    }
+
+    /// Title of the chapter at `positionSeconds`, or `nil` when none / empty title.
+    private var currentChapterTitle: String? {
+        guard let index = ChapterIndexing.currentIndex(in: chapters, at: playback.positionSeconds) else {
+            return nil
+        }
+        let title = chapters[index].title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return title.isEmpty ? nil : title
+    }
+
+    private func openFullPlayerAccessibilityLabel(for episode: PodcastEpisode) -> String {
+        if let chapter = currentChapterTitle {
+            return String(localized: "Open full player, \(episode.title), chapter \(chapter)")
+        }
+        return String(localized: "Open full player, \(episode.title)")
     }
 
     private var feedForCurrentEpisode: PodcastFeed? {

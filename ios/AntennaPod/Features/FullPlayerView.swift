@@ -66,6 +66,13 @@ struct FullPlayerView: View {
         ChapterIndexing.currentIndex(in: chapters, at: displayPosition)
     }
 
+    /// Title of the active chapter at display position, or `nil` when none / empty.
+    private var currentChapterTitle: String? {
+        guard let index = currentChapterIndex else { return nil }
+        let title = chapters[index].title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return title.isEmpty ? nil : title
+    }
+
     private var canSkipChapters: Bool { !chapters.isEmpty }
 
     private var previousChapterTarget: Double? {
@@ -225,6 +232,14 @@ struct FullPlayerView: View {
                                 ? String(localized: "Podcast unavailable")
                                 : String(localized: "Opens this episode's podcast in Subscriptions")
                         )
+                        if let chapterTitle = currentChapterTitle {
+                            Text(chapterTitle)
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .accessibilityLabel(String(localized: "Chapter \(chapterTitle)"))
+                        }
                         Label(
                             playback.isPlayingFromLocalFile ? "Playing from download" : "Streaming",
                             systemImage: playback.isPlayingFromLocalFile ? "internaldrive" : "wifi"
