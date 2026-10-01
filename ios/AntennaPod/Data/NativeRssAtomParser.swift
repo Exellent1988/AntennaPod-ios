@@ -100,6 +100,24 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itemSocialInteracts: [PodcastSocialInteract] = []
     /// Item podcast:value / valueRecipient — feed-provided only; display-only (no payments).
     private var itemValues: [PodcastValue] = []
+    /// Item podcast:alternateEnclosure (+ nested source) — feed-provided only; display-only (Open/Copy; no player switch).
+    private var itemAlternateEnclosures: [PodcastAlternateEnclosure] = []
+    /// Capturing podcast:alternateEnclosure attributes + nested sources.
+    private var capturingAlternateEnclosure = false
+    private var pendingAltType: String?
+    private var pendingAltLength: Int64?
+    private var pendingAltBitrate: Double?
+    private var pendingAltHeight: Int?
+    private var pendingAltLang: String?
+    private var pendingAltTitle: String?
+    private var pendingAltRel: String?
+    private var pendingAltCodecs: String?
+    private var pendingAltDefault: Bool?
+    private var pendingAltSources: [PodcastAlternateSource] = []
+    /// Capturing podcast:source under alternateEnclosure.
+    private var capturingAlternateSource = false
+    private var pendingSourceUri: String?
+    private var pendingSourceContentType: String?
     /// Capturing podcast:person element text (name) + pending attributes.
     private var capturingPerson = false
     private var pendingPersonRole: String?
@@ -237,6 +255,21 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemLocations = []
             itemSocialInteracts = []
             itemValues = []
+            itemAlternateEnclosures = []
+            capturingAlternateEnclosure = false
+            pendingAltType = nil
+            pendingAltLength = nil
+            pendingAltBitrate = nil
+            pendingAltHeight = nil
+            pendingAltLang = nil
+            pendingAltTitle = nil
+            pendingAltRel = nil
+            pendingAltCodecs = nil
+            pendingAltDefault = nil
+            pendingAltSources = []
+            capturingAlternateSource = false
+            pendingSourceUri = nil
+            pendingSourceContentType = nil
             if local.lowercased() == "entry", let href = attributeDict["href"] {
                 itemLink = href
             }
@@ -493,6 +526,63 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             guard inLiveItem else { break }
             capturingContentLink = true
             pendingContentLinkHref = Self.nonEmptyAttr(attributeDict["href"] ?? attributeDict["url"])
+        case "alternateenclosure":
+            // Podcast Index: <podcast:alternateEnclosure type="…" length="…" bitrate="…" …>
+            // Item-level only. type required; ≥1 podcast:source. Display-only — Open URL / Copy; no player switch.
+            // Never invent alternate enclosures.
+            if inLiveItem { break }
+            guard inItem else { break }
+            capturingAlternateEnclosure = true
+            pendingAltType = Self.nonEmptyAttr(attributeDict["type"])
+            if let rawLen = Self.nonEmptyAttr(attributeDict["length"]),
+               let len = Int64(rawLen), len >= 0 {
+                pendingAltLength = len
+            } else {
+                pendingAltLength = nil
+            }
+            if let rawBr = Self.nonEmptyAttr(attributeDict["bitrate"]),
+               let br = Double(rawBr), br > 0 {
+                pendingAltBitrate = br
+            } else {
+                pendingAltBitrate = nil
+            }
+            if let rawH = Self.nonEmptyAttr(attributeDict["height"]),
+               let h = Int(rawH), h > 0 {
+                pendingAltHeight = h
+            } else {
+                pendingAltHeight = nil
+            }
+            pendingAltLang = Self.nonEmptyAttr(attributeDict["lang"] ?? attributeDict["language"])
+            pendingAltTitle = Self.nonEmptyAttr(attributeDict["title"])
+            pendingAltRel = Self.nonEmptyAttr(attributeDict["rel"])
+            pendingAltCodecs = Self.nonEmptyAttr(attributeDict["codecs"])
+            if let rawDef = Self.nonEmptyAttr(attributeDict["default"]) {
+                let lower = rawDef.lowercased()
+                if lower == "true" || lower == "yes" || lower == "1" {
+                    pendingAltDefault = true
+                } else if lower == "false" || lower == "no" || lower == "0" {
+                    pendingAltDefault = false
+                } else {
+                    pendingAltDefault = nil
+                }
+            } else {
+                pendingAltDefault = nil
+            }
+            pendingAltSources = []
+            capturingAlternateSource = false
+            pendingSourceUri = nil
+            pendingSourceContentType = nil
+        case "source":
+            // Podcast Index: <podcast:source uri="…" contentType="…"/> under alternateEnclosure.
+            // uri required; contentType optional (when transport MIME differs).
+            guard capturingAlternateEnclosure, inItem, !inLiveItem else { break }
+            capturingAlternateSource = true
+            pendingSourceUri = Self.nonEmptyAttr(
+                attributeDict["uri"] ?? attributeDict["url"] ?? attributeDict["href"]
+            )
+            pendingSourceContentType = Self.nonEmptyAttr(
+                attributeDict["contentType"] ?? attributeDict["type"]
+            )
         default:
             break
         }
@@ -597,6 +687,10 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishValueRecipient()
             case "value":
                 finishValue(intoItem: true)
+            case "source":
+                finishAlternateSource()
+            case "alternateenclosure":
+                finishAlternateEnclosure()
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
@@ -620,7 +714,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     people: itemPeople,
                     locations: itemLocations,
                     socialInteracts: itemSocialInteracts,
-                    values: itemValues
+                    values: itemValues,
+                    alternateEnclosures: itemAlternateEnclosures
                 )
                 episodes.append(episode)
                 inItem = false
@@ -721,6 +816,63 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     }
 
 
+
+    /// Finish podcast:source under alternateEnclosure — append when uri present; never invent.
+    private func finishAlternateSource() {
+        defer {
+            capturingAlternateSource = false
+            pendingSourceUri = nil
+            pendingSourceContentType = nil
+        }
+        guard capturingAlternateEnclosure, capturingAlternateSource else { return }
+        guard let uri = pendingSourceUri,
+              !uri.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        pendingAltSources.append(
+            PodcastAlternateSource(
+                uri: uri,
+                contentType: pendingSourceContentType
+            )
+        )
+    }
+
+    /// Finish podcast:alternateEnclosure — append when type + ≥1 source; display-only (no player switch).
+    private func finishAlternateEnclosure() {
+        defer {
+            capturingAlternateEnclosure = false
+            pendingAltType = nil
+            pendingAltLength = nil
+            pendingAltBitrate = nil
+            pendingAltHeight = nil
+            pendingAltLang = nil
+            pendingAltTitle = nil
+            pendingAltRel = nil
+            pendingAltCodecs = nil
+            pendingAltDefault = nil
+            pendingAltSources = []
+            capturingAlternateSource = false
+            pendingSourceUri = nil
+            pendingSourceContentType = nil
+        }
+        guard capturingAlternateEnclosure, inItem else { return }
+        guard let mime = pendingAltType,
+              !mime.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        let sources = pendingAltSources
+        guard !sources.isEmpty else { return }
+        itemAlternateEnclosures.append(
+            PodcastAlternateEnclosure(
+                type: mime,
+                length: pendingAltLength,
+                bitrate: pendingAltBitrate,
+                height: pendingAltHeight,
+                lang: pendingAltLang,
+                title: pendingAltTitle,
+                rel: pendingAltRel,
+                codecs: pendingAltCodecs,
+                isDefault: pendingAltDefault,
+                sources: sources
+            )
+        )
+    }
 
     /// Finish podcast:contentLink under liveItem — append when href present; never invent.
     private func finishContentLink(text: String) {

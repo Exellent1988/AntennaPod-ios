@@ -635,6 +635,224 @@ enum PodcastValueDisplay {
 
 
 
+
+/// Podcast Index `podcast:source` under `podcast:alternateEnclosure`.
+/// Required `uri`; optional `contentType` when transport MIME differs from the media type.
+/// Feed-provided only — never invent URIs.
+struct PodcastAlternateSource: Identifiable, Hashable, Codable {
+    var id: String { "\(uri)|\(contentType ?? "")" }
+    /// Required URI from the feed (`https://…`, `ipfs://…`, torrent URL, …).
+    var uri: String
+    /// Optional transport MIME (e.g. `application/x-bittorrent`) when it differs from parent `type`.
+    var contentType: String?
+
+    init(uri: String, contentType: String? = nil) {
+        self.uri = uri
+        self.contentType = contentType
+    }
+
+    /// Trimmed non-empty URI. Nil when blank.
+    var displayURI: String? {
+        let trimmed = uri.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty contentType when the feed set it.
+    var displayContentType: String? {
+        guard let contentType else { return nil }
+        let trimmed = contentType.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) openable URL from feed `uri` only. Nil for ipfs / magnet / other schemes — Copy instead.
+    /// Never invent URLs — openURL only when the URI itself is http(s).
+    var browserURL: URL? {
+        guard let trimmed = displayURI, let url = URL(string: trimmed) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return url
+    }
+}
+
+/// Podcast Index `podcast:alternateEnclosure` — alternate / companion media for an item.
+/// Required `type` + ≥1 `podcast:source`. Optional length/bitrate/height/lang/title/rel/codecs/default.
+/// **Display-only:** this app does **not** switch `PlaybackService` to alternate streams — Open URL / Copy only.
+/// Feed-provided only — never invent enclosures.
+struct PodcastAlternateEnclosure: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields + sources.
+    var id: String {
+        let src = sources.map(\.id).joined(separator: ";")
+        return "\(type)|\(title ?? "")|\(bitrate.map { String($0) } ?? "")|\(length.map(String.init) ?? "")|\(lang ?? "")|\(rel ?? "")|\(src)"
+    }
+    /// Required MIME type of the media asset (`audio/mpeg`, `video/mp4`, …).
+    var type: String
+    /// Recommended file length in bytes when the feed provides it.
+    var length: Int64?
+    /// Optional average encoding bitrate in bits per second.
+    var bitrate: Double?
+    /// Optional video height in pixels.
+    var height: Int?
+    /// Optional IETF language tag (BCP 47).
+    var lang: String?
+    /// Optional human-readable label (Podcast Index suggests ≤32 characters).
+    var title: String?
+    /// Optional grouping / relation (e.g. commentary). Nil or `default` = alternative to the main enclosure.
+    var rel: String?
+    /// Optional RFC 6381 codecs string.
+    var codecs: String?
+    /// Optional `default` attribute — preferred / same as RSS enclosure when true.
+    var isDefault: Bool?
+    /// Nested `podcast:source` entries (at least one required by the namespace).
+    var sources: [PodcastAlternateSource]
+
+    init(
+        type: String,
+        length: Int64? = nil,
+        bitrate: Double? = nil,
+        height: Int? = nil,
+        lang: String? = nil,
+        title: String? = nil,
+        rel: String? = nil,
+        codecs: String? = nil,
+        isDefault: Bool? = nil,
+        sources: [PodcastAlternateSource] = []
+    ) {
+        self.type = type
+        self.length = length
+        self.bitrate = bitrate
+        self.height = height
+        self.lang = lang
+        self.title = title
+        self.rel = rel
+        self.codecs = codecs
+        self.isDefault = isDefault
+        self.sources = sources
+    }
+
+    /// Trimmed non-empty MIME type.
+    var displayType: String? {
+        let trimmed = type.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty title when the feed set it.
+    var displayTitle: String? {
+        guard let title else { return nil }
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty lang when the feed set it.
+    var displayLang: String? {
+        guard let lang else { return nil }
+        let trimmed = lang.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty rel when set and not the literal `default` (spec default grouping).
+    var displayRel: String? {
+        guard let rel else { return nil }
+        let trimmed = rel.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        if trimmed.lowercased() == "default" { return nil }
+        return trimmed
+    }
+
+    /// Trimmed non-empty codecs when the feed set it.
+    var displayCodecs: String? {
+        guard let codecs else { return nil }
+        let trimmed = codecs.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// True when feed set `default` to true/yes/1.
+    var markedDefault: Bool { isDefault == true }
+
+    /// Sources with a non-empty URI (feed order).
+    var validSources: [PodcastAlternateSource] {
+        sources.compactMap { src in
+            guard let uri = src.displayURI else { return nil }
+            return PodcastAlternateSource(uri: uri, contentType: src.displayContentType)
+        }
+    }
+}
+
+/// Display helpers for item `podcast:alternateEnclosure` lists. Feed-provided only; Open URL / Copy — no player switch.
+enum PodcastAlternateEnclosureDisplay {
+    /// Soft UI cap — show first N after feed order; honesty footnote when more exist.
+    static let displayCap = 20
+
+    /// Enclosures with required type + ≥1 source URI. Feed order. No invented entries / no player switch.
+    static func valid(_ items: [PodcastAlternateEnclosure]) -> [PodcastAlternateEnclosure] {
+        items.compactMap { item in
+            guard let mime = item.displayType else { return nil }
+            let cleanedSources = item.validSources
+            guard !cleanedSources.isEmpty else { return nil }
+            return PodcastAlternateEnclosure(
+                type: mime,
+                length: (item.length ?? 0) > 0 ? item.length : nil,
+                bitrate: (item.bitrate ?? 0) > 0 ? item.bitrate : nil,
+                height: (item.height ?? 0) > 0 ? item.height : nil,
+                lang: item.displayLang,
+                title: item.displayTitle,
+                rel: item.displayRel,
+                codecs: item.displayCodecs,
+                isDefault: item.isDefault,
+                sources: cleanedSources
+            )
+        }
+    }
+
+    /// First `displayCap` + whether the feed listed more valid alternate enclosures.
+    static func capped(_ items: [PodcastAlternateEnclosure]) -> (shown: [PodcastAlternateEnclosure], truncated: Bool) {
+        let list = valid(items)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+
+    /// Human bitrate label from bits-per-second (e.g. `128 kbps`). Nil when missing / non-positive.
+    static func bitrateLabel(_ bitrate: Double?) -> String? {
+        guard let bitrate, bitrate.isFinite, bitrate > 0 else { return nil }
+        if bitrate >= 1_000_000 {
+            let mbps = bitrate / 1_000_000
+            let text = mbps == floor(mbps) ? String(format: "%.0f", mbps) : String(format: "%.1f", mbps)
+            return "\(text) Mbps"
+        }
+        if bitrate >= 1000 {
+            let kbps = bitrate / 1000
+            let text = kbps == floor(kbps) ? String(format: "%.0f", kbps) : String(format: "%.1f", kbps)
+            return "\(text) kbps"
+        }
+        return "\(Int(bitrate.rounded())) bps"
+    }
+
+    /// File size via `DownloadStorageUsage.formatBytes` when length > 0.
+    static func lengthLabel(_ length: Int64?) -> String? {
+        guard let length, length > 0 else { return nil }
+        return DownloadStorageUsage.formatBytes(length)
+    }
+
+    /// Localized language name when possible, else raw BCP 47 tag.
+    static func languageLabel(_ lang: String?) -> String? {
+        guard let lang, !lang.isEmpty else { return nil }
+        let code = lang.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !code.isEmpty else { return nil }
+        let name = Locale.current.localizedString(forLanguageCode: code)
+            ?? Locale.current.localizedString(forIdentifier: code)
+        if let name, !name.isEmpty { return name }
+        return code
+    }
+
+    /// Height caption for video (`720p`) when height > 0.
+    static func heightLabel(_ height: Int?) -> String? {
+        guard let height, height > 0 else { return nil }
+        return "\(height)p"
+    }
+}
+
+
 /// Podcast Index `podcast:contentLink` — fallback / alternate platform link under `podcast:liveItem` (or item).
 /// Element text = label; `href` required. Feed-provided only — never invent URLs.
 struct PodcastContentLink: Identifiable, Hashable, Codable {
@@ -905,6 +1123,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Item-level Podcast Index `podcast:value` / valueRecipient blocks when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — no Lightning / wallet sends.
     var values: [PodcastValue]
+    /// Item-level Podcast Index `podcast:alternateEnclosure` (+ nested `podcast:source`) when the feed provides them.
+    /// Empty when absent — never invent; UI hides when empty. **Display-only** — Open URL / Copy; does **not** switch the player.
+    var alternateEnclosures: [PodcastAlternateEnclosure]
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -958,7 +1179,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         people: [PodcastPerson] = [],
         locations: [PodcastLocation] = [],
         socialInteracts: [PodcastSocialInteract] = [],
-        values: [PodcastValue] = []
+        values: [PodcastValue] = [],
+        alternateEnclosures: [PodcastAlternateEnclosure] = []
     ) {
         self.id = id
         self.title = title
@@ -981,6 +1203,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.locations = locations
         self.socialInteracts = socialInteracts
         self.values = values
+        self.alternateEnclosures = alternateEnclosures
     }
 
     init(from decoder: Decoder) throws {
@@ -1006,6 +1229,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         locations = try c.decodeIfPresent([PodcastLocation].self, forKey: .locations) ?? []
         socialInteracts = try c.decodeIfPresent([PodcastSocialInteract].self, forKey: .socialInteracts) ?? []
         values = try c.decodeIfPresent([PodcastValue].self, forKey: .values) ?? []
+        alternateEnclosures = try c.decodeIfPresent([PodcastAlternateEnclosure].self, forKey: .alternateEnclosures) ?? []
     }
 
     /// Non-empty named item-level `podcast:person` entries (hide when empty — never invent).
@@ -1031,6 +1255,11 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Flattened item-level `podcast:value` recipients (hide when empty — never invent; display-only).
     var displayValueRecipients: [PodcastValueRecipientRow] {
         PodcastValueDisplay.valid(values)
+    }
+
+    /// Valid item-level `podcast:alternateEnclosure` entries (hide when empty — never invent; display-only Open/Copy).
+    var displayAlternateEnclosures: [PodcastAlternateEnclosure] {
+        PodcastAlternateEnclosureDisplay.valid(alternateEnclosures)
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).

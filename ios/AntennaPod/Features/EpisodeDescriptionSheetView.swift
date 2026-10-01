@@ -70,6 +70,15 @@ struct EpisodeDescriptionSheetView: View {
         !episode.displayValueRecipients.isEmpty
     }
 
+    /// Item podcast:alternateEnclosure when the feed provided options — empty → hide (display-only; no player switch).
+    private var displayAlternateEnclosures: [PodcastAlternateEnclosure] {
+        episode.alternateEnclosures
+    }
+
+    private var hasAlternateEnclosures: Bool {
+        !episode.displayAlternateEnclosures.isEmpty
+    }
+
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
     private var paragraphs: [String] {
         let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -136,7 +145,7 @@ struct EpisodeDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues {
+                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasAlternateEnclosures {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "doc.text",
@@ -156,6 +165,9 @@ struct EpisodeDescriptionSheetView: View {
                             }
                             if hasValues {
                                 PodcastValueRecipientsListView(values: displayValues)
+                            }
+                            if hasAlternateEnclosures {
+                                PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures)
                             }
                         }
                         .padding()
@@ -283,6 +295,9 @@ struct EpisodeDescriptionSheetView: View {
                     if hasValues {
                         PodcastValueRecipientsListView(values: displayValues)
                     }
+                    if hasAlternateEnclosures {
+                        PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures)
+                    }
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
                             .font(.body)
@@ -307,6 +322,9 @@ struct EpisodeDescriptionSheetView: View {
                     }
                     if hasValues {
                         PodcastValueRecipientsListView(values: displayValues)
+                    }
+                    if hasAlternateEnclosures {
+                        PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures)
                     }
                     Text(plainDescription)
                         .font(.body)

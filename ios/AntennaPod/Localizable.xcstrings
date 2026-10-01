@@ -16052,6 +16052,168 @@
         }
       },
       "comment": "VoiceOver fragment for count of openable contentLinks."
+    },
+    "Alternate media": {
+      "extractionState": "manual",
+      "comment": "Section title for podcast:alternateEnclosure list in Shownotes (display-only).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternate media"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternative Medien"
+          }
+        }
+      }
+    },
+    "This app lists alternate media from the feed for information only. It does not switch playback to these streams.": {
+      "extractionState": "manual",
+      "comment": "Honesty footnote: alternateEnclosure is display-only — no PlaybackService switch.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This app lists alternate media from the feed for information only. It does not switch playback to these streams."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die App listet alternative Medien aus dem Feed nur zur Information. Die Wiedergabe wird nicht auf diese Streams umgestellt."
+          }
+        }
+      }
+    },
+    "Showing first 20 alternate media options from the feed.": {
+      "extractionState": "manual",
+      "comment": "Honesty footnote when alternateEnclosure list is truncated to 20.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first 20 alternate media options from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es werden die ersten 20 Alternativ-Medien-Optionen aus dem Feed angezeigt."
+          }
+        }
+      }
+    },
+    "Open URL": {
+      "extractionState": "manual",
+      "comment": "Button to open http(s) podcast:source URI from alternateEnclosure in the system browser.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL öffnen"
+          }
+        }
+      }
+    },
+    "Opens this alternate media URL from the feed in the system browser": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Open URL on alternateEnclosure source.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens this alternate media URL from the feed in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet diese Alternativ-Medien-URL aus dem Feed im Systembrowser"
+          }
+        }
+      }
+    },
+    "Copies the alternate media URI to the pasteboard. Playback is not switched.": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy on alternateEnclosure source.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the alternate media URI to the pasteboard. Playback is not switched."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die Alternativ-Medien-URI in die Zwischenablage. Die Wiedergabe wird nicht umgestellt."
+          }
+        }
+      }
+    },
+    "Default": {
+      "extractionState": "manual",
+      "comment": "Badge when podcast:alternateEnclosure default=true (preferred / same as enclosure).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard"
+          }
+        }
+      }
+    },
+    "Media URI %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for non-http(s) alternateEnclosure source URI.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Media URI %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medien-URI %@"
+          }
+        }
+      }
+    },
+    "Content type %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for podcast:source contentType when set.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Content type %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inhaltstyp %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
