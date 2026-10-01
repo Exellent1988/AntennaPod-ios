@@ -365,6 +365,7 @@ struct EpisodeRow: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
+    @EnvironmentObject private var settings: AppSettings
     @Environment(\.openURL) private var openURL
     let episode: PodcastEpisode
     let feedTitle: String
@@ -610,7 +611,8 @@ struct EpisodeRow: View {
             } label: {
                 Label("Add to queue", systemImage: "text.append")
             }
-            if let qi = queueIndex {
+            // Move to top/bottom = manual reorder; hidden when Queue lock is on (Play Next / enqueue stay).
+            if let qi = queueIndex, !settings.queueLocked {
                 if qi > 0 {
                     Button {
                         store.moveQueueItemToTop(episode)

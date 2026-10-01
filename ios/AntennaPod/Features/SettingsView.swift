@@ -191,6 +191,13 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+                Section("Queue") {
+                    Toggle("Lock queue", isOn: $settings.queueLocked)
+                        .accessibilityHint("When on, disables Queue drag reorder and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off.")
+                    Text("When on, the Queue tab disables Edit drag reorder and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 refreshSection
                 autoDownloadSection
                 networkDownloadsSection

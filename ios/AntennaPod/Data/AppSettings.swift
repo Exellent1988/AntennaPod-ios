@@ -300,7 +300,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips, queue lock).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -375,6 +375,7 @@ final class AppSettings: ObservableObject {
         static let subscriptionsSort = "settings.subscriptionsSort"
         static let feedEpisodeSort = "settings.feedEpisodeSort"
         static let allEpisodesFilter = "settings.allEpisodesFilter"
+        static let queueLocked = "settings.queueLocked"
     }
 
     private enum Kind: String {
@@ -658,6 +659,15 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// When true, Queue tab disables Edit drag reorder and EpisodeRow Move to top/bottom.
+    /// Default **false** (unlocked). Enqueue / Play Next / Remove / Clear queue stay available (reorder lock only).
+    /// Mirrors Android `prefQueueLocked` / `UserPreferences.isQueueLocked()`.
+    @Published var queueLocked: Bool {
+        didSet {
+            UserDefaults.standard.set(queueLocked, forKey: Keys.queueLocked)
+        }
+    }
+
     /// Visible sections in display order (hidden filtered out).
     var visibleHomeSections: [HomeSectionId] {
         homeSectionOrder.filter { !homeHiddenSections.contains($0) }
@@ -842,6 +852,12 @@ final class AppSettings: ObservableObject {
         let episodesFilterRaw = UserDefaults.standard.string(forKey: Keys.allEpisodesFilter)
             ?? AllEpisodesFilter.all.rawValue
         allEpisodesFilter = AllEpisodesFilter(rawValue: episodesFilterRaw) ?? .all
+        if UserDefaults.standard.object(forKey: Keys.queueLocked) != nil {
+            queueLocked = UserDefaults.standard.bool(forKey: Keys.queueLocked)
+        } else {
+            // Default unlocked (Android prefQueueLocked default false).
+            queueLocked = false
+        }
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh
@@ -1052,7 +1068,8 @@ final class AppSettings: ObservableObject {
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
             subscriptionsSort: subscriptionsSort.rawValue,
             feedEpisodeSort: feedEpisodeSort.rawValue,
-            allEpisodesFilter: allEpisodesFilter.rawValue
+            allEpisodesFilter: allEpisodesFilter.rawValue,
+            queueLocked: queueLocked
         )
     }
 
@@ -1150,6 +1167,7 @@ final class AppSettings: ObservableObject {
         if let filterRaw = snap.allEpisodesFilter {
             allEpisodesFilter = AllEpisodesFilter(rawValue: filterRaw) ?? .all
         }
+        queueLocked = snap.queueLocked ?? false
     }
 }
 
@@ -1208,4 +1226,6 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var feedEpisodeSort: String? = nil
     /// Absent in older backups → all (default).
     var allEpisodesFilter: String? = nil
+    /// Absent in older backups → unlocked (false).
+    var queueLocked: Bool? = false
 }

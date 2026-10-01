@@ -8823,6 +8823,125 @@
           }
         }
       }
+    },
+    "Lock queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange sperren"
+          }
+        }
+      }
+    },
+    "Unlock queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlock queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange entsperren"
+          }
+        }
+      }
+    },
+    "Disables drag reorder and Move to top or bottom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disables drag reorder and Move to top or bottom"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deaktiviert Ziehen zum Umsortieren sowie An Anfang / Ans Ende"
+          }
+        }
+      }
+    },
+    "Allows drag reorder and Move to top or bottom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allows drag reorder and Move to top or bottom"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erlaubt Ziehen zum Umsortieren sowie An Anfang / Ans Ende"
+          }
+        }
+      }
+    },
+    "Add episodes from a podcast feed. Queue is locked — unlock to drag reorder.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add episodes from a podcast feed. Queue is locked — unlock to drag reorder."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden aus einem Podcast-Feed hinzufügen. Warteschlange ist gesperrt — entsperren zum Umsortieren per Ziehen."
+          }
+        }
+      }
+    },
+    "When on, disables Queue drag reorder and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, disables Queue drag reorder and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an, deaktiviert Ziehen zum Umsortieren sowie An Anfang / Ans Ende. Einreihen, Als Nächstes, Entfernen und Warteschlange leeren bleiben möglich. Standard aus."
+          }
+        }
+      }
+    },
+    "When on, the Queue tab disables Edit drag reorder and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, the Queue tab disables Edit drag reorder and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an, deaktiviert der Queue-Tab Bearbeiten/Ziehen-Umsortieren und blendet An Anfang / Ans Ende aus. Einreihen, Als Nächstes, Entfernen, Archiv-Swipe und Warteschlange leeren bleiben möglich (nur Reihenfolge-Sperre — wie AntennaPod Android). Gleiche Einstellung wie die Queue-Toolbar-Sperre. Standard aus."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

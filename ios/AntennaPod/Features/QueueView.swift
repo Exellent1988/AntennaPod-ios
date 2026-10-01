@@ -4,6 +4,7 @@ struct QueueView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
+    @EnvironmentObject private var settings: AppSettings
     @Environment(\.editMode) private var editMode
 
     @State private var searchText = ""
@@ -16,6 +17,11 @@ struct QueueView: View {
     /// Non-empty debounced query — reorder is disabled while filtering (indices would not map to the full queue).
     private var isFiltering: Bool {
         !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Drag / Edit reorder allowed only when unlocked and not filtering.
+    private var canReorder: Bool {
+        !settings.queueLocked && !isFiltering
     }
 
     /// Visible queue rows; empty query shows the full queue order.
@@ -37,7 +43,11 @@ struct QueueView: View {
                     ContentUnavailableView(
                         "Queue empty",
                         systemImage: "list.bullet",
-                        description: Text("Add episodes from a podcast feed. Edit mode lets you drag to reorder.")
+                        description: Text(
+                            settings.queueLocked
+                                ? String(localized: "Add episodes from a podcast feed. Queue is locked — unlock to drag reorder.")
+                                : String(localized: "Add episodes from a podcast feed. Edit mode lets you drag to reorder.")
+                        )
                     )
                 } else if isFiltering && filteredQueue.isEmpty {
                     ContentUnavailableView(
@@ -67,9 +77,9 @@ struct QueueView: View {
                             .tint(.orange)
                         }
                     }
-                    .onMove(perform: isFiltering ? nil : { source, destination in
+                    .onMove(perform: canReorder ? { source, destination in
                         store.moveQueue(from: source, to: destination)
-                    })
+                    } : nil)
                 }
             }
             .navigationTitle("Queue")
@@ -83,14 +93,43 @@ struct QueueView: View {
                     editMode?.wrappedValue = .inactive
                 }
             }
+            .onChange(of: settings.queueLocked) { _, locked in
+                // Leave Edit when locking so drag handles disappear immediately.
+                if locked {
+                    editMode?.wrappedValue = .inactive
+                }
+            }
             .onDisappear {
                 debounceTask?.cancel()
             }
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        settings.queueLocked.toggle()
+                    } label: {
+                        Label(
+                            settings.queueLocked
+                                ? String(localized: "Unlock queue")
+                                : String(localized: "Lock queue"),
+                            systemImage: settings.queueLocked ? "lock.fill" : "lock.open"
+                        )
+                    }
+                    .accessibilityLabel(
+                        settings.queueLocked
+                            ? String(localized: "Unlock queue")
+                            : String(localized: "Lock queue")
+                    )
+                    .accessibilityHint(
+                        settings.queueLocked
+                            ? String(localized: "Allows drag reorder and Move to top or bottom")
+                            : String(localized: "Disables drag reorder and Move to top or bottom")
+                    )
+                    .accessibilityAddTraits(.isButton)
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     EditButton()
-                        // Hide reorder while filtering — filtered IndexSet ≠ full queue.
-                        .disabled(store.queue.isEmpty || isFiltering)
+                        // Hide reorder while filtering or locked — filtered IndexSet ≠ full queue; lock = no manual reorder.
+                        .disabled(store.queue.isEmpty || !canReorder)
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
