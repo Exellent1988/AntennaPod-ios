@@ -853,6 +853,100 @@ enum PodcastAlternateEnclosureDisplay {
 }
 
 
+/// Podcast Index `podcast:soundbite` — short highlight within an item’s enclosure.
+/// Required `startTime` + `duration` (seconds, float). Optional element text = title.
+/// **Not a separate clip player:** when this episode is the current PlaybackService item,
+/// UI may seek to `startTime`; otherwise times (+ Copy). Feed-provided only — never invent.
+struct PodcastSoundbite: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields.
+    var id: String {
+        "\(startTimeSeconds)|\(durationSeconds)|\(title ?? "")"
+    }
+    /// Required start offset in seconds from the beginning of the episode enclosure.
+    var startTimeSeconds: Double
+    /// Required soundbite length in seconds.
+    var durationSeconds: Double
+    /// Optional human-readable title (element text). Nil when absent / blank.
+    var title: String?
+
+    init(startTimeSeconds: Double, durationSeconds: Double, title: String? = nil) {
+        self.startTimeSeconds = startTimeSeconds
+        self.durationSeconds = durationSeconds
+        self.title = title
+    }
+
+    /// Trimmed non-empty title when the feed set it.
+    var displayTitle: String? {
+        guard let title else { return nil }
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// True when startTime is finite and ≥ 0 and duration is finite and > 0 (Podcast Index required attrs).
+    var isValid: Bool {
+        startTimeSeconds.isFinite && startTimeSeconds >= 0
+            && durationSeconds.isFinite && durationSeconds > 0
+    }
+}
+
+/// Display helpers for item `podcast:soundbite` lists. Feed-provided only; seek only via existing PlaybackService.
+enum PodcastSoundbiteDisplay {
+    /// Soft UI cap — show first N after feed order; honesty footnote when more exist.
+    static let displayCap = 20
+
+    /// Soundbites with required startTime (≥0) + duration (>0). Feed order. No invented entries / no clip player.
+    static func valid(_ items: [PodcastSoundbite]) -> [PodcastSoundbite] {
+        items.compactMap { item in
+            guard item.isValid else { return nil }
+            return PodcastSoundbite(
+                startTimeSeconds: item.startTimeSeconds,
+                durationSeconds: item.durationSeconds,
+                title: item.displayTitle
+            )
+        }
+    }
+
+    /// First `displayCap` + whether the feed listed more valid soundbites.
+    static func capped(_ items: [PodcastSoundbite]) -> (shown: [PodcastSoundbite], truncated: Bool) {
+        let list = valid(items)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+
+    /// Human start / duration (`m:ss` / `h:mm:ss`), matching full-player / share formatters.
+    static func formatSeconds(_ seconds: Double) -> String {
+        guard seconds.isFinite, seconds >= 0 else { return "--:--" }
+        let total = Int(seconds.rounded(.down))
+        let h = total / 3600
+        let m = (total % 3600) / 60
+        let s = total % 60
+        if h > 0 {
+            return String(format: "%d:%02d:%02d", h, m, s)
+        }
+        return String(format: "%d:%02d", m, s)
+    }
+
+    /// Caption `start · duration` (localized separators left to UI).
+    static func timeCaption(_ item: PodcastSoundbite) -> String {
+        let start = formatSeconds(item.startTimeSeconds)
+        let dur = formatSeconds(item.durationSeconds)
+        return "\(start) · \(dur)"
+    }
+
+    /// Pasteboard / summary line: optional title + start + duration.
+    static func copyText(_ item: PodcastSoundbite) -> String {
+        let times = timeCaption(item)
+        if let title = item.displayTitle {
+            return "\(title) — \(times)"
+        }
+        return times
+    }
+}
+
+
+
 /// Podcast Index `podcast:contentLink` — fallback / alternate platform link under `podcast:liveItem` (or item).
 /// Element text = label; `href` required. Feed-provided only — never invent URLs.
 struct PodcastContentLink: Identifiable, Hashable, Codable {
@@ -1126,6 +1220,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Item-level Podcast Index `podcast:alternateEnclosure` (+ nested `podcast:source`) when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — Open URL / Copy; does **not** switch the player.
     var alternateEnclosures: [PodcastAlternateEnclosure]
+    /// Item-level Podcast Index `podcast:soundbite` (startTime + duration; optional title) when the feed provides them.
+    /// Empty when absent — never invent; UI hides when empty. Seek via PlaybackService when this episode is current — **no** separate clip player.
+    var soundbites: [PodcastSoundbite]
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -1180,7 +1277,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         locations: [PodcastLocation] = [],
         socialInteracts: [PodcastSocialInteract] = [],
         values: [PodcastValue] = [],
-        alternateEnclosures: [PodcastAlternateEnclosure] = []
+        alternateEnclosures: [PodcastAlternateEnclosure] = [],
+        soundbites: [PodcastSoundbite] = []
     ) {
         self.id = id
         self.title = title
@@ -1204,6 +1302,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.socialInteracts = socialInteracts
         self.values = values
         self.alternateEnclosures = alternateEnclosures
+        self.soundbites = soundbites
     }
 
     init(from decoder: Decoder) throws {
@@ -1230,6 +1329,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         socialInteracts = try c.decodeIfPresent([PodcastSocialInteract].self, forKey: .socialInteracts) ?? []
         values = try c.decodeIfPresent([PodcastValue].self, forKey: .values) ?? []
         alternateEnclosures = try c.decodeIfPresent([PodcastAlternateEnclosure].self, forKey: .alternateEnclosures) ?? []
+        soundbites = try c.decodeIfPresent([PodcastSoundbite].self, forKey: .soundbites) ?? []
     }
 
     /// Non-empty named item-level `podcast:person` entries (hide when empty — never invent).
@@ -1260,6 +1360,11 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Valid item-level `podcast:alternateEnclosure` entries (hide when empty — never invent; display-only Open/Copy).
     var displayAlternateEnclosures: [PodcastAlternateEnclosure] {
         PodcastAlternateEnclosureDisplay.valid(alternateEnclosures)
+    }
+
+    /// Valid item-level `podcast:soundbite` entries (hide when empty — never invent; seek when current episode / else Copy).
+    var displaySoundbites: [PodcastSoundbite] {
+        PodcastSoundbiteDisplay.valid(soundbites)
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).

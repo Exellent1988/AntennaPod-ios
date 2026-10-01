@@ -102,6 +102,12 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itemValues: [PodcastValue] = []
     /// Item podcast:alternateEnclosure (+ nested source) — feed-provided only; display-only (Open/Copy; no player switch).
     private var itemAlternateEnclosures: [PodcastAlternateEnclosure] = []
+    /// Item podcast:soundbite — feed-provided only; display / seek-to-start when current episode (no clip player).
+    private var itemSoundbites: [PodcastSoundbite] = []
+    /// Capturing podcast:soundbite attributes + optional title text.
+    private var capturingSoundbite = false
+    private var pendingSoundbiteStart: Double?
+    private var pendingSoundbiteDuration: Double?
     /// Capturing podcast:alternateEnclosure attributes + nested sources.
     private var capturingAlternateEnclosure = false
     private var pendingAltType: String?
@@ -256,6 +262,10 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemSocialInteracts = []
             itemValues = []
             itemAlternateEnclosures = []
+            itemSoundbites = []
+            capturingSoundbite = false
+            pendingSoundbiteStart = nil
+            pendingSoundbiteDuration = nil
             capturingAlternateEnclosure = false
             pendingAltType = nil
             pendingAltLength = nil
@@ -583,6 +593,26 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             pendingSourceContentType = Self.nonEmptyAttr(
                 attributeDict["contentType"] ?? attributeDict["type"]
             )
+        case "soundbite":
+            // Podcast Index: <podcast:soundbite startTime="…" duration="…">optional title</podcast:soundbite>
+            // Item-level only. startTime + duration required (seconds). Optional element text = title.
+            // Display / seek-to-start via PlaybackService when current — no separate clip player.
+            // Never invent soundbites.
+            if inLiveItem { break }
+            guard inItem else { break }
+            capturingSoundbite = true
+            if let rawStart = Self.nonEmptyAttr(attributeDict["startTime"] ?? attributeDict["starttime"]),
+               let start = Double(rawStart), start.isFinite, start >= 0 {
+                pendingSoundbiteStart = start
+            } else {
+                pendingSoundbiteStart = nil
+            }
+            if let rawDur = Self.nonEmptyAttr(attributeDict["duration"]),
+               let dur = Double(rawDur), dur.isFinite, dur > 0 {
+                pendingSoundbiteDuration = dur
+            } else {
+                pendingSoundbiteDuration = nil
+            }
         default:
             break
         }
@@ -691,6 +721,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishAlternateSource()
             case "alternateenclosure":
                 finishAlternateEnclosure()
+            case "soundbite":
+                finishSoundbite(text: text)
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
@@ -715,7 +747,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     locations: itemLocations,
                     socialInteracts: itemSocialInteracts,
                     values: itemValues,
-                    alternateEnclosures: itemAlternateEnclosures
+                    alternateEnclosures: itemAlternateEnclosures,
+                    soundbites: itemSoundbites
                 )
                 episodes.append(episode)
                 inItem = false
@@ -870,6 +903,28 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 codecs: pendingAltCodecs,
                 isDefault: pendingAltDefault,
                 sources: sources
+            )
+        )
+    }
+
+
+    /// Finish podcast:soundbite — append when startTime (≥0) + duration (>0); optional title text.
+    /// Display / seek-to-start only — never invent; no separate clip player.
+    private func finishSoundbite(text: String) {
+        defer {
+            capturingSoundbite = false
+            pendingSoundbiteStart = nil
+            pendingSoundbiteDuration = nil
+        }
+        guard capturingSoundbite, inItem else { return }
+        guard let start = pendingSoundbiteStart, start.isFinite, start >= 0 else { return }
+        guard let duration = pendingSoundbiteDuration, duration.isFinite, duration > 0 else { return }
+        let title = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        itemSoundbites.append(
+            PodcastSoundbite(
+                startTimeSeconds: start,
+                durationSeconds: duration,
+                title: title.isEmpty ? nil : title
             )
         )
     }

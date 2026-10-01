@@ -79,6 +79,15 @@ struct EpisodeDescriptionSheetView: View {
         !episode.displayAlternateEnclosures.isEmpty
     }
 
+    /// Item podcast:soundbite when the feed provided clips — empty → hide (seek when current / else Copy; no clip player).
+    private var displaySoundbites: [PodcastSoundbite] {
+        episode.soundbites
+    }
+
+    private var hasSoundbites: Bool {
+        !episode.displaySoundbites.isEmpty
+    }
+
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
     private var paragraphs: [String] {
         let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -145,7 +154,7 @@ struct EpisodeDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasAlternateEnclosures {
+                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasAlternateEnclosures && !hasSoundbites {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "doc.text",
@@ -168,6 +177,9 @@ struct EpisodeDescriptionSheetView: View {
                             }
                             if hasAlternateEnclosures {
                                 PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures)
+                            }
+                            if hasSoundbites {
+                                PodcastSoundbitesListView(soundbites: displaySoundbites, episodeId: episode.id)
                             }
                         }
                         .padding()
@@ -298,6 +310,9 @@ struct EpisodeDescriptionSheetView: View {
                     if hasAlternateEnclosures {
                         PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures)
                     }
+                    if hasSoundbites {
+                        PodcastSoundbitesListView(soundbites: displaySoundbites, episodeId: episode.id)
+                    }
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
                             .font(.body)
@@ -325,6 +340,9 @@ struct EpisodeDescriptionSheetView: View {
                     }
                     if hasAlternateEnclosures {
                         PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures)
+                    }
+                    if hasSoundbites {
+                        PodcastSoundbitesListView(soundbites: displaySoundbites, episodeId: episode.id)
                     }
                     Text(plainDescription)
                         .font(.body)

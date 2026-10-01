@@ -39,6 +39,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Value / Support creators (beta; parse Podcast Index `podcast:value` + nested `podcast:valueRecipient` type/method/address/name/split/optional fee at channel and/or item into `PodcastFeed.values` / `PodcastEpisode.values`; Feed detail + description sheet + Shownotes list name + type/method + split %; http(s) address → Open in browser; Lightning/node → Copy only; first 20 + honesty; **feed-provided only** — never invent recipients; **display-only** — **no** Lightning / wallet sends / streaming sats / payment API; **hide when none**; refresh to populate existing feeds)
 - Live Item (beta; parse channel Podcast Index `podcast:liveItem` status+start (+ optional end) + title/link/guid/contentLink into `PodcastFeed.liveItems`; Feed detail + description: status capsule + title + start/end; **Open live page** / contentLink → system browser; first 20 + honesty; **feed-provided only** — never invent; **display-only** — **no** live stream player / recording / chat / payments; **hide when none**; refresh to populate existing feeds)
 - Alternate Enclosure (beta; parse item Podcast Index `podcast:alternateEnclosure` + nested `podcast:source` type/uri (+ length/bitrate/height/lang/title/rel/codecs/default) into `PodcastEpisode.alternateEnclosures`; episode Shownotes list type + bitrate/length/title/lang when set; http(s) → **Open URL**; else **Copy**; first 20 + honesty; **feed-provided only** — never invent; **display-only** — **no** PlaybackService switch to alternate streams; **hide when none**; refresh to populate existing feeds)
+- Soundbite (beta; parse item Podcast Index `podcast:soundbite` startTime+duration (+ optional title) into `PodcastEpisode.soundbites`; Shownotes + Full player list start/duration + title when set; **Seek to start** via existing `PlaybackService.seek(toSeconds:)` when this episode is current — else **Copy**; first 20 + honesty; **feed-provided only** — never invent; **no** separate clip player / end trim; **hide when none**; refresh to populate existing feeds)
 - Shared list/Home **remaining-time** helper (`EpisodeRemainingTime`): one wall-clock sum (`max(0, duration − position)`, unknowns → `~`, live current, played→0); call sites keep their own episode scopes (visible filtered / Home preview soft-cap / Subscriptions unplayed map / library search episode hits). No user-facing behavior change; EN/DE strings unchanged.
 - Relative publish dates on list rows (beta; EpisodeRow `pubDateEpochMs` via `EpisodeDateFormatting`: Today / Yesterday / N days ago for ≤7 calendar days (`RelativeDateTimeFormatter` locale-aware EN/DE), else medium absolute; caption `S2 E5 · Trailer/Bonus · date · duration · size` (omit unknown parts); History/Favorites/Archived `dateOverride` stays live SwiftUI `.relative`; VoiceOver includes publish caption; no Settings toggle)
 - EpisodeRow in-progress playback (beta polish; thin `ProgressView` under caption when `playback.json` `positionSeconds > 1` and not `isPlayed` and duration known — fraction = position/duration; duration from playback state or feed `itunes:duration`/media; hide when unplayed, played, or duration unknown; VoiceOver EN/DE **N percent played** + remaining, or **At m:ss** if duration unknown; no Settings toggle)
@@ -655,6 +656,17 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 - **Local-folder feeds:** no alternateEnclosure (no RSS).
 - EN / DE + VoiceOver.
 
+
+
+
+
+## Soundbite / `podcast:soundbite` (beta)
+
+- **Parse:** `NativeRssAtomParser` stores item Podcast Index **`podcast:soundbite`** (required `startTime` + `duration` in seconds; optional element text = title) into `PodcastEpisode.soundbites`. **Feed-provided only** — never invent. Populated on subscribe / refresh — **existing subscriptions need a feed refresh**.
+- **UI:** Episode **Shownotes** and **Full player** list soundbites (title when set + start · duration as `m:ss` / `h:mm:ss`). When this episode is the **current** `PlaybackService` item, **Seek to start** uses existing `seek(toSeconds:)`. Otherwise **Copy** title+times to the pasteboard. Display capped at the **first 20** with an honesty footnote when more exist. **Hidden when none.**
+- **Honesty:** **Not a separate clip player.** The app does **not** extract/export audio clips, play an isolated segment, or auto-stop at `startTime + duration` — only seek-to-start on the current episode (same as chapter seek).
+- **Local-folder feeds:** no soundbite (no RSS).
+- EN / DE + VoiceOver.
 
 
 ## Headset / Bluetooth pause

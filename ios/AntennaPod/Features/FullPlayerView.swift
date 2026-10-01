@@ -387,6 +387,9 @@ struct FullPlayerView: View {
                     chaptersSection
                         .padding(.horizontal)
 
+                    soundbitesSection
+                        .padding(.horizontal)
+
                     descriptionButton
                         .padding(.horizontal)
 
@@ -471,6 +474,19 @@ struct FullPlayerView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         // No chapters → hide section entirely (no empty placeholder).
+    }
+
+    /// Item podcast:soundbite — feed-provided only; seek via PlaybackService (current episode); no clip player.
+    /// Prefer store-resolved episode so refresh-populated soundbites appear without restarting playback.
+    @ViewBuilder
+    private var soundbitesSection: some View {
+        if let ep = resolvedEpisode ?? episode, !ep.displaySoundbites.isEmpty {
+            PodcastSoundbitesListView(
+                soundbites: ep.displaySoundbites,
+                episodeId: ep.id
+            )
+            .padding(.top, 8)
+        }
     }
 
     private func resetChapterSearch() {

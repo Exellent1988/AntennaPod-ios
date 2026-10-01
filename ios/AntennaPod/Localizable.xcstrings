@@ -16248,6 +16248,168 @@
           }
         }
       }
+    },
+    "Soundbites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbites"
+          }
+        }
+      },
+      "comment": "Section title for podcast:soundbite list in Shownotes / Full player."
+    },
+    "Soundbite": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbite"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbite"
+          }
+        }
+      },
+      "comment": "VoiceOver prefix for a single podcast:soundbite row."
+    },
+    "Start %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start %@"
+          }
+        }
+      },
+      "comment": "VoiceOver start time for a soundbite (m:ss / h:mm:ss)."
+    },
+    "Soundbites come from the feed. Tapping seeks in the current episode when it is playing; there is no separate clip player.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbites come from the feed. Tapping seeks in the current episode when it is playing; there is no separate clip player."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbites stammen aus dem Feed. Tippen springt in der aktuellen Episode zum Start; es gibt keinen eigenen Clip-Player."
+          }
+        }
+      },
+      "comment": "Honesty footnote: soundbites seek via PlaybackService only — no separate clip player."
+    },
+    "Showing first 20 soundbites from the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first 20 soundbites from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es werden die ersten 20 Soundbites aus dem Feed angezeigt."
+          }
+        }
+      },
+      "comment": "Honesty when more than 20 valid podcast:soundbite entries exist."
+    },
+    "Seek to start": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seek to start"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Start springen"
+          }
+        }
+      },
+      "comment": "Button: seek PlaybackService to soundbite startTime when episode is current."
+    },
+    "Seeks playback to the soundbite start time in the current episode": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks playback to the soundbite start time in the current episode"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt in der aktuellen Episode zur Startzeit des Soundbites"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Seek to start."
+    },
+    "Copies the soundbite title and times to the pasteboard. Seek is available when this episode is playing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the soundbite title and times to the pasteboard. Seek is available when this episode is playing."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert Titel und Zeiten des Soundbites in die Zwischenablage. Springen ist verfügbar, wenn diese Episode läuft."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy when episode is not current."
+    },
+    "Soundbite copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbite copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbite in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Alert message after copying a soundbite summary."
     }
   },
   "version": "1.0"
