@@ -476,6 +476,35 @@ enum QueueFilter: String, CaseIterable, Identifiable {
     }
 }
 
+/// Podcast chip selection on the Queue list (feeds that currently have queued
+/// episodes only — never invent podcasts). Empty storage = All; otherwise feed UUID string.
+enum QueuePodcastFilter: Hashable, Identifiable {
+    case all
+    case feed(UUID)
+
+    var id: String {
+        switch self {
+        case .all: return "__all__"
+        case .feed(let id): return "feed:\(id.uuidString)"
+        }
+    }
+
+    /// Persistable raw value: empty = All; otherwise the feed UUID string.
+    var storageValue: String {
+        switch self {
+        case .all: return ""
+        case .feed(let id): return id.uuidString
+        }
+    }
+
+    static func fromStorage(_ raw: String?) -> QueuePodcastFilter {
+        guard let raw else { return .all }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let id = UUID(uuidString: trimmed) else { return .all }
+        return .feed(id)
+    }
+}
+
 /// Filter chips on Library → Episodes (All Episodes). Applied after the newest-500 soft cap.
 enum AllEpisodesFilter: String, CaseIterable, Identifiable {
     case all
@@ -721,6 +750,7 @@ final class AppSettings: ObservableObject {
         static let allEpisodesSort = "settings.allEpisodesSort"
         static let queueLocked = "settings.queueLocked"
         static let queueFilter = "settings.queueFilter"
+        static let queuePodcastFilter = "settings.queuePodcastFilter"
         static let statisticsTimeRange = "settings.statisticsTimeRange"
     }
 
@@ -1140,8 +1170,9 @@ final class AppSettings: ObservableObject {
     }
 
     /// Queue tab chip filter (All / Unplayed / Played via PodcastStore.isPlayed). Default All. Persisted.
-    /// Applied before `.searchable`. Chip ≠ All (or non-empty search) disables Edit/`.onMove` like search alone —
-    /// filtered indices would not map to the persisted queue. Move to top/bottom still uses episode id → full queue.
+    /// Applied before podcast filter and `.searchable`. Chip ≠ All, podcast ≠ All, or non-empty search disables
+    /// Edit/`.onMove` like search alone — filtered indices would not map to the persisted queue.
+    /// Move to top/bottom still uses episode id → full queue.
     /// Shuffle / Shuffle (keep playing first) / Reverse order / Sort by date / Sort by duration / Clear queue / Play Next stay full-queue scoped (Shuffle variants/Reverse/Sort still need unlock + count ≥ 2).
     @Published var queueFilter: QueueFilter {
         didSet {
@@ -1149,6 +1180,16 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Queue podcast chip filter. Empty string = All; otherwise a feed UUID that currently has
+    /// (or recently had) queued episodes. Default All. Persisted (+ backup). Applied after
+    /// played chip, before `.searchable`. Chips list only feeds present in the current queue
+    /// (never invent). Orphan queue items without a matching library feed match All only.
+    /// View-only — does not remove episodes from the persisted queue.
+    @Published var queuePodcastFilter: String {
+        didSet {
+            UserDefaults.standard.set(queuePodcastFilter, forKey: Keys.queuePodcastFilter)
+        }
+    }
 
     /// Statistics / Echo time range: This week / This month / This year / All time (default).
     /// Filters aggregations by `lastPlayedAt` (else `updatedAt`) within the device-calendar unit.
@@ -1398,6 +1439,8 @@ final class AppSettings: ObservableObject {
         let queueFilterRaw = UserDefaults.standard.string(forKey: Keys.queueFilter)
             ?? QueueFilter.all.rawValue
         queueFilter = QueueFilter(rawValue: queueFilterRaw) ?? .all
+        let queuePodcastFilterRaw = UserDefaults.standard.string(forKey: Keys.queuePodcastFilter) ?? ""
+        queuePodcastFilter = QueuePodcastFilter.fromStorage(queuePodcastFilterRaw).storageValue
         let statsRangeRaw = UserDefaults.standard.string(forKey: Keys.statisticsTimeRange)
             ?? StatisticsTimeRange.allTime.rawValue
         statisticsTimeRange = StatisticsTimeRange(rawValue: statsRangeRaw) ?? .allTime
@@ -1627,6 +1670,7 @@ final class AppSettings: ObservableObject {
             allEpisodesSort: allEpisodesSort.rawValue,
             queueLocked: queueLocked,
             queueFilter: queueFilter.rawValue,
+            queuePodcastFilter: queuePodcastFilter,
             statisticsTimeRange: statisticsTimeRange.rawValue
         )
     }
@@ -1769,6 +1813,9 @@ final class AppSettings: ObservableObject {
         if let queueFilterRaw = snap.queueFilter {
             queueFilter = QueueFilter(rawValue: queueFilterRaw) ?? .all
         }
+        if let queuePodcastFilterRaw = snap.queuePodcastFilter {
+            queuePodcastFilter = QueuePodcastFilter.fromStorage(queuePodcastFilterRaw).storageValue
+        }
         if let statsRangeRaw = snap.statisticsTimeRange {
             statisticsTimeRange = StatisticsTimeRange(rawValue: statsRangeRaw) ?? .allTime
         }
@@ -1860,6 +1907,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var queueLocked: Bool? = false
     /// Absent in older backups → all (default).
     var queueFilter: String? = nil
+    /// Absent in older backups → All (empty). Feed UUID string or empty for All.
+    var queuePodcastFilter: String? = nil
     /// Absent in older backups → allTime (default).
     var statisticsTimeRange: String? = nil
 }

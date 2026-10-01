@@ -23,10 +23,11 @@ struct QueueView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
-    /// Chip ≠ All or non-empty search — Edit/`.onMove` disabled (filtered IndexSet ≠ full queue).
+    /// Chip ≠ All, podcast ≠ All, or non-empty search — Edit/`.onMove` disabled (filtered IndexSet ≠ full queue).
     /// EpisodeRow Move to top/bottom still uses episode id → full-queue indices (safe while filtering).
     private var isFiltering: Bool {
         settings.queueFilter != .all
+            || isPodcastFiltering
             || !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
@@ -71,8 +72,64 @@ struct QueueView: View {
         return index > 0
     }
 
-    /// Visible queue rows: chip (`isPlayed`) → search. Empty query shows the chip-filtered queue order.
-    /// Clear queue / Play Next stay full-queue scoped (not the visible subset).
+    /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
+    private var podcastFilter: QueuePodcastFilter {
+        QueuePodcastFilter.fromStorage(settings.queuePodcastFilter)
+    }
+
+    private var isPodcastFiltering: Bool {
+        if case .feed = podcastFilter { return true }
+        return false
+    }
+
+    /// Unique feeds that currently have at least one queued episode (title A–Z).
+    /// Built from the persisted queue via `feed(containingEpisodeId:)` — never invent.
+    private var queuePodcastFeeds: [PodcastFeed] {
+        var seen = Set<UUID>()
+        var feeds: [PodcastFeed] = []
+        for episode in store.queue {
+            guard let feed = store.feed(containingEpisodeId: episode.id) else { continue }
+            if seen.insert(feed.id).inserted {
+                feeds.append(feed)
+            }
+        }
+        return feeds.sorted {
+            $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+    }
+
+    private var podcastFilterChips: [QueuePodcastFilter] {
+        var chips: [QueuePodcastFilter] = [.all]
+        var feeds = queuePodcastFeeds
+        // Keep a persisted selection visible (even if that feed no longer has queue items)
+        // so the user can see why the list is empty and tap All.
+        if case .feed(let id) = podcastFilter,
+           !feeds.contains(where: { $0.id == id }),
+           let feed = store.feeds.first(where: { $0.id == id }) {
+            feeds.append(feed)
+            feeds.sort {
+                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
+        }
+        chips.append(contentsOf: feeds.map { .feed($0.id) })
+        return chips
+    }
+
+    private func podcastChipTitle(_ chip: QueuePodcastFilter) -> String {
+        switch chip {
+        case .all:
+            return String(localized: "All")
+        case .feed(let id):
+            return store.feeds.first(where: { $0.id == id })?.title
+                ?? queuePodcastFeeds.first(where: { $0.id == id })?.title
+                ?? String(localized: "Podcast")
+        }
+    }
+
+    /// Visible queue rows: played chip (`isPlayed`) → podcast chip → search.
+    /// Empty query shows the chip+podcast-filtered queue order (persisted order preserved).
+    /// View-only — does not remove episodes from the actual queue.
+    /// Clear queue / Shuffle / lock ops / Play Next stay full-queue scoped (not the visible subset).
     private var filteredQueue: [PodcastEpisode] {
         var base = store.queue
         switch settings.queueFilter {
@@ -82,6 +139,12 @@ struct QueueView: View {
             base = base.filter { !store.isPlayed($0.id) }
         case .played:
             base = base.filter { store.isPlayed($0.id) }
+        }
+        switch podcastFilter {
+        case .all:
+            break
+        case .feed(let feedId):
+            base = base.filter { store.feed(containingEpisodeId: $0.id)?.id == feedId }
         }
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         if q.isEmpty { return base }
@@ -133,7 +196,8 @@ struct QueueView: View {
                             ForEach(QueueFilter.allCases) { chip in
                                 QueueFilterChip(
                                     title: chip.label,
-                                    selected: settings.queueFilter == chip
+                                    selected: settings.queueFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the Queue list")
                                 ) {
                                     settings.queueFilter = chip
                                 }
@@ -142,6 +206,28 @@ struct QueueView: View {
                         .padding(.vertical, 4)
                     }
                     .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                }
+
+                if !store.queue.isEmpty, !queuePodcastFeeds.isEmpty || isPodcastFiltering {
+                    Section {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(podcastFilterChips) { chip in
+                                    QueueFilterChip(
+                                        title: podcastChipTitle(chip),
+                                        selected: podcastFilter == chip,
+                                        accessibilityHint: String(localized: "Filters the Queue list by podcast")
+                                    ) {
+                                        settings.queuePodcastFilter = chip.storageValue
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    } header: {
+                        Text("Podcasts")
+                    }
                 }
 
                 // AntennaPod-like queue info bar (visible filtered list remaining time).
@@ -205,7 +291,7 @@ struct QueueView: View {
                         }
                     }
                     .onMove(perform: canReorder ? { source, destination in
-                        // Indices are only valid when the list shows the full queue (All + empty search).
+                        // Indices are only valid when the list shows the full queue (All + All podcasts + empty search).
                         store.moveQueue(from: source, to: destination)
                     } : nil)
                 }
@@ -216,7 +302,7 @@ struct QueueView: View {
                 scheduleFilter(for: newValue)
             }
             .onChange(of: isFiltering) { _, filtering in
-                // Drag reorder uses full-queue indices; leave Edit while a chip/search filter is active.
+                // Drag reorder uses full-queue indices; leave Edit while a chip/podcast/search filter is active.
                 if filtering {
                     editMode?.wrappedValue = .inactive
                 }
@@ -538,10 +624,11 @@ struct QueueView: View {
     }
 }
 
-/// Filter chip for Queue All / Unplayed / Played (mirrors Downloads / Feed detail).
+/// Filter chip for Queue All / Unplayed / Played and podcast chips (mirrors Downloads).
 private struct QueueFilterChip: View {
     let title: String
     let selected: Bool
+    let accessibilityHint: String
     let action: () -> Void
 
     var body: some View {
@@ -555,7 +642,7 @@ private struct QueueFilterChip: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
-        .accessibilityHint(String(localized: "Filters the Queue list"))
+        .accessibilityHint(accessibilityHint)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }
