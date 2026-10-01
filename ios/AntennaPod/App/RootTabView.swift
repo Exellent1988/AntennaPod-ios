@@ -75,5 +75,18 @@ struct RootTabView: View {
             guard token != nil else { return }
             selectedTab = .downloads
         }
+        .alert(
+            "Cannot stream",
+            isPresented: Binding(
+                get: { playback.lastError != nil },
+                set: { if !$0 { playback.lastError = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) {
+                playback.lastError = nil
+            }
+        } message: {
+            Text(playback.lastError ?? "")
+        }
     }
 }

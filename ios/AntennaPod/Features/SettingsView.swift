@@ -124,6 +124,7 @@ struct SettingsView: View {
                 }
                 refreshSection
                 autoDownloadSection
+                networkDownloadsSection
                 notificationsSection
                 storageSection
                 podcastIndexDiscoverySection
@@ -231,7 +232,6 @@ struct SettingsView: View {
                         Text(cap.label).tag(cap)
                     }
                 }
-                Toggle("Wi‑Fi only", isOn: $settings.autoDownloadWifiOnly)
             }
             Text(autoDownloadHelpText)
                 .font(.caption)
@@ -243,12 +243,27 @@ struct SettingsView: View {
 
     private var autoDownloadHelpText: String {
         if !settings.autoDownloadEnabled {
-            return "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Storage-limit eviction still applies."
+            return "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Storage-limit eviction still applies. Wi‑Fi-only for auto-download is under Network / Downloads."
         }
-        let wifi = settings.autoDownloadWifiOnly
-            ? " On cellular, auto-download is skipped (NWPathMonitor); manual downloads still work."
-            : " Auto-download may use cellular."
-        return "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to \(settings.autoDownloadEpisodesPerFeed.rawValue) newest unplayed episode(s) per feed. Override per podcast via Feed detail → gear. Always/Never beat this global toggle.\(wifi)"
+        return "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to \(settings.autoDownloadEpisodesPerFeed.rawValue) newest unplayed episode(s) per feed. Override per podcast via Feed detail → gear. Always/Never beat this global toggle. Cellular gating is under Network / Downloads."
+    }
+
+    @ViewBuilder
+    private var networkDownloadsSection: some View {
+        Section {
+            Toggle("Auto-download Wi‑Fi only", isOn: $settings.autoDownloadWifiOnly)
+            Toggle("Manual download Wi‑Fi only", isOn: $settings.manualDownloadWifiOnly)
+            Toggle("Stream Wi‑Fi only", isOn: $settings.streamWifiOnly)
+            Text(networkDownloadsHelpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("Network / Downloads")
+        }
+    }
+
+    private var networkDownloadsHelpText: String {
+        "Uses NWPathMonitor (Wi‑Fi / Ethernet vs cellular). Auto-download Wi‑Fi only defaults on — skips enqueue on cellular. Manual download Wi‑Fi only (default off) refuses user downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action."
     }
 
     @ViewBuilder

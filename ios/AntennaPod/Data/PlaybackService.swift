@@ -35,6 +35,11 @@ final class PlaybackService: ObservableObject {
     @Published private(set) var isSleepTimerActive = false
     /// `true` when the current AVPlayer item is a local file URL (offline); `false` when streaming.
     @Published private(set) var isPlayingFromLocalFile = false
+    /// Honest error for stream Wi‑Fi-only refusal (UI alert); cleared on successful play.
+    @Published var lastError: String?
+
+    static let streamCellularBlockedMessage =
+        "Streaming is Wi‑Fi only. Connect to Wi‑Fi or Ethernet, play a downloaded episode, or turn off Stream Wi‑Fi only in Settings → Network / Downloads."
 
     /// Bound from the app for progress / played / continuous queue.
     weak var store: PodcastStore?
@@ -77,7 +82,23 @@ final class PlaybackService: ObservableObject {
     /// Skip-outro fired once per episode play session (avoids observer re-entry / loops).
     private var didTriggerSkipOutroForSession = false
 
-    func play(episode: PodcastEpisode, fileURL: URL? = nil) {
+    /// Starts or switches playback. Returns `false` when streaming is blocked by Wi‑Fi-only policy
+    /// (current player left unchanged; `lastError` set for UI).
+    @discardableResult
+    func play(episode: PodcastEpisode, fileURL: URL? = nil) -> Bool {
+        guard let url = resolvePlaybackURL(for: episode, preferredFileURL: fileURL) else {
+            return false
+        }
+        let playingLocal = url.isFileURL
+        if !playingLocal, settings?.streamWifiOnly == true {
+            AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
+            if !NetworkPathGate.shared.allowsTransfer(wifiOnly: true) {
+                lastError = Self.streamCellularBlockedMessage
+                return false
+            }
+        }
+        lastError = nil
+
         let isFreshEpisode = currentEpisode?.id != episode.id
         var leavingEpisodeId: String?
         if let current = currentEpisode, current.id != episode.id {
@@ -89,11 +110,6 @@ final class PlaybackService: ObservableObject {
         if isFreshEpisode {
             rate = settings?.defaultPlaybackSpeed ?? 1.0
         }
-
-        guard let url = resolvePlaybackURL(for: episode, preferredFileURL: fileURL) else {
-            return
-        }
-        let playingLocal = url.isFileURL
 
         // Keep an active sleep timer across episode changes (clock continues; EOE re-arms).
         tearDownPlayer(clearSleepTimer: false)
@@ -153,6 +169,7 @@ final class PlaybackService: ObservableObject {
         updateNowPlayingInfo(force: true)
         loadArtworkIfNeeded()
         store?.touchLastPlayed(episode.id)
+        return true
     }
 
     func togglePlayPause() {
@@ -311,6 +328,7 @@ final class PlaybackService: ObservableObject {
     /// - Prefer stream: always network URL when available (falls back to local if no remote).
     /// Optional `preferredFileURL` is treated as a known local path (same as `localURL`) and
     /// still subject to Prefer stream.
+    /// Stream URLs are additionally gated by `streamWifiOnly` in `play` (local files always OK).
     private func resolvePlaybackURL(for episode: PodcastEpisode, preferredFileURL: URL?) -> URL? {
         let preference = settings?.playbackSourcePreference ?? .automatic
         let local = preferredFileURL ?? downloads?.localURL(for: episode)
@@ -402,10 +420,13 @@ final class PlaybackService: ObservableObject {
         // Snapshot next before markPlayed removes the finished item from the queue.
         let next = finishedId.flatMap { store?.nextQueueEpisode(after: $0) }
         finishCurrentEpisode(ended: true)
+        var startedNext = false
         if let next {
             // play() switches away and flushes deferred auto-delete for the finished episode.
-            play(episode: next)
-        } else {
+            // May refuse when stream Wi‑Fi-only blocks cellular streaming.
+            startedNext = play(episode: next)
+        }
+        if !startedNext {
             isPlaying = false
             pauseSleepTimerCountdown()
             tearDownPlayer(clearSleepTimer: false)

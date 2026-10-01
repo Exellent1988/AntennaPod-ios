@@ -47,7 +47,7 @@ enum AutoDownloadCoordinator {
             candidates.append(contentsOf: eligibleEpisodes(in: feed, store: store, downloads: downloads, cap: cap))
         }
         for episode in candidates {
-            await downloads.download(episode)
+            await downloads.download(episode, source: .automatic)
         }
     }
 
@@ -79,7 +79,8 @@ enum AutoDownloadCoordinator {
 
 // MARK: - NWPathMonitor gate
 
-/// Shared path monitor for the auto-download Wi‑Fi-only setting.
+/// Shared path monitor for Settings → Network / Downloads Wi‑Fi-only policies
+/// (auto-download, manual download, streaming).
 @MainActor
 final class NetworkPathGate {
     static let shared = NetworkPathGate()
@@ -106,12 +107,18 @@ final class NetworkPathGate {
         monitor.start(queue: DispatchQueue(label: "de.danoeh.antennapod.ios.network-path", qos: .utility))
     }
 
-    /// Manual downloads ignore this gate; auto-download respects `wifiOnly`.
-    func allowsAutoDownload(wifiOnly: Bool) -> Bool {
+    /// When `wifiOnly` is true, requires a satisfied Wi‑Fi or Ethernet path.
+    /// When false, only requires a satisfied path (cellular OK).
+    func allowsTransfer(wifiOnly: Bool) -> Bool {
         guard pathSatisfied else { return false }
         if wifiOnly {
             return isWifiOrEthernet
         }
         return true
+    }
+
+    /// Auto-download Wi‑Fi-only gate (same as `allowsTransfer`).
+    func allowsAutoDownload(wifiOnly: Bool) -> Bool {
+        allowsTransfer(wifiOnly: wifiOnly)
     }
 }

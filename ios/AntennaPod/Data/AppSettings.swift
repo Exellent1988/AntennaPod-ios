@@ -193,7 +193,7 @@ enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
     ]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error notifications).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error notifications).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -230,6 +230,8 @@ final class AppSettings: ObservableObject {
         static let autoDownloadEnabled = "settings.autoDownload.enabled"
         static let autoDownloadEpisodesPerFeed = "settings.autoDownload.episodesPerFeed"
         static let autoDownloadWifiOnly = "settings.autoDownload.wifiOnly"
+        static let manualDownloadWifiOnly = "settings.manualDownload.wifiOnly"
+        static let streamWifiOnly = "settings.stream.wifiOnly"
         static let playbackSourcePreference = "settings.playbackSourcePreference"
         static let autoDeleteAfterPlaying = "settings.autoDelete.afterPlaying"
         static let rewindSeconds = "settings.rewindSeconds"
@@ -303,6 +305,20 @@ final class AppSettings: ObservableObject {
     @Published var autoDownloadWifiOnly: Bool {
         didSet {
             UserDefaults.standard.set(autoDownloadWifiOnly, forKey: Keys.autoDownloadWifiOnly)
+        }
+    }
+
+    /// When true, manual downloads are refused on cellular (error recorded; default off).
+    @Published var manualDownloadWifiOnly: Bool {
+        didSet {
+            UserDefaults.standard.set(manualDownloadWifiOnly, forKey: Keys.manualDownloadWifiOnly)
+        }
+    }
+
+    /// When true, `PlaybackService` refuses stream URLs on cellular; local files still play (default off).
+    @Published var streamWifiOnly: Bool {
+        didSet {
+            UserDefaults.standard.set(streamWifiOnly, forKey: Keys.streamWifiOnly)
         }
     }
 
@@ -413,6 +429,16 @@ final class AppSettings: ObservableObject {
             autoDownloadWifiOnly = UserDefaults.standard.bool(forKey: Keys.autoDownloadWifiOnly)
         } else {
             autoDownloadWifiOnly = true
+        }
+        if UserDefaults.standard.object(forKey: Keys.manualDownloadWifiOnly) != nil {
+            manualDownloadWifiOnly = UserDefaults.standard.bool(forKey: Keys.manualDownloadWifiOnly)
+        } else {
+            manualDownloadWifiOnly = false
+        }
+        if UserDefaults.standard.object(forKey: Keys.streamWifiOnly) != nil {
+            streamWifiOnly = UserDefaults.standard.bool(forKey: Keys.streamWifiOnly)
+        } else {
+            streamWifiOnly = false
         }
         let sourceRaw = UserDefaults.standard.string(forKey: Keys.playbackSourcePreference)
             ?? PlaybackSourcePreference.automatic.rawValue

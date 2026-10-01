@@ -78,6 +78,12 @@ struct DownloadStorageUsage: Equatable {
     }
 }
 
+/// Distinguishes user-tapped downloads from auto-download enqueue (separate Wi‑Fi policies).
+enum DownloadEnqueueSource {
+    case manual
+    case automatic
+}
+
 @MainActor
 final class DownloadService: ObservableObject {
     static let backgroundSessionIdentifier = "de.danoeh.antennapod.ios.background-downloads"
@@ -153,15 +159,27 @@ final class DownloadService: ObservableObject {
         localURL(for: episode) != nil
     }
 
+    static let manualCellularBlockedMessage =
+        "Manual downloads are Wi‑Fi only. Connect to Wi‑Fi or Ethernet, or turn off Manual download Wi‑Fi only in Settings → Network / Downloads."
+
     /// Starts a background `URLSession` download task. Continues while the app is suspended
     /// (system-permitting); mapping is persisted for relaunch.
-    func download(_ episode: PodcastEpisode) async {
+    /// - Parameter source: `.manual` (default) honors `manualDownloadWifiOnly`; `.automatic`
+    ///   skips that gate (auto-download uses `autoDownloadWifiOnly` in `AutoDownloadCoordinator`).
+    func download(_ episode: PodcastEpisode, source: DownloadEnqueueSource = .manual) async {
         guard let remote = episode.downloadUrl, let url = URL(string: remote) else {
             recordFailure(episode: episode, message: "Episode has no media URL")
             return
         }
         if inProgress.contains(episode.id) {
             return
+        }
+        if source == .manual, settings?.manualDownloadWifiOnly == true {
+            AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
+            if !NetworkPathGate.shared.allowsTransfer(wifiOnly: true) {
+                recordFailure(episode: episode, message: Self.manualCellularBlockedMessage)
+                return
+            }
         }
         lastError = nil
         inProgress.insert(episode.id)

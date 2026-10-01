@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync + About (P0/P1); more prefs later |
+| Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync + About (P0/P1); more prefs later |
 
 ## Subscriptions
 
@@ -72,7 +72,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Auto-download (global + Regeln) | 4 | done | Global toggle + per-feed cap (1/2/3/5) + per-feed Use global/Always/Never; enqueue after refresh via DownloadService; Wi‑Fi-only via NWPathMonitor; storage eviction unchanged. Full Android-style filter rules → KMP later |
 | Per-feed auto-download | 4 | done | Use global / Always / Never on feed settings sheet; Always enqueues even when global off; Never skips; cap + Wi‑Fi-only still global |
 | Auto-delete after play | 4 | done | Global Settings toggle (default off); on mark played (manual or playback finished / continuous auto-next) deletes local file via DownloadService; keeps episode row + played status; defers while that local file is still the active player item; **skips favorited / starred** episodes |
-| Mobile/Wi‑Fi Policy | 4 | wip | Auto-download Wi‑Fi/Ethernet-only via NWPathMonitor; manual downloads still allow cellular; broader cellular prefs later |
+| Mobile/Wi‑Fi Policy | 4 | done | Settings → Network / Downloads: `autoDownloadWifiOnly` (default on), `manualDownloadWifiOnly` (default off; refuse + error on cellular), `streamWifiOnly` (default off; PlaybackService refuses stream URLs on cellular, local OK + alert); shared `NWPathMonitor` (`NetworkPathGate`) |
 | Background downloads | 5 | done | `URLSessionConfiguration.background`; AppDelegate `handleEventsForBackgroundURLSession`; task↔episode in `pending-downloads.json` |
 | Download log / errors | 3 | done | Ring buffer (~50) in Application Support `download-errors.json` (episode id/title, feed, message, timestamp); `lastError` banner on Downloads + Download errors list (toolbar / Settings); Clear errors |
 

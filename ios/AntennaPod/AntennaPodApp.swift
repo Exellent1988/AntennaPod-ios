@@ -27,7 +27,7 @@ struct AntennaPodApp: App {
         downloads.runStorageMaintenance()
         // BGAppRefreshTask stub — Info.plist has no `fetch` mode (see FeedRefreshCoordinator).
         FeedRefreshCoordinator.registerBackgroundRefreshIfNeeded()
-        // NWPathMonitor for auto-download Wi‑Fi-only gate.
+        // NWPathMonitor for Network / Downloads Wi‑Fi-only gates (auto / manual / stream).
         AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
         _store = StateObject(wrappedValue: store)
         _playback = StateObject(wrappedValue: playback)
