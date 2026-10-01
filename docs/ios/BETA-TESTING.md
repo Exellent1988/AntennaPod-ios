@@ -102,6 +102,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Feed-Detail: Episoden-Sortierung (Neueste / Älteste zuerst) | ☐ Feed detail: episode sort (Newest / Oldest first) |
 | ☐ Library: Episodes (Filter All / Ungehört / Heruntergeladen) / History / Favorites / Archived / Statistics / Echo | ☐ Library: Episodes (filter All / Unplayed / Downloaded) / History / Favorites / Archived / Statistics / Echo |
 | ☐ History: Verlauf leeren (Bestätigung) | ☐ History: Clear history (confirm) |
+| ☐ History: Suche (Titel / Feed) | ☐ History: search (title / feed) |
 | ☐ Favoriten (Stern) | ☐ Favorites (star) |
 | ☐ Favoriten: Suche (Titel / Feed) | ☐ Favorites: search (title / feed) |
 | ☐ Favoriten: Favoriten leeren (Bestätigung) | ☐ Favorites: Clear favorites (confirm) |
