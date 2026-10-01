@@ -209,6 +209,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     var author: String?
     /// Channel `itunes:explicit` yes/true/explicit. `false` when missing/clean — never invent; UI hides unless true.
     var isExplicit: Bool
+    /// Feed language BCP-47 / ISO 639 code when the feed provides it (`itunes:language` / RSS `language` / `xml:lang`).
+    /// Nil or blank when absent — never invent; UI hides unless present.
+    var language: String?
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -224,6 +227,20 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// Trimmed non-empty language code from the feed. Hidden when missing — never invent.
+    var languageCode: String? {
+        guard let language else { return nil }
+        let trimmed = language.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Localized language name for UI / VoiceOver when `Locale` knows the code; otherwise the raw code.
+    /// `nil` when the feed did not provide a language — never invents a code.
+    var displayLanguage: String? {
+        guard let code = languageCode else { return nil }
+        return FeedLanguageFormatting.displayName(for: code)
+    }
+
     init(
         id: UUID,
         title: String,
@@ -233,6 +250,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         descriptionText: String? = nil,
         author: String? = nil,
         isExplicit: Bool = false,
+        language: String? = nil,
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -243,6 +261,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.descriptionText = descriptionText
         self.author = author
         self.isExplicit = isExplicit
+        self.language = language
         self.episodes = episodes
     }
 
@@ -256,11 +275,40 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         descriptionText = try c.decodeIfPresent(String.self, forKey: .descriptionText)
         author = try c.decodeIfPresent(String.self, forKey: .author)
         isExplicit = try c.decodeIfPresent(Bool.self, forKey: .isExplicit) ?? false
+        language = try c.decodeIfPresent(String.self, forKey: .language)
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, episodes
+    }
+}
+
+/// Localized display for feed-provided language codes (RSS / itunes / xml:lang).
+/// Uses `Locale.current` only — never invents or remaps codes the feed did not supply.
+enum FeedLanguageFormatting {
+    /// Prefer `Locale.current.localizedString(forLanguageCode:)` / identifier; fall back to the raw code.
+    static func displayName(for rawCode: String) -> String {
+        let code = rawCode.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !code.isEmpty else { return rawCode }
+        // Full BCP-47 identifier first (e.g. en-US).
+        if let name = Locale.current.localizedString(forIdentifier: code)?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+           !name.isEmpty,
+           name.caseInsensitiveCompare(code) != .orderedSame {
+            return name
+        }
+        // Language subtag only (en from en-US / en_US).
+        let langOnly = code
+            .split(whereSeparator: { $0 == "-" || $0 == "_" })
+            .first
+            .map(String.init) ?? code
+        if let name = Locale.current.localizedString(forLanguageCode: langOnly)?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+           !name.isEmpty {
+            return name
+        }
+        return code
     }
 }
 

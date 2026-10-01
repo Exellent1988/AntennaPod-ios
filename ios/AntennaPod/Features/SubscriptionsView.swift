@@ -42,7 +42,7 @@ struct SubscriptionsView: View {
     }
 
     /// Visible subscriptions after search; empty query shows full list under current sort.
-    /// Matches feed **title**, optional **descriptionText**, and optional **author** (`PodcastStore.matchingFeeds`).
+    /// Matches feed **title**, optional **descriptionText**, optional **author**, and optional **language** (`PodcastStore.matchingFeeds`).
     private var searchFilteredFeeds: [PodcastFeed] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base: [PodcastFeed]
@@ -549,6 +549,14 @@ struct SubscriptionsView: View {
                             .lineLimit(1)
                             .accessibilityHidden(true)
                     }
+                    // Feed language when present (localized name or raw code); hide when missing.
+                    if let language = feed.displayLanguage {
+                        Text(language)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .accessibilityHidden(true)
+                    }
                     HStack(spacing: 6) {
                         Text("\(feed.episodes.count) episodes")
                             .font(.subheadline)
@@ -643,6 +651,9 @@ struct SubscriptionsView: View {
         }
         if let author = feed.displayAuthor {
             parts.append(author)
+        }
+        if let language = feed.displayLanguage {
+            parts.append(String(localized: "Language \(language)"))
         }
         let epCount = feed.episodes.count
         if epCount == 1 {

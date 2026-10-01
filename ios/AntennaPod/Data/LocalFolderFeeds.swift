@@ -266,6 +266,7 @@ enum LocalFolderScanner {
             imageUrl: nil,
             descriptionText: "Local folder · \(folderURL.lastPathComponent) · no RSS · refresh re-scans files",
             author: nil,
+            language: nil,
             episodes: episodes
         )
     }

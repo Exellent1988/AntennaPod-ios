@@ -211,6 +211,13 @@ struct FeedPreviewView: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
                 }
+                if let language = parsed?.displayLanguage {
+                    Text(language)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .accessibilityLabel(String(localized: "Language \(language)"))
+                }
                 if parsed?.isExplicit == true {
                     Text(String(localized: "Explicit"))
                         .font(.caption2.weight(.semibold))

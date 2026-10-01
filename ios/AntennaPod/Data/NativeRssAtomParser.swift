@@ -23,6 +23,9 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var managingEditor: String?
     /// Channel itunes:explicit — true only for yes/true/explicit.
     private var feedIsExplicit = false
+    /// Prefer itunes:language / RSS language element → xml:lang on rss/feed/channel.
+    private var languageElement: String?
+    private var xmlLang: String?
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -83,6 +86,10 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 managingEditor: managingEditor
             ),
             isExplicit: feedIsExplicit,
+            language: Self.preferredLanguage(
+                languageElement: languageElement,
+                xmlLang: xmlLang
+            ),
             episodes: episodes
         )
     }
@@ -102,8 +109,13 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         switch local.lowercased() {
         case "rss":
             feedType = "rss"
+            captureXmlLangIfNeeded(attributeDict)
         case "feed":
             feedType = "atom"
+            captureXmlLangIfNeeded(attributeDict)
+        case "channel":
+            // RSS channel may carry xml:lang (language element is handled on endElement).
+            captureXmlLangIfNeeded(attributeDict)
         case "item", "entry":
             inItem = true
             itemTitle = nil
@@ -342,6 +354,11 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 if let flagged = ItunesExplicitParsing.parse(text) {
                     feedIsExplicit = flagged
                 }
+            case "language":
+                // RSS <language> / itunes:language — store as provided (never invent). Prefer over xml:lang.
+                if !text.isEmpty {
+                    languageElement = text
+                }
             case "url" where inImage:
                 imageUrl = text
             case "logo", "icon":
@@ -384,6 +401,39 @@ extension XMLFeedParser {
             }
         }
         return nil
+    }
+
+    /// Non-empty language preference: RSS/itunes `<language>` element → `xml:lang` on rss/feed/channel.
+    /// Returns nil when none present (UI hides; never invents codes).
+    fileprivate static func preferredLanguage(
+        languageElement: String?,
+        xmlLang: String?
+    ) -> String? {
+        for candidate in [languageElement, xmlLang] {
+            if let raw = candidate?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty {
+                return raw
+            }
+        }
+        return nil
+    }
+
+    /// Capture `xml:lang` (or bare `lang`) once from root/channel attributes when still unset.
+    fileprivate func captureXmlLangIfNeeded(_ attributeDict: [String: String]) {
+        guard xmlLang == nil || xmlLang?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == true else {
+            return
+        }
+        // Foundation may key as "xml:lang", "lang", or expand the namespace URI form.
+        let candidates = [
+            attributeDict["xml:lang"],
+            attributeDict["lang"],
+            attributeDict.first(where: { $0.key.lowercased().hasSuffix(":lang") || $0.key.lowercased() == "lang" })?.value
+        ]
+        for candidate in candidates {
+            if let raw = candidate?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty {
+                xmlLang = raw
+                return
+            }
+        }
     }
 }
 

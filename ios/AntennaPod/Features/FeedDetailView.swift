@@ -47,6 +47,11 @@ struct FeedDetailView: View {
         liveFeed.displayAuthor
     }
 
+    /// Localized language name (or raw code) when the feed provided a language — hidden when missing.
+    private var displayLanguage: String? {
+        liveFeed.displayLanguage
+    }
+
     /// Episodes for this feed ordered by `AppSettings.feedEpisodeSort` (`pubDateEpochMs`).
     /// Missing dates sort last in both modes. Does not mutate stored feed order.
     private var sortedEpisodes: [PodcastEpisode] {
@@ -176,6 +181,17 @@ struct FeedDetailView: View {
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityLabel(String(localized: "Author \(author)"))
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Feed language when present (itunes:language / RSS language / xml:lang); hide when missing.
+            if let language = displayLanguage {
+                Section {
+                    Text(language)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityLabel(String(localized: "Language \(language)"))
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }

@@ -14542,6 +14542,24 @@
           }
         }
       }
+    },
+    "Language %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for podcast language when feed provides itunes:language / RSS language / xml:lang. Uses localized name when Locale knows the code, else raw code.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprache %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
