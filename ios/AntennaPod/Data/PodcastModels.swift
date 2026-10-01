@@ -479,6 +479,160 @@ enum PodcastSocialInteractDisplay {
     }
 }
 
+
+/// Podcast Index `podcast:value` + nested `podcast:valueRecipient` — Value4Value metadata only.
+/// **Display-only:** this app does **not** send Lightning / wallet payments, stream sats, or call payment APIs.
+/// Feed-provided only — never invent recipients or payment addresses as actionable sends.
+struct PodcastValue: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields.
+    var id: String {
+        let rec = recipients.map(\.id).joined(separator: ";")
+        return "\(type)|\(method)|\(suggested ?? "")|\(rec)"
+    }
+    /// Value layer / cryptocurrency slug from feed (`lightning`, `webmonetization`, …).
+    var type: String
+    /// Transport method from feed (`keysend`, `ILP`, …).
+    var method: String
+    /// Optional suggested amount string as provided (informational only — never used to send).
+    var suggested: String?
+    /// Nested `podcast:valueRecipient` entries (may be empty after parse filtering).
+    var recipients: [PodcastValueRecipient]
+
+    init(type: String, method: String, suggested: String? = nil, recipients: [PodcastValueRecipient] = []) {
+        self.type = type
+        self.method = method
+        self.suggested = suggested
+        self.recipients = recipients
+    }
+}
+
+/// One `podcast:valueRecipient` — type, address, split required by Podcast Index; name recommended; fee optional.
+struct PodcastValueRecipient: Identifiable, Hashable, Codable {
+    var id: String { "\(name ?? "")|\(type)|\(address)|\(split)|\(fee.map(String.init) ?? "")" }
+    /// Optional display name from feed. Nil when absent — never invent.
+    var name: String?
+    /// Address type slug (`node`, `lnaddress`, …).
+    var type: String
+    /// Receiving address / payment pointer / node pubkey as provided.
+    var address: String
+    /// Share count from feed `split` (not necessarily a percentage — UI may derive %).
+    var split: Int
+    /// Optional `fee` attribute. Nil when absent (spec default false).
+    var fee: Bool?
+
+    init(name: String? = nil, type: String, address: String, split: Int, fee: Bool? = nil) {
+        self.name = name
+        self.type = type
+        self.address = address
+        self.split = split
+        self.fee = fee
+    }
+
+    /// Trimmed non-empty name when the feed set it.
+    var displayName: String? {
+        guard let name else { return nil }
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty recipient type.
+    var displayType: String? {
+        let trimmed = type.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty address. Nil when blank.
+    var displayAddress: String? {
+        let trimmed = address.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// True when feed set `fee` to true/yes.
+    var isFee: Bool { fee == true }
+
+    /// http(s) recipient page from feed `address` only. Nil for lightning node / lnaddress / other non-http(s).
+    /// Never invent payment URLs — openURL only when the address itself is http(s).
+    var browserURL: URL? {
+        guard let trimmed = displayAddress, let url = URL(string: trimmed) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return url
+    }
+}
+
+/// Flattened display row: recipient + parent `podcast:value` type/method + optional split %.
+struct PodcastValueRecipientRow: Identifiable, Hashable {
+    var id: String { "\(valueType)|\(valueMethod)|\(recipient.id)|\(splitPercent.map(String.init) ?? "")" }
+    var recipient: PodcastValueRecipient
+    var valueType: String
+    var valueMethod: String
+    /// Percentage of this block’s total split shares (rounded). Nil when total ≤ 0.
+    var splitPercent: Int?
+
+    var displayName: String? { recipient.displayName }
+    var displayRecipientType: String? { recipient.displayType }
+    var displayAddress: String? { recipient.displayAddress }
+    var browserURL: URL? { recipient.browserURL }
+    var isFee: Bool { recipient.isFee }
+    var split: Int { recipient.split }
+
+    /// Compact type/method caption for UI (e.g. `lightning / keysend`).
+    var typeMethodCaption: String {
+        "\(valueType) / \(valueMethod)"
+    }
+}
+
+/// Display helpers for `podcast:value` / valueRecipient lists (channel or item). Feed-provided only; no payments.
+enum PodcastValueDisplay {
+    /// Soft UI cap — show first N flattened recipients; honesty footnote when more exist.
+    static let displayCap = 20
+
+    /// Flatten valid recipients from value blocks (type+method+address+split required). Feed order.
+    /// Computes split % per block from that block’s total shares. No invented recipients / no payment sends.
+    static func valid(_ values: [PodcastValue]) -> [PodcastValueRecipientRow] {
+        var rows: [PodcastValueRecipientRow] = []
+        for value in values {
+            let vType = value.type.trimmingCharacters(in: .whitespacesAndNewlines)
+            let vMethod = value.method.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !vType.isEmpty, !vMethod.isEmpty else { continue }
+            let cleaned: [PodcastValueRecipient] = value.recipients.compactMap { rec in
+                guard let rType = rec.displayType, let addr = rec.displayAddress, rec.split >= 0 else { return nil }
+                return PodcastValueRecipient(
+                    name: rec.displayName,
+                    type: rType,
+                    address: addr,
+                    split: rec.split,
+                    fee: rec.fee
+                )
+            }
+            guard !cleaned.isEmpty else { continue }
+            let total = cleaned.reduce(0) { $0 + max(0, $1.split) }
+            for rec in cleaned {
+                let pct: Int? = total > 0 ? Int((Double(rec.split) * 100.0 / Double(total)).rounded()) : nil
+                rows.append(
+                    PodcastValueRecipientRow(
+                        recipient: rec,
+                        valueType: vType,
+                        valueMethod: vMethod,
+                        splitPercent: pct
+                    )
+                )
+            }
+        }
+        return rows
+    }
+
+    /// First `displayCap` flattened recipients + whether more exist in the feed.
+    static func capped(_ values: [PodcastValue]) -> (shown: [PodcastValueRecipientRow], truncated: Bool) {
+        let list = valid(values)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+}
+
+
 struct PodcastEpisode: Identifiable, Hashable, Codable {
     let id: String
     var title: String
@@ -518,6 +672,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Item-level Podcast Index `podcast:socialInteract` entries when the feed provides them.
     /// Empty when absent — never invent discussion URLs; UI hides when empty / disabled. openURL only.
     var socialInteracts: [PodcastSocialInteract]
+    /// Item-level Podcast Index `podcast:value` / valueRecipient blocks when the feed provides them.
+    /// Empty when absent — never invent; UI hides when empty. **Display-only** — no Lightning / wallet sends.
+    var values: [PodcastValue]
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -570,7 +727,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         isExplicit: Bool = false,
         people: [PodcastPerson] = [],
         locations: [PodcastLocation] = [],
-        socialInteracts: [PodcastSocialInteract] = []
+        socialInteracts: [PodcastSocialInteract] = [],
+        values: [PodcastValue] = []
     ) {
         self.id = id
         self.title = title
@@ -592,6 +750,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.people = people
         self.locations = locations
         self.socialInteracts = socialInteracts
+        self.values = values
     }
 
     init(from decoder: Decoder) throws {
@@ -616,6 +775,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         people = try c.decodeIfPresent([PodcastPerson].self, forKey: .people) ?? []
         locations = try c.decodeIfPresent([PodcastLocation].self, forKey: .locations) ?? []
         socialInteracts = try c.decodeIfPresent([PodcastSocialInteract].self, forKey: .socialInteracts) ?? []
+        values = try c.decodeIfPresent([PodcastValue].self, forKey: .values) ?? []
     }
 
     /// Non-empty named item-level `podcast:person` entries (hide when empty — never invent).
@@ -636,6 +796,11 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Highest-priority openable item socialInteract (openURL Discuss). Nil when none.
     var preferredSocialInteract: PodcastSocialInteract? {
         PodcastSocialInteractDisplay.preferred(socialInteracts)
+    }
+
+    /// Flattened item-level `podcast:value` recipients (hide when empty — never invent; display-only).
+    var displayValueRecipients: [PodcastValueRecipientRow] {
+        PodcastValueDisplay.valid(values)
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).
@@ -742,6 +907,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel-level Podcast Index `podcast:socialInteract` entries when the feed provides them.
     /// Empty when absent — never invent discussion URLs; UI hides when empty / disabled. openURL only.
     var socialInteracts: [PodcastSocialInteract]
+    /// Channel-level Podcast Index `podcast:value` / valueRecipient blocks when the feed provides them.
+    /// Empty when absent — never invent; UI hides when empty. **Display-only** — no Lightning / wallet sends.
+    var values: [PodcastValue]
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -844,6 +1012,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastSocialInteractDisplay.preferred(socialInteracts)
     }
 
+    /// Flattened channel-level `podcast:value` recipients (hide when empty — never invent; display-only).
+    var displayValueRecipients: [PodcastValueRecipientRow] {
+        PodcastValueDisplay.valid(values)
+    }
+
     init(
         id: UUID,
         title: String,
@@ -864,6 +1037,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         trailers: [PodcastTrailer] = [],
         locations: [PodcastLocation] = [],
         socialInteracts: [PodcastSocialInteract] = [],
+        values: [PodcastValue] = [],
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -885,6 +1059,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.trailers = trailers
         self.locations = locations
         self.socialInteracts = socialInteracts
+        self.values = values
         self.episodes = episodes
     }
 
@@ -909,11 +1084,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         trailers = try c.decodeIfPresent([PodcastTrailer].self, forKey: .trailers) ?? []
         locations = try c.decodeIfPresent([PodcastLocation].self, forKey: .locations) ?? []
         socialInteracts = try c.decodeIfPresent([PodcastSocialInteract].self, forKey: .socialInteracts) ?? []
+        values = try c.decodeIfPresent([PodcastValue].self, forKey: .values) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, episodes
     }
 }
 

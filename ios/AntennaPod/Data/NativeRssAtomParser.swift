@@ -54,6 +54,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var channelLocations: [PodcastLocation] = []
     /// Channel podcast:socialInteract — feed-provided only; never invent discussion URLs.
     private var channelSocialInteracts: [PodcastSocialInteract] = []
+    /// Channel podcast:value / valueRecipient — feed-provided only; display-only (no payments).
+    private var channelValues: [PodcastValue] = []
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -92,6 +94,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itemLocations: [PodcastLocation] = []
     /// Item podcast:socialInteract — feed-provided only; never invent discussion URLs.
     private var itemSocialInteracts: [PodcastSocialInteract] = []
+    /// Item podcast:value / valueRecipient — feed-provided only; display-only (no payments).
+    private var itemValues: [PodcastValue] = []
     /// Capturing podcast:person element text (name) + pending attributes.
     private var capturingPerson = false
     private var pendingPersonRole: String?
@@ -109,6 +113,19 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var pendingSocialUri: String?
     private var pendingSocialAccountId: String?
     private var pendingSocialPriority: Int?
+    /// Capturing podcast:value (parent) + nested valueRecipient children.
+    private var capturingValue = false
+    private var pendingValueType: String?
+    private var pendingValueMethod: String?
+    private var pendingValueSuggested: String?
+    private var pendingValueRecipients: [PodcastValueRecipient] = []
+    /// Capturing podcast:valueRecipient attributes (typically self-closing).
+    private var capturingValueRecipient = false
+    private var pendingRecipientName: String?
+    private var pendingRecipientType: String?
+    private var pendingRecipientAddress: String?
+    private var pendingRecipientSplit: Int?
+    private var pendingRecipientFee: Bool?
     private var elementStack: [String] = []
 
     init(data: Data) {
@@ -151,6 +168,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             trailers: channelTrailers,
             locations: channelLocations,
             socialInteracts: channelSocialInteracts,
+            values: channelValues,
             episodes: episodes
         )
     }
@@ -200,6 +218,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemPeople = []
             itemLocations = []
             itemSocialInteracts = []
+            itemValues = []
             if local.lowercased() == "entry", let href = attributeDict["href"] {
                 itemLink = href
             }
@@ -384,6 +403,41 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             } else {
                 pendingSocialPriority = nil
             }
+        case "value":
+            // Podcast Index: <podcast:value type="…" method="…" suggested="…">…valueRecipient…</podcast:value>
+            // Channel and/or item. type + method required; suggested optional. Display-only — no payments.
+            capturingValue = true
+            pendingValueType = Self.nonEmptyAttr(attributeDict["type"])
+            pendingValueMethod = Self.nonEmptyAttr(attributeDict["method"])
+            pendingValueSuggested = Self.nonEmptyAttr(attributeDict["suggested"])
+            pendingValueRecipients = []
+        case "valuerecipient":
+            // Podcast Index: <podcast:valueRecipient name="…" type="…" address="…" split="…" fee="…"/>
+            // Nested under podcast:value. type + address + split required; name recommended; fee optional.
+            // Never invent addresses; never treat as actionable Lightning send in this app.
+            guard capturingValue else { break }
+            capturingValueRecipient = true
+            pendingRecipientName = Self.nonEmptyAttr(attributeDict["name"])
+            pendingRecipientType = Self.nonEmptyAttr(attributeDict["type"])
+            pendingRecipientAddress = Self.nonEmptyAttr(attributeDict["address"])
+            if let rawSplit = Self.nonEmptyAttr(attributeDict["split"]),
+               let split = Int(rawSplit) {
+                pendingRecipientSplit = split
+            } else {
+                pendingRecipientSplit = nil
+            }
+            if let rawFee = Self.nonEmptyAttr(attributeDict["fee"]) {
+                let lower = rawFee.lowercased()
+                if lower == "true" || lower == "yes" || lower == "1" {
+                    pendingRecipientFee = true
+                } else if lower == "false" || lower == "no" || lower == "0" {
+                    pendingRecipientFee = false
+                } else {
+                    pendingRecipientFee = nil
+                }
+            } else {
+                pendingRecipientFee = nil
+            }
         default:
             break
         }
@@ -463,6 +517,10 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishLocation(text: text, intoItem: true)
             case "socialinteract":
                 finishSocialInteract(text: text, intoItem: true)
+            case "valuerecipient":
+                finishValueRecipient()
+            case "value":
+                finishValue(intoItem: true)
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
@@ -485,7 +543,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     isExplicit: itemExplicitOverride ?? feedIsExplicit,
                     people: itemPeople,
                     locations: itemLocations,
-                    socialInteracts: itemSocialInteracts
+                    socialInteracts: itemSocialInteracts,
+                    values: itemValues
                 )
                 episodes.append(episode)
                 inItem = false
@@ -567,6 +626,10 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishLocation(text: text, intoItem: false)
             case "socialinteract":
                 finishSocialInteract(text: text, intoItem: false)
+            case "valuerecipient":
+                finishValueRecipient()
+            case "value":
+                finishValue(intoItem: false)
             case "id":
                 break
             default:
@@ -659,6 +722,62 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         }
     }
 
+
+    /// Finish a podcast:valueRecipient — append when type + address + split present; never invent.
+    private func finishValueRecipient() {
+        defer {
+            capturingValueRecipient = false
+            pendingRecipientName = nil
+            pendingRecipientType = nil
+            pendingRecipientAddress = nil
+            pendingRecipientSplit = nil
+            pendingRecipientFee = nil
+        }
+        guard capturingValue, capturingValueRecipient else { return }
+        guard let rType = pendingRecipientType,
+              !rType.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              let address = pendingRecipientAddress,
+              !address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              let split = pendingRecipientSplit else { return }
+        pendingValueRecipients.append(
+            PodcastValueRecipient(
+                name: pendingRecipientName,
+                type: rType,
+                address: address,
+                split: split,
+                fee: pendingRecipientFee
+            )
+        )
+    }
+
+    /// Finish a podcast:value block — append when type + method present and ≥1 recipient; display-only.
+    private func finishValue(intoItem: Bool) {
+        defer {
+            capturingValue = false
+            pendingValueType = nil
+            pendingValueMethod = nil
+            pendingValueSuggested = nil
+            pendingValueRecipients = []
+        }
+        guard capturingValue else { return }
+        guard let vType = pendingValueType,
+              !vType.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              let vMethod = pendingValueMethod,
+              !vMethod.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        let recipients = pendingValueRecipients
+        guard !recipients.isEmpty else { return }
+        let block = PodcastValue(
+            type: vType,
+            method: vMethod,
+            suggested: pendingValueSuggested,
+            recipients: recipients
+        )
+        if intoItem {
+            itemValues.append(block)
+        } else {
+            channelValues.append(block)
+        }
+    }
 
     /// Finish a podcast:socialInteract — append when protocol present; uri from attr or http(s) element text.
     /// `protocol=disabled` may omit uri (still stored so UI can hide). Never invent URLs.

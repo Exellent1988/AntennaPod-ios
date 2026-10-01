@@ -15440,6 +15440,294 @@
           }
         }
       }
+    },
+    "Value / Support creators": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Value / Support creators"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Value / Creator unterstützen"
+          }
+        }
+      },
+      "comment": "Section title for podcast:value / valueRecipient metadata list (display-only)."
+    },
+    "This app does not send payments. Addresses are shown for information only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This app does not send payments. Addresses are shown for information only."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese App sendet keine Zahlungen. Adressen werden nur zur Information angezeigt."
+          }
+        }
+      },
+      "comment": "Honesty footnote under Value4Value recipient list — no Lightning/wallet sends."
+    },
+    "Showing first 20 value recipients from the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first 20 value recipients from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es werden die ersten 20 Value-Empfänger aus dem Feed angezeigt."
+          }
+        }
+      },
+      "comment": "Honesty footnote when podcast:value recipient list is truncated to the first 20."
+    },
+    "Open in browser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Im Browser öffnen"
+          }
+        }
+      },
+      "comment": "Button to open http(s) valueRecipient address in the system browser."
+    },
+    "Opens the recipient page from the feed in the system browser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the recipient page from the feed in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Empfängerseite aus dem Feed im Systembrowser"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Open in browser on a podcast:valueRecipient http(s) address."
+    },
+    "Copy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopieren"
+          }
+        }
+      },
+      "comment": "Button to copy a non-http(s) valueRecipient address (Lightning/node) to the pasteboard."
+    },
+    "Copies the recipient address to the pasteboard. This app does not send payments.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the recipient address to the pasteboard. This app does not send payments."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die Empfängeradresse in die Zwischenablage. Diese App sendet keine Zahlungen."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy on a Lightning/node valueRecipient address."
+    },
+    "Address copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Address copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adresse in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Alert message after copying a valueRecipient address."
+    },
+    "Fee": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fee"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gebühr"
+          }
+        }
+      },
+      "comment": "Compact badge when podcast:valueRecipient fee=true."
+    },
+    "Fee recipient": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fee recipient"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gebührenempfänger"
+          }
+        }
+      },
+      "comment": "VoiceOver when valueRecipient is marked fee=true."
+    },
+    "Split %lld percent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Split %lld percent"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anteil %lld Prozent"
+          }
+        }
+      },
+      "comment": "Split share as percent of the value block total for a valueRecipient row."
+    },
+    "Split shares %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Split shares %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anteil %lld Anteile"
+          }
+        }
+      },
+      "comment": "Raw split share count when percent cannot be computed."
+    },
+    "Type %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Typ %@"
+          }
+        }
+      },
+      "comment": "VoiceOver recipient type for a podcast:valueRecipient row."
+    },
+    "Method %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Method %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Methode %@"
+          }
+        }
+      },
+      "comment": "VoiceOver value method for a podcast:value row."
+    },
+    "Value layer %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Value layer %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Value-Schicht %@"
+          }
+        }
+      },
+      "comment": "VoiceOver value type (lightning/webmonetization) for a podcast:value row."
+    },
+    "Address %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Address %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adresse %@"
+          }
+        }
+      },
+      "comment": "VoiceOver for a non-http(s) valueRecipient address shown as text."
     }
   },
   "version": "1.0"

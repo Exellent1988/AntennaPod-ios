@@ -74,6 +74,15 @@ struct FeedDetailView: View {
         liveFeed.displaySocialInteracts
     }
 
+    /// Channel podcast:value recipients when the feed provided them — empty → hide (display-only; no payments).
+    private var displayValues: [PodcastValue] {
+        liveFeed.values
+    }
+
+    private var hasDisplayValueRecipients: Bool {
+        !liveFeed.displayValueRecipients.isEmpty
+    }
+
     /// Most recent channel podcast:trailer when the feed provided one — hide when missing (never invent).
     /// Distinct from item itunes:episodeType=trailer (EpisodeRow badge).
     private var displayTrailer: PodcastTrailer? {
@@ -334,6 +343,14 @@ struct FeedDetailView: View {
             if !displaySocialInteracts.isEmpty {
                 Section {
                     PodcastSocialInteractListView(socialInteracts: displaySocialInteracts)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:value / valueRecipient — Value / Support creators metadata; display-only (no Lightning sends).
+            // http(s) address → Open in browser; else Copy. Hide when none — never invent recipients / payment addresses.
+            if hasDisplayValueRecipients {
+                Section {
+                    PodcastValueRecipientsListView(values: displayValues)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
