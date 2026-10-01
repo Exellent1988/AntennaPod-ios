@@ -13860,6 +13860,57 @@
           }
         }
       }
+    },
+    "Search shownotes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search shownotes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shownotes durchsuchen"
+          }
+        }
+      }
+    },
+    "No matching text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No matching text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein passender Text"
+          }
+        }
+      }
+    },
+    "No shownotes text matches your search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No shownotes text matches your search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Shownotes-Text passt zu deiner Suche."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

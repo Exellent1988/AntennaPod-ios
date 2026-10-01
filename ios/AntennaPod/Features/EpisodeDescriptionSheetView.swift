@@ -2,6 +2,9 @@ import SwiftUI
 import UIKit
 
 /// Scrollable episode shownotes / description sheet (plain text; HTML stripped for beta).
+/// Supports `.searchable` filter over already-loaded plain paragraphs/lines (case-insensitive,
+/// ~250 ms debounce). Does not fetch remote HTML beyond the episode's feed description —
+/// no WebView / rich HTML renderer.
 struct EpisodeDescriptionSheetView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -16,9 +19,42 @@ struct EpisodeDescriptionSheetView: View {
     @State private var copiedAlertMessage = ""
     @State private var copyURLFeedbackTick = 0
 
+    @State private var searchText = ""
+    @State private var debouncedQuery = ""
+    @State private var debounceTask: Task<Void, Never>?
+
+    private let debounceNs: UInt64 = 250_000_000 // 250 ms
+
     private var plainDescription: String {
         guard let raw = episode.descriptionText else { return "" }
         return HTMLTextStripping.plainText(from: raw)
+    }
+
+    /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
+    private var paragraphs: [String] {
+        let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return [] }
+        let blankSplit = trimmed
+            .components(separatedBy: "\n\n")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        if blankSplit.count > 1 { return blankSplit }
+        let lineSplit = trimmed
+            .components(separatedBy: "\n")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        return lineSplit.isEmpty ? [trimmed] : lineSplit
+    }
+
+    /// Visible paragraphs after light-debounced case-insensitive filter.
+    private var filteredParagraphs: [String] {
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !q.isEmpty else { return paragraphs }
+        return paragraphs.filter { $0.localizedCaseInsensitiveContains(q) }
+    }
+
+    private var isFiltering: Bool {
+        !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private var resolvedFeed: PodcastFeed? {
@@ -67,13 +103,11 @@ struct EpisodeDescriptionSheetView: View {
                         description: Text("This episode has no shownotes in the feed.")
                     )
                 } else {
-                    ScrollView {
-                        Text(plainDescription)
-                            .font(.body)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .textSelection(.enabled)
-                            .padding()
-                    }
+                    shownotesContent
+                        .searchable(text: $searchText, prompt: "Search shownotes")
+                        .onChange(of: searchText) { _, newValue in
+                            scheduleFilter(for: newValue)
+                        }
                 }
             }
             .navigationTitle("Shownotes")
@@ -153,6 +187,55 @@ struct EpisodeDescriptionSheetView: View {
                 Text(copiedAlertMessage)
             }
             .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
+        }
+        .onDisappear {
+            debounceTask?.cancel()
+        }
+    }
+
+    @ViewBuilder
+    private var shownotesContent: some View {
+        if isFiltering && filteredParagraphs.isEmpty {
+            ContentUnavailableView(
+                "No matching text",
+                systemImage: "magnifyingglass",
+                description: Text("No shownotes text matches your search.")
+            )
+        } else if isFiltering {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 16) {
+                    ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
+                        Text(paragraph)
+                            .font(.body)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .textSelection(.enabled)
+                            .accessibilityLabel(paragraph)
+                    }
+                }
+                .padding()
+            }
+        } else {
+            ScrollView {
+                Text(plainDescription)
+                    .font(.body)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .textSelection(.enabled)
+                    .padding()
+            }
+        }
+    }
+
+    private func scheduleFilter(for term: String) {
+        debounceTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            debouncedQuery = ""
+            return
+        }
+        debounceTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: debounceNs)
+            guard !Task.isCancelled else { return }
+            debouncedQuery = trimmed
         }
     }
 

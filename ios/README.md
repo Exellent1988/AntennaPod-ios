@@ -476,9 +476,9 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 ## Episode description / Shownotes (beta)
 
 - **Parse:** `NativeRssAtomParser` stores item `description` / `summary` / `content` / `subtitle` (prefer longer; CDATA supported) as `PodcastEpisode.descriptionText`. Populated on subscribe / refresh (existing subscriptions need a refresh).
-- **Full player:** **Shownotes** button opens a sheet with scrollable **plain text** (`HTMLTextStripping` — tags removed; not a rich HTML renderer). Empty state when missing / blank after strip. Toolbar: **Open episode website** (when `link` is http(s)) + **Copy episode link** + optional **Copy media URL** + Share.
+- **Full player:** **Shownotes** button opens a sheet with scrollable **plain text** (`HTMLTextStripping` — tags removed; not a rich HTML renderer). Empty state when missing / blank after strip. Toolbar: **Open episode website** (when `link` is http(s)) + **Copy episode link** + optional **Copy media URL** + Share. **`.searchable`** filters **already-loaded** plain paragraphs/lines case-insensitively with ~250 ms debounce; empty state when no matches. Does **not** fetch remote HTML beyond the episode feed field — no WebView.
 - **Episode row:** context menu **Shownotes** (same sheet) + **Open episode website** / **Copy episode link** when link exists + **Copy media URL** when enclosure exists.
-- **Search:** Feed detail + library episode hits also match `descriptionText` (raw feed text).
+- **Library search:** Feed detail + library episode hits also match `descriptionText` (raw feed text) — separate from the Shownotes sheet filter.
 
 
 ## Feed / podcast description (beta)
