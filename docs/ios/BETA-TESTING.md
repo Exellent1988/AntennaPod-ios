@@ -119,6 +119,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Queue: An Anfang / Ans Ende (Kontextmenü; ausgeblendet wenn erste/letzte/nicht in Queue) | ☐ Queue: Move to top / bottom (context menu; hide if first/last/not queued) |
 | ☐ Queue: Sperre (Toolbar + Settings; kein Reorder / An Anfang-Ende; Einreihen / Als Nächstes / Entfernen / Leeren bleiben) | ☐ Queue: lock (toolbar + Settings; no reorder / Move to top-bottom; enqueue / Play Next / Remove / Clear still work) |
 | ☐ Subscriptions + Tags/Filter | ☐ Subscriptions + tags/filter |
+| ☐ Subscriptions: Suche (Titel / Beschreibung; Sort bleibt) | ☐ Subscriptions: search (title / description; sort preserved) |
 | ☐ Subscriptions: Sortierung (Zuletzt aktualisiert / Alphabetisch) | ☐ Subscriptions: sort (Recently updated / Alphabetical) |
 | ☐ Subscriptions: Alle aktualisieren (Toolbar + Pull; Progress während `isLoading`) | ☐ Subscriptions: Refresh all (toolbar + pull; progress while `isLoading`) |
 | ☐ Feed-Detail: Episoden-Sortierung (Neueste / Älteste zuerst) | ☐ Feed detail: episode sort (Newest / Oldest first) |

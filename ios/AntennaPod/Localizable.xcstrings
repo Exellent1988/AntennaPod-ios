@@ -3333,23 +3333,6 @@
         }
       }
     },
-    "No subscriptions match your library search.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No subscriptions match your library search."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Abonnements passen zu deiner Bibliothekssuche."
-          }
-        }
-      }
-    },
     "No subscriptions or episodes match “%@”.": {
       "extractionState": "manual",
       "localizations": {
@@ -8973,6 +8956,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Posteingang sortieren"
+          }
+        }
+      }
+    },
+    "No subscriptions match your search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match your search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu deiner Suche."
           }
         }
       }

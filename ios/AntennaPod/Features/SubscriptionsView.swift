@@ -13,9 +13,13 @@ struct SubscriptionsView: View {
     @State private var showDiscoverPINGate = false
     @State private var navigateToDiscover = false
     @State private var searchText = ""
+    @State private var debouncedQuery = ""
+    @State private var debounceTask: Task<Void, Never>?
     @State private var tagFilter: SubscriptionTagFilter = .all
     @State private var groupByTag = true
     @State private var feedPendingUnsubscribe: PodcastFeed?
+
+    private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
     /// Client-side list order after search/tag filters (no drag-reorder of subscriptions).
     private func sortedFeeds(_ feeds: [PodcastFeed]) -> [PodcastFeed] {
@@ -34,8 +38,10 @@ struct SubscriptionsView: View {
         }
     }
 
+    /// Visible subscriptions after search; empty query shows full list under current sort.
+    /// Matches feed **title** and optional **descriptionText** (no author/authorEmail on PodcastFeed).
     private var searchFilteredFeeds: [PodcastFeed] {
-        let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base: [PodcastFeed]
         if q.isEmpty {
             base = store.feeds
@@ -43,6 +49,10 @@ struct SubscriptionsView: View {
             base = store.matchingFeeds(query: q)
         }
         return sortedFeeds(base)
+    }
+
+    private var isSearchFiltering: Bool {
+        !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private var tagFilteredFeeds: [PodcastFeed] {
@@ -183,9 +193,9 @@ struct SubscriptionsView: View {
                         "No matching podcasts",
                         systemImage: "magnifyingglass",
                         description: Text(
-                            searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                                ? String(localized: "No subscriptions match this tag filter.")
-                                : String(localized: "No subscriptions match your library search.")
+                            isSearchFiltering
+                                ? String(localized: "No subscriptions match your search.")
+                                : String(localized: "No subscriptions match this tag filter.")
                         )
                     )
                 } else {
@@ -200,6 +210,12 @@ struct SubscriptionsView: View {
             }
             .navigationTitle("Subscriptions")
             .searchable(text: $searchText, prompt: "Search subscriptions")
+            .onChange(of: searchText) { _, newValue in
+                scheduleFilter(for: newValue)
+            }
+            .onDisappear {
+                debounceTask?.cancel()
+            }
             .navigationDestination(for: PodcastFeed.self) { feed in
                 FeedDetailView(feed: feed)
             }
@@ -363,6 +379,20 @@ struct SubscriptionsView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
             path = NavigationPath()
             path.append(feed)
+        }
+    }
+
+    private func scheduleFilter(for term: String) {
+        debounceTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            debouncedQuery = ""
+            return
+        }
+        debounceTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: debounceNs)
+            guard !Task.isCancelled else { return }
+            debouncedQuery = trimmed
         }
     }
 
