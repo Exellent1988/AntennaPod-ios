@@ -12286,6 +12286,42 @@
         }
       }
     },
+    "New / Inbox remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Home New/Inbox preview info bar (episode count + remaining over visible soft-capped preview rows).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New / Inbox remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Neu/Inbox-Zeit %@"
+          }
+        }
+      }
+    },
+    "Home Inbox remaining time covers the preview only (first %lld), not the full Inbox": {
+      "extractionState": "manual",
+      "comment": "VoiceOver soft-cap honesty when Home Inbox/New preview is capped below the full Inbox catalog.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home Inbox remaining time covers the preview only (first %lld), not the full Inbox"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Verbleibende Zeit für Neu/Inbox auf dem Home gilt nur für die Vorschau (erste %lld), nicht für die gesamte Inbox"
+          }
+        }
+      }
+    },
     "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom": {
       "extractionState": "manual",
       "localizations": {
