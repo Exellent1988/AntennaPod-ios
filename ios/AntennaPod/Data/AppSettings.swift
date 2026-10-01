@@ -246,6 +246,7 @@ enum AllEpisodesFilter: String, CaseIterable, Identifiable {
     case all
     case unplayed
     case downloaded
+    case favorites
 
     var id: String { rawValue }
 
@@ -254,6 +255,7 @@ enum AllEpisodesFilter: String, CaseIterable, Identifiable {
         case .all: return String(localized: "All")
         case .unplayed: return String(localized: "Unplayed")
         case .downloaded: return String(localized: "Downloaded")
+        case .favorites: return String(localized: "Favorites")
         }
     }
 }
@@ -652,7 +654,7 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// Library → Episodes chip filter (All / Unplayed / Downloaded). Default All. Persisted.
+    /// Library → Episodes chip filter (All / Unplayed / Downloaded / Favorites). Default All. Persisted.
     @Published var allEpisodesFilter: AllEpisodesFilter {
         didSet {
             UserDefaults.standard.set(allEpisodesFilter.rawValue, forKey: Keys.allEpisodesFilter)

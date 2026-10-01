@@ -8942,6 +8942,23 @@
           }
         }
       }
+    },
+    "Filters the All Episodes list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the All Episodes list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Alle-Episoden-Liste"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

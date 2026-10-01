@@ -18,6 +18,9 @@ struct AllEpisodesView: View {
             base = base.filter { !store.isPlayed($0.episode.id) && !store.isArchived($0.episode.id) }
         case .downloaded:
             base = base.filter { downloads.isDownloaded($0.episode) }
+        case .favorites:
+            // Starred via PodcastStore.isFavorite / favorites.json — still within the capped set.
+            base = base.filter { store.isFavorite($0.episode.id) }
         }
         let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         if q.isEmpty { return base }
@@ -119,6 +122,8 @@ private struct AllEpisodesFilterChip: View {
                 .foregroundStyle(selected ? Color.white : Color.primary)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(String(localized: "Filters the All Episodes list"))
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }
