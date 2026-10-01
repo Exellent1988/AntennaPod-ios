@@ -87,6 +87,8 @@ final class PlaybackService: ObservableObject {
     private var didApplySkipIntroForSession = false
     /// Skip-outro fired once per episode play session (avoids observer re-entry / loops).
     private var didTriggerSkipOutroForSession = false
+    /// When the current item was paused (user / audio-session / sleep-timer). `nil` means no rewind-after-pause.
+    private var pausedAt: Date?
 
     init() {
         setupRemoteCommandsIfNeeded()
@@ -143,6 +145,8 @@ final class PlaybackService: ObservableObject {
         // New play session for this episode item — reset intro/outro once-guards.
         didApplySkipIntroForSession = false
         didTriggerSkipOutroForSession = false
+        // Cold play / episode (re)start is not a pause-resume — do not rewind-after-pause.
+        pausedAt = nil
 
         let resumeAt = resumePosition(for: episode.id)
         if resumeAt > 1 {
@@ -198,7 +202,9 @@ final class PlaybackService: ObservableObject {
             // Pause only saves progress; smart-mark happens on leave/end (AntennaPod-like).
             persistProgress(force: true)
             pauseSleepTimerCountdown()
+            recordPausedAt()
         } else {
+            applyRewindAfterPauseIfNeeded()
             activateSession()
             player.play()
             player.rate = rate
@@ -211,6 +217,7 @@ final class PlaybackService: ObservableObject {
 
     func stop() {
         resumeAfterInterruption = false
+        pausedAt = nil
         let leavingId = currentEpisode?.id
         finishCurrentEpisode(ended: false)
         tearDownPlayer(clearSleepTimer: true)
@@ -593,6 +600,7 @@ final class PlaybackService: ObservableObject {
             player.pause()
             isPlaying = false
         }
+        recordPausedAt()
         // AntennaPod rewinds slightly after fade so the listener does not lose content.
         if sleepTimerDidFade {
             let rewind = Self.fadeThresholdSeconds / 2
@@ -806,6 +814,7 @@ final class PlaybackService: ObservableObject {
             isPlaying = false
             persistProgress(force: true)
             pauseSleepTimerCountdown()
+            recordPausedAt()
         }
         updateNowPlayingInfo(force: true)
         applyIdleTimerPolicy()
@@ -813,6 +822,7 @@ final class PlaybackService: ObservableObject {
 
     private func resumeAfterAudioSessionEvent() {
         guard let player, currentEpisode != nil else { return }
+        applyRewindAfterPauseIfNeeded()
         activateSession()
         player.play()
         player.rate = rate
@@ -820,6 +830,28 @@ final class PlaybackService: ObservableObject {
         resumeSleepTimerIfNeeded()
         updateNowPlayingInfo(force: true)
         applyIdleTimerPolicy()
+    }
+
+    /// Remember pause time for rewind-after-pause (only if not already paused).
+    private func recordPausedAt() {
+        if pausedAt == nil {
+            pausedAt = Date()
+        }
+    }
+
+    /// When Settings rewind-after-pause > 0 and pause lasted ≥ 1s, seek back by N seconds.
+    /// Clears `pausedAt`. No-op on cold play (`pausedAt == nil`).
+    private func applyRewindAfterPauseIfNeeded() {
+        defer { pausedAt = nil }
+        let rewindSecs = settings?.rewindAfterPauseSeconds ?? AppSettings.defaultRewindAfterPauseSeconds
+        guard rewindSecs > 0, let pausedAt else { return }
+        let pausedFor = Date().timeIntervalSince(pausedAt)
+        guard pausedFor >= AppSettings.rewindAfterPauseMinimumPauseSeconds else { return }
+        let target = max(0, positionSeconds - Double(rewindSecs))
+        if abs(target - positionSeconds) < 0.05 {
+            return
+        }
+        seek(toSeconds: target)
     }
 
     // MARK: - Now Playing / remote commands

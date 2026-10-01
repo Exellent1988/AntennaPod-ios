@@ -51,6 +51,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Picture in Picture (Video-Surface, Button) | ☐ Picture in Picture (video surface, button) |
 | ☐ Keep screen on (Settings; idle timer während Play) | ☐ Keep screen on (Settings; idle timer while playing) |
 | ☐ Continuous playback Toggle (an → Queue-Next; aus → Stop ohne Advance) | ☐ Continuous playback toggle (on → queue next; off → stop, no advance) |
+| ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; Pause ≥1s → Seek zurück; kein Cold-Play) | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; pause ≥1s → seek back; not on cold play) |
 | ☐ Progress speichern / Resume | ☐ Progress save / resume |
 | ☐ Mark played / unplayed (+ Smart mark Settings Off/15/30/60/120, default 30) | ☐ Mark played / unplayed (+ Smart mark Settings Off/15/30/60/120, default 30) |
 | ☐ Skip intro / outro (wenn > 0) | ☐ Skip intro / outro (when > 0) |
@@ -164,6 +165,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Keep screen on: idle timer only; no Low Power Mode override / no brightness; PiP/background audio unchanged.
 - Continuous playback: Toggle Standard **an**; aus = Episode-Ende ohne Queue-Advance (Mark played / Progress bleiben); Sleep-Timer Ende der Episode stoppt weiterhin ohne Advance.  
   Continuous playback: toggle default **on**; off = episode end without queue advance (mark played / progress still apply); end-of-episode sleep timer still stops without advance.
+- Rewind after pause: Settings → Playback Picker Off/1/2/3/5/10 (Standard **2**); nur nach echter Pause ≥1s der aktuellen Episode — nicht bei Cold-Play / erstem Start; fester Betrag (nicht Android-Zeitstufen).  
+  Rewind after pause: Settings → Playback picker Off/1/2/3/5/10 (default **2**); only after a real pause ≥1s of the current item — not cold play / first start; fixed amount (not Android elapsed tiers).
 - Smart mark as played: Settings → Playback Picker Off/15/30/60/120 (Standard **30**); Aus (0) = nur natürliches Ende oder manuell als gehört — kein Near-End-Scrub.  
   Smart mark as played: Settings → Playback picker Off/15/30/60/120 (default **30**); Off (0) = only natural end or explicit mark — not near-end scrub.
 

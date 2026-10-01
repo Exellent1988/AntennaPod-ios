@@ -300,7 +300,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, All Episodes filter chips).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -310,6 +310,8 @@ final class AppSettings: ObservableObject {
     static let skipIntroOutroPresets: [Int] = [0, 5, 10, 15, 30, 60]
     /// Smart mark as played presets (0 = off). AntennaPod `prefSmartMarkAsPlayedSecs` values (subset).
     static let smartMarkAsPlayedPresets: [Int] = [0, 15, 30, 60, 120]
+    /// Rewind-after-pause presets (0 = off). Simpler than Android's graduated elapsed buckets; default 2s.
+    static let rewindAfterPausePresets: [Int] = [0, 1, 2, 3, 5, 10]
     /// Android `prefRewindSecs` default.
     static let defaultRewindSeconds: Int = 10
     /// Android `prefFastForwardSecs` default.
@@ -318,6 +320,10 @@ final class AppSettings: ObservableObject {
     static let defaultSkipIntroOutroSeconds: Int = 0
     /// Android `prefSmartMarkAsPlayedSecs` default.
     static let defaultSmartMarkAsPlayedSeconds: Int = 30
+    /// Fixed rewind after a real pause (honest beta; not Android's elapsed-tier util). Default 2.
+    static let defaultRewindAfterPauseSeconds: Int = 2
+    /// Minimum pause duration before rewind-after-pause applies (avoids accidental pause/play).
+    static let rewindAfterPauseMinimumPauseSeconds: Double = 1
     static let customStorageMBRange = 50...100_000
 
     /// SF Symbol for skip buttons (`gobackward.10`, `goforward.30`, …). Falls back to unnumbered glyph when no preset icon exists (e.g. 20s).
@@ -360,6 +366,7 @@ final class AppSettings: ObservableObject {
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
         static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
         static let continuousPlaybackEnabled = "settings.continuousPlaybackEnabled"
+        static let rewindAfterPauseSeconds = "settings.rewindAfterPauseSeconds"
         static let smartMarkAsPlayedSeconds = "settings.smartMarkAsPlayedSeconds"
         static let homeSectionOrder = "settings.home.sectionOrder"
         static let homeHiddenSections = "settings.home.hiddenSections"
@@ -576,6 +583,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Seconds to seek backward when resuming after a pause ≥ 1s (0 = off). Default **2**.
+    /// Honest beta: fixed amount (not Android `RewindAfterPauseUtils` elapsed tiers). Only after an actual pause of the current item — not cold play / first start.
+    @Published var rewindAfterPauseSeconds: Int {
+        didSet {
+            UserDefaults.standard.set(rewindAfterPauseSeconds, forKey: Keys.rewindAfterPauseSeconds)
+        }
+    }
+
     /// Seconds before end that count as “played” when leaving / stopping (Android `prefSmartMarkAsPlayedSecs`, default 30).
     /// `0` = Off: only mark played on natural end (`ended: true`) or explicit mark — not near-end scrub/leave.
     @Published var smartMarkAsPlayedSeconds: Int {
@@ -782,6 +797,7 @@ final class AppSettings: ObservableObject {
             // Default on: auto-advance to next queue episode on end (AntennaPod continuous playback).
             continuousPlaybackEnabled = true
         }
+        rewindAfterPauseSeconds = Self.loadRewindAfterPauseSeconds()
         smartMarkAsPlayedSeconds = Self.loadSmartMarkAsPlayedSeconds()
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
@@ -870,12 +886,40 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Label for rewind-after-pause Settings picker (`Off` when 0).
+    static func rewindAfterPauseLabel(_ seconds: Int) -> String {
+        switch seconds {
+        case 0:
+            return String(localized: "Off")
+        case 1:
+            return String(localized: "1 second")
+        case 2:
+            return String(localized: "2 seconds")
+        case 3:
+            return String(localized: "3 seconds")
+        case 5:
+            return String(localized: "5 seconds")
+        case 10:
+            return String(localized: "10 seconds")
+        default:
+            return "\(seconds) seconds"
+        }
+    }
+
     private static func loadSmartMarkAsPlayedSeconds() -> Int {
         guard UserDefaults.standard.object(forKey: Keys.smartMarkAsPlayedSeconds) != nil else {
             return defaultSmartMarkAsPlayedSeconds
         }
         let stored = UserDefaults.standard.integer(forKey: Keys.smartMarkAsPlayedSeconds)
         return smartMarkAsPlayedPresets.contains(stored) ? stored : defaultSmartMarkAsPlayedSeconds
+    }
+
+    private static func loadRewindAfterPauseSeconds() -> Int {
+        guard UserDefaults.standard.object(forKey: Keys.rewindAfterPauseSeconds) != nil else {
+            return defaultRewindAfterPauseSeconds
+        }
+        let stored = UserDefaults.standard.integer(forKey: Keys.rewindAfterPauseSeconds)
+        return rewindAfterPausePresets.contains(stored) ? stored : defaultRewindAfterPauseSeconds
     }
 
 
@@ -969,6 +1013,7 @@ final class AppSettings: ObservableObject {
             skipSilenceEnabled: skipSilenceEnabled,
             keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
             continuousPlaybackEnabled: continuousPlaybackEnabled,
+            rewindAfterPauseSeconds: rewindAfterPauseSeconds,
             smartMarkAsPlayedSeconds: smartMarkAsPlayedSeconds,
             chartsCountryCode: chartsCountryCode,
             homeSectionOrder: homeSectionOrder.map(\.rawValue),
@@ -1032,6 +1077,10 @@ final class AppSettings: ObservableObject {
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
         keepScreenOnWhilePlaying = snap.keepScreenOnWhilePlaying ?? false
         continuousPlaybackEnabled = snap.continuousPlaybackEnabled ?? true
+        let rewindAfter = snap.rewindAfterPauseSeconds ?? Self.defaultRewindAfterPauseSeconds
+        rewindAfterPauseSeconds = Self.rewindAfterPausePresets.contains(rewindAfter)
+            ? rewindAfter
+            : Self.defaultRewindAfterPauseSeconds
         let smartMark = snap.smartMarkAsPlayedSeconds ?? Self.defaultSmartMarkAsPlayedSeconds
         smartMarkAsPlayedSeconds = Self.smartMarkAsPlayedPresets.contains(smartMark)
             ? smartMark
@@ -1106,6 +1155,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var keepScreenOnWhilePlaying: Bool? = false
     /// Absent in older backups → treated as on (auto-next from queue).
     var continuousPlaybackEnabled: Bool? = true
+    /// Absent in older backups → treated as 2 (honest beta default).
+    var rewindAfterPauseSeconds: Int? = 2
     /// Absent in older backups → treated as 30 (AntennaPod default).
     var smartMarkAsPlayedSeconds: Int? = 30
     var chartsCountryCode: String

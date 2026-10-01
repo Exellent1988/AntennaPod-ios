@@ -162,6 +162,15 @@ struct SettingsView: View {
                     Text("When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    Picker("Rewind after pause", selection: $settings.rewindAfterPauseSeconds) {
+                        ForEach(AppSettings.rewindAfterPausePresets, id: \.self) { secs in
+                            Text(AppSettings.rewindAfterPauseLabel(secs)).tag(secs)
+                        }
+                    }
+                    .accessibilityHint("Seconds to seek back when resuming after a pause of at least 1 second. Off disables. Default 2.")
+                    Text("When resuming after a pause of at least 1 second, seek backward by this many seconds so you do not lose context. Off (0) disables. Does not apply on first start / cold play from a row — only after an actual pause of the current item. Fixed amount (honest beta; not Android’s elapsed-time tiers). Default 2.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     Picker("Smart mark as played", selection: $settings.smartMarkAsPlayedSeconds) {
                         ForEach(AppSettings.smartMarkAsPlayedPresets, id: \.self) { secs in
                             Text(AppSettings.smartMarkAsPlayedLabel(secs)).tag(secs)
