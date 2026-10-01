@@ -625,6 +625,23 @@ final class PodcastStore: ObservableObject {
         archivedAtById = [:]
     }
 
+    /// Append every archived episode that is not already queued (bulk).
+    /// Uses store `archivedEpisodes` order (**newest-first** by `archivedAtEpochMs` —
+    /// same catalog as Restore all). Does **not** follow UI `archivedSort` or searchable filter.
+    /// Skips already-queued ids (no duplicates). Uses `enqueue` (append), not `playNext`.
+    /// Does **not** restore / unarchive (archive side map unchanged).
+    /// Safe while queue lock is on (reorder-only — enqueue stays allowed).
+    /// Callers must confirm first (Archived toolbar `confirmationDialog`).
+    /// - Returns: number of episodes newly appended.
+    @discardableResult
+    func enqueueAllArchived() -> Int {
+        let candidates = archivedEpisodes.map(\.episode).filter { !isInQueue($0.id) }
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
     func toggleArchived(_ episodeId: String) {
         if isArchived(episodeId) {
             restore(episodeId)

@@ -9,12 +9,21 @@ struct ArchivedView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
     @State private var showRestoreAllConfirm = false
+    @State private var showEnqueueAllConfirm = false
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
     /// Full archived catalog (store order: newest archived first) — Restore all always uses this count.
     private var items: [ArchivedEpisode] {
         store.archivedEpisodes
+    }
+
+    /// Episodes from the **full Archived catalog** (`store.archivedEpisodes`, newest archived first) that are
+    /// not already queued — same catalog as Restore all, **not** the searchable filtered list.
+    /// Confirm count and `enqueueAllArchived()` share this eligibility.
+    /// Does **not** restore / unarchive.
+    private var enqueueAllArchivedCandidatesCount: Int {
+        items.filter { !store.isInQueue($0.episode.id) }.count
     }
 
     /// Visible archived ordered by `AppSettings.archivedSort`.
@@ -218,6 +227,14 @@ struct ArchivedView: View {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {
+                        showEnqueueAllConfirm = true
+                    } label: {
+                        Label("Add all to queue", systemImage: "text.append")
+                    }
+                    .disabled(enqueueAllArchivedCandidatesCount == 0)
+                    .accessibilityHint("Appends archived episodes not already queued")
+
+                    Button {
                         showRestoreAllConfirm = true
                     } label: {
                         Label("Restore all", systemImage: "arrow.uturn.backward")
@@ -229,6 +246,18 @@ struct ArchivedView: View {
                 }
                 .disabled(items.isEmpty)
             }
+        }
+        .confirmationDialog(
+            "Add all to queue?",
+            isPresented: $showEnqueueAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all to queue") {
+                store.enqueueAllArchived()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllArchivedCandidatesCount) archived episodes to the end of the queue (newest archived first). Already queued episodes are skipped. Uses the full Archived catalog (same as Restore all), not the searchable filter. Does not restore or unarchive. Queue lock does not block enqueue.")
         }
         .confirmationDialog(
             "Restore all?",
