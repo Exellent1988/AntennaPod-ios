@@ -82,6 +82,7 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                 }
                 refreshSection
+                autoDownloadSection
                 storageSection
                 OpmlImportExportSection()
             }
@@ -139,6 +140,37 @@ struct SettingsView: View {
             return "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode)."
         }
         return "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch."
+    }
+
+
+    @ViewBuilder
+    private var autoDownloadSection: some View {
+        Section {
+            Toggle("Auto-download", isOn: $settings.autoDownloadEnabled)
+            if settings.autoDownloadEnabled {
+                Picker("Episodes per feed", selection: $settings.autoDownloadEpisodesPerFeed) {
+                    ForEach(AutoDownloadEpisodesPerFeed.allCases) { cap in
+                        Text(cap.label).tag(cap)
+                    }
+                }
+                Toggle("Wi‑Fi only", isOn: $settings.autoDownloadWifiOnly)
+            }
+            Text(autoDownloadHelpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("Auto-download")
+        }
+    }
+
+    private var autoDownloadHelpText: String {
+        if !settings.autoDownloadEnabled {
+            return "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Storage-limit eviction still applies."
+        }
+        let wifi = settings.autoDownloadWifiOnly
+            ? " On cellular, auto-download is skipped (NWPathMonitor); manual downloads still work."
+            : " Auto-download may use cellular."
+        return "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to \(settings.autoDownloadEpisodesPerFeed.rawValue) newest unplayed episode(s) per feed. Per-feed toggles come later.\(wifi)"
     }
 
     @ViewBuilder

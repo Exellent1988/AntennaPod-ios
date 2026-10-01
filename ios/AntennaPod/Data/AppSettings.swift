@@ -107,7 +107,27 @@ enum FeedRefreshInterval: String, CaseIterable, Identifiable {
     }
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh).
+
+/// How many newest unplayed episodes per feed auto-download may enqueue after refresh.
+enum AutoDownloadEpisodesPerFeed: Int, CaseIterable, Identifiable {
+    case one = 1
+    case two = 2
+    case three = 3
+    case five = 5
+
+    var id: Int { rawValue }
+
+    var label: String {
+        switch self {
+        case .one: return "1 episode"
+        case .two: return "2 episodes"
+        case .three: return "3 episodes"
+        case .five: return "5 episodes"
+        }
+    }
+}
+
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -120,6 +140,9 @@ final class AppSettings: ObservableObject {
         static let storageLimitValue = "settings.storageLimit.value"
         static let refreshInterval = "settings.refreshInterval"
         static let lastFeedRefreshAt = "settings.lastFeedRefreshAt"
+        static let autoDownloadEnabled = "settings.autoDownload.enabled"
+        static let autoDownloadEpisodesPerFeed = "settings.autoDownload.episodesPerFeed"
+        static let autoDownloadWifiOnly = "settings.autoDownload.wifiOnly"
     }
 
     private enum Kind: String {
@@ -165,6 +188,28 @@ final class AppSettings: ObservableObject {
         }
     }
 
+
+    /// Global auto-download after feed refresh (newest unplayed, not yet downloaded).
+    @Published var autoDownloadEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(autoDownloadEnabled, forKey: Keys.autoDownloadEnabled)
+        }
+    }
+
+    /// Cap per feed to avoid download storms (1 / 2 / 3 / 5).
+    @Published var autoDownloadEpisodesPerFeed: AutoDownloadEpisodesPerFeed {
+        didSet {
+            UserDefaults.standard.set(autoDownloadEpisodesPerFeed.rawValue, forKey: Keys.autoDownloadEpisodesPerFeed)
+        }
+    }
+
+    /// When true, auto-download enqueues only on Wi‑Fi / Ethernet (`NWPathMonitor`).
+    @Published var autoDownloadWifiOnly: Bool {
+        didSet {
+            UserDefaults.standard.set(autoDownloadWifiOnly, forKey: Keys.autoDownloadWifiOnly)
+        }
+    }
+
     init() {
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
@@ -183,6 +228,19 @@ final class AppSettings: ObservableObject {
             lastFeedRefreshAt = Date(timeIntervalSince1970: epoch)
         } else {
             lastFeedRefreshAt = nil
+        }
+        if UserDefaults.standard.object(forKey: Keys.autoDownloadEnabled) != nil {
+            autoDownloadEnabled = UserDefaults.standard.bool(forKey: Keys.autoDownloadEnabled)
+        } else {
+            autoDownloadEnabled = false
+        }
+        let perFeedRaw = UserDefaults.standard.object(forKey: Keys.autoDownloadEpisodesPerFeed) as? Int
+            ?? AutoDownloadEpisodesPerFeed.two.rawValue
+        autoDownloadEpisodesPerFeed = AutoDownloadEpisodesPerFeed(rawValue: perFeedRaw) ?? .two
+        if UserDefaults.standard.object(forKey: Keys.autoDownloadWifiOnly) != nil {
+            autoDownloadWifiOnly = UserDefaults.standard.bool(forKey: Keys.autoDownloadWifiOnly)
+        } else {
+            autoDownloadWifiOnly = true
         }
     }
 

@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (5): Inbox, Subscriptions, Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, ±30s, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | wip | Tab: theme + default speed + download storage limit + refresh interval (P0); more prefs later |
+| Settings | 5 | wip | Tab: theme + default speed + download storage limit + refresh interval + auto-download (P0/P1); more prefs later |
 
 ## Subscriptions
 
@@ -68,10 +68,10 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Manual download / delete | 5 | done | Documents/downloads + JSON catalog (`downloads.json`) |
 | Offline Wiedergabe | 5 | done | Play from local file; catalog restored on launch |
 | Speicherverwaltung / Cache-Limit | 5 | done | UserDefaults byte budget (unlimited / 1 / 5 / 10 GB / custom MB); usage in Settings; eviction: played oldest-mtime first then unplayed LRU; after DL + Settings open + launch; Clear downloads |
-| Auto-download (global + Regeln) | 4 | todo | Regeln in KMP |
-| Per-feed auto-download | 4 | todo | |
+| Auto-download (global + Regeln) | 4 | done | Global toggle + per-feed cap (1/2/3/5 newest unplayed); enqueue after refresh via DownloadService; Wi‑Fi-only via NWPathMonitor; storage eviction unchanged. Full Android-style filter rules → KMP later |
+| Per-feed auto-download | 4 | todo | Global only in this slice; per-feed enable/disable later |
 | Auto-delete after play | 4 | todo | |
-| Mobile/Wi‑Fi Policy | 4 | todo | Cellular toggles |
+| Mobile/Wi‑Fi Policy | 4 | wip | Auto-download Wi‑Fi/Ethernet-only via NWPathMonitor; manual downloads still allow cellular; broader cellular prefs later |
 | Background downloads | 5 | done | `URLSessionConfiguration.background`; AppDelegate `handleEventsForBackgroundURLSession`; task↔episode in `pending-downloads.json` |
 | Download log / errors | 3 | todo | lastError surfaced in UI |
 

@@ -18,6 +18,8 @@ final class PodcastStore: ObservableObject {
 
     /// Optional settings for stamping last feed-refresh time after `refreshAllFeeds()`.
     weak var settings: AppSettings?
+    /// Optional downloads for auto-download enqueue after refresh.
+    weak var downloads: DownloadService?
 
     private let repository = FeedRepository()
 
@@ -58,6 +60,11 @@ final class PodcastStore: ObservableObject {
             return
         }
         await subscribe(feedUrl: feed.feedUrl)
+        await AutoDownloadCoordinator.enqueueAfterRefresh(
+            store: self,
+            downloads: downloads,
+            settings: settings
+        )
     }
 
     func enqueue(_ episode: PodcastEpisode) {
@@ -199,6 +206,11 @@ final class PodcastStore: ObservableObject {
         }
         // Stamp even if some feeds failed — avoids hammering on every foreground.
         settings?.markFeedRefreshCompleted()
+        await AutoDownloadCoordinator.enqueueAfterRefresh(
+            store: self,
+            downloads: downloads,
+            settings: settings
+        )
     }
 
     // MARK: - Library search (local only)

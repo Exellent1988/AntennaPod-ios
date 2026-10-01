@@ -19,10 +19,13 @@ struct AntennaPodApp: App {
         downloads.store = store
         downloads.settings = settings
         store.settings = settings
+        store.downloads = downloads
         // Launch maintenance once weak refs are wired (limit + played status available).
         downloads.runStorageMaintenance()
         // BGAppRefreshTask stub — Info.plist has no `fetch` mode (see FeedRefreshCoordinator).
         FeedRefreshCoordinator.registerBackgroundRefreshIfNeeded()
+        // NWPathMonitor for auto-download Wi‑Fi-only gate.
+        AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
         _store = StateObject(wrappedValue: store)
         _playback = StateObject(wrappedValue: playback)
         _downloads = StateObject(wrappedValue: downloads)
