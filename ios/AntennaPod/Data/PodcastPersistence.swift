@@ -11,6 +11,8 @@ enum PodcastPersistence {
     private static var feedsURL: URL { directory.appendingPathComponent("feeds.json") }
     private static var queueURL: URL { directory.appendingPathComponent("queue.json") }
     private static var playbackURL: URL { directory.appendingPathComponent("playback.json") }
+    private static var downloadsURL: URL { directory.appendingPathComponent("downloads.json") }
+    private static var pendingDownloadsURL: URL { directory.appendingPathComponent("pending-downloads.json") }
 
     static func loadFeeds() -> [PodcastFeed] {
         decode(feedsURL) ?? []
@@ -35,6 +37,24 @@ enum PodcastPersistence {
 
     static func savePlaybackStates(_ states: [String: EpisodePlaybackState]) {
         encode(states, to: playbackURL)
+    }
+
+    /// Completed offline downloads (episode metadata + file name under Documents/downloads).
+    static func loadDownloadedEpisodes() -> [DownloadedEpisode] {
+        decode(downloadsURL) ?? []
+    }
+
+    static func saveDownloadedEpisodes(_ items: [DownloadedEpisode]) {
+        encode(items, to: downloadsURL)
+    }
+
+    /// In-flight background URLSession task ↔ episode mappings (survive relaunch).
+    static func loadPendingDownloads() -> [PendingDownloadMapping] {
+        decode(pendingDownloadsURL) ?? []
+    }
+
+    static func savePendingDownloads(_ items: [PendingDownloadMapping]) {
+        encode(items, to: pendingDownloadsURL)
     }
 
     private static func decode<T: Decodable>(_ url: URL) -> T? {

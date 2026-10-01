@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct AntennaPodApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var store: PodcastStore
     @StateObject private var playback: PlaybackService
     @StateObject private var downloads: DownloadService

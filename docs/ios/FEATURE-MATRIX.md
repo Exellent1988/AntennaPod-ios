@@ -13,7 +13,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Queue | 5 | wip | JSON persistence |
 | Inbox | 4 | todo | Neue Episoden |
 | Episodes (Alle) | 4 | todo | |
-| Downloads-Liste | 5 | wip | P0, local file downloads |
+| Downloads-Liste | 5 | wip | P0, local files + persisted catalog |
 | History | 3 | todo | |
 | Favorites | 3 | todo | |
 | Subscriptions | 5 | wip | List + subscribe sheet |
@@ -65,15 +65,15 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
-| Manual download / delete | 5 | wip | P0, Documents/downloads |
-| Offline Wiedergabe | 5 | wip | Play from local file |
+| Manual download / delete | 5 | done | Documents/downloads + JSON catalog (`downloads.json`) |
+| Offline Wiedergabe | 5 | done | Play from local file; catalog restored on launch |
 | Speicherverwaltung / Cache-Limit | 5 | todo | |
 | Auto-download (global + Regeln) | 4 | todo | Regeln in KMP |
 | Per-feed auto-download | 4 | todo | |
 | Auto-delete after play | 4 | todo | |
 | Mobile/Wi‑Fi Policy | 4 | todo | Cellular toggles |
-| Background downloads | 5 | todo | URLSession + BGTasks |
-| Download log / errors | 3 | todo | |
+| Background downloads | 5 | done | `URLSessionConfiguration.background`; AppDelegate `handleEventsForBackgroundURLSession`; task↔episode in `pending-downloads.json` |
+| Download log / errors | 3 | todo | lastError surfaced in UI |
 
 ## Discovery
 
