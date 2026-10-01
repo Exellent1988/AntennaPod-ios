@@ -542,4 +542,117 @@ final class AppSettings: ObservableObject {
             return .customMegabytes(mb)
         }
     }
+
+    // MARK: - Data backup
+
+    /// Snapshot of UserDefaults-backed prefs for iOS JSON backup (no Keychain).
+    func backupSnapshot() -> AppSettingsBackupSnapshot {
+        let storageKind: String
+        let storageValue: Int?
+        switch downloadStorageLimit {
+        case .unlimited:
+            storageKind = Kind.unlimited.rawValue
+            storageValue = nil
+        case .gigabytes(let gb):
+            storageKind = Kind.gigabytes.rawValue
+            storageValue = gb
+        case .customMegabytes(let mb):
+            storageKind = Kind.customMegabytes.rawValue
+            storageValue = mb
+        }
+        return AppSettingsBackupSnapshot(
+            theme: theme.rawValue,
+            defaultPlaybackSpeed: defaultPlaybackSpeed,
+            storageLimitKind: storageKind,
+            storageLimitValue: storageValue,
+            refreshInterval: refreshInterval.rawValue,
+            lastFeedRefreshAtEpoch: lastFeedRefreshAt?.timeIntervalSince1970,
+            autoDownloadEnabled: autoDownloadEnabled,
+            autoDownloadEpisodesPerFeed: autoDownloadEpisodesPerFeed.rawValue,
+            autoDownloadWifiOnly: autoDownloadWifiOnly,
+            manualDownloadWifiOnly: manualDownloadWifiOnly,
+            streamWifiOnly: streamWifiOnly,
+            playbackSourcePreference: playbackSourcePreference.rawValue,
+            autoDeleteAfterPlaying: autoDeleteAfterPlaying,
+            rewindSeconds: rewindSeconds,
+            fastForwardSeconds: fastForwardSeconds,
+            skipIntroSeconds: skipIntroSeconds,
+            skipOutroSeconds: skipOutroSeconds,
+            notifyOnNewEpisodes: notifyOnNewEpisodes,
+            notifyOnDownloadErrors: notifyOnDownloadErrors,
+            chartsCountryCode: chartsCountryCode
+        )
+    }
+
+    /// Apply prefs from an iOS JSON backup (writes through didSet → UserDefaults).
+    func applyBackupSnapshot(_ snap: AppSettingsBackupSnapshot) {
+        theme = AppTheme(rawValue: snap.theme) ?? .system
+        if AppSettings.speedPresets.contains(snap.defaultPlaybackSpeed) {
+            defaultPlaybackSpeed = snap.defaultPlaybackSpeed
+        }
+        switch Kind(rawValue: snap.storageLimitKind) {
+        case .unlimited, .none:
+            downloadStorageLimit = .unlimited
+        case .gigabytes:
+            let gb = snap.storageLimitValue ?? 5
+            downloadStorageLimit = .gigabytes([1, 5, 10].contains(gb) ? gb : 5)
+        case .customMegabytes:
+            let mb = snap.storageLimitValue ?? 500
+            downloadStorageLimit = .customMegabytes(mb)
+        }
+        refreshInterval = FeedRefreshInterval(rawValue: snap.refreshInterval) ?? .manual
+        if let epoch = snap.lastFeedRefreshAtEpoch {
+            lastFeedRefreshAt = Date(timeIntervalSince1970: epoch)
+        } else {
+            lastFeedRefreshAt = nil
+        }
+        autoDownloadEnabled = snap.autoDownloadEnabled
+        autoDownloadEpisodesPerFeed =
+            AutoDownloadEpisodesPerFeed(rawValue: snap.autoDownloadEpisodesPerFeed) ?? .two
+        autoDownloadWifiOnly = snap.autoDownloadWifiOnly
+        manualDownloadWifiOnly = snap.manualDownloadWifiOnly
+        streamWifiOnly = snap.streamWifiOnly
+        playbackSourcePreference =
+            PlaybackSourcePreference(rawValue: snap.playbackSourcePreference) ?? .automatic
+        autoDeleteAfterPlaying = snap.autoDeleteAfterPlaying
+        if AppSettings.skipIntervalPresets.contains(snap.rewindSeconds) {
+            rewindSeconds = snap.rewindSeconds
+        }
+        if AppSettings.skipIntervalPresets.contains(snap.fastForwardSeconds) {
+            fastForwardSeconds = snap.fastForwardSeconds
+        }
+        if AppSettings.skipIntroOutroPresets.contains(snap.skipIntroSeconds) {
+            skipIntroSeconds = snap.skipIntroSeconds
+        }
+        if AppSettings.skipIntroOutroPresets.contains(snap.skipOutroSeconds) {
+            skipOutroSeconds = snap.skipOutroSeconds
+        }
+        notifyOnNewEpisodes = snap.notifyOnNewEpisodes
+        notifyOnDownloadErrors = snap.notifyOnDownloadErrors
+        chartsCountryCode = ChartsCountryPreference.fromStorage(snap.chartsCountryCode).storageValue
+    }
+}
+
+/// Codable prefs blob inside `app-settings.json` backup entry.
+struct AppSettingsBackupSnapshot: Codable, Equatable {
+    var theme: String
+    var defaultPlaybackSpeed: Float
+    var storageLimitKind: String
+    var storageLimitValue: Int?
+    var refreshInterval: String
+    var lastFeedRefreshAtEpoch: Double?
+    var autoDownloadEnabled: Bool
+    var autoDownloadEpisodesPerFeed: Int
+    var autoDownloadWifiOnly: Bool
+    var manualDownloadWifiOnly: Bool
+    var streamWifiOnly: Bool
+    var playbackSourcePreference: String
+    var autoDeleteAfterPlaying: Bool
+    var rewindSeconds: Int
+    var fastForwardSeconds: Int
+    var skipIntroSeconds: Int
+    var skipOutroSeconds: Int
+    var notifyOnNewEpisodes: Bool
+    var notifyOnDownloadErrors: Bool
+    var chartsCountryCode: String
 }

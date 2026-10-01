@@ -54,6 +54,19 @@ final class PodcastStore: ObservableObject {
         tagsByFeedId = PodcastPersistence.loadFeedTags()
     }
 
+    /// Reload all Application Support maps after a data backup import (didSet re-persists).
+    func reloadFromPersistence() {
+        feeds = PodcastPersistence.loadFeeds()
+        queue = PodcastPersistence.loadQueue()
+        playbackStates = PodcastPersistence.loadPlaybackStates()
+        feedSettingsById = PodcastPersistence.loadFeedSettings()
+        favoriteAtById = PodcastPersistence.loadFavorites()
+        archivedAtById = PodcastPersistence.loadArchived()
+        tagsByFeedId = PodcastPersistence.loadFeedTags()
+        pendingAutoDeleteIds = []
+        lastError = nil
+    }
+
     func subscribe(feedUrl: String) async {
         lastError = nil
         isLoading = true

@@ -143,6 +143,7 @@ struct SettingsView: View {
                         Label("About", systemImage: "info.circle")
                     }
                 }
+                DataBackupSection()
                 OpmlImportExportSection()
             }
             .navigationTitle("Settings")

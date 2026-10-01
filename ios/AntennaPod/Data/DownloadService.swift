@@ -407,6 +407,20 @@ final class DownloadService: ObservableObject {
         inProgress = Set(pending.map(\.episode.id))
     }
 
+    /// After backup import: prune catalog to media files present on this device (MVP exports catalog only).
+    /// Clears in-flight pending map (not restored across backup). Refreshes storage usage.
+    func reloadAfterBackupImport() {
+        // Drop stale pending mappings from before restore.
+        pendingByTaskId.removeAll()
+        inProgress.removeAll()
+        sessionDelegate.removeAllPending()
+        PodcastPersistence.savePendingDownloads([])
+        reloadFromDisk()
+        recentErrors = PodcastPersistence.loadDownloadErrors()
+        lastError = nil
+        runStorageMaintenance()
+    }
+
     private func reconnectOutstandingTasks() {
         session.getTasksWithCompletionHandler { [weak self] _, _, downloadTasks in
             Task { @MainActor in
@@ -473,6 +487,12 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
     func removePending(for taskIdentifier: Int) {
         lock.lock()
         pendingByTaskId.removeValue(forKey: taskIdentifier)
+        lock.unlock()
+    }
+
+    func removeAllPending() {
+        lock.lock()
+        pendingByTaskId.removeAll()
         lock.unlock()
     }
 

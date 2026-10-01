@@ -370,4 +370,69 @@ final class GpodderSyncService: ObservableObject {
         while s.hasSuffix("/") { s.removeLast() }
         return s.lowercased()
     }
+
+    // MARK: - Data backup
+
+    /// gpodder / Nextcloud prefs for iOS JSON backup — **password never included** (Keychain only).
+    func backupSnapshot() -> GpodderBackupSnapshot {
+        GpodderBackupSnapshot(
+            provider: provider.rawValue,
+            host: host,
+            username: username,
+            deviceId: deviceId,
+            deviceName: deviceName,
+            isLoggedIn: isLoggedIn,
+            lastSyncAtEpoch: lastSyncAt?.timeIntervalSince1970,
+            lastSyncStatus: lastSyncStatus,
+            lastSyncError: lastSyncError,
+            subscriptionTimestamp: subscriptionTimestamp,
+            knownRemoteURLs: Array(knownRemoteURLs).sorted(),
+            passwordIncluded: false
+        )
+    }
+
+    /// Restore prefs from backup. Password stays in Keychain if still present on this device;
+    /// otherwise `isLoggedIn` is forced off so the user re-enters the password.
+    func applyBackupSnapshot(_ snap: GpodderBackupSnapshot) {
+        provider = GpodderProvider(rawValue: snap.provider) ?? .gpodderNet
+        host = snap.host
+        username = snap.username
+        deviceName = snap.deviceName
+        if !snap.deviceId.isEmpty {
+            deviceId = snap.deviceId
+        }
+        lastSyncStatus = snap.lastSyncStatus
+        lastSyncError = snap.lastSyncError
+        if let epoch = snap.lastSyncAtEpoch {
+            lastSyncAt = Date(timeIntervalSince1970: epoch)
+        } else {
+            lastSyncAt = nil
+        }
+        subscriptionTimestamp = snap.subscriptionTimestamp
+        knownRemoteURLs = Set(snap.knownRemoteURLs)
+        passwordDraft = ""
+        let hasPassword = GpodderKeychain.loadPassword() != nil
+        // Never claim logged-in without a Keychain password (cross-device restore).
+        isLoggedIn = snap.isLoggedIn && hasPassword
+        if snap.isLoggedIn && !hasPassword {
+            lastSyncStatus = "Restored from backup — re-enter password to login (Keychain secret not in backup)"
+        }
+    }
+}
+
+/// Codable gpodder prefs blob (`gpodder-prefs.json`). Password is never serialized.
+struct GpodderBackupSnapshot: Codable, Equatable {
+    var provider: String
+    var host: String
+    var username: String
+    var deviceId: String
+    var deviceName: String
+    var isLoggedIn: Bool
+    var lastSyncAtEpoch: Double?
+    var lastSyncStatus: String
+    var lastSyncError: String?
+    var subscriptionTimestamp: Int64
+    var knownRemoteURLs: [String]
+    /// Always false in exports; documents honesty in the JSON itself.
+    var passwordIncluded: Bool
 }

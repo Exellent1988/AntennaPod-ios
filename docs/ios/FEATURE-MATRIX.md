@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync + About (P0/P1); more prefs later |
+| Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync + **Backup** (iOS JSON) + About (P0/P1); more prefs later |
 
 ## Subscriptions
 
@@ -93,7 +93,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 |---------|---------|------------|---------|
 | gpodder.net sync | 4 | done | **P1 MVP**: Settings → Sync; provider gpodder.net; Keychain password; device id+name; login/logout/sync now; URLSession API2 auth + device + subscription get/upload; pull missing feeds + push local URLs; **additive merge** (remote removes do not wipe local); episode actions stub/not synced |
 | Nextcloud Gpodder sync | 4 | done | **P1 MVP**: same Settings Sync section; provider Nextcloud; base URL (server root or `…/index.php/apps/gpoddersync/`); reuses Keychain + Login/Sync; client composes Nextcloud paths (`subscriptions`, `subscription_change/create`); login probes GET subscriptions (no device API); **additive** subscriptions only — episode actions not synced |
-| AntennaPod DB backup import/export | 3 | todo | P2 |
+| AntennaPod DB backup import/export | 3 | partial | **iOS JSON backup** (not Android DB): Settings → Backup export/import ZIP of Application Support maps (feeds/queue/playback/downloads catalog/favorites/archived/feed-settings/tags/download-errors) + app-settings + gpodder prefs; **no Keychain secrets**; **catalog only** for downloads (re-download media); replace warn + store refresh. HTML export still todo |
 | HTML export | 2 | todo | |
 | Wear OS companion | 1 | n/a | → Watch später P4 |
 

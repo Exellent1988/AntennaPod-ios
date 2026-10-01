@@ -19,6 +19,20 @@ enum PodcastPersistence {
     private static var feedTagsURL: URL { directory.appendingPathComponent("feed-tags.json") }
     private static var downloadErrorsURL: URL { directory.appendingPathComponent("download-errors.json") }
 
+    /// Application Support/AntennaPod directory (created if needed).
+    static var applicationSupportDirectory: URL { directory }
+
+    /// Absolute URL for a persistence file name under Application Support/AntennaPod.
+    static func fileURL(_ fileName: String) -> URL {
+        directory.appendingPathComponent(fileName)
+    }
+
+    /// Replace a persistence file atomically (used by data backup import).
+    static func writeFile(name: String, data: Data) throws {
+        let url = fileURL(name)
+        try data.write(to: url, options: .atomic)
+    }
+
     static func loadFeeds() -> [PodcastFeed] {
         decode(feedsURL) ?? []
     }
