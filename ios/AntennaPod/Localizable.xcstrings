@@ -6919,6 +6919,74 @@
           }
         }
       }
+    },
+    "Search episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden durchsuchen"
+          }
+        }
+      }
+    },
+    "No episodes match your search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No episodes match your search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Episoden passen zu deiner Suche."
+          }
+        }
+      }
+    },
+    "No episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Episoden"
+          }
+        }
+      }
+    },
+    "This podcast has no episodes yet. Pull to refresh on Subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast has no episodes yet. Pull to refresh on Subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Podcast hat noch keine Episoden. Ziehe auf Abonnements zum Aktualisieren."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

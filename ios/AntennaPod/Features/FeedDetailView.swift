@@ -9,6 +9,11 @@ struct FeedDetailView: View {
     @State private var showPerFeedSettings = false
     @State private var showDownloadAllConfirm = false
     @State private var showMarkAllPlayedConfirm = false
+    @State private var searchText = ""
+    @State private var debouncedQuery = ""
+    @State private var debounceTask: Task<Void, Never>?
+
+    private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
     /// Live feed from the store when available (episodes refresh after pull/refresh).
     private var liveFeed: PodcastFeed {
@@ -38,12 +43,23 @@ struct FeedDetailView: View {
         }
     }
 
+    /// Visible episodes after search; empty query shows the full sorted list.
+    /// Episode model has no description field — title only (cheap).
+    private var filteredEpisodes: [PodcastEpisode] {
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let base = sortedEpisodes
+        if q.isEmpty { return base }
+        return base.filter { $0.title.localizedCaseInsensitiveContains(q) }
+    }
+
     /// Unplayed, not archived, not downloaded — newest first, soft-capped.
+    /// Bulk Download all always uses full-feed eligibility (not the filtered subset).
     private var downloadAllCandidates: [PodcastEpisode] {
         downloads.eligibleForFeedDownloadAll(in: liveFeed, store: store)
     }
 
     /// Unplayed, non-archived episodes on this feed only (for Mark all as played).
+    /// Bulk Mark all as played always uses full-feed eligibility (not the filtered subset).
     private var markAllPlayedCandidates: [PodcastEpisode] {
         liveFeed.episodes.filter { !store.isPlayed($0.id) && !store.isArchived($0.id) }
     }
@@ -68,47 +84,68 @@ struct FeedDetailView: View {
                 }
             }
             Section("Episodes") {
-                ForEach(sortedEpisodes) { episode in
-                    EpisodeRow(episode: episode, feedTitle: liveFeed.title)
-                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                            Button {
-                                store.toggleArchived(episode.id)
-                            } label: {
-                                Label(
-                                    store.isArchived(episode.id) ? "Restore" : "Archive",
-                                    systemImage: store.isArchived(episode.id) ? "arrow.uturn.backward" : "archivebox"
-                                )
-                            }
-                            .tint(store.isArchived(episode.id) ? .green : .orange)
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button {
-                                store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
-                            } label: {
-                                Label("Play Next", systemImage: "text.insert")
-                            }
-                            .tint(.teal)
-                            Button {
-                                store.enqueue(episode)
-                            } label: {
-                                Label("Queue", systemImage: "text.append")
-                            }
-                            .tint(.purple)
-                            if let url = episode.shareURL {
-                                ShareLink(
-                                    item: url,
-                                    subject: Text(episode.title),
-                                    message: Text(episode.title)
-                                ) {
-                                    Label("Share", systemImage: "square.and.arrow.up")
+                if liveFeed.episodes.isEmpty {
+                    ContentUnavailableView(
+                        "No episodes",
+                        systemImage: "list.bullet",
+                        description: Text("This podcast has no episodes yet. Pull to refresh on Subscriptions.")
+                    )
+                } else if filteredEpisodes.isEmpty {
+                    ContentUnavailableView(
+                        "No matching episodes",
+                        systemImage: "magnifyingglass",
+                        description: Text("No episodes match your search.")
+                    )
+                } else {
+                    ForEach(filteredEpisodes) { episode in
+                        EpisodeRow(episode: episode, feedTitle: liveFeed.title)
+                            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                                Button {
+                                    store.toggleArchived(episode.id)
+                                } label: {
+                                    Label(
+                                        store.isArchived(episode.id) ? "Restore" : "Archive",
+                                        systemImage: store.isArchived(episode.id) ? "arrow.uturn.backward" : "archivebox"
+                                    )
                                 }
-                                .tint(.indigo)
+                                .tint(store.isArchived(episode.id) ? .green : .orange)
                             }
-                        }
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button {
+                                    store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
+                                } label: {
+                                    Label("Play Next", systemImage: "text.insert")
+                                }
+                                .tint(.teal)
+                                Button {
+                                    store.enqueue(episode)
+                                } label: {
+                                    Label("Queue", systemImage: "text.append")
+                                }
+                                .tint(.purple)
+                                if let url = episode.shareURL {
+                                    ShareLink(
+                                        item: url,
+                                        subject: Text(episode.title),
+                                        message: Text(episode.title)
+                                    ) {
+                                        Label("Share", systemImage: "square.and.arrow.up")
+                                    }
+                                    .tint(.indigo)
+                                }
+                            }
+                    }
                 }
             }
         }
         .navigationTitle(liveFeed.title)
+        .searchable(text: $searchText, prompt: "Search episodes")
+        .onChange(of: searchText) { _, newValue in
+            scheduleFilter(for: newValue)
+        }
+        .onDisappear {
+            debounceTask?.cancel()
+        }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Menu {
@@ -213,6 +250,20 @@ struct FeedDetailView: View {
                     .padding(8)
                     .background(.ultraThinMaterial)
             }
+        }
+    }
+
+    private func scheduleFilter(for term: String) {
+        debounceTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            debouncedQuery = ""
+            return
+        }
+        debounceTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: debounceNs)
+            guard !Task.isCancelled else { return }
+            debouncedQuery = trimmed
         }
     }
 }

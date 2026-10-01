@@ -100,6 +100,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Subscriptions + Tags/Filter | ☐ Subscriptions + tags/filter |
 | ☐ Subscriptions: Sortierung (Zuletzt aktualisiert / Alphabetisch) | ☐ Subscriptions: sort (Recently updated / Alphabetical) |
 | ☐ Feed-Detail: Episoden-Sortierung (Neueste / Älteste zuerst) | ☐ Feed detail: episode sort (Newest / Oldest first) |
+| ☐ Feed-Detail: Suche (Episodentitel) | ☐ Feed detail: search (episode title) |
 | ☐ Library: Episodes (Filter All / Ungehört / Heruntergeladen) / History / Favorites / Archived / Statistics / Echo | ☐ Library: Episodes (filter All / Unplayed / Downloaded) / History / Favorites / Archived / Statistics / Echo |
 | ☐ History: Verlauf leeren (Bestätigung) | ☐ History: Clear history (confirm) |
 | ☐ History: Suche (Titel / Feed) | ☐ History: search (title / feed) |
