@@ -511,6 +511,25 @@ final class PodcastStore: ObservableObject {
         return items
     }
 
+    /// Per-feed unplayed counts (`!isPlayed && !isArchived`), one pass over stored `feed.episodes`.
+    /// Same definition as Inbox / All Episodes Unplayed / Feed detail Unplayed.
+    /// Counts the full stored feed catalog — **not** the All Episodes newest-500 soft cap.
+    /// Omits feeds with zero unplayed (callers treat missing as 0).
+    func unplayedCountsByFeedId() -> [UUID: Int] {
+        var counts: [UUID: Int] = [:]
+        counts.reserveCapacity(feeds.count)
+        for feed in feeds {
+            var n = 0
+            for episode in feed.episodes where !isPlayed(episode.id) && !isArchived(episode.id) {
+                n += 1
+            }
+            if n > 0 {
+                counts[feed.id] = n
+            }
+        }
+        return counts
+    }
+
     // MARK: - All Episodes (catalog)
 
     /// Soft cap for All Episodes (newest by pubDate). Keeps List honest without lazy paging.

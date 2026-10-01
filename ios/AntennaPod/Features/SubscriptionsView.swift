@@ -101,6 +101,11 @@ struct SubscriptionsView: View {
         return chips
     }
 
+    /// Single-pass map from `PodcastStore.unplayedCountsByFeedId()` (missing = 0).
+    private var unplayedCountByFeedId: [UUID: Int] {
+        store.unplayedCountsByFeedId()
+    }
+
     var body: some View {
         NavigationStack(path: $path) {
             List {
@@ -408,12 +413,13 @@ struct SubscriptionsView: View {
 
     @ViewBuilder
     private func feedRow(_ feed: PodcastFeed) -> some View {
+        let unplayed = unplayedCountByFeedId[feed.id] ?? 0
         NavigationLink(value: feed) {
             HStack(alignment: .center, spacing: 12) {
                 if LocalFolderFeed.isLocalFolderFeed(feed) {
                     Image(systemName: "folder.fill")
                         .foregroundStyle(.orange)
-                        .accessibilityLabel("Local folder")
+                        .accessibilityHidden(true)
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
@@ -426,6 +432,7 @@ struct SubscriptionsView: View {
                                 .padding(.vertical, 2)
                                 .background(Color.orange.opacity(0.2), in: Capsule())
                                 .foregroundStyle(.orange)
+                                .accessibilityHidden(true)
                         }
                     }
                     HStack(spacing: 6) {
@@ -443,7 +450,20 @@ struct SubscriptionsView: View {
                         }
                     }
                 }
+                Spacer(minLength: 8)
+                // AntennaPod-like unplayed badge; hidden when 0.
+                if unplayed > 0 {
+                    Text("\(unplayed)")
+                        .font(.caption.weight(.semibold).monospacedDigit())
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, unplayed >= 10 ? 7 : 0)
+                        .frame(minWidth: 22, minHeight: 22)
+                        .background(Color.accentColor, in: Capsule())
+                        .accessibilityHidden(true)
+                }
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(subscriptionRowAccessibilityLabel(feed: feed, unplayed: unplayed))
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button(role: .destructive) {
@@ -461,6 +481,34 @@ struct SubscriptionsView: View {
             .tint(.blue)
         }
         .modifier(OpenPodcastWebsiteContextMenu(url: feed.websiteURL, openURL: openURL))
+    }
+
+    private func unplayedCountLabel(_ count: Int) -> String {
+        if count == 1 {
+            return String(localized: "1 unplayed")
+        }
+        return String(localized: "\(count) unplayed")
+    }
+
+    private func subscriptionRowAccessibilityLabel(feed: PodcastFeed, unplayed: Int) -> String {
+        var parts: [String] = [feed.title]
+        if LocalFolderFeed.isLocalFolderFeed(feed) {
+            parts.append(String(localized: "Folder"))
+        }
+        let epCount = feed.episodes.count
+        if epCount == 1 {
+            parts.append(String(localized: "1 episode"))
+        } else {
+            parts.append(String(localized: "\(epCount) episodes"))
+        }
+        if unplayed > 0 {
+            parts.append(unplayedCountLabel(unplayed))
+        }
+        let tags = store.tags(for: feed.id)
+        if !tags.isEmpty, tagFilter == .all, !groupByTag {
+            parts.append(tags.joined(separator: ", "))
+        }
+        return parts.joined(separator: ", ")
     }
 }
 

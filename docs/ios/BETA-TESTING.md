@@ -133,6 +133,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Subscriptions: Suche (Titel / Beschreibung; Sort bleibt) | ☐ Subscriptions: search (title / description; sort preserved) |
 | ☐ Subscriptions: Sortierung (Zuletzt aktualisiert / Alphabetisch) | ☐ Subscriptions: sort (Recently updated / Alphabetical) |
 | ☐ Subscriptions: Alle aktualisieren (Toolbar + Pull; Progress während `isLoading`) | ☐ Subscriptions: Refresh all (toolbar + pull; progress while `isLoading`) |
+| ☐ Subscriptions: Ungehört-Badge (pro Podcast; 0 ausgeblendet; VoiceOver; `!isPlayed` && nicht archiviert) | ☐ Subscriptions: unplayed badge (per podcast; hide when 0; VoiceOver; `!isPlayed` && not archived) |
 | ☐ Feed-Detail: Episoden-Sortierung (Neueste / Älteste zuerst) | ☐ Feed detail: episode sort (Newest / Oldest first) |
 | ☐ Feed-Detail: Suche (Episodentitel) | ☐ Feed detail: search (episode title) |
 | ☐ Feed-Detail: Filterchips Alle / Ungehört / Gehört (persistiert; Bulk bleibt full-feed) | ☐ Feed detail: filter chips All / Unplayed / Played (persisted; bulk stays full-feed) |
