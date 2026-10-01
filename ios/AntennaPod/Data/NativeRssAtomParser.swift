@@ -30,6 +30,12 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var channelMedium: String?
     /// Channel itunes:type — raw feed string (episodic/serial/…); nil when absent. Display-only; never invent; does not change sort.
     private var channelItunesType: String?
+    /// Channel podcast:updateFrequency — structured text + optional rrule/dtstart/complete; nil when absent. Display-only; never invent; does not change Keep updated/refresh.
+    private var channelUpdateFrequency: PodcastUpdateFrequency?
+    private var capturingUpdateFrequency = false
+    private var pendingUpdateFrequencyRrule: String?
+    private var pendingUpdateFrequencyDtstart: String?
+    private var pendingUpdateFrequencyComplete: Bool?
     /// Prefer channel `podcast:funding` (url + optional text) over Atom `link rel="payment"`.
     private var fundingUrl: String?
     private var fundingLabel: String?
@@ -220,6 +226,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             ),
             medium: channelMedium,
             itunesType: channelItunesType,
+            updateFrequency: channelUpdateFrequency,
             fundingUrl: fundingUrl,
             fundingLabel: fundingLabel,
             categories: Self.uniqueCategories(categoryTexts),
@@ -393,6 +400,19 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                 if let owner, !owner.isEmpty {
                     lockedOwnerAttr = owner
+                }
+            }
+        case "updatefrequency":
+            // Podcast Index: <podcast:updateFrequency rrule="…" dtstart="…" complete="true|false">Weekly</podcast:updateFrequency>
+            // Channel-level intended release schedule; display-only — does not change Keep updated / refresh.
+            if !inItem && !inLiveItem && !inPodroll && !inPublisher {
+                capturingUpdateFrequency = true
+                pendingUpdateFrequencyRrule = Self.nonEmptyAttr(attributeDict["rrule"] ?? attributeDict["Rrule"])
+                pendingUpdateFrequencyDtstart = Self.nonEmptyAttr(attributeDict["dtstart"] ?? attributeDict["Dtstart"])
+                if let raw = attributeDict["complete"] ?? attributeDict["Complete"] {
+                    pendingUpdateFrequencyComplete = PodcastUpdateFrequencyParsing.parseComplete(raw)
+                } else {
+                    pendingUpdateFrequencyComplete = nil
                 }
             }
         case "funding":
@@ -894,6 +914,25 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 if inPodroll || inPublisher || inLiveItem { break }
                 if let raw = ItunesTypeParsing.nonEmptyRaw(text) {
                     channelItunesType = raw
+                }
+            case "updatefrequency":
+                // podcast:updateFrequency — free-form text + optional rrule/dtstart/complete. Channel only.
+                // Display-only — never invent schedule; does not change Keep updated / refresh.
+                if capturingUpdateFrequency {
+                    let body = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                    let uf = PodcastUpdateFrequency(
+                        text: body.isEmpty ? nil : body,
+                        rrule: pendingUpdateFrequencyRrule,
+                        dtstart: pendingUpdateFrequencyDtstart,
+                        complete: pendingUpdateFrequencyComplete
+                    )
+                    if uf.hasContent {
+                        channelUpdateFrequency = uf
+                    }
+                    capturingUpdateFrequency = false
+                    pendingUpdateFrequencyRrule = nil
+                    pendingUpdateFrequencyDtstart = nil
+                    pendingUpdateFrequencyComplete = nil
                 }
             case "url" where inImage:
                 imageUrl = text
@@ -1503,6 +1542,23 @@ enum ItunesSeasonEpisodeParsing {
         switch trimmed {
         case "full", "trailer", "bonus":
             return trimmed
+        default:
+            return nil
+        }
+    }
+}
+
+/// Podcast Index `podcast:updateFrequency` `complete` attribute.
+/// Spec: boolean. Accept true/yes / false/no. Unknown/empty → nil (do not invent).
+enum PodcastUpdateFrequencyParsing {
+    static func parseComplete(_ raw: String) -> Bool? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !trimmed.isEmpty else { return nil }
+        switch trimmed {
+        case "true", "yes", "1":
+            return true
+        case "false", "no", "0":
+            return false
         default:
             return nil
         }

@@ -1672,6 +1672,89 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     }
 }
 
+/// Podcast Index channel `podcast:updateFrequency` (Podcasting 2.0).
+/// Free-form display text (node value, typically ≤128 chars) + optional attributes:
+/// `rrule` (iCalendar RFC 5545), `dtstart` (ISO8601), `complete` (boolean — no further episodes).
+/// **Display-only:** never invent schedule text; does **not** change Keep updated / refresh interval.
+/// Feed-provided only — hide when the tag is absent or empty of all fields.
+struct PodcastUpdateFrequency: Hashable, Codable {
+    /// Element text as provided by the feed (free-form schedule label). Nil/blank when absent.
+    var text: String?
+    /// Optional `rrule` attribute (raw). Nil when absent — never invent recurrence rules.
+    var rrule: String?
+    /// Optional `dtstart` attribute (raw ISO8601 date/datetime). Nil when absent — never invent.
+    var dtstart: String?
+    /// Optional `complete` attribute. `true` = feed claims no further episodes; `nil` when absent (do not assume false for display gating).
+    var complete: Bool?
+
+    init(text: String? = nil, rrule: String? = nil, dtstart: String? = nil, complete: Bool? = nil) {
+        self.text = text
+        self.rrule = rrule
+        self.dtstart = dtstart
+        self.complete = complete
+    }
+
+    /// True when any field has feed-provided content worth showing.
+    var hasContent: Bool {
+        displayText != nil || displayRrule != nil || displayDtstart != nil || complete == true
+    }
+
+    /// Trimmed non-empty free-form text (spec suggests ≤128; we store as provided, UI may truncate display).
+    var displayText: String? {
+        guard let text else { return nil }
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty raw `rrule`. Hidden when missing — never invent.
+    var displayRrule: String? {
+        guard let rrule else { return nil }
+        let trimmed = rrule.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty raw `dtstart`. Hidden when missing — never invent.
+    var displayDtstart: String? {
+        guard let dtstart else { return nil }
+        let trimmed = dtstart.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Feed claims no further episodes via `complete="true"`.
+    var isComplete: Bool { complete == true }
+
+    /// Capsule / row primary label: free-form text when set; else localized **Complete** when `complete`; else nil
+    /// (structured-only rows still show via `hasContent` with footnotes for rrule/dtstart).
+    /// Never invents Daily/Weekly from rrule alone.
+    var displayLabel: String? {
+        if let t = displayText { return t }
+        if isComplete { return String(localized: "Complete") }
+        return nil
+    }
+
+    /// VoiceOver summary for the update-frequency block.
+    var accessibilityLabel: String {
+        var parts: [String] = []
+        if let t = displayText {
+            parts.append(String(localized: "Update frequency \(t)"))
+        } else if isComplete {
+            parts.append(String(localized: "Complete"))
+        } else {
+            parts.append(String(localized: "Update frequency"))
+        }
+        if isComplete {
+            parts.append(String(localized: "This podcast claims it will not release further episodes. This does not change Keep updated or refresh."))
+        }
+        if let r = displayRrule {
+            parts.append(String(localized: "Recurrence \(r)"))
+        }
+        if let d = displayDtstart {
+            parts.append(String(localized: "Starts \(d)"))
+        }
+        return parts.joined(separator: ". ")
+    }
+}
+
 struct PodcastFeed: Identifiable, Hashable, Codable {
     var id: UUID
     var title: String
@@ -1695,6 +1778,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Nil when absent — never invent; UI hides unless present. Unknown values kept as raw for display.
     /// Display-only — does **not** change default episode sort.
     var itunesType: String?
+    /// Channel Podcast Index `podcast:updateFrequency` when the feed provides it (text + optional rrule/dtstart/complete).
+    /// Nil when absent — never invent schedule; UI hides unless present. Display-only — does **not** change Keep updated / refresh.
+    var updateFrequency: PodcastUpdateFrequency?
     /// Podcast Index `podcast:funding` / Atom `link rel="payment"` URL when the feed provides it.
     /// Nil or blank when absent — never invent; UI hides unless http(s) valid.
     var fundingUrl: String?
@@ -1811,6 +1897,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         }
     }
 
+    /// Channel `podcast:updateFrequency` when the feed provided any displayable field. Nil when absent — never invent.
+    var displayUpdateFrequency: PodcastUpdateFrequency? {
+        guard let updateFrequency, updateFrequency.hasContent else { return nil }
+        return updateFrequency
+    }
+
     /// Trimmed non-empty funding label from the feed when provided. Hidden/fallback when missing.
     var displayFundingLabel: String? {
         guard let fundingLabel else { return nil }
@@ -1921,6 +2013,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         language: String? = nil,
         medium: String? = nil,
         itunesType: String? = nil,
+        updateFrequency: PodcastUpdateFrequency? = nil,
         fundingUrl: String? = nil,
         fundingLabel: String? = nil,
         categories: [String] = [],
@@ -1949,6 +2042,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.language = language
         self.medium = medium
         self.itunesType = itunesType
+        self.updateFrequency = updateFrequency
         self.fundingUrl = fundingUrl
         self.fundingLabel = fundingLabel
         self.categories = categories
@@ -1980,6 +2074,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         language = try c.decodeIfPresent(String.self, forKey: .language)
         medium = try c.decodeIfPresent(String.self, forKey: .medium)
         itunesType = try c.decodeIfPresent(String.self, forKey: .itunesType)
+        updateFrequency = try c.decodeIfPresent(PodcastUpdateFrequency.self, forKey: .updateFrequency)
         fundingUrl = try c.decodeIfPresent(String.self, forKey: .fundingUrl)
         fundingLabel = try c.decodeIfPresent(String.self, forKey: .fundingLabel)
         categories = try c.decodeIfPresent([String].self, forKey: .categories) ?? []
@@ -1999,7 +2094,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, publisherItems, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, publisherItems, episodes
     }
 }
 

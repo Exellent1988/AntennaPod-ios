@@ -15905,7 +15905,7 @@
           }
         }
       },
-      "comment": "Live item start timestamp caption. Arg is formatted date/time or raw feed string."
+      "comment": "Live item start timestamp caption, or podcast:updateFrequency dtstart footnote (raw ISO8601 as provided). Arg is formatted date/time or raw feed string. Never invent."
     },
     "Ends %@": {
       "extractionState": "manual",
@@ -16967,6 +16967,96 @@
         }
       },
       "comment": "VoiceOver hint for Subscriptions language filter chips."
+    },
+    "Update frequency": {
+      "extractionState": "manual",
+      "comment": "Capsule/label for channel podcast:updateFrequency when free-form text is absent but structured attrs exist. Display-only; hide when tag missing. Does not change Keep updated/refresh.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update frequency"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisierungshäufigkeit"
+          }
+        }
+      }
+    },
+    "Update frequency %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for channel podcast:updateFrequency free-form text (feed-provided schedule label). Never invent; hide when missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update frequency %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisierungshäufigkeit %@"
+          }
+        }
+      }
+    },
+    "Complete": {
+      "extractionState": "manual",
+      "comment": "Capsule when podcast:updateFrequency complete=true (no further episodes claimed). Display-only; does not change Keep updated/refresh. Distinct from other Complete UI if any.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abgeschlossen"
+          }
+        }
+      }
+    },
+    "This podcast claims it will not release further episodes. This does not change Keep updated or refresh.": {
+      "extractionState": "manual",
+      "comment": "Honest footnote under podcast:updateFrequency complete=true — display-only; no auto Keep updated/refresh change.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast claims it will not release further episodes. This does not change Keep updated or refresh."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Podcast gibt an, keine weiteren Episoden zu veröffentlichen. Das ändert weder „Aktualisiert halten“ noch das Aktualisierungsintervall."
+          }
+        }
+      }
+    },
+    "Recurrence %@": {
+      "extractionState": "manual",
+      "comment": "Footnote showing raw podcast:updateFrequency rrule attribute (iCalendar RFC 5545). Never invent; hide when missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recurrence %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederholung %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -48,6 +48,10 @@ struct FeedDescriptionSheetView: View {
         feed.displayItunesType
     }
 
+    private var displayUpdateFrequency: PodcastUpdateFrequency? {
+        feed.displayUpdateFrequency
+    }
+
     private var displayCategories: [String] {
         feed.displayCategories
     }
@@ -304,6 +308,11 @@ struct FeedDescriptionSheetView: View {
                             .accessibilityLabel(feed.itunesTypeAccessibilityLabel ?? itunesType)
                     }
 
+                    if let uf = displayUpdateFrequency {
+                        FeedUpdateFrequencyDetailBlock(frequency: uf)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
                     if !displayCategories.isEmpty {
                         FeedDescriptionCategoryChips(categories: displayCategories)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -391,6 +400,11 @@ struct FeedDescriptionSheetView: View {
                             .background(Color.secondary.opacity(0.2), in: Capsule())
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .accessibilityLabel(feed.itunesTypeAccessibilityLabel ?? itunesType)
+                    }
+
+                    if let uf = displayUpdateFrequency {
+                        FeedUpdateFrequencyDetailBlock(frequency: uf)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
                     if !displayCategories.isEmpty {

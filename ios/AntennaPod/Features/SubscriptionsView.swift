@@ -732,6 +732,11 @@ struct SubscriptionsView: View {
                                 .background(Color.secondary.opacity(0.2), in: Capsule())
                                 .accessibilityHidden(true)
                         }
+                        // Channel podcast:updateFrequency when set — free-form text or Complete; hide when missing (never invent; display-only).
+                        if let uf = feed.displayUpdateFrequency {
+                            FeedUpdateFrequencyCapsule(frequency: uf, compact: true)
+                                .accessibilityHidden(true)
+                        }
                     }
                     // Feed author when present (itunes:author / Atom name / managingEditor); hide when missing.
                     if let author = feed.displayAuthor {
@@ -854,6 +859,9 @@ struct SubscriptionsView: View {
         }
         if let a11y = feed.itunesTypeAccessibilityLabel {
             parts.append(a11y)
+        }
+        if let uf = feed.displayUpdateFrequency {
+            parts.append(uf.accessibilityLabel)
         }
         if let author = feed.displayAuthor {
             parts.append(author)

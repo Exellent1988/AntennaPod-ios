@@ -136,6 +136,11 @@ struct FeedDetailView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// Channel podcast:updateFrequency when present — hide when absent (never invent; display-only).
+    private var displayUpdateFrequency: PodcastUpdateFrequency? {
+        liveFeed.displayUpdateFrequency
+    }
+
     /// Episodes for this feed ordered by `AppSettings.feedEpisodeSort` (`pubDateEpochMs`).
     /// Missing dates sort last in both modes. Does not mutate stored feed order.
     private var sortedEpisodes: [PodcastEpisode] {
@@ -302,6 +307,13 @@ struct FeedDetailView: View {
                         .background(Color.secondary.opacity(0.2), in: Capsule())
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityLabel(liveFeed.itunesTypeAccessibilityLabel ?? itunesType)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:updateFrequency when present — text + optional complete/rrule/dtstart; hide when missing (never invent; display-only — no Keep updated/refresh change).
+            if let uf = displayUpdateFrequency {
+                Section {
+                    FeedUpdateFrequencyDetailBlock(frequency: uf)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -1545,5 +1557,70 @@ struct EpisodeRow: View {
     private var formattedKnownByteSize: String? {
         guard let bytes = knownByteSize else { return nil }
         return DownloadStorageUsage.formatBytes(bytes)
+    }
+}
+
+/// Feed-detail / description block for channel `podcast:updateFrequency` (display-only).
+struct FeedUpdateFrequencyDetailBlock: View {
+    let frequency: PodcastUpdateFrequency
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            if let label = frequency.displayLabel {
+                Text(label)
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.secondary.opacity(0.2), in: Capsule())
+            } else {
+                Text(String(localized: "Update frequency"))
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+            if frequency.isComplete {
+                Text(String(localized: "This podcast claims it will not release further episodes. This does not change Keep updated or refresh."))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            if let rrule = frequency.displayRrule {
+                Text(String(localized: "Recurrence \(rrule)"))
+                    .font(.footnote.monospaced())
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+            }
+            if let dtstart = frequency.displayDtstart {
+                Text(String(localized: "Starts \(dtstart)"))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(frequency.accessibilityLabel)
+    }
+}
+
+/// Compact capsule for Subscriptions / preview when `podcast:updateFrequency` is present.
+struct FeedUpdateFrequencyCapsule: View {
+    let frequency: PodcastUpdateFrequency
+    var compact: Bool = false
+
+    var body: some View {
+        if let label = frequency.displayLabel {
+            Text(label)
+                .font(compact ? .caption2.weight(.semibold) : .caption.weight(.semibold))
+                .padding(.horizontal, compact ? 6 : 8)
+                .padding(.vertical, compact ? 2 : 4)
+                .background(Color.secondary.opacity(0.2), in: Capsule())
+                .accessibilityLabel(frequency.accessibilityLabel)
+        } else if frequency.hasContent {
+            Text(String(localized: "Update frequency"))
+                .font(compact ? .caption2.weight(.semibold) : .caption.weight(.semibold))
+                .padding(.horizontal, compact ? 6 : 8)
+                .padding(.vertical, compact ? 2 : 4)
+                .background(Color.secondary.opacity(0.2), in: Capsule())
+                .accessibilityLabel(frequency.accessibilityLabel)
+        }
     }
 }

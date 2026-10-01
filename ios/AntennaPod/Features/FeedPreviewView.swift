@@ -234,6 +234,9 @@ struct FeedPreviewView: View {
                         .background(Color.secondary.opacity(0.2), in: Capsule())
                         .accessibilityLabel(parsed?.itunesTypeAccessibilityLabel ?? itunesType)
                 }
+                if let uf = parsed?.displayUpdateFrequency {
+                    FeedUpdateFrequencyCapsule(frequency: uf, compact: true)
+                }
                 if let cats = parsed?.categoriesCaption {
                     Text(cats)
                         .font(.caption)
