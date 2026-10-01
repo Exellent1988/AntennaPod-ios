@@ -44,6 +44,10 @@ struct FeedDescriptionSheetView: View {
         feed.displayMedium
     }
 
+    private var displayItunesType: String? {
+        feed.displayItunesType
+    }
+
     private var displayCategories: [String] {
         feed.displayCategories
     }
@@ -290,6 +294,16 @@ struct FeedDescriptionSheetView: View {
                             .accessibilityLabel(String(localized: "Medium \(medium)"))
                     }
 
+                    if let itunesType = displayItunesType {
+                        Text(itunesType)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityLabel(feed.itunesTypeAccessibilityLabel ?? itunesType)
+                    }
+
                     if !displayCategories.isEmpty {
                         FeedDescriptionCategoryChips(categories: displayCategories)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -367,6 +381,16 @@ struct FeedDescriptionSheetView: View {
                             .background(Color.secondary.opacity(0.2), in: Capsule())
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .accessibilityLabel(String(localized: "Medium \(medium)"))
+                    }
+
+                    if let itunesType = displayItunesType {
+                        Text(itunesType)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityLabel(feed.itunesTypeAccessibilityLabel ?? itunesType)
                     }
 
                     if !displayCategories.isEmpty {

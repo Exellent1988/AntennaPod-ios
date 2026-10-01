@@ -16859,6 +16859,60 @@
           }
         }
       }
+    },
+    "Episodic": {
+      "extractionState": "manual",
+      "comment": "Capsule when channel itunes:type is episodic (Apple Podcasts). Hidden when missing — never invent. Display-only; does not change episode sort.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodic"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodisch"
+          }
+        }
+      }
+    },
+    "Serial": {
+      "extractionState": "manual",
+      "comment": "Capsule when channel itunes:type is serial (Apple Podcasts). Hidden when missing — never invent. Display-only; does not change episode sort.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serial"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seriell"
+          }
+        }
+      }
+    },
+    "Podcast type %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for channel itunes:type when the feed provides an unknown/non-canonical value (show raw). Known episodic/serial use their own keys. Never invent.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast type %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Typ %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

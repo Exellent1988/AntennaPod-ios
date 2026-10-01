@@ -28,6 +28,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var xmlLang: String?
     /// Channel podcast:medium — raw feed string (podcast/music/video/…); nil when absent. Display-only; never invent/remap.
     private var channelMedium: String?
+    /// Channel itunes:type — raw feed string (episodic/serial/…); nil when absent. Display-only; never invent; does not change sort.
+    private var channelItunesType: String?
     /// Prefer channel `podcast:funding` (url + optional text) over Atom `link rel="payment"`.
     private var fundingUrl: String?
     private var fundingLabel: String?
@@ -217,6 +219,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 xmlLang: xmlLang
             ),
             medium: channelMedium,
+            itunesType: channelItunesType,
             fundingUrl: fundingUrl,
             fundingLabel: fundingLabel,
             categories: Self.uniqueCategories(categoryTexts),
@@ -884,6 +887,14 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 if !text.isEmpty {
                     channelMedium = text
                 }
+            case "type":
+                // itunes:type — episodic | serial (Apple Podcasts). Channel only; store raw trimmed; never invent.
+                // Distinct from enclosure@type / media type / podcast:value@type attributes (those are attributes, not elements).
+                // Does not change default episode sort (display-only).
+                if inPodroll || inPublisher || inLiveItem { break }
+                if let raw = ItunesTypeParsing.nonEmptyRaw(text) {
+                    channelItunesType = raw
+                }
             case "url" where inImage:
                 imageUrl = text
             case "logo", "icon":
@@ -1491,6 +1502,27 @@ enum ItunesSeasonEpisodeParsing {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         switch trimmed {
         case "full", "trailer", "bonus":
+            return trimmed
+        default:
+            return nil
+        }
+    }
+}
+
+/// Channel `itunes:type` from feed text nodes (Apple Podcasts: episodic / serial).
+/// Stores non-empty raw trimmed text; never invents. Display localizes known values; unknown → show raw or hide.
+enum ItunesTypeParsing {
+    /// Non-empty trimmed raw `itunes:type` text, or `nil` when blank.
+    static func nonEmptyRaw(_ raw: String) -> String? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Canonical lowercase `episodic` / `serial`, or `nil` when absent/unknown (caller may still store raw).
+    static func canonical(from raw: String) -> String? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        switch trimmed {
+        case "episodic", "serial":
             return trimmed
         default:
             return nil

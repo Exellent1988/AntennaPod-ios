@@ -1691,6 +1691,10 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel Podcast Index `podcast:medium` raw string when the feed provides it (e.g. podcast / music / video / audiobook).
     /// Nil when absent — never invent or remap beyond display; UI hides unless present. Display-only — does not change playback.
     var medium: String?
+    /// Channel `itunes:type` raw string when the feed provides it (Apple Podcasts: `episodic` / `serial`).
+    /// Nil when absent — never invent; UI hides unless present. Unknown values kept as raw for display.
+    /// Display-only — does **not** change default episode sort.
+    var itunesType: String?
     /// Podcast Index `podcast:funding` / Atom `link rel="payment"` URL when the feed provides it.
     /// Nil or blank when absent — never invent; UI hides unless http(s) valid.
     var fundingUrl: String?
@@ -1771,6 +1775,40 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         guard let medium else { return nil }
         let trimmed = medium.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty channel `itunes:type` from the feed. Hidden when missing — never invent.
+    var itunesTypeCode: String? {
+        guard let itunesType else { return nil }
+        let trimmed = itunesType.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Capsule / row label for `itunes:type`: localized Episodic/Serial when known; else raw feed string.
+    /// `nil` when missing — never invent. Display-only (does not change episode sort).
+    var displayItunesType: String? {
+        guard let code = itunesTypeCode else { return nil }
+        switch code.lowercased() {
+        case "episodic":
+            return String(localized: "Episodic")
+        case "serial":
+            return String(localized: "Serial")
+        default:
+            return code
+        }
+    }
+
+    /// VoiceOver for channel `itunes:type` (localized known values; "Podcast type …" for unknown raw).
+    var itunesTypeAccessibilityLabel: String? {
+        guard let code = itunesTypeCode else { return nil }
+        switch code.lowercased() {
+        case "episodic":
+            return String(localized: "Episodic")
+        case "serial":
+            return String(localized: "Serial")
+        default:
+            return String(localized: "Podcast type \(code)")
+        }
     }
 
     /// Trimmed non-empty funding label from the feed when provided. Hidden/fallback when missing.
@@ -1882,6 +1920,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         isExplicit: Bool = false,
         language: String? = nil,
         medium: String? = nil,
+        itunesType: String? = nil,
         fundingUrl: String? = nil,
         fundingLabel: String? = nil,
         categories: [String] = [],
@@ -1909,6 +1948,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.isExplicit = isExplicit
         self.language = language
         self.medium = medium
+        self.itunesType = itunesType
         self.fundingUrl = fundingUrl
         self.fundingLabel = fundingLabel
         self.categories = categories
@@ -1939,6 +1979,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         isExplicit = try c.decodeIfPresent(Bool.self, forKey: .isExplicit) ?? false
         language = try c.decodeIfPresent(String.self, forKey: .language)
         medium = try c.decodeIfPresent(String.self, forKey: .medium)
+        itunesType = try c.decodeIfPresent(String.self, forKey: .itunesType)
         fundingUrl = try c.decodeIfPresent(String.self, forKey: .fundingUrl)
         fundingLabel = try c.decodeIfPresent(String.self, forKey: .fundingLabel)
         categories = try c.decodeIfPresent([String].self, forKey: .categories) ?? []
@@ -1958,7 +1999,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, publisherItems, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, podrollItems, publisherItems, episodes
     }
 }
 

@@ -59,6 +59,11 @@ struct FeedDetailView: View {
         liveFeed.displayMedium
     }
 
+    /// Channel itunes:type label when the feed provided it — hidden when missing (never invent; display-only).
+    private var displayItunesType: String? {
+        liveFeed.displayItunesType
+    }
+
     /// itunes:category texts when the feed provided them — empty → hide (never invent taxonomy).
     private var displayCategories: [String] {
         liveFeed.displayCategories
@@ -284,6 +289,19 @@ struct FeedDetailView: View {
                         .background(Color.secondary.opacity(0.2), in: Capsule())
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityLabel(String(localized: "Medium \(medium)"))
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel itunes:type when present — Episodic/Serial (localized) or raw; hide when missing (never invent; display-only — no sort change).
+            if let itunesType = displayItunesType {
+                Section {
+                    Text(itunesType)
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.2), in: Capsule())
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityLabel(liveFeed.itunesTypeAccessibilityLabel ?? itunesType)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }

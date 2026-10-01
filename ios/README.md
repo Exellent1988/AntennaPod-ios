@@ -708,7 +708,13 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 - **Local-folder feeds:** no `podcast:medium` (no RSS).
 - EN / DE + VoiceOver.
 
+## itunes:type (episodic / serial) (beta)
 
+- **Parse:** `NativeRssAtomParser` stores channel Apple Podcasts **`itunes:type`** element text into `PodcastFeed.itunesType` as the **raw feed string** (typically `episodic` or `serial`). **Feed-provided only** — never invent values. Unknown non-empty values are kept as raw for display. Populated on subscribe / refresh — **existing subscriptions need a feed refresh**.
+- **UI:** Feed detail (+ description sheet / subscribe preview) and **Subscriptions** row show a small capsule: localized **Episodic** / **Serial** (EN **Episodic**/**Serial**, DE **Episodisch**/**Seriell**) when known; otherwise the raw string. VoiceOver matches the capsule for known values, or **Podcast type …** for unknown raw. **Hidden when missing.**
+- **Honesty:** **Display-only.** Does **not** change default episode sort (`feedEpisodeSort` remains Newest first / Oldest first user preference). Distinct from item `itunes:episodeType` (Trailer/Bonus badge).
+- **Local-folder feeds:** no `itunes:type` (no RSS).
+- EN / DE + VoiceOver.
 
 ## Headset / Bluetooth pause
 

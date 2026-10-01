@@ -226,6 +226,14 @@ struct FeedPreviewView: View {
                         .background(Color.secondary.opacity(0.2), in: Capsule())
                         .accessibilityLabel(String(localized: "Medium \(medium)"))
                 }
+                if let itunesType = parsed?.displayItunesType {
+                    Text(itunesType)
+                        .font(.caption2.weight(.semibold))
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.secondary.opacity(0.2), in: Capsule())
+                        .accessibilityLabel(parsed?.itunesTypeAccessibilityLabel ?? itunesType)
+                }
                 if let cats = parsed?.categoriesCaption {
                     Text(cats)
                         .font(.caption)

@@ -658,6 +658,15 @@ struct SubscriptionsView: View {
                                 .background(Color.secondary.opacity(0.2), in: Capsule())
                                 .accessibilityHidden(true)
                         }
+                        // Channel itunes:type when set — Episodic/Serial or raw; hide when missing (never invent; display-only).
+                        if let itunesType = feed.displayItunesType {
+                            Text(itunesType)
+                                .font(.caption2.weight(.semibold))
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(Color.secondary.opacity(0.2), in: Capsule())
+                                .accessibilityHidden(true)
+                        }
                     }
                     // Feed author when present (itunes:author / Atom name / managingEditor); hide when missing.
                     if let author = feed.displayAuthor {
@@ -777,6 +786,9 @@ struct SubscriptionsView: View {
         }
         if let medium = feed.displayMedium {
             parts.append(String(localized: "Medium \(medium)"))
+        }
+        if let a11y = feed.itunesTypeAccessibilityLabel {
+            parts.append(a11y)
         }
         if let author = feed.displayAuthor {
             parts.append(author)
