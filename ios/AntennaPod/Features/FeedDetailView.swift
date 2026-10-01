@@ -507,7 +507,7 @@ struct EpisodeRow: View {
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
-                if dateOverride != nil || episode.pubDateEpochMs != nil || formattedKnownDuration != nil {
+                if dateOverride != nil || episode.pubDateEpochMs != nil || formattedKnownDuration != nil || formattedKnownByteSize != nil {
                     HStack(spacing: 6) {
                         if let dateOverride {
                             // History / Favorites / Archived: live relative (hours matter).
@@ -522,6 +522,14 @@ struct EpisodeRow: View {
                                     .accessibilityHidden(true)
                             }
                             Text(formattedKnownDuration)
+                                .monospacedDigit()
+                        }
+                        if let formattedKnownByteSize {
+                            if dateOverride != nil || episode.pubDateEpochMs != nil || formattedKnownDuration != nil {
+                                Text("·")
+                                    .accessibilityHidden(true)
+                            }
+                            Text(formattedKnownByteSize)
                                 .monospacedDigit()
                         }
                     }
@@ -849,7 +857,7 @@ struct EpisodeRow: View {
         return String(localized: "Download")
     }
 
-    /// VoiceOver summary: title, feed, date, duration, played / percent (+ remaining) or position-only, downloaded (+ favorite/archived).
+    /// VoiceOver summary: title, feed, date, duration, size, played / percent (+ remaining) or position-only, downloaded (+ favorite/archived).
     private var episodeAccessibilityLabel: String {
         var parts: [String] = [episode.title]
         if !feedTitle.isEmpty {
@@ -862,6 +870,9 @@ struct EpisodeRow: View {
         }
         if let formattedKnownDuration {
             parts.append(String(localized: "Duration \(formattedKnownDuration)"))
+        }
+        if let formattedKnownByteSize {
+            parts.append(String(localized: "Size \(formattedKnownByteSize)"))
         }
         if state.isPlayed {
             parts.append(String(localized: "Played"))
@@ -915,5 +926,32 @@ struct EpisodeRow: View {
     /// `m:ss` / `h:mm:ss` via the same formatter as the full-player scrubber / share timestamp.
     private var formattedKnownDuration: String? {
         PodcastEpisode.formatPlaybackPosition(knownDurationSeconds)
+    }
+
+    /// Prefer on-disk file size when an offline copy exists; else feed enclosure `PodcastEpisode.size` when > 0.
+    /// Same honesty as Downloads rows (`DownloadedEpisode.knownByteSize`). Hidden when unknown — never invents MB.
+    private var knownByteSize: Int64? {
+        if let item = downloads.downloads.first(where: { $0.id == episode.id }) {
+            return item.knownByteSize()
+        }
+        // Local-folder `file://` (or other localURL) not necessarily in the downloads catalog.
+        if let url = downloads.localURL(for: episode) {
+            let values = try? url.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
+            if values?.isRegularFile != false,
+               let size = values?.fileSize,
+               size > 0 {
+                return Int64(size)
+            }
+        }
+        if episode.size > 0 {
+            return episode.size
+        }
+        return nil
+    }
+
+    /// Compact KB/MB/GB via `DownloadStorageUsage.formatBytes` / `ByteCountFormatter` when `knownByteSize` is set.
+    private var formattedKnownByteSize: String? {
+        guard let bytes = knownByteSize else { return nil }
+        return DownloadStorageUsage.formatBytes(bytes)
     }
 }
