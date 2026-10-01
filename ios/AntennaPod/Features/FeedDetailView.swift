@@ -89,6 +89,11 @@ struct FeedDetailView: View {
         liveFeed.displayTrailer
     }
 
+    /// Channel podcast:liveItem when the feed provided them — empty → hide (display-only; no live player).
+    private var displayLiveItems: [PodcastLiveItem] {
+        liveFeed.displayLiveItems
+    }
+
     /// Podcast Index `podcast:guid` when the feed provided it — hide when missing (never invent).
     private var displayPodcastGuid: String? {
         liveFeed.displayPodcastGuid
@@ -359,6 +364,14 @@ struct FeedDetailView: View {
             if let trailer = displayTrailer {
                 Section {
                     feedTrailerRow(trailer)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:liveItem — status/start/end/title + Open link/contentLink in browser; hide when none.
+            // Display-only — no live stream player / recording / chat / payments. Never invent live items.
+            if !displayLiveItems.isEmpty {
+                Section {
+                    PodcastLiveItemsListView(liveItems: displayLiveItems)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }

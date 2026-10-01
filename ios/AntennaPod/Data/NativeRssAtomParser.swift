@@ -56,11 +56,15 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var channelSocialInteracts: [PodcastSocialInteract] = []
     /// Channel podcast:value / valueRecipient — feed-provided only; display-only (no payments).
     private var channelValues: [PodcastValue] = []
+    /// Channel podcast:liveItem — feed-provided only; display-only (no live player / recording / chat).
+    private var channelLiveItems: [PodcastLiveItem] = []
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
     private var currentText = ""
     private var inItem = false
+    /// Inside channel podcast:liveItem — capture title/link/guid/contentLink; do not create episodes / do not pollute channel title.
+    private var inLiveItem = false
     private var inImage = false
     /// Atom `<author>` / RSS itunes:author element at channel/feed level (not item).
     private var inFeedAuthor = false
@@ -126,6 +130,17 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var pendingRecipientAddress: String?
     private var pendingRecipientSplit: Int?
     private var pendingRecipientFee: Bool?
+    /// Capturing podcast:liveItem (channel) + nested title/link/guid/contentLink.
+    private var pendingLiveStatus: PodcastLiveItemStatus?
+    private var pendingLiveStart: String?
+    private var pendingLiveEnd: String?
+    private var pendingLiveTitle: String?
+    private var pendingLiveLink: String?
+    private var pendingLiveGuid: String?
+    private var pendingLiveContentLinks: [PodcastContentLink] = []
+    /// Capturing podcast:contentLink under liveItem (href attr + element text label).
+    private var capturingContentLink = false
+    private var pendingContentLinkHref: String?
     private var elementStack: [String] = []
 
     init(data: Data) {
@@ -169,6 +184,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             locations: channelLocations,
             socialInteracts: channelSocialInteracts,
             values: channelValues,
+            liveItems: channelLiveItems,
             episodes: episodes
         )
     }
@@ -196,6 +212,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             // RSS channel may carry xml:lang (language element is handled on endElement).
             captureXmlLangIfNeeded(attributeDict)
         case "item", "entry":
+            // Nested item/entry inside liveItem would pollute episode list — ignore (liveItem is not an episode).
+            if inLiveItem { break }
             inItem = true
             itemTitle = nil
             itemLink = nil
@@ -223,19 +241,22 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 itemLink = href
             }
         case "image":
-            if !inItem {
+            if !inItem && !inLiveItem {
                 inImage = true
             }
         case "author":
             // Channel itunes:author (text) or Atom <author> wrapper — ignore item-level authors.
-            if !inItem {
+            if !inItem && !inLiveItem {
                 inFeedAuthor = true
             }
         case "enclosure":
+            // Live stream enclosure is intentionally not stored for playback (display-only liveItem).
+            if inLiveItem { break }
             enclosureUrl = attributeDict["url"] ?? attributeDict["href"]
             enclosureType = attributeDict["type"]
             enclosureLength = Int64(attributeDict["length"] ?? attributeDict["fileSize"] ?? "0") ?? 0
         case "content":
+            if inLiveItem { break }
             if attributeDict["url"] != nil {
                 enclosureUrl = attributeDict["url"]
                 enclosureType = attributeDict["type"]
@@ -254,7 +275,14 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         case "link":
             let rel = attributeDict["rel"] ?? ""
             let href = attributeDict["href"]
-            if inItem {
+            if inLiveItem {
+                // Live item page link (Atom-style href) — http(s) only used in UI; never invent.
+                if rel.isEmpty || rel == "alternate" {
+                    if let href, !href.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        pendingLiveLink = href.trimmingCharacters(in: .whitespacesAndNewlines)
+                    }
+                }
+            } else if inItem {
                 if rel == "enclosure" {
                     enclosureUrl = href
                     enclosureType = attributeDict["type"]
@@ -276,7 +304,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         case "category":
             // itunes:category text="Technology" — parent and nested subcategory both fire here.
             // Channel-level only; store attribute text as provided — never invent App Store taxonomy.
-            if !inItem {
+            if !inItem && !inLiveItem {
                 let raw = (attributeDict["text"] ?? attributeDict["Text"])?
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                 if let raw, !raw.isEmpty {
@@ -286,7 +314,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         case "locked":
             // Podcast Index: <podcast:locked owner="email@…">yes|no</podcast:locked>
             // Channel-level claim for host transfer; display-only — we do not verify owner or block import.
-            if !inItem {
+            if !inItem && !inLiveItem {
                 capturingLocked = true
                 let owner = (attributeDict["owner"] ?? attributeDict["Owner"])?
                     .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -297,7 +325,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         case "funding":
             // Podcast Index: <podcast:funding url="https://…">Support the show!</podcast:funding>
             // Channel-level; first podcast:funding wins (may replace earlier Atom payment). Never invent URLs.
-            if !inItem, !fundingFromPodcastTag {
+            if !inItem && !inLiveItem, !fundingFromPodcastTag {
                 let href = (attributeDict["url"] ?? attributeDict["href"])?
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                 if let href, !href.isEmpty {
@@ -351,6 +379,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         case "person":
             // Podcast Index: <podcast:person role="…" group="…" href="…" img="…">Name</podcast:person>
             // Channel and/or item. Name required; role/group/href/img optional — never invent people or default role/group.
+            // Skip inside liveItem (display-only live metadata — do not attach people to channel/item from live children).
+            if inLiveItem { break }
             capturingPerson = true
             pendingPersonRole = Self.nonEmptyAttr(attributeDict["role"] ?? attributeDict["Role"])
             pendingPersonGroup = Self.nonEmptyAttr(attributeDict["group"] ?? attributeDict["Group"])
@@ -360,7 +390,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             // Podcast Index: <podcast:trailer pubdate="…" url="…" length="…" type="…" season="…">Title</podcast:trailer>
             // Channel-level only. Title (element text) required to keep; url/pubdate/length/type/season optional here —
             // never invent trailers. Distinct from item itunes:episodeType=trailer.
-            if !inItem {
+            if !inItem && !inLiveItem {
                 capturingTrailer = true
                 pendingTrailerPubDate = Self.nonEmptyAttr(attributeDict["pubdate"] ?? attributeDict["pubDate"])
                 pendingTrailerUrl = Self.nonEmptyAttr(attributeDict["url"] ?? attributeDict["href"])
@@ -381,6 +411,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         case "location":
             // Podcast Index: <podcast:location geo="…" osm="…" rel="…">Name</podcast:location>
             // Channel and/or item. Name required; geo/osm/rel optional — never invent / never geocode names.
+            if inLiveItem { break }
             capturingLocation = true
             pendingLocationGeo = Self.nonEmptyAttr(attributeDict["geo"])
             pendingLocationOsm = Self.nonEmptyAttr(attributeDict["osm"])
@@ -389,6 +420,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             // Podcast Index: <podcast:socialInteract protocol="…" uri="…" accountId="…" priority="…"/>
             // Channel and/or item. protocol + uri/url required for Discuss; accountId/priority optional.
             // protocol=disabled → stored but UI hides (no Discuss). Never invent URLs / no Fediverse client.
+            if inLiveItem { break }
             capturingSocialInteract = true
             pendingSocialProtocol = Self.nonEmptyAttr(attributeDict["protocol"] ?? attributeDict["Protocol"])
             pendingSocialUri = Self.nonEmptyAttr(
@@ -406,6 +438,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         case "value":
             // Podcast Index: <podcast:value type="…" method="…" suggested="…">…valueRecipient…</podcast:value>
             // Channel and/or item. type + method required; suggested optional. Display-only — no payments.
+            if inLiveItem { break }
             capturingValue = true
             pendingValueType = Self.nonEmptyAttr(attributeDict["type"])
             pendingValueMethod = Self.nonEmptyAttr(attributeDict["method"])
@@ -438,6 +471,28 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             } else {
                 pendingRecipientFee = nil
             }
+        case "liveitem":
+            // Podcast Index: <podcast:liveItem status="…" start="…" end="…">…</podcast:liveItem>
+            // Channel-level only. status + start required; end recommended. Children: title, link, guid, contentLink, …
+            // Display-only — do not create episodes / do not play live enclosure / no chat / no payments.
+            // Never invent live items.
+            guard !inItem else { break }
+            inLiveItem = true
+            pendingLiveStatus = PodcastLiveItemStatus.parse(attributeDict["status"])
+            pendingLiveStart = Self.nonEmptyAttr(attributeDict["start"])
+            pendingLiveEnd = Self.nonEmptyAttr(attributeDict["end"])
+            pendingLiveTitle = nil
+            pendingLiveLink = nil
+            pendingLiveGuid = nil
+            pendingLiveContentLinks = []
+            capturingContentLink = false
+            pendingContentLinkHref = nil
+        case "contentlink":
+            // Podcast Index: <podcast:contentLink href="…">Label</podcast:contentLink>
+            // Under liveItem (fallback / platform links). href required; text = label. openURL only — no live player.
+            guard inLiveItem else { break }
+            capturingContentLink = true
+            pendingContentLinkHref = Self.nonEmptyAttr(attributeDict["href"] ?? attributeDict["url"])
         default:
             break
         }
@@ -465,7 +520,28 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         let local = localName(elementName)
         let text = currentText.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        if inItem {
+        if inLiveItem {
+            switch local.lowercased() {
+            case "title":
+                if !text.isEmpty {
+                    pendingLiveTitle = text
+                }
+            case "link":
+                if pendingLiveLink == nil, !text.isEmpty {
+                    pendingLiveLink = text
+                }
+            case "guid", "id":
+                if !text.isEmpty {
+                    pendingLiveGuid = text
+                }
+            case "contentlink":
+                finishContentLink(text: text)
+            case "liveitem":
+                finishLiveItem()
+            default:
+                break
+            }
+        } else if inItem {
             switch local.lowercased() {
             case "title":
                 itemTitle = text
@@ -644,6 +720,59 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         currentElement = elementStack.last ?? ""
     }
 
+
+
+    /// Finish podcast:contentLink under liveItem — append when href present; never invent.
+    private func finishContentLink(text: String) {
+        defer {
+            capturingContentLink = false
+            pendingContentLinkHref = nil
+        }
+        guard inLiveItem, capturingContentLink else { return }
+        guard let href = pendingContentLinkHref,
+              !href.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        let label = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        pendingLiveContentLinks.append(
+            PodcastContentLink(
+                href: href,
+                label: label.isEmpty ? nil : label
+            )
+        )
+    }
+
+    /// Finish channel podcast:liveItem — append when status + start present; display-only (no episode / no player).
+    private func finishLiveItem() {
+        defer {
+            inLiveItem = false
+            pendingLiveStatus = nil
+            pendingLiveStart = nil
+            pendingLiveEnd = nil
+            pendingLiveTitle = nil
+            pendingLiveLink = nil
+            pendingLiveGuid = nil
+            pendingLiveContentLinks = []
+            capturingContentLink = false
+            pendingContentLinkHref = nil
+        }
+        guard inLiveItem else { return }
+        guard let status = pendingLiveStatus,
+              let start = pendingLiveStart,
+              !start.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        let end = pendingLiveEnd
+        channelLiveItems.append(
+            PodcastLiveItem(
+                status: status,
+                start: start,
+                startEpochMs: FeedDateParsing.epochMs(from: start),
+                end: end,
+                endEpochMs: FeedDateParsing.epochMs(from: end),
+                title: pendingLiveTitle,
+                link: pendingLiveLink,
+                guid: pendingLiveGuid,
+                contentLinks: pendingLiveContentLinks
+            )
+        )
+    }
 
     /// Finish a podcast:person element — append when name non-empty; never invent.
     private func finishPerson(text: String, intoItem: Bool) {
@@ -903,14 +1032,26 @@ enum FeedDateParsing {
         guard let raw = raw?.trimmingCharacters(in: .whitespacesAndNewlines), !raw.isEmpty else {
             return nil
         }
+        // Normalize common Podcast Index liveItem offsets like …-0600 → …-06:00 for ISO8601DateFormatter.
+        let normalized = normalizeISO8601Offset(raw)
         let iso = ISO8601DateFormatter()
         iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let date = iso.date(from: raw) {
+        if let date = iso.date(from: normalized) {
             return Int64(date.timeIntervalSince1970 * 1000)
         }
         iso.formatOptions = [.withInternetDateTime]
-        if let date = iso.date(from: raw) {
+        if let date = iso.date(from: normalized) {
             return Int64(date.timeIntervalSince1970 * 1000)
+        }
+        if normalized != raw {
+            iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            if let date = iso.date(from: raw) {
+                return Int64(date.timeIntervalSince1970 * 1000)
+            }
+            iso.formatOptions = [.withInternetDateTime]
+            if let date = iso.date(from: raw) {
+                return Int64(date.timeIntervalSince1970 * 1000)
+            }
         }
         let rfc = DateFormatter()
         rfc.locale = Locale(identifier: "en_US_POSIX")
@@ -927,6 +1068,22 @@ enum FeedDateParsing {
             return Int64(date.timeIntervalSince1970 * 1000)
         }
         return nil
+    }
+
+    /// Insert a colon in timezone offsets like `-0600` / `+0530` so `ISO8601DateFormatter` accepts them.
+    /// Leaves already-colonized / Z / bare strings unchanged. Never invents a timestamp.
+    private static func normalizeISO8601Offset(_ raw: String) -> String {
+        // Match …±HHMM at end (no colon).
+        guard raw.count >= 5 else { return raw }
+        let tail = raw.suffix(5)
+        let sign = tail.first
+        guard sign == "+" || sign == "-" else { return raw }
+        let digits = tail.dropFirst()
+        guard digits.count == 4, digits.allSatisfy(\.isNumber) else { return raw }
+        // Already has colon before offset? e.g. …T12:00:00-06:00 won't match 5-char ±HHMM tail.
+        let hh = digits.prefix(2)
+        let mm = digits.suffix(2)
+        return String(raw.dropLast(5)) + "\(sign!)\(hh):\(mm)"
     }
 }
 

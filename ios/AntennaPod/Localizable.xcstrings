@@ -15818,6 +15818,240 @@
         }
       },
       "comment": "VoiceOver honesty when Subscriptions search, tag, or category filter narrows visible podcasts for the remaining-time sum."
+    },
+    "Live": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live"
+          }
+        }
+      },
+      "comment": "Section title / status for podcast:liveItem (display-only schedule + links)."
+    },
+    "Pending": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pending"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geplant"
+          }
+        }
+      },
+      "comment": "podcast:liveItem status=pending capsule."
+    },
+    "Ended": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ended"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beendet"
+          }
+        }
+      },
+      "comment": "podcast:liveItem status=ended capsule."
+    },
+    "Starts %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beginn %@"
+          }
+        }
+      },
+      "comment": "Live item start timestamp caption. Arg is formatted date/time or raw feed string."
+    },
+    "Ends %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ends %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ende %@"
+          }
+        }
+      },
+      "comment": "Live item end timestamp caption. Arg is formatted date/time or raw feed string."
+    },
+    "Open live page": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open live page"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Seite öffnen"
+          }
+        }
+      },
+      "comment": "Button to open podcast:liveItem <link> http(s) in system browser."
+    },
+    "Opens the live item page link from the feed in the system browser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the live item page link from the feed in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den Live-Item-Seitenlink aus dem Feed im Systembrowser"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Open live page."
+    },
+    "Open content link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open content link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Content-Link öffnen"
+          }
+        }
+      },
+      "comment": "Fallback label when podcast:contentLink has no element text."
+    },
+    "Opens a content link from the feed in the system browser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a content link from the feed in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet einen Content-Link aus dem Feed im Systembrowser"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for contentLink open button."
+    },
+    "This app shows live item schedule and links only. It does not play live streams, record, or open chat.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This app shows live item schedule and links only. It does not play live streams, record, or open chat."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese App zeigt nur Live-Item-Zeitplan und Links. Sie spielt keine Livestreams ab, nimmt nicht auf und öffnet keinen Chat."
+          }
+        }
+      },
+      "comment": "Honesty footnote under podcast:liveItem list — display-only."
+    },
+    "Showing first 20 live items from the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first 20 live items from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es werden die ersten 20 Live-Items aus dem Feed angezeigt."
+          }
+        }
+      },
+      "comment": "Honesty footnote when liveItem list is truncated to 20."
+    },
+    "Has live page link from the feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Has live page link from the feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hat Live-Seitenlink aus dem Feed"
+          }
+        }
+      },
+      "comment": "VoiceOver fragment when liveItem has http(s) link."
+    },
+    "Has %lld content links from the feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Has %lld content links from the feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hat %lld Content-Links aus dem Feed"
+          }
+        }
+      },
+      "comment": "VoiceOver fragment for count of openable contentLinks."
     }
   },
   "version": "1.0"

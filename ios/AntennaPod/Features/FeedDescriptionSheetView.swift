@@ -3,7 +3,7 @@ import UIKit
 
 /// Scrollable podcast / feed description sheet (plain text; HTML stripped for beta).
 /// Parallel to `EpisodeDescriptionSheetView` shownotes. Uses `PodcastFeed.descriptionText`
-/// plus optional `author` / `language` / `categories` / `people` / `locations` / `socialInteract` / `value` under the title when the feed provided them (hidden when missing).
+/// plus optional `author` / `language` / `categories` / `people` / `locations` / `socialInteract` / `value` / `liveItem` under the title when the feed provided them (hidden when missing).
 /// Supports `.searchable` filter over already-loaded plain paragraphs/lines (case-insensitive,
 /// ~250 ms debounce). Does not fetch remote HTML beyond the feed's description field —
 /// no WebView / rich HTML renderer.
@@ -80,6 +80,15 @@ struct FeedDescriptionSheetView: View {
         !feed.displayValueRecipients.isEmpty
     }
 
+    /// Channel podcast:liveItem when the feed provided them — empty → hide (display-only; no live player).
+    private var displayLiveItems: [PodcastLiveItem] {
+        feed.displayLiveItems
+    }
+
+    private var hasLiveItems: Bool {
+        !displayLiveItems.isEmpty
+    }
+
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
     private var paragraphs: [String] {
         let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -114,7 +123,7 @@ struct FeedDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues {
+                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasLiveItems {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "info.circle",
@@ -134,6 +143,9 @@ struct FeedDescriptionSheetView: View {
                             }
                             if hasValues {
                                 PodcastValueRecipientsListView(values: displayValues)
+                            }
+                            if hasLiveItems {
+                                PodcastLiveItemsListView(liveItems: displayLiveItems)
                             }
                         }
                         .padding()
@@ -250,6 +262,9 @@ struct FeedDescriptionSheetView: View {
                     if hasValues {
                         PodcastValueRecipientsListView(values: displayValues)
                     }
+                    if hasLiveItems {
+                        PodcastLiveItemsListView(liveItems: displayLiveItems)
+                    }
 
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
@@ -306,6 +321,9 @@ struct FeedDescriptionSheetView: View {
                     }
                     if hasValues {
                         PodcastValueRecipientsListView(values: displayValues)
+                    }
+                    if hasLiveItems {
+                        PodcastLiveItemsListView(liveItems: displayLiveItems)
                     }
 
                     Text(plainDescription)

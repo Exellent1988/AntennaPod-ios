@@ -633,6 +633,236 @@ enum PodcastValueDisplay {
 }
 
 
+
+
+/// Podcast Index `podcast:contentLink` — fallback / alternate platform link under `podcast:liveItem` (or item).
+/// Element text = label; `href` required. Feed-provided only — never invent URLs.
+struct PodcastContentLink: Identifiable, Hashable, Codable {
+    var id: String { "\(href)|\(label ?? "")" }
+    /// Required `href` URI from the feed.
+    var href: String
+    /// Optional element text describing the destination (e.g. "YouTube!", "Listen Live!").
+    var label: String?
+
+    init(href: String, label: String? = nil) {
+        self.href = href
+        self.label = label
+    }
+
+    /// Trimmed non-empty label when the feed set element text.
+    var displayLabel: String? {
+        guard let label else { return nil }
+        let trimmed = label.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) URL from feed `href` only. Nil when missing / non-http(s).
+    var browserURL: URL? {
+        let trimmed = href.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return url
+    }
+}
+
+/// Podcast Index `podcast:liveItem` status values (required attribute).
+enum PodcastLiveItemStatus: String, Hashable, Codable {
+    case pending
+    case live
+    case ended
+
+    /// Parse feed attribute; nil when missing/unknown — never invent.
+    static func parse(_ raw: String?) -> PodcastLiveItemStatus? {
+        guard let raw else { return nil }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        switch trimmed {
+        case "pending": return .pending
+        case "live": return .live
+        case "ended": return .ended
+        default: return nil
+        }
+    }
+
+    /// Sort rank: live first, then pending, then ended.
+    var sortRank: Int {
+        switch self {
+        case .live: return 0
+        case .pending: return 1
+        case .ended: return 2
+        }
+    }
+}
+
+/// Podcast Index `podcast:liveItem` — channel-level live stream metadata (display-only).
+/// Required: `status` + `start`. Recommended: `end`. Children: title, link, guid, contentLink, …
+/// **Display-only:** this app does **not** play live enclosures, record, open chat, or process payments.
+/// Feed-provided only — never invent live items.
+struct PodcastLiveItem: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields.
+    var id: String {
+        let links = contentLinks.map(\.id).joined(separator: ";")
+        return "\(status.rawValue)|\(start)|\(end ?? "")|\(title ?? "")|\(guid ?? "")|\(link ?? "")|\(links)"
+    }
+    /// Required status: pending / live / ended.
+    var status: PodcastLiveItemStatus
+    /// Raw `start` ISO8601 attribute as provided.
+    var start: String
+    /// Parsed `start` epoch ms when parsable; nil when unparsable — never invent.
+    var startEpochMs: Int64?
+    /// Raw `end` ISO8601 attribute when provided.
+    var end: String?
+    /// Parsed `end` epoch ms when parsable.
+    var endEpochMs: Int64?
+    /// Child `<title>` when provided.
+    var title: String?
+    /// Child `<link>` / alternate http(s) page when provided.
+    var link: String?
+    /// Child `<guid>` when provided (identity only — not used as subscription key).
+    var guid: String?
+    /// Nested `podcast:contentLink` fallback / platform links (feed-provided).
+    var contentLinks: [PodcastContentLink]
+
+    init(
+        status: PodcastLiveItemStatus,
+        start: String,
+        startEpochMs: Int64? = nil,
+        end: String? = nil,
+        endEpochMs: Int64? = nil,
+        title: String? = nil,
+        link: String? = nil,
+        guid: String? = nil,
+        contentLinks: [PodcastContentLink] = []
+    ) {
+        self.status = status
+        self.start = start
+        self.startEpochMs = startEpochMs
+        self.end = end
+        self.endEpochMs = endEpochMs
+        self.title = title
+        self.link = link
+        self.guid = guid
+        self.contentLinks = contentLinks
+    }
+
+    /// Trimmed non-empty title when the feed set it.
+    var displayTitle: String? {
+        guard let title else { return nil }
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) page URL from feed `<link>` only. Nil when missing / non-http(s).
+    var linkURL: URL? {
+        guard let link else { return nil }
+        let trimmed = link.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return url
+    }
+
+    /// Openable http(s) contentLinks from the feed (label optional).
+    var openableContentLinks: [PodcastContentLink] {
+        contentLinks.filter { $0.browserURL != nil }
+    }
+}
+
+/// Display helpers for channel `podcast:liveItem` (feed-provided only; display-only — no live player).
+enum PodcastLiveItemDisplay {
+    /// Soft UI cap — show first N; honesty footnote when more exist.
+    static let displayCap = 20
+
+    private static let dateTime: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .medium
+        f.timeStyle = .short
+        return f
+    }()
+
+    /// Valid live items: known status + non-empty start. Feed order preserved then sorted for UI.
+    /// Never invents items / times / links.
+    static func valid(_ items: [PodcastLiveItem]) -> [PodcastLiveItem] {
+        items.compactMap { item in
+            let start = item.start.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !start.isEmpty else { return nil }
+            let links = item.contentLinks.compactMap { link -> PodcastContentLink? in
+                let href = link.href.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !href.isEmpty else { return nil }
+                return PodcastContentLink(href: href, label: link.displayLabel)
+            }
+            return PodcastLiveItem(
+                status: item.status,
+                start: start,
+                startEpochMs: item.startEpochMs,
+                end: {
+                    guard let end = item.end?.trimmingCharacters(in: .whitespacesAndNewlines), !end.isEmpty else {
+                        return nil
+                    }
+                    return end
+                }(),
+                endEpochMs: item.endEpochMs,
+                title: item.displayTitle,
+                link: {
+                    guard let link = item.link?.trimmingCharacters(in: .whitespacesAndNewlines), !link.isEmpty else {
+                        return nil
+                    }
+                    return link
+                }(),
+                guid: {
+                    guard let guid = item.guid?.trimmingCharacters(in: .whitespacesAndNewlines), !guid.isEmpty else {
+                        return nil
+                    }
+                    return guid
+                }(),
+                contentLinks: links
+            )
+        }
+    }
+
+    /// Prefer live → pending → ended; within same status newest `start` first (missing dates last).
+    static func sorted(_ items: [PodcastLiveItem]) -> [PodcastLiveItem] {
+        valid(items).sorted { lhs, rhs in
+            if lhs.status.sortRank != rhs.status.sortRank {
+                return lhs.status.sortRank < rhs.status.sortRank
+            }
+            let l = lhs.startEpochMs ?? Int64.min
+            let r = rhs.startEpochMs ?? Int64.min
+            if l != r { return l > r }
+            let lt = lhs.displayTitle ?? ""
+            let rt = rhs.displayTitle ?? ""
+            return lt.localizedCaseInsensitiveCompare(rt) == .orderedAscending
+        }
+    }
+
+    /// First `displayCap` sorted items + whether more exist in the feed.
+    static func capped(_ items: [PodcastLiveItem]) -> (shown: [PodcastLiveItem], truncated: Bool) {
+        let list = sorted(items)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+
+    /// Localized status label for UI / VoiceOver.
+    static func statusLabel(_ status: PodcastLiveItemStatus) -> String {
+        switch status {
+        case .pending: return String(localized: "Pending")
+        case .live: return String(localized: "Live")
+        case .ended: return String(localized: "Ended")
+        }
+    }
+
+    /// Format start/end for display: medium date + short time when epoch known; else raw feed string.
+    static func formatTimestamp(raw: String, epochMs: Int64?) -> String {
+        if let epochMs {
+            let date = Date(timeIntervalSince1970: TimeInterval(epochMs) / 1000.0)
+            return dateTime.string(from: date)
+        }
+        return raw
+    }
+}
+
 struct PodcastEpisode: Identifiable, Hashable, Codable {
     let id: String
     var title: String
@@ -910,6 +1140,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel-level Podcast Index `podcast:value` / valueRecipient blocks when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — no Lightning / wallet sends.
     var values: [PodcastValue]
+    /// Channel-level Podcast Index `podcast:liveItem` entries when the feed provides them.
+    /// Empty when absent — never invent; UI hides when empty. **Display-only** — no live stream player / recording / chat.
+    var liveItems: [PodcastLiveItem]
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -1017,6 +1250,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastValueDisplay.valid(values)
     }
 
+    /// Channel-level `podcast:liveItem` entries (hide when empty — never invent; display-only — no live player).
+    var displayLiveItems: [PodcastLiveItem] {
+        PodcastLiveItemDisplay.valid(liveItems)
+    }
+
     init(
         id: UUID,
         title: String,
@@ -1038,6 +1276,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         locations: [PodcastLocation] = [],
         socialInteracts: [PodcastSocialInteract] = [],
         values: [PodcastValue] = [],
+        liveItems: [PodcastLiveItem] = [],
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -1060,6 +1299,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.locations = locations
         self.socialInteracts = socialInteracts
         self.values = values
+        self.liveItems = liveItems
         self.episodes = episodes
     }
 
@@ -1085,11 +1325,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         locations = try c.decodeIfPresent([PodcastLocation].self, forKey: .locations) ?? []
         socialInteracts = try c.decodeIfPresent([PodcastSocialInteract].self, forKey: .socialInteracts) ?? []
         values = try c.decodeIfPresent([PodcastValue].self, forKey: .values) ?? []
+        liveItems = try c.decodeIfPresent([PodcastLiveItem].self, forKey: .liveItems) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, episodes
     }
 }
 
