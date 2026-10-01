@@ -14883,6 +14883,150 @@
         }
       },
       "comment": "VoiceOver hint for Open trailer on Feed detail."
+    },
+    "Locations": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locations"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orte"
+          }
+        }
+      },
+      "comment": "Section title for podcast:location list on Feed detail / description / shownotes. Hidden when none."
+    },
+    "Showing first 20 locations from the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing first 20 locations from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es werden die ersten 20 Orte aus dem Feed angezeigt."
+          }
+        }
+      },
+      "comment": "Honesty footnote when podcast:location list is truncated to the first 20."
+    },
+    "Open in Maps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in Maps"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Karten öffnen"
+          }
+        }
+      },
+      "comment": "Button to open Apple Maps when podcast:location has parseable geo lat,lon from the feed."
+    },
+    "Opens this location in Apple Maps using coordinates from the feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens this location in Apple Maps using coordinates from the feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet diesen Ort in Apple Karten mit Koordinaten aus dem Feed"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Open in Maps — coordinates are feed-provided only; never geocoded from name."
+    },
+    "OSM %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OSM %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OSM %@"
+          }
+        }
+      },
+      "comment": "Secondary caption showing feed-provided OpenStreetMap id (podcast:location osm). Never invent."
+    },
+    "OpenStreetMap %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenStreetMap %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OpenStreetMap %@"
+          }
+        }
+      },
+      "comment": "VoiceOver for feed-provided OpenStreetMap id on podcast:location."
+    },
+    "Relation %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relation %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bezug %@"
+          }
+        }
+      },
+      "comment": "VoiceOver for feed-provided podcast:location rel (subject/creator). Never invent."
+    },
+    "Has map coordinates from the feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Has map coordinates from the feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hat Kartenkoordinaten aus dem Feed"
+          }
+        }
+      },
+      "comment": "VoiceOver note when podcast:location geo parsed to lat,lon (Open in Maps available)."
     }
   },
   "version": "1.0"

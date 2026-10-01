@@ -64,6 +64,11 @@ struct FeedDetailView: View {
         liveFeed.displayPeople
     }
 
+    /// Channel podcast:location when the feed provided them — empty → hide (never invent / never geocode).
+    private var displayLocations: [PodcastLocation] {
+        liveFeed.displayLocations
+    }
+
     /// Most recent channel podcast:trailer when the feed provided one — hide when missing (never invent).
     /// Distinct from item itunes:episodeType=trailer (EpisodeRow badge).
     private var displayTrailer: PodcastTrailer? {
@@ -308,6 +313,14 @@ struct FeedDetailView: View {
             if !displayPeople.isEmpty {
                 Section {
                     PodcastPeopleListView(people: displayPeople)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:location — name + optional rel/osm; Open in Maps when geo lat,lon; hide when none.
+            // Feed-provided only — never invent names / never geocode.
+            if !displayLocations.isEmpty {
+                Section {
+                    PodcastLocationsListView(locations: displayLocations)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }

@@ -50,6 +50,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var pendingTrailerLength: Int64?
     private var pendingTrailerType: String?
     private var pendingTrailerSeason: Int?
+    /// Channel podcast:location — feed-provided only; never invent / never geocode.
+    private var channelLocations: [PodcastLocation] = []
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -84,12 +86,19 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itemExplicitOverride: Bool?
     /// Item podcast:person — feed-provided only; never invent.
     private var itemPeople: [PodcastPerson] = []
+    /// Item podcast:location — feed-provided only; never invent / never geocode.
+    private var itemLocations: [PodcastLocation] = []
     /// Capturing podcast:person element text (name) + pending attributes.
     private var capturingPerson = false
     private var pendingPersonRole: String?
     private var pendingPersonGroup: String?
     private var pendingPersonHref: String?
     private var pendingPersonImg: String?
+    /// Capturing podcast:location element text (name) + pending attributes.
+    private var capturingLocation = false
+    private var pendingLocationGeo: String?
+    private var pendingLocationOsm: String?
+    private var pendingLocationRel: String?
     private var elementStack: [String] = []
 
     init(data: Data) {
@@ -130,6 +139,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             podcastGuid: podcastGuid,
             people: channelPeople,
             trailers: channelTrailers,
+            locations: channelLocations,
             episodes: episodes
         )
     }
@@ -177,6 +187,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemEpisodeType = nil
             itemExplicitOverride = nil
             itemPeople = []
+            itemLocations = []
             if local.lowercased() == "entry", let href = attributeDict["href"] {
                 itemLink = href
             }
@@ -336,6 +347,13 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     pendingTrailerSeason = nil
                 }
             }
+        case "location":
+            // Podcast Index: <podcast:location geo="…" osm="…" rel="…">Name</podcast:location>
+            // Channel and/or item. Name required; geo/osm/rel optional — never invent / never geocode names.
+            capturingLocation = true
+            pendingLocationGeo = Self.nonEmptyAttr(attributeDict["geo"])
+            pendingLocationOsm = Self.nonEmptyAttr(attributeDict["osm"])
+            pendingLocationRel = Self.nonEmptyAttr(attributeDict["rel"])
         default:
             break
         }
@@ -411,6 +429,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 }
             case "person":
                 finishPerson(text: text, intoItem: true)
+            case "location":
+                finishLocation(text: text, intoItem: true)
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
@@ -431,7 +451,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     episodeNumber: itemEpisodeNumber,
                     episodeType: itemEpisodeType,
                     isExplicit: itemExplicitOverride ?? feedIsExplicit,
-                    people: itemPeople
+                    people: itemPeople,
+                    locations: itemLocations
                 )
                 episodes.append(episode)
                 inItem = false
@@ -509,6 +530,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 finishPerson(text: text, intoItem: false)
             case "trailer":
                 finishTrailer(text: text)
+            case "location":
+                finishLocation(text: text, intoItem: false)
             case "id":
                 break
             default:
@@ -575,6 +598,30 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 season: pendingTrailerSeason
             )
         )
+    }
+
+    /// Finish a podcast:location element — append when name non-empty; never invent / never geocode.
+    private func finishLocation(text: String, intoItem: Bool) {
+        defer {
+            capturingLocation = false
+            pendingLocationGeo = nil
+            pendingLocationOsm = nil
+            pendingLocationRel = nil
+        }
+        guard capturingLocation else { return }
+        let name = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { return }
+        let location = PodcastLocation(
+            name: name,
+            geo: pendingLocationGeo,
+            osm: pendingLocationOsm,
+            rel: pendingLocationRel
+        )
+        if intoItem {
+            itemLocations.append(location)
+        } else {
+            channelLocations.append(location)
+        }
     }
 
     private func localName(_ name: String) -> String {

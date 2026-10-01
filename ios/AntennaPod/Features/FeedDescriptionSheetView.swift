@@ -3,7 +3,7 @@ import UIKit
 
 /// Scrollable podcast / feed description sheet (plain text; HTML stripped for beta).
 /// Parallel to `EpisodeDescriptionSheetView` shownotes. Uses `PodcastFeed.descriptionText`
-/// plus optional `author` / `language` / `categories` / `people` under the title when the feed provided them (hidden when missing).
+/// plus optional `author` / `language` / `categories` / `people` / `locations` under the title when the feed provided them (hidden when missing).
 /// Supports `.searchable` filter over already-loaded plain paragraphs/lines (case-insensitive,
 /// ~250 ms debounce). Does not fetch remote HTML beyond the feed's description field —
 /// no WebView / rich HTML renderer.
@@ -53,6 +53,15 @@ struct FeedDescriptionSheetView: View {
         !displayPeople.isEmpty
     }
 
+    /// Channel podcast:location when the feed provided them — empty → hide (never invent / never geocode).
+    private var displayLocations: [PodcastLocation] {
+        feed.displayLocations
+    }
+
+    private var hasLocations: Bool {
+        !displayLocations.isEmpty
+    }
+
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
     private var paragraphs: [String] {
         let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -87,7 +96,7 @@ struct FeedDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople {
+                if plainDescription.isEmpty && !hasPeople && !hasLocations {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "info.circle",
@@ -95,8 +104,15 @@ struct FeedDescriptionSheetView: View {
                     )
                 } else if plainDescription.isEmpty {
                     ScrollView {
-                        PodcastPeopleListView(people: displayPeople)
-                            .padding()
+                        VStack(alignment: .leading, spacing: 16) {
+                            if hasPeople {
+                                PodcastPeopleListView(people: displayPeople)
+                            }
+                            if hasLocations {
+                                PodcastLocationsListView(locations: displayLocations)
+                            }
+                        }
+                        .padding()
                     }
                 } else {
                     descriptionContent
@@ -201,6 +217,10 @@ struct FeedDescriptionSheetView: View {
                         PodcastPeopleListView(people: displayPeople)
                     }
 
+                    if hasLocations {
+                        PodcastLocationsListView(locations: displayLocations)
+                    }
+
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
                             .font(.body)
@@ -246,6 +266,10 @@ struct FeedDescriptionSheetView: View {
 
                     if hasPeople {
                         PodcastPeopleListView(people: displayPeople)
+                    }
+
+                    if hasLocations {
+                        PodcastLocationsListView(locations: displayLocations)
                     }
 
                     Text(plainDescription)

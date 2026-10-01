@@ -129,7 +129,8 @@ struct PodcastTrailer: Identifiable, Hashable, Codable {
             episodeNumber: nil,
             episodeType: "trailer",
             isExplicit: false,
-            people: []
+            people: [],
+            locations: []
         )
     }
 }
@@ -243,6 +244,132 @@ enum PodcastPeopleDisplay {
     }
 }
 
+
+/// Podcast Index `podcast:location` — feed-provided place name only (never invent / never geocode names).
+/// Element text = human-readable name (required to keep); optional `geo` (RFC5870 geo URI), `osm`, `rel`.
+/// Open in Maps only when `geo` parses to lat,lon — never geocode from name alone.
+struct PodcastLocation: Identifiable, Hashable, Codable {
+    /// Stable list identity from feed fields (names can repeat).
+    var id: String { "\(name)|\(geo ?? "")|\(osm ?? "")|\(rel ?? "")" }
+    /// Human-readable location from element text (required by Podcast Index; may be truncated ~128 chars).
+    var name: String
+    /// Optional `geo` attribute as provided (e.g. `geo:30.2672,97.7431`). Nil when absent — never invent.
+    var geo: String?
+    /// Optional OpenStreetMap id from `osm` (e.g. `R113314`). Nil when absent — never invent / never fetch OSM.
+    var osm: String?
+    /// Optional `rel` attribute (`subject` / `creator`). Nil when absent — never invent default.
+    var rel: String?
+
+    init(name: String, geo: String? = nil, osm: String? = nil, rel: String? = nil) {
+        self.name = name
+        self.geo = geo
+        self.osm = osm
+        self.rel = rel
+    }
+
+    /// Trimmed non-empty name. Nil when blank.
+    var displayName: String? {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty `rel` when the feed set it. Hidden when missing — never invent "subject".
+    var displayRel: String? {
+        guard let rel else { return nil }
+        let trimmed = rel.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty `osm` when the feed set it. Hidden when missing — never invent.
+    var displayOsm: String? {
+        guard let osm else { return nil }
+        let trimmed = osm.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Parsed latitude/longitude from feed `geo` only (RFC5870 `geo:lat,lon`[,alt][;params]).
+    /// Nil when missing / unparsable — **never geocode** from name.
+    var coordinates: (latitude: Double, longitude: Double)? {
+        PodcastLocationGeoParsing.coordinates(from: geo)
+    }
+
+    /// Apple Maps URL when feed `geo` parses to lat,lon. Uses place name as pin label when non-empty.
+    /// Nil when no coordinates — never invent a Maps URL from name alone.
+    var appleMapsURL: URL? {
+        guard let coords = coordinates else { return nil }
+        var components = URLComponents(string: "https://maps.apple.com/")
+        var items: [URLQueryItem] = [
+            URLQueryItem(name: "ll", value: "\(coords.latitude),\(coords.longitude)")
+        ]
+        if let label = displayName {
+            items.append(URLQueryItem(name: "q", value: label))
+        }
+        components?.queryItems = items
+        return components?.url
+    }
+}
+
+/// Parse Podcast Index / RFC5870 `geo:` URIs for display / Maps only — never invent coordinates.
+enum PodcastLocationGeoParsing {
+    /// Returns lat/lon when `geo` is a usable `geo:lat,lon` URI; otherwise nil.
+    static func coordinates(from raw: String?) -> (latitude: Double, longitude: Double)? {
+        guard let raw else { return nil }
+        var s = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !s.isEmpty else { return nil }
+        if s.lowercased().hasPrefix("geo:") {
+            s = String(s.dropFirst(4))
+        }
+        // Drop `;crs=…` / `;u=…` parameters — coordinates are before the first `;`.
+        if let semi = s.firstIndex(of: ";") {
+            s = String(s[..<semi])
+        }
+        s = s.trimmingCharacters(in: .whitespacesAndNewlines)
+        let parts = s.split(separator: ",", omittingEmptySubsequences: false).map {
+            $0.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        guard parts.count >= 2,
+              let lat = Double(parts[0]),
+              let lon = Double(parts[1]),
+              lat.isFinite, lon.isFinite,
+              (-90...90).contains(lat),
+              (-180...180).contains(lon) else {
+            return nil
+        }
+        return (lat, lon)
+    }
+}
+
+/// Display helpers for `podcast:location` lists (channel or item). Feed-provided only.
+enum PodcastLocationDisplay {
+    /// Soft UI cap — show first N, honesty footnote when more exist in the feed.
+    static let displayCap = 20
+
+    /// Non-empty named locations in feed order (no invented entries / no geocoding).
+    static func valid(_ locations: [PodcastLocation]) -> [PodcastLocation] {
+        locations.compactMap { location in
+            guard let name = location.displayName else { return nil }
+            return PodcastLocation(
+                name: name,
+                geo: location.geo.flatMap { g in
+                    let t = g.trimmingCharacters(in: .whitespacesAndNewlines)
+                    return t.isEmpty ? nil : t
+                },
+                osm: location.displayOsm,
+                rel: location.displayRel
+            )
+        }
+    }
+
+    /// First `displayCap` locations + whether the feed listed more.
+    static func capped(_ locations: [PodcastLocation]) -> (shown: [PodcastLocation], truncated: Bool) {
+        let list = valid(locations)
+        if list.count <= displayCap {
+            return (list, false)
+        }
+        return (Array(list.prefix(displayCap)), true)
+    }
+}
+
 struct PodcastEpisode: Identifiable, Hashable, Codable {
     let id: String
     var title: String
@@ -276,6 +403,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Item-level Podcast Index `podcast:person` entries when the feed provides them.
     /// Empty when absent — never invent people; UI hides when empty.
     var people: [PodcastPerson]
+    /// Item-level Podcast Index `podcast:location` entries when the feed provides them.
+    /// Empty when absent — never invent locations / never geocode names; UI hides when empty.
+    var locations: [PodcastLocation]
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -326,7 +456,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         episodeNumber: Int? = nil,
         episodeType: String? = nil,
         isExplicit: Bool = false,
-        people: [PodcastPerson] = []
+        people: [PodcastPerson] = [],
+        locations: [PodcastLocation] = []
     ) {
         self.id = id
         self.title = title
@@ -346,6 +477,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.episodeType = episodeType
         self.isExplicit = isExplicit
         self.people = people
+        self.locations = locations
     }
 
     init(from decoder: Decoder) throws {
@@ -368,11 +500,17 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         episodeType = try c.decodeIfPresent(String.self, forKey: .episodeType)
         isExplicit = try c.decodeIfPresent(Bool.self, forKey: .isExplicit) ?? false
         people = try c.decodeIfPresent([PodcastPerson].self, forKey: .people) ?? []
+        locations = try c.decodeIfPresent([PodcastLocation].self, forKey: .locations) ?? []
     }
 
     /// Non-empty named item-level `podcast:person` entries (hide when empty — never invent).
     var displayPeople: [PodcastPerson] {
         PodcastPeopleDisplay.valid(people)
+    }
+
+    /// Non-empty named item-level `podcast:location` entries (hide when empty — never invent / never geocode).
+    var displayLocations: [PodcastLocation] {
+        PodcastLocationDisplay.valid(locations)
     }
 
     /// Non-empty shownotes / description from the feed (may still contain HTML).
@@ -473,6 +611,9 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Empty when absent — never invent trailers; UI hides when empty.
     /// Distinct from item `itunes:episodeType=trailer` (EpisodeRow Trailer badge).
     var trailers: [PodcastTrailer]
+    /// Channel-level Podcast Index `podcast:location` entries when the feed provides them.
+    /// Empty when absent — never invent locations / never geocode names; UI hides when empty.
+    var locations: [PodcastLocation]
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -560,6 +701,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastTrailerDisplay.mostRecent(trailers)
     }
 
+    /// Non-empty named channel-level `podcast:location` entries (hide when empty — never invent / never geocode).
+    var displayLocations: [PodcastLocation] {
+        PodcastLocationDisplay.valid(locations)
+    }
+
     init(
         id: UUID,
         title: String,
@@ -578,6 +724,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         podcastGuid: String? = nil,
         people: [PodcastPerson] = [],
         trailers: [PodcastTrailer] = [],
+        locations: [PodcastLocation] = [],
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -597,6 +744,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.podcastGuid = podcastGuid
         self.people = people
         self.trailers = trailers
+        self.locations = locations
         self.episodes = episodes
     }
 
@@ -619,11 +767,12 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         podcastGuid = try c.decodeIfPresent(String.self, forKey: .podcastGuid)
         people = try c.decodeIfPresent([PodcastPerson].self, forKey: .people) ?? []
         trailers = try c.decodeIfPresent([PodcastTrailer].self, forKey: .trailers) ?? []
+        locations = try c.decodeIfPresent([PodcastLocation].self, forKey: .locations) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, podcastGuid, people, trailers, locations, episodes
     }
 }
 

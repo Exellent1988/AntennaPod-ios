@@ -43,6 +43,15 @@ struct EpisodeDescriptionSheetView: View {
         !displayPeople.isEmpty
     }
 
+    /// Item podcast:location when the feed provided them — empty → hide (never invent / never geocode).
+    private var displayLocations: [PodcastLocation] {
+        episode.displayLocations
+    }
+
+    private var hasLocations: Bool {
+        !displayLocations.isEmpty
+    }
+
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
     private var paragraphs: [String] {
         let trimmed = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -109,7 +118,7 @@ struct EpisodeDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople {
+                if plainDescription.isEmpty && !hasPeople && !hasLocations {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "doc.text",
@@ -117,8 +126,15 @@ struct EpisodeDescriptionSheetView: View {
                     )
                 } else if plainDescription.isEmpty {
                     ScrollView {
-                        PodcastPeopleListView(people: displayPeople)
-                            .padding()
+                        VStack(alignment: .leading, spacing: 16) {
+                            if hasPeople {
+                                PodcastPeopleListView(people: displayPeople)
+                            }
+                            if hasLocations {
+                                PodcastLocationsListView(locations: displayLocations)
+                            }
+                        }
+                        .padding()
                     }
                 } else {
                     shownotesContent
@@ -234,6 +250,9 @@ struct EpisodeDescriptionSheetView: View {
                     if hasPeople {
                         PodcastPeopleListView(people: displayPeople)
                     }
+                    if hasLocations {
+                        PodcastLocationsListView(locations: displayLocations)
+                    }
                     ForEach(Array(filteredParagraphs.enumerated()), id: \.offset) { _, paragraph in
                         Text(paragraph)
                             .font(.body)
@@ -249,6 +268,9 @@ struct EpisodeDescriptionSheetView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     if hasPeople {
                         PodcastPeopleListView(people: displayPeople)
+                    }
+                    if hasLocations {
+                        PodcastLocationsListView(locations: displayLocations)
                     }
                     Text(plainDescription)
                         .font(.body)
