@@ -2,8 +2,12 @@ import SwiftUI
 
 struct SubscriptionsView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var parental: ParentalControls
     @State private var showAdd = false
     @State private var showOpmlSheet = false
+    @State private var showAddPINGate = false
+    @State private var showDiscoverPINGate = false
+    @State private var navigateToDiscover = false
     @State private var searchText = ""
     @State private var tagFilter: SubscriptionTagFilter = .all
     @State private var groupByTag = true
@@ -87,11 +91,27 @@ struct SubscriptionsView: View {
                     } label: {
                         Label("Statistics", systemImage: "chart.bar.doc.horizontal")
                     }
-                    NavigationLink {
-                        TopListsView()
+                    Button {
+                        if parental.needsPINForAddDiscover {
+                            showDiscoverPINGate = true
+                        } else {
+                            navigateToDiscover = true
+                        }
                     } label: {
-                        Label("Discover", systemImage: "chart.bar")
+                        HStack {
+                            Label("Discover", systemImage: "chart.bar")
+                            Spacer()
+                            if parental.needsPINForAddDiscover {
+                                Image(systemName: "lock.fill")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Image(systemName: "chevron.right")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.tertiary)
+                        }
                     }
+                    .tint(.primary)
                 }
 
                 if !store.feeds.isEmpty, !store.allTags.isEmpty || tagFilter != .all {
@@ -153,10 +173,17 @@ struct SubscriptionsView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
-                        showAdd = true
+                        if parental.needsPINForAddDiscover {
+                            showAddPINGate = true
+                        } else {
+                            showAdd = true
+                        }
                     } label: {
-                        Image(systemName: "plus")
+                        Image(systemName: parental.needsPINForAddDiscover ? "plus.circle" : "plus")
                     }
+                    .accessibilityLabel(
+                        parental.needsPINForAddDiscover ? "Add podcast (PIN required)" : "Add podcast"
+                    )
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -169,6 +196,39 @@ struct SubscriptionsView: View {
             }
             .sheet(isPresented: $showAdd) {
                 AddFeedView()
+            }
+            .navigationDestination(isPresented: $navigateToDiscover) {
+                TopListsView()
+            }
+            .sheet(isPresented: $showAddPINGate) {
+                ParentalPINPromptSheet(
+                    title: "Parental controls",
+                    message: "Enter your PIN to add or discover podcasts.",
+                    onCancel: { showAddPINGate = false },
+                    onSuccess: { pin in
+                        if parental.unlockSession(with: pin) {
+                            showAddPINGate = false
+                            showAdd = true
+                            return true
+                        }
+                        return false
+                    }
+                )
+            }
+            .sheet(isPresented: $showDiscoverPINGate) {
+                ParentalPINPromptSheet(
+                    title: "Parental controls",
+                    message: "Enter your PIN to open Discover.",
+                    onCancel: { showDiscoverPINGate = false },
+                    onSuccess: { pin in
+                        if parental.unlockSession(with: pin) {
+                            showDiscoverPINGate = false
+                            navigateToDiscover = true
+                            return true
+                        }
+                        return false
+                    }
+                )
             }
             .sheet(isPresented: $showOpmlSheet) {
                 NavigationStack {

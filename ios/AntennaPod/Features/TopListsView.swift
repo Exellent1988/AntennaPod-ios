@@ -4,6 +4,7 @@ import SwiftUI
 struct TopListsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
+    @EnvironmentObject private var parental: ParentalControls
 
     @State private var results: [ItunesPodcastResult] = []
     @State private var isLoading = false
@@ -26,7 +27,7 @@ struct TopListsView: View {
     var body: some View {
         List {
             Section {
-                Text("Top podcasts on Apple Charts for \(countryLabel). No API key — public iTunes RSS. Change country under Settings → Discovery. Tap Preview to fetch the feed before subscribe.")
+                Text(chartsHelpText)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -99,6 +100,12 @@ struct TopListsView: View {
         .onChange(of: settings.chartsCountryCode) { _, _ in
             Task { await loadCharts() }
         }
+        .onChange(of: parental.hideExplicitCharts) { _, _ in
+            Task { await loadCharts() }
+        }
+        .onChange(of: parental.isEnabled) { _, _ in
+            Task { await loadCharts() }
+        }
     }
 
     @MainActor
@@ -107,7 +114,10 @@ struct TopListsView: View {
         loadError = nil
         defer { isLoading = false }
         do {
-            let found = try await service.loadTopList(country: countryCode)
+            let found = try await service.loadTopList(
+                country: countryCode,
+                includeExplicit: !parental.shouldHideExplicitCharts
+            )
             results = found
             didLoad = true
         } catch is CancellationError {
@@ -124,6 +134,7 @@ struct TopListsView: View {
 struct HomeTopListsPreview: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
+    @EnvironmentObject private var parental: ParentalControls
 
     @State private var preview: [ItunesPodcastResult] = []
     @State private var loadError: String?
@@ -180,6 +191,12 @@ struct HomeTopListsPreview: View {
         .onChange(of: settings.chartsCountryCode) { _, _ in
             Task { await loadPreview() }
         }
+        .onChange(of: parental.hideExplicitCharts) { _, _ in
+            Task { await loadPreview() }
+        }
+        .onChange(of: parental.isEnabled) { _, _ in
+            Task { await loadPreview() }
+        }
     }
 
     @MainActor
@@ -190,7 +207,8 @@ struct HomeTopListsPreview: View {
         do {
             let found = try await service.loadTopList(
                 country: settings.resolvedChartsCountryCode,
-                limit: limit
+                limit: limit,
+                includeExplicit: !parental.shouldHideExplicitCharts
             )
             preview = found
         } catch is CancellationError {

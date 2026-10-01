@@ -3,7 +3,10 @@ import SwiftUI
 /// Landing tab: honest previews of Continue listening, Inbox, Queue, and recently updated feeds.
 struct HomeView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var parental: ParentalControls
     @Binding var selectedTab: RootTab
+    @State private var showDiscoverPINGate = false
+    @State private var navigateToDiscover = false
 
     private let previewLimit = 5
     private let feedsLimit = 5
@@ -36,11 +39,22 @@ struct HomeView: View {
                 } header: {
                     sectionHeader("Discover", systemImage: "chart.bar")
                 } footer: {
-                    NavigationLink {
-                        TopListsView()
+                    Button {
+                        if parental.needsPINForAddDiscover {
+                            showDiscoverPINGate = true
+                        } else {
+                            navigateToDiscover = true
+                        }
                     } label: {
-                        Text("See all charts")
-                            .font(.footnote)
+                        HStack(spacing: 4) {
+                            Text("See all charts")
+                                .font(.footnote)
+                            if parental.needsPINForAddDiscover {
+                                Image(systemName: "lock.fill")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     }
                 }
 
@@ -155,6 +169,24 @@ struct HomeView: View {
             .navigationTitle("Home")
             .navigationDestination(for: PodcastFeed.self) { feed in
                 FeedDetailView(feed: feed)
+            }
+            .navigationDestination(isPresented: $navigateToDiscover) {
+                TopListsView()
+            }
+            .sheet(isPresented: $showDiscoverPINGate) {
+                ParentalPINPromptSheet(
+                    title: "Parental controls",
+                    message: "Enter your PIN to open Discover.",
+                    onCancel: { showDiscoverPINGate = false },
+                    onSuccess: { pin in
+                        if parental.unlockSession(with: pin) {
+                            showDiscoverPINGate = false
+                            navigateToDiscover = true
+                            return true
+                        }
+                        return false
+                    }
+                )
             }
             .refreshable {
                 await store.refreshAllFeeds()

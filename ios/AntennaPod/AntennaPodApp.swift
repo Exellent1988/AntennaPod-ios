@@ -8,6 +8,7 @@ struct AntennaPodApp: App {
     @StateObject private var downloads: DownloadService
     @StateObject private var settings: AppSettings
     @StateObject private var gpodder: GpodderSyncService
+    @StateObject private var parental: ParentalControls
 
     init() {
         let store = PodcastStore()
@@ -15,6 +16,7 @@ struct AntennaPodApp: App {
         let downloads = DownloadService()
         let settings = AppSettings()
         let gpodder = GpodderSyncService()
+        let parental = ParentalControls()
         playback.store = store
         playback.downloads = downloads
         playback.settings = settings
@@ -34,6 +36,7 @@ struct AntennaPodApp: App {
         _downloads = StateObject(wrappedValue: downloads)
         _settings = StateObject(wrappedValue: settings)
         _gpodder = StateObject(wrappedValue: gpodder)
+        _parental = StateObject(wrappedValue: parental)
     }
 
     var body: some Scene {
@@ -44,6 +47,7 @@ struct AntennaPodApp: App {
                 .environmentObject(downloads)
                 .environmentObject(settings)
                 .environmentObject(gpodder)
+                .environmentObject(parental)
                 .preferredColorScheme(settings.theme.colorScheme)
         }
     }

@@ -2,7 +2,7 @@ import Foundation
 
 /// Apple iTunes RSS top podcasts charts (no API key).
 /// Mirrors Android `ItunesTopListLoader`
-/// (`https://itunes.apple.com/{country}/rss/toppodcasts/limit=25/explicit=true/json`).
+/// (`https://itunes.apple.com/{country}/rss/toppodcasts/limit=25/explicit={true|false}/json`).
 /// Chart entries expose a collection id; real RSS `feedUrl` comes from a batch `lookup`.
 struct ItunesTopListService {
     static let defaultLimit = 25
@@ -35,11 +35,16 @@ struct ItunesTopListService {
 
     /// Fetch top podcasts for `country` (ISO 3166-1 alpha-2, e.g. `de`, `us`).
     /// Resolves each entry’s RSS `feedUrl` via a single batch lookup when possible.
-    func loadTopList(country: String, limit: Int = Self.defaultLimit) async throws -> [ItunesPodcastResult] {
+    /// - Parameter includeExplicit: when `false`, requests `explicit=false` (parental controls).
+    func loadTopList(
+        country: String,
+        limit: Int = Self.defaultLimit,
+        includeExplicit: Bool = true
+    ) async throws -> [ItunesPodcastResult] {
         let code = Self.normalizedCountryCode(country)
         guard !code.isEmpty else { throw TopListError.invalidCountry }
 
-        let entries = try await fetchChartEntries(country: code)
+        let entries = try await fetchChartEntries(country: code, includeExplicit: includeExplicit)
         guard !entries.isEmpty else { return [] }
 
         let feedByCollectionId = try await lookupFeedUrls(collectionIds: entries.map(\.collectionId))
@@ -89,10 +94,11 @@ struct ItunesTopListService {
 
     // MARK: - Charts RSS
 
-    private func fetchChartEntries(country: String) async throws -> [ChartEntry] {
-        // Match Android URL shape (explicit=true); limit fixed at NUM_LOADED then sliced by caller.
+    private func fetchChartEntries(country: String, includeExplicit: Bool = true) async throws -> [ChartEntry] {
+        // Match Android URL shape; parental controls may request explicit=false.
+        let explicitFlag = includeExplicit ? "true" : "false"
         let urlString =
-            "https://itunes.apple.com/\(country)/rss/toppodcasts/limit=\(Self.defaultLimit)/explicit=true/json"
+            "https://itunes.apple.com/\(country)/rss/toppodcasts/limit=\(Self.defaultLimit)/explicit=\(explicitFlag)/json"
         guard let url = URL(string: urlString) else {
             throw TopListError.invalidCountry
         }

@@ -46,6 +46,7 @@ struct SettingsView: View {
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var gpodder: GpodderSyncService
+    @EnvironmentObject private var parental: ParentalControls
 
     @State private var customMB: Int = 500
     @State private var showClearConfirmation = false
@@ -54,6 +55,8 @@ struct SettingsView: View {
     @State private var podcastIndexAPISecretDraft = ""
     @State private var podcastIndexKeysSaved = PodcastIndexKeychain.hasCredentials
     @State private var podcastIndexKeyError: String?
+    @State private var showNetworkPINGate = false
+    @State private var pendingNetworkUnlockAction: (() -> Void)?
 
     private var pickerChoice: Binding<StorageLimitPickerChoice> {
         Binding(
@@ -134,6 +137,13 @@ struct SettingsView: View {
                         StatisticsView()
                     } label: {
                         Label("Statistics", systemImage: "chart.bar.doc.horizontal")
+                    }
+                }
+                Section("Privacy") {
+                    NavigationLink {
+                        ParentalControlsSettingsView()
+                    } label: {
+                        Label("Parental controls", systemImage: "lock.shield")
                     }
                 }
                 Section("About") {
@@ -252,15 +262,54 @@ struct SettingsView: View {
     @ViewBuilder
     private var networkDownloadsSection: some View {
         Section {
-            Toggle("Auto-download Wi‑Fi only", isOn: $settings.autoDownloadWifiOnly)
-            Toggle("Manual download Wi‑Fi only", isOn: $settings.manualDownloadWifiOnly)
-            Toggle("Stream Wi‑Fi only", isOn: $settings.streamWifiOnly)
+            Toggle("Auto-download Wi‑Fi only", isOn: gatedWifiToggle(\AppSettings.autoDownloadWifiOnly))
+            Toggle("Manual download Wi‑Fi only", isOn: gatedWifiToggle(\AppSettings.manualDownloadWifiOnly))
+            Toggle("Stream Wi‑Fi only", isOn: gatedWifiToggle(\AppSettings.streamWifiOnly))
+            if parental.isEnabled && parental.lockNetworkDownloadsSettings && parental.isLocked {
+                Text("Network / Downloads settings are locked. Enter the parental PIN to change these toggles.")
+                    .font(.caption)
+                    .foregroundStyle(.orange)
+            }
             Text(networkDownloadsHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         } header: {
             Text("Network / Downloads")
         }
+        .sheet(isPresented: $showNetworkPINGate) {
+            ParentalPINPromptSheet(
+                title: "Parental controls",
+                message: "Enter your PIN to change Network / Downloads settings.",
+                onCancel: {
+                    showNetworkPINGate = false
+                    pendingNetworkUnlockAction = nil
+                },
+                onSuccess: { pin in
+                    if parental.unlockSession(with: pin) {
+                        showNetworkPINGate = false
+                        pendingNetworkUnlockAction?()
+                        pendingNetworkUnlockAction = nil
+                        return true
+                    }
+                    return false
+                }
+            )
+        }
+    }
+
+    /// Binding that prompts for PIN when Network / Downloads settings are gated.
+    private func gatedWifiToggle(_ keyPath: ReferenceWritableKeyPath<AppSettings, Bool>) -> Binding<Bool> {
+        Binding(
+            get: { settings[keyPath: keyPath] },
+            set: { newValue in
+                if parental.needsPINForNetworkDownloads {
+                    pendingNetworkUnlockAction = { settings[keyPath: keyPath] = newValue }
+                    showNetworkPINGate = true
+                } else {
+                    settings[keyPath: keyPath] = newValue
+                }
+            }
+        )
     }
 
     private var networkDownloadsHelpText: String {

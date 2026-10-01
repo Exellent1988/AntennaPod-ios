@@ -1,0 +1,328 @@
+import SwiftUI
+
+// MARK: - Settings destination
+
+/// Settings → Parental controls (beta MVP).
+struct ParentalControlsSettingsView: View {
+    @EnvironmentObject private var parental: ParentalControls
+
+    @State private var showSetPIN = false
+    @State private var showChangePIN = false
+    @State private var showDisablePIN = false
+    @State private var statusMessage: String?
+    @State private var statusIsError = false
+
+    var body: some View {
+        Form {
+            Section {
+                Toggle("Enable parental controls", isOn: enableBinding)
+                if parental.isEnabled {
+                    LabeledContent("Status") {
+                        Text(parental.isSessionUnlocked ? "Unlocked (this session)" : "Locked")
+                            .foregroundStyle(.secondary)
+                    }
+                    Button("Change PIN") {
+                        showChangePIN = true
+                    }
+                }
+                Text(enableHelpText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } header: {
+                Text("Parental controls")
+            }
+
+            if parental.isEnabled {
+                Section {
+                    Toggle("Lock Add / Discover", isOn: $parental.lockAddDiscover)
+                    Toggle("Lock Network / Downloads settings", isOn: $parental.lockNetworkDownloadsSettings)
+                    Toggle("Hide explicit top charts", isOn: $parental.hideExplicitCharts)
+                    Text(optionsHelpText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } header: {
+                    Text("Options")
+                }
+            }
+
+            if let statusMessage {
+                Section {
+                    Text(statusMessage)
+                        .font(.footnote)
+                        .foregroundStyle(statusIsError ? .red : .secondary)
+                }
+            }
+        }
+        .navigationTitle("Parental controls")
+        .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showSetPIN) {
+            ParentalSetPINSheet(
+                title: "Set PIN",
+                confirmLabel: "Enable",
+                onCancel: {
+                    showSetPIN = false
+                },
+                onSave: { pin in
+                    do {
+                        try parental.enable(pin: pin)
+                        showSetPIN = false
+                        statusIsError = false
+                        statusMessage = "Parental controls enabled. PIN stored in Keychain."
+                    } catch {
+                        statusIsError = true
+                        statusMessage = error.localizedDescription
+                    }
+                }
+            )
+        }
+        .sheet(isPresented: $showChangePIN) {
+            ParentalChangePINSheet(
+                onCancel: { showChangePIN = false },
+                onSave: { current, newPIN in
+                    try parental.changePIN(current: current, newPIN: newPIN)
+                    showChangePIN = false
+                    statusIsError = false
+                    statusMessage = "PIN updated."
+                }
+            )
+        }
+        .sheet(isPresented: $showDisablePIN) {
+            ParentalPINPromptSheet(
+                title: "Disable parental controls",
+                message: "Enter your PIN to turn off parental controls and remove the stored PIN.",
+                confirmLabel: "Disable",
+                onCancel: { showDisablePIN = false },
+                onSuccess: { pin in
+                    do {
+                        try parental.disable(pin: pin)
+                        showDisablePIN = false
+                        statusIsError = false
+                        statusMessage = "Parental controls disabled. PIN cleared from Keychain."
+                        return true
+                    } catch {
+                        return false
+                    }
+                }
+            )
+        }
+    }
+
+    private var enableBinding: Binding<Bool> {
+        Binding(
+            get: { parental.isEnabled },
+            set: { newValue in
+                if newValue {
+                    if parental.isEnabled { return }
+                    showSetPIN = true
+                } else {
+                    if !parental.isEnabled { return }
+                    showDisablePIN = true
+                }
+            }
+        )
+    }
+
+    private var enableHelpText: String {
+        if parental.isEnabled {
+            return "PIN is stored in the Keychain (not in Settings backup). Unlock lasts until the app goes to the background. Disable requires the PIN and clears Keychain."
+        }
+        return "Set a 4–6 digit PIN to restrict Add / Discover and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock."
+    }
+
+    private var optionsHelpText: String {
+        "Lock Add / Discover asks for the PIN before the Add sheet or Discover charts. Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled."
+    }
+}
+
+// MARK: - PIN prompt (gated UI)
+
+/// Sheet that asks for the existing PIN and unlocks the session on success.
+struct ParentalPINPromptSheet: View {
+    let title: String
+    var message: String = "Enter your parental controls PIN to continue."
+    var confirmLabel: String = "Unlock"
+    let onCancel: () -> Void
+    /// Return `true` to dismiss (caller may also unlock session). Return `false` on wrong PIN.
+    let onSuccess: (String) -> Bool
+
+    @State private var pin = ""
+    @State private var errorText: String?
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Text(message)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    SecureField("PIN", text: $pin)
+                        .keyboardType(.numberPad)
+                        .textContentType(.oneTimeCode)
+                        .autocorrectionDisabled()
+                    if let errorText {
+                        Text(errorText)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                }
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel", action: onCancel)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(confirmLabel) {
+                        submit()
+                    }
+                    .disabled(!ParentalControlsKeychain.isValidPIN(pin))
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+
+    private func submit() {
+        let trimmed = pin.trimmingCharacters(in: .whitespacesAndNewlines)
+        if onSuccess(trimmed) {
+            errorText = nil
+        } else {
+            errorText = "Incorrect PIN"
+            pin = ""
+        }
+    }
+}
+
+// MARK: - Set PIN (enable)
+
+struct ParentalSetPINSheet: View {
+    let title: String
+    var confirmLabel: String = "Save"
+    let onCancel: () -> Void
+    let onSave: (String) -> Void
+
+    @State private var pin = ""
+    @State private var confirm = ""
+    @State private var errorText: String?
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    SecureField("PIN (4–6 digits)", text: $pin)
+                        .keyboardType(.numberPad)
+                        .textContentType(.oneTimeCode)
+                    SecureField("Confirm PIN", text: $confirm)
+                        .keyboardType(.numberPad)
+                        .textContentType(.oneTimeCode)
+                    if let errorText {
+                        Text(errorText)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                    Text("Choose a 4–6 digit PIN. It is stored only in the Keychain.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel", action: onCancel)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(confirmLabel) {
+                        save()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+
+    private func save() {
+        let a = pin.trimmingCharacters(in: .whitespacesAndNewlines)
+        let b = confirm.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard ParentalControlsKeychain.isValidPIN(a) else {
+            errorText = "PIN must be 4–6 digits"
+            return
+        }
+        guard a == b else {
+            errorText = "PINs don’t match"
+            return
+        }
+        errorText = nil
+        onSave(a)
+    }
+}
+
+// MARK: - Change PIN
+
+struct ParentalChangePINSheet: View {
+    let onCancel: () -> Void
+    let onSave: (String, String) throws -> Void
+
+    @State private var current = ""
+    @State private var newPIN = ""
+    @State private var confirm = ""
+    @State private var errorText: String?
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    SecureField("Current PIN", text: $current)
+                        .keyboardType(.numberPad)
+                        .textContentType(.oneTimeCode)
+                    SecureField("New PIN (4–6 digits)", text: $newPIN)
+                        .keyboardType(.numberPad)
+                        .textContentType(.oneTimeCode)
+                    SecureField("Confirm new PIN", text: $confirm)
+                        .keyboardType(.numberPad)
+                        .textContentType(.oneTimeCode)
+                    if let errorText {
+                        Text(errorText)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                }
+            }
+            .navigationTitle("Change PIN")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel", action: onCancel)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        save()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+
+    private func save() {
+        let cur = current.trimmingCharacters(in: .whitespacesAndNewlines)
+        let a = newPIN.trimmingCharacters(in: .whitespacesAndNewlines)
+        let b = confirm.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard ParentalControlsKeychain.isValidPIN(a) else {
+            errorText = "New PIN must be 4–6 digits"
+            return
+        }
+        guard a == b else {
+            errorText = "New PINs don’t match"
+            return
+        }
+        do {
+            try onSave(cur, a)
+            errorText = nil
+        } catch {
+            errorText = error.localizedDescription
+            current = ""
+        }
+    }
+}

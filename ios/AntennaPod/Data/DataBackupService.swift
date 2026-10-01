@@ -26,7 +26,7 @@ struct DataBackupManifest: Codable, Equatable {
             notes: [
                 "iOS Application Support JSON backup — not AntennaPod Android database export.",
                 "Downloads: catalog metadata only (downloads.json); media under Documents/downloads is not included — re-download offline files.",
-                "Keychain secrets are NOT included (gpodder password, Podcast Index API key/secret). Re-enter passwords/keys after import on a new device.",
+                "Keychain secrets are NOT included (gpodder password, Podcast Index API key/secret, Parental controls PIN). Re-enter passwords/keys after import on a new device.",
                 "pending-downloads.json (in-flight tasks) is omitted.",
                 "HTML subscription export is separate (Settings → Import / Export), not part of this ZIP."
             ]

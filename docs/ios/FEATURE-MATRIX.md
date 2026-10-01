@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics), Queue, Downloads, Settings |
 | Miniplayer + Full Player | 5 | done | Mini player; tap → full sheet (artwork, scrubber, configurable skip, speed, sleep timer, mark/queue/download) |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync + **Backup** (iOS JSON) + About (P0/P1); more prefs later |
+| Settings | 5 | wip | Tab: theme + default speed + rewind/FF intervals + skip intro/outro + playback source + download storage limit + refresh interval + auto-download + Network/Downloads Wi‑Fi policy + auto-delete after play + new-episode notifications + gpodder.net / Nextcloud Gpodder sync + **Parental controls** (PIN) + **Backup** (iOS JSON) + About (P0/P1); more prefs later |
 
 ## Subscriptions
 
@@ -109,7 +109,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Skip intro / Skip outro | 3 | done | UserDefaults `skipIntroSeconds` / `skipOutroSeconds`; presets 0/5/10/15/30/60 (0=off); PlaybackService seeks intro on fresh start; outro once/session → finished + queue next; global only (per-feed later) |
 | Refresh interval | 4 | done | UserDefaults presets: manual / 1h / 4h / 12h / 24h; due-check on launch + foreground → `refreshAllFeeds()`; BGAppRefreshTask stubbed (no `fetch` in Info.plist) |
 | Swipe actions | 3 | done | Queue: Remove + Archive (+ Edit drag reorder). Downloads: Delete. Inbox: Archive + Mark played. Feed: Archive/Restore + Queue + Share. History: Remove + Mark unplayed. Favorites: Unfavorite + Archive. Archived: Restore. All Episodes: Archive/Restore + Mark played. EpisodeRow buttons remain for play/download/queue/favorite/share |
-| Parental controls | 2 | todo | |
+| Parental controls | 2 | done | **MVP**: Settings → Parental controls; 4–6 digit PIN in Keychain; lock Add/Discover; optional lock Network/Downloads toggles; optional hide explicit iTunes charts (`explicit=false`); session unlock until background (`scenePhase`); disable clears PIN |
 | Notifications (new episodes) | 4 | done | Local UserNotifications after feed refresh; Settings toggle (default on; honest if denied); per-feed Always/Never override; permission from Settings or first new-eps refresh; tap → Inbox; no push |
 | Notifications (DL/Sync errors) | 4 | partial | **DL done**: Settings “Notify on download errors” (default on; same UNUserNotificationCenter permission as new episodes); local banner on failure (episode title + short error); tap → Downloads. **Sync errors later** (no push) |
 | About / contribute links | 2 | done | Settings → About: AntennaPod iOS fork blurb; version from Bundle (placeholder fallback); Links → antennapod.org, GitHub AntennaPod, contribute, docs, this fork (`Exellent1988/AntennaPod-ios`) via Safari `Link` |

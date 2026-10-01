@@ -32,7 +32,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics link, About)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics link, About)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -49,6 +49,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Notifications for new episodes (local UserNotifications after refresh; Settings toggle; tap opens Inbox; no push)
 - Download log / errors (ring buffer in Application Support; Downloads banner + errors list; Clear errors)
 - Notify on download errors (local UserNotifications; Settings toggle default on; tap opens Downloads; Sync-error notify later; no push)
+- Parental controls (beta; Settings → Parental controls; 4–6 digit PIN in Keychain; lock Add/Discover; optional Network/Downloads lock + hide explicit charts; session unlock until background)
 - gpodder.net / Nextcloud Gpodder sync (subscriptions MVP: provider picker; Keychain; pull+push feed URLs; additive merge; episode actions later)
 
 Root tabs (6): **Home**, Inbox, Subscriptions, Queue, Downloads, Settings.
@@ -63,7 +64,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview), top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Backup + Statistics + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview), top lists, player, downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -81,9 +82,21 @@ See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
 
 Subscriptions, queue, per-feed settings (`feed-settings.json`), subscription tags (`feed-tags.json`), starred episode ids (`favorites.json`), archived episode ids (`archived.json`), and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`, `lastPlayedAtEpochMs`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `feed-settings.json`, `feed-tags.json`, `favorites.json`, `archived.json`, `playback.json`). Inbox is derived from that state (unplayed, non-archived episodes across feeds, newest first). Archived episodes stay on feed lists (dimmed/badge) and in Library → Archived. All Episodes is the same cross-feed catalog without the unplayed filter (newest pubDate first, soft-capped at 500). History lists played or in-progress episodes (newest `lastPlayedAt` first); swipe removes playback state or marks unplayed. Older `playback.json` without `lastPlayedAt` migrates from `updatedAt` when played/in-progress. Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme, default playback speed, rewind/fast-forward intervals, skip intro/outro seconds, playback source preference, feed refresh interval, auto-download, Network / Downloads Wi‑Fi policy (`autoDownloadWifiOnly` / `manualDownloadWifiOnly` / `streamWifiOnly`), auto-delete-after-playing, and notify-on-new-episodes / notify-on-download-errors prefs live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts / mini+full+Now Playing skip / `PlaybackService.play` source resolution / launch+foreground due-check / post-refresh enqueue / mark-played download cleanup. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`), in-flight background task↔episode map (`pending-downloads.json`), and a recent download-error ring buffer (`download-errors.json`, ~50 entries: episode id/title, feed, message, timestamp). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
 
-**Data backup (beta):** Settings → **Backup** exports a ZIP of those Application Support JSON files plus `app-settings.json` and `gpodder-prefs.json` (STORE ZIP via `MinimalZip`). **Not** AntennaPod Android DB. Downloads = **catalog only** (`downloads.json`) — media under Documents/downloads is omitted (re-download after import). **Keychain secrets omitted** (gpodder password, Podcast Index API key/secret). Import warns before replace, writes files, reloads `PodcastStore` / `DownloadService` / Settings / gpodder prefs. `pending-downloads.json` is cleared on import. **HTML export** is separate under Import / Export (not in the ZIP).
+**Data backup (beta):** Settings → **Backup** exports a ZIP of those Application Support JSON files plus `app-settings.json` and `gpodder-prefs.json` (STORE ZIP via `MinimalZip`). **Not** AntennaPod Android DB. Downloads = **catalog only** (`downloads.json`) — media under Documents/downloads is omitted (re-download after import). **Keychain secrets omitted** (gpodder password, Podcast Index API key/secret, Parental controls PIN). Import warns before replace, writes files, reloads `PodcastStore` / `DownloadService` / Settings / gpodder prefs. `pending-downloads.json` is cleared on import. **HTML export** is separate under Import / Export (not in the ZIP).
 
 
+
+
+## Parental controls
+
+Beta MVP under Settings → **Parental controls**:
+
+- **Enable** prompts for a 4–6 digit PIN (confirm); stored in Keychain only (not UserDefaults / not backup ZIP).
+- **Options:** Lock Add / Discover (PIN before Add sheet or Discover charts); optional lock Network / Downloads Wi‑Fi toggles; optional hide explicit top charts (`explicit=false` on iTunes RSS while enabled).
+- **Session unlock:** correct PIN unlocks until the app backgrounds (`scenePhase` inactive/background), then gated UI asks again.
+- **Disable:** requires PIN, then clears Keychain and turns options off.
+
+Not a full device parental lock / Screen Time substitute.
 
 ## Home
 

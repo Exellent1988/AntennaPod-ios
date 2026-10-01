@@ -8,6 +8,7 @@ struct RootTabView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var parental: ParentalControls
     @Environment(\.scenePhase) private var scenePhase
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
     @State private var selectedTab: RootTab = .home
@@ -53,7 +54,11 @@ struct RootTabView: View {
             await FeedRefreshCoordinator.refreshAllFeedsIfDue(store: store, settings: settings)
         }
         .onChange(of: scenePhase) { _, phase in
-            guard phase == .active else { return }
+            if phase != .active {
+                // Relock parental controls when leaving foreground (inactive/background).
+                parental.lockSession()
+                return
+            }
             Task {
                 await FeedRefreshCoordinator.refreshAllFeedsIfDue(store: store, settings: settings)
             }
