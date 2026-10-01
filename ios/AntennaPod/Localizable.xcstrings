@@ -11705,6 +11705,159 @@
           }
         }
       }
+    },
+    "Shuffle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shuffle"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mischen"
+          }
+        }
+      }
+    },
+    "Shuffle queue?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shuffle queue?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange mischen?"
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then randomly reorders the entire queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then randomly reorders the entire queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und ordnet dann die gesamte Warteschlange zufällig neu"
+          }
+        }
+      }
+    },
+    "Shuffle or clear the entire queue after confirmation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shuffle or clear the entire queue after confirmation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mischt oder leert die gesamte Warteschlange nach Bestätigung"
+          }
+        }
+      }
+    },
+    "Randomly reorders all %lld episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Randomly reorders all %lld episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordnet alle %lld Episoden der gesamten Warteschlange zufällig neu (nicht nur dem aktuellen Filter). Stoppt die Wiedergabe nicht, ändert den Fortschritt nicht, markiert nicht als gehört und löscht keine Downloads. Die aktuell spielende Episode bleibt dieselbe und wandert mit ihrer neuen Position in der Liste."
+          }
+        }
+      }
+    },
+    "Allows drag reorder, Shuffle, and Move to top or bottom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allows drag reorder, Shuffle, and Move to top or bottom"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erlaubt Ziehen zum Sortieren, Mischen sowie An Anfang oder Ans Ende"
+          }
+        }
+      }
+    },
+    "Disables drag reorder, Shuffle, and Move to top or bottom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disables drag reorder, Shuffle, and Move to top or bottom"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deaktiviert Ziehen zum Sortieren, Mischen sowie An Anfang oder Ans Ende"
+          }
+        }
+      }
+    },
+    "When on, disables Queue drag reorder, Shuffle, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, disables Queue drag reorder, Shuffle, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an: kein Ziehen zum Sortieren, kein Mischen und kein An Anfang/Ans Ende. Einreihen, Als Nächstes, Entfernen und Warteschlange leeren bleiben. Standard aus."
+          }
+        }
+      }
+    },
+    "When on, the Queue tab disables Edit drag reorder, Shuffle, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, the Queue tab disables Edit drag reorder, Shuffle, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an: Queue-Tab ohne Edit/Ziehen-Reorder und ohne Mischen; An Anfang / Ans Ende ausgeblendet. Einreihen, Als Nächstes, Entfernen, Archiv-Swipe und Warteschlange leeren bleiben (nur Reihenfolge-Sperre — wie AntennaPod Android). Gleiche Einstellung wie der Queue-Toolbar-Sperr-Button. Standard aus."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

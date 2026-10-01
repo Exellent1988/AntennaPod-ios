@@ -11,6 +11,7 @@ struct QueueView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
     @State private var showClearQueueConfirm = false
+    @State private var showShuffleQueueConfirm = false
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -24,6 +25,12 @@ struct QueueView: View {
     /// Drag / Edit reorder allowed only when unlocked and not filtering.
     private var canReorder: Bool {
         !settings.queueLocked && !isFiltering
+    }
+
+    /// Shuffle always targets the **full** persisted queue (not chip/search). Allowed when unlocked
+    /// and at least two items — filter state does not matter (unlike Edit/`onMove` index mapping).
+    private var canShuffle: Bool {
+        !settings.queueLocked && store.queue.count >= 2
     }
 
     /// Visible queue rows: chip (`isPlayed`) → search. Empty query shows the chip-filtered queue order.
@@ -256,8 +263,8 @@ struct QueueView: View {
                     )
                     .accessibilityHint(
                         settings.queueLocked
-                            ? String(localized: "Allows drag reorder and Move to top or bottom")
-                            : String(localized: "Disables drag reorder and Move to top or bottom")
+                            ? String(localized: "Allows drag reorder, Shuffle, and Move to top or bottom")
+                            : String(localized: "Disables drag reorder, Shuffle, and Move to top or bottom")
                     )
                     .accessibilityAddTraits(.isButton)
                 }
@@ -268,6 +275,18 @@ struct QueueView: View {
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
+                        Button {
+                            // Always confirm before shuffleQueue() — reorders the full list.
+                            showShuffleQueueConfirm = true
+                        } label: {
+                            Label("Shuffle", systemImage: "shuffle")
+                        }
+                        // Shuffle always targets the full queue (not the filtered subset).
+                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                        .disabled(!canShuffle)
+                        .accessibilityHint(
+                            String(localized: "Asks for confirmation, then randomly reorders the entire queue")
+                        )
                         Button(role: .destructive) {
                             // Always confirm before clearQueue() — never clear from the menu alone.
                             showClearQueueConfirm = true
@@ -286,7 +305,7 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Clear the entire queue after confirmation")
+                        String(localized: "Shuffle or clear the entire queue after confirmation")
                     )
                 }
             }
@@ -302,6 +321,20 @@ struct QueueView: View {
             } message: {
                 Text(
                     "Removes \(store.queue.count) episodes from the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads."
+                )
+            }
+            .confirmationDialog(
+                "Shuffle queue?",
+                isPresented: $showShuffleQueueConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Shuffle") {
+                    store.shuffleQueue()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Randomly reorders all \(store.queue.count) episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
                 )
             }
         }

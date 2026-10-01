@@ -333,6 +333,20 @@ final class PodcastStore: ObservableObject {
         queue = []
     }
 
+    /// Randomly reorder the **full** persisted queue (Fisher–Yates via `Array.shuffle()`).
+    /// Persists via `queue` `didSet` (same path as `moveQueue`). No-op when fewer than 2 items.
+    /// Does **not** change `PlaybackService.currentEpisode` identity, seek, or stop playback —
+    /// the currently playing episode (if any) **moves with its episode id** to a new list index
+    /// (it is not pinned at the same index). Continuous next still uses `nextQueueEpisode(after:)`
+    /// by id, so auto-next becomes whatever follows that id after the shuffle.
+    /// Callers must gate on queue unlock (reorder-only lock, same as Edit/`onMove`) and confirm first.
+    func shuffleQueue() {
+        guard queue.count >= 2 else { return }
+        var shuffled = queue
+        shuffled.shuffle()
+        queue = shuffled
+    }
+
     // MARK: - Playback progress / played
 
     func playbackState(for episodeId: String) -> EpisodePlaybackState {
