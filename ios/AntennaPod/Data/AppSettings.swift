@@ -194,6 +194,29 @@ enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
 }
 
 
+
+/// How the Subscriptions tab orders the feed list (client-side only; no drag-reorder).
+enum SubscriptionsSort: String, CaseIterable, Identifiable {
+    case recentlyUpdated
+    case alphabetical
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .recentlyUpdated: return String(localized: "Recently updated")
+        case .alphabetical: return String(localized: "Alphabetical A–Z")
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .recentlyUpdated: return "clock.arrow.circlepath"
+        case .alphabetical: return "textformat.abc"
+        }
+    }
+}
+
 /// Configurable Home tab sections (order + show/hide). Mirrors Android HomePreferences lite.
 enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     case continueListening
@@ -236,7 +259,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Home section order/visibility).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Home section order/visibility, subscriptions list sort).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -293,6 +316,7 @@ final class AppSettings: ObservableObject {
         static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
         static let homeSectionOrder = "settings.home.sectionOrder"
         static let homeHiddenSections = "settings.home.hiddenSections"
+        static let subscriptionsSort = "settings.subscriptionsSort"
     }
 
     private enum Kind: String {
@@ -513,6 +537,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+
+    /// Subscriptions tab list order: recently updated (default) or alphabetical A–Z. Client-side only.
+    @Published var subscriptionsSort: SubscriptionsSort {
+        didSet {
+            UserDefaults.standard.set(subscriptionsSort.rawValue, forKey: Keys.subscriptionsSort)
+        }
+    }
+
     /// Visible sections in display order (hidden filtered out).
     var visibleHomeSections: [HomeSectionId] {
         homeSectionOrder.filter { !homeHiddenSections.contains($0) }
@@ -668,6 +700,9 @@ final class AppSettings: ObservableObject {
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
         homeSectionOrder = Self.loadHomeSectionOrder()
         homeHiddenSections = Self.loadHomeHiddenSections()
+        let sortRaw = UserDefaults.standard.string(forKey: Keys.subscriptionsSort)
+            ?? SubscriptionsSort.recentlyUpdated.rawValue
+        subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh
@@ -816,7 +851,8 @@ final class AppSettings: ObservableObject {
             keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
             chartsCountryCode: chartsCountryCode,
             homeSectionOrder: homeSectionOrder.map(\.rawValue),
-            homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted()
+            homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
+            subscriptionsSort: subscriptionsSort.rawValue
         )
     }
 
@@ -894,6 +930,9 @@ final class AppSettings: ObservableObject {
             homeHiddenSections = Set(hiddenRaw.compactMap { HomeSectionId(rawValue: $0) })
                 .intersection(Set(HomeSectionId.allCases))
         }
+        if let sortRaw = snap.subscriptionsSort {
+            subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
+        }
     }
 }
 
@@ -936,4 +975,6 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var homeSectionOrder: [String]? = nil
     /// Absent in older backups → default hidden (Favorites).
     var homeHiddenSections: [String]? = nil
+    /// Absent in older backups → recentlyUpdated (default).
+    var subscriptionsSort: String? = nil
 }

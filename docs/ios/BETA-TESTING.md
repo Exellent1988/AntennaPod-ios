@@ -95,6 +95,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Queue: Remove, Archive, Reorder | ☐ Queue: remove, archive, reorder |
 | ☐ Queue: Warteschlange leeren (Bestätigung) | ☐ Queue: Clear queue (confirm) |
 | ☐ Subscriptions + Tags/Filter | ☐ Subscriptions + tags/filter |
+| ☐ Subscriptions: Sortierung (Zuletzt aktualisiert / Alphabetisch) | ☐ Subscriptions: sort (Recently updated / Alphabetical) |
 | ☐ Library: Episodes / History / Favorites / Archived / Statistics / Echo | ☐ Library: Episodes / History / Favorites / Archived / Statistics / Echo |
 | ☐ Favoriten (Stern) | ☐ Favorites (star) |
 | ☐ Archive / Restore | ☐ Archive / restore |

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SubscriptionsView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var parental: ParentalControls
     @State private var showAdd = false
     @State private var showOpmlSheet = false
@@ -12,10 +13,32 @@ struct SubscriptionsView: View {
     @State private var tagFilter: SubscriptionTagFilter = .all
     @State private var groupByTag = true
 
+    /// Client-side list order after search/tag filters (no drag-reorder of subscriptions).
+    private func sortedFeeds(_ feeds: [PodcastFeed]) -> [PodcastFeed] {
+        switch settings.subscriptionsSort {
+        case .recentlyUpdated:
+            return feeds.sorted { lhs, rhs in
+                let l = lhs.episodes.compactMap(\.pubDateEpochMs).max() ?? Int64.min
+                let r = rhs.episodes.compactMap(\.pubDateEpochMs).max() ?? Int64.min
+                if l != r { return l > r }
+                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+            }
+        case .alphabetical:
+            return feeds.sorted {
+                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
+        }
+    }
+
     private var searchFilteredFeeds: [PodcastFeed] {
         let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        if q.isEmpty { return store.feeds }
-        return store.matchingFeeds(query: q)
+        let base: [PodcastFeed]
+        if q.isEmpty {
+            base = store.feeds
+        } else {
+            base = store.matchingFeeds(query: q)
+        }
+        return sortedFeeds(base)
     }
 
     private var tagFilteredFeeds: [PodcastFeed] {
@@ -33,6 +56,7 @@ struct SubscriptionsView: View {
     }
 
     /// Sections when grouping is on and filter is All (multi-tag feeds appear under each tag).
+    /// Feeds within each section follow `subscriptionsSort` (inherited from `searchFilteredFeeds`).
     private var groupedSections: [(title: String, feeds: [PodcastFeed])] {
         guard tagFilter == .all, groupByTag, !store.allTags.isEmpty else {
             return [("Podcasts", tagFilteredFeeds)]
@@ -197,6 +221,21 @@ struct SubscriptionsView: View {
                         Image(systemName: "arrow.up.arrow.down.square")
                     }
                     .accessibilityLabel("Import or export OPML")
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        Picker(selection: $settings.subscriptionsSort) {
+                            ForEach(SubscriptionsSort.allCases) { sort in
+                                Label(sort.label, systemImage: sort.systemImage)
+                                    .tag(sort)
+                            }
+                        } label: {
+                            Text("Sort")
+                        }
+                    } label: {
+                        Label("Sort", systemImage: "arrow.up.arrow.down")
+                    }
+                    .accessibilityLabel("Sort subscriptions")
                 }
             }
             .sheet(isPresented: $showAdd) {
