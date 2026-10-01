@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Scrollable episode shownotes / description sheet (plain text; HTML stripped for beta).
 struct EpisodeDescriptionSheetView: View {
@@ -10,6 +11,10 @@ struct EpisodeDescriptionSheetView: View {
     let episode: PodcastEpisode
     /// Optional podcast name for share message (`Title — Podcast`). When empty, looked up from the store.
     var feedTitle: String? = nil
+
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyURLFeedbackTick = 0
 
     private var plainDescription: String {
         guard let raw = episode.descriptionText else { return "" }
@@ -86,6 +91,23 @@ struct EpisodeDescriptionSheetView: View {
                         }
                         .accessibilityLabel(String(localized: "Open episode website"))
                         .accessibilityHint(String(localized: "Opens the episode webpage in the system browser"))
+
+                        Button {
+                            copyEpisodeLink(url)
+                        } label: {
+                            Image(systemName: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy episode link"))
+                        .accessibilityHint(String(localized: "Copies the episode webpage URL to the pasteboard"))
+                    }
+                    if let url = episode.mediaURL {
+                        Button {
+                            copyMediaURL(url)
+                        } label: {
+                            Image(systemName: "link")
+                        }
+                        .accessibilityLabel(String(localized: "Copy media URL"))
+                        .accessibilityHint(String(localized: "Copies the episode media / enclosure URL to the pasteboard"))
                     }
                     if let url = shareURL {
                         ShareLink(
@@ -122,6 +144,29 @@ struct EpisodeDescriptionSheetView: View {
                     .padding(.vertical, 6)
                     .background(.bar)
             }
+            .alert(
+                String(localized: "Copied"),
+                isPresented: $showCopiedAlert
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(copiedAlertMessage)
+            }
+            .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
         }
+    }
+
+    private func copyEpisodeLink(_ url: URL) {
+        UIPasteboard.general.string = url.absoluteString
+        copiedAlertMessage = String(localized: "Episode link copied to the pasteboard.")
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    private func copyMediaURL(_ url: URL) {
+        UIPasteboard.general.string = url.absoluteString
+        copiedAlertMessage = String(localized: "Media URL copied to the pasteboard.")
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
     }
 }

@@ -373,6 +373,9 @@ struct EpisodeRow: View {
     var dateAccessibilityLabel: String? = nil
 
     @State private var showDescription = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyURLFeedbackTick = 0
 
     private var state: EpisodePlaybackState {
         store.playbackState(for: episode.id)
@@ -540,6 +543,23 @@ struct EpisodeRow: View {
                 }
                 .accessibilityLabel(String(localized: "Open episode website"))
                 .accessibilityHint(String(localized: "Opens the episode webpage in the system browser"))
+
+                Button {
+                    copyEpisodeLink(url)
+                } label: {
+                    Label("Copy episode link", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy episode link"))
+                .accessibilityHint(String(localized: "Copies the episode webpage URL to the pasteboard"))
+            }
+            if let url = episode.mediaURL {
+                Button {
+                    copyMediaURL(url)
+                } label: {
+                    Label("Copy media URL", systemImage: "link")
+                }
+                .accessibilityLabel(String(localized: "Copy media URL"))
+                .accessibilityHint(String(localized: "Copies the episode media / enclosure URL to the pasteboard"))
             }
             if let url = episodeShareURL {
                 ShareLink(
@@ -619,6 +639,29 @@ struct EpisodeRow: View {
         .sheet(isPresented: $showDescription) {
             EpisodeDescriptionSheetView(episode: episode, feedTitle: feedTitle)
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
+    }
+
+    private func copyEpisodeLink(_ url: URL) {
+        UIPasteboard.general.string = url.absoluteString
+        copiedAlertMessage = String(localized: "Episode link copied to the pasteboard.")
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    private func copyMediaURL(_ url: URL) {
+        UIPasteboard.general.string = url.absoluteString
+        copiedAlertMessage = String(localized: "Media URL copied to the pasteboard.")
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private var resolvedFeed: PodcastFeed? {

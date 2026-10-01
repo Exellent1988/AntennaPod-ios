@@ -1,5 +1,6 @@
 import AVFoundation
 import SwiftUI
+import UIKit
 
 /// Full-screen / sheet player opened from the mini player (AntennaPod P0).
 struct FullPlayerView: View {
@@ -23,6 +24,9 @@ struct FullPlayerView: View {
     @State private var showFeedUnavailable = false
     @State private var showCustomSleepTimer = false
     @State private var showJumpToPosition = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyURLFeedbackTick = 0
 
     private var episode: PodcastEpisode? { playback.currentEpisode }
 
@@ -186,6 +190,15 @@ struct FullPlayerView: View {
         } message: {
             Text(String(localized: "This episode is not linked to a subscribed podcast."))
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
         .sheet(isPresented: $showCustomSleepTimer) {
             CustomSleepTimerSheet()
                 .environmentObject(playback)
@@ -703,6 +716,20 @@ struct FullPlayerView: View {
         return String(localized: "Downloads this episode for offline playback")
     }
 
+    private func copyEpisodeLink(_ url: URL) {
+        UIPasteboard.general.string = url.absoluteString
+        copiedAlertMessage = String(localized: "Episode link copied to the pasteboard.")
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    private func copyMediaURL(_ url: URL) {
+        UIPasteboard.general.string = url.absoluteString
+        copiedAlertMessage = String(localized: "Media URL copied to the pasteboard.")
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
     private func secondaryActions(episode: PodcastEpisode) -> some View {
         let played = store.isPlayed(episode.id)
         let favorited = store.isFavorite(episode.id)
@@ -815,6 +842,24 @@ struct FullPlayerView: View {
                 }
                 .accessibilityLabel(String(localized: "Open episode website"))
                 .accessibilityHint(String(localized: "Opens the episode webpage in the system browser"))
+
+                Button {
+                    copyEpisodeLink(url)
+                } label: {
+                    Label("Copy episode link", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy episode link"))
+                .accessibilityHint(String(localized: "Copies the episode webpage URL to the pasteboard"))
+            }
+
+            if let url = episode.mediaURL {
+                Button {
+                    copyMediaURL(url)
+                } label: {
+                    Label("Copy media URL", systemImage: "link")
+                }
+                .accessibilityLabel(String(localized: "Copy media URL"))
+                .accessibilityHint(String(localized: "Copies the episode media / enclosure URL to the pasteboard"))
             }
 
             if let url = episode.shareURL(feed: feed) {

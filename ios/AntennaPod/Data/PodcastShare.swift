@@ -99,6 +99,18 @@ extension PodcastEpisode {
         guard scheme == "http" || scheme == "https" else { return nil }
         return url
     }
+
+    /// Enclosure / media download URL (`http` / `https` only).
+    /// Distinct from `websiteURL` (episode page). Never invents a URL; `file://` /
+    /// `local-folder://` omitted. Used only for a clearly labeled “Copy media URL”.
+    var mediaURL: URL? {
+        guard let downloadUrl else { return nil }
+        let trimmed = downloadUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return url
+    }
 }
 
 extension PodcastFeed {

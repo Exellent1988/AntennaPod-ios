@@ -8721,6 +8721,108 @@
           }
         }
       }
+    },
+    "Copy episode link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy episode link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden-Link kopieren"
+          }
+        }
+      }
+    },
+    "Copy media URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy media URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medien-URL kopieren"
+          }
+        }
+      }
+    },
+    "Copies the episode webpage URL to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the episode webpage URL to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die Episoden-Webseiten-URL in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Copies the episode media / enclosure URL to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the episode media / enclosure URL to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die Episoden-Medien-/Enclosure-URL in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Episode link copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode link copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden-Link in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Media URL copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Media URL copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medien-URL in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

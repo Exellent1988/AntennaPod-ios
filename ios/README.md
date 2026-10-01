@@ -46,6 +46,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500 then All/Unplayed/Downloaded chips + searchable title/feed; EpisodeRow actions; swipe Archive + Mark played/unplayed; filter persisted in AppSettings)
 - Share podcast / episode (system share sheet; episode URL: page link → enclosure → feed site/RSS; `Title — Podcast` message; **Share with position** = same URL + text timestamp `(12:34)` when current item; full player + Shownotes toolbar + EpisodeRow / swipe / context; FeedDetail podcast share + Copy feed URL; no AntennaPod deep link / no `#t=` / no gPodder fake share)
 - Open episode website (opens episode `link` http(s) in system Safari/default browser via `openURL`; full player secondary + Shownotes toolbar + EpisodeRow context; hidden when no usable link; never enclosure / never invents URL; no in-app WebView)
+- Copy episode link (pasteboard `UIPasteboard.general` + brief Copied alert / haptic like Copy feed URL; webpage `link` http(s) only via `websiteURL`; full player + Shownotes + EpisodeRow context; optional clearly labeled **Copy media URL** for enclosure; never silently copies enclosure as episode link; never invents URL)
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; Queue/Downloads/Favorites/History/Archived title/feed; Feed detail episode title; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (EpisodeRow button/context, Feed leading swipe, **Full player** secondary, All Episodes leading swipe via `PodcastStore.isPlayed` / `togglePlayed` — same `playback.json`; no seek/stop on toggle; VoiceOver hints; Smart mark Off/15/30/60/120 default 30; Inbox + Feed detail Mark all as played with confirm)
@@ -314,7 +315,7 @@ Share an **episode** or a **podcast** via the **system share sheet** only (`Shar
 
 **Share with position:** second action on the **full player** (and **Shownotes** toolbar when the shownotes episode is the **current playback item**). Same URL precedence; message appends a human-readable timestamp from `PlaybackService.positionSeconds` — e.g. `Title — Podcast (12:34)` (`m:ss` / `h:mm:ss`, same as the scrubber). **Text timestamp only** — does **not** invent AntennaPod deep links or append `#t=` media fragments. Hidden when position is unknown or the episode is not current (list rows keep plain Share only).
 
-**Entry points:** full player secondary Share + Share with position; **Shownotes** sheet toolbar (Share + position when current); EpisodeRow button + context menu; Feed detail trailing swipe Share. **Feed detail** toolbar shares the **podcast** (title + feed URL); the ⋯ **Feed actions** menu also offers **Copy feed URL** (`UIPasteboard.general` + brief **Copied** alert / haptic). Local-folder feeds disable Copy / podcast Share — no network RSS URL.
+**Entry points:** full player secondary Share + Share with position; **Shownotes** sheet toolbar (Share + position when current); EpisodeRow button + context menu; Feed detail trailing swipe Share. **Feed detail** toolbar shares the **podcast** (title + feed URL); the ⋯ **Feed actions** menu also offers **Copy feed URL** (`UIPasteboard.general` + brief **Copied** alert / haptic). Local-folder feeds disable Copy / podcast Share — no network RSS URL. See also **Copy episode link** (webpage only) under Open episode website.
 
 ## Open episode website
 
@@ -325,9 +326,19 @@ Opens the episode’s real webpage (`PodcastEpisode.link`) in the **system brows
 - **Entry points:** full player secondary actions; **Shownotes** sheet toolbar (safari icon); EpisodeRow context menu.
 - EN / DE + VoiceOver label **Open episode website** and hint **Opens the episode webpage in the system browser**.
 
+## Copy episode link
+
+Copies the episode webpage URL (`PodcastEpisode.websiteURL` / `link` http(s) only) to the pasteboard — same confirmation pattern as **Copy feed URL** (`UIPasteboard.general` + brief **Copied** alert + success haptic).
+
+- **URL rule:** webpage `link` only. Does **not** silently copy enclosure / `downloadUrl` as “episode link”. Never invents a URL.
+- Optional separate action **Copy media URL** (`PodcastEpisode.mediaURL` — enclosure `downloadUrl` http/https only), clearly labeled so it is not confused with the webpage link.
+- **Hidden** when no usable webpage link (media action shown independently when enclosure URL exists).
+- **Entry points:** full player secondary; **Shownotes** toolbar (`doc.on.doc` / `link`); EpisodeRow context menu.
+- EN / DE + VoiceOver labels/hints for both actions.
+
 ## Full player
 
-Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed (**tap** cycles `0.8 / 1.0 / 1.1 / 1.2 / 1.3 / 1.5 / 2.0`, wrap; **long-press** keeps the full preset menu — same on mini player), sleep timer (same presets + Custom… 1–180 min as mini; mini also shows live remaining countdown / End of ep. on the moon control badge), plus **Play from beginning** / **mark played / unplayed** (`PodcastStore.isPlayed` / `togglePlayed` — same `playback.json` as lists; does **not** seek or stop playback; VoiceOver hints; hidden when nothing playing) / **favorite** (star toggle → `PodcastStore.toggleFavorite`; VoiceOver Add/Remove from favorites; hidden when nothing playing) / queue / download / **Open episode website** (when `episode.link` is http(s)) / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
+Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed (**tap** cycles `0.8 / 1.0 / 1.1 / 1.2 / 1.3 / 1.5 / 2.0`, wrap; **long-press** keeps the full preset menu — same on mini player), sleep timer (same presets + Custom… 1–180 min as mini; mini also shows live remaining countdown / End of ep. on the moon control badge), plus **Play from beginning** / **mark played / unplayed** (`PodcastStore.isPlayed` / `togglePlayed` — same `playback.json` as lists; does **not** seek or stop playback; VoiceOver hints; hidden when nothing playing) / **favorite** (star toggle → `PodcastStore.toggleFavorite`; VoiceOver Add/Remove from favorites; hidden when nothing playing) / queue / download / **Open episode website** (when `episode.link` is http(s)) / **Copy episode link** / optional **Copy media URL** / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
 
 **Jump to position:** tap the left (current) time under the scrubber to open a medium sheet. Enter **mm:ss** / **h:mm:ss** (or a plain seconds integer) in the TextField, or use **minutes** + **seconds** steppers; **Jump** parses, clamps to `[0, duration]`, and calls `PlaybackService.seek(toSeconds:)`. Disabled when there is no episode or duration is unknown / zero.
 
@@ -428,8 +439,8 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 ## Episode description / Shownotes (beta)
 
 - **Parse:** `NativeRssAtomParser` stores item `description` / `summary` / `content` / `subtitle` (prefer longer; CDATA supported) as `PodcastEpisode.descriptionText`. Populated on subscribe / refresh (existing subscriptions need a refresh).
-- **Full player:** **Shownotes** button opens a sheet with scrollable **plain text** (`HTMLTextStripping` — tags removed; not a rich HTML renderer). Empty state when missing / blank after strip. Toolbar: **Open episode website** (when `link` is http(s)) + Share.
-- **Episode row:** context menu **Shownotes** (same sheet) + **Open episode website** when link exists.
+- **Full player:** **Shownotes** button opens a sheet with scrollable **plain text** (`HTMLTextStripping` — tags removed; not a rich HTML renderer). Empty state when missing / blank after strip. Toolbar: **Open episode website** (when `link` is http(s)) + **Copy episode link** + optional **Copy media URL** + Share.
+- **Episode row:** context menu **Shownotes** (same sheet) + **Open episode website** / **Copy episode link** when link exists + **Copy media URL** when enclosure exists.
 - **Search:** Feed detail + library episode hits also match `descriptionText` (raw feed text).
 
 
