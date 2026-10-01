@@ -346,9 +346,9 @@ struct SettingsView: View {
     private var autoDownloadSection: some View {
         Section {
             Toggle("Auto-download", isOn: $settings.autoDownloadEnabled)
-                .accessibilityHint("Downloads newest unplayed episodes after a feed refresh when enabled.")
+                .accessibilityHint(String(localized: "Downloads newly appeared unplayed episodes after a feed refresh when enabled."))
             if settings.autoDownloadEnabled {
-                Picker("Episodes per feed", selection: $settings.autoDownloadEpisodesPerFeed) {
+                Picker(String(localized: "Episodes per feed"), selection: $settings.autoDownloadEpisodesPerFeed) {
                     ForEach(AutoDownloadEpisodesPerFeed.allCases) { cap in
                         Text(cap.label).tag(cap)
                     }
@@ -364,19 +364,19 @@ struct SettingsView: View {
 
     private var autoDownloadHelpText: String {
         if !settings.autoDownloadEnabled {
-            return String(localized: "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Storage-limit eviction still applies. Wi‑Fi-only for auto-download is under Network / Downloads.")
+            return String(localized: "When enabled, after a feed refresh only newly appeared episode IDs (not the whole backlog) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Local-folder feeds are skipped. Storage-limit eviction still applies. Runs on refresh success — no separate silent BGAppRefresh. Wi‑Fi-only for auto-download is under Network / Downloads.")
         }
-        return String(localized: "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to \(settings.autoDownloadEpisodesPerFeed.rawValue) newest unplayed episode(s) per feed. Override per podcast via Feed detail → gear. Always/Never beat this global toggle. Cellular gating is under Network / Downloads.")
+        return String(localized: "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to \(settings.autoDownloadEpisodesPerFeed.rawValue) newly appeared unplayed episode(s) per feed (not backlog). Override per podcast via Feed detail → gear. Always/Never beat this global toggle. Local-folder / file:// feeds skipped. Cellular gating is under Network / Downloads.")
     }
 
     @ViewBuilder
     private var networkDownloadsSection: some View {
         Section {
-            Toggle("Auto-download Wi‑Fi only", isOn: gatedWifiToggle(\AppSettings.autoDownloadWifiOnly))
+            Toggle(String(localized: "Auto-download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.autoDownloadWifiOnly))
                 .accessibilityHint("When on, auto-download skips cellular networks.")
-            Toggle("Manual download Wi‑Fi only", isOn: gatedWifiToggle(\AppSettings.manualDownloadWifiOnly))
+            Toggle(String(localized: "Manual download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.manualDownloadWifiOnly))
                 .accessibilityHint("When on, user downloads are refused on cellular.")
-            Toggle("Stream Wi‑Fi only", isOn: gatedWifiToggle(\AppSettings.streamWifiOnly))
+            Toggle(String(localized: "Stream Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.streamWifiOnly))
                 .accessibilityHint("When on, network streaming is blocked on cellular; local files still play.")
             if parental.isEnabled && parental.lockNetworkDownloadsSettings && parental.isLocked {
                 Text("Network / Downloads settings are locked. Enter the parental PIN to change these toggles.")

@@ -59,7 +59,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Smart mark as played (Settings picker Off/15/30/60/120, default 30; Off = natural end / explicit only)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
 - New-episode action (Inbox only / Add to Queue / Add to Queue and download; per-feed Use global / Inbox / Queue; after refresh newcomers only)
-- Auto-download (global on/off + episodes-per-feed cap; after refresh; Wi‑Fi only under Network / Downloads; per-feed Use global / Always / Never)
+- Auto-download (global on/off + episodes-per-feed cap; **new episode IDs after refresh only**; Wi‑Fi only under Network / Downloads; per-feed Use global / Always / Never; skips local-folder)
 - Mobile / Wi‑Fi policy (auto / manual download / stream Wi‑Fi-only toggles; shared NWPathMonitor)
 - Per-feed settings (Feed detail → gear: Auto-download, Keep updated, New episodes, Notify, Skip intro/outro, Playback speed overrides)
 - Tags / Folders for subscriptions (side map `feed-tags.json`; manage on per-feed settings; Subscriptions filter chips + optional group-by-tag; untagged)
@@ -498,7 +498,7 @@ Settings → **Feeds / Keep updated → New episodes**: **Inbox only** (default)
 
 - **Inbox only** — no side effects; episodes still show in Inbox while unplayed (and not archived).
 - **Add to Queue** — `PodcastStore.enqueue` (idempotent); Inbox unchanged as a derived list.
-- **Add to Queue and download** — enqueue plus `DownloadService.download` (`.automatic`), gated by **Auto-download Wi‑Fi only** (`NetworkPathGate`). Separate global Auto-download (newest-unplayed cap) still runs afterward.
+- **Add to Queue and download** — enqueue plus `DownloadService.download` (`.automatic`), gated by **Auto-download Wi‑Fi only** (`NetworkPathGate`). Separate global Auto-download (new-ID cap per feed) may also run afterward on the same newcomers.
 
 **Per-feed** (Feed detail → gear): **Use global** / **Inbox only** / **Add to Queue**. Queue+download is global-only; a per-feed Queue override never forces download. **Honest beta:** simple global/per-feed choice — not Android’s full new-episode filter rules (KMP later).
 
@@ -529,7 +529,7 @@ Settings → **Feeds / Keep updated → New episodes**: **Inbox only** (default)
 
 **Search (Feed detail):** `.searchable` (~250 ms debounce) filters episodes by **title** and optional **`descriptionText`** after the chip filter. Empty query shows the chip-filtered list under the current sort; empty state when nothing matches. Swipes, Play Next, gear, sort menu, and filter chips stay available. Toolbar **Download all** / **Mark all as played** confirmations still use **full-feed** eligibility counts (`downloadAllCandidates` / `markAllPlayedCandidates` on the live feed), not the chip/search filtered subset — same honesty as Clear queue / Clear favorites / Restore all / Downloads Delete played.
 
-Settings → **Auto-download**: global on/off (default off) and **Episodes per feed** cap (1 / 2 / 3 / 5, default 2). **Wi‑Fi only** for auto-download lives under **Network / Downloads** (default on). After every feed refresh (`refreshAllFeeds`, single-podcast refresh, Inbox pull-to-refresh, Keep updated), `AutoDownloadCoordinator` picks the newest unplayed episodes that are not already downloaded or in-flight and enqueues them through `DownloadService.download` (`.automatic` source skips the manual Wi‑Fi gate). Storage-limit eviction after successful downloads is unchanged. **Per-feed** Auto-download (Use global / Always / Never) is on each podcast’s settings sheet (Feed detail → gear); Always enqueues even when global is off; Never skips that feed; episode cap and Wi‑Fi-only remain global.
+Settings → **Auto-download**: global on/off (default **off**) and **Episodes per feed** cap (1 / 2 / 3 / 5, default 2 — **documented cap**). **Wi‑Fi only** for auto-download lives under **Network / Downloads** (default on; `NWPathMonitor` via `NetworkPathGate`). After a **successful** feed refresh that discovered newcomers (`refreshAllFeeds`, single-podcast refresh, Inbox pull-to-refresh, Keep updated), `AutoDownloadCoordinator` enqueues only those **newly appeared episode IDs** (not the whole unplayed backlog), newest-first per feed, unplayed / not archived / not already downloaded or in-flight, remote media URL, capped by the global episodes-per-feed setting, through `DownloadService.download` (`.automatic` skips the manual Wi‑Fi gate). **Local-folder / `file://` feeds and enclosures are skipped.** No separate silent BGAppRefresh download loop (BG fetch remains stubbed until Info.plist adds `fetch`). Storage-limit eviction after successful downloads is unchanged. **Per-feed** Auto-download (Use global / Always / Never) is on each podcast’s settings sheet (Feed detail → gear); Always enqueues new IDs even when global is off; Never skips that feed; episode cap and Wi‑Fi-only remain global.
 
 ## Mobile / Wi‑Fi policy
 
@@ -551,7 +551,7 @@ Wi‑Fi / Ethernet satisfy the gate; cellular does not. Turn a toggle off to all
 
 Feed detail → **gear** opens a sheet with overrides:
 
-- **Auto-download** — Use global / Always / Never; Always/Never beat the global Settings toggle; episode cap and Network / Downloads Wi‑Fi-only stay global.
+- **Auto-download** — Use global / Always / Never; Always/Never beat the global Settings toggle; only newly appeared IDs after refresh; episode cap and Network / Downloads Wi‑Fi-only stay global; local-folder feeds skipped.
 - **Keep updated** — Use global / Always / Never (default Use global). **Never** excludes the podcast from `refreshAllFeeds` (Subscriptions toolbar **Refresh all**, Home/Inbox pull-to-refresh, launch/foreground Keep updated interval). Use global / Always both refresh with the others. Manual single-podcast refresh (Subscriptions swipe / Feed detail) still works. EN/DE + VoiceOver on the picker; section footer notes Refresh all respects Never.
 - **New episodes** — Use global / Inbox only / Add to Queue (Queue+download stays a global Settings choice).
 - **Notify on new episodes** — Use global / Always / Never; Always/Never beat the global notification toggle (system permission still required).

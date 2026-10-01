@@ -237,10 +237,11 @@ final class PodcastStore: ObservableObject {
         let existingIds = Set(feed.episodes.map(\.id))
         let wasSubscribed = feeds.contains(where: { $0.feedUrl == feed.feedUrl })
         await subscribe(feedUrl: feed.feedUrl)
+        var newBatches: [NewEpisodeBatch] = []
         if wasSubscribed, let updated = feeds.first(where: { $0.feedUrl == feed.feedUrl }) {
             let newcomers = updated.episodes.filter { !existingIds.contains($0.id) }
             if !newcomers.isEmpty {
-                let batches = [
+                newBatches = [
                     NewEpisodeBatch(
                         feedTitle: updated.title,
                         feedId: updated.id,
@@ -249,12 +250,12 @@ final class PodcastStore: ObservableObject {
                     )
                 ]
                 await NewEpisodeNotificationCoordinator.handleNewEpisodes(
-                    batches,
+                    newBatches,
                     settings: settings,
                     store: self
                 )
                 await NewEpisodeActionCoordinator.apply(
-                    batches,
+                    newBatches,
                     store: self,
                     downloads: downloads,
                     settings: settings
@@ -264,7 +265,8 @@ final class PodcastStore: ObservableObject {
         await AutoDownloadCoordinator.enqueueAfterRefresh(
             store: self,
             downloads: downloads,
-            settings: settings
+            settings: settings,
+            newBatches: newBatches
         )
     }
 
@@ -1039,7 +1041,8 @@ final class PodcastStore: ObservableObject {
         await AutoDownloadCoordinator.enqueueAfterRefresh(
             store: self,
             downloads: downloads,
-            settings: settings
+            settings: settings,
+            newBatches: newBatches
         )
     }
 
@@ -1129,8 +1132,9 @@ final class PodcastStore: ObservableObject {
         do {
             let updated = try rescanLocalFolderFeed(feed)
             let newcomers = updated.episodes.filter { !existingIds.contains($0.id) }
+            var newBatches: [NewEpisodeBatch] = []
             if !newcomers.isEmpty {
-                let batches = [
+                newBatches = [
                     NewEpisodeBatch(
                         feedTitle: updated.title,
                         feedId: updated.id,
@@ -1139,21 +1143,23 @@ final class PodcastStore: ObservableObject {
                     )
                 ]
                 await NewEpisodeNotificationCoordinator.handleNewEpisodes(
-                    batches,
+                    newBatches,
                     settings: settings,
                     store: self
                 )
                 await NewEpisodeActionCoordinator.apply(
-                    batches,
+                    newBatches,
                     store: self,
                     downloads: downloads,
                     settings: settings
                 )
             }
+            // Local-folder feeds are skipped inside the coordinator (already on disk).
             await AutoDownloadCoordinator.enqueueAfterRefresh(
                 store: self,
                 downloads: downloads,
-                settings: settings
+                settings: settings,
+                newBatches: newBatches
             )
         } catch {
             lastError = error.localizedDescription

@@ -154,40 +154,6 @@
         }
       }
     },
-    "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to %lld newest unplayed episode(s) per feed. Override per podcast via Feed detail → gear. Always/Never beat this global toggle. Cellular gating is under Network / Downloads.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to %lld newest unplayed episode(s) per feed. Override per podcast via Feed detail → gear. Always/Never beat this global toggle. Cellular gating is under Network / Downloads."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nach jeder Feed-Aktualisierung (Pull-to-Refresh im Posteingang, Aktualisiert halten oder einzelner Podcast) werden bis zu %lld neueste ungehörte Episode(n) pro Feed eingeordnet. Pro Podcast unter Feed → Zahnrad überschreibbar. Immer/Nie schlagen diesen globalen Schalter. Mobilfunk-Sperre unter Netzwerk / Downloads."
-          }
-        }
-      }
-    },
-    "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules still apply to newest unplayed caps.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules still apply to newest unplayed caps."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nach der Aktualisierung werden neu erschienene Episoden in die Warteschlange gestellt und heruntergeladen (achtet auf Auto-Download nur Wi‑Fi). Separate Auto-Download-Regeln gelten weiter für die Neueste-ungehört-Obergrenze."
-          }
-        }
-      }
-    },
     "After refresh, newly appeared episodes are enqueued on Queue. Inbox still shows them while unplayed.": {
       "extractionState": "manual",
       "localizations": {
@@ -5951,23 +5917,6 @@
         }
       }
     },
-    "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Storage-limit eviction still applies. Wi‑Fi-only for auto-download is under Network / Downloads.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When enabled, after a feed refresh the newest unplayed episodes (not already downloaded) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Storage-limit eviction still applies. Wi‑Fi-only for auto-download is under Network / Downloads."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn aktiv, werden nach einer Feed-Aktualisierung die neuesten ungehörten Episoden (noch nicht heruntergeladen) über DownloadService eingeordnet, begrenzt pro Feed. Pro-Podcast Immer/Nie unter Feed-Einstellungen. Speicherlimit-Bereinigung gilt weiterhin. Nur-Wi‑Fi für Auto-Download unter Netzwerk / Downloads."
-          }
-        }
-      }
-    },
     "When enabled, offline files are removed after an episode is marked played. Episode metadata and played status are kept.": {
       "extractionState": "manual",
       "localizations": {
@@ -9330,6 +9279,295 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dieser Podcast hat keine Beschreibung im Feed."
+          }
+        }
+      }
+    },
+    "1 episode": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 episode"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 Episode"
+          }
+        }
+      }
+    },
+    "2 episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 Episoden"
+          }
+        }
+      }
+    },
+    "3 episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 Episoden"
+          }
+        }
+      }
+    },
+    "5 episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 Episoden"
+          }
+        }
+      }
+    },
+    "Episodes per feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodes per feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden pro Feed"
+          }
+        }
+      }
+    },
+    "Auto-download Wi‑Fi only": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-download Wi‑Fi only"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-Download nur Wi‑Fi"
+          }
+        }
+      }
+    },
+    "Manual download Wi‑Fi only": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual download Wi‑Fi only"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manueller Download nur Wi‑Fi"
+          }
+        }
+      }
+    },
+    "Stream Wi‑Fi only": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stream Wi‑Fi only"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stream nur Wi‑Fi"
+          }
+        }
+      }
+    },
+    "on": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "on"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "an"
+          }
+        }
+      }
+    },
+    "off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "off"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aus"
+          }
+        }
+      }
+    },
+    "Downloads newly appeared unplayed episodes after a feed refresh when enabled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads newly appeared unplayed episodes after a feed refresh when enabled."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt neu erschienene ungehörte Episoden nach einer Feed-Aktualisierung herunter, wenn aktiviert."
+          }
+        }
+      }
+    },
+    "When enabled, after a feed refresh only newly appeared episode IDs (not the whole backlog) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Local-folder feeds are skipped. Storage-limit eviction still applies. Runs on refresh success — no separate silent BGAppRefresh. Wi‑Fi-only for auto-download is under Network / Downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When enabled, after a feed refresh only newly appeared episode IDs (not the whole backlog) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Local-folder feeds are skipped. Storage-limit eviction still applies. Runs on refresh success — no separate silent BGAppRefresh. Wi‑Fi-only for auto-download is under Network / Downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, werden nach einer Feed-Aktualisierung nur neu erschienene Episoden-IDs (nicht der gesamte Rückstand) über DownloadService eingeordnet, begrenzt pro Feed. Pro-Podcast Immer/Nie unter Feed-Einstellungen. Lokale Ordner-Feeds werden übersprungen. Speicherlimit-Bereinigung gilt weiter. Läuft nach erfolgreichem Refresh — kein separates stilles BGAppRefresh. Nur-Wi‑Fi unter Netzwerk / Downloads."
+          }
+        }
+      }
+    },
+    "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to %lld newly appeared unplayed episode(s) per feed (not backlog). Override per podcast via Feed detail → gear. Always/Never beat this global toggle. Local-folder / file:// feeds skipped. Cellular gating is under Network / Downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After each feed refresh (Inbox pull-to-refresh, Keep updated, or a single podcast refresh), enqueues up to %lld newly appeared unplayed episode(s) per feed (not backlog). Override per podcast via Feed detail → gear. Always/Never beat this global toggle. Local-folder / file:// feeds skipped. Cellular gating is under Network / Downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach jeder Feed-Aktualisierung (Pull-to-Refresh im Posteingang, Aktualisiert halten oder einzelner Podcast) werden bis zu %lld neu erschienene ungehörte Episode(n) pro Feed eingeordnet (kein Rückstand). Pro Podcast unter Feed-Detail → Zahnrad überschreibbar. Immer/Nie schlagen diesen globalen Schalter. Lokale Ordner- / file://-Feeds werden übersprungen. Mobilfunk-Gates unter Netzwerk / Downloads."
+          }
+        }
+      }
+    },
+    "Follows Settings → Auto-download (currently %@). Cap and Wi‑Fi-only still apply globally. Only newly appeared episodes after refresh are candidates.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follows Settings → Auto-download (currently %@). Cap and Wi‑Fi-only still apply globally. Only newly appeared episodes after refresh are candidates."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folgt Einstellungen → Automatischer Download (aktuell %@). Cap und Nur-Wi‑Fi gelten weiter global. Nur neu erschienene Episoden nach dem Refresh sind Kandidaten."
+          }
+        }
+      }
+    },
+    "Always enqueue newly appeared episodes after refresh for this podcast, even when global Auto-download is off. Cap and Wi‑Fi-only still apply.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Always enqueue newly appeared episodes after refresh for this podcast, even when global Auto-download is off. Cap and Wi‑Fi-only still apply."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordnet nach dem Refresh neu erschienene Episoden für diesen Podcast immer ein, auch wenn globaler Auto-Download aus ist. Cap und Nur-Wi‑Fi gelten weiter."
+          }
+        }
+      }
+    },
+    "Never auto-download this podcast, even when global Auto-download is on. Manual Download still works.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never auto-download this podcast, even when global Auto-download is on. Manual Download still works."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt diesen Podcast nie automatisch herunter, auch wenn globaler Auto-Download an ist. Manueller Download funktioniert weiter."
+          }
+        }
+      }
+    },
+    "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules may also enqueue newly appeared IDs (capped per feed).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules may also enqueue newly appeared IDs (capped per feed)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach der Aktualisierung werden neu erschienene Episoden in die Warteschlange gestellt und heruntergeladen (achtet auf Auto-Download nur Wi‑Fi). Separate Auto-Download-Regeln können neu erschienene IDs ebenfalls einordnen (Cap pro Feed)."
           }
         }
       }

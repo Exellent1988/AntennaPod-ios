@@ -3,7 +3,7 @@ import Foundation
 /// What to do with episodes that first appear on an **existing** subscription after refresh.
 ///
 /// Distinct from Inbox (always derived: unplayed + not archived) and from global Auto-download
-/// (newest unplayed cap). This action only touches **newly discovered** episode IDs.
+/// (new-ID cap after refresh). This action only touches **newly discovered** episode IDs.
 enum NewEpisodeAction: String, CaseIterable, Identifiable, Codable, Hashable {
     /// Leave in Inbox only (default). No queue / download side effects.
     case inboxOnly
@@ -29,7 +29,7 @@ enum NewEpisodeAction: String, CaseIterable, Identifiable, Codable, Hashable {
         case .addToQueue:
             return String(localized: "After refresh, newly appeared episodes are enqueued on Queue. Inbox still shows them while unplayed.")
         case .addToQueueAndDownload:
-            return String(localized: "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules still apply to newest unplayed caps.")
+            return String(localized: "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules may also enqueue newly appeared IDs (capped per feed).")
         }
     }
 }

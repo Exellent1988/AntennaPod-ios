@@ -108,7 +108,7 @@ enum FeedRefreshInterval: String, CaseIterable, Identifiable {
 }
 
 
-/// How many newest unplayed episodes per feed auto-download may enqueue after refresh.
+/// Cap: how many **newly appeared** unplayed episodes per feed auto-download may enqueue after refresh.
 enum AutoDownloadEpisodesPerFeed: Int, CaseIterable, Identifiable {
     case one = 1
     case two = 2
@@ -119,10 +119,10 @@ enum AutoDownloadEpisodesPerFeed: Int, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .one: return "1 episode"
-        case .two: return "2 episodes"
-        case .three: return "3 episodes"
-        case .five: return "5 episodes"
+        case .one: return String(localized: "1 episode")
+        case .two: return String(localized: "2 episodes")
+        case .three: return String(localized: "3 episodes")
+        case .five: return String(localized: "5 episodes")
         }
     }
 }
@@ -603,7 +603,7 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// Global auto-download after feed refresh (newest unplayed, not yet downloaded).
+    /// Global auto-download after feed refresh (newly appeared unplayed IDs only, not backlog).
     @Published var autoDownloadEnabled: Bool {
         didSet {
             UserDefaults.standard.set(autoDownloadEnabled, forKey: Keys.autoDownloadEnabled)

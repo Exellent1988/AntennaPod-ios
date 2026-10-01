@@ -95,7 +95,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Feed: Alle herunterladen (Bestätigung + Cap) | ☐ Feed: Download all (confirm + cap) |
 | ☐ Feed: Alle als gehört markieren (Bestätigung) | ☐ Feed: Mark all as played (confirm) |
 | ☐ Background-Download überlebt Suspend | ☐ Background download survives suspend |
-| ☐ Auto-download nach Refresh (Cap + Wi‑Fi) | ☐ Auto-download after refresh (cap + Wi‑Fi) |
+| ☐ Auto-download nach Refresh (nur neue IDs, Cap 1/2/3/5, Wi‑Fi, Per-Feed, kein Local-Folder; kein separates BGAppRefresh) | ☐ Auto-download after refresh (new IDs only, cap 1/2/3/5, Wi‑Fi, per-feed, skip local-folder; no separate BGAppRefresh) |
 | ☐ Storage-Limit / Eviction | ☐ Storage limit / eviction |
 | ☐ Auto-delete after play | ☐ Auto-delete after play |
 | ☐ Network / Downloads Wi‑Fi-only Gates | ☐ Network / Downloads Wi‑Fi-only gates |

@@ -262,14 +262,14 @@ struct PerFeedSettingsView: View {
     }
 
     private var autoDownloadHelp: String {
-        let global = appSettings.autoDownloadEnabled ? "on" : "off"
+        let global = appSettings.autoDownloadEnabled ? String(localized: "on") : String(localized: "off")
         switch current.autoDownload {
         case .useGlobal:
-            return "Follows Settings → Auto-download (currently \(global)). Cap and Wi‑Fi-only still apply globally."
+            return String(localized: "Follows Settings → Auto-download (currently \(global)). Cap and Wi‑Fi-only still apply globally. Only newly appeared episodes after refresh are candidates.")
         case .always:
-            return "Always enqueue after refresh for this podcast, even when global Auto-download is off. Cap and Wi‑Fi-only still apply."
+            return String(localized: "Always enqueue newly appeared episodes after refresh for this podcast, even when global Auto-download is off. Cap and Wi‑Fi-only still apply.")
         case .never:
-            return "Never auto-download this podcast, even when global Auto-download is on. Manual Download still works."
+            return String(localized: "Never auto-download this podcast, even when global Auto-download is on. Manual Download still works.")
         }
     }
 
