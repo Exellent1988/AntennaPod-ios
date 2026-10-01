@@ -26,6 +26,8 @@ struct SubscriptionsView: View {
 
     /// Client-side list order after search/tag filters (no drag-reorder of subscriptions).
     /// Author / language: A–Z by feed-provided `displayAuthor` / `displayLanguage`; missing values last; title tiebreak.
+    /// Most unplayed: descending per-feed unplayed count (`!isPlayed && !isArchived`, same as badges /
+    /// Inbox / `unplayedCountsByFeedId`); equal counts → title A–Z tiebreak.
     private func sortedFeeds(_ feeds: [PodcastFeed]) -> [PodcastFeed] {
         switch settings.subscriptionsSort {
         case .recentlyUpdated:
@@ -68,6 +70,15 @@ struct SubscriptionsView: View {
                     if cmp != .orderedSame { return cmp == .orderedAscending }
                     return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
                 }
+            }
+        case .mostUnplayed:
+            // Same definition as row badges / Inbox (`!isPlayed && !isArchived`; missing = 0).
+            let counts = store.unplayedCountsByFeedId()
+            return feeds.sorted { lhs, rhs in
+                let l = counts[lhs.id] ?? 0
+                let r = counts[rhs.id] ?? 0
+                if l != r { return l > r }
+                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
             }
         }
     }

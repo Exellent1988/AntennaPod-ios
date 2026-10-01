@@ -201,6 +201,8 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
     case alphabetical
     case byAuthor
     case byLanguage
+    /// Descending unplayed count (`!isPlayed && !isArchived` — same as badges / Inbox).
+    case mostUnplayed
 
     var id: String { rawValue }
 
@@ -210,6 +212,7 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
         case .alphabetical: return String(localized: "Alphabetical A–Z")
         case .byAuthor: return String(localized: "Author A–Z")
         case .byLanguage: return String(localized: "Language A–Z")
+        case .mostUnplayed: return String(localized: "Most unplayed")
         }
     }
 
@@ -219,6 +222,7 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
         case .alphabetical: return "textformat.abc"
         case .byAuthor: return "person"
         case .byLanguage: return "globe"
+        case .mostUnplayed: return "number"
         }
     }
 }
