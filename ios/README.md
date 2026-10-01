@@ -15,6 +15,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Mark played / unplayed (manual + smart-mark 30s)
 - Settings tab (theme light/dark/system, default playback speed)
 - OPML import/export (Settings + Subscriptions; share sheet / file picker; batch subscribe)
+- Download storage limit (Settings: usage + max size; auto-evict played first)
 
 ## Layout
 
@@ -42,7 +43,7 @@ See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
 
 ## Persistence
 
-Subscriptions, queue, and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `playback.json`). Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme and default playback speed live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`) and in-flight background task↔episode map (`pending-downloads.json`). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. GRDB/SQLite aligned with AntennaPod schema comes later.
+Subscriptions, queue, and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `playback.json`). Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme and default playback speed live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`) and in-flight background task↔episode map (`pending-downloads.json`). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
 
 ## OPML
 

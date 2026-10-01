@@ -19,6 +19,34 @@ struct PendingDownloadMapping: Codable, Hashable {
     var fileName: String
 }
 
+/// Snapshot of Documents/downloads size for Settings UI.
+struct DownloadStorageUsage: Equatable {
+    var usedBytes: Int64
+    var fileCount: Int
+    var limitBytes: Int64?
+
+    var isOverLimit: Bool {
+        guard let limitBytes else { return false }
+        return usedBytes > limitBytes
+    }
+
+    var usedFormatted: String {
+        Self.formatBytes(usedBytes)
+    }
+
+    var limitFormatted: String? {
+        guard let limitBytes else { return nil }
+        return Self.formatBytes(limitBytes)
+    }
+
+    static func formatBytes(_ bytes: Int64) -> String {
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useKB, .useMB, .useGB]
+        formatter.countStyle = .file
+        return formatter.string(fromByteCount: bytes)
+    }
+}
+
 @MainActor
 final class DownloadService: ObservableObject {
     static let backgroundSessionIdentifier = "de.danoeh.antennapod.ios.background-downloads"
@@ -33,6 +61,13 @@ final class DownloadService: ObservableObject {
     @Published var downloads: [DownloadedEpisode] = []
     @Published var inProgress: Set<String> = []
     @Published var lastError: String?
+    /// Last measured size of the downloads folder (refreshed on load / eviction / settings).
+    @Published private(set) var storageUsage = DownloadStorageUsage(usedBytes: 0, fileCount: 0, limitBytes: nil)
+
+    /// Bound from the app so eviction can prefer played episodes (AntennaPod-like).
+    weak var store: PodcastStore?
+    /// Bound for the configured byte budget.
+    weak var settings: AppSettings?
 
     private let sessionDelegate = DownloadSessionDelegate()
     private var session: URLSession!
@@ -59,6 +94,7 @@ final class DownloadService: ObservableObject {
 
         reloadFromDisk()
         reconnectOutstandingTasks()
+        refreshStorageUsage()
     }
 
     /// Called from `AppDelegate` when iOS relaunches / wakes the app for this background session.
@@ -119,6 +155,83 @@ final class DownloadService: ObservableObject {
             persistCompleted()
         }
         inProgress.remove(episode.id)
+        refreshStorageUsage()
+    }
+
+    /// Deletes every completed download (confirmation is UI responsibility). Cancels in-flight tasks.
+    func clearAllDownloads() {
+        let episodeIds = downloads.map(\.id)
+        for id in episodeIds {
+            cancelTask(for: id)
+        }
+        for item in downloads {
+            try? FileManager.default.removeItem(at: item.localFileURL)
+        }
+        downloads.removeAll()
+        persistCompleted()
+        refreshStorageUsage()
+    }
+
+    /// Recompute folder usage from disk + apply configured limit for the Settings display.
+    @discardableResult
+    func refreshStorageUsage() -> DownloadStorageUsage {
+        let limit = settings?.downloadStorageLimit.byteLimit
+        var total: Int64 = 0
+        var count = 0
+        let fm = FileManager.default
+        if let files = try? fm.contentsOfDirectory(
+            at: Self.downloadsDirectory,
+            includingPropertiesForKeys: [.fileSizeKey, .isRegularFileKey],
+            options: [.skipsHiddenFiles]
+        ) {
+            for url in files {
+                let values = try? url.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
+                guard values?.isRegularFile == true else { continue }
+                total += Int64(values?.fileSize ?? 0)
+                count += 1
+            }
+        }
+        let usage = DownloadStorageUsage(usedBytes: total, fileCount: count, limitBytes: limit)
+        storageUsage = usage
+        return usage
+    }
+
+    ///
+    /// Eviction policy (AntennaPod-like: prefer deleting played):
+    /// 1. While `usedBytes > limit`, delete downloaded episodes marked **played**, oldest file
+    ///    modification date first (proxy for “longest since kept / LRU among played”).
+    /// 2. If still over limit after all played files are gone, delete **unplayed** downloads
+    ///    oldest-mtime-first (LRU among remaining).
+    /// 3. Never deletes the episode currently in the catalog mid-write; skips missing files.
+    /// 4. Unlimited (`byteLimit == nil`) is a no-op.
+    ///
+    /// Called after successful downloads, on Settings open, and optionally at app launch.
+    @discardableResult
+    func enforceStorageLimit(keepEpisodeId: String? = nil) -> Int {
+        refreshStorageUsage()
+        guard let limit = settings?.downloadStorageLimit.byteLimit else {
+            return 0
+        }
+        var removed = 0
+        while storageUsage.usedBytes > limit {
+            guard let victim = nextEvictionCandidate(keeping: keepEpisodeId) else {
+                break
+            }
+            let sizeBefore = storageUsage.usedBytes
+            delete(victim.episode)
+            removed += 1
+            // Safety: if delete did not shrink usage, stop to avoid infinite loop.
+            if storageUsage.usedBytes >= sizeBefore {
+                break
+            }
+        }
+        return removed
+    }
+
+    /// App launch / Settings: refresh usage then evict if over budget.
+    func runStorageMaintenance() {
+        refreshStorageUsage()
+        _ = enforceStorageLimit()
     }
 
     // MARK: - Delegate callbacks (from DownloadSessionDelegate)
@@ -128,6 +241,9 @@ final class DownloadService: ObservableObject {
         downloads.removeAll { $0.id == item.id }
         downloads.append(item)
         persistCompleted()
+        refreshStorageUsage()
+        // Keep the episode we just finished; evict older/played peers if over budget.
+        _ = enforceStorageLimit(keepEpisodeId: episode.id)
     }
 
     fileprivate func handleTaskCompleted(taskIdentifier: Int, error: Error?) {
@@ -156,6 +272,27 @@ final class DownloadService: ObservableObject {
 
     fileprivate func reportError(_ message: String) {
         lastError = message
+    }
+
+    // MARK: - Eviction helpers
+
+    private func nextEvictionCandidate(keeping keepEpisodeId: String?) -> DownloadedEpisode? {
+        let candidates = downloads.filter { item in
+            if let keepEpisodeId, item.id == keepEpisodeId { return false }
+            return FileManager.default.fileExists(atPath: item.localFileURL.path)
+        }
+        guard !candidates.isEmpty else { return nil }
+
+        func mtime(_ item: DownloadedEpisode) -> Date {
+            let values = try? item.localFileURL.resourceValues(forKeys: [.contentModificationDateKey])
+            return values?.contentModificationDate ?? .distantPast
+        }
+
+        let played = candidates.filter { store?.isPlayed($0.id) == true }
+        if let oldestPlayed = played.min(by: { mtime($0) < mtime($1) }) {
+            return oldestPlayed
+        }
+        return candidates.min(by: { mtime($0) < mtime($1) })
     }
 
     // MARK: - Persistence / relaunch

@@ -23,7 +23,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs |
 | Miniplayer + Full Player | 5 | wip | Mini player only |
 | Video Player | 1 | todo | P4, bewusst nachrangig |
-| Settings | 5 | wip | Tab: theme + default speed (P0); more prefs later |
+| Settings | 5 | wip | Tab: theme + default speed + download storage limit (P0); more prefs later |
 
 ## Subscriptions
 
@@ -67,7 +67,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 |---------|---------|------------|---------|
 | Manual download / delete | 5 | done | Documents/downloads + JSON catalog (`downloads.json`) |
 | Offline Wiedergabe | 5 | done | Play from local file; catalog restored on launch |
-| Speicherverwaltung / Cache-Limit | 5 | todo | |
+| Speicherverwaltung / Cache-Limit | 5 | done | UserDefaults byte budget (unlimited / 1 / 5 / 10 GB / custom MB); usage in Settings; eviction: played oldest-mtime first then unplayed LRU; after DL + Settings open + launch; Clear downloads |
 | Auto-download (global + Regeln) | 4 | todo | Regeln in KMP |
 | Per-feed auto-download | 4 | todo | |
 | Auto-delete after play | 4 | todo | |
