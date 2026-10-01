@@ -62,6 +62,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Tags / Folders for subscriptions (side map `feed-tags.json`; manage on per-feed settings; Subscriptions filter chips + optional group-by-tag; untagged)
 - Unsubscribe confirm (Subscriptions trailing swipe + Feed detail ⋯; destructive dialog with podcast title; removes feed + feed-settings + tags + queue items from that feed + favorites/archive/playback history for its episodes; **keeps downloaded files**; local-folder releases bookmark; dismisses Feed detail after confirm)
 - Subscriptions list sort (toolbar: Recently updated default / Alphabetical A–Z; `subscriptionsSort` pref + backup; client-side only, no drag-reorder)
+- Refresh all on Subscriptions (toolbar **Refresh all** + pull-to-refresh → `PodcastStore.refreshAllFeeds()`; ProgressView while `isLoading`; disabled when empty / in flight; same keep-updated / network / auto-download path as Home, Inbox, and interval)
 - Feed episode list sort (Feed detail toolbar: Newest first default / Oldest first by `pubDateEpochMs`; global `feedEpisodeSort` + backup; Inbox/All Episodes unchanged)
 - Local folder feeds (beta; Add podcast → Folder via fileImporter; security-scoped bookmark; synthetic feed from mp3/m4a/aac/wav/flac; refresh re-scans; no RSS/network; Folder badge; unsubscribe releases bookmark)
 - OPML import/export (Settings + Subscriptions; share sheet / file picker; batch subscribe)
@@ -149,7 +150,7 @@ Available sections:
 - **Recently updated** — subscriptions sorted by newest episode `pubDateEpochMs`; tap → `FeedDetailView`; See all → Subscriptions. Hidden when empty.
 - **Favorites** (optional) — starred episodes preview; See all → Library Favorites. **Off by default**; enable under Home layout. Hidden when empty.
 
-Default order: Discover → Continue → Inbox → Queue → Recently updated → Favorites (hidden). Home layout supports toggles, Edit/drag reorder, and Reset to defaults. Pull-to-refresh calls `refreshAllFeeds()` (Discover preview reloads on appear / country change). Empty library shows a welcome empty state (and Discover when that section is enabled).
+Default order: Discover → Continue → Inbox → Queue → Recently updated → Favorites (hidden). Home layout supports toggles, Edit/drag reorder, and Reset to defaults. Pull-to-refresh calls `refreshAllFeeds()` (same as Inbox / Subscriptions pull + Subscriptions toolbar **Refresh all**; Discover preview reloads on appear / country change). Empty library shows a welcome empty state (and Discover when that section is enabled).
 
 
 ## Localization (German, beta / partial)
@@ -271,7 +272,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 
 | Screen | Leading | Trailing | Extra |
 |--------|---------|----------|-------|
-| Subscriptions | Refresh | Unsubscribe (confirm) | Destructive confirm shows podcast title; keeps downloads; no full-swipe |
+| Subscriptions | Refresh (per feed) | Unsubscribe (confirm) | Toolbar **Refresh all** + list pull-to-refresh → `refreshAllFeeds()` (disabled while `isLoading` / empty). Destructive Unsubscribe confirm shows podcast title; keeps downloads; no full-swipe |
 | Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`) when not filtering; `.searchable` title/feed; toolbar Clear queue (confirm, full queue) |
 | Downloads | — | Play Next + Add to queue + Delete download | — |
 | Inbox | Mark played | Play Next + Add to queue + Archive | Toolbar menu: Mark all as played (confirm) + Archive all |
@@ -420,7 +421,7 @@ Audio apps often appear on CarPlay through **system Now Playing** once they publ
 
 ## Feed refresh / Keep updated
 
-Settings → **Feeds / Keep updated** offers refresh presets: Manual only, Every 1 / 4 / 12 / 24 hours (persisted in `AppSettings`). When not manual, opening the app (launch `.task` or returning to foreground via `scenePhase`) calls `PodcastStore.refreshAllFeeds()` if the interval elapsed since `lastFeedRefreshAt` (also stamped after Inbox pull-to-refresh). Global interval still drives when auto refresh runs; per-feed **Keep updated → Never** skips that feed in `refreshAllFeeds` (single-feed refresh from Subscriptions still works). Use global / Always both participate today. **BGAppRefreshTask is stubbed**: `Info.plist` only has `UIBackgroundModes` → `audio` (no `fetch`, no `BGTaskSchedulerPermittedIdentifiers`), so `FeedRefreshCoordinator` does not register a background task — enable later by adding those keys.
+Settings → **Feeds / Keep updated** offers refresh presets: Manual only, Every 1 / 4 / 12 / 24 hours (persisted in `AppSettings`). When not manual, opening the app (launch `.task` or returning to foreground via `scenePhase`) calls `PodcastStore.refreshAllFeeds()` if the interval elapsed since `lastFeedRefreshAt` (also stamped after manual Refresh all / Home+Inbox+Subscriptions pull-to-refresh). **Subscriptions** toolbar **Refresh all** (and list pull-to-refresh) call the same `refreshAllFeeds()` — ProgressView while `store.isLoading`, disabled when empty or in flight. Global interval still drives when auto refresh runs; per-feed **Keep updated → Never** skips that feed in `refreshAllFeeds` (single-feed refresh from Subscriptions swipe still works). Use global / Always both participate today. **BGAppRefreshTask is stubbed**: `Info.plist` only has `UIBackgroundModes` → `audio` (no `fetch`, no `BGTaskSchedulerPermittedIdentifiers`), so `FeedRefreshCoordinator` does not register a background task — enable later by adding those keys.
 
 
 ## New-episode action (Inbox / Queue)

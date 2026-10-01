@@ -108,6 +108,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Queue: Suche (Titel / Feed; kein Reorder während Filter) | ☐ Queue: search (title / feed; no reorder while filtering) |
 | ☐ Subscriptions + Tags/Filter | ☐ Subscriptions + tags/filter |
 | ☐ Subscriptions: Sortierung (Zuletzt aktualisiert / Alphabetisch) | ☐ Subscriptions: sort (Recently updated / Alphabetical) |
+| ☐ Subscriptions: Alle aktualisieren (Toolbar + Pull; Progress während `isLoading`) | ☐ Subscriptions: Refresh all (toolbar + pull; progress while `isLoading`) |
 | ☐ Feed-Detail: Episoden-Sortierung (Neueste / Älteste zuerst) | ☐ Feed detail: episode sort (Newest / Oldest first) |
 | ☐ Feed-Detail: Suche (Episodentitel) | ☐ Feed detail: search (episode title) |
 | ☐ Library: Episodes (Filter All / Ungehört / Heruntergeladen) / History / Favorites / Archived / Statistics / Echo | ☐ Library: Episodes (filter All / Unplayed / Downloaded) / History / Favorites / Archived / Statistics / Echo |

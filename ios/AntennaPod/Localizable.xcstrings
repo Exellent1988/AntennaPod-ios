@@ -7871,6 +7871,23 @@
           }
         }
       }
+    },
+    "Refresh all": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh all"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle aktualisieren"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -203,7 +203,23 @@ struct SubscriptionsView: View {
             .navigationDestination(for: PodcastFeed.self) { feed in
                 FeedDetailView(feed: feed)
             }
+            .refreshable {
+                await store.refreshAllFeeds()
+            }
             .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        Task { await store.refreshAllFeeds() }
+                    } label: {
+                        if store.isLoading {
+                            ProgressView()
+                        } else {
+                            Image(systemName: "arrow.clockwise")
+                        }
+                    }
+                    .disabled(store.isLoading || store.feeds.isEmpty)
+                    .accessibilityLabel("Refresh all")
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         if parental.needsPINForAddDiscover {
@@ -294,7 +310,7 @@ struct SubscriptionsView: View {
             }
             .overlay {
                 if store.isLoading {
-                    ProgressView("Loading feed…")
+                    ProgressView("Refreshing feeds…")
                         .padding()
                         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
                 }
