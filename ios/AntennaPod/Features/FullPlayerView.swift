@@ -18,6 +18,7 @@ struct FullPlayerView: View {
     @State private var isLoadingRemoteChapters = false
     @State private var isLoadingMediaChapters = false
     @State private var showTranscript = false
+    @State private var showDescription = false
     @State private var showFeedUnavailable = false
     @State private var showCustomSleepTimer = false
     @State private var showJumpToPosition = false
@@ -134,6 +135,7 @@ struct FullPlayerView: View {
             remoteChapters = []
             mediaChapters = []
             showTranscript = false
+            showDescription = false
             Task { await loadChaptersIfNeeded() }
         }
         .onChange(of: settings.playVideoAsAudioOnly) { _, audioOnly in
@@ -151,6 +153,11 @@ struct FullPlayerView: View {
             if let episode = resolvedEpisode ?? episode {
                 TranscriptSheetView(episode: episode)
                     .environmentObject(playback)
+            }
+        }
+        .sheet(isPresented: $showDescription) {
+            if let episode = resolvedEpisode ?? episode {
+                EpisodeDescriptionSheetView(episode: episode)
             }
         }
         .alert(
@@ -229,6 +236,9 @@ struct FullPlayerView: View {
                     chaptersSection
                         .padding(.horizontal)
 
+                    descriptionButton
+                        .padding(.horizontal)
+
                     transcriptButton
                         .padding(.horizontal)
 
@@ -293,6 +303,27 @@ struct FullPlayerView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         // No chapters → hide section entirely (no empty placeholder).
+    }
+
+    @ViewBuilder
+    private var descriptionButton: some View {
+        let ep = resolvedEpisode ?? episode
+        if let ep {
+            Button {
+                showDescription = true
+            } label: {
+                Label("Shownotes", systemImage: "doc.text")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .padding(.top, 8)
+            .accessibilityLabel(String(localized: "Show shownotes"))
+            .accessibilityHint(
+                ep.hasDescriptionText
+                    ? String(localized: "Opens the episode description from the feed")
+                    : String(localized: "No description available for this episode")
+            )
+        }
     }
 
     @ViewBuilder

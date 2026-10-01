@@ -32,6 +32,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     var chapters: [PodcastChapter]
     /// Podcast Index `podcast:chapters` remote JSON URL (fetched lazily when needed).
     var podcastIndexChapterUrl: String?
+    /// Episode shownotes / description from RSS (`description` / `content:encoded` / Atom `summary` / `content`).
+    /// May contain HTML; UI strips tags to plain text for beta display.
+    var descriptionText: String?
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -75,7 +78,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         transcriptUrl: String? = nil,
         transcriptType: String? = nil,
         chapters: [PodcastChapter] = [],
-        podcastIndexChapterUrl: String? = nil
+        podcastIndexChapterUrl: String? = nil,
+        descriptionText: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -88,6 +92,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.transcriptType = transcriptType
         self.chapters = chapters
         self.podcastIndexChapterUrl = podcastIndexChapterUrl
+        self.descriptionText = descriptionText
     }
 
     init(from decoder: Decoder) throws {
@@ -103,6 +108,13 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         transcriptType = try c.decodeIfPresent(String.self, forKey: .transcriptType)
         chapters = try c.decodeIfPresent([PodcastChapter].self, forKey: .chapters) ?? []
         podcastIndexChapterUrl = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterUrl)
+        descriptionText = try c.decodeIfPresent(String.self, forKey: .descriptionText)
+    }
+
+    /// Non-empty shownotes / description from the feed (may still contain HTML).
+    var hasDescriptionText: Bool {
+        guard let descriptionText else { return false }
+        return !descriptionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 }
 

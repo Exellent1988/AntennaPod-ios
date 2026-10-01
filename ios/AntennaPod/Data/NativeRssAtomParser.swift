@@ -179,6 +179,15 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         currentText += string
     }
 
+    func parser(_ parser: XMLParser, foundCDATA CDATABlock: Data) {
+        // Many feeds put HTML shownotes in CDATA (esp. content:encoded).
+        if let s = String(data: CDATABlock, encoding: .utf8) {
+            currentText += s
+        } else if let s = String(data: CDATABlock, encoding: .isoLatin1) {
+            currentText += s
+        }
+    }
+
     func parser(
         _ parser: XMLParser,
         didEndElement elementName: String,
@@ -201,8 +210,12 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             case "pubdate", "published", "updated":
                 itemPubDate = text
             case "description", "summary", "content", "subtitle":
-                if itemDescription == nil, !text.isEmpty {
-                    itemDescription = text
+                // Prefer longer text so content:encoded / Atom content wins over short description.
+                if !text.isEmpty {
+                    let prev = itemDescription ?? ""
+                    if text.count > prev.count {
+                        itemDescription = text
+                    }
                 }
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
@@ -217,7 +230,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     transcriptUrl: transcriptUrl,
                     transcriptType: transcriptType,
                     chapters: sorted,
-                    podcastIndexChapterUrl: podcastIndexChapterUrl
+                    podcastIndexChapterUrl: podcastIndexChapterUrl,
+                    descriptionText: itemDescription
                 )
                 episodes.append(episode)
                 inItem = false

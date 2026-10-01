@@ -12,7 +12,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Online feed preview (before subscribe: discovery rows + Feed URL → Preview via FeedRepository; episode count + first titles; Confirm Subscribe / Cancel; already subscribed → Open feed)
 - Episode list
 - Stream playback (AVPlayer, speed tap-cycle presets + long-press menu, configurable skip intervals)
-- Full player sheet (artwork or video surface, scrubber, **Jump to position** (mm:ss / min+sec → seek), transport; tap mini player to open; **Open podcast** → dismiss → Subscriptions Feed detail; orphan → disabled / unavailable alert; mini ⋯ menu same)
+- Full player sheet (artwork or video surface, scrubber, **Jump to position** (mm:ss / min+sec → seek), transport, **Shownotes** (plain text / HTML stripped); tap mini player to open; **Open podcast** → dismiss → Subscriptions Feed detail; orphan → disabled / unavailable alert; mini ⋯ menu same)
 - Video player (beta lite; MIME video/* or mp4/m4v/mov/webm → AVPlayerLayer in full player; PiP beta lite)
 - Video → audio only (Settings + full-player toggle; default off; Lockscreen stays audio)
 - Volume adaptation (Settings; default off; iOS AVAudioSession spokenAudio / speech optimize — not Android loudness gain)
@@ -21,6 +21,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Keep screen on while playing (Settings; default off; `isIdleTimerDisabled` only — no Low Power Mode override / brightness; PiP/background audio unchanged)
 - Chapters (PSC / Podcast Index from feed + media-file QuickTime/MP4 tags on local files; list in full player; tap to seek)
 - Transcripts (beta; feed `podcast:transcript` URL only — fetch VTT/SRT/JSON, scrollable sheet, tap cue seek; no Whisper/STT)
+- Episode description / Shownotes (beta; RSS `description`/`content:encoded` → `descriptionText`; full player + EpisodeRow context sheet; plain text, HTML stripped; empty state; refresh to populate existing feeds)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip/seek using Settings intervals)
 - CarPlay (honest partial: system Now Playing / remotes + background audio; **no** custom CPTemplate / CarPlay entitlement)
 - Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
@@ -74,7 +75,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Favorites search (`.searchable`; filter by episode title and/or feed title; light debounce; empty query = all; empty state when no matches; **Clear favorites still clears full favorites list** — count in confirm is always full list; enabled whenever favorites non-empty even if filter shows no rows)
 - History search (`.searchable`; filter by episode title and/or feed title; light debounce; empty query = all; empty state when no matches; **Clear history still clears full history list** — count in confirm is always full list; enabled whenever history non-empty even if filter shows no rows)
 - Archived search (`.searchable`; filter by episode title and/or feed title; light debounce; empty query = all; empty state when no matches; **Restore all still restores full archived list** — count in confirm is always full list; enabled whenever archived non-empty even if filter shows no rows; does not mark unplayed or delete downloads)
-- Feed detail search (`.searchable`; filter by episode title; light debounce ~250 ms; empty query = sorted full list; empty state when no matches; respects Newest/Oldest sort on the filtered set; episode model has no description — title only; **Download all / Mark all as played still use full-feed eligibility counts** — not the filtered subset)
+- Feed detail search (`.searchable`; filter by episode title; light debounce ~250 ms; empty query = sorted full list; empty state when no matches; respects Newest/Oldest sort on the filtered set; title + optional `descriptionText`; **Download all / Mark all as played still use full-feed eligibility counts** — not the filtered subset)
 - Download log / errors (ring buffer in Application Support; Downloads banner + errors list; Clear errors)
 - Notify on download / sync errors (local UserNotifications; Settings toggles default on; DL tap → Downloads; Sync tap → Settings Sync; no push)
 - Parental controls (beta; Settings → Parental controls; 4–6 digit PIN in Keychain; lock Add/Discover; optional Network/Downloads lock + hide explicit charts; session unlock until background)
@@ -165,7 +166,7 @@ SwiftUI `Text` / `Label` / `Button` / `navigationTitle` / `Section` / `Toggle` s
 - Home section labels (layout toggles + Home headers): Continue listening, New / Inbox, Queue, Discover, Recently updated, Favorites
 - Backup / Sync: section labels, primary Backup buttons, Sync form field labels (Host / Username / Password / Device / Login / Sync now), notification toggles
 - Download errors: banner title, Errors list title/empty, clear confirmation
-- Full player: Chapters / Transcript sheet titles + loading / unavailable copy
+- Full player: Chapters / Transcript / Shownotes sheet titles + loading / unavailable / empty copy
 - Local notifications: Download failed, Sync failed, “N new episodes”
 - Settings footnotes / help captions: Playback (speed, skip, video-as-audio, volume adaptation, skip silence, Stereo to mono, keep screen on, continuous playback, playback source), Feeds / Keep updated, Auto-download, Network / Downloads, Notifications, Downloads / Storage, Discovery, Sync provider blurbs, Backup help + media captions, Home layout footer, App Store rating / Siri / Widget / Watch / CarPlay notes
 - Parental controls detail: enable/options help, PIN sheet copy, lock status, common PIN errors
@@ -390,6 +391,14 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 - **Full player:** **Transcript** button appears when `hasTranscriptURL`. Opens a sheet that fetches the remote file (`TranscriptService`), best-effort parses JSON / WebVTT / SRT into timed cues (plain-text fallback if cues cannot be parsed). Tap a cue to **seek**; current cue highlight follows playback. Footer notes feed-URL-only honesty.
 - **Cache:** in-memory map (small cap) plus light Caches/`transcripts/` JSON files for the session — not a durable offline library.
 
+## Episode description / Shownotes (beta)
+
+- **Parse:** `NativeRssAtomParser` stores item `description` / `summary` / `content` / `subtitle` (prefer longer; CDATA supported) as `PodcastEpisode.descriptionText`. Populated on subscribe / refresh (existing subscriptions need a refresh).
+- **Full player:** **Shownotes** button opens a sheet with scrollable **plain text** (`HTMLTextStripping` — tags removed; not a rich HTML renderer). Empty state when missing / blank after strip.
+- **Episode row:** context menu **Shownotes** (same sheet).
+- **Search:** Feed detail + library episode hits also match `descriptionText` (raw feed text).
+
+
 ## Headset / Bluetooth pause
 
 `PlaybackService` observes `AVAudioSession` interruption notifications (pause on began; resume on ended when `shouldResume`) and route changes (pause when the old output is unavailable — headphones unplugged). Bluetooth headset play/pause buttons stay on `MPRemoteCommandCenter` / Now Playing; interruption handling only pauses or resumes `AVPlayer` and refreshes Now Playing info.
@@ -431,7 +440,7 @@ Settings → **Feeds / Keep updated → New episodes**: **Inbox only** (default)
 
 **Episode sort (Feed detail):** toolbar **Sort** menu — **Newest first** (default) or **Oldest first** by `pubDateEpochMs`. Global preference `AppSettings.feedEpisodeSort` (UserDefaults + JSON backup); **not** per-feed (simpler than Android’s per-podcast sort). Missing dates sort last. Applies only to the Feed detail episode list — **Inbox** and **All Episodes** keep their fixed newest-first ordering.
 
-**Search (Feed detail):** `.searchable` (~250 ms debounce) filters episodes by **title** (episode model has no description field). Empty query shows the full list under the current sort; empty state when nothing matches. Swipes, Play Next, gear, and sort menu stay available. Toolbar **Download all** / **Mark all as played** confirmations still use **full-feed** eligibility counts (`downloadAllCandidates` / `markAllPlayedCandidates` on the live feed), not the filtered subset — same honesty as Clear queue / Clear favorites / Restore all.
+**Search (Feed detail):** `.searchable` (~250 ms debounce) filters episodes by **title** and optional **`descriptionText`**. Empty query shows the full list under the current sort; empty state when nothing matches. Swipes, Play Next, gear, and sort menu stay available. Toolbar **Download all** / **Mark all as played** confirmations still use **full-feed** eligibility counts (`downloadAllCandidates` / `markAllPlayedCandidates` on the live feed), not the filtered subset — same honesty as Clear queue / Clear favorites / Restore all.
 
 Settings → **Auto-download**: global on/off (default off) and **Episodes per feed** cap (1 / 2 / 3 / 5, default 2). **Wi‑Fi only** for auto-download lives under **Network / Downloads** (default on). After every feed refresh (`refreshAllFeeds`, single-podcast refresh, Inbox pull-to-refresh, Keep updated), `AutoDownloadCoordinator` picks the newest unplayed episodes that are not already downloaded or in-flight and enqueues them through `DownloadService.download` (`.automatic` source skips the manual Wi‑Fi gate). Storage-limit eviction after successful downloads is unchanged. **Per-feed** Auto-download (Use global / Always / Never) is on each podcast’s settings sheet (Feed detail → gear); Always enqueues even when global is off; Never skips that feed; episode cap and Wi‑Fi-only remain global.
 

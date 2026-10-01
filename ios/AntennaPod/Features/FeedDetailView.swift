@@ -47,12 +47,15 @@ struct FeedDetailView: View {
     }
 
     /// Visible episodes after search; empty query shows the full sorted list.
-    /// Episode model has no description field — title only (cheap).
+    /// Matches title and optional episode descriptionText (raw feed text / HTML).
     private var filteredEpisodes: [PodcastEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base = sortedEpisodes
         if q.isEmpty { return base }
-        return base.filter { $0.title.localizedCaseInsensitiveContains(q) }
+        return base.filter {
+            $0.title.localizedCaseInsensitiveContains(q)
+                || ($0.descriptionText?.localizedCaseInsensitiveContains(q) ?? false)
+        }
     }
 
     /// Unplayed, not archived, not downloaded — newest first, soft-capped.
@@ -333,6 +336,8 @@ struct EpisodeRow: View {
     var dateOverride: Date? = nil
     var dateAccessibilityLabel: String? = nil
 
+    @State private var showDescription = false
+
     private var state: EpisodePlaybackState {
         store.playbackState(for: episode.id)
     }
@@ -511,6 +516,14 @@ struct EpisodeRow: View {
             } label: {
                 Label("Add to queue", systemImage: "text.append")
             }
+            Button {
+                showDescription = true
+            } label: {
+                Label("Shownotes", systemImage: "doc.text")
+            }
+        }
+        .sheet(isPresented: $showDescription) {
+            EpisodeDescriptionSheetView(episode: episode)
         }
     }
 

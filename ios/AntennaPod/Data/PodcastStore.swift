@@ -1035,7 +1035,8 @@ final class PodcastStore: ObservableObject {
         guard !q.isEmpty else { return [] }
         var hits: [LibraryEpisodeHit] = []
         for feed in feeds {
-            for episode in feed.episodes where Self.matches(episode.title, query: q) {
+            for episode in feed.episodes where Self.matches(episode.title, query: q)
+                || Self.matches(episode.descriptionText, query: q) {
                 hits.append(
                     LibraryEpisodeHit(
                         episode: episode,
