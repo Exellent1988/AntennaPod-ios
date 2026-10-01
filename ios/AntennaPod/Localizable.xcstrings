@@ -11362,6 +11362,24 @@
           }
         }
       }
+    },
+    "History remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for History info bar (episode count + remaining duration over visible sort+search list; played→0).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Verlaufszeit %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

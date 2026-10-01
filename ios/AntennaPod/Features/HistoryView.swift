@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HistoryView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var settings: AppSettings
 
     @State private var searchText = ""
@@ -20,6 +21,7 @@ struct HistoryView: View {
     /// Sort key: `HistoryEpisode.lastPlayedAtEpochMs` (`lastPlayedAt`, else `updatedAt` from playback state).
     /// Empty query shows the full list; sort applies to search-filtered results too.
     /// Does not mutate `PodcastStore.historyEpisodes` (Home Continue / Clear history stay newest-first catalog).
+    /// Respects history size limit catalog as-is (store already trimmed).
     private var filteredItems: [HistoryEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base = items
@@ -48,8 +50,117 @@ struct HistoryView: View {
         }
     }
 
+    /// AntennaPod-like info bar: episode count + remaining over the **visible** History list
+    /// (sort + searchable filter). Remaining per episode = `max(0, duration − position)` when
+    /// duration known; unplayed with duration contributes full duration; **played** (not current)
+    /// → 0 (History is mostly played / in-progress — low totals are expected and correct; still
+    /// useful for in-progress); **unknown duration skipped** (tilde when any skipped). Currently
+    /// playing uses live `PlaybackService` position/duration. Wall-clock only (no playback-speed
+    /// divide). Distinct from Clear history count (always full catalog). Respects history size
+    /// limit catalog as-is — never invents beyond the store-trimmed set.
+    private var historyRemainingInfoLabel: String? {
+        guard !filteredItems.isEmpty else { return nil }
+        let summary = historyRemainingSummary
+        let episodesWord: String
+        if summary.episodeCount == 1 {
+            episodesWord = String(localized: "1 episode")
+        } else {
+            episodesWord = String(localized: "\(summary.episodeCount) episodes")
+        }
+        // All durations unknown — show count only (no invented time).
+        guard summary.knownCount > 0 else {
+            return episodesWord
+        }
+        let formatted = StatisticsView.formatDuration(summary.remainingSeconds)
+        let timePart: String
+        if summary.unknownCount > 0 {
+            timePart = String(localized: "~\(formatted)")
+        } else {
+            timePart = formatted
+        }
+        return String(localized: "\(episodesWord) • \(timePart) left")
+    }
+
+    private var historyRemainingAccessibilityLabel: String {
+        guard let label = historyRemainingInfoLabel else { return "" }
+        var parts = [String(localized: "History remaining time \(label)")]
+        let unknown = historyRemainingSummary.unknownCount
+        if unknown > 0 {
+            parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
+        }
+        return parts.joined(separator: ". ")
+    }
+
+    private var historyRemainingSummary: HistoryRemainingSummary {
+        var remaining = 0.0
+        var known = 0
+        var unknown = 0
+        for item in filteredItems {
+            let episode = item.episode
+            guard let duration = knownDurationSeconds(for: episode) else {
+                unknown += 1
+                continue
+            }
+            known += 1
+            // Mark-played clears position; do not count full duration as still left
+            // (unless this is the live current episode — use live position instead).
+            // History honesty: played (not current) → 0 remaining is correct.
+            if store.isPlayed(episode.id), playback.currentEpisode?.id != episode.id {
+                continue
+            }
+            let position = positionSeconds(for: episode)
+            remaining += max(0, duration - position)
+        }
+        return HistoryRemainingSummary(
+            episodeCount: filteredItems.count,
+            remainingSeconds: remaining,
+            knownCount: known,
+            unknownCount: unknown
+        )
+    }
+
+    /// Prefer live player duration when this episode is current; else feed `itunes:duration` /
+    /// media; else saved playback duration. Never invents a length.
+    private func knownDurationSeconds(for episode: PodcastEpisode) -> Double? {
+        if playback.currentEpisode?.id == episode.id {
+            let live = playback.durationSeconds
+            if live.isFinite, live > 0 { return live }
+        }
+        if episode.hasKnownDuration {
+            return episode.durationSeconds
+        }
+        let saved = store.playbackState(for: episode.id).durationSeconds
+        if saved.isFinite, saved > 0 { return saved }
+        return nil
+    }
+
+    /// Live player position when current; else saved progress (`0` when unplayed / cleared).
+    private func positionSeconds(for episode: PodcastEpisode) -> Double {
+        if playback.currentEpisode?.id == episode.id {
+            let live = playback.positionSeconds
+            return live.isFinite ? max(0, live) : 0
+        }
+        return max(0, store.positionSeconds(for: episode.id))
+    }
+
     var body: some View {
         List {
+            // AntennaPod-like history info bar (visible sorted+filtered list remaining time).
+            // Hidden when catalog empty or search matches nothing — not full-catalog Clear count.
+            // Played (not current) → 0; totals may often be low — still useful for in-progress.
+            if let remainingLabel = historyRemainingInfoLabel {
+                Section {
+                    Text(remainingLabel)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(historyRemainingAccessibilityLabel)
+                }
+                .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            }
+
             if items.isEmpty {
                 ContentUnavailableView(
                     "No history yet",
@@ -173,4 +284,12 @@ struct HistoryView: View {
             debouncedQuery = trimmed
         }
     }
+}
+
+/// Sum of remaining seconds over the visible History list (sort + searchable filter).
+private struct HistoryRemainingSummary {
+    var episodeCount: Int
+    var remainingSeconds: Double
+    var knownCount: Int
+    var unknownCount: Int
 }
