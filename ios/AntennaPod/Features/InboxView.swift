@@ -2,6 +2,7 @@ import SwiftUI
 
 struct InboxView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var playback: PlaybackService
 
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -32,7 +33,22 @@ struct InboxView: View {
                 } else {
                     ForEach(items) { item in
                         EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button {
+                                    store.playNext(
+                                        item.episode,
+                                        currentlyPlayingId: playback.currentEpisode?.id
+                                    )
+                                } label: {
+                                    Label("Play Next", systemImage: "text.insert")
+                                }
+                                .tint(.teal)
+                                Button {
+                                    store.enqueue(item.episode)
+                                } label: {
+                                    Label("Add to queue", systemImage: "text.append")
+                                }
+                                .tint(.purple)
                                 Button {
                                     store.archive(item.episode.id)
                                 } label: {

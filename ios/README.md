@@ -29,7 +29,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
 - German localization (beta; String Catalog `Localizable.xcstrings` en+de; tabs/nav, Settings headers, Discovery chrome, library empty states, download errors, Sync labels, notification titles, Chapters/Transcript — **partial**, not full i18n)
 - Accessibility / VoiceOver (beta polish; EpisodeRow combined labels + action button labels; mini/full player transport; tab Labels; Settings toggle hints — not a full audit)
-- Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played; toolbar menu Archive all + Mark all as played with confirm)
+- Inbox tab (unplayed, non-archived across subscriptions; pull-to-refresh; swipe Archive + Mark played + Play Next + Add to queue; toolbar menu Archive all + Mark all as played with confirm)
 - History (played / in-progress; Subscriptions → Library → History; newest last-played first; toolbar Clear history with confirm)
 - Statistics (beta; Subscriptions → Library → Statistics + Settings; totals + top podcasts from `playback.json`; approx time)
 - Echo / Year in Review (beta lite; Library + Settings; current calendar year from playback/favorites; ShareLink text)
@@ -38,7 +38,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Siri Shortcuts lite (App Intents Play/Pause / Skip forward/back + `antennapod://` URL schemes; opens app; needs current episode)
 - Homescreen widget (beta lite; WidgetKit Continue listening from App Group snapshot; tap → `antennapod://play`; empty placeholder; may be stale / no scrubber)
 - Apple Watch companion (beta lite; watchOS Continue listening from same snapshot via WC push; Play → iPhone `antennapod://play`; empty state; no independent playback / downloads / queue)
-- Swipe actions (Queue Remove+Archive + drag reorder + Clear queue confirm; Downloads Delete; Inbox/Feed/History(+ Clear history confirm)/Favorites/Archived/All Episodes useful swipes)
+- Swipe actions (Queue Remove+Archive + drag reorder + Clear queue confirm; Downloads Delete; Inbox Archive+Mark played+Play Next+Add to queue; Feed/History(+ Clear history confirm)/Favorites/Archived/All Episodes useful swipes)
 - Favorites / starred episodes (Subscriptions → Library → Favorites; optional Home preview via Home layout; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; auto-delete skips favorites)
 - Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived; bulk Archive all + Mark all as played in Inbox)
 - Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500; searchable title/feed filter; EpisodeRow actions; swipe Archive + Mark played)
@@ -174,7 +174,7 @@ Honest limits: not every screen/control audited; no custom rotor / reduce-motion
 
 **Queue** tab lists enqueued episodes (JSON under Application Support). Swipe trailing **Remove**, leading **Archive**. **Edit** enables drag reorder via `PodcastStore.moveQueue(from:to:)` (persists with `queue.json`). Continuous playback still advances with `nextQueueEpisode`.
 
-**Add to Queue** (`PodcastStore.enqueue`) appends if absent. **Play Next** (`PodcastStore.playNext(_:currentlyPlayingId:)`) moves/inserts immediately after the currently playing queue item, or at the **head** when nothing is playing / the current episode is not in the queue — so auto-next after finish still hits that head item (honest: same as today’s append semantics when current is not queued). Entry points: EpisodeRow context menu, Feed detail swipe, full player (alongside Queue).
+**Add to Queue** (`PodcastStore.enqueue`) appends if absent. **Play Next** (`PodcastStore.playNext(_:currentlyPlayingId:)`) moves/inserts immediately after the currently playing queue item, or at the **head** when nothing is playing / the current episode is not in the queue — so auto-next after finish still hits that head item (honest: same as today’s append semantics when current is not queued). Entry points: EpisodeRow context menu, Feed detail swipe, Inbox swipe, full player (alongside Queue).
 
 ## Library search
 
@@ -251,7 +251,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 |--------|---------|----------|-------|
 | Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`); toolbar Clear queue (confirm) |
 | Downloads | — | Delete download | — |
-| Inbox | Mark played | Archive | Toolbar menu: Mark all as played (confirm) + Archive all |
+| Inbox | Mark played | Play Next + Add to queue + Archive | Toolbar menu: Mark all as played (confirm) + Archive all |
 | Feed detail | Archive / Restore | Play Next + Queue + Share | Toolbar Download all + Mark all as played (confirm) + EpisodeRow context: Play Next + Add to queue |
 | History | Mark unplayed (if played) | Remove playback state | Toolbar Clear history (confirm) |
 | Favorites | Archive | Unfavorite | — |
