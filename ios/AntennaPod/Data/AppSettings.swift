@@ -388,6 +388,24 @@ enum DownloadsFilter: String, CaseIterable, Identifiable {
     }
 }
 
+/// Filter chips on Queue tab. Uses PodcastStore.isPlayed on queued episodes
+/// (archive ignored — same honesty as Downloads; queue can still hold archived items).
+enum QueueFilter: String, CaseIterable, Identifiable {
+    case all
+    case unplayed
+    case played
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .all: return String(localized: "All")
+        case .unplayed: return String(localized: "Unplayed")
+        case .played: return String(localized: "Played")
+        }
+    }
+}
+
 /// Filter chips on Library → Episodes (All Episodes). Applied after the newest-500 soft cap.
 enum AllEpisodesFilter: String, CaseIterable, Identifiable {
     case all
@@ -449,7 +467,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     static let defaultHidden: Set<HomeSectionId> = [.favorites]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, Inbox sort, Downloads sort, History sort, Favorites sort, Archived sort, All Episodes filter chips, Downloads filter chips, Feed detail episode filter chips, queue lock).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, Inbox sort, Downloads sort, History sort, Favorites sort, Archived sort, All Episodes filter chips, Downloads filter chips, Feed detail episode filter chips, Queue filter chips, queue lock).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -532,6 +550,7 @@ final class AppSettings: ObservableObject {
         static let archivedSort = "settings.archivedSort"
         static let allEpisodesFilter = "settings.allEpisodesFilter"
         static let queueLocked = "settings.queueLocked"
+        static let queueFilter = "settings.queueFilter"
     }
 
     private enum Kind: String {
@@ -891,6 +910,16 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Queue tab chip filter (All / Unplayed / Played via PodcastStore.isPlayed). Default All. Persisted.
+    /// Applied before `.searchable`. Chip ≠ All (or non-empty search) disables Edit/`.onMove` like search alone —
+    /// filtered indices would not map to the persisted queue. Move to top/bottom still uses episode id → full queue.
+    /// Clear queue / Play Next stay full-queue scoped.
+    @Published var queueFilter: QueueFilter {
+        didSet {
+            UserDefaults.standard.set(queueFilter.rawValue, forKey: Keys.queueFilter)
+        }
+    }
+
     /// Visible sections in display order (hidden filtered out).
     var visibleHomeSections: [HomeSectionId] {
         homeSectionOrder.filter { !homeHiddenSections.contains($0) }
@@ -1102,6 +1131,9 @@ final class AppSettings: ObservableObject {
             // Default unlocked (Android prefQueueLocked default false).
             queueLocked = false
         }
+        let queueFilterRaw = UserDefaults.standard.string(forKey: Keys.queueFilter)
+            ?? QueueFilter.all.rawValue
+        queueFilter = QueueFilter(rawValue: queueFilterRaw) ?? .all
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh
@@ -1320,7 +1352,8 @@ final class AppSettings: ObservableObject {
             favoritesSort: favoritesSort.rawValue,
             archivedSort: archivedSort.rawValue,
             allEpisodesFilter: allEpisodesFilter.rawValue,
-            queueLocked: queueLocked
+            queueLocked: queueLocked,
+            queueFilter: queueFilter.rawValue
         )
     }
 
@@ -1440,6 +1473,9 @@ final class AppSettings: ObservableObject {
             allEpisodesFilter = AllEpisodesFilter(rawValue: filterRaw) ?? .all
         }
         queueLocked = snap.queueLocked ?? false
+        if let queueFilterRaw = snap.queueFilter {
+            queueFilter = QueueFilter(rawValue: queueFilterRaw) ?? .all
+        }
     }
 }
 
@@ -1514,4 +1550,6 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var allEpisodesFilter: String? = nil
     /// Absent in older backups → unlocked (false).
     var queueLocked: Bool? = false
+    /// Absent in older backups → all (default).
+    var queueFilter: String? = nil
 }

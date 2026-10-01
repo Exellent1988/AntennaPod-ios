@@ -9248,6 +9248,40 @@
           }
         }
       }
+    },
+    "Filters the Queue list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Queue list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Warteschlangen-Liste"
+          }
+        }
+      }
+    },
+    "No queue episodes match your filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No queue episodes match your filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Warteschlangen-Episoden passen zu deinem Filter."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

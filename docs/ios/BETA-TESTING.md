@@ -120,6 +120,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Queue: Suche (Titel / Feed; kein Reorder während Filter) | ☐ Queue: search (title / feed; no reorder while filtering) |
 | ☐ Queue: An Anfang / Ans Ende (Kontextmenü; ausgeblendet wenn erste/letzte/nicht in Queue) | ☐ Queue: Move to top / bottom (context menu; hide if first/last/not queued) |
 | ☐ Queue: Sperre (Toolbar + Settings; kein Reorder / An Anfang-Ende; Einreihen / Als Nächstes / Entfernen / Leeren bleiben) | ☐ Queue: lock (toolbar + Settings; no reorder / Move to top-bottom; enqueue / Play Next / Remove / Clear still work) |
+| ☐ Queue: Filterchips Alle / Ungehört / Gehört (persistiert; kein Reorder während Filter; Clear bleibt full-queue) | ☐ Queue: filter chips All / Unplayed / Played (persisted; no reorder while filtering; Clear stays full-queue) |
 | ☐ Subscriptions + Tags/Filter | ☐ Subscriptions + tags/filter |
 | ☐ Subscriptions: Suche (Titel / Beschreibung; Sort bleibt) | ☐ Subscriptions: search (title / description; sort preserved) |
 | ☐ Subscriptions: Sortierung (Zuletzt aktualisiert / Alphabetisch) | ☐ Subscriptions: sort (Recently updated / Alphabetical) |
@@ -199,6 +200,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Stereo to mono: best-effort `setPreferredOutputNumberOfChannels(1)`; route may ignore; not ExoPlayer remix; AVPlayer kept.
 - Keep screen on: nur Idle-Timer (`isIdleTimerDisabled`); kein Low-Power-Override / keine Helligkeit; PiP/Hintergrund-Audio unverändert.  
   Keep screen on: idle timer only; no Low Power Mode override / no brightness; PiP/background audio unchanged.
+- Queue played filter: Chips **Alle** / **Ungehört** / **Gehört** via `isPlayed` (nicht archive-aware); persistiert `AppSettings.queueFilter` (Default Alle). Pipeline Chip → Suche. Edit/Ziehen-Reorder aus bei Chip ≠ Alle oder Suche (wie Suche allein); Move to top/bottom bleibt id-basiert wenn entsperrt; **Clear queue** bleibt full-queue.
+  Queue played filter: chips **All** / **Unplayed** / **Played** via `isPlayed` (not archive-aware); persists `AppSettings.queueFilter` (default All). Pipeline chip → search. Edit/drag reorder off when chip ≠ All or search active (same as search alone); Move to top/bottom stays id-based when unlocked; **Clear queue** stays full-queue.
 - Queue lock: Toolbar Lock/Unlock (`lock.fill` / `lock.open`) + Settings → Queue Toggle; persistiert `AppSettings.queueLocked` (Default aus). Gesperrt = kein Edit/Ziehen-Reorder und kein Move to top/bottom; **Einreihen / Play Next / Remove / Archive-Swipe / Clear queue bleiben** (nur Reihenfolge-Sperre, wie Android `prefQueueLocked`).
   Queue lock: toolbar Lock/Unlock (`lock.fill` / `lock.open`) + Settings → Queue toggle; persists `AppSettings.queueLocked` (default off). Locked = no Edit/drag reorder and no Move to top/bottom; **enqueue / Play Next / Remove / Archive swipe / Clear queue still work** (reorder lock only, mirrors Android `prefQueueLocked`).
 - Continuous playback: Toggle Standard **an**; aus = Episode-Ende ohne Queue-Advance (Mark played / Progress bleiben); Sleep-Timer Ende der Episode stoppt weiterhin ohne Advance.  

@@ -14,9 +14,11 @@ struct QueueView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
-    /// Non-empty debounced query — reorder is disabled while filtering (indices would not map to the full queue).
+    /// Chip ≠ All or non-empty search — Edit/`.onMove` disabled (filtered IndexSet ≠ full queue).
+    /// EpisodeRow Move to top/bottom still uses episode id → full-queue indices (safe while filtering).
     private var isFiltering: Bool {
-        !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        settings.queueFilter != .all
+            || !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// Drag / Edit reorder allowed only when unlocked and not filtering.
@@ -24,10 +26,19 @@ struct QueueView: View {
         !settings.queueLocked && !isFiltering
     }
 
-    /// Visible queue rows; empty query shows the full queue order.
+    /// Visible queue rows: chip (`isPlayed`) → search. Empty query shows the chip-filtered queue order.
+    /// Clear queue / Play Next stay full-queue scoped (not the visible subset).
     private var filteredQueue: [PodcastEpisode] {
+        var base = store.queue
+        switch settings.queueFilter {
+        case .all:
+            break
+        case .unplayed:
+            base = base.filter { !store.isPlayed($0.id) }
+        case .played:
+            base = base.filter { store.isPlayed($0.id) }
+        }
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-        let base = store.queue
         if q.isEmpty { return base }
         return base.filter { episode in
             if episode.title.localizedCaseInsensitiveContains(q) { return true }
@@ -39,6 +50,23 @@ struct QueueView: View {
     var body: some View {
         NavigationStack {
             List {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(QueueFilter.allCases) { chip in
+                                QueueFilterChip(
+                                    title: chip.label,
+                                    selected: settings.queueFilter == chip
+                                ) {
+                                    settings.queueFilter = chip
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                }
+
                 if store.queue.isEmpty {
                     ContentUnavailableView(
                         "Queue empty",
@@ -49,11 +77,15 @@ struct QueueView: View {
                                 : String(localized: "Add episodes from a podcast feed. Edit mode lets you drag to reorder.")
                         )
                     )
-                } else if isFiltering && filteredQueue.isEmpty {
+                } else if filteredQueue.isEmpty {
                     ContentUnavailableView(
                         "No matching queue episodes",
                         systemImage: "magnifyingglass",
-                        description: Text("No queue episodes match your search.")
+                        description: Text(
+                            isFiltering
+                                ? String(localized: "No queue episodes match your filter.")
+                                : String(localized: "No queue episodes match your search.")
+                        )
                     )
                 } else {
                     ForEach(filteredQueue) { episode in
@@ -78,6 +110,7 @@ struct QueueView: View {
                         }
                     }
                     .onMove(perform: canReorder ? { source, destination in
+                        // Indices are only valid when the list shows the full queue (All + empty search).
                         store.moveQueue(from: source, to: destination)
                     } : nil)
                 }
@@ -88,7 +121,7 @@ struct QueueView: View {
                 scheduleFilter(for: newValue)
             }
             .onChange(of: isFiltering) { _, filtering in
-                // Drag reorder uses full-queue indices; leave Edit while a filter is active.
+                // Drag reorder uses full-queue indices; leave Edit while a chip/search filter is active.
                 if filtering {
                     editMode?.wrappedValue = .inactive
                 }
@@ -173,5 +206,27 @@ struct QueueView: View {
             guard !Task.isCancelled else { return }
             debouncedQuery = trimmed
         }
+    }
+}
+
+/// Filter chip for Queue All / Unplayed / Played (mirrors Downloads / Feed detail).
+private struct QueueFilterChip: View {
+    let title: String
+    let selected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline.weight(selected ? .semibold : .regular))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(selected ? Color.accentColor : Color.secondary.opacity(0.15), in: Capsule())
+                .foregroundStyle(selected ? Color.white : Color.primary)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(String(localized: "Filters the Queue list"))
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }
