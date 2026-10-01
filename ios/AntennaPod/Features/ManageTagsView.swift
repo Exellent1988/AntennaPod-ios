@@ -2,6 +2,9 @@ import SwiftUI
 
 /// Global tag vocabulary manager: list tags with podcast counts, rename, and delete
 /// (removes the label from feeds; does not unsubscribe). Uses `feed-tags.json` via `PodcastStore`.
+/// Supports `.searchable` filter over already-known tag names (case-insensitive, ~250 ms debounce).
+/// Rename/delete still apply to the **named tag across all feeds** (not a filtered subset of podcasts);
+/// there is no bulk “delete all tags” action — per-row destructive ops stay on the visible rows only.
 struct ManageTagsView: View {
     @EnvironmentObject private var store: PodcastStore
 
@@ -10,32 +13,58 @@ struct ManageTagsView: View {
     @State private var showRenameAlert = false
     @State private var tagPendingDelete: String?
 
-    private var tags: [String] {
+    @State private var searchText = ""
+    @State private var debouncedQuery = ""
+    @State private var debounceTask: Task<Void, Never>?
+
+    private let debounceNs: UInt64 = 250_000_000 // 250 ms
+
+    /// Full in-use tag vocabulary — rename/delete always target a specific name from this set.
+    private var allTags: [String] {
         store.allTags
     }
 
+    /// Visible tags; empty query shows the full list. Filters tag **names** only (client-side).
+    private var filteredTags: [String] {
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let base = allTags
+        if q.isEmpty { return base }
+        return base.filter { $0.localizedCaseInsensitiveContains(q) }
+    }
+
     var body: some View {
-        Group {
-            if tags.isEmpty {
+        List {
+            if allTags.isEmpty {
                 ContentUnavailableView(
                     "No tags yet",
                     systemImage: "tag",
                     description: Text("Add tags on a podcast under Feed detail → gear → Tags / Folders. They also appear as filter chips on Subscriptions.")
                 )
+            } else if filteredTags.isEmpty {
+                ContentUnavailableView(
+                    "No matching tags",
+                    systemImage: "magnifyingglass",
+                    description: Text("No tags match your search.")
+                )
             } else {
-                List {
-                    Section {
-                        ForEach(tags, id: \.self) { tag in
-                            tagRow(tag)
-                        }
-                    } footer: {
-                        Text("Rename updates every podcast using that name. Delete removes the tag from those podcasts; subscriptions stay. Empty names disappear from this list.")
+                Section {
+                    ForEach(filteredTags, id: \.self) { tag in
+                        tagRow(tag)
                     }
+                } footer: {
+                    Text("Rename updates every podcast using that name. Delete removes the tag from those podcasts; subscriptions stay. Empty names disappear from this list.")
                 }
             }
         }
         .navigationTitle("Manage tags")
         .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $searchText, prompt: "Search tags")
+        .onChange(of: searchText) { _, newValue in
+            scheduleFilter(for: newValue)
+        }
+        .onDisappear {
+            debounceTask?.cancel()
+        }
         .alert("Rename tag", isPresented: $showRenameAlert) {
             TextField("Tag name", text: $renameDraft)
                 .accessibilityLabel(String(localized: "Tag name"))
@@ -138,5 +167,19 @@ struct ManageTagsView: View {
             return String(localized: "1 podcast")
         }
         return String(format: String(localized: "%lld podcasts"), count)
+    }
+
+    private func scheduleFilter(for term: String) {
+        debounceTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            debouncedQuery = ""
+            return
+        }
+        debounceTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: debounceNs)
+            guard !Task.isCancelled else { return }
+            debouncedQuery = trimmed
+        }
     }
 }

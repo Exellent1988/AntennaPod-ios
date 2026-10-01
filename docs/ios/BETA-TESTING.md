@@ -157,6 +157,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Queue: Verbleibende Zeit (Info-Leiste; gefilterte Liste; ~ bei unbekannten Dauern) | ☐ Queue: remaining time (info bar; visible filtered list; ~ when unknowns) |
 | ☐ Subscriptions + Tags/Filter | ☐ Subscriptions + tags/filter |
 | ☐ Tags verwalten: Liste + Umbenennen + Löschen (Bestätigung; Settings / Abonnements) | ☐ Manage tags: list + rename + delete (confirm; Settings / Subscriptions) |
+| ☐ Tags verwalten: Suche (Tag-Name; Debounce; leer bei keinen Treffern; nur vorhandene Tags; Umbenennen/Löschen bleiben pro sichtbarem Tag, wirken global auf den Namen) | ☐ Manage tags search (tag name; debounce; empty when no matches; existing tags only; rename/delete stay on visible rows, still apply to that name globally) |
 | ☐ Subscriptions: Suche (Titel / Beschreibung; Sort bleibt) | ☐ Subscriptions: search (title / description; sort preserved) |
 | ☐ Subscriptions: Sortierung (Zuletzt aktualisiert / Alphabetisch) | ☐ Subscriptions: sort (Recently updated / Alphabetical) |
 | ☐ Subscriptions: Alle aktualisieren (Toolbar + Pull; Progress während `isLoading`) | ☐ Subscriptions: Refresh all (toolbar + pull; progress while `isLoading`) |
