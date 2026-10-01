@@ -24,7 +24,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip/seek using Settings intervals)
 - CarPlay (honest partial: system Now Playing / remotes + background audio; **no** custom CPTemplate / CarPlay entitlement)
 - Headset / Bluetooth pause (AVAudioSession interruption + headphone unplug; remotes unchanged)
-- Sleep timer (clock presets + end of episode, fade-out)
+- Sleep timer (clock presets + end of episode + Custom… 1–180 min, fade-out)
 - Offline download to Documents/downloads (background URLSession; survives suspend/relaunch; Feed detail **Download all** for unplayed/not-archived/not-downloaded, newest 50 soft cap)
 - Queue tab (JSON; swipe Remove + Archive; Edit drag reorder; `.searchable` title/feed filter with debounce; reorder disabled while filtering; toolbar Clear queue with confirm)
 - Home tab (configurable sections: Continue, Inbox, Queue, Discover, Recently updated, Favorites optional; Settings → Home layout; pull-to-refresh)
@@ -298,7 +298,7 @@ Share an **episode** (title + URL) or a **podcast** (title + feed URL) via the s
 
 ## Full player
 
-Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed (**tap** cycles `0.8 / 1.0 / 1.1 / 1.2 / 1.3 / 1.5 / 2.0`, wrap; **long-press** keeps the full preset menu — same on mini player), sleep timer (same presets as mini), plus mark played / favorite / queue / download / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
+Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed (**tap** cycles `0.8 / 1.0 / 1.1 / 1.2 / 1.3 / 1.5 / 2.0`, wrap; **long-press** keeps the full preset menu — same on mini player), sleep timer (same presets + Custom… 1–180 min as mini), plus mark played / favorite / queue / download / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
 
 ## Playback speed preset cycle
 

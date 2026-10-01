@@ -19,6 +19,7 @@ struct FullPlayerView: View {
     @State private var isLoadingMediaChapters = false
     @State private var showTranscript = false
     @State private var showFeedUnavailable = false
+    @State private var showCustomSleepTimer = false
 
     private var episode: PodcastEpisode? { playback.currentEpisode }
 
@@ -151,6 +152,10 @@ struct FullPlayerView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(String(localized: "This episode is not linked to a subscribed podcast."))
+        }
+        .sheet(isPresented: $showCustomSleepTimer) {
+            CustomSleepTimerSheet()
+                .environmentObject(playback)
         }
     }
 
@@ -524,6 +529,9 @@ struct FullPlayerView: View {
             }
             Button("End of episode") {
                 playback.setSleepTimerEndOfEpisode()
+            }
+            Button(String(localized: "Custom…")) {
+                showCustomSleepTimer = true
             }
         } label: {
             if playback.isSleepTimerActive, let label = playback.sleepTimerStatusLabel {

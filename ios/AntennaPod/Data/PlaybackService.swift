@@ -20,6 +20,8 @@ final class PlaybackService: ObservableObject {
     static let fadeThresholdSeconds: Double = 10
 
     static let clockPresetsMinutes: [Int] = [5, 10, 15, 30, 45, 60]
+    /// Custom sleep timer UI range (minutes). Presets stay 5–60; fade unchanged.
+    static let customSleepTimerMinutesRange: ClosedRange<Int> = 1...180
     /// Throttle lock-screen elapsed updates (system interpolates via rate + timestamp).
     private static let nowPlayingUpdateIntervalSeconds: Double = 5
 

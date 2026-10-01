@@ -6,6 +6,7 @@ struct MiniPlayerView: View {
     @EnvironmentObject private var store: PodcastStore
     @State private var showFullPlayer = false
     @State private var showFeedUnavailable = false
+    @State private var showCustomSleepTimer = false
 
     var body: some View {
         if let episode = playback.currentEpisode {
@@ -111,6 +112,10 @@ struct MiniPlayerView: View {
             } message: {
                 Text(String(localized: "This episode is not linked to a subscribed podcast."))
             }
+            .sheet(isPresented: $showCustomSleepTimer) {
+                CustomSleepTimerSheet()
+                    .environmentObject(playback)
+            }
         }
     }
 
@@ -156,6 +161,9 @@ struct MiniPlayerView: View {
             }
             Button("End of episode") {
                 playback.setSleepTimerEndOfEpisode()
+            }
+            Button(String(localized: "Custom…")) {
+                showCustomSleepTimer = true
             }
         } label: {
             if playback.isSleepTimerActive, let label = playback.sleepTimerStatusLabel {
