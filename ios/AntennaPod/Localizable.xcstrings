@@ -11552,6 +11552,40 @@
           }
         }
       }
+    },
+    "Appends history episodes not already queued": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends history episodes not already queued"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht Verlaufs-Episoden ein, die noch nicht in der Warteschlange sind"
+          }
+        }
+      }
+    },
+    "Appends %lld history episodes to the end of the queue (newest last-played first). Already queued episodes are skipped. Uses the full History catalog (same as Clear history), not the searchable filter. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld history episodes to the end of the queue (newest last-played first). Already queued episodes are skipped. Uses the full History catalog (same as Clear history), not the searchable filter. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld Verlaufs-Episoden am Ende der Warteschlange ein (zuletzt gespielt zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Verlaufs-Katalog (wie Verlauf leeren), nicht die Suchfilterung. Warteschlangen-Sperre blockiert Einreihen nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

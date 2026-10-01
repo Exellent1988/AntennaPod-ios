@@ -882,6 +882,23 @@ final class PodcastStore: ObservableObject {
         playbackStates = next
     }
 
+    /// Append every History episode that is not already queued (bulk).
+    /// Uses store `historyEpisodes` order (**newest-first** by `lastPlayedAtEpochMs` —
+    /// `lastPlayedAt` else `updatedAt` — same catalog as Clear history / Home Continue).
+    /// Does **not** follow UI `historySort` or searchable filter.
+    /// Skips already-queued ids (no duplicates). Uses `enqueue` (append), not `playNext`.
+    /// Safe while queue lock is on (reorder-only — enqueue stays allowed).
+    /// Callers must confirm first (History toolbar `confirmationDialog`).
+    /// - Returns: number of episodes newly appended.
+    @discardableResult
+    func enqueueAllHistory() -> Int {
+        let candidates = historyEpisodes.map(\.episode).filter { !isInQueue($0.id) }
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
     /// Drop oldest History-listed `playbackStates` entries when over `AppSettings.historySizeLimit`.
     ///
     /// **Honesty:** History is derived from `playback.json` (no separate `history.json`).

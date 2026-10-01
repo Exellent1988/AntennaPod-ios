@@ -9,12 +9,20 @@ struct HistoryView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
     @State private var showClearHistoryConfirm = false
+    @State private var showEnqueueAllConfirm = false
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
     /// Full history catalog (store order: newest last-played first) — Clear history always uses this count.
     private var items: [HistoryEpisode] {
         store.historyEpisodes
+    }
+
+    /// Episodes from the **full History catalog** (`store.historyEpisodes`, newest last-played first) that are
+    /// not already queued — same catalog as Clear history, **not** the searchable filtered list.
+    /// Confirm count and `enqueueAllHistory()` share this eligibility.
+    private var enqueueAllHistoryCandidatesCount: Int {
+        items.filter { !store.isInQueue($0.episode.id) }.count
     }
 
     /// Visible history ordered by `AppSettings.historySort`.
@@ -244,6 +252,14 @@ struct HistoryView: View {
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
+                    Button {
+                        showEnqueueAllConfirm = true
+                    } label: {
+                        Label("Add all to queue", systemImage: "text.append")
+                    }
+                    .disabled(enqueueAllHistoryCandidatesCount == 0)
+                    .accessibilityHint("Appends history episodes not already queued")
+
                     Button(role: .destructive) {
                         showClearHistoryConfirm = true
                     } label: {
@@ -256,6 +272,18 @@ struct HistoryView: View {
                 }
                 .disabled(items.isEmpty)
             }
+        }
+        .confirmationDialog(
+            "Add all to queue?",
+            isPresented: $showEnqueueAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all to queue") {
+                store.enqueueAllHistory()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllHistoryCandidatesCount) history episodes to the end of the queue (newest last-played first). Already queued episodes are skipped. Uses the full History catalog (same as Clear history), not the searchable filter. Queue lock does not block enqueue.")
         }
         .confirmationDialog(
             "Clear history?",
