@@ -12738,6 +12738,142 @@
         }
       },
       "comment": "Compact remaining time on a Subscriptions row (per-feed unplayed remaining; same wall-clock rules as the list info bar)."
+    },
+    "Notify when sleep timer ends": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notify when sleep timer ends"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bei Schlaf-Timer-Ende benachrichtigen"
+          }
+        }
+      }
+    },
+    "Local notification and haptic when the sleep timer pauses or stops playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local notification and haptic when the sleep timer pauses or stops playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Benachrichtigung und Haptik, wenn der Schlaf-Timer die Wiedergabe pausiert oder stoppt."
+          }
+        }
+      }
+    },
+    "Sleep timer ended": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep timer ended"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlaf-Timer beendet"
+          }
+        }
+      }
+    },
+    "Playback paused.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback paused."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedergabe pausiert."
+          }
+        }
+      }
+    },
+    "End of episode — playback stopped.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of episode — playback stopped."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ende der Episode — Wiedergabe gestoppt."
+          }
+        }
+      }
+    },
+    "When enabled: new episodes after refresh (aggregated local banner), download failures, gpodder/Nextcloud login or sync failures, and/or sleep timer end. Local only — no push; needs permission.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When enabled: new episodes after refresh (aggregated local banner), download failures, gpodder/Nextcloud login or sync failures, and/or sleep timer end. Local only — no push; needs permission."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv: neue Episoden nach Aktualisierung (aggregiertes lokales Banner), Download-Fehler, gpodder/Nextcloud-Login- oder Sync-Fehler und/oder Schlaf-Timer-Ende. Nur lokal — kein Push; Berechtigung nötig."
+          }
+        }
+      }
+    },
+    "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails / sleep timer ends. Local only — no push.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails / sleep timer ends. Local only — no push."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Berechtigung wird angefragt, wenn Sie einen Benachrichtigungs-Schalter einschalten, oder wenn eine Aktualisierung erstmals neue Episoden findet / ein Download fehlschlägt / Sync fehlschlägt / der Schlaf-Timer endet. Nur lokal — kein Push."
+          }
+        }
+      }
+    },
+    "Sleep timer end → local banner + foreground haptic (one per fire)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep timer end → local banner + foreground haptic (one per fire)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlaf-Timer-Ende → lokales Banner + Haptik im Vordergrund (einmal pro Auslösung)"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

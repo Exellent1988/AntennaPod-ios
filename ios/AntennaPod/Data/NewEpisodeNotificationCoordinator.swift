@@ -88,7 +88,13 @@ enum NewEpisodeNotificationCoordinator {
             intentIdentifiers: [],
             options: []
         )
-        center.setNotificationCategories([category, dlCategory, syncCategory])
+        let sleepCategory = UNNotificationCategory(
+            identifier: SleepTimerEndNotificationCoordinator.categoryId,
+            actions: [],
+            intentIdentifiers: [],
+            options: []
+        )
+        center.setNotificationCategories([category, dlCategory, syncCategory, sleepCategory])
     }
 
     static func authorizationStatus() async -> UNAuthorizationStatus {

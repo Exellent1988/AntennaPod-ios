@@ -172,6 +172,7 @@ struct SettingsView: View {
                     "Notify on new episodes",
                     "Notify on download errors",
                     "Notify on sync errors",
+                    "Notify when sleep timer ends",
                     "Permission",
                     "Open iOS Settings",
                     "Download errors",
@@ -337,6 +338,13 @@ struct SettingsView: View {
                     await refreshNotificationAuthLabel()
                 }
             }
+            .onChange(of: settings.notifyOnSleepTimerEnd) { _, enabled in
+                guard enabled else { return }
+                Task {
+                    await NewEpisodeNotificationCoordinator.requestPermissionIfNeeded()
+                    await refreshNotificationAuthLabel()
+                }
+            }
             .onChange(of: notificationDeepLink.settingsSyncOpenToken) { _, token in
                 guard token != nil else { return }
                 // Defer slightly so the Settings tab is visible before scrolling.
@@ -385,6 +393,7 @@ struct SettingsView: View {
                 "Notify on new episodes",
                 "Notify on download errors",
                 "Notify on sync errors",
+                "Notify when sleep timer ends",
                 "Download errors"
             )
             || matchesSearch(
@@ -920,6 +929,8 @@ struct SettingsView: View {
                 .accessibilityHint("Local notifications when a download fails.")
             Toggle("Notify on sync errors", isOn: $settings.notifyOnSyncErrors)
                 .accessibilityHint("Local notifications when gpodder or Nextcloud sync fails.")
+            Toggle("Notify when sleep timer ends", isOn: $settings.notifyOnSleepTimerEnd)
+                .accessibilityHint("Local notification and haptic when the sleep timer pauses or stops playback.")
             LabeledContent("Permission") {
                 Text(notificationAuthLabel)
                     .foregroundStyle(.secondary)
@@ -953,11 +964,11 @@ struct SettingsView: View {
         if notificationAuthLabel == "Denied" {
             return String(localized: "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. Toggles stay on so your preference is clear.")
         }
-        if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors && !settings.notifyOnSyncErrors {
-            return String(localized: "When enabled: new episodes after refresh (aggregated local banner), download failures, and/or gpodder/Nextcloud login or sync failures. Local only — no push; needs refresh + permission.")
+        if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors && !settings.notifyOnSyncErrors && !settings.notifyOnSleepTimerEnd {
+            return String(localized: "When enabled: new episodes after refresh (aggregated local banner), download failures, gpodder/Nextcloud login or sync failures, and/or sleep timer end. Local only — no push; needs permission.")
         }
         if notificationAuthLabel == "Not determined" {
-            return String(localized: "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails. Local only — no push.")
+            return String(localized: "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails / sleep timer ends. Local only — no push.")
         }
         var parts: [String] = []
         if settings.notifyOnNewEpisodes {
@@ -968,6 +979,9 @@ struct SettingsView: View {
         }
         if settings.notifyOnSyncErrors {
             parts.append(String(localized: "Sync / login failures → Settings Sync (short error)"))
+        }
+        if settings.notifyOnSleepTimerEnd {
+            parts.append(String(localized: "Sleep timer end → local banner + foreground haptic (one per fire)"))
         }
         return parts.joined(separator: ". ") + ". " + String(localized: "No APNs / push.")
     }

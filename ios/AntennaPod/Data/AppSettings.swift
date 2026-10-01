@@ -651,6 +651,7 @@ final class AppSettings: ObservableObject {
         static let notifyOnNewEpisodes = "settings.notifyOnNewEpisodes"
         static let notifyOnDownloadErrors = "settings.notifyOnDownloadErrors"
         static let notifyOnSyncErrors = "settings.notifyOnSyncErrors"
+        static let notifyOnSleepTimerEnd = "settings.notifyOnSleepTimerEnd"
         static let chartsCountryCode = "settings.chartsCountryCode"
         static let askForAppStoreRating = "settings.askForAppStoreRating"
         static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
@@ -829,6 +830,14 @@ final class AppSettings: ObservableObject {
     @Published var notifyOnSyncErrors: Bool {
         didSet {
             UserDefaults.standard.set(notifyOnSyncErrors, forKey: Keys.notifyOnSyncErrors)
+        }
+    }
+
+    /// Notify when the sleep timer ends (local UserNotifications + foreground haptic; no push).
+    /// Defaults on; shares the same system permission as new-episode / DL / sync alerts.
+    @Published var notifyOnSleepTimerEnd: Bool {
+        didSet {
+            UserDefaults.standard.set(notifyOnSleepTimerEnd, forKey: Keys.notifyOnSleepTimerEnd)
         }
     }
 
@@ -1202,6 +1211,12 @@ final class AppSettings: ObservableObject {
             // Default on; same permission gate as new-episode / download-error alerts.
             notifyOnSyncErrors = true
         }
+        if UserDefaults.standard.object(forKey: Keys.notifyOnSleepTimerEnd) != nil {
+            notifyOnSleepTimerEnd = UserDefaults.standard.bool(forKey: Keys.notifyOnSleepTimerEnd)
+        } else {
+            // Default on; same permission gate as DL / sync error alerts.
+            notifyOnSleepTimerEnd = true
+        }
         if UserDefaults.standard.object(forKey: Keys.askForAppStoreRating) != nil {
             askForAppStoreRating = UserDefaults.standard.bool(forKey: Keys.askForAppStoreRating)
         } else {
@@ -1498,6 +1513,7 @@ final class AppSettings: ObservableObject {
             notifyOnNewEpisodes: notifyOnNewEpisodes,
             notifyOnDownloadErrors: notifyOnDownloadErrors,
             notifyOnSyncErrors: notifyOnSyncErrors,
+            notifyOnSleepTimerEnd: notifyOnSleepTimerEnd,
             askForAppStoreRating: askForAppStoreRating,
             playVideoAsAudioOnly: playVideoAsAudioOnly,
             volumeAdaptationEnabled: volumeAdaptationEnabled,
@@ -1576,6 +1592,7 @@ final class AppSettings: ObservableObject {
         notifyOnNewEpisodes = snap.notifyOnNewEpisodes
         notifyOnDownloadErrors = snap.notifyOnDownloadErrors
         notifyOnSyncErrors = snap.notifyOnSyncErrors ?? true
+        notifyOnSleepTimerEnd = snap.notifyOnSleepTimerEnd ?? true
         askForAppStoreRating = snap.askForAppStoreRating ?? true
         playVideoAsAudioOnly = snap.playVideoAsAudioOnly ?? false
         volumeAdaptationEnabled = snap.volumeAdaptationEnabled ?? false
@@ -1684,6 +1701,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var notifyOnDownloadErrors: Bool
     /// Absent in older backups → treated as on (default).
     var notifyOnSyncErrors: Bool? = true
+    /// Absent in older backups → treated as on (default).
+    var notifyOnSleepTimerEnd: Bool? = true
     /// Absent in older backups → treated as on (default).
     var askForAppStoreRating: Bool? = true
     /// Absent in older backups → treated as off (show video when detected).

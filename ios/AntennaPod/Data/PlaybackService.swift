@@ -667,6 +667,12 @@ final class PlaybackService: ObservableObject {
     }
 
     private func expireSleepTimer() {
+        let wasEndOfEpisode: Bool
+        if case .endOfEpisode = sleepTimerMode {
+            wasEndOfEpisode = true
+        } else {
+            wasEndOfEpisode = false
+        }
         if let player, isPlaying {
             player.pause()
             isPlaying = false
@@ -684,6 +690,13 @@ final class PlaybackService: ObservableObject {
         clearSleepTimerState(restoreVolume: true)
         updateNowPlayingInfo(force: true)
         applyIdleTimerPolicy()
+        // Local banner (+ foreground haptic) once per fire; Settings toggle default on.
+        Task {
+            await SleepTimerEndNotificationCoordinator.notifyIfNeeded(
+                endOfEpisode: wasEndOfEpisode,
+                settings: settings
+            )
+        }
     }
 
     private func pauseSleepTimerCountdown() {

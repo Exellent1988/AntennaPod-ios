@@ -1,7 +1,7 @@
 import UIKit
 import UserNotifications
 
-/// Wires background URLSession completion and local notification taps (new episodes / DL / sync errors).
+/// Wires background URLSession completion and local notification taps (new episodes / DL / sync errors / sleep timer end).
 final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     func application(
         _ application: UIApplication,
