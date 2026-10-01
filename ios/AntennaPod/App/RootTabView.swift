@@ -6,6 +6,7 @@ enum RootTab: Hashable {
 
 struct RootTabView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var parental: ParentalControls
@@ -47,6 +48,9 @@ struct RootTabView: View {
                     Label("Downloads", systemImage: "arrow.down.circle")
                 }
                 .tag(RootTab.downloads)
+                // Full completed catalog (`DownloadService.downloads`), not chip/search or in-progress.
+                // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
+                .badge(downloads.downloads.count)
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape")

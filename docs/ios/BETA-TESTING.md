@@ -109,6 +109,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Downloads: Swipes (Play Next / Queue / Delete) | ☐ Downloads: swipes (Play Next / Add to queue / Delete) |
 | ☐ Downloads: Gehörte löschen (Bestätigung; Favoriten überspringen; global — nicht nur sichtbarer Filter) | ☐ Downloads: Delete played (confirm; skip favorites; global — not visible filter only) |
 | ☐ Downloads: Dateigröße in Zeile (Datei auf Disk bevorzugt, sonst Enclosure-Größe; ausblenden wenn unbekannt) + Toolbar-Gesamtgröße | ☐ Downloads: row file size (disk preferred, else enclosure; hide when unknown) + toolbar total |
+| ☐ Downloads: Tab-Badge (volle Katalog-Länge; nicht Chip/Suche/in-progress; 0 ausgeblendet; System-VoiceOver) | ☐ Downloads: tab badge (full catalog length; not chip/search/in-progress; hide when 0; system VoiceOver) |
 
 ---
 
