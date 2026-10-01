@@ -656,6 +656,22 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Append every Inbox episode that is not already queued (bulk).
+    /// Uses store `inboxEpisodes` order (**newest-first** by `pubDateEpochMs` — same catalog as
+    /// `archiveAllInbox` / `markAllInboxPlayed`). Does **not** follow UI `inboxSort`.
+    /// Skips already-queued ids (no duplicates). Uses `enqueue` (append), not `playNext`.
+    /// Safe while queue lock is on (reorder-only — enqueue stays allowed).
+    /// Callers must confirm first (Inbox toolbar `confirmationDialog`).
+    /// - Returns: number of episodes newly appended.
+    @discardableResult
+    func enqueueAllInbox() -> Int {
+        let candidates = inboxEpisodes.map(\.episode).filter { !isInQueue($0.id) }
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
     /// Mark every unplayed, non-archived episode in one feed as played (bulk).
     /// Snapshots eligible ids first, then calls `markPlayed` per id so auto-delete-after-playing
     /// and queue removal side effects still apply. Feed-scoped only; does not archive.

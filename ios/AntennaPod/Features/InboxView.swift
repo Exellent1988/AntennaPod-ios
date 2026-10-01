@@ -9,6 +9,7 @@ struct InboxView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
     @State private var showMarkAllPlayedConfirm = false
+    @State private var showEnqueueAllConfirm = false
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -35,6 +36,13 @@ struct InboxView: View {
 
     private var isSearching: Bool {
         !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Episodes from the **full Inbox catalog** (`store.inboxEpisodes`, newest-first) that are
+    /// not already queued — same catalog as Mark all / Archive all, **not** library-search hits.
+    /// Confirm count and `enqueueAllInbox()` share this eligibility. Menu disabled while searching.
+    private var enqueueAllInboxCandidatesCount: Int {
+        store.inboxEpisodes.filter { !store.isInQueue($0.episode.id) }.count
     }
 
     /// Visible Inbox rows for remaining-time: sorted list when **not** in library-search mode.
@@ -217,6 +225,14 @@ struct InboxView: View {
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button {
+                            showEnqueueAllConfirm = true
+                        } label: {
+                            Label("Add all to queue", systemImage: "text.append")
+                        }
+                        .disabled(enqueueAllInboxCandidatesCount == 0)
+                        .accessibilityHint("Appends Inbox episodes not already queued")
+
+                        Button {
                             showMarkAllPlayedConfirm = true
                         } label: {
                             Label("Mark all as played", systemImage: "checkmark.circle")
@@ -234,6 +250,18 @@ struct InboxView: View {
                     }
                     .disabled(items.isEmpty || isSearching)
                 }
+            }
+            .confirmationDialog(
+                "Add all to queue?",
+                isPresented: $showEnqueueAllConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Add all to queue") {
+                    store.enqueueAllInbox()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Appends \(enqueueAllInboxCandidatesCount) Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full Inbox catalog (same as Mark all / Archive all), not library search. Queue lock does not block enqueue.")
             }
             .confirmationDialog(
                 "Mark all as played?",

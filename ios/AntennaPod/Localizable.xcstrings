@@ -11416,6 +11416,74 @@
           }
         }
       }
+    },
+    "Add all to queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add all to queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle zur Warteschlange hinzufügen"
+          }
+        }
+      }
+    },
+    "Add all to queue?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add all to queue?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle zur Warteschlange hinzufügen?"
+          }
+        }
+      }
+    },
+    "Appends Inbox episodes not already queued": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends Inbox episodes not already queued"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht Posteingangs-Episoden ein, die noch nicht in der Warteschlange sind"
+          }
+        }
+      }
+    },
+    "Appends %lld Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full Inbox catalog (same as Mark all / Archive all), not library search. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full Inbox catalog (same as Mark all / Archive all), not library search. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld Posteingangs-Episoden am Ende der Warteschlange ein (neueste zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Posteingangs-Katalog (wie Alle als gehört / Alle archivieren), nicht die Bibliothekssuche. Warteschlangen-Sperre blockiert Einreihen nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
