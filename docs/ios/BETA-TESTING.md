@@ -175,7 +175,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Parental PIN setzen / Unlock / Disable | ☐ Parental PIN set / unlock / disable |
 | ☐ Lock Add/Discover (+ optional Network) | ☐ Lock Add/Discover (+ optional Network) |
 | ☐ Theme light/dark/system | ☐ Theme light/dark/system |
-| ☐ Notify new episodes (lokal, kein Push) | ☐ Notify new episodes (local, no push) |
+| ☐ Notify new episodes (default aus; lokal; ein Banner; kein Push) | ☐ Notify new episodes (default off; local; one banner; no push) |
 | ☐ Per-feed settings (auto-DL / keep / notify / tags) | ☐ Per-feed settings (auto-DL / keep / notify / tags) |
 | ☐ Per-feed Keep updated → Never: Refresh all überspringt; Einzel-Refresh OK | ☐ Per-feed Keep updated → Never: Refresh all skips; single-feed refresh OK |
 | ☐ Feed refresh interval / Keep updated | ☐ Feed refresh interval / Keep updated |

@@ -478,14 +478,14 @@ struct SettingsView: View {
             return String(localized: "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. Toggles stay on so your preference is clear.")
         }
         if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors && !settings.notifyOnSyncErrors {
-            return String(localized: "When enabled: new episodes after refresh, download failures, and/or gpodder/Nextcloud login or sync failures. Local only — no push.")
+            return String(localized: "When enabled: new episodes after refresh (aggregated local banner), download failures, and/or gpodder/Nextcloud login or sync failures. Local only — no push; needs refresh + permission.")
         }
         if notificationAuthLabel == "Not determined" {
             return String(localized: "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails. Local only — no push.")
         }
         var parts: [String] = []
         if settings.notifyOnNewEpisodes {
-            parts.append(String(localized: "New episodes after refresh → Inbox"))
+            parts.append(String(localized: "New episodes after refresh (one local banner) → Inbox; needs feed refresh + permission"))
         }
         if settings.notifyOnDownloadErrors {
             parts.append(String(localized: "Download failures → Downloads (title = episode, body = error)"))

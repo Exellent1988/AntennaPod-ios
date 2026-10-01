@@ -10013,6 +10013,57 @@
           }
         }
       }
+    },
+    "New episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Episoden"
+          }
+        }
+      }
+    },
+    "New episodes after refresh (one local banner) → Inbox; needs feed refresh + permission": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes after refresh (one local banner) → Inbox; needs feed refresh + permission"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Episoden nach Aktualisierung (ein lokales Banner) → Posteingang; braucht Feed-Aktualisierung + Berechtigung"
+          }
+        }
+      }
+    },
+    "When enabled: new episodes after refresh (aggregated local banner), download failures, and/or gpodder/Nextcloud login or sync failures. Local only — no push; needs refresh + permission.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When enabled: new episodes after refresh (aggregated local banner), download failures, and/or gpodder/Nextcloud login or sync failures. Local only — no push; needs refresh + permission."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv: neue Episoden nach Aktualisierung (aggregiertes lokales Banner), Download-Fehler und/oder gpodder-/Nextcloud-Login- oder Sync-Fehler. Nur lokal — kein Push; braucht Aktualisierung + Berechtigung."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

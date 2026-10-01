@@ -681,7 +681,7 @@ final class AppSettings: ObservableObject {
     }
 
     /// Notify when feed refresh discovers new episodes (local UserNotifications; no push).
-    /// Defaults on; actual delivery still requires system permission (Settings stays honest if denied).
+    /// Defaults **off**; actual delivery still requires system permission (Settings stays honest if denied).
     @Published var notifyOnNewEpisodes: Bool {
         didSet {
             UserDefaults.standard.set(notifyOnNewEpisodes, forKey: Keys.notifyOnNewEpisodes)
@@ -1027,8 +1027,8 @@ final class AppSettings: ObservableObject {
         if UserDefaults.standard.object(forKey: Keys.notifyOnNewEpisodes) != nil {
             notifyOnNewEpisodes = UserDefaults.standard.bool(forKey: Keys.notifyOnNewEpisodes)
         } else {
-            // Default on; permission gate is separate (honest if denied).
-            notifyOnNewEpisodes = true
+            // Default off; opt-in + permission gate (honest if denied).
+            notifyOnNewEpisodes = false
         }
         if UserDefaults.standard.object(forKey: Keys.notifyOnDownloadErrors) != nil {
             notifyOnDownloadErrors = UserDefaults.standard.bool(forKey: Keys.notifyOnDownloadErrors)

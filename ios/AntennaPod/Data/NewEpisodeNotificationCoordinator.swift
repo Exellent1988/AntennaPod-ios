@@ -47,12 +47,15 @@ final class NotificationDeepLinkRouter: ObservableObject {
 /// **Honesty:** posts when global or per-feed Always allows it **and** authorization
 /// is `.authorized` / `.provisional`. Denied stays denied — Settings shows the real status.
 /// Per-feed Never suppresses that feed even when global is on.
+/// **Aggregation:** one local banner per refresh (not one per feed) to avoid spam.
 @MainActor
 enum NewEpisodeNotificationCoordinator {
     static let categoryId = "NEW_EPISODES"
     static let destinationKey = "destination"
     static let destinationInbox = "inbox"
     static let feedIdKey = "feedId"
+    /// Stable id so a later refresh replaces the prior aggregated banner.
+    static let aggregateNotificationId = "new-episodes.aggregate"
 
     /// Shared router for notification taps → open Inbox (best-effort deep link).
     static let deepLink = NotificationDeepLinkRouter()
@@ -111,8 +114,10 @@ enum NewEpisodeNotificationCoordinator {
         }
     }
 
-    /// After refresh: request permission on first new-episode find if still undetermined, then notify.
+    /// After refresh: request permission on first new-episode find if still undetermined, then
+    /// post **one** aggregated local notification for all allowed batches.
     /// Per-feed `notifyOnNewEpisodes` Use global / Always / Never overrides the global toggle.
+    /// Feeds that did not refresh (Keep updated → Never skips bulk refresh) never appear in batches.
     static func handleNewEpisodes(
         _ batches: [NewEpisodeBatch],
         settings: AppSettings?,
@@ -135,30 +140,48 @@ enum NewEpisodeNotificationCoordinator {
         }
         guard status == .authorized || status == .provisional else { return }
 
-        for batch in flat {
-            await postNotification(for: batch)
-        }
+        await postAggregatedNotification(batches: flat)
     }
 
-    private static func postNotification(for batch: NewEpisodeBatch) async {
+    private static func postAggregatedNotification(batches: [NewEpisodeBatch]) async {
+        let totalCount = batches.reduce(0) { $0 + $1.episodes.count }
+        guard totalCount > 0 else { return }
+
         let content = UNMutableNotificationContent()
-        content.title = batch.feedTitle.isEmpty ? "AntennaPod" : batch.feedTitle
-        if batch.episodes.count == 1 {
-            content.body = batch.episodes[0].title
-        } else {
-            content.body = String(localized: "\(batch.episodes.count) new episodes")
-        }
         content.sound = .default
         content.categoryIdentifier = categoryId
-        content.userInfo = [
-            destinationKey: destinationInbox,
-            feedIdKey: batch.feedId.uuidString,
-            "feedUrl": batch.feedUrl
+
+        var userInfo: [AnyHashable: Any] = [
+            destinationKey: destinationInbox
         ]
 
-        // Unique per feed (stable `PodcastFeed.id`) so a later refresh replaces the prior banner.
-        let id = "new-episodes.\(batch.feedId.uuidString)"
-        let request = UNNotificationRequest(identifier: id, content: content, trigger: nil)
+        if batches.count == 1 {
+            let batch = batches[0]
+            content.title = batch.feedTitle.isEmpty
+                ? String(localized: "New episodes")
+                : batch.feedTitle
+            if batch.episodes.count == 1 {
+                let title = batch.episodes[0].title.trimmingCharacters(in: .whitespacesAndNewlines)
+                content.body = title.isEmpty
+                    ? String(localized: "\(1) new episodes")
+                    : title
+            } else {
+                content.body = String(localized: "\(batch.episodes.count) new episodes")
+            }
+            userInfo[feedIdKey] = batch.feedId.uuidString
+            userInfo["feedUrl"] = batch.feedUrl
+        } else {
+            // Multi-feed refresh: one banner — "N new episodes" (avoid per-feed spam).
+            content.title = String(localized: "New episodes")
+            content.body = String(localized: "\(totalCount) new episodes")
+        }
+        content.userInfo = userInfo
+
+        let request = UNNotificationRequest(
+            identifier: aggregateNotificationId,
+            content: content,
+            trigger: nil
+        )
         do {
             try await UNUserNotificationCenter.current().add(request)
         } catch {
