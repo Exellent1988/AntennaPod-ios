@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Shared discovery row (Apple Search, Podcast Index, Top lists).
+/// Shared discovery row (Apple Search, Podcast Index, fyyd, Top lists).
 /// Selecting the row or Preview / Open opens the online feed preview (not fire-and-forget subscribe).
 struct DiscoveryResultRow: View {
     let title: String

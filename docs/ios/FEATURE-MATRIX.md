@@ -17,7 +17,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | History | 3 | done | Played / in-progress across feeds, newest `lastPlayedAt` first; Subscriptions → Library → History; swipe remove / mark unplayed; tap via EpisodeRow |
 | Favorites | 3 | done | Starred episode ids in `favorites.json` side map; star toggle on EpisodeRow + full player; Subscriptions → Library → Favorites (newest first); swipe Unfavorite + Archive; auto-delete skips favorited downloads |
 | Subscriptions | 5 | wip | List + subscribe sheet |
-| Add podcast | 5 | wip | URL + Apple Podcasts + Podcast Index search; charts via Discover; discovery/URL → online Preview then Confirm Subscribe |
+| Add podcast | 5 | wip | URL + Apple Podcasts + Podcast Index + fyyd search; charts via Discover; discovery/URL → online Preview then Confirm Subscribe |
 | Search (Bibliothek) | 4 | done | Local only: Inbox `.searchable` (debounced) filters feeds + episodes; Subscriptions filters feeds; EpisodeRow actions; not iTunes |
 | Statistics | 2 | done | Totals from `playback.json`: played count, approx listening time (played→duration / in-progress→position), per-feed top podcasts; Library + Settings; honest approximation footnote; Echo still separate |
 | Bottom nav / Drawer-Analog | 4 | wip | SwiftUI Tabs (6): Home, Inbox, Subscriptions (+ Library → Episodes / Favorites / Archived / History / Statistics), Queue, Downloads, Settings |
@@ -83,7 +83,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Add by RSS URL | 5 | wip | Add sheet Feed URL tab |
 | Apple Podcasts / iTunes Search | 4 | done | Native URLSession; Add sheet Search tab; debounced; feedUrl → subscribe |
 | Podcast Index | 4 | done | User-supplied API key+secret (Keychain); Settings → Discovery; Add sheet tab; auth sha1; Subscribe via feed URL; honest empty state if keys missing |
-| fyyd | 3 | todo | |
+| fyyd | 3 | done | Public fyyd.de API (`/0.2/search/podcast?term=`); no API key; Add sheet tab; debounced; Preview → Confirm Subscribe via feed URL; honest empty/error states |
 | Top lists / Quick discovery | 4 | done | Apple iTunes RSS charts (`/{country}/rss/toppodcasts/limit=25/json`); country Settings (auto→locale/`de`); Home preview + Subscriptions → Discover; batch lookup → feedUrl; Subscribe via existing pipeline; pull-to-refresh |
 | Online feed preview | 4 | done | Preview screen before subscribe (discovery + Feed URL): FeedRepository fetch+parse; title/author/artwork hints; episode count + first 10 titles; Confirm Subscribe / Cancel; already subscribed → Open feed |
 

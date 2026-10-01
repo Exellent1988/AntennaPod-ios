@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Add podcast: Apple Podcasts / Podcast Index search + preview-by-URL (confirm subscribe).
+/// Add podcast: Apple Podcasts / Podcast Index / fyyd search + preview-by-URL (confirm subscribe).
 struct AddFeedView: View {
     @EnvironmentObject private var store: PodcastStore
     @Environment(\.dismiss) private var dismiss
@@ -26,16 +26,26 @@ struct AddFeedView: View {
     @State private var indexSearchTask: Task<Void, Never>?
     @State private var indexHasKeys = PodcastIndexKeychain.hasCredentials
 
+    // fyyd search
+    @State private var fyydSearchText = ""
+    @State private var fyydResults: [FyydPodcastResult] = []
+    @State private var fyydIsSearching = false
+    @State private var fyydSearchError: String?
+    @State private var fyydDidSearch = false
+    @State private var fyydSearchTask: Task<Void, Never>?
+
     @State private var previewRequest: FeedPreviewRequest?
 
     private let itunesSearcher = ItunesSearchService()
     private let podcastIndexSearcher = PodcastIndexSearchService()
+    private let fyydSearcher = FyydSearchService()
     private let debounceNs: UInt64 = 400_000_000 // 400 ms
 
     private enum AddMode: String, CaseIterable, Identifiable {
-        case apple = "Apple Podcasts"
-        case podcastIndex = "Podcast Index"
-        case url = "Feed URL"
+        case apple = "Apple"
+        case podcastIndex = "Index"
+        case fyyd = "fyyd"
+        case url = "URL"
         var id: String { rawValue }
     }
 
@@ -56,6 +66,8 @@ struct AddFeedView: View {
                     appleSearchContent
                 case .podcastIndex:
                     podcastIndexSearchContent
+                case .fyyd:
+                    fyydSearchContent
                 case .url:
                     urlContent
                 }
@@ -72,6 +84,7 @@ struct AddFeedView: View {
                     Button("Cancel") {
                         appleSearchTask?.cancel()
                         indexSearchTask?.cancel()
+                        fyydSearchTask?.cancel()
                         dismiss()
                     }
                 }
@@ -90,6 +103,9 @@ struct AddFeedView: View {
             .onChange(of: indexSearchText) { _, newValue in
                 scheduleIndexSearch(for: newValue)
             }
+            .onChange(of: fyydSearchText) { _, newValue in
+                scheduleFyydSearch(for: newValue)
+            }
             .onChange(of: mode) { _, newMode in
                 if newMode == .podcastIndex {
                     indexHasKeys = PodcastIndexKeychain.hasCredentials
@@ -98,6 +114,7 @@ struct AddFeedView: View {
             .onDisappear {
                 appleSearchTask?.cancel()
                 indexSearchTask?.cancel()
+                fyydSearchTask?.cancel()
             }
         }
     }
@@ -148,7 +165,7 @@ struct AddFeedView: View {
                     ContentUnavailableView(
                         "No podcasts found",
                         systemImage: "magnifyingglass",
-                        description: Text("Try another name or artist, or switch to Feed URL / Podcast Index.")
+                        description: Text("Try another name or artist, or switch to Index / fyyd / URL.")
                     )
                     .listRowBackground(Color.clear)
                 }
@@ -237,7 +254,7 @@ struct AddFeedView: View {
                         ContentUnavailableView(
                             "No podcasts found",
                             systemImage: "magnifyingglass",
-                            description: Text("Try another name or author, or switch to Apple Podcasts / Feed URL.")
+                            description: Text("Try another name or author, or switch to Apple / fyyd / URL.")
                         )
                         .listRowBackground(Color.clear)
                     }
@@ -290,7 +307,7 @@ struct AddFeedView: View {
                 .disabled(urlText.trimmingCharacters(in: .whitespacesAndNewlines).count < 8)
             }
             Section {
-                Text("Paste an RSS/Atom podcast feed URL, or use Apple Podcasts / Podcast Index search. Preview fetches the feed before you confirm subscribe.")
+                Text("Paste an RSS/Atom podcast feed URL, or use Apple / Index / fyyd search. Preview fetches the feed before you confirm subscribe.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -396,6 +413,137 @@ struct AddFeedView: View {
             indexResults = []
             indexDidSearch = true
             indexSearchError = error.localizedDescription
+        }
+    }
+
+    // MARK: - Search (fyyd)
+
+    private var fyydSearchContent: some View {
+        List {
+            Section {
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(.secondary)
+                    TextField("Search fyyd", text: $fyydSearchText)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .submitLabel(.search)
+                        .onSubmit { runFyydSearchImmediately() }
+                    if fyydIsSearching {
+                        ProgressView()
+                            .controlSize(.small)
+                    } else if !fyydSearchText.isEmpty {
+                        Button {
+                            fyydSearchText = ""
+                            fyydResults = []
+                            fyydSearchError = nil
+                            fyydDidSearch = false
+                            fyydSearchTask?.cancel()
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Clear search")
+                    }
+                }
+            }
+
+            Section {
+                Text("fyyd.de podcast directory — no API key required.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+
+            if let fyydSearchError {
+                Section {
+                    Text(fyydSearchError)
+                        .foregroundStyle(.red)
+                        .font(.subheadline)
+                }
+            }
+
+            if fyydDidSearch && !fyydIsSearching && fyydResults.isEmpty && fyydSearchError == nil {
+                Section {
+                    ContentUnavailableView(
+                        "No podcasts found",
+                        systemImage: "magnifyingglass",
+                        description: Text("Try another name or author, or switch to Apple / Index / URL.")
+                    )
+                    .listRowBackground(Color.clear)
+                }
+            }
+
+            if !fyydResults.isEmpty {
+                Section("Results") {
+                    ForEach(fyydResults) { item in
+                        DiscoveryResultRow(
+                            title: item.title,
+                            author: item.author,
+                            artworkURL: item.artworkURL,
+                            feedUrl: item.feedUrl,
+                            isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl },
+                            onSelect: {
+                                previewRequest = FeedPreviewRequest(
+                                    feedUrl: item.feedUrl,
+                                    hintTitle: item.title,
+                                    hintAuthor: item.author,
+                                    hintArtworkURL: item.artworkURL
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+    }
+
+    // MARK: - fyyd search actions
+
+    private func scheduleFyydSearch(for term: String) {
+        fyydSearchTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            fyydResults = []
+            fyydSearchError = nil
+            fyydDidSearch = false
+            fyydIsSearching = false
+            return
+        }
+        fyydSearchTask = Task {
+            try? await Task.sleep(nanoseconds: debounceNs)
+            guard !Task.isCancelled else { return }
+            await performFyydSearch(term: trimmed)
+        }
+    }
+
+    private func runFyydSearchImmediately() {
+        fyydSearchTask?.cancel()
+        let trimmed = fyydSearchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        fyydSearchTask = Task {
+            await performFyydSearch(term: trimmed)
+        }
+    }
+
+    @MainActor
+    private func performFyydSearch(term: String) async {
+        fyydIsSearching = true
+        fyydSearchError = nil
+        defer { fyydIsSearching = false }
+        do {
+            let found = try await fyydSearcher.search(term: term)
+            guard !Task.isCancelled else { return }
+            fyydResults = found
+            fyydDidSearch = true
+        } catch is CancellationError {
+            // ignore
+        } catch {
+            guard !Task.isCancelled else { return }
+            fyydResults = []
+            fyydDidSearch = true
+            fyydSearchError = error.localizedDescription
         }
     }
 

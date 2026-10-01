@@ -7,6 +7,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Subscribe by feed URL
 - Apple Podcasts / iTunes Search discovery (Add sheet; debounced; Subscribe via feed URL)
 - Podcast Index discovery (Add sheet tab; user-supplied API key+secret in Keychain; Settings → Discovery; debounced; Subscribe via feed URL)
+- fyyd discovery (Add sheet tab; public fyyd.de search API, no key; debounced; Preview → Subscribe via feed URL)
 - Top lists / Quick discovery (Apple iTunes RSS charts; Home preview + Subscriptions → Discover; country in Settings; pull-to-refresh; Subscribe via feed URL)
 - Online feed preview (before subscribe: discovery rows + Feed URL → Preview via FeedRepository; episode count + first titles; Confirm Subscribe / Cancel; already subscribed → Open feed)
 - Episode list
@@ -242,7 +243,7 @@ Settings → **Notifications → Notify on download errors** (default on) reuses
 
 ## Discovery
 
-Add podcast sheet (**Subscriptions → +**) has three segments: **Apple Podcasts**, **Podcast Index**, and **Feed URL**.
+Add podcast sheet (**Subscriptions → +**) has four segments: **Apple**, **Index**, **fyyd**, and **URL**.
 
 **Online feed preview** — discovering a podcast (search / charts) or tapping **Preview** on the Feed URL tab opens a Preview screen that fetches and parses the RSS/Atom via `FeedRepository` (same parser as subscribe). Shows title, author/artwork when known (discovery hints + feed image), episode count, and the first **10** episode titles. **Confirm Subscribe** runs `PodcastStore.subscribe(feedUrl:)`; **Cancel** goes back. If the feed URL is already in the library, the primary action is **Open feed** (pushes `FeedDetailView`) instead of Subscribe. Discovery rows are no longer fire-and-forget Subscribe.
 
@@ -251,6 +252,8 @@ Add podcast sheet (**Subscriptions → +**) has three segments: **Apple Podcasts
 **Apple Podcasts** uses the public iTunes Search API (`media=podcast`, no API key) via `URLSession` (`ItunesSearchService`). Results that include a `feedUrl` are listed with artwork, title, and artist; **Preview** then Confirm Subscribe uses `PodcastStore.subscribe(feedUrl:)` / `FeedRepository`. Search is lightly debounced (~400 ms). Empty results and network/decode errors are surfaced in the Add sheet.
 
 **Podcast Index** (`PodcastIndexSearchService`) calls `https://api.podcastindex.org/api/1.0/search/byterm` with auth headers `X-Auth-Date`, `X-Auth-Key`, and `Authorization` = SHA-1(`apiKey` + `apiSecret` + unix time) per the Podcast Index docs. **API key and secret are user-supplied** (free registration at podcastindex.org) and stored only in the **Keychain** (`PodcastIndexKeychain`) — nothing is hardcoded or shipped with the app. Paste them under **Settings → Discovery / Podcast Index**. If keys are missing, the Add sheet shows an honest empty state explaining how to get keys. Results show title, author, and artwork; **Preview** then Confirm Subscribe. Debounce matches Apple (~400 ms).
+
+**fyyd** (`FyydSearchService`) calls the public fyyd.de API `https://api.fyyd.de/0.2/search/podcast?term=` (optional `count` / `page`). **No API key** for basic search. Results that include `xmlURL` are listed with artwork (`imgURL`), title, and author; **Preview** then Confirm Subscribe. Debounce matches Apple (~400 ms). Empty results and network/decode errors are surfaced honestly in the Add sheet.
 
 
 ## Sync / gpodder.net / Nextcloud
