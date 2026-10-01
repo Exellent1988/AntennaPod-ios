@@ -11087,6 +11087,159 @@
           }
         }
       }
+    },
+    "History size": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History size"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlaufsgröße"
+          }
+        }
+      }
+    },
+    "50 episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50 episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50 Episoden"
+          }
+        }
+      }
+    },
+    "100 episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "100 episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "100 Episoden"
+          }
+        }
+      }
+    },
+    "200 episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "200 episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "200 Episoden"
+          }
+        }
+      }
+    },
+    "500 episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "500 episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "500 Episoden"
+          }
+        }
+      }
+    },
+    "Unlimited": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbegrenzt"
+          }
+        }
+      }
+    },
+    "Maximum episodes kept in History. Oldest last-played entries are removed first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximum episodes kept in History. Oldest last-played entries are removed first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximale Episoden im Verlauf. Älteste zuletzt gehörte Einträge werden zuerst entfernt."
+          }
+        }
+      }
+    },
+    "Caps History-listed episodes in playback.json (played / in-progress). Oldest by lastPlayedAt (else updatedAt) are removed first — same as Remove from history (progress and played flags gone). Unlimited keeps the full list. Does not touch favorites, archive, downloads, or queue. Statistics and Continue listening may lose trimmed episodes. Default Unlimited.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caps History-listed episodes in playback.json (played / in-progress). Oldest by lastPlayedAt (else updatedAt) are removed first — same as Remove from history (progress and played flags gone). Unlimited keeps the full list. Does not touch favorites, archive, downloads, or queue. Statistics and Continue listening may lose trimmed episodes. Default Unlimited."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Begrenzt die im Verlauf gelisteten Episoden in playback.json (gehört / in Bearbeitung). Älteste nach lastPlayedAt (sonst updatedAt) zuerst — wie „Aus Verlauf entfernen“ (Fortschritt und Gehört-Status weg). Unbegrenzt behält die ganze Liste. Favoriten, Archiv, Downloads und Warteschlange bleiben. Statistik und Weitershören können getrimmte Episoden verlieren. Standard: Unbegrenzt."
+          }
+        }
+      }
+    },
+    "History is capped at %lld episodes (Settings → Library → History size). Oldest last-played entries are removed first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History is capped at %lld episodes (Settings → Library → History size). Oldest last-played entries are removed first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Verlauf ist auf %lld Episoden begrenzt (Einstellungen → Bibliothek → Verlaufsgröße). Älteste zuletzt gehörte Einträge werden zuerst entfernt."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

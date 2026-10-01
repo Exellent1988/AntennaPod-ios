@@ -28,6 +28,8 @@ struct AntennaPodApp: App {
         store.playback = playback
         // Launch maintenance once weak refs are wired (limit + played status available).
         downloads.runStorageMaintenance()
+        // History size cap (needs settings); no-op when Unlimited.
+        store.trimHistoryToSizeLimitIfNeeded()
         // Homescreen widget Continue-listening snapshot (needs store.playback wired).
         store.publishWidgetSnapshot()
         // Apple Watch companion: WCSession for snapshot push + play remote.

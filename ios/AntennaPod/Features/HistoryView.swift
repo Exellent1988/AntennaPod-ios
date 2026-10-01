@@ -88,6 +88,22 @@ struct HistoryView: View {
                         }
                     }
                 }
+                if let limit = settings.historySizeLimit.entryLimit {
+                    Section {
+                        Text(
+                            String(
+                                localized: "History is capped at \(limit) episodes (Settings → Library → History size). Oldest last-played entries are removed first."
+                            )
+                        )
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .accessibilityLabel(
+                            String(
+                                localized: "History is capped at \(limit) episodes (Settings → Library → History size). Oldest last-played entries are removed first."
+                            )
+                        )
+                    }
+                }
             }
         }
         .navigationTitle("History")

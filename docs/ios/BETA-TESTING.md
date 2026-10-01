@@ -146,6 +146,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ History: Verlauf leeren (Bestätigung) | ☐ History: Clear history (confirm) |
 | ☐ History: Suche (Titel / Feed) | ☐ History: search (title / feed) |
 | ☐ History: Sortierung (Neueste / Älteste; lastPlayedAt sonst updatedAt; persistiert) | ☐ History: sort (Newest / Oldest; lastPlayedAt else updatedAt; persisted) |
+| ☐ History: Größenlimit (Einstellungen → Bibliothek; 50/100/200/500/Unbegrenzt Standard; Trim älteste lastPlayedAt; Fußnote) | ☐ History: size limit (Settings → Library; 50/100/200/500/Unlimited default; trim oldest lastPlayedAt; footnote) |
 | ☐ Statistics/Echo: Zeitraum Diese Woche / Dieser Monat / Dieses Jahr / Gesamte Zeit (persistiert; lastPlayedAt sonst updatedAt; grobe Episoden-Stempel) | ☐ Statistics/Echo: time range This week / This month / This year / All time (persisted; lastPlayedAt else updatedAt; coarse episode stamps) |
 | ☐ Favoriten (Stern; Full Player + EpisodeRow; VoiceOver Add/Remove) | ☐ Favorites (star; Full Player + EpisodeRow; VoiceOver Add/Remove) |
 | ☐ Favoriten: Suche (Titel / Feed) | ☐ Favorites: search (title / feed) |

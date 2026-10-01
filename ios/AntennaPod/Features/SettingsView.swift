@@ -100,6 +100,16 @@ struct SettingsView: View {
         }
     }
 
+    private var historySizeLimitBinding: Binding<HistorySizeLimit> {
+        Binding(
+            get: { settings.historySizeLimit },
+            set: { newValue in
+                settings.historySizeLimit = newValue
+                store.trimHistoryToSizeLimitIfNeeded()
+            }
+        )
+    }
+
     private var pickerChoice: Binding<StorageLimitPickerChoice> {
         Binding(
             get: { StorageLimitPickerChoice.from(settings.downloadStorageLimit) },
@@ -422,7 +432,19 @@ struct SettingsView: View {
     }
 
     private var matchesLibrarySection: Bool {
-        matchesSearch("Library", "Manage tags", "Statistics", "Echo")
+        matchesSearch(
+            "Library",
+            "Manage tags",
+            "Statistics",
+            "Echo",
+            "History size",
+            "50 episodes",
+            "100 episodes",
+            "200 episodes",
+            "500 episodes",
+            "Unlimited",
+            "Caps History-listed episodes in playback.json (played / in-progress). Oldest by lastPlayedAt (else updatedAt) are removed first — same as Remove from history (progress and played flags gone). Unlimited keeps the full list. Does not touch favorites, archive, downloads, or queue. Statistics and Continue listening may lose trimmed episodes. Default Unlimited."
+        )
     }
 
     /// Row-level keywords for Playback (section shows if header or any row matches).
@@ -592,6 +614,28 @@ struct SettingsView: View {
                     Label("Manage tags", systemImage: "tag")
                 }
                 .accessibilityHint(String(localized: "Rename or delete subscription tags across all podcasts"))
+            }
+            if matchesSearch(
+                "Library",
+                "History size",
+                "50 episodes",
+                "100 episodes",
+                "200 episodes",
+                "500 episodes",
+                "Unlimited",
+                "Caps History-listed episodes in playback.json (played / in-progress). Oldest by lastPlayedAt (else updatedAt) are removed first — same as Remove from history (progress and played flags gone). Unlimited keeps the full list. Does not touch favorites, archive, downloads, or queue. Statistics and Continue listening may lose trimmed episodes. Default Unlimited."
+            ) {
+                Picker("History size", selection: historySizeLimitBinding) {
+                    ForEach(HistorySizeLimit.allCases) { limit in
+                        Text(limit.label).tag(limit)
+                    }
+                }
+                .accessibilityLabel(String(localized: "History size"))
+                .accessibilityValue(settings.historySizeLimit.label)
+                .accessibilityHint(String(localized: "Maximum episodes kept in History. Oldest last-played entries are removed first."))
+                Text("Caps History-listed episodes in playback.json (played / in-progress). Oldest by lastPlayedAt (else updatedAt) are removed first — same as Remove from history (progress and played flags gone). Unlimited keeps the full list. Does not touch favorites, archive, downloads, or queue. Statistics and Continue listening may lose trimmed episodes. Default Unlimited.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
             if matchesSearch("Library", "Statistics") {
                 NavigationLink {

@@ -74,6 +74,7 @@ final class PodcastStore: ObservableObject {
         pendingAutoDeleteIds = []
         lastError = nil
         rescanLocalFolderFeedsBestEffort()
+        trimHistoryToSizeLimitIfNeeded()
         publishWidgetSnapshot()
     }
 
@@ -360,6 +361,7 @@ final class PodcastStore: ObservableObject {
             state.lastPlayedAtEpochMs = nowMs
         }
         playbackStates[episodeId] = state
+        trimHistoryToSizeLimitIfNeeded()
         publishWidgetSnapshot()
     }
 
@@ -382,6 +384,7 @@ final class PodcastStore: ObservableObject {
         if !wasPlayed {
             RatingPromptCoordinator.recordSuccessfulMarkPlayed(settings: settings)
         }
+        trimHistoryToSizeLimitIfNeeded()
         publishWidgetSnapshot()
     }
 
@@ -409,6 +412,7 @@ final class PodcastStore: ObservableObject {
         state.updatedAtEpochMs = nowMs
         state.lastPlayedAtEpochMs = nowMs
         playbackStates[episodeId] = state
+        trimHistoryToSizeLimitIfNeeded()
     }
 
     /// Next queue item after `episodeId`, or the head of the queue if that id is gone.
@@ -823,6 +827,32 @@ final class PodcastStore: ObservableObject {
             pendingAutoDeleteIds.remove(id)
         }
         playbackStates = next
+    }
+
+    /// Drop oldest History-listed `playbackStates` entries when over `AppSettings.historySizeLimit`.
+    ///
+    /// **Honesty:** History is derived from `playback.json` (no separate `history.json`).
+    /// Oldest = lowest `lastPlayedAtEpochMs` else `updatedAtEpochMs` (end of newest-first `historyEpisodes`).
+    /// Trim removes the whole playback entry (progress + `isPlayed` + `lastPlayedAt`) — same as
+    /// `removeFromHistory` / Clear history row. Favorites, archive, downloads, and queue stay.
+    /// Statistics / Echo / Continue listening may lose trimmed episodes. **Unlimited** = no-op.
+    /// Call after load (settings wired), after history-growing writes, and when the Settings cap changes.
+    func trimHistoryToSizeLimitIfNeeded() {
+        guard let limit = settings?.historySizeLimit.entryLimit else { return }
+        let catalog = historyEpisodes
+        guard catalog.count > limit else { return }
+        let victims = catalog.dropFirst(limit)
+        var next = playbackStates
+        var changed = false
+        for item in victims {
+            if next.removeValue(forKey: item.id) != nil {
+                changed = true
+            }
+            pendingAutoDeleteIds.remove(item.id)
+        }
+        if changed {
+            playbackStates = next
+        }
     }
 
     // MARK: - Statistics (from playback.json)

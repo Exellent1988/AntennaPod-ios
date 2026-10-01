@@ -326,6 +326,37 @@ enum HistorySort: String, CaseIterable, Identifiable {
 }
 
 
+
+/// Cap on History-listed episodes (played / in-progress in `playback.json`).
+/// **No separate history.json** — History is derived from `playbackStates`. Trimming drops the oldest
+/// history-eligible entries (same as Remove from history): progress + `isPlayed` + `lastPlayedAt` gone.
+/// Favorites, archive, downloads, and queue are untouched. Statistics / Echo / Continue listening may
+/// lose those episodes’ estimates. **Unlimited** = no automatic trim (default).
+enum HistorySizeLimit: Int, CaseIterable, Identifiable {
+    case fifty = 50
+    case oneHundred = 100
+    case twoHundred = 200
+    case fiveHundred = 500
+    case unlimited = 0
+
+    var id: Int { rawValue }
+
+    /// `nil` means no automatic trim.
+    var entryLimit: Int? {
+        self == .unlimited ? nil : rawValue
+    }
+
+    var label: String {
+        switch self {
+        case .fifty: return String(localized: "50 episodes")
+        case .oneHundred: return String(localized: "100 episodes")
+        case .twoHundred: return String(localized: "200 episodes")
+        case .fiveHundred: return String(localized: "500 episodes")
+        case .unlimited: return String(localized: "Unlimited")
+        }
+    }
+}
+
 /// How the Favorites list orders episodes (client-side; by favorited-at timestamp).
 enum FavoritesSort: String, CaseIterable, Identifiable {
     case newestFirst
@@ -539,7 +570,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, Inbox sort, Downloads sort, History sort, Favorites sort, Archived sort, All Episodes filter chips, Downloads filter chips, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort, feed episode list sort, Inbox sort, Downloads sort, History sort, History size limit, Favorites sort, Archived sort, All Episodes filter chips, Downloads filter chips, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -618,6 +649,7 @@ final class AppSettings: ObservableObject {
         static let downloadsSort = "settings.downloadsSort"
         static let downloadsFilter = "settings.downloadsFilter"
         static let historySort = "settings.historySort"
+        static let historySizeLimit = "settings.historySizeLimit"
         static let favoritesSort = "settings.favoritesSort"
         static let archivedSort = "settings.archivedSort"
         static let allEpisodesFilter = "settings.allEpisodesFilter"
@@ -947,6 +979,17 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Max History-listed episodes kept in `playback.json` (50 / 100 / 200 / 500 / Unlimited).
+    /// Default **Unlimited**. Finite caps trim oldest by `lastPlayedAt` else `updatedAt` (same as History catalog)
+    /// on append, load, and Settings change — drops whole `playbackStates` entries (progress + played), same as
+    /// Remove from history. Does not touch favorites / archive / downloads / queue. Statistics / Echo / Continue
+    /// may lose trimmed episodes. **No separate history.json.**
+    @Published var historySizeLimit: HistorySizeLimit {
+        didSet {
+            UserDefaults.standard.set(historySizeLimit.rawValue, forKey: Keys.historySizeLimit)
+        }
+    }
+
     /// Favorites list order by `FavoriteEpisode.favoritedAtEpochMs` (`favorites.json` / `favoriteAtById`):
     /// newest first (default) or oldest first.
     /// Stable tiebreaker is episode `id`. Client-side re-sort in FavoritesView only — `PodcastStore.favoriteEpisodes`
@@ -1199,6 +1242,9 @@ final class AppSettings: ObservableObject {
         let historySortRaw = UserDefaults.standard.string(forKey: Keys.historySort)
             ?? HistorySort.newestFirst.rawValue
         historySort = HistorySort(rawValue: historySortRaw) ?? .newestFirst
+        let historyLimitRaw = UserDefaults.standard.object(forKey: Keys.historySizeLimit) as? Int
+            ?? HistorySizeLimit.unlimited.rawValue
+        historySizeLimit = HistorySizeLimit(rawValue: historyLimitRaw) ?? .unlimited
         let favoritesSortRaw = UserDefaults.standard.string(forKey: Keys.favoritesSort)
             ?? FavoritesSort.newestFirst.rawValue
         favoritesSort = FavoritesSort(rawValue: favoritesSortRaw) ?? .newestFirst
@@ -1435,6 +1481,7 @@ final class AppSettings: ObservableObject {
             downloadsSort: downloadsSort.rawValue,
             downloadsFilter: downloadsFilter.rawValue,
             historySort: historySort.rawValue,
+            historySizeLimit: historySizeLimit.rawValue,
             favoritesSort: favoritesSort.rawValue,
             archivedSort: archivedSort.rawValue,
             allEpisodesFilter: allEpisodesFilter.rawValue,
@@ -1550,6 +1597,9 @@ final class AppSettings: ObservableObject {
         if let historySortRaw = snap.historySort {
             historySort = HistorySort(rawValue: historySortRaw) ?? .newestFirst
         }
+        if let historyLimitRaw = snap.historySizeLimit {
+            historySizeLimit = HistorySizeLimit(rawValue: historyLimitRaw) ?? .unlimited
+        }
         if let favoritesSortRaw = snap.favoritesSort {
             favoritesSort = FavoritesSort(rawValue: favoritesSortRaw) ?? .newestFirst
         }
@@ -1632,6 +1682,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var downloadsFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var historySort: String? = nil
+    /// Absent in older backups → Unlimited (0). Raw `HistorySizeLimit` value.
+    var historySizeLimit: Int? = 0
     /// Absent in older backups → newestFirst (default).
     var favoritesSort: String? = nil
     /// Absent in older backups → newestFirst (default).
