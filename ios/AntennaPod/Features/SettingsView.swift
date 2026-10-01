@@ -23,6 +23,7 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+                OpmlImportExportSection()
             }
             .navigationTitle("Settings")
         }

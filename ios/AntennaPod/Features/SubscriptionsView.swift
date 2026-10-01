@@ -3,6 +3,7 @@ import SwiftUI
 struct SubscriptionsView: View {
     @EnvironmentObject private var store: PodcastStore
     @State private var showAdd = false
+    @State private var showOpmlSheet = false
 
     var body: some View {
         NavigationStack {
@@ -11,7 +12,7 @@ struct SubscriptionsView: View {
                     ContentUnavailableView(
                         "No subscriptions",
                         systemImage: "dot.radiowaves.left.and.right",
-                        description: Text("Add a podcast by feed URL to get started.")
+                        description: Text("Add a podcast by feed URL, or import an OPML file.")
                     )
                 } else {
                     ForEach(store.feeds) { feed in
@@ -54,9 +55,31 @@ struct SubscriptionsView: View {
                         Image(systemName: "plus")
                     }
                 }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        showOpmlSheet = true
+                    } label: {
+                        Image(systemName: "arrow.up.arrow.down.square")
+                    }
+                    .accessibilityLabel("Import or export OPML")
+                }
             }
             .sheet(isPresented: $showAdd) {
                 AddFeedView()
+            }
+            .sheet(isPresented: $showOpmlSheet) {
+                NavigationStack {
+                    Form {
+                        OpmlImportExportSection()
+                    }
+                    .navigationTitle("OPML")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Done") { showOpmlSheet = false }
+                        }
+                    }
+                }
             }
             .overlay {
                 if store.isLoading {

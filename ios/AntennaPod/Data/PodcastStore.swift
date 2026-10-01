@@ -14,6 +14,7 @@ final class PodcastStore: ObservableObject {
     }
     @Published var isLoading = false
     @Published var lastError: String?
+    @Published var opmlImport = OpmlImportState()
 
     private let repository = FeedRepository()
 
@@ -136,4 +137,80 @@ final class PodcastStore: ObservableObject {
             feed.episodes.contains { $0.id == episodeId }
         }
     }
+    // MARK: - OPML import / export
+
+    func exportOpmlXML() -> String {
+        OpmlWriter.writeDocument(feeds: feeds)
+    }
+
+    func exportOpmlTemporaryFile() throws -> URL {
+        try OpmlWriter.writeTemporaryFile(feeds: feeds)
+    }
+
+    /// Parse OPML and subscribe each feed URL via the existing fetch/parse pipeline.
+    /// Skips URLs already in `feeds`. Records per-URL errors without aborting the batch.
+    func importOpml(data: Data) async {
+        lastError = nil
+        var state = OpmlImportState(isImporting: true)
+        opmlImport = state
+        do {
+            let outlines = try OpmlReader.parse(data: data)
+            // Deduplicate by xmlUrl (first wins)
+            var seen = Set<String>()
+            var unique: [OpmlOutline] = []
+            for o in outlines {
+                let key = o.xmlUrl.lowercased()
+                if seen.insert(key).inserted {
+                    unique.append(o)
+                }
+            }
+            state.total = unique.count
+            opmlImport = state
+            var subscribed = Set(feeds.map { $0.feedUrl.lowercased() })
+
+            for outline in unique {
+                state.currentTitle = outline.text
+                opmlImport = state
+                let urlKey = outline.xmlUrl.lowercased()
+                if subscribed.contains(urlKey) {
+                    state.skipped += 1
+                    state.completed += 1
+                    opmlImport = state
+                    continue
+                }
+                do {
+                    try await subscribeQuietly(feedUrl: outline.xmlUrl)
+                    subscribed.insert(urlKey)
+                    state.succeeded += 1
+                } catch {
+                    state.failures.append(
+                        OpmlImportFailure(
+                            title: outline.text,
+                            url: outline.xmlUrl,
+                            error: error.localizedDescription
+                        )
+                    )
+                }
+                state.completed += 1
+                opmlImport = state
+            }
+        } catch {
+            lastError = error.localizedDescription
+        }
+        state.currentTitle = nil
+        state.isImporting = false
+        opmlImport = state
+    }
+
+    /// Subscribe without flipping the global `isLoading` overlay (used by OPML batch).
+    func subscribeQuietly(feedUrl: String) async throws {
+        var feed = try await repository.fetchAndParse(feedUrl: feedUrl)
+        feed.feedUrl = feedUrl
+        if let index = feeds.firstIndex(where: { $0.feedUrl == feedUrl }) {
+            feeds[index] = feed
+        } else {
+            feeds.append(feed)
+        }
+    }
+
 }

@@ -30,7 +30,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Feature | Gewicht | iOS-Status | Hinweis |
 |---------|---------|------------|---------|
 | Subscribe / Unsubscribe (URL) | 5 | wip | Subscribe-by-URL skeleton |
-| OPML Import/Export | 5 | todo | KMP-Kandidat |
+| OPML Import/Export | 5 | done | Pure Swift XML (fork `ios/`); Settings + Subscriptions; batch subscribe with progress/errors |
 | Feed aktualisieren | 5 | wip | Fetch + parse on subscribe |
 | Episodenliste / Feed-Seite | 5 | wip | |
 | Archive / restore | 3 | todo | |
@@ -126,7 +126,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 
 | In KMP (Shared) | Native iOS |
 |-----------------|------------|
-| Domain models, Feed-Parser, OPML | SwiftUI, AVFoundation |
+| Domain models, Feed-Parser, OPML (later) | SwiftUI, AVFoundation; OPML native for beta |
 | Geschäftsregeln (Filter, Queue, Auto-DL-Kandidaten) | URLSession Downloads, BGTasks |
 | Discovery- & Sync-Protokoll-Clients | GRDB/SQLite Persistenz |
 | Schema-/Verhaltens-Specs | UNUserNotificationCenter, WidgetKit |
