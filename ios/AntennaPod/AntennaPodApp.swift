@@ -28,6 +28,8 @@ struct AntennaPodApp: App {
         store.playback = playback
         // Launch maintenance once weak refs are wired (limit + played status available).
         downloads.runStorageMaintenance()
+        // Homescreen widget Continue-listening snapshot (needs store.playback wired).
+        store.publishWidgetSnapshot()
         // BGAppRefreshTask stub — Info.plist has no `fetch` mode (see FeedRefreshCoordinator).
         FeedRefreshCoordinator.registerBackgroundRefreshIfNeeded()
         // NWPathMonitor for Network / Downloads Wi‑Fi-only gates (auto / manual / stream).

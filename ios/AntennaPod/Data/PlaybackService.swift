@@ -169,6 +169,7 @@ final class PlaybackService: ObservableObject {
         updateNowPlayingInfo(force: true)
         loadArtworkIfNeeded()
         store?.touchLastPlayed(episode.id)
+        store?.publishWidgetSnapshot()
         return true
     }
 
@@ -205,6 +206,7 @@ final class PlaybackService: ObservableObject {
         if let leavingId {
             store?.flushAutoDeleteAfterPlaying(for: leavingId)
         }
+        store?.publishWidgetSnapshot()
     }
 
     func setRate(_ newRate: Float) {

@@ -28,6 +28,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - About / contribute links (Settings → About; fork blurb; Bundle version; antennapod.org / GitHub / contribute / docs / this fork)
 - Rating prompt (optional; after 10 mark-played, once per install `AppStore.requestReview`; Settings toggle default on + Reset; iOS may suppress)
 - Siri Shortcuts lite (App Intents Play/Pause / Skip forward/back + `antennapod://` URL schemes; opens app; needs current episode)
+- Homescreen widget (beta lite; WidgetKit Continue listening from App Group snapshot; tap → `antennapod://play`; empty placeholder; may be stale / no scrubber)
 - Swipe actions (Queue Remove+Archive + drag reorder; Downloads Delete; Inbox/Feed/History/Favorites/Archived/All Episodes useful swipes)
 - Favorites / starred episodes (Subscriptions → Library → Favorites; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; auto-delete skips favorites)
 - Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived; bulk Archive all in Inbox)
@@ -36,7 +37,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors / sync errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, App Store rating prompt, Siri/Shortcuts note, About)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, **new-episode action** (Inbox / Queue / Queue+download), auto-download, Network / Downloads Wi‑Fi policy, auto-delete after play, notify on new episodes / download errors / sync errors, Discovery charts country + Podcast Index API keys, gpodder.net / Nextcloud Gpodder sync, **Parental controls** (PIN / Keychain), **Backup** (iOS JSON), Import / Export (OPML + HTML), Statistics / Echo links, App Store rating prompt, Siri/Shortcuts note, Homescreen widget note, About)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -65,12 +66,15 @@ Root tabs (6): **Home**, Inbox, Subscriptions, Queue, Downloads, Settings.
 ```
 ios/
 ├── README.md
-├── project.yml              # XcodeGen
+├── project.yml              # XcodeGen (app + AntennaPodWidget)
+├── Shared/                  # App Group Continue-listening snapshot (app + widget)
+├── AntennaPodWidget/        # WidgetKit extension (Continue listening)
 └── AntennaPod/
     ├── AntennaPodApp.swift
+    ├── AntennaPod.entitlements   # App Group
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, statistics, echo, favorites, archived, library search, subscriptions (+ Discover charts), feed detail + per-feed settings (+ tags), add/discover (+ feed preview + local folder), top lists, player (+ transcripts sheet), downloads (+ error log), queue, settings (+ gpodder/Nextcloud sync + charts country + Parental controls + Backup + Statistics + Echo + App Store rating + Siri note + Homescreen widget note + About), queue swipes/reorder, OPML, HTML export, data backup, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -81,6 +85,8 @@ brew install xcodegen
 cd ios && xcodegen generate
 open AntennaPod.xcodeproj
 ```
+
+**Homescreen widget:** XcodeGen creates `AntennaPod` + embedded `AntennaPodWidget`. Select a Development Team, ensure App Group `group.de.danoeh.antennapod.ios` is enabled for **both** targets (entitlements files are already listed), build/run on a device or simulator, then add **Continue listening** from the iOS home-screen widget gallery. Without a signing team / App Group capability on the Apple developer portal, the extension may fail to install — shared snapshot code still builds into the app.
 
 See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
 
@@ -167,6 +173,17 @@ Honest empty state when little/no year data. Footnote: approximate — same limi
 **URL schemes** (`Info.plist` `CFBundleURLTypes`): `antennapod://play`, `antennapod://pause`, `antennapod://toggle`, `antennapod://skip-forward`, `antennapod://skip-back` — handled in `AntennaPodApp.onOpenURL` → `PlaybackDeepLinkRouter` → `PlaybackService` (skip uses Settings rewind / fast-forward intervals).
 
 **Limits:** opens the app; controls playback only when a current episode is already loaded. Not a background-only / App Group shared-store control surface — full in-process Shortcuts without UI would need more plumbing.
+
+## Homescreen widget (beta lite)
+
+**WidgetKit** extension (`AntennaPodWidget`) shows **Continue listening**: episode title + feed name from an **App Group** (`group.de.danoeh.antennapod.ios`) `UserDefaults` snapshot.
+
+- **Writer:** main app (`PodcastStore.publishWidgetSnapshot` / `WidgetSnapshotPublisher`) updates the snapshot when playback starts/stops, queue changes, or progress / mark-played changes. Prefers the **current player episode**, else the top Home Continue-listening item.
+- **Tap:** `antennapod://play` → `PlaybackDeepLinkRouter` (same as Siri lite).
+- **Empty:** “Open AntennaPod to continue”.
+- **Honest limits:** snapshot **may be stale** (not live Now Playing); **no scrubber / transport** on the widget; requires App Group entitlement + codesigning for the extension to install; add the widget manually from the home screen.
+
+Shared Codable helpers live in `ios/Shared/WidgetContinueSnapshot.swift` (compiled into both targets).
 
 ## Swipe actions
 

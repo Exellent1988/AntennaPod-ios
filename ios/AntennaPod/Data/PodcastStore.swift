@@ -6,7 +6,11 @@ final class PodcastStore: ObservableObject {
         didSet { PodcastPersistence.saveFeeds(feeds) }
     }
     @Published var queue: [PodcastEpisode] = [] {
-        didSet { PodcastPersistence.saveQueue(queue) }
+        didSet {
+            PodcastPersistence.saveQueue(queue)
+            // Queue changes can affect Continue listening / widget context.
+            publishWidgetSnapshot()
+        }
     }
     /// Episode id → position / played. Published so episode rows refresh.
     @Published var playbackStates: [String: EpisodePlaybackState] = [:] {
@@ -54,6 +58,7 @@ final class PodcastStore: ObservableObject {
         tagsByFeedId = PodcastPersistence.loadFeedTags()
         LocalFolderBookmarkStore.reloadFromPersistence()
         rescanLocalFolderFeedsBestEffort()
+        publishWidgetSnapshot()
     }
 
     /// Reload all Application Support maps after a data backup import (didSet re-persists).
@@ -69,6 +74,7 @@ final class PodcastStore: ObservableObject {
         pendingAutoDeleteIds = []
         lastError = nil
         rescanLocalFolderFeedsBestEffort()
+        publishWidgetSnapshot()
     }
 
     func subscribe(feedUrl: String) async {
@@ -300,6 +306,7 @@ final class PodcastStore: ObservableObject {
             state.lastPlayedAtEpochMs = nowMs
         }
         playbackStates[episodeId] = state
+        publishWidgetSnapshot()
     }
 
     /// AntennaPod-like: mark played and reset position for a clean resume-from-start later.
@@ -321,6 +328,7 @@ final class PodcastStore: ObservableObject {
         if !wasPlayed {
             RatingPromptCoordinator.recordSuccessfulMarkPlayed(settings: settings)
         }
+        publishWidgetSnapshot()
     }
 
     func markUnplayed(_ episodeId: String) {
@@ -329,6 +337,7 @@ final class PodcastStore: ObservableObject {
         state.updatedAtEpochMs = Int64(Date().timeIntervalSince1970 * 1000)
         playbackStates[episodeId] = state
         pendingAutoDeleteIds.remove(episodeId)
+        publishWidgetSnapshot()
     }
 
     func togglePlayed(_ episodeId: String) {
@@ -482,6 +491,21 @@ final class PodcastStore: ObservableObject {
             let state = playbackState(for: item.episode.id)
             return !state.isPlayed && state.positionSeconds > 1
         }
+    }
+
+    /// Write Continue-listening snapshot to the App Group for the homescreen widget.
+    /// Prefers the current player episode when set; else the top continue-listening item.
+    func publishWidgetSnapshot() {
+        let current = playback?.currentEpisode
+        let cont = continueListeningEpisodes.first
+        WidgetSnapshotPublisher.publish(
+            currentEpisodeId: current?.id,
+            currentEpisodeTitle: current?.title,
+            currentFeedTitle: current.flatMap { feed(containingEpisodeId: $0.id)?.title },
+            continueEpisodeId: cont?.episode.id,
+            continueEpisodeTitle: cont?.episode.title,
+            continueFeedTitle: cont?.feedTitle
+        )
     }
 
     /// Subscriptions ordered by newest episode `pubDateEpochMs` (proxy for recently updated).

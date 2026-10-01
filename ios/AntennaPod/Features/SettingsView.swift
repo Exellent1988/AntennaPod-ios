@@ -157,6 +157,7 @@ struct SettingsView: View {
                 }
                 appStoreRatingSection
                 siriShortcutsSection
+                homescreenWidgetSection
                 Section("About") {
                     NavigationLink {
                         AboutView()
@@ -618,6 +619,17 @@ struct SettingsView: View {
                 .foregroundStyle(.secondary)
         } header: {
             Text("Siri / Shortcuts")
+        }
+    }
+
+    @ViewBuilder
+    private var homescreenWidgetSection: some View {
+        Section {
+            Text("Homescreen widget (beta lite): Continue listening shows episode title + podcast from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("Homescreen widget")
         }
     }
 

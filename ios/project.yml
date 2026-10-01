@@ -13,6 +13,7 @@ targets:
     platform: iOS
     sources:
       - path: AntennaPod
+      - path: Shared
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: de.danoeh.antennapod.ios
       PRODUCT_NAME: AntennaPod
@@ -23,3 +24,38 @@ targets:
       ENABLE_PREVIEWS: YES
       MARKETING_VERSION: "0.1.0"
       CURRENT_PROJECT_VERSION: "1"
+      CODE_SIGN_ENTITLEMENTS: AntennaPod/AntennaPod.entitlements
+    entitlements:
+      path: AntennaPod/AntennaPod.entitlements
+    dependencies:
+      - target: AntennaPodWidget
+        embed: true
+  AntennaPodWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: AntennaPodWidget
+      - path: Shared
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: de.danoeh.antennapod.ios.AntennaPodWidget
+      PRODUCT_NAME: AntennaPodWidget
+      INFOPLIST_FILE: AntennaPodWidget/Info.plist
+      GENERATE_INFOPLIST_FILE: YES
+      INFOPLIST_KEY_CFBundleDisplayName: AntennaPod
+      LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+      SKIP_INSTALL: YES
+      MARKETING_VERSION: "0.1.0"
+      CURRENT_PROJECT_VERSION: "1"
+      CODE_SIGN_ENTITLEMENTS: AntennaPodWidget/AntennaPodWidget.entitlements
+      TARGETED_DEVICE_FAMILY: "1,2"
+    entitlements:
+      path: AntennaPodWidget/AntennaPodWidget.entitlements
+    dependencies: []
+schemes:
+  AntennaPod:
+    build:
+      targets:
+        AntennaPod: all
+        AntennaPodWidget: all
+    run:
+      config: Debug
