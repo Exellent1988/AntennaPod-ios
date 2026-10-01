@@ -4,6 +4,9 @@ struct SubscriptionsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var parental: ParentalControls
+    @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
+    @State private var path = NavigationPath()
+    @State private var lastHandledFeedOpenToken: UUID?
     @State private var showAdd = false
     @State private var showOpmlSheet = false
     @State private var showAddPINGate = false
@@ -87,7 +90,7 @@ struct SubscriptionsView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 Section("Library") {
                     NavigationLink {
@@ -302,6 +305,26 @@ struct SubscriptionsView: View {
                     tagFilter = .all
                 }
             }
+            .onAppear {
+                consumePendingFeedOpenIfNeeded()
+            }
+            .onChange(of: notificationDeepLink.feedOpenToken) { _, _ in
+                consumePendingFeedOpenIfNeeded()
+            }
+        }
+    }
+
+    /// Push Feed detail for a pending `openFeed` deep link (player → Subscriptions).
+    private func consumePendingFeedOpenIfNeeded() {
+        guard let token = notificationDeepLink.feedOpenToken,
+              token != lastHandledFeedOpenToken,
+              let id = notificationDeepLink.pendingFeedId,
+              let feed = store.feeds.first(where: { $0.id == id }) else { return }
+        lastHandledFeedOpenToken = token
+        // Defer so the Subscriptions tab is selected before push (same pattern as Settings Sync).
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            path = NavigationPath()
+            path.append(feed)
         }
     }
 

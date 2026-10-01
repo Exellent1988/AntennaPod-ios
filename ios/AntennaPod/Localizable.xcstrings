@@ -1939,6 +1939,23 @@
         }
       }
     },
+    "Go to podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go to podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Podcast"
+          }
+        }
+      }
+    },
     "Group by tag": {
       "extractionState": "manual",
       "localizations": {
@@ -3520,6 +3537,23 @@
         }
       }
     },
+    "Open podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast öffnen"
+          }
+        }
+      }
+    },
     "Open subscribed podcast": {
       "extractionState": "manual",
       "localizations": {
@@ -3550,6 +3584,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das vom Feed bereitgestellte Transkript"
+          }
+        }
+      }
+    },
+    "Opens this episode's podcast in Subscriptions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens this episode's podcast in Subscriptions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den Podcast dieser Episode unter Abonnements"
           }
         }
       }
@@ -3979,6 +4030,23 @@
         }
       }
     },
+    "Player options": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Player options"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Player-Optionen"
+          }
+        }
+      }
+    },
     "Playing from download": {
       "extractionState": "manual",
       "localizations": {
@@ -3992,6 +4060,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wiedergabe aus Download"
+          }
+        }
+      }
+    },
+    "Podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast"
           }
         }
       }
@@ -4026,6 +4111,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Podcast-Einstellungen"
+          }
+        }
+      }
+    },
+    "Podcast unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast unavailable"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast nicht verfügbar"
           }
         }
       }
@@ -5352,6 +5454,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Die Feed-URL lieferte leeren oder unlesbaren Inhalt."
+          }
+        }
+      }
+    },
+    "This episode is not linked to a subscribed podcast.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This episode is not linked to a subscribed podcast."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Episode ist keinem abonnierten Podcast zugeordnet."
           }
         }
       }

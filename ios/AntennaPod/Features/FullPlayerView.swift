@@ -18,6 +18,7 @@ struct FullPlayerView: View {
     @State private var isLoadingRemoteChapters = false
     @State private var isLoadingMediaChapters = false
     @State private var showTranscript = false
+    @State private var showFeedUnavailable = false
 
     private var episode: PodcastEpisode? { playback.currentEpisode }
 
@@ -77,6 +78,20 @@ struct FullPlayerView: View {
                     }
                     .accessibilityLabel(String(localized: "Close player"))
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        openPodcastFromPlayer()
+                    } label: {
+                        Image(systemName: "dot.radiowaves.left.and.right")
+                    }
+                    .disabled(feed == nil)
+                    .accessibilityLabel(String(localized: "Open podcast"))
+                    .accessibilityHint(
+                        feed == nil
+                            ? String(localized: "Podcast unavailable")
+                            : String(localized: "Opens this episode's podcast in Subscriptions")
+                    )
+                }
                 if let episode, showsVideoSurface(for: episode) {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
@@ -129,6 +144,14 @@ struct FullPlayerView: View {
                     .environmentObject(playback)
             }
         }
+        .alert(
+            String(localized: "Podcast unavailable"),
+            isPresented: $showFeedUnavailable
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "This episode is not linked to a subscribed podcast."))
+        }
     }
 
     @ViewBuilder
@@ -146,10 +169,23 @@ struct FullPlayerView: View {
                             .font(.title2.weight(.semibold))
                             .multilineTextAlignment(.center)
                             .lineLimit(3)
-                        Text(feed?.title ?? "Podcast")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(2)
+                        Button {
+                            openPodcastFromPlayer()
+                        } label: {
+                            Text(feed?.title ?? String(localized: "Podcast"))
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(feed == nil)
+                        .accessibilityLabel(String(localized: "Open podcast"))
+                        .accessibilityValue(feed?.title ?? String(localized: "Podcast unavailable"))
+                        .accessibilityHint(
+                            feed == nil
+                                ? String(localized: "Podcast unavailable")
+                                : String(localized: "Opens this episode's podcast in Subscriptions")
+                        )
                         Label(
                             playback.isPlayingFromLocalFile ? "Playing from download" : "Streaming",
                             systemImage: playback.isPlayingFromLocalFile ? "internaldrive" : "wifi"
@@ -649,6 +685,19 @@ struct FullPlayerView: View {
                 current.chapters = loaded
                 playback.currentEpisode = current
             }
+        }
+    }
+
+    /// Dismiss the player sheet, then deep-link to Subscriptions → Feed detail.
+    private func openPodcastFromPlayer() {
+        guard let feed else {
+            showFeedUnavailable = true
+            return
+        }
+        let id = feed.id
+        dismiss()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            NewEpisodeNotificationCoordinator.deepLink.openFeed(id: id)
         }
     }
 

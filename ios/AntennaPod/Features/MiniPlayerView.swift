@@ -3,7 +3,9 @@ import SwiftUI
 struct MiniPlayerView: View {
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var settings: AppSettings
+    @EnvironmentObject private var store: PodcastStore
     @State private var showFullPlayer = false
+    @State private var showFeedUnavailable = false
 
     var body: some View {
         if let episode = playback.currentEpisode {
@@ -82,6 +84,18 @@ struct MiniPlayerView: View {
                     }
                     .accessibilityLabel("\(String(localized: "Playback speed")) \(String(format: "%.1f", playback.rate))")
                     .accessibilityHint(String(localized: "Cycles to the next speed. Long-press for full list."))
+
+                    Menu {
+                        Button {
+                            openPodcastFromMiniPlayer()
+                        } label: {
+                            Label("Open podcast", systemImage: "dot.radiowaves.left.and.right")
+                        }
+                        .disabled(feedForCurrentEpisode == nil)
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                    .accessibilityLabel(String(localized: "Player options"))
                 }
             }
             .padding()
@@ -89,6 +103,32 @@ struct MiniPlayerView: View {
             .sheet(isPresented: $showFullPlayer) {
                 FullPlayerView()
             }
+            .alert(
+                String(localized: "Podcast unavailable"),
+                isPresented: $showFeedUnavailable
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(String(localized: "This episode is not linked to a subscribed podcast."))
+            }
+        }
+    }
+
+    private var feedForCurrentEpisode: PodcastFeed? {
+        guard let episode = playback.currentEpisode else { return nil }
+        return store.feed(containingEpisodeId: episode.id)
+    }
+
+    private func openPodcastFromMiniPlayer() {
+        guard let feed = feedForCurrentEpisode else {
+            showFeedUnavailable = true
+            return
+        }
+        // Close full player sheet if open, then navigate.
+        showFullPlayer = false
+        let id = feed.id
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            NewEpisodeNotificationCoordinator.deepLink.openFeed(id: id)
         }
     }
 

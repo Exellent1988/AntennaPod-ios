@@ -100,6 +100,10 @@ struct RootTabView: View {
             guard token != nil else { return }
             selectedTab = .settings
         }
+        .onChange(of: notificationDeepLink.feedOpenToken) { _, token in
+            guard token != nil else { return }
+            selectedTab = .subscriptions
+        }
         .alert(
             "Cannot stream",
             isPresented: Binding(

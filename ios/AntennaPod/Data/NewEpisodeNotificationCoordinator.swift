@@ -16,6 +16,9 @@ final class NotificationDeepLinkRouter: ObservableObject {
     @Published private(set) var inboxOpenToken: UUID?
     @Published private(set) var downloadsOpenToken: UUID?
     @Published private(set) var settingsSyncOpenToken: UUID?
+    /// Token + feed id for in-app “Open podcast” (full/mini player → Subscriptions → Feed detail).
+    @Published private(set) var feedOpenToken: UUID?
+    @Published private(set) var pendingFeedId: UUID?
 
     func openInbox() {
         inboxOpenToken = UUID()
@@ -28,6 +31,12 @@ final class NotificationDeepLinkRouter: ObservableObject {
     /// Open Settings tab and scroll to Sync (gpodder / Nextcloud).
     func openSettingsSync() {
         settingsSyncOpenToken = UUID()
+    }
+
+    /// Switch to Subscriptions and push Feed detail for `id` (best-effort).
+    func openFeed(id: UUID) {
+        pendingFeedId = id
+        feedOpenToken = UUID()
     }
 }
 
