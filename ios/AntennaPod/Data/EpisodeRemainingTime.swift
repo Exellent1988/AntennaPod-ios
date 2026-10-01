@@ -6,7 +6,7 @@ import Foundation
 ///
 /// Per episode when duration is known: `max(0, duration − position)`. Unplayed with known
 /// duration contributes full duration (position 0). **Played** (not the live current episode)
-/// → 0 remaining (mark-played clears position). **Unknown duration skipped** (`unknownCount`;
+/// → 0 remaining (regardless of stored position; mark-played clears position only when Settings reset-on-mark-played is on). **Unknown duration skipped** (`unknownCount`;
 /// UI prefixes `~` when any skipped). Currently playing prefers live `PlaybackService`
 /// position/duration when the caller supplies them. Wall-clock only (no playback-speed divide).
 ///

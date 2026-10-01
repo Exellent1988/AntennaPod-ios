@@ -824,6 +824,7 @@ final class AppSettings: ObservableObject {
         static let stereoToMonoEnabled = "settings.stereoToMonoEnabled"
         static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
         static let continuousPlaybackEnabled = "settings.continuousPlaybackEnabled"
+        static let resetPositionWhenMarkedPlayed = "settings.resetPositionWhenMarkedPlayed"
         static let showRemainingTime = "settings.showRemainingTime"
         static let rewindAfterPauseSeconds = "settings.rewindAfterPauseSeconds"
         static let smartMarkAsPlayedSeconds = "settings.smartMarkAsPlayedSeconds"
@@ -1082,6 +1083,14 @@ final class AppSettings: ObservableObject {
     @Published var continuousPlaybackEnabled: Bool {
         didSet {
             UserDefaults.standard.set(continuousPlaybackEnabled, forKey: Keys.continuousPlaybackEnabled)
+        }
+    }
+
+    /// When true, `PodcastStore.markPlayed` clears `positionSeconds` to 0 (current default / AntennaPod-like clean resume-from-start).
+    /// When false, mark-played keeps the saved playback position (so Mark unplayed can resume). Default **true** — match prior beta.
+    @Published var resetPositionWhenMarkedPlayed: Bool {
+        didSet {
+            UserDefaults.standard.set(resetPositionWhenMarkedPlayed, forKey: Keys.resetPositionWhenMarkedPlayed)
         }
     }
 
@@ -1520,6 +1529,12 @@ final class AppSettings: ObservableObject {
             // Default on: auto-advance to next queue episode on end (AntennaPod continuous playback).
             continuousPlaybackEnabled = true
         }
+        if UserDefaults.standard.object(forKey: Keys.resetPositionWhenMarkedPlayed) != nil {
+            resetPositionWhenMarkedPlayed = UserDefaults.standard.bool(forKey: Keys.resetPositionWhenMarkedPlayed)
+        } else {
+            // Default on: clear position on mark-played (prior beta / AntennaPod-like).
+            resetPositionWhenMarkedPlayed = true
+        }
         if UserDefaults.standard.object(forKey: Keys.showRemainingTime) != nil {
             showRemainingTime = UserDefaults.standard.bool(forKey: Keys.showRemainingTime)
         } else {
@@ -1851,6 +1866,7 @@ final class AppSettings: ObservableObject {
             stereoToMonoEnabled: stereoToMonoEnabled,
             keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
             continuousPlaybackEnabled: continuousPlaybackEnabled,
+            resetPositionWhenMarkedPlayed: resetPositionWhenMarkedPlayed,
             showRemainingTime: showRemainingTime,
             rewindAfterPauseSeconds: rewindAfterPauseSeconds,
             smartMarkAsPlayedSeconds: smartMarkAsPlayedSeconds,
@@ -1939,6 +1955,7 @@ final class AppSettings: ObservableObject {
         stereoToMonoEnabled = snap.stereoToMonoEnabled ?? false
         keepScreenOnWhilePlaying = snap.keepScreenOnWhilePlaying ?? false
         continuousPlaybackEnabled = snap.continuousPlaybackEnabled ?? true
+        resetPositionWhenMarkedPlayed = snap.resetPositionWhenMarkedPlayed ?? true
         showRemainingTime = snap.showRemainingTime ?? false
         let rewindAfter = snap.rewindAfterPauseSeconds ?? Self.defaultRewindAfterPauseSeconds
         rewindAfterPauseSeconds = Self.rewindAfterPausePresets.contains(rewindAfter)
@@ -2077,6 +2094,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var keepScreenOnWhilePlaying: Bool? = false
     /// Absent in older backups → treated as on (auto-next from queue).
     var continuousPlaybackEnabled: Bool? = true
+    /// Absent in older backups → treated as on (reset position on mark-played).
+    var resetPositionWhenMarkedPlayed: Bool? = true
     /// Absent in older backups → treated as off (show total duration).
     var showRemainingTime: Bool? = false
     /// Absent in older backups → treated as 2 (honest beta default).

@@ -499,6 +499,7 @@ struct SettingsView: View {
             || matchesPlaybackStereo
             || matchesPlaybackKeepScreen
             || matchesPlaybackContinuous
+            || matchesPlaybackResetPosition
             || matchesPlaybackRemaining
             || matchesPlaybackRewindPause
             || matchesPlaybackSmartMark
@@ -575,6 +576,13 @@ struct SettingsView: View {
         matchesSearch(
             "Continuous playback",
             "When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on."
+        )
+    }
+
+    private var matchesPlaybackResetPosition: Bool {
+        matchesSearch(
+            "Reset position when marked played",
+            "When on, marking an episode played clears its saved playback position to 0 (resume from start later). When off, the position is kept so Mark unplayed can resume. Applies to manual mark, mark-all, smart mark, and natural end. Default on."
         )
     }
 
@@ -816,6 +824,13 @@ struct SettingsView: View {
                 Toggle("Continuous playback", isOn: $settings.continuousPlaybackEnabled)
                     .accessibilityHint(String(localized: "When on, finishing an episode auto-plays the next Queue item. Default on."))
                 Text("When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackResetPosition {
+                Toggle("Reset position when marked played", isOn: $settings.resetPositionWhenMarkedPlayed)
+                    .accessibilityHint(String(localized: "When on, mark played clears saved position to 0. When off, keeps position for resume after Mark unplayed. Default on."))
+                Text("When on, marking an episode played clears its saved playback position to 0 (resume from start later). When off, the position is kept so Mark unplayed can resume. Applies to manual mark, mark-all, smart mark, and natural end. Default on.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

@@ -18360,6 +18360,57 @@
           }
         }
       }
+    },
+    "Reset position when marked played": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset position when marked played"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Position beim Markieren als gehört zurücksetzen"
+          }
+        }
+      }
+    },
+    "When on, mark played clears saved position to 0. When off, keeps position for resume after Mark unplayed. Default on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, mark played clears saved position to 0. When off, keeps position for resume after Mark unplayed. Default on."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, löscht „Als gehört markieren“ die gespeicherte Position auf 0. Wenn aus, bleibt die Position für Fortsetzen nach „Als ungehört“. Standard an."
+          }
+        }
+      }
+    },
+    "When on, marking an episode played clears its saved playback position to 0 (resume from start later). When off, the position is kept so Mark unplayed can resume. Applies to manual mark, mark-all, smart mark, and natural end. Default on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, marking an episode played clears its saved playback position to 0 (resume from start later). When off, the position is kept so Mark unplayed can resume. Applies to manual mark, mark-all, smart mark, and natural end. Default on."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, setzt „Als gehört markieren“ die gespeicherte Wiedergabeposition auf 0 (später von vorn). Wenn aus, bleibt die Position, damit „Als ungehört“ fortsetzen kann. Gilt für manuell, Alle markieren, Smart Mark und natürliches Ende. Standard an."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

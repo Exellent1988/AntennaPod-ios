@@ -494,14 +494,19 @@ final class PodcastStore: ObservableObject {
         publishWidgetSnapshot()
     }
 
-    /// AntennaPod-like: mark played and reset position for a clean resume-from-start later.
+    /// Mark played. Position: when Settings **Reset position when marked played** is on (default),
+    /// clears `positionSeconds` to 0 for a clean resume-from-start later; when off, keeps the saved position
+    /// (Mark unplayed can resume). Applies to manual toggle, Inbox/Feed mark-all, smart-mark, and natural end.
     /// When auto-delete-after-playing is on, removes the local download file (keeps the episode row).
     /// Counts a successful mark-played for the optional App Store rating prompt when newly played.
     func markPlayed(_ episodeId: String, removeFromQueue: Bool = true) {
         let wasPlayed = isPlayed(episodeId)
         var state = playbackState(for: episodeId)
         state.isPlayed = true
-        state.positionSeconds = 0
+        let resetPosition = settings?.resetPositionWhenMarkedPlayed ?? true
+        if resetPosition {
+            state.positionSeconds = 0
+        }
         let nowMs = Int64(Date().timeIntervalSince1970 * 1000)
         state.updatedAtEpochMs = nowMs
         state.lastPlayedAtEpochMs = nowMs
