@@ -362,6 +362,35 @@ final class PodcastStore: ObservableObject {
         queue = Array(queue.reversed())
     }
 
+    /// Sort the **full** persisted queue by episode `pubDateEpochMs` (newest or oldest first).
+    /// Persists via `queue` `didSet` (same path as `moveQueue` / `shuffleQueue` / `reverseQueue`).
+    /// No-op when fewer than 2 items. Episodes **missing** `pubDateEpochMs` sort **last** in both modes;
+    /// equal dates (or both missing) break ties by stable episode `id`.
+    /// Does **not** change `PlaybackService.currentEpisode` identity, seek, or stop playback —
+    /// the currently playing episode (if any) **moves with its episode id** to its new list index
+    /// (it is not pinned at the same index). Continuous next still uses `nextQueueEpisode(after:)`
+    /// by id, so auto-next becomes whatever follows that id after the sort.
+    /// One-shot reorder of `queue.json` — **not** a persistent filter preference (unlike Inbox/`inboxSort`).
+    /// Callers must gate on queue unlock (reorder-only lock, same as Shuffle/Reverse) and confirm first.
+    func sortQueueByPublishDate(newestFirst: Bool) {
+        guard queue.count >= 2 else { return }
+        queue = queue.sorted { lhs, rhs in
+            switch (lhs.pubDateEpochMs, rhs.pubDateEpochMs) {
+            case let (l?, r?):
+                if l != r {
+                    return newestFirst ? (l > r) : (l < r)
+                }
+                return lhs.id < rhs.id
+            case (_?, nil):
+                return true // dated before missing
+            case (nil, _?):
+                return false
+            case (nil, nil):
+                return lhs.id < rhs.id
+            }
+        }
+    }
+
     // MARK: - Playback progress / played
 
     func playbackState(for episodeId: String) -> EpisodePlaybackState {

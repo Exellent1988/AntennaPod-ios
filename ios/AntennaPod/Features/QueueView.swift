@@ -13,6 +13,8 @@ struct QueueView: View {
     @State private var showClearQueueConfirm = false
     @State private var showShuffleQueueConfirm = false
     @State private var showReverseQueueConfirm = false
+    @State private var showSortNewestQueueConfirm = false
+    @State private var showSortOldestQueueConfirm = false
     /// Single episode pending swipe-remove confirmation (nil = dialog dismissed).
     @State private var episodePendingRemove: PodcastEpisode?
 
@@ -39,6 +41,12 @@ struct QueueView: View {
     /// Reverse order always targets the **full** persisted queue (not chip/search). Same gate as Shuffle:
     /// unlocked and at least two items — filter state does not matter.
     private var canReverse: Bool {
+        !settings.queueLocked && store.queue.count >= 2
+    }
+
+    /// Sort by publish date always targets the **full** persisted queue (not chip/search). Same gate as
+    /// Shuffle/Reverse: unlocked and at least two items — filter state does not matter.
+    private var canSortByDate: Bool {
         !settings.queueLocked && store.queue.count >= 2
     }
 
@@ -288,8 +296,8 @@ struct QueueView: View {
                     )
                     .accessibilityHint(
                         settings.queueLocked
-                            ? String(localized: "Allows drag reorder, Shuffle, Reverse order, Move playing to top, and Move to top or bottom")
-                            : String(localized: "Disables drag reorder, Shuffle, Reverse order, Move playing to top, and Move to top or bottom")
+                            ? String(localized: "Allows drag reorder, Shuffle, Reverse order, Sort by date, Move playing to top, and Move to top or bottom")
+                            : String(localized: "Disables drag reorder, Shuffle, Reverse order, Sort by date, Move playing to top, and Move to top or bottom")
                     )
                     .accessibilityAddTraits(.isButton)
                 }
@@ -325,6 +333,32 @@ struct QueueView: View {
                             String(localized: "Asks for confirmation, then reverses the entire queue order")
                         )
                         Button {
+                            // Always confirm before sortQueueByPublishDate — reorders the full list.
+                            showSortNewestQueueConfirm = true
+                        } label: {
+                            Label("Newest first", systemImage: "calendar")
+                        }
+                        // Sort always targets the full queue (not the filtered subset).
+                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                        .disabled(!canSortByDate)
+                        .accessibilityLabel(String(localized: "Sort newest first"))
+                        .accessibilityHint(
+                            String(localized: "Asks for confirmation, then sorts the entire queue by publish date, newest first")
+                        )
+                        Button {
+                            // Always confirm before sortQueueByPublishDate — reorders the full list.
+                            showSortOldestQueueConfirm = true
+                        } label: {
+                            Label("Oldest first", systemImage: "calendar")
+                        }
+                        // Sort always targets the full queue (not the filtered subset).
+                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                        .disabled(!canSortByDate)
+                        .accessibilityLabel(String(localized: "Sort oldest first"))
+                        .accessibilityHint(
+                            String(localized: "Asks for confirmation, then sorts the entire queue by publish date, oldest first")
+                        )
+                        Button {
                             // Reuse moveQueueItemToTop — no seek/stop; no confirm (single-item reorder).
                             if let current = playback.currentEpisode {
                                 store.moveQueueItemToTop(current)
@@ -333,7 +367,7 @@ struct QueueView: View {
                             Label("Move playing to top", systemImage: "arrow.up.to.line")
                         }
                         // Enabled only when current episode is queued and not already first;
-                        // blocked when Queue locked (reorder-only, same as Shuffle/Reverse/Move to top).
+                        // blocked when Queue locked (reorder-only, same as Shuffle/Reverse/Sort/Move to top).
                         .disabled(!canMovePlayingToTop)
                         .accessibilityLabel(String(localized: "Move playing to top"))
                         .accessibilityHint(
@@ -357,7 +391,7 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Shuffle, reverse, move playing to top, or clear the entire queue")
+                        String(localized: "Shuffle, reverse, sort by date, move playing to top, or clear the entire queue")
                     )
                 }
             }
@@ -401,6 +435,34 @@ struct QueueView: View {
             } message: {
                 Text(
                     "Reverses all \(store.queue.count) episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+                )
+            }
+            .confirmationDialog(
+                "Sort queue newest first?",
+                isPresented: $showSortNewestQueueConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Newest first") {
+                    store.sortQueueByPublishDate(newestFirst: true)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Sorts all \(store.queue.count) episodes in the entire queue by publish date, newest first (not only the current filter). Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+                )
+            }
+            .confirmationDialog(
+                "Sort queue oldest first?",
+                isPresented: $showSortOldestQueueConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Oldest first") {
+                    store.sortQueueByPublishDate(newestFirst: false)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Sorts all \(store.queue.count) episodes in the entire queue by publish date, oldest first (not only the current filter). Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
                 )
             }
             .confirmationDialog(
