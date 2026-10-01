@@ -12,7 +12,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Online feed preview (before subscribe: discovery rows + Feed URL → Preview via FeedRepository; episode count + first titles; Confirm Subscribe / Cancel; already subscribed → Open feed)
 - Episode list
 - Stream playback (AVPlayer, speed tap-cycle presets + long-press menu, configurable skip intervals)
-- Full player sheet (artwork or video surface, scrubber, transport; tap mini player to open; **Open podcast** → dismiss → Subscriptions Feed detail; orphan → disabled / unavailable alert; mini ⋯ menu same)
+- Full player sheet (artwork or video surface, scrubber, **Jump to position** (mm:ss / min+sec → seek), transport; tap mini player to open; **Open podcast** → dismiss → Subscriptions Feed detail; orphan → disabled / unavailable alert; mini ⋯ menu same)
 - Video player (beta lite; MIME video/* or mp4/m4v/mov/webm → AVPlayerLayer in full player; PiP beta lite)
 - Video → audio only (Settings + full-player toggle; default off; Lockscreen stays audio)
 - Volume adaptation (Settings; default off; iOS AVAudioSession spokenAudio / speech optimize — not Android loudness gain)
@@ -299,6 +299,8 @@ Share an **episode** (title + URL) or a **podcast** (title + feed URL) via the s
 ## Full player
 
 Tap the mini player title or progress bar to open a full-screen sheet: feed artwork **or video surface**, episode title, podcast name, scrubber synced to `PlaybackService`, play/pause, rewind/fast-forward (Settings intervals), speed (**tap** cycles `0.8 / 1.0 / 1.1 / 1.2 / 1.3 / 1.5 / 2.0`, wrap; **long-press** keeps the full preset menu — same on mini player), sleep timer (same presets + Custom… 1–180 min as mini), plus mark played / favorite / queue / download / share. Chevron dismisses back to the mini player. Prior tabs (Inbox, search, discovery, etc.) unchanged.
+
+**Jump to position:** tap the left (current) time under the scrubber to open a medium sheet. Enter **mm:ss** / **h:mm:ss** (or a plain seconds integer) in the TextField, or use **minutes** + **seconds** steppers; **Jump** parses, clamps to `[0, duration]`, and calls `PlaybackService.seek(toSeconds:)`. Disabled when there is no episode or duration is unknown / zero.
 
 ## Playback speed preset cycle
 

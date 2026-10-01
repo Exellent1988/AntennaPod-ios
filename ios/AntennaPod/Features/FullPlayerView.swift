@@ -20,6 +20,7 @@ struct FullPlayerView: View {
     @State private var showTranscript = false
     @State private var showFeedUnavailable = false
     @State private var showCustomSleepTimer = false
+    @State private var showJumpToPosition = false
 
     private var episode: PodcastEpisode? { playback.currentEpisode }
 
@@ -50,6 +51,13 @@ struct FullPlayerView: View {
 
     private var displayPosition: Double {
         isScrubbing ? scrubSeconds : playback.positionSeconds
+    }
+
+    /// Jump-to-position needs a known finite duration and a current episode.
+    private var canJumpToPosition: Bool {
+        episode != nil
+            && playback.durationSeconds.isFinite
+            && playback.durationSeconds > 0
     }
 
     private var currentChapterIndex: Int? {
@@ -156,6 +164,14 @@ struct FullPlayerView: View {
         .sheet(isPresented: $showCustomSleepTimer) {
             CustomSleepTimerSheet()
                 .environmentObject(playback)
+        }
+        .sheet(isPresented: $showJumpToPosition) {
+            JumpToPositionSheet(initialSeconds: displayPosition)
+                .environmentObject(playback)
+                .onDisappear {
+                    scrubSeconds = playback.positionSeconds
+                    isScrubbing = false
+                }
         }
     }
 
@@ -413,10 +429,26 @@ struct FullPlayerView: View {
             .accessibilityValue(format(displayPosition))
             .accessibilityHint("Adjusts playback position")
             HStack {
-                Text(format(displayPosition))
-                    .font(.caption.monospacedDigit())
+                Button {
+                    showJumpToPosition = true
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(format(displayPosition))
+                            .font(.caption.monospacedDigit())
+                        Image(systemName: "arrow.right.to.line")
+                            .font(.caption2)
+                    }
                     .foregroundStyle(.secondary)
-                    .accessibilityLabel(String(localized: "Playback position"))
+                }
+                .buttonStyle(.plain)
+                .disabled(!canJumpToPosition)
+                .accessibilityLabel(String(localized: "Jump to position"))
+                .accessibilityValue(format(displayPosition))
+                .accessibilityHint(
+                    canJumpToPosition
+                        ? String(localized: "Enter a time to seek")
+                        : String(localized: "Duration unknown — jump unavailable.")
+                )
                 Spacer()
                 Button {
                     settings.showRemainingTime.toggle()
