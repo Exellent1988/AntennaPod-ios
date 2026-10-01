@@ -1,27 +1,40 @@
 import SwiftUI
 
-/// Add podcast: Apple Podcasts / iTunes search + subscribe-by-URL.
+/// Add podcast: Apple Podcasts / Podcast Index search + subscribe-by-URL.
 struct AddFeedView: View {
     @EnvironmentObject private var store: PodcastStore
     @Environment(\.dismiss) private var dismiss
 
-    @State private var mode: AddMode = .search
+    @State private var mode: AddMode = .apple
     @State private var urlText = "https://"
     @FocusState private var urlFocused: Bool
 
-    @State private var searchText = ""
-    @State private var results: [ItunesPodcastResult] = []
-    @State private var isSearching = false
-    @State private var searchError: String?
-    @State private var didSearch = false
-    @State private var searchTask: Task<Void, Never>?
+    // Apple Podcasts search
+    @State private var appleSearchText = ""
+    @State private var appleResults: [ItunesPodcastResult] = []
+    @State private var appleIsSearching = false
+    @State private var appleSearchError: String?
+    @State private var appleDidSearch = false
+    @State private var appleSearchTask: Task<Void, Never>?
+
+    // Podcast Index search
+    @State private var indexSearchText = ""
+    @State private var indexResults: [PodcastIndexPodcastResult] = []
+    @State private var indexIsSearching = false
+    @State private var indexSearchError: String?
+    @State private var indexDidSearch = false
+    @State private var indexSearchTask: Task<Void, Never>?
+    @State private var indexHasKeys = PodcastIndexKeychain.hasCredentials
+
     @State private var subscribingFeedUrl: String?
 
-    private let searcher = ItunesSearchService()
+    private let itunesSearcher = ItunesSearchService()
+    private let podcastIndexSearcher = PodcastIndexSearchService()
     private let debounceNs: UInt64 = 400_000_000 // 400 ms
 
     private enum AddMode: String, CaseIterable, Identifiable {
-        case search = "Search"
+        case apple = "Apple Podcasts"
+        case podcastIndex = "Podcast Index"
         case url = "Feed URL"
         var id: String { rawValue }
     }
@@ -39,8 +52,10 @@ struct AddFeedView: View {
                 .padding(.vertical, 8)
 
                 switch mode {
-                case .search:
-                    searchContent
+                case .apple:
+                    appleSearchContent
+                case .podcastIndex:
+                    podcastIndexSearchContent
                 case .url:
                     urlContent
                 }
@@ -50,7 +65,8 @@ struct AddFeedView: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
-                        searchTask?.cancel()
+                        appleSearchTask?.cancel()
+                        indexSearchTask?.cancel()
                         dismiss()
                     }
                 }
@@ -63,38 +79,47 @@ struct AddFeedView: View {
                     }
                 }
             }
-            .onChange(of: searchText) { _, newValue in
-                scheduleSearch(for: newValue)
+            .onChange(of: appleSearchText) { _, newValue in
+                scheduleAppleSearch(for: newValue)
+            }
+            .onChange(of: indexSearchText) { _, newValue in
+                scheduleIndexSearch(for: newValue)
+            }
+            .onChange(of: mode) { _, newMode in
+                if newMode == .podcastIndex {
+                    indexHasKeys = PodcastIndexKeychain.hasCredentials
+                }
             }
             .onDisappear {
-                searchTask?.cancel()
+                appleSearchTask?.cancel()
+                indexSearchTask?.cancel()
             }
         }
     }
 
     // MARK: - Search (Apple Podcasts)
 
-    private var searchContent: some View {
+    private var appleSearchContent: some View {
         List {
             Section {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.secondary)
-                    TextField("Search Apple Podcasts", text: $searchText)
+                    TextField("Search Apple Podcasts", text: $appleSearchText)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .submitLabel(.search)
-                        .onSubmit { runSearchImmediately() }
-                    if isSearching {
+                        .onSubmit { runAppleSearchImmediately() }
+                    if appleIsSearching {
                         ProgressView()
                             .controlSize(.small)
-                    } else if !searchText.isEmpty {
+                    } else if !appleSearchText.isEmpty {
                         Button {
-                            searchText = ""
-                            results = []
-                            searchError = nil
-                            didSearch = false
-                            searchTask?.cancel()
+                            appleSearchText = ""
+                            appleResults = []
+                            appleSearchError = nil
+                            appleDidSearch = false
+                            appleSearchTask?.cancel()
                         } label: {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundStyle(.secondary)
@@ -105,41 +130,44 @@ struct AddFeedView: View {
                 }
             }
 
-            if let searchError {
+            if let appleSearchError {
                 Section {
-                    Text(searchError)
+                    Text(appleSearchError)
                         .foregroundStyle(.red)
                         .font(.subheadline)
                 }
             }
 
-            if didSearch && !isSearching && results.isEmpty && searchError == nil {
+            if appleDidSearch && !appleIsSearching && appleResults.isEmpty && appleSearchError == nil {
                 Section {
                     ContentUnavailableView(
                         "No podcasts found",
                         systemImage: "magnifyingglass",
-                        description: Text("Try another name or artist, or switch to Feed URL.")
+                        description: Text("Try another name or artist, or switch to Feed URL / Podcast Index.")
                     )
                     .listRowBackground(Color.clear)
                 }
             }
 
-            if !results.isEmpty {
+            if !appleResults.isEmpty {
                 Section("Results") {
-                    ForEach(results) { item in
-                        ItunesResultRow(
-                            result: item,
+                    ForEach(appleResults) { item in
+                        DiscoveryResultRow(
+                            title: item.title,
+                            author: item.author,
+                            artworkURL: item.artworkURL,
+                            feedUrl: item.feedUrl,
                             isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl },
-                            isSubscribing: subscribingFeedUrl == item.feedUrl || (store.isLoading && subscribingFeedUrl == item.feedUrl),
+                            isSubscribing: subscribingFeedUrl == item.feedUrl,
                             onSubscribe: {
-                                Task { await subscribeSearchResult(item) }
+                                Task { await subscribeFeedUrl(item.feedUrl) }
                             }
                         )
                     }
                 }
             }
 
-            if let error = store.lastError, mode == .search {
+            if let error = store.lastError, mode == .apple {
                 Section {
                     Text(error)
                         .foregroundStyle(.red)
@@ -148,6 +176,103 @@ struct AddFeedView: View {
             }
         }
         .listStyle(.insetGrouped)
+    }
+
+    // MARK: - Search (Podcast Index)
+
+    private var podcastIndexSearchContent: some View {
+        List {
+            if !indexHasKeys {
+                Section {
+                    ContentUnavailableView(
+                        "API keys required",
+                        systemImage: "key",
+                        description: Text(
+                            "Podcast Index needs a free API key and secret from podcastindex.org (API docs / register). Paste them under Settings → Discovery. Keys stay in the Keychain — nothing is hardcoded or shipped with the app."
+                        )
+                    )
+                    .listRowBackground(Color.clear)
+                }
+            } else {
+                Section {
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.secondary)
+                        TextField("Search Podcast Index", text: $indexSearchText)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .submitLabel(.search)
+                            .onSubmit { runIndexSearchImmediately() }
+                        if indexIsSearching {
+                            ProgressView()
+                                .controlSize(.small)
+                        } else if !indexSearchText.isEmpty {
+                            Button {
+                                indexSearchText = ""
+                                indexResults = []
+                                indexSearchError = nil
+                                indexDidSearch = false
+                                indexSearchTask?.cancel()
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Clear search")
+                        }
+                    }
+                }
+
+                if let indexSearchError {
+                    Section {
+                        Text(indexSearchError)
+                            .foregroundStyle(.red)
+                            .font(.subheadline)
+                    }
+                }
+
+                if indexDidSearch && !indexIsSearching && indexResults.isEmpty && indexSearchError == nil {
+                    Section {
+                        ContentUnavailableView(
+                            "No podcasts found",
+                            systemImage: "magnifyingglass",
+                            description: Text("Try another name or author, or switch to Apple Podcasts / Feed URL.")
+                        )
+                        .listRowBackground(Color.clear)
+                    }
+                }
+
+                if !indexResults.isEmpty {
+                    Section("Results") {
+                        ForEach(indexResults) { item in
+                            DiscoveryResultRow(
+                                title: item.title,
+                                author: item.author,
+                                artworkURL: item.artworkURL,
+                                feedUrl: item.feedUrl,
+                                isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl },
+                                isSubscribing: subscribingFeedUrl == item.feedUrl,
+                                onSubscribe: {
+                                    Task { await subscribeFeedUrl(item.feedUrl) }
+                                }
+                            )
+                        }
+                    }
+                }
+
+                if let error = store.lastError, mode == .podcastIndex {
+                    Section {
+                        Text(error)
+                            .foregroundStyle(.red)
+                            .font(.subheadline)
+                    }
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+        .onAppear {
+            indexHasKeys = PodcastIndexKeychain.hasCredentials
+        }
     }
 
     // MARK: - Feed URL
@@ -168,7 +293,7 @@ struct AddFeedView: View {
                 }
             }
             Section {
-                Text("Paste an RSS/Atom podcast feed URL, or use Search to find feeds via Apple Podcasts.")
+                Text("Paste an RSS/Atom podcast feed URL, or use Apple Podcasts / Podcast Index search to find feeds.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -180,60 +305,111 @@ struct AddFeedView: View {
         }
     }
 
-    // MARK: - Actions
+    // MARK: - Apple search actions
 
-    private func scheduleSearch(for term: String) {
-        searchTask?.cancel()
+    private func scheduleAppleSearch(for term: String) {
+        appleSearchTask?.cancel()
         let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else {
-            results = []
-            searchError = nil
-            didSearch = false
-            isSearching = false
+            appleResults = []
+            appleSearchError = nil
+            appleDidSearch = false
+            appleIsSearching = false
             return
         }
-        searchTask = Task {
+        appleSearchTask = Task {
             try? await Task.sleep(nanoseconds: debounceNs)
             guard !Task.isCancelled else { return }
-            await performSearch(term: trimmed)
+            await performAppleSearch(term: trimmed)
         }
     }
 
-    private func runSearchImmediately() {
-        searchTask?.cancel()
-        let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+    private func runAppleSearchImmediately() {
+        appleSearchTask?.cancel()
+        let trimmed = appleSearchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-        searchTask = Task {
-            await performSearch(term: trimmed)
+        appleSearchTask = Task {
+            await performAppleSearch(term: trimmed)
         }
     }
 
     @MainActor
-    private func performSearch(term: String) async {
-        isSearching = true
-        searchError = nil
-        defer { isSearching = false }
+    private func performAppleSearch(term: String) async {
+        appleIsSearching = true
+        appleSearchError = nil
+        defer { appleIsSearching = false }
         do {
-            let found = try await searcher.search(term: term)
+            let found = try await itunesSearcher.search(term: term)
             guard !Task.isCancelled else { return }
-            results = found
-            didSearch = true
+            appleResults = found
+            appleDidSearch = true
         } catch is CancellationError {
             // ignore
         } catch {
             guard !Task.isCancelled else { return }
-            results = []
-            didSearch = true
-            searchError = error.localizedDescription
+            appleResults = []
+            appleDidSearch = true
+            appleSearchError = error.localizedDescription
+        }
+    }
+
+    // MARK: - Podcast Index search actions
+
+    private func scheduleIndexSearch(for term: String) {
+        indexSearchTask?.cancel()
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            indexResults = []
+            indexSearchError = nil
+            indexDidSearch = false
+            indexIsSearching = false
+            return
+        }
+        guard indexHasKeys else { return }
+        indexSearchTask = Task {
+            try? await Task.sleep(nanoseconds: debounceNs)
+            guard !Task.isCancelled else { return }
+            await performIndexSearch(term: trimmed)
+        }
+    }
+
+    private func runIndexSearchImmediately() {
+        indexSearchTask?.cancel()
+        let trimmed = indexSearchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, indexHasKeys else { return }
+        indexSearchTask = Task {
+            await performIndexSearch(term: trimmed)
         }
     }
 
     @MainActor
-    private func subscribeSearchResult(_ item: ItunesPodcastResult) async {
-        guard !item.feedUrl.isEmpty else { return }
-        subscribingFeedUrl = item.feedUrl
+    private func performIndexSearch(term: String) async {
+        indexIsSearching = true
+        indexSearchError = nil
+        defer { indexIsSearching = false }
+        do {
+            let found = try await podcastIndexSearcher.search(term: term)
+            guard !Task.isCancelled else { return }
+            indexResults = found
+            indexDidSearch = true
+        } catch is CancellationError {
+            // ignore
+        } catch {
+            guard !Task.isCancelled else { return }
+            indexResults = []
+            indexDidSearch = true
+            indexSearchError = error.localizedDescription
+        }
+    }
+
+    // MARK: - Subscribe
+
+    @MainActor
+    private func subscribeFeedUrl(_ feedUrl: String) async {
+        guard !feedUrl.isEmpty else { return }
+        subscribingFeedUrl = feedUrl
         defer { subscribingFeedUrl = nil }
-        await store.subscribe(feedUrl: item.feedUrl)
+        await store.subscribe(feedUrl: feedUrl)
         if store.lastError == nil {
             dismiss()
         }
@@ -248,10 +424,13 @@ struct AddFeedView: View {
     }
 }
 
-// MARK: - Result row
+// MARK: - Shared result row (Apple + Podcast Index)
 
-private struct ItunesResultRow: View {
-    let result: ItunesPodcastResult
+private struct DiscoveryResultRow: View {
+    let title: String
+    let author: String
+    let artworkURL: URL?
+    let feedUrl: String
     let isSubscribed: Bool
     let isSubscribing: Bool
     let onSubscribe: () -> Void
@@ -260,10 +439,10 @@ private struct ItunesResultRow: View {
         HStack(spacing: 12) {
             artwork
             VStack(alignment: .leading, spacing: 2) {
-                Text(result.title)
+                Text(title)
                     .font(.headline)
                     .lineLimit(2)
-                Text(result.author)
+                Text(author)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -279,7 +458,7 @@ private struct ItunesResultRow: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.small)
-                .disabled(isSubscribing || result.feedUrl.isEmpty)
+                .disabled(isSubscribing || feedUrl.isEmpty)
             }
         }
         .padding(.vertical, 4)
@@ -288,7 +467,7 @@ private struct ItunesResultRow: View {
     @ViewBuilder
     private var artwork: some View {
         let size: CGFloat = 56
-        if let url = result.artworkURL {
+        if let url = artworkURL {
             AsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):
@@ -320,3 +499,4 @@ private struct ItunesResultRow: View {
             }
     }
 }
+

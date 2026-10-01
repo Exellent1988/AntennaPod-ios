@@ -50,6 +50,10 @@ struct SettingsView: View {
     @State private var customMB: Int = 500
     @State private var showClearConfirmation = false
     @State private var notificationAuthLabel = "Checking…"
+    @State private var podcastIndexAPIKeyDraft = ""
+    @State private var podcastIndexAPISecretDraft = ""
+    @State private var podcastIndexKeysSaved = PodcastIndexKeychain.hasCredentials
+    @State private var podcastIndexKeyError: String?
 
     private var pickerChoice: Binding<StorageLimitPickerChoice> {
         Binding(
@@ -122,6 +126,7 @@ struct SettingsView: View {
                 autoDownloadSection
                 notificationsSection
                 storageSection
+                podcastIndexDiscoverySection
                 gpodderSyncSection
                 OpmlImportExportSection()
             }
@@ -132,6 +137,11 @@ struct SettingsView: View {
                 }
                 downloads.runStorageMaintenance()
                 Task { await refreshNotificationAuthLabel() }
+                podcastIndexKeysSaved = PodcastIndexKeychain.hasCredentials
+                if podcastIndexAPIKeyDraft.isEmpty {
+                    podcastIndexAPIKeyDraft = PodcastIndexKeychain.loadAPIKey() ?? ""
+                }
+                // Secret is not pre-filled once saved (Keychain holds it); leave draft empty when already saved.
             }
             .onChange(of: settings.notifyOnNewEpisodes) { _, enabled in
                 guard enabled else { return }
@@ -323,6 +333,80 @@ struct SettingsView: View {
 
     private var evictionHelpText: String {
         "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch."
+    }
+
+    @ViewBuilder
+    private var podcastIndexDiscoverySection: some View {
+        Section {
+            if podcastIndexKeysSaved {
+                LabeledContent("API key") {
+                    Text("Stored in Keychain")
+                        .foregroundStyle(.secondary)
+                }
+                LabeledContent("API secret") {
+                    Text("Stored in Keychain")
+                        .foregroundStyle(.secondary)
+                }
+                Button("Replace keys…") {
+                    podcastIndexKeysSaved = false
+                    podcastIndexAPIKeyDraft = ""
+                    podcastIndexAPISecretDraft = ""
+                    podcastIndexKeyError = nil
+                }
+                Button("Clear keys", role: .destructive) {
+                    PodcastIndexKeychain.deleteCredentials()
+                    podcastIndexKeysSaved = false
+                    podcastIndexAPIKeyDraft = ""
+                    podcastIndexAPISecretDraft = ""
+                    podcastIndexKeyError = nil
+                }
+            } else {
+                SecureField("API key", text: $podcastIndexAPIKeyDraft)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                SecureField("API secret", text: $podcastIndexAPISecretDraft)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                Button("Save keys") {
+                    savePodcastIndexKeys()
+                }
+                .disabled(
+                    podcastIndexAPIKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        || podcastIndexAPISecretDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                )
+            }
+            if let podcastIndexKeyError {
+                Text(podcastIndexKeyError)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+            Text(podcastIndexHelpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        } header: {
+            Text("Discovery / Podcast Index")
+        }
+    }
+
+    private var podcastIndexHelpText: String {
+        "Free API key + secret from podcastindex.org (register / API docs). Stored only in the Keychain — not hardcoded and not shipped with the app. Used by Add podcast → Podcast Index search; Subscribe still follows the feed URL pipeline."
+    }
+
+    private func savePodcastIndexKeys() {
+        let key = podcastIndexAPIKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        let secret = podcastIndexAPISecretDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !key.isEmpty, !secret.isEmpty else {
+            podcastIndexKeyError = "Enter both API key and secret"
+            return
+        }
+        do {
+            try PodcastIndexKeychain.save(apiKey: key, apiSecret: secret)
+            podcastIndexAPISecretDraft = ""
+            podcastIndexKeysSaved = true
+            podcastIndexKeyError = nil
+        } catch {
+            podcastIndexKeyError = error.localizedDescription
+        }
     }
 
     @ViewBuilder
