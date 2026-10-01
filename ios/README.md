@@ -30,6 +30,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Feed / podcast language (beta; parse `itunes:language` / RSS `language` / `xml:lang` into `PodcastFeed.language`; Feed detail header + description sheet + optional Subscriptions subtitle show localized name via `Locale.current` or raw code; **hide when missing** — never invent codes; VoiceOver EN/DE **Language …** / **Sprache …**; refresh to populate existing feeds)
 - Support / Funding (beta; parse channel `podcast:funding` url + optional text, else Atom `link rel="payment"`, into `PodcastFeed.fundingUrl` / `fundingLabel`; Feed detail ⋯ opens http(s) in system browser — **not** in-app payment; **hide when missing** — never invent Patreon/URLs; menu uses creator label or **Support** / **Unterstützen**; refresh to populate existing feeds)
 - Feed categories (beta; parse channel `itunes:category` `text` incl. nested subcategory into `PodcastFeed.categories`; Feed detail + description sheet chips; optional Subscriptions/preview caption; **hide when empty** — never invent App Store taxonomy; VoiceOver EN/DE **Categories …** / **Kategorien …**; `matchingFeeds` matches category text; refresh to populate existing feeds)
+- Feed locked (beta; parse channel Podcast Index `podcast:locked` yes/no + optional `owner` into `PodcastFeed.isLocked` / `lockedOwner`; Feed detail **Locked** badge + honest footnote that the feed claims transfer lock — **no** ownership verification; hide when absent/`no`; refresh to populate existing feeds)
 - Shared list/Home **remaining-time** helper (`EpisodeRemainingTime`): one wall-clock sum (`max(0, duration − position)`, unknowns → `~`, live current, played→0); call sites keep their own episode scopes (visible filtered / Home preview soft-cap / Subscriptions unplayed map / library search episode hits). No user-facing behavior change; EN/DE strings unchanged.
 - Relative publish dates on list rows (beta; EpisodeRow `pubDateEpochMs` via `EpisodeDateFormatting`: Today / Yesterday / N days ago for ≤7 calendar days (`RelativeDateTimeFormatter` locale-aware EN/DE), else medium absolute; caption `S2 E5 · Trailer/Bonus · date · duration · size` (omit unknown parts); History/Favorites/Archived `dateOverride` stays live SwiftUI `.relative`; VoiceOver includes publish caption; no Settings toggle)
 - EpisodeRow in-progress playback (beta polish; thin `ProgressView` under caption when `playback.json` `positionSeconds > 1` and not `isPlayed` and duration known — fraction = position/duration; duration from playback state or feed `itunes:duration`/media; hide when unplayed, played, or duration unknown; VoiceOver EN/DE **N percent played** + remaining, or **At m:ss** if duration unknown; no Settings toggle)
@@ -554,6 +555,13 @@ Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`
 - **Search:** `PodcastStore.matchingFeeds` also matches category strings.
 - **Local-folder feeds:** no categories (no RSS).
 - EN / DE + VoiceOver **Categories …** / **Kategorien …** (and per-chip **Category …** / **Kategorie …**).
+
+## Feed locked / `podcast:locked` (beta)
+
+- **Parse:** `NativeRssAtomParser` stores channel-level Podcast Index **`podcast:locked`** as `PodcastFeed.isLocked` + optional `lockedOwner` (attribute `owner` email). Node value **`yes`** → locked; **`no`** → not locked; absent/unknown → not locked (`false`). Populated on subscribe / refresh — **existing subscriptions need a feed refresh**.
+- **UI:** On **Feed detail**, when `isLocked`, a **Locked** / **Gesperrt** capsule plus an honest footnote that the feed **claims** to be locked for transfer and that **this app does not verify ownership** (no host-import block, no email challenge). Optional owner line when the feed provided `owner`. **Hidden when absent/`no` — never invent.**
+- **Local-folder feeds:** not locked (no RSS).
+- EN / DE + VoiceOver.
 
 ## Headset / Bluetooth pause
 

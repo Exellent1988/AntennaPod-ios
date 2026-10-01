@@ -220,6 +220,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Channel `itunes:category` `text` attributes (parent + nested subcategory), feed order, de-duped.
     /// Empty when absent — never invent App Store taxonomy; UI hides when empty.
     var categories: [String]
+    /// Podcast Index `podcast:locked` channel claim (`yes` → true). `false` when absent/`no` — never invent; UI hides unless true.
+    /// Display-only: this app does **not** verify ownership or block host transfer.
+    var isLocked: Bool
+    /// Optional `owner` email attribute on `podcast:locked` when the feed provides it. Nil when absent — never invent.
+    var lockedOwner: String?
     var episodes: [PodcastEpisode]
 
     /// Non-empty feed description (may still contain HTML).
@@ -278,6 +283,13 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         return list.joined(separator: " · ")
     }
 
+    /// Trimmed non-empty locked-owner email from the feed when provided. Hidden when missing.
+    var displayLockedOwner: String? {
+        guard let lockedOwner else { return nil }
+        let trimmed = lockedOwner.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     init(
         id: UUID,
         title: String,
@@ -291,6 +303,8 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         fundingUrl: String? = nil,
         fundingLabel: String? = nil,
         categories: [String] = [],
+        isLocked: Bool = false,
+        lockedOwner: String? = nil,
         episodes: [PodcastEpisode]
     ) {
         self.id = id
@@ -305,6 +319,8 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.fundingUrl = fundingUrl
         self.fundingLabel = fundingLabel
         self.categories = categories
+        self.isLocked = isLocked
+        self.lockedOwner = lockedOwner
         self.episodes = episodes
     }
 
@@ -322,11 +338,13 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         fundingUrl = try c.decodeIfPresent(String.self, forKey: .fundingUrl)
         fundingLabel = try c.decodeIfPresent(String.self, forKey: .fundingLabel)
         categories = try c.decodeIfPresent([String].self, forKey: .categories) ?? []
+        isLocked = try c.decodeIfPresent(Bool.self, forKey: .isLocked) ?? false
+        lockedOwner = try c.decodeIfPresent(String.self, forKey: .lockedOwner)
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, episodes
     }
 }
 

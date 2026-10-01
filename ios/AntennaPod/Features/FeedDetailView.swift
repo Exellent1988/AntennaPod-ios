@@ -57,6 +57,18 @@ struct FeedDetailView: View {
         liveFeed.displayCategories
     }
 
+    /// VoiceOver for podcast:locked=yes badge + honest footnote (+ optional owner from feed).
+    private var feedLockedAccessibilityLabel: String {
+        var parts = [
+            String(localized: "Locked"),
+            String(localized: "This feed claims to be locked for transfer. This app does not verify ownership.")
+        ]
+        if let owner = liveFeed.displayLockedOwner {
+            parts.append(String(localized: "Locked owner \(owner)"))
+        }
+        return parts.joined(separator: ". ")
+    }
+
     /// Episodes for this feed ordered by `AppSettings.feedEpisodeSort` (`pubDateEpochMs`).
     /// Missing dates sort last in both modes. Does not mutate stored feed order.
     private var sortedEpisodes: [PodcastEpisode] {
@@ -210,6 +222,30 @@ struct FeedDetailView: View {
                         .background(Color.secondary.opacity(0.2), in: Capsule())
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityLabel(String(localized: "Explicit"))
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Channel podcast:locked=yes only — display-only claim; no owner verification / host block.
+            if liveFeed.isLocked {
+                Section {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(String(localized: "Locked"))
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                        Text(String(localized: "This feed claims to be locked for transfer. This app does not verify ownership."))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        if let owner = liveFeed.displayLockedOwner {
+                            Text(String(localized: "Locked owner \(owner)"))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(feedLockedAccessibilityLabel)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }

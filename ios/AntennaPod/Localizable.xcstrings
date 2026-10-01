@@ -2534,7 +2534,8 @@
             "value": "Gesperrt"
           }
         }
-      }
+      },
+      "comment": "Badge when channel podcast:locked is yes (Feed detail), or parental-controls locked session label. Hidden for podcast:locked when absent/no — display-only claim; no host ownership verification."
     },
     "Logging in…": {
       "extractionState": "manual",
@@ -14630,6 +14631,42 @@
           }
         }
       }
+    },
+    "This feed claims to be locked for transfer. This app does not verify ownership.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This feed claims to be locked for transfer. This app does not verify ownership."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Feed gibt an, für Übertragungen gesperrt zu sein. Diese App prüft die Eigentümerschaft nicht."
+          }
+        }
+      },
+      "comment": "Honest footnote under Locked badge — Podcast Index podcast:locked display-only; no verification workflow."
+    },
+    "Locked owner %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked owner %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eigentümer %@"
+          }
+        }
+      },
+      "comment": "Optional podcast:locked owner email from the feed when present. Display-only — never verified."
     }
   },
   "version": "1.0"

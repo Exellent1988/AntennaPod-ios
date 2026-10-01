@@ -33,6 +33,10 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var capturingFundingLabel = false
     /// Channel itunes:category `text` attributes (parent + nested), feed order; de-duped when building feed.
     private var categoryTexts: [String] = []
+    /// Channel podcast:locked — true only for yes; false when absent/no. Display-only (no host verification).
+    private var feedIsLocked = false
+    private var lockedOwnerAttr: String?
+    private var capturingLocked = false
     private var episodes: [PodcastEpisode] = []
 
     private var currentElement = ""
@@ -100,6 +104,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             fundingUrl: fundingUrl,
             fundingLabel: fundingLabel,
             categories: Self.uniqueCategories(categoryTexts),
+            isLocked: feedIsLocked,
+            lockedOwner: lockedOwnerAttr,
             episodes: episodes
         )
     }
@@ -208,6 +214,17 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     .trimmingCharacters(in: .whitespacesAndNewlines)
                 if let raw, !raw.isEmpty {
                     categoryTexts.append(raw)
+                }
+            }
+        case "locked":
+            // Podcast Index: <podcast:locked owner="email@…">yes|no</podcast:locked>
+            // Channel-level claim for host transfer; display-only — we do not verify owner or block import.
+            if !inItem {
+                capturingLocked = true
+                let owner = (attributeDict["owner"] ?? attributeDict["Owner"])?
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                if let owner, !owner.isEmpty {
+                    lockedOwnerAttr = owner
                 }
             }
         case "funding":
@@ -394,6 +411,15 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 // Channel itunes:explicit — only yes/true/explicit marks the feed.
                 if let flagged = ItunesExplicitParsing.parse(text) {
                     feedIsExplicit = flagged
+                }
+            case "locked":
+                // podcast:locked text must be yes/no per Podcast Index; yes → claim locked for transfer.
+                if capturingLocked {
+                    if let flagged = PodcastLockedParsing.parse(text) {
+                        feedIsLocked = flagged
+                    }
+                    // Owner without a parseable yes/no stays stored but UI only shows when isLocked.
+                    capturingLocked = false
                 }
             case "funding":
                 // podcast:funding text node = creator label (optional; may be truncated by aggregators ~128 chars).
@@ -584,6 +610,23 @@ enum ItunesSeasonEpisodeParsing {
         switch trimmed {
         case "full", "trailer", "bonus":
             return trimmed
+        default:
+            return nil
+        }
+    }
+}
+
+/// Podcast Index `podcast:locked` channel text nodes.
+/// Spec: `yes` / `no`. Also accept `true` / `false` for lenient feeds. Unknown/empty → nil (do not invent).
+enum PodcastLockedParsing {
+    static func parse(_ raw: String) -> Bool? {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !trimmed.isEmpty else { return nil }
+        switch trimmed {
+        case "yes", "true":
+            return true
+        case "no", "false":
+            return false
         default:
             return nil
         }

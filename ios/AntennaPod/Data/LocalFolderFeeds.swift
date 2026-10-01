@@ -270,6 +270,8 @@ enum LocalFolderScanner {
             fundingUrl: nil,
             fundingLabel: nil,
             categories: [],
+            isLocked: false,
+            lockedOwner: nil,
             episodes: episodes
         )
     }
