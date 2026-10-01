@@ -12684,6 +12684,42 @@
           }
         }
       }
+    },
+    "Library search remaining time %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver for Library search info bar (episode count + remaining over matching episode results only).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Library search remaining time %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Zeit in der Bibliothekssuche %@"
+          }
+        }
+      }
+    },
+    "Library search remaining time covers matching episode results only, not podcast hits or the full library": {
+      "extractionState": "manual",
+      "comment": "VoiceOver honesty: Library search remaining sums episode hit rows only — not Podcasts section feeds or the whole library.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Library search remaining time covers matching episode results only, not podcast hits or the full library"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Verbleibende Zeit in der Bibliothekssuche gilt nur für passende Episoden-Treffer, nicht für Podcast-Treffer oder die gesamte Bibliothek"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
