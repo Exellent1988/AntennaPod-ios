@@ -95,7 +95,22 @@ struct DownloadsView: View {
                                 }
                                 .buttonStyle(.bordered)
                             }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                Button {
+                                    store.playNext(
+                                        item.episode,
+                                        currentlyPlayingId: playback.currentEpisode?.id
+                                    )
+                                } label: {
+                                    Label("Play Next", systemImage: "text.insert")
+                                }
+                                .tint(.teal)
+                                Button {
+                                    store.enqueue(item.episode)
+                                } label: {
+                                    Label("Add to queue", systemImage: "text.append")
+                                }
+                                .tint(.purple)
                                 Button(role: .destructive) {
                                     downloads.delete(item.episode)
                                 } label: {

@@ -39,7 +39,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Siri Shortcuts lite (App Intents Play/Pause / Skip forward/back + `antennapod://` URL schemes; opens app; needs current episode)
 - Homescreen widget (beta lite; WidgetKit Continue listening from App Group snapshot; tap → `antennapod://play`; empty placeholder; may be stale / no scrubber)
 - Apple Watch companion (beta lite; watchOS Continue listening from same snapshot via WC push; Play → iPhone `antennapod://play`; empty state; no independent playback / downloads / queue)
-- Swipe actions (Queue Remove+Archive + drag reorder + Clear queue confirm; Downloads Delete + toolbar Delete played downloads confirm; Inbox Archive+Mark played+Play Next+Add to queue; Feed(+ searchable title; Download all / Mark all played confirm on full-feed eligibility)/History(+ searchable + Clear history confirm)/Favorites(+ searchable + Clear favorites confirm)/Archived(+ searchable + Restore all confirm)/All Episodes useful swipes)
+- Swipe actions (Queue Remove+Archive + drag reorder + Clear queue confirm; Downloads Play Next+Add to queue+Delete + toolbar Delete played downloads confirm; Inbox Archive+Mark played+Play Next+Add to queue; Feed(+ searchable title; Download all / Mark all played confirm on full-feed eligibility)/History(+ searchable + Clear history confirm)/Favorites(+ searchable + Clear favorites confirm)/Archived(+ searchable + Restore all confirm)/All Episodes useful swipes)
 - Favorites / starred episodes (Subscriptions → Library → Favorites; optional Home preview via Home layout; star on EpisodeRow + full player; `favorites.json`; swipe Unfavorite + Archive; `.searchable` title/feed filter with debounce; toolbar Clear favorites with confirm on full list; auto-delete skips favorites)
 - Archive / restore episodes (side map `archived.json`; hide from Inbox / Home New; feed lists keep with dim/badge; EpisodeRow + Feed/Inbox/Queue/Favorites/All Episodes swipe; Library → Archived with `.searchable` + toolbar Restore all confirm on full list; bulk Archive all + Mark all as played in Inbox)
 - Episodes / All episodes (Subscriptions → Library → Episodes; all feeds, newest pubDate first; soft cap 500 then All/Unplayed/Downloaded chips + searchable title/feed; EpisodeRow actions; swipe Archive + Mark played; filter persisted in AppSettings)
@@ -270,7 +270,7 @@ Consistent list swipes (EpisodeRow icon buttons remain for play / download / que
 | Screen | Leading | Trailing | Extra |
 |--------|---------|----------|-------|
 | Queue | Archive | Remove from queue | Edit → drag reorder (`moveQueue`) when not filtering; `.searchable` title/feed; toolbar Clear queue (confirm, full queue) |
-| Downloads | — | Delete download | — |
+| Downloads | — | Play Next + Add to queue + Delete download | — |
 | Inbox | Mark played | Play Next + Add to queue + Archive | Toolbar menu: Mark all as played (confirm) + Archive all |
 | Feed detail | Archive / Restore | Play Next + Queue + Share | `.searchable` episode title; toolbar Download all + Mark all as played (confirm, full-feed eligibility) + EpisodeRow context: Play Next + Add to queue |
 | History | Mark unplayed (if played) | Remove playback state | `.searchable` title/feed; toolbar Clear history (confirm, full list) |
