@@ -12720,6 +12720,24 @@
           }
         }
       }
+    },
+    "%@ left": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ left"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ verbleibend"
+          }
+        }
+      },
+      "comment": "Compact remaining time on a Subscriptions row (per-feed unplayed remaining; same wall-clock rules as the list info bar)."
     }
   },
   "version": "1.0"

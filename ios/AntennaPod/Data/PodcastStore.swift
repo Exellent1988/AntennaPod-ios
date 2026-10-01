@@ -636,6 +636,8 @@ final class PodcastStore: ObservableObject {
     /// Same definition as Inbox / All Episodes Unplayed / Feed detail Unplayed.
     /// Counts the full stored feed catalog — **not** the All Episodes newest-500 soft cap.
     /// Omits feeds with zero unplayed (callers treat missing as 0).
+    /// Prefer `unplayedRemainingByFeedId()` when Subscriptions also needs per-feed remaining
+    /// (same pass returns count + remaining).
     func unplayedCountsByFeedId() -> [UUID: Int] {
         var counts: [UUID: Int] = [:]
         counts.reserveCapacity(feeds.count)
@@ -649,6 +651,57 @@ final class PodcastStore: ObservableObject {
             }
         }
         return counts
+    }
+
+    /// Per-feed unplayed remaining (`!isPlayed && !isArchived`), **one pass** over stored
+    /// `feed.episodes` — same definition / catalog honesty as `unplayedCountsByFeedId` / Inbox
+    /// (full stored feed catalog; **not** All Episodes newest-500 soft cap; RSS window inherent).
+    /// Remaining = wall-clock sum of `max(0, duration − position)` when duration known; unknown
+    /// durations skipped (`unknownCount`); live `PlaybackService` position/duration when that
+    /// episode is current (if `playback` is wired). **Played** (not current) → 0 (defensive —
+    /// set is already unplayed). Omits feeds with zero unplayed (callers treat missing as 0 /
+    /// hide remaining).
+    func unplayedRemainingByFeedId() -> [UUID: FeedUnplayedRemainingSummary] {
+        var result: [UUID: FeedUnplayedRemainingSummary] = [:]
+        result.reserveCapacity(feeds.count)
+        for feed in feeds {
+            var unplayed = 0
+            var remaining = 0.0
+            var known = 0
+            var unknown = 0
+            for episode in feed.episodes where !isPlayed(episode.id) && !isArchived(episode.id) {
+                unplayed += 1
+                guard let duration = knownDurationSeconds(for: episode) else {
+                    unknown += 1
+                    continue
+                }
+                known += 1
+                // Mark-played clears position; do not count full duration as still left
+                // (unless this is the live current episode — use live position instead).
+                if isPlayed(episode.id), playback?.currentEpisode?.id != episode.id {
+                    continue
+                }
+                remaining += max(0, duration - remainingPositionSeconds(for: episode))
+            }
+            if unplayed > 0 {
+                result[feed.id] = FeedUnplayedRemainingSummary(
+                    unplayedCount: unplayed,
+                    remainingSeconds: remaining,
+                    knownCount: known,
+                    unknownCount: unknown
+                )
+            }
+        }
+        return result
+    }
+
+    /// Live player position when current; else saved progress (`0` when unplayed / cleared).
+    private func remainingPositionSeconds(for episode: PodcastEpisode) -> Double {
+        if let playback, playback.currentEpisode?.id == episode.id {
+            let live = playback.positionSeconds
+            return live.isFinite ? max(0, live) : 0
+        }
+        return max(0, positionSeconds(for: episode.id))
     }
 
     // MARK: - All Episodes (catalog)
@@ -1643,5 +1696,15 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+}
+
+/// Per-feed unplayed remaining from `PodcastStore.unplayedRemainingByFeedId()`.
+/// `unplayedCount` matches Inbox / badge definition; remaining is wall-clock over known-duration
+/// unplayed episodes only (`unknownCount` skipped with `~` in UI).
+struct FeedUnplayedRemainingSummary: Equatable {
+    var unplayedCount: Int
+    var remainingSeconds: Double
+    var knownCount: Int
+    var unknownCount: Int
 }
 

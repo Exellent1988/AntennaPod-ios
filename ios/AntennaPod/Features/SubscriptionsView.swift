@@ -102,39 +102,30 @@ struct SubscriptionsView: View {
         return chips
     }
 
-    /// Single-pass map from `PodcastStore.unplayedCountsByFeedId()` (missing = 0).
-    private var unplayedCountByFeedId: [UUID: Int] {
-        store.unplayedCountsByFeedId()
-    }
-
-    /// Unplayed, non-archived episodes on **visible** subscriptions only (`tagFilteredFeeds`
-    /// after search + tag filter). Same `!isPlayed && !isArchived` definition as per-row
-    /// unplayed badges / Inbox. Uses **unique** feeds (not `groupedSections`) so multi-tag
-    /// feeds are not double-counted when Group by tag is on. Full stored feed catalogs —
-    /// **not** the All Episodes newest-500 soft cap (same honesty as unplayed badges).
-    /// **Not** per-feed remaining on rows (no episode preview on this screen).
-    private var visibleUnplayedEpisodesForRemaining: [PodcastEpisode] {
-        var episodes: [PodcastEpisode] = []
-        for feed in tagFilteredFeeds {
-            for episode in feed.episodes where !store.isPlayed(episode.id) && !store.isArchived(episode.id) {
-                episodes.append(episode)
-            }
-        }
-        return episodes
+    /// Single-pass map from `PodcastStore.unplayedRemainingByFeedId()` (missing = 0 /
+    /// no remaining). Supplies both per-row unplayed **badge** counts and **per-feed remaining**.
+    /// Touches live `PlaybackService` so remaining refreshes while listening (store reads the
+    /// same weak `playback` for duration/position).
+    private var unplayedRemainingByFeedId: [UUID: FeedUnplayedRemainingSummary] {
+        _ = playback.currentEpisode?.id
+        _ = playback.positionSeconds
+        _ = playback.durationSeconds
+        return store.unplayedRemainingByFeedId()
     }
 
     /// AntennaPod-like info bar: unplayed count + remaining over unplayed episodes of
-    /// **visible** subscriptions (search + tag). Remaining per episode =
-    /// `max(0, duration − position)` when duration known; unplayed with duration contributes
-    /// full duration; **played** (not current) → 0 (defensive — set is already unplayed);
-    /// **unknown duration skipped** (tilde when any skipped). Currently playing uses live
-    /// `PlaybackService` position/duration. Wall-clock only (no playback-speed divide).
-    /// Distinct from Inbox tab remaining (`inboxSort` / full Inbox) and from per-row badges
-    /// (count only). Hidden when no visible feeds or no unplayed episodes among them.
+    /// **visible** subscriptions (search + tag). Built by summing per-feed summaries from
+    /// `unplayedRemainingByFeedId` over **unique** `tagFilteredFeeds` (multi-tag Group by tag
+    /// does not double-count). Same `!isPlayed && !isArchived` definition as per-row badges /
+    /// Inbox / per-feed row remaining. Full stored feed catalogs — **not** the All Episodes
+    /// newest-500 soft cap. Remaining per episode = `max(0, duration − position)` when
+    /// duration known; **unknown duration skipped** (tilde when any skipped); live player
+    /// when current. Wall-clock only (no playback-speed divide). Distinct from Inbox tab
+    /// remaining (`inboxSort` / full Inbox). Hidden when no visible feeds or no unplayed
+    /// episodes among them.
     private var subscriptionsRemainingInfoLabel: String? {
-        let episodes = visibleUnplayedEpisodesForRemaining
-        guard !episodes.isEmpty else { return nil }
         let summary = subscriptionsRemainingSummary
+        guard summary.episodeCount > 0 else { return nil }
         let unplayedWord: String
         if summary.episodeCount == 1 {
             unplayedWord = String(localized: "1 unplayed")
@@ -169,62 +160,30 @@ struct SubscriptionsView: View {
     }
 
     private var subscriptionsRemainingSummary: SubscriptionsRemainingSummary {
-        let episodes = visibleUnplayedEpisodesForRemaining
+        var episodeCount = 0
         var remaining = 0.0
         var known = 0
         var unknown = 0
-        for episode in episodes {
-            guard let duration = knownDurationSeconds(for: episode) else {
-                unknown += 1
-                continue
-            }
-            known += 1
-            // Mark-played clears position; do not count full duration as still left
-            // (unless this is the live current episode — use live position instead).
-            // Visible set is already unplayed-only, but still handle played defensively.
-            if store.isPlayed(episode.id), playback.currentEpisode?.id != episode.id {
-                continue
-            }
-            let position = positionSeconds(for: episode)
-            remaining += max(0, duration - position)
+        for feed in tagFilteredFeeds {
+            guard let s = unplayedRemainingByFeedId[feed.id] else { continue }
+            episodeCount += s.unplayedCount
+            remaining += s.remainingSeconds
+            known += s.knownCount
+            unknown += s.unknownCount
         }
         return SubscriptionsRemainingSummary(
-            episodeCount: episodes.count,
+            episodeCount: episodeCount,
             remainingSeconds: remaining,
             knownCount: known,
             unknownCount: unknown
         )
     }
 
-    /// Prefer live player duration when this episode is current; else feed `itunes:duration` /
-    /// media; else saved playback duration. Never invents a length.
-    private func knownDurationSeconds(for episode: PodcastEpisode) -> Double? {
-        if playback.currentEpisode?.id == episode.id {
-            let live = playback.durationSeconds
-            if live.isFinite, live > 0 { return live }
-        }
-        if episode.hasKnownDuration {
-            return episode.durationSeconds
-        }
-        let saved = store.playbackState(for: episode.id).durationSeconds
-        if saved.isFinite, saved > 0 { return saved }
-        return nil
-    }
-
-    /// Live player position when current; else saved progress (`0` when unplayed / cleared).
-    private func positionSeconds(for episode: PodcastEpisode) -> Double {
-        if playback.currentEpisode?.id == episode.id {
-            let live = playback.positionSeconds
-            return live.isFinite ? max(0, live) : 0
-        }
-        return max(0, store.positionSeconds(for: episode.id))
-    }
-
     var body: some View {
         NavigationStack(path: $path) {
             List {
                 // AntennaPod-like subscriptions info bar (unplayed remaining over visible feeds).
-                // Not per-feed row remaining (no episode preview); unique feeds when grouped by tag.
+                // Per-feed remaining also on each row (same map); unique feeds when grouped by tag.
                 if let remainingLabel = subscriptionsRemainingInfoLabel {
                     Section {
                         Text(remainingLabel)
@@ -542,7 +501,9 @@ struct SubscriptionsView: View {
 
     @ViewBuilder
     private func feedRow(_ feed: PodcastFeed) -> some View {
-        let unplayed = unplayedCountByFeedId[feed.id] ?? 0
+        let summary = unplayedRemainingByFeedId[feed.id]
+        let unplayed = summary?.unplayedCount ?? 0
+        let remainingLabel = feedRowRemainingLabel(summary)
         NavigationLink(value: feed) {
             HStack(alignment: .center, spacing: 12) {
                 if LocalFolderFeed.isLocalFolderFeed(feed) {
@@ -580,19 +541,32 @@ struct SubscriptionsView: View {
                     }
                 }
                 Spacer(minLength: 8)
-                // AntennaPod-like unplayed badge; hidden when 0.
-                if unplayed > 0 {
-                    Text("\(unplayed)")
-                        .font(.caption.weight(.semibold).monospacedDigit())
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, unplayed >= 10 ? 7 : 0)
-                        .frame(minWidth: 22, minHeight: 22)
-                        .background(Color.accentColor, in: Capsule())
-                        .accessibilityHidden(true)
+                // AntennaPod-like unplayed badge + per-feed remaining; both hidden when 0 unplayed.
+                // Remaining text also hidden when all durations unknown (badge still shows count).
+                VStack(alignment: .trailing, spacing: 4) {
+                    if unplayed > 0 {
+                        Text("\(unplayed)")
+                            .font(.caption.weight(.semibold).monospacedDigit())
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, unplayed >= 10 ? 7 : 0)
+                            .frame(minWidth: 22, minHeight: 22)
+                            .background(Color.accentColor, in: Capsule())
+                            .accessibilityHidden(true)
+                    }
+                    if let remainingLabel {
+                        Text(remainingLabel)
+                            .font(.caption2.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                            .accessibilityHidden(true)
+                    }
                 }
             }
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(subscriptionRowAccessibilityLabel(feed: feed, unplayed: unplayed))
+            .accessibilityLabel(subscriptionRowAccessibilityLabel(
+                feed: feed,
+                unplayed: unplayed,
+                remainingLabel: remainingLabel
+            ))
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button(role: .destructive) {
@@ -612,6 +586,20 @@ struct SubscriptionsView: View {
         .modifier(OpenPodcastWebsiteContextMenu(url: feed.websiteURL, openURL: openURL))
     }
 
+    /// Compact per-feed remaining for a subscription row. Hidden when unplayed is 0 or all
+    /// durations unknown (no invented time). Prefix `~` when any unplayed episode lacks duration.
+    private func feedRowRemainingLabel(_ summary: FeedUnplayedRemainingSummary?) -> String? {
+        guard let summary, summary.unplayedCount > 0, summary.knownCount > 0 else { return nil }
+        let formatted = StatisticsView.formatDuration(summary.remainingSeconds)
+        let timePart: String
+        if summary.unknownCount > 0 {
+            timePart = String(localized: "~\(formatted)")
+        } else {
+            timePart = formatted
+        }
+        return String(localized: "\(timePart) left")
+    }
+
     private func unplayedCountLabel(_ count: Int) -> String {
         if count == 1 {
             return String(localized: "1 unplayed")
@@ -619,7 +607,11 @@ struct SubscriptionsView: View {
         return String(localized: "\(count) unplayed")
     }
 
-    private func subscriptionRowAccessibilityLabel(feed: PodcastFeed, unplayed: Int) -> String {
+    private func subscriptionRowAccessibilityLabel(
+        feed: PodcastFeed,
+        unplayed: Int,
+        remainingLabel: String?
+    ) -> String {
         var parts: [String] = [feed.title]
         if LocalFolderFeed.isLocalFolderFeed(feed) {
             parts.append(String(localized: "Folder"))
@@ -632,6 +624,9 @@ struct SubscriptionsView: View {
         }
         if unplayed > 0 {
             parts.append(unplayedCountLabel(unplayed))
+        }
+        if let remainingLabel {
+            parts.append(remainingLabel)
         }
         let tags = store.tags(for: feed.id)
         if !tags.isEmpty, tagFilter == .all, !groupByTag {
