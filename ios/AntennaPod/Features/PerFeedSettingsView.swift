@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Per-subscription overrides (Auto-download / Keep updated / New episodes / Notifications) + tags.
+/// Per-subscription overrides (Auto-download / Keep updated / New episodes / Notifications / Skip intro·outro / Speed) + tags.
 struct PerFeedSettingsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var appSettings: AppSettings
@@ -79,6 +79,40 @@ struct PerFeedSettingsView: View {
                     .foregroundStyle(.secondary)
             } header: {
                 Text("Notifications")
+            }
+
+            Section {
+                Picker("Skip intro", selection: skipIntroBinding) {
+                    Text("Use global").tag(Optional<Int>.none)
+                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
+                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(Optional(secs))
+                    }
+                }
+                Text(skipIntroHelp)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                Picker("Skip outro", selection: skipOutroBinding) {
+                    Text("Use global").tag(Optional<Int>.none)
+                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
+                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(Optional(secs))
+                    }
+                }
+                Text(skipOutroHelp)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                Picker("Playback speed", selection: playbackSpeedBinding) {
+                    Text("Use global").tag(Optional<Float>.none)
+                    ForEach(AppSettings.speedPresets, id: \.self) { speed in
+                        Text(String(format: "%.1f×", speed)).tag(Optional(speed))
+                    }
+                }
+                Text(playbackSpeedHelp)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } header: {
+                Text("Playback")
             }
 
             Section {
@@ -252,5 +286,58 @@ struct PerFeedSettingsView: View {
         case .never:
             return "No local notification for this podcast, even when the global toggle is on."
         }
+    }
+
+    private var skipIntroBinding: Binding<Int?> {
+        Binding(
+            get: { current.skipIntroSeconds },
+            set: { value in
+                store.updateFeedSettings(for: feedId) { $0.skipIntroSeconds = value }
+            }
+        )
+    }
+
+    private var skipOutroBinding: Binding<Int?> {
+        Binding(
+            get: { current.skipOutroSeconds },
+            set: { value in
+                store.updateFeedSettings(for: feedId) { $0.skipOutroSeconds = value }
+            }
+        )
+    }
+
+    private var playbackSpeedBinding: Binding<Float?> {
+        Binding(
+            get: { current.playbackSpeed },
+            set: { value in
+                store.updateFeedSettings(for: feedId) { $0.playbackSpeed = value }
+            }
+        )
+    }
+
+    private var skipIntroHelp: String {
+        let global = AppSettings.skipIntroOutroLabel(appSettings.skipIntroSeconds)
+        if let override = current.skipIntroSeconds {
+            let label = AppSettings.skipIntroOutroLabel(override)
+            return "This podcast uses \(label) instead of Settings → Skip intro (currently \(global))."
+        }
+        return "Follows Settings → Skip intro (currently \(global)). Applied on a fresh start (position ≈ 0)."
+    }
+
+    private var skipOutroHelp: String {
+        let global = AppSettings.skipIntroOutroLabel(appSettings.skipOutroSeconds)
+        if let override = current.skipOutroSeconds {
+            let label = AppSettings.skipIntroOutroLabel(override)
+            return "This podcast uses \(label) instead of Settings → Skip outro (currently \(global))."
+        }
+        return "Follows Settings → Skip outro (currently \(global)). Near end, remaining ≤ value finishes the episode."
+    }
+
+    private var playbackSpeedHelp: String {
+        let global = String(format: "%.1f×", appSettings.defaultPlaybackSpeed)
+        if let override = current.playbackSpeed {
+            return String(format: "This podcast starts at %.1f× instead of Settings → Default speed (currently %@).", override, global)
+        }
+        return "Follows Settings → Default speed (currently \(global)). Applied when starting a fresh episode for this podcast."
     }
 }

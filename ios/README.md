@@ -49,7 +49,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - New-episode action (Inbox only / Add to Queue / Add to Queue and download; per-feed Use global / Inbox / Queue; after refresh newcomers only)
 - Auto-download (global on/off + episodes-per-feed cap; after refresh; Wi‑Fi only under Network / Downloads; per-feed Use global / Always / Never)
 - Mobile / Wi‑Fi policy (auto / manual download / stream Wi‑Fi-only toggles; shared NWPathMonitor)
-- Per-feed settings (Feed detail → gear: Auto-download, Keep updated, New episodes, Notify overrides)
+- Per-feed settings (Feed detail → gear: Auto-download, Keep updated, New episodes, Notify, Skip intro/outro, Playback speed overrides)
 - Tags / Folders for subscriptions (side map `feed-tags.json`; manage on per-feed settings; Subscriptions filter chips + optional group-by-tag; untagged)
 - Local folder feeds (beta; Add podcast → Folder via fileImporter; security-scoped bookmark; synthetic feed from mp3/m4a/aac/wav/flac; refresh re-scans; no RSS/network; Folder badge; unsubscribe releases bookmark)
 - OPML import/export (Settings + Subscriptions; share sheet / file picker; batch subscribe)
@@ -322,8 +322,10 @@ Feed detail → **gear** opens a sheet with overrides:
 - **Keep updated** — Never excludes the podcast from refresh-all; Use global / Always both refresh with the others.
 - **New episodes** — Use global / Inbox only / Add to Queue (Queue+download stays a global Settings choice).
 - **Notify on new episodes** — Use global / Always / Never; Always/Never beat the global notification toggle (system permission still required).
+- **Skip intro / Skip outro** — Use global / Off / 5 / 10 / 15 / 30 / 60 seconds (`nil` in the side map = Use global; explicit `0` = Off for this podcast). Same presets as Settings → Playback.
+- **Playback speed** — Use global / 0.8× / 1.0× / 1.2× / 1.5× / 2.0× (`nil` = Use global). Applied when starting a fresh episode for this podcast.
 
-Persisted as a side map keyed by stable `PodcastFeed.id` in Application Support `feed-settings.json` (survives feed refresh; cleared on unsubscribe). Reset to global defaults removes the map entry. Speed / skip-intro·outro per feed are not in this slice (global skip intro/outro lives in Settings → Playback).
+Persisted as a side map keyed by stable `PodcastFeed.id` in Application Support `feed-settings.json` (survives feed refresh; cleared on unsubscribe). Reset to global defaults removes the map entry. `PlaybackService` resolves intro/outro/speed from the feed override when set, otherwise `AppSettings`.
 
 The same sheet also manages **Tags / Folders** (see below).
 
@@ -352,7 +354,7 @@ Settings → **Playback → Rewind** / **Fast-forward**: presets **5 / 10 / 15 /
 
 ## Skip intro / Skip outro
 
-Settings → **Playback → Skip intro** / **Skip outro**: presets **0 / 5 / 10 / 15 / 30 / 60** seconds (`AppSettings.skipIntroSeconds` / `skipOutroSeconds`, UserDefaults; **0 = Off**). On a **fresh start** (resume position ≈ 0), playback seeks forward by skip-intro once per episode play session. When duration is known and **remaining ≤ skip-outro**, `PlaybackService` treats the episode as finished once (mark played + continuous queue next, same path as natural end) — guarded so it does not loop. Resume from mid-episode does not re-apply skip intro. **Global only** in this beta; per-feed override is later (same as speed).
+Settings → **Playback → Skip intro** / **Skip outro**: presets **0 / 5 / 10 / 15 / 30 / 60** seconds (`AppSettings.skipIntroSeconds` / `skipOutroSeconds`, UserDefaults; **0 = Off**). On a **fresh start** (resume position ≈ 0), playback seeks forward by skip-intro once per episode play session. When duration is known and **remaining ≤ skip-outro**, `PlaybackService` treats the episode as finished once (mark played + continuous queue next, same path as natural end) — guarded so it does not loop. Resume from mid-episode does not re-apply skip intro. **Per-feed override** (Feed detail → gear → Playback): Use global / Off / same presets; when set, that podcast’s episodes use the override instead of Settings.
 
 ## Prefer stream vs download
 

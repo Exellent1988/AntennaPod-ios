@@ -116,7 +116,7 @@ struct SettingsView: View {
                             Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
                         }
                     }
-                    Text("Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Global only; per-feed override later.")
+                    Text("Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Override per podcast via Feed detail → gear → Playback.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                     Picker("Playback source", selection: $settings.playbackSourcePreference) {

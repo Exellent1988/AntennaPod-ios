@@ -114,9 +114,9 @@ final class PlaybackService: ObservableObject {
             finishCurrentEpisode(ended: false)
         }
 
-        // Fresh episode (or first play): use Settings default speed.
+        // Fresh episode (or first play): feed override speed, else Settings default.
         if isFreshEpisode {
-            rate = settings?.defaultPlaybackSpeed ?? 1.0
+            rate = resolvedPlaybackSpeed(for: episode)
         }
 
         // Keep an active sleep timer across episode changes (clock continues; EOE re-arms).
@@ -150,8 +150,8 @@ final class PlaybackService: ObservableObject {
             }
             positionSeconds = resumeAt
         } else {
-            // Fresh start (position ≈ 0): skip intro once when configured.
-            let intro = Double(settings?.skipIntroSeconds ?? 0)
+            // Fresh start (position ≈ 0): skip intro once when configured (feed override else global).
+            let intro = Double(resolvedSkipIntroSeconds(for: episode))
             if intro > 0 {
                 let time = CMTime(seconds: intro, preferredTimescale: 600)
                 newPlayer.seek(to: time) { [weak self] finished in
@@ -340,6 +340,34 @@ final class PlaybackService: ObservableObject {
     /// Optional `preferredFileURL` is treated as a known local path (same as `localURL`) and
     /// still subject to Prefer stream.
     /// Stream URLs are additionally gated by `streamWifiOnly` in `play` (local files always OK).
+
+    /// Feed override playback speed when set; otherwise AppSettings default.
+    private func resolvedPlaybackSpeed(for episode: PodcastEpisode) -> Float {
+        let global = settings?.defaultPlaybackSpeed ?? 1.0
+        guard let store, let feed = store.feed(containingEpisodeId: episode.id) else {
+            return global
+        }
+        return store.feedSettings(for: feed.id).resolvedPlaybackSpeed(global: global)
+    }
+
+    /// Feed override skip-intro when set; otherwise AppSettings global.
+    private func resolvedSkipIntroSeconds(for episode: PodcastEpisode) -> Int {
+        let global = settings?.skipIntroSeconds ?? 0
+        guard let store, let feed = store.feed(containingEpisodeId: episode.id) else {
+            return global
+        }
+        return store.feedSettings(for: feed.id).resolvedSkipIntroSeconds(global: global)
+    }
+
+    /// Feed override skip-outro when set; otherwise AppSettings global.
+    private func resolvedSkipOutroSeconds(for episode: PodcastEpisode) -> Int {
+        let global = settings?.skipOutroSeconds ?? 0
+        guard let store, let feed = store.feed(containingEpisodeId: episode.id) else {
+            return global
+        }
+        return store.feedSettings(for: feed.id).resolvedSkipOutroSeconds(global: global)
+    }
+
     private func resolvePlaybackURL(for episode: PodcastEpisode, preferredFileURL: URL?) -> URL? {
         let preference = settings?.playbackSourcePreference ?? .automatic
         let local = preferredFileURL ?? downloads?.localURL(for: episode)
@@ -470,7 +498,8 @@ final class PlaybackService: ObservableObject {
     /// When remaining ≤ skipOutroSeconds (duration known), finish once like natural end.
     private func checkSkipOutro() {
         guard !didTriggerSkipOutroForSession else { return }
-        let outro = Double(settings?.skipOutroSeconds ?? 0)
+        guard let episode = currentEpisode else { return }
+        let outro = Double(resolvedSkipOutroSeconds(for: episode))
         guard outro > 0 else { return }
         guard durationSeconds.isFinite, durationSeconds > 0 else { return }
         // Avoid firing at t≈0 before any real progress (short media + large outro).

@@ -362,14 +362,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// Seconds to skip at the start of an episode on a fresh play (0 = off). Global only in this beta.
+    /// Seconds to skip at the start of an episode on a fresh play (0 = off). Overridable per feed.
     @Published var skipIntroSeconds: Int {
         didSet {
             UserDefaults.standard.set(skipIntroSeconds, forKey: Keys.skipIntroSeconds)
         }
     }
 
-    /// When remaining playback ≤ this many seconds, treat the episode as finished (0 = off). Global only.
+    /// When remaining playback ≤ this many seconds, treat the episode as finished (0 = off). Overridable per feed.
     @Published var skipOutroSeconds: Int {
         didSet {
             UserDefaults.standard.set(skipOutroSeconds, forKey: Keys.skipOutroSeconds)
