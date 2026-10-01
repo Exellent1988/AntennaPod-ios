@@ -15,6 +15,7 @@ enum PodcastPersistence {
     private static var pendingDownloadsURL: URL { directory.appendingPathComponent("pending-downloads.json") }
     private static var feedSettingsURL: URL { directory.appendingPathComponent("feed-settings.json") }
     private static var favoritesURL: URL { directory.appendingPathComponent("favorites.json") }
+    private static var downloadErrorsURL: URL { directory.appendingPathComponent("download-errors.json") }
 
     static func loadFeeds() -> [PodcastFeed] {
         decode(feedsURL) ?? []
@@ -82,6 +83,15 @@ enum PodcastPersistence {
 
     static func saveFavorites(_ map: [String: Int64]) {
         encode(map, to: favoritesURL)
+    }
+
+    /// Ring buffer of recent download failures (newest first; capped by caller).
+    static func loadDownloadErrors() -> [DownloadErrorEntry] {
+        decode(downloadErrorsURL) ?? []
+    }
+
+    static func saveDownloadErrors(_ items: [DownloadErrorEntry]) {
+        encode(items, to: downloadErrorsURL)
     }
 
     private static func decode<T: Decodable>(_ url: URL) -> T? {

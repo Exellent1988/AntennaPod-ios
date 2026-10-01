@@ -193,7 +193,7 @@ enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
     ]
 }
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source, auto-delete, skip intervals, skip intro/outro, new-episode notifications).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, refresh, auto-download, playback source, auto-delete, skip intervals, skip intro/outro, new-episode / download-error notifications).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.2, 1.5, 2.0]
@@ -237,6 +237,7 @@ final class AppSettings: ObservableObject {
         static let skipIntroSeconds = "settings.skipIntroSeconds"
         static let skipOutroSeconds = "settings.skipOutroSeconds"
         static let notifyOnNewEpisodes = "settings.notifyOnNewEpisodes"
+        static let notifyOnDownloadErrors = "settings.notifyOnDownloadErrors"
         static let chartsCountryCode = "settings.chartsCountryCode"
     }
 
@@ -355,6 +356,13 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Notify when an episode download fails (local UserNotifications; no push).
+    /// Defaults on; shares the same system permission as new-episode alerts.
+    @Published var notifyOnDownloadErrors: Bool {
+        didSet {
+            UserDefaults.standard.set(notifyOnDownloadErrors, forKey: Keys.notifyOnDownloadErrors)
+        }
+    }
 
     /// iTunes top-lists country: `"auto"` (device locale → else `de`) or ISO alpha-2 (`de`, `us`, …).
     @Published var chartsCountryCode: String {
@@ -429,6 +437,12 @@ final class AppSettings: ObservableObject {
         } else {
             // Default on; permission gate is separate (honest if denied).
             notifyOnNewEpisodes = true
+        }
+        if UserDefaults.standard.object(forKey: Keys.notifyOnDownloadErrors) != nil {
+            notifyOnDownloadErrors = UserDefaults.standard.bool(forKey: Keys.notifyOnDownloadErrors)
+        } else {
+            // Default on; same permission gate as new-episode alerts.
+            notifyOnDownloadErrors = true
         }
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue

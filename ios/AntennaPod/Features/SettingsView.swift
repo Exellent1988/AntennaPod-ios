@@ -150,6 +150,13 @@ struct SettingsView: View {
                     await refreshNotificationAuthLabel()
                 }
             }
+            .onChange(of: settings.notifyOnDownloadErrors) { _, enabled in
+                guard enabled else { return }
+                Task {
+                    await NewEpisodeNotificationCoordinator.requestPermissionIfNeeded()
+                    await refreshNotificationAuthLabel()
+                }
+            }
             .confirmationDialog(
                 "Clear all downloads?",
                 isPresented: $showClearConfirmation,
@@ -234,6 +241,7 @@ struct SettingsView: View {
     private var notificationsSection: some View {
         Section {
             Toggle("Notify on new episodes", isOn: $settings.notifyOnNewEpisodes)
+            Toggle("Notify on download errors", isOn: $settings.notifyOnDownloadErrors)
             LabeledContent("Permission") {
                 Text(notificationAuthLabel)
                     .foregroundStyle(.secondary)
@@ -241,6 +249,18 @@ struct SettingsView: View {
             if notificationAuthLabel == "Denied" {
                 Button("Open iOS Settings") {
                     NewEpisodeNotificationCoordinator.openSystemNotificationSettings()
+                }
+            }
+            NavigationLink {
+                DownloadErrorsView()
+            } label: {
+                HStack {
+                    Text("Download errors")
+                    Spacer()
+                    if !downloads.recentErrors.isEmpty {
+                        Text("\(downloads.recentErrors.count)")
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             Text(notificationsHelpText)
@@ -252,16 +272,23 @@ struct SettingsView: View {
     }
 
     private var notificationsHelpText: String {
-        if !settings.notifyOnNewEpisodes {
-            return "When enabled, a local notification appears after a feed refresh that finds new episodes (title = podcast, body = episode title or “N new episodes”). No push server."
-        }
         if notificationAuthLabel == "Denied" {
-            return "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. The toggle stays on so your preference is clear."
+            return "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. Toggles stay on so your preference is clear. Sync-error notifications are not implemented yet."
+        }
+        if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors {
+            return "When enabled: new episodes after refresh, and/or download failures (episode title + short error). Local only — no push. Sync-error notifications later."
         }
         if notificationAuthLabel == "Not determined" {
-            return "Permission is requested when you turn this on, or when a refresh first finds new episodes. Local only — no push."
+            return "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails. Local only — no push."
         }
-        return "After Inbox pull-to-refresh, Keep updated, or a single podcast refresh, new episodes trigger a local notification. Tap opens Inbox (best-effort). No APNs / push."
+        var parts: [String] = []
+        if settings.notifyOnNewEpisodes {
+            parts.append("New episodes after refresh → Inbox")
+        }
+        if settings.notifyOnDownloadErrors {
+            parts.append("Download failures → Downloads (title = episode, body = error)")
+        }
+        return parts.joined(separator: ". ") + ". No APNs / push. Sync-error notifications later."
     }
 
     @MainActor

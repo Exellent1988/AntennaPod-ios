@@ -71,5 +71,9 @@ struct RootTabView: View {
             guard token != nil else { return }
             selectedTab = .inbox
         }
+        .onChange(of: notificationDeepLink.downloadsOpenToken) { _, token in
+            guard token != nil else { return }
+            selectedTab = .downloads
+        }
     }
 }

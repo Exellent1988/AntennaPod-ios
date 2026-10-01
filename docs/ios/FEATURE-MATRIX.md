@@ -1,6 +1,6 @@
 # Feature-Matrix (Android → iOS)
 
-Status: `todo` | `wip` | `done` | `n/a` (kein sinnvolles iOS-Äquivalent).  
+Status: `todo` | `wip` | `done` | `partial` | `n/a` (kein sinnvolles iOS-Äquivalent).  
 Gewicht: 5 = P0 … 1 = P4. Details und Begründung: [PLAN.md](PLAN.md).
 
 Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/preferences`) und Modulgrenzen.
@@ -74,7 +74,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Auto-delete after play | 4 | done | Global Settings toggle (default off); on mark played (manual or playback finished / continuous auto-next) deletes local file via DownloadService; keeps episode row + played status; defers while that local file is still the active player item; **skips favorited / starred** episodes |
 | Mobile/Wi‑Fi Policy | 4 | wip | Auto-download Wi‑Fi/Ethernet-only via NWPathMonitor; manual downloads still allow cellular; broader cellular prefs later |
 | Background downloads | 5 | done | `URLSessionConfiguration.background`; AppDelegate `handleEventsForBackgroundURLSession`; task↔episode in `pending-downloads.json` |
-| Download log / errors | 3 | todo | lastError surfaced in UI |
+| Download log / errors | 3 | done | Ring buffer (~50) in Application Support `download-errors.json` (episode id/title, feed, message, timestamp); `lastError` banner on Downloads + Download errors list (toolbar / Settings); Clear errors |
 
 ## Discovery
 
@@ -111,7 +111,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Swipe actions | 3 | todo | |
 | Parental controls | 2 | todo | |
 | Notifications (new episodes) | 4 | done | Local UserNotifications after feed refresh; Settings toggle (default on; honest if denied); per-feed Always/Never override; permission from Settings or first new-eps refresh; tap → Inbox; no push |
-| Notifications (DL/Sync errors) | 4 | todo | |
+| Notifications (DL/Sync errors) | 4 | partial | **DL done**: Settings “Notify on download errors” (default on; same UNUserNotificationCenter permission as new episodes); local banner on failure (episode title + short error); tap → Downloads. **Sync errors later** (no push) |
 | About / contribute links | 2 | todo | |
 
 ## Extras

@@ -26,7 +26,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Library search (local subscriptions/episodes; Inbox searchable + Subscriptions filter; not iTunes)
 - Playback progress save / resume (`lastPlayedAt` for History)
 - Mark played / unplayed (manual + smart-mark 30s)
-- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, auto-delete after play, notify on new episodes, Discovery charts country + Podcast Index API keys, gpodder.net sync)
+- Settings tab (theme light/dark/system, default playback speed, rewind/FF intervals, skip intro/outro, playback source, feed refresh interval, auto-download, auto-delete after play, notify on new episodes / download errors, Discovery charts country + Podcast Index API keys, gpodder.net sync)
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (auto-next from queue when an episode ends)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
@@ -36,6 +36,8 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Download storage limit (Settings: usage + max size; auto-evict played first)
 - Auto-delete after playing (global toggle; deletes offline file on mark played; keeps episode row)
 - Notifications for new episodes (local UserNotifications after refresh; Settings toggle; tap opens Inbox; no push)
+- Download log / errors (ring buffer in Application Support; Downloads banner + errors list; Clear errors)
+- Notify on download errors (local UserNotifications; Settings toggle default on; tap opens Downloads; Sync-error notify later; no push)
 - gpodder.net sync (subscriptions MVP: Settings login/sync; Keychain; pull+push feed URLs; additive merge; episode actions later)
 
 Root tabs (6): **Home**, Inbox, Subscriptions, Queue, Downloads, Settings.
@@ -50,7 +52,7 @@ ios/
     ├── AntennaPodApp.swift
     ├── App/RootTabView.swift
     ├── Data/…               # store, repository, playback, download, parsers
-    └── Features/…           # home (+ charts preview), inbox, all episodes, history, favorites, library search, subscriptions (+ Discover charts), feed detail + per-feed settings, add/discover, top lists, player, downloads, queue, settings (+ gpodder sync + charts country), OPML, notifications
+    └── Features/…           # home (+ charts preview), inbox, all episodes, history, favorites, library search, subscriptions (+ Discover charts), feed detail + per-feed settings, add/discover, top lists, player, downloads (+ error log), queue, settings (+ gpodder sync + charts country), OPML, notifications (new eps + DL errors)
 ```
 
 ## Local setup (Mac)
@@ -66,7 +68,7 @@ See `docs/ios/PLAN.md` and `docs/ios/FEATURE-MATRIX.md`.
 
 ## Persistence
 
-Subscriptions, queue, per-feed settings (`feed-settings.json`), starred episode ids (`favorites.json`), and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`, `lastPlayedAtEpochMs`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `feed-settings.json`, `favorites.json`, `playback.json`). Inbox is derived from that state (unplayed episodes across feeds, newest first). All Episodes is the same cross-feed catalog without the unplayed filter (newest pubDate first, soft-capped at 500). History lists played or in-progress episodes (newest `lastPlayedAt` first); swipe removes playback state or marks unplayed. Older `playback.json` without `lastPlayedAt` migrates from `updatedAt` when played/in-progress. Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme, default playback speed, rewind/fast-forward intervals, skip intro/outro seconds, playback source preference, feed refresh interval, auto-download, auto-delete-after-playing, and notify-on-new-episodes prefs live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts / mini+full+Now Playing skip / `PlaybackService.play` source resolution / launch+foreground due-check / post-refresh enqueue / mark-played download cleanup. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`) and in-flight background task↔episode map (`pending-downloads.json`). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
+Subscriptions, queue, per-feed settings (`feed-settings.json`), starred episode ids (`favorites.json`), and per-episode playback state (`positionSeconds`, `durationSeconds`, `isPlayed`, `lastPlayedAtEpochMs`) are stored as JSON under Application Support (`PodcastPersistence`: `feeds.json`, `queue.json`, `feed-settings.json`, `favorites.json`, `playback.json`). Inbox is derived from that state (unplayed episodes across feeds, newest first). All Episodes is the same cross-feed catalog without the unplayed filter (newest pubDate first, soft-capped at 500). History lists played or in-progress episodes (newest `lastPlayedAt` first); swipe removes playback state or marks unplayed. Older `playback.json` without `lastPlayedAt` migrates from `updatedAt` when played/in-progress. Playback resumes from the saved position; episodes are auto-marked played within the last 30 seconds (AntennaPod `smartMarkAsPlayed` default) or when playback ends. Theme, default playback speed, rewind/fast-forward intervals, skip intro/outro seconds, playback source preference, feed refresh interval, auto-download, auto-delete-after-playing, and notify-on-new-episodes / notify-on-download-errors prefs live in `UserDefaults` (`AppSettings`) and apply via `preferredColorScheme` / fresh episode starts / mini+full+Now Playing skip / `PlaybackService.play` source resolution / launch+foreground due-check / post-refresh enqueue / mark-played download cleanup. Downloads are files under Documents/downloads with a JSON catalog (`downloads.json`), in-flight background task↔episode map (`pending-downloads.json`), and a recent download-error ring buffer (`download-errors.json`, ~50 entries: episode id/title, feed, message, timestamp). Background transfers use `URLSessionConfiguration.background(withIdentifier:)` plus `AppDelegate.handleEventsForBackgroundURLSession`. Download storage limit lives in `UserDefaults` (`AppSettings.downloadStorageLimit`); `DownloadService` measures Documents/downloads usage, enforces the budget after each successful download (and on Settings open / app launch) by deleting **played** episodes first (oldest file mtime), then unplayed (LRU). Settings also offers **Clear downloads** with confirmation. GRDB/SQLite aligned with AntennaPod schema comes later.
 
 
 
@@ -159,6 +161,12 @@ Settings → **Downloads / Storage → Delete episode after playing** (default o
 ## Notifications (new episodes)
 
 Settings → **Notifications → Notify on new episodes** (default on). Uses `UserNotifications` **locally** only — no APNs / push server. Permission is requested when you enable the toggle, or on the first feed refresh that finds new episodes while the toggle is on and status is still undetermined. Settings shows Allowed / Denied / Not determined; if denied, the preference can stay on but no banners fire until iOS Settings allows Notifications (Open iOS Settings button). Per-feed **Notify on new episodes** (Use global / Always / Never) overrides the global toggle for that podcast. After Inbox pull-to-refresh, Keep updated, or a single podcast refresh, newly appeared episode IDs (existing subscriptions only — not first subscribe) post a local notification: **title** = feed title, **body** = episode title, or **“N new episodes”** when several arrive for that feed. Tap opens the **Inbox** tab (best-effort; feed-detail deep link not wired). `PodcastFeed.id` is preserved across refresh so notification ids stay stable.
+
+## Download log / errors + notify on failures
+
+Failed downloads are appended to a ring buffer (~50) in Application Support `download-errors.json` (episode id, title, feed title, message, timestamp). `DownloadService.lastError` still drives a red **Last download failed** banner on the **Downloads** tab (episode + feed when known). **Downloads → Errors** toolbar and **Settings → Notifications → Download errors** open the same simple list; **Clear** wipes the log and banner (offline files kept).
+
+Settings → **Notifications → Notify on download errors** (default on) reuses the same `UNUserNotificationCenter` permission path as new-episode alerts. On failure (no media URL, HTTP error, move failure, or task error — not user cancel), if the toggle is on and permission allows, a **local** notification posts: **title** = episode title, **body** = short error. Tap opens the **Downloads** tab. **No push / APNs.** Sync-error notifications are **not** implemented yet (matrix: DL done, Sync later).
 
 ## Discovery
 

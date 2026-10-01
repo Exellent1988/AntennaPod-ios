@@ -19,6 +19,37 @@ struct PendingDownloadMapping: Codable, Hashable {
     var fileName: String
 }
 
+/// One failed download attempt (ring-buffered in Application Support).
+struct DownloadErrorEntry: Identifiable, Hashable, Codable {
+    let id: UUID
+    let episodeId: String
+    let episodeTitle: String
+    let feedTitle: String
+    let message: String
+    let timestampEpochMs: Int64
+
+    init(
+        id: UUID = UUID(),
+        episodeId: String,
+        episodeTitle: String,
+        feedTitle: String,
+        message: String,
+        timestampEpochMs: Int64 = Int64(Date().timeIntervalSince1970 * 1000)
+    ) {
+        self.id = id
+        self.episodeId = episodeId
+        self.episodeTitle = episodeTitle
+        self.feedTitle = feedTitle
+        self.message = message
+        self.timestampEpochMs = timestampEpochMs
+    }
+
+    var timestamp: Date {
+        Date(timeIntervalSince1970: TimeInterval(timestampEpochMs) / 1000)
+    }
+}
+
+
 /// Snapshot of Documents/downloads size for Settings UI.
 struct DownloadStorageUsage: Equatable {
     var usedBytes: Int64
@@ -61,8 +92,12 @@ final class DownloadService: ObservableObject {
     @Published var downloads: [DownloadedEpisode] = []
     @Published var inProgress: Set<String> = []
     @Published var lastError: String?
+    /// Recent download failures (newest first; Application Support ring buffer).
+    @Published private(set) var recentErrors: [DownloadErrorEntry] = []
     /// Last measured size of the downloads folder (refreshed on load / eviction / settings).
     @Published private(set) var storageUsage = DownloadStorageUsage(usedBytes: 0, fileCount: 0, limitBytes: nil)
+
+    static let downloadErrorRingCapacity = 50
 
     /// Bound from the app so eviction can prefer played episodes (AntennaPod-like).
     weak var store: PodcastStore?
@@ -95,6 +130,7 @@ final class DownloadService: ObservableObject {
         reloadFromDisk()
         reconnectOutstandingTasks()
         refreshStorageUsage()
+        recentErrors = PodcastPersistence.loadDownloadErrors()
     }
 
     /// Called from `AppDelegate` when iOS relaunches / wakes the app for this background session.
@@ -121,7 +157,7 @@ final class DownloadService: ObservableObject {
     /// (system-permitting); mapping is persisted for relaunch.
     func download(_ episode: PodcastEpisode) async {
         guard let remote = episode.downloadUrl, let url = URL(string: remote) else {
-            lastError = "Episode has no media URL"
+            recordFailure(episode: episode, message: "Episode has no media URL")
             return
         }
         if inProgress.contains(episode.id) {
@@ -254,12 +290,14 @@ final class DownloadService: ObservableObject {
             inProgress.remove(episodeId)
         }
         if let error, (error as NSError).code != NSURLErrorCancelled {
-            lastError = error.localizedDescription
             if let mapping {
+                recordFailure(episode: mapping.episode, message: error.localizedDescription)
                 let destination = Self.downloadsDirectory.appendingPathComponent(mapping.fileName)
                 if !downloads.contains(where: { $0.id == mapping.episode.id }) {
                     try? FileManager.default.removeItem(at: destination)
                 }
+            } else {
+                lastError = error.localizedDescription
             }
         }
     }
@@ -270,8 +308,45 @@ final class DownloadService: ObservableObject {
         handler?()
     }
 
-    fileprivate func reportError(_ message: String) {
+    fileprivate func reportError(_ message: String, episode: PodcastEpisode? = nil) {
+        if let episode {
+            recordFailure(episode: episode, message: message)
+        } else {
+            lastError = message
+        }
+    }
+
+    /// Clears the persisted error ring buffer and the banner `lastError`.
+    func clearDownloadErrors() {
+        recentErrors = []
+        lastError = nil
+        PodcastPersistence.saveDownloadErrors([])
+    }
+
+    // MARK: - Error log
+
+    private func recordFailure(episode: PodcastEpisode, message: String) {
+        let feedTitle = store?.feed(containingEpisodeId: episode.id)?.title ?? ""
+        let entry = DownloadErrorEntry(
+            episodeId: episode.id,
+            episodeTitle: episode.title,
+            feedTitle: feedTitle,
+            message: message
+        )
+        var next = recentErrors
+        next.insert(entry, at: 0)
+        if next.count > Self.downloadErrorRingCapacity {
+            next = Array(next.prefix(Self.downloadErrorRingCapacity))
+        }
+        recentErrors = next
         lastError = message
+        PodcastPersistence.saveDownloadErrors(next)
+        Task {
+            await DownloadErrorNotificationCoordinator.notifyIfNeeded(
+                entry: entry,
+                settings: settings
+            )
+        }
     }
 
     // MARK: - Eviction helpers
@@ -400,7 +475,10 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
         }
         if let http = downloadTask.response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
             Task { @MainActor in
-                self.owner?.reportError("Download failed (HTTP \(http.statusCode))")
+                self.owner?.reportError(
+                    "Download failed (HTTP \(http.statusCode))",
+                    episode: mapping.episode
+                )
             }
             return
         }
@@ -419,7 +497,7 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
             }
         } catch {
             Task { @MainActor in
-                self.owner?.reportError(error.localizedDescription)
+                self.owner?.reportError(error.localizedDescription, episode: mapping.episode)
             }
         }
     }

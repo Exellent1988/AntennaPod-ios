@@ -14,9 +14,14 @@ struct NewEpisodeBatch {
 @MainActor
 final class NotificationDeepLinkRouter: ObservableObject {
     @Published private(set) var inboxOpenToken: UUID?
+    @Published private(set) var downloadsOpenToken: UUID?
 
     func openInbox() {
         inboxOpenToken = UUID()
+    }
+
+    func openDownloads() {
+        downloadsOpenToken = UUID()
     }
 }
 
@@ -53,7 +58,13 @@ enum NewEpisodeNotificationCoordinator {
             intentIdentifiers: [],
             options: []
         )
-        center.setNotificationCategories([category])
+        let dlCategory = UNNotificationCategory(
+            identifier: DownloadErrorNotificationCoordinator.categoryId,
+            actions: [],
+            intentIdentifiers: [],
+            options: []
+        )
+        center.setNotificationCategories([category, dlCategory])
     }
 
     static func authorizationStatus() async -> UNAuthorizationStatus {
