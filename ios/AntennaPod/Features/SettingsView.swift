@@ -199,10 +199,17 @@ struct SettingsView: View {
                     "Delete episode after playing",
                     "Used",
                     "Max storage",
+                    "Parallel downloads",
                     "Clear downloads",
                     "Unlimited",
                     "Custom (MB)",
-                    "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch."
+                    "1 at a time",
+                    "2 parallel",
+                    "3 parallel",
+                    "4 parallel",
+                    "5 parallel",
+                    "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch.",
+                    "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch."
                 ) {
                     storageSection
                 }
@@ -430,6 +437,7 @@ struct SettingsView: View {
                 "Downloads / Storage",
                 "Delete episode after playing",
                 "Max storage",
+                "Parallel downloads",
                 "Clear downloads"
             )
             || matchesSearch("Discovery", "Charts country", "API key", "API secret")
@@ -1129,6 +1137,20 @@ struct SettingsView: View {
             Text(evictionHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            Picker(String(localized: "Parallel downloads"), selection: $settings.maxParallelDownloads) {
+                ForEach(MaxParallelDownloads.allCases) { cap in
+                    Text(cap.label).tag(cap)
+                }
+            }
+            .accessibilityLabel(String(localized: "Parallel downloads"))
+            .accessibilityHint(String(localized: "Maximum number of episode downloads that run at the same time. Default 3."))
+            .onChange(of: settings.maxParallelDownloads) { _, _ in
+                downloads.pumpWaitingQueue()
+            }
+            Text(parallelDownloadsHelpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(parallelDownloadsHelpText)
             Button("Clear downloads", role: .destructive) {
                 showClearConfirmation = true
             }
@@ -1136,6 +1158,10 @@ struct SettingsView: View {
         } header: {
             Text("Downloads / Storage")
         }
+    }
+
+    private var parallelDownloadsHelpText: String {
+        String(localized: "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch.")
     }
 
     private var autoDeleteHelpText: String {

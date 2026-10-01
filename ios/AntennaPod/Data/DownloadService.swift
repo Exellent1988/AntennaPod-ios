@@ -137,6 +137,12 @@ enum DownloadEnqueueSource {
     case automatic
 }
 
+/// One episode waiting for a free parallel-download slot (in-memory FIFO).
+private struct WaitingDownload {
+    var episode: PodcastEpisode
+    var source: DownloadEnqueueSource
+}
+
 @MainActor
 final class DownloadService: ObservableObject {
     static let backgroundSessionIdentifier = "de.danoeh.antennapod.ios.background-downloads"
@@ -167,6 +173,9 @@ final class DownloadService: ObservableObject {
     private var session: URLSession!
     /// Live task id → episode (+ destination file name).
     private var pendingByTaskId: [Int: PendingDownloadMapping] = [:]
+    /// Episodes accepted but not yet started as URLSession tasks (FIFO). In-memory only —
+    /// survives while the service is alive / session completion handlers fire; not written to disk.
+    private var waitingQueue: [WaitingDownload] = []
     private var backgroundCompletionHandler: (() -> Void)?
 
     private static weak var activeInstance: DownloadService?
@@ -278,8 +287,11 @@ final class DownloadService: ObservableObject {
         }
     }
 
-    /// Starts a background `URLSession` download task. Continues while the app is suspended
-    /// (system-permitting); mapping is persisted for relaunch.
+    /// Enqueues an episode for download. Honors `maxParallelDownloads`: only that many
+    /// `URLSession` tasks run at once; extras wait in an in-memory FIFO until a slot frees.
+    /// Active tasks continue while the app is suspended (system-permitting); mapping is
+    /// persisted for relaunch. Waiting (not-yet-started) items are **not** persisted —
+    /// they are dropped if the process dies before a slot opens.
     /// - Parameter source: `.manual` (default) honors `manualDownloadWifiOnly`; `.automatic`
     ///   skips that gate (auto-download uses `autoDownloadWifiOnly` in `AutoDownloadCoordinator`).
     func download(_ episode: PodcastEpisode, source: DownloadEnqueueSource = .manual) async {
@@ -308,6 +320,36 @@ final class DownloadService: ObservableObject {
         }
         lastError = nil
         inProgress.insert(episode.id)
+        waitingQueue.append(WaitingDownload(episode: episode, source: source))
+        pumpWaitingQueue()
+    }
+
+    /// Start waiting downloads until active `URLSession` tasks reach `maxParallelDownloads`.
+    /// Call after enqueue, task completion/cancel, and when the Settings cap changes.
+    func pumpWaitingQueue() {
+        let limit = settings?.maxParallelDownloads.rawValue ?? MaxParallelDownloads.three.rawValue
+        while !waitingQueue.isEmpty && pendingByTaskId.count < limit {
+            let next = waitingQueue.removeFirst()
+            // Re-check manual Wi‑Fi gate when a waiting item finally starts (path may have changed).
+            if next.source == .manual, settings?.manualDownloadWifiOnly == true {
+                AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
+                if !NetworkPathGate.shared.allowsTransfer(wifiOnly: true) {
+                    inProgress.remove(next.episode.id)
+                    recordFailure(episode: next.episode, message: Self.manualCellularBlockedMessage)
+                    continue
+                }
+            }
+            startActiveDownload(episode: next.episode)
+        }
+    }
+
+    /// Hands one episode to the background `URLSession` (caller already reserved an `inProgress` slot).
+    private func startActiveDownload(episode: PodcastEpisode) {
+        guard let remote = episode.downloadUrl, let url = URL(string: remote), !url.isFileURL else {
+            inProgress.remove(episode.id)
+            recordFailure(episode: episode, message: "Episode has no media URL")
+            return
+        }
 
         let ext = url.pathExtension.isEmpty ? "mp3" : url.pathExtension
         let safeName = episode.id
@@ -546,6 +588,8 @@ final class DownloadService: ObservableObject {
                 lastError = error.localizedDescription
             }
         }
+        // Free slot → start next waiting download (if any).
+        pumpWaitingQueue()
     }
 
     fileprivate func handleSessionFinishedEvents() {
@@ -688,6 +732,7 @@ final class DownloadService: ObservableObject {
     func reloadAfterBackupImport() {
         // Drop stale pending mappings from before restore.
         pendingByTaskId.removeAll()
+        waitingQueue.removeAll()
         inProgress.removeAll()
         sessionDelegate.removeAllPending()
         PodcastPersistence.savePendingDownloads([])
@@ -728,8 +773,17 @@ final class DownloadService: ObservableObject {
     }
 
     private func cancelTask(for episodeId: String) {
+        // Waiting (not yet a URLSession task): drop from FIFO only.
+        if let idx = waitingQueue.firstIndex(where: { $0.episode.id == episodeId }) {
+            waitingQueue.remove(at: idx)
+            inProgress.remove(episodeId)
+            return
+        }
         let taskIds = pendingByTaskId.filter { $0.value.episode.id == episodeId }.map(\.key)
-        guard !taskIds.isEmpty else { return }
+        guard !taskIds.isEmpty else {
+            inProgress.remove(episodeId)
+            return
+        }
         session.getTasksWithCompletionHandler { _, _, downloadTasks in
             for task in downloadTasks where taskIds.contains(task.taskIdentifier) {
                 task.cancel()
@@ -741,6 +795,8 @@ final class DownloadService: ObservableObject {
         }
         persistPending()
         inProgress.remove(episodeId)
+        // Free slot → start next waiting download (if any).
+        pumpWaitingQueue()
     }
 }
 

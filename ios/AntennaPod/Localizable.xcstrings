@@ -18411,6 +18411,142 @@
           }
         }
       }
+    },
+    "Parallel downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parallel downloads"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parallele Downloads"
+          }
+        }
+      }
+    },
+    "1 at a time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 at a time"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 gleichzeitig"
+          }
+        }
+      }
+    },
+    "2 parallel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 parallel"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2 parallel"
+          }
+        }
+      }
+    },
+    "3 parallel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 parallel"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 parallel"
+          }
+        }
+      }
+    },
+    "4 parallel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4 parallel"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "4 parallel"
+          }
+        }
+      }
+    },
+    "5 parallel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 parallel"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 parallel"
+          }
+        }
+      }
+    },
+    "Maximum number of episode downloads that run at the same time. Default 3.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximum number of episode downloads that run at the same time. Default 3."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximale Anzahl Episode-Downloads, die gleichzeitig laufen. Standard 3."
+          }
+        }
+      }
+    },
+    "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Begrenzt, wie viele Episode-Downloads gleichzeitig als aktive Transfers laufen (1–5, Standard 3). Weitere Downloads warten im Speicher, bis ein Slot frei wird. Wartende Einträge werden bei Prozessende nicht persistiert; bereits gestartete Hintergrund-URLSession-Tasks laufen nach dem Neustart weiter."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
