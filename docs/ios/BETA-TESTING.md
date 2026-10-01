@@ -50,6 +50,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Geschwindigkeit Tippen = nächste Preset (0.8…2.0 Wrap); Long-Press = Menü; Default aus Settings | ☐ Speed tap = next preset (0.8…2.0 wrap); long-press = menu; default from Settings |
 | ☐ Sleep timer (Uhr / Ende der Episode / Custom… 1–180 Min.) | ☐ Sleep timer (clock / end of episode / Custom… 1–180 min) |
 | ☐ Chapters tippen → Seek (wenn im Feed) | ☐ Chapters tap → seek (when in feed) |
+| ☐ Kapitel Prev/Next (nur wenn Kapitel; Next → nächster Start; Prev → Anfang wenn >2s sonst vorheriges) | ☐ Chapter prev/next (only when chapters; Next → next start; Prev → restart if >2s else previous) |
 | ☐ Transcript sheet (nur Feed-URL) | ☐ Transcript sheet (feed URL only) |
 | ☐ Shownotes / Beschreibung (Full Player + Episode-Kontext; leer wenn keine; HTML → Plain Text) | ☐ Shownotes / description (full player + episode context; empty when none; HTML → plain text) |
 | ☐ Video → audio only Toggle | ☐ Play video as audio only |

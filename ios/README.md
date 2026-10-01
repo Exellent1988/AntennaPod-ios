@@ -12,14 +12,14 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Online feed preview (before subscribe: discovery rows + Feed URL → Preview via FeedRepository; episode count + first titles; Confirm Subscribe / Cancel; already subscribed → Open feed)
 - Episode list
 - Stream playback (AVPlayer, speed tap-cycle presets + long-press menu, configurable skip intervals)
-- Full player sheet (artwork or video surface, scrubber, **Jump to position** (mm:ss / min+sec → seek), transport, **Shownotes** (plain text / HTML stripped); tap mini player to open; **Open podcast** → dismiss → Subscriptions Feed detail; orphan → disabled / unavailable alert; mini ⋯ menu same)
+- Full player sheet (artwork or video surface, scrubber, **Jump to position** (mm:ss / min+sec → seek), **Previous/Next chapter** when chapters exist, transport, **Shownotes** (plain text / HTML stripped); tap mini player to open; **Open podcast** → dismiss → Subscriptions Feed detail; orphan → disabled / unavailable alert; mini ⋯ menu same)
 - Video player (beta lite; MIME video/* or mp4/m4v/mov/webm → AVPlayerLayer in full player; PiP beta lite)
 - Video → audio only (Settings + full-player toggle; default off; Lockscreen stays audio)
 - Volume adaptation (Settings; default off; iOS AVAudioSession spokenAudio / speech optimize — not Android loudness gain)
 - Skip silence (Settings toggle only; not applied on stock AVPlayer — needs custom audio graph)
 - Stereo to mono (Settings; default off; best-effort `AVAudioSession` preferred output channels = 1 — route-dependent; not ExoPlayer remix)
 - Keep screen on while playing (Settings; default off; `isIdleTimerDisabled` only — no Low Power Mode override / brightness; PiP/background audio unchanged)
-- Chapters (PSC / Podcast Index from feed + media-file QuickTime/MP4 tags on local files; list in full player; tap to seek)
+- Chapters (PSC / Podcast Index from feed + media-file QuickTime/MP4 tags on local files; list in full player; tap to seek; **Previous/Next chapter** when available)
 - Transcripts (beta; feed `podcast:transcript` URL only — fetch VTT/SRT/JSON, scrollable sheet, tap cue seek; no Whisper/STT)
 - Episode description / Shownotes (beta; RSS `description`/`content:encoded` → `descriptionText`; full player + EpisodeRow context sheet; plain text, HTML stripped; empty state; refresh to populate existing feeds)
 - Lockscreen / Now Playing (title, podcast, artwork, remote play/pause/skip/seek using Settings intervals)
@@ -385,6 +385,8 @@ When leaving, stopping, or switching episodes, `PlaybackService.finishCurrentEpi
 **Honest ID3 limits:** **ID3v2 CHAP** (typical MP3) and **Vorbis** chapter comments are **not** read — AVFoundation does not expose them as chapter groups on iOS, and this fork does not ship a custom ID3/Vorbis parser. Nero `chpl` only if AVFoundation surfaces it. Matrix documents the same.
 
 Model: `PodcastChapter` (`title`, `startTimeSeconds`, optional `href`/`imageUrl`). Full player shows a chapter list (hidden when empty); tap seeks; the active chapter is highlighted from `PlaybackService.positionSeconds`.
+
+**Previous / Next chapter (Full player):** Shown only when the merged chapter list is non-empty (hidden otherwise). **Next** seeks to the start of the next chapter after the current position (`ChapterIndexing.nextSeekSeconds`; disabled on the last chapter). **Previous** uses an AntennaPod-like **2s** threshold (`ChapterIndexing.previousRestartThresholdSeconds`): if more than 2 seconds into the current chapter, seek to that chapter’s start; otherwise seek to the previous chapter’s start (or `0` on the first chapter). Lockscreen / Now Playing remotes stay configurable skip± intervals — not chapter-aware in this beta.
 
 ## Transcripts (beta)
 

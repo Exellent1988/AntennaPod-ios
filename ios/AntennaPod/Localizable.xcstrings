@@ -7888,6 +7888,74 @@
           }
         }
       }
+    },
+    "Previous chapter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous chapter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorheriges Kapitel"
+          }
+        }
+      }
+    },
+    "Next chapter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next chapter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nächstes Kapitel"
+          }
+        }
+      }
+    },
+    "Seeks to the previous chapter, or restarts the current chapter if more than 2 seconds in": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks to the previous chapter, or restarts the current chapter if more than 2 seconds in"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt zum vorherigen Kapitel, oder zum Anfang des aktuellen, wenn mehr als 2 Sekunden vergangen sind"
+          }
+        }
+      }
+    },
+    "Seeks to the next chapter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks to the next chapter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt zum nächsten Kapitel"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

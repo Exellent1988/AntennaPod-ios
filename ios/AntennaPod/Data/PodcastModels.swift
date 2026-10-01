@@ -226,6 +226,9 @@ struct ArchivedEpisode: Identifiable, Hashable {
 }
 
 enum ChapterIndexing {
+    /// AntennaPod-like: if farther than this into the current chapter, Previous restarts it.
+    static let previousRestartThresholdSeconds: Double = 2
+
     /// Index of the chapter active at `positionSeconds`, or `nil` if before the first chapter / empty.
     static func currentIndex(in chapters: [PodcastChapter], at positionSeconds: Double) -> Int? {
         guard !chapters.isEmpty else { return nil }
@@ -238,6 +241,37 @@ enum ChapterIndexing {
             }
         }
         return current
+    }
+
+    /// Seek target for Previous chapter, or `nil` when there are no chapters.
+    /// If >`previousRestartThresholdSeconds` into the current chapter → chapter start;
+    /// otherwise → previous chapter start (or `0` on the first chapter).
+    static func previousSeekSeconds(in chapters: [PodcastChapter], at positionSeconds: Double) -> Double? {
+        guard !chapters.isEmpty else { return nil }
+        guard let index = currentIndex(in: chapters, at: positionSeconds) else {
+            return 0
+        }
+        let start = chapters[index].startTimeSeconds
+        if positionSeconds - start > previousRestartThresholdSeconds {
+            return start
+        }
+        if index == 0 {
+            return 0
+        }
+        return chapters[index - 1].startTimeSeconds
+    }
+
+    /// Seek target for Next chapter (start of the chapter after the current one), or `nil`
+    /// when there are no chapters / already on the last chapter.
+    static func nextSeekSeconds(in chapters: [PodcastChapter], at positionSeconds: Double) -> Double? {
+        guard !chapters.isEmpty else { return nil }
+        if let index = currentIndex(in: chapters, at: positionSeconds) {
+            let next = index + 1
+            guard next < chapters.count else { return nil }
+            return chapters[next].startTimeSeconds
+        }
+        // Before the first chapter → jump to it.
+        return chapters[0].startTimeSeconds
     }
 }
 

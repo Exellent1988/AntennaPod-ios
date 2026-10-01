@@ -65,6 +65,16 @@ struct FullPlayerView: View {
         ChapterIndexing.currentIndex(in: chapters, at: displayPosition)
     }
 
+    private var canSkipChapters: Bool { !chapters.isEmpty }
+
+    private var previousChapterTarget: Double? {
+        ChapterIndexing.previousSeekSeconds(in: chapters, at: displayPosition)
+    }
+
+    private var nextChapterTarget: Double? {
+        ChapterIndexing.nextSeekSeconds(in: chapters, at: displayPosition)
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -225,6 +235,9 @@ struct FullPlayerView: View {
                     .padding(.horizontal)
 
                     scrubber
+                        .padding(.horizontal)
+
+                    chapterSkipControls
                         .padding(.horizontal)
 
                     transportControls
@@ -507,6 +520,42 @@ struct FullPlayerView: View {
             return formatRemaining(remaining)
         }
         return format(playback.durationSeconds)
+    }
+
+    @ViewBuilder
+    private var chapterSkipControls: some View {
+        if canSkipChapters {
+            HStack(spacing: 40) {
+                Button {
+                    seekToChapter(previousChapterTarget)
+                } label: {
+                    Image(systemName: "backward.end.fill")
+                        .font(.title2)
+                }
+                .disabled(previousChapterTarget == nil)
+                .accessibilityLabel(String(localized: "Previous chapter"))
+                .accessibilityHint(String(localized: "Seeks to the previous chapter, or restarts the current chapter if more than 2 seconds in"))
+
+                Button {
+                    seekToChapter(nextChapterTarget)
+                } label: {
+                    Image(systemName: "forward.end.fill")
+                        .font(.title2)
+                }
+                .disabled(nextChapterTarget == nil)
+                .accessibilityLabel(String(localized: "Next chapter"))
+                .accessibilityHint(String(localized: "Seeks to the next chapter"))
+            }
+            .buttonStyle(.plain)
+            .frame(maxWidth: .infinity)
+        }
+    }
+
+    private func seekToChapter(_ seconds: Double?) {
+        guard let seconds else { return }
+        playback.seek(toSeconds: seconds)
+        scrubSeconds = seconds
+        isScrubbing = false
     }
 
     private var transportControls: some View {
