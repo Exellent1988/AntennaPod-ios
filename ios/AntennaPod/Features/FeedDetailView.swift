@@ -23,6 +23,7 @@ struct FeedDetailView: View {
     @State private var showPodcastGuidCopied = false
     @State private var showDiscussURLCopied = false
     @State private var showTrailerURLCopied = false
+    @State private var showLockedOwnerCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
@@ -32,6 +33,7 @@ struct FeedDetailView: View {
     @State private var copyPodcastGuidFeedbackTick = 0
     @State private var copyDiscussURLFeedbackTick = 0
     @State private var copyTrailerURLFeedbackTick = 0
+    @State private var copyLockedOwnerFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -164,16 +166,13 @@ struct FeedDetailView: View {
         liveFeed.displayPodcastGuid
     }
 
-    /// VoiceOver for podcast:locked=yes badge + honest footnote (+ optional owner from feed).
+    /// VoiceOver for the podcast:locked=yes badge and honest footnote.
+    /// The optional owner has its own label and actions so it stays distinct from the claim.
     private var feedLockedAccessibilityLabel: String {
-        var parts = [
+        [
             String(localized: "Locked"),
             String(localized: "This feed claims to be locked for transfer. This app does not verify ownership.")
-        ]
-        if let owner = liveFeed.displayLockedOwner {
-            parts.append(String(localized: "Locked owner \(owner)"))
-        }
-        return parts.joined(separator: ". ")
+        ].joined(separator: ". ")
     }
 
     /// VoiceOver for podcast:block / itunes:block yes badge + honest directory display-only footnote.
@@ -600,24 +599,64 @@ struct FeedDetailView: View {
             // Channel podcast:locked=yes only — display-only claim; no owner verification / host block.
             if liveFeed.isLocked {
                 Section {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(String(localized: "Locked"))
-                            .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.secondary.opacity(0.2), in: Capsule())
-                        Text(String(localized: "This feed claims to be locked for transfer. This app does not verify ownership."))
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                        if let owner = liveFeed.displayLockedOwner {
-                            Text(String(localized: "Locked owner \(owner)"))
+                    VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(String(localized: "Locked"))
+                                .font(.caption.weight(.semibold))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.secondary.opacity(0.2), in: Capsule())
+                            Text(String(localized: "This feed claims to be locked for transfer. This app does not verify ownership."))
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
                         }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(feedLockedAccessibilityLabel)
+
+                        if let owner = liveFeed.displayLockedOwner {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(String(localized: "Locked owner \(owner)"))
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                                    .textSelection(.enabled)
+                                    .accessibilityLabel(String(localized: "Locked owner \(owner)"))
+                                HStack(spacing: 12) {
+                                    Button {
+                                        copyLockedOwner(owner)
+                                    } label: {
+                                        Label("Copy locked owner", systemImage: "doc.on.doc")
+                                            .font(.subheadline)
+                                    }
+                                    .accessibilityLabel(String(localized: "Copy locked owner"))
+                                    .accessibilityHint(String(localized: "Copies the feed-provided locked owner string to the pasteboard; display-only; no ownership verification"))
+
+                                    if let url = lockedOwnerShareURL(owner) {
+                                        ShareLink(
+                                            item: url,
+                                            subject: Text(feedDisplayTitle)
+                                        ) {
+                                            Label("Share locked owner", systemImage: "square.and.arrow.up")
+                                                .font(.subheadline)
+                                        }
+                                        .accessibilityLabel(String(localized: "Share locked owner"))
+                                        .accessibilityHint(String(localized: "Shares the feed-provided locked owner string; display-only; no ownership verification"))
+                                    } else {
+                                        ShareLink(
+                                            item: owner,
+                                            subject: Text(feedDisplayTitle)
+                                        ) {
+                                            Label("Share locked owner", systemImage: "square.and.arrow.up")
+                                                .font(.subheadline)
+                                        }
+                                        .accessibilityLabel(String(localized: "Share locked owner"))
+                                        .accessibilityHint(String(localized: "Shares the feed-provided locked owner string; display-only; no ownership verification"))
+                                    }
+                                }
+                            }
+                            .accessibilityElement(children: .contain)
+                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(feedLockedAccessibilityLabel)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -1441,12 +1480,21 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Trailer URL copied to the pasteboard."))
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showLockedOwnerCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Locked owner copied to the pasteboard."))
+        }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastGuidFeedbackTick)
         .sensoryFeedback(.success, trigger: copyDiscussURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerURLFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyLockedOwnerFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle)
@@ -1532,6 +1580,19 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = url.absoluteString
         copyTrailerURLFeedbackTick += 1
         showTrailerURLCopied = true
+    }
+
+    private func lockedOwnerShareURL(_ owner: String) -> URL? {
+        guard let url = URL(string: owner) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "mailto" || scheme == "http" || scheme == "https" else { return nil }
+        return url
+    }
+
+    private func copyLockedOwner(_ owner: String) {
+        UIPasteboard.general.string = owner
+        copyLockedOwnerFeedbackTick += 1
+        showLockedOwnerCopied = true
     }
 
     /// Feed-provided Podcast Index `podcast:guid` only — never invent / never derive from feed URL.

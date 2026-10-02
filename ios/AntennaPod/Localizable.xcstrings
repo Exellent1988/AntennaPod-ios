@@ -14826,6 +14826,96 @@
       },
       "comment": "Optional podcast:locked owner email from the feed when present. Display-only — never verified."
     },
+    "Copy locked owner": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy locked owner"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesperrten Eigentümer kopieren"
+          }
+        }
+      },
+      "comment": "Copy the optional feed-provided podcast:locked owner string; display-only, never verify ownership."
+    },
+    "Share locked owner": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share locked owner"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesperrten Eigentümer teilen"
+          }
+        }
+      },
+      "comment": "Share the optional feed-provided podcast:locked owner string as a URL when parseable, otherwise as raw text."
+    },
+    "Copies the feed-provided locked owner string to the pasteboard; display-only; no ownership verification": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided locked owner string to the pasteboard; display-only; no ownership verification"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vom Feed bereitgestellte Zeichenfolge des gesperrten Eigentümers in die Zwischenablage; nur Anzeige; keine Eigentumsprüfung"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for copying podcast:locked owner; no verification or transfer workflow."
+    },
+    "Shares the feed-provided locked owner string; display-only; no ownership verification": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the feed-provided locked owner string; display-only; no ownership verification"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die vom Feed bereitgestellte Zeichenfolge des gesperrten Eigentümers; nur Anzeige; keine Eigentumsprüfung"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for sharing podcast:locked owner; no verification or transfer workflow."
+    },
+    "Locked owner copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked owner copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesperrter Eigentümer in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copied alert message for the optional podcast:locked owner string."
+    },
     "Podcast GUID": {
       "extractionState": "manual",
       "localizations": {
