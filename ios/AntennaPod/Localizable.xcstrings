@@ -42734,6 +42734,142 @@
           }
         }
       }
+    },
+    "Recently updated. This is the default. Podcasts are ordered by the newest episode publish date. A podcast whose episodes have no date stays last. The display title breaks ties, using a custom title when one is set. Pinned podcasts stay above the others. Choosing this sort does not refresh feeds, subscribe, unsubscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recently updated. This is the default. Podcasts are ordered by the newest episode publish date. A podcast whose episodes have no date stays last. The display title breaks ties, using a custom title when one is set. Pinned podcasts stay above the others. Choosing this sort does not refresh feeds, subscribe, unsubscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zuletzt aktualisiert. Das ist der Standard. Podcasts werden nach dem neuesten Episoden-Veröffentlichungsdatum sortiert. Ein Podcast, dessen Episoden kein Datum haben, bleibt zuletzt. Der Anzeigename entscheidet bei Gleichstand und nutzt einen eigenen Titel, wenn einer gesetzt ist. Angepinnte Podcasts bleiben über den anderen. Diese Sortierung aktualisiert keine Feeds, abonniert nicht, kündigt kein Abo und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Alphabetical A–Z. This is not the default. Podcasts are ordered by display title, using a custom title when one is set, otherwise the feed title. Pinned podcasts stay above the others. Choosing this sort does not subscribe, unsubscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alphabetical A–Z. This is not the default. Podcasts are ordered by display title, using a custom title when one is set, otherwise the feed title. Pinned podcasts stay above the others. Choosing this sort does not subscribe, unsubscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alphabetisch A–Z. Das ist nicht der Standard. Podcasts werden nach dem Anzeigenamen sortiert, mit einem eigenen Titel, wenn einer gesetzt ist, sonst dem Feed-Titel. Angepinnte Podcasts bleiben über den anderen. Diese Sortierung abonniert nicht, kündigt kein Abo und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Author A–Z. This is not the default. Podcasts are ordered by the author the feed provides. A podcast with no author stays last. No author is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not subscribe, unsubscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Author A–Z. This is not the default. Podcasts are ordered by the author the feed provides. A podcast with no author stays last. No author is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not subscribe, unsubscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autor A–Z. Das ist nicht der Standard. Podcasts werden nach dem Autor sortiert, den der Feed liefert. Ein Podcast ohne Autor bleibt zuletzt. Es wird kein Autor erfunden. Der Anzeigename entscheidet bei Gleichstand. Angepinnte Podcasts bleiben über den anderen. Diese Sortierung abonniert nicht, kündigt kein Abo und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Language A–Z. This is not the default. Podcasts are ordered by the localized language name, or the raw language code when no localized name is available. A podcast with no language stays last. No language is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not subscribe, unsubscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Language A–Z. This is not the default. Podcasts are ordered by the localized language name, or the raw language code when no localized name is available. A podcast with no language stays last. No language is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not subscribe, unsubscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprache A–Z. Das ist nicht der Standard. Podcasts werden nach dem lokalisierten Sprachnamen sortiert, oder nach dem rohen Sprachcode, wenn kein lokalisierter Name verfügbar ist. Ein Podcast ohne Sprache bleibt zuletzt. Es wird keine Sprache erfunden. Der Anzeigename entscheidet bei Gleichstand. Angepinnte Podcasts bleiben über den anderen. Diese Sortierung abonniert nicht, kündigt kein Abo und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Most unplayed. This is not the default. Podcasts with more unplayed episodes come first. Unplayed means not played and not archived, the same count as the subscription badge. Equal counts use the display title. This uses each podcast’s stored episodes, not the All Episodes newest-500 cap. Pinned podcasts stay above the others. Choosing this sort does not mark episodes played, subscribe, unsubscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Most unplayed. This is not the default. Podcasts with more unplayed episodes come first. Unplayed means not played and not archived, the same count as the subscription badge. Equal counts use the display title. This uses each podcast’s stored episodes, not the All Episodes newest-500 cap. Pinned podcasts stay above the others. Choosing this sort does not mark episodes played, subscribe, unsubscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meiste ungehört. Das ist nicht der Standard. Podcasts mit mehr ungehörten Episoden stehen zuerst. Ungehört heißt nicht gehört und nicht archiviert, dieselbe Zahl wie das Abo-Badge. Bei gleicher Zahl entscheidet der Anzeigename. Es zählen die gespeicherten Episoden jedes Podcasts, nicht der Soft-Cap der neuesten 500 von Alle Episoden. Angepinnte Podcasts bleiben über den anderen. Diese Sortierung markiert keine Episoden als gehört, abonniert nicht, kündigt kein Abo und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Recently refreshed. This is not the default. Podcasts with a newer successful network refresh come first. A podcast that has never refreshed successfully stays last, including a local folder. No refresh time is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not refresh feeds, subscribe, unsubscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recently refreshed. This is not the default. Podcasts with a newer successful network refresh come first. A podcast that has never refreshed successfully stays last, including a local folder. No refresh time is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not refresh feeds, subscribe, unsubscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zuletzt abgerufen. Das ist nicht der Standard. Podcasts mit einem neueren erfolgreichen Netzwerk-Abruf stehen zuerst. Ein Podcast, der noch nie erfolgreich abgerufen wurde, bleibt zuletzt, einschließlich eines lokalen Ordners. Es wird keine Abrufzeit erfunden. Der Anzeigename entscheidet bei Gleichstand. Angepinnte Podcasts bleiben über den anderen. Diese Sortierung aktualisiert keine Feeds, abonniert nicht, kündigt kein Abo und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Least recently refreshed. This is not the default. Podcasts with an older successful network refresh come first. A podcast that has never refreshed successfully stays last, including a local folder. No refresh time is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not refresh feeds, subscribe, unsubscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Least recently refreshed. This is not the default. Podcasts with an older successful network refresh come first. A podcast that has never refreshed successfully stays last, including a local folder. No refresh time is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not refresh feeds, subscribe, unsubscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Am längsten nicht abgerufen. Das ist nicht der Standard. Podcasts mit einem älteren erfolgreichen Netzwerk-Abruf stehen zuerst. Ein Podcast, der noch nie erfolgreich abgerufen wurde, bleibt zuletzt, einschließlich eines lokalen Ordners. Es wird keine Abrufzeit erfunden. Der Anzeigename entscheidet bei Gleichstand. Angepinnte Podcasts bleiben über den anderen. Diese Sortierung aktualisiert keine Feeds, abonniert nicht, kündigt kein Abo und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Saved on this device and included in Settings backup. Not synced. Applied after search, category, language, and tag filters, including the Pinned chip. Group by tag keeps this order inside each section. Keep at top stays first and is not its own sort choice. There is no drag reorder of subscriptions. It does not change filters, tags, or pins.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved on this device and included in Settings backup. Not synced. Applied after search, category, language, and tag filters, including the Pinned chip. Group by tag keeps this order inside each section. Keep at top stays first and is not its own sort choice. There is no drag reorder of subscriptions. It does not change filters, tags, or pins."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf diesem Gerät gespeichert und im Einstellungs-Backup enthalten. Nicht synchronisiert. Wirkt nach Suche, Kategorie, Sprache und Tag-Filtern, einschließlich des Chips Angepinnt. Nach Tag gruppieren behält diese Reihenfolge in jedem Abschnitt. Oben halten bleibt zuerst und ist keine eigene Sortierwahl. Abonnements lassen sich nicht per Ziehen umsortieren. Es ändert keine Filter, Tags oder Pins."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

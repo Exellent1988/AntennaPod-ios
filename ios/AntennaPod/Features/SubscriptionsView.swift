@@ -601,6 +601,8 @@ struct SubscriptionsView: View {
                         Label("Sort", systemImage: "arrow.up.arrow.down")
                     }
                     .accessibilityLabel(String(localized: "Sort subscriptions"))
+                    .accessibilityValue(subscriptionsSortAccessibilityValue)
+                    .accessibilityHint(subscriptionsSortAccessibilityHint)
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
@@ -907,6 +909,32 @@ struct SubscriptionsView: View {
 
     private var groupByTagAccessibilityHint: String {
         String(localized: "Starts on for this visit only. Not saved in Settings or backup, and not synced. Shown only while the tag filter is All. Pinned, a named tag, and Untagged hide this toggle and stay a flat list. On groups by existing tags and does not hide podcasts. Off is one flat list. It does not rename tags or change sort.")
+    }
+
+    /// VoiceOver for the Subscriptions sort menu. Announces the saved choice.
+    /// Recently updated is the default. Pinned stay first on every choice.
+    /// Does not refresh, subscribe, unsubscribe, or download.
+    private var subscriptionsSortAccessibilityValue: String {
+        switch settings.subscriptionsSort {
+        case .recentlyUpdated:
+            return String(localized: "Recently updated. This is the default. Podcasts are ordered by the newest episode publish date. A podcast whose episodes have no date stays last. The display title breaks ties, using a custom title when one is set. Pinned podcasts stay above the others. Choosing this sort does not refresh feeds, subscribe, unsubscribe, or download.")
+        case .alphabetical:
+            return String(localized: "Alphabetical A–Z. This is not the default. Podcasts are ordered by display title, using a custom title when one is set, otherwise the feed title. Pinned podcasts stay above the others. Choosing this sort does not subscribe, unsubscribe, or download.")
+        case .byAuthor:
+            return String(localized: "Author A–Z. This is not the default. Podcasts are ordered by the author the feed provides. A podcast with no author stays last. No author is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not subscribe, unsubscribe, or download.")
+        case .byLanguage:
+            return String(localized: "Language A–Z. This is not the default. Podcasts are ordered by the localized language name, or the raw language code when no localized name is available. A podcast with no language stays last. No language is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not subscribe, unsubscribe, or download.")
+        case .mostUnplayed:
+            return String(localized: "Most unplayed. This is not the default. Podcasts with more unplayed episodes come first. Unplayed means not played and not archived, the same count as the subscription badge. Equal counts use the display title. This uses each podcast’s stored episodes, not the All Episodes newest-500 cap. Pinned podcasts stay above the others. Choosing this sort does not mark episodes played, subscribe, unsubscribe, or download.")
+        case .recentlyRefreshed:
+            return String(localized: "Recently refreshed. This is not the default. Podcasts with a newer successful network refresh come first. A podcast that has never refreshed successfully stays last, including a local folder. No refresh time is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not refresh feeds, subscribe, unsubscribe, or download.")
+        case .leastRecentlyRefreshed:
+            return String(localized: "Least recently refreshed. This is not the default. Podcasts with an older successful network refresh come first. A podcast that has never refreshed successfully stays last, including a local folder. No refresh time is invented. The display title breaks ties. Pinned podcasts stay above the others. Choosing this sort does not refresh feeds, subscribe, unsubscribe, or download.")
+        }
+    }
+
+    private var subscriptionsSortAccessibilityHint: String {
+        String(localized: "Saved on this device and included in Settings backup. Not synced. Applied after search, category, language, and tag filters, including the Pinned chip. Group by tag keeps this order inside each section. Keep at top stays first and is not its own sort choice. There is no drag reorder of subscriptions. It does not change filters, tags, or pins.")
     }
 
     /// VoiceOver hint for tag-row chips (Pinned vs tag / Untagged / All).
