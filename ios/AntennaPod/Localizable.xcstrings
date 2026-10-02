@@ -17692,6 +17692,96 @@
       },
       "comment": "VoiceOver hint for contentLink open button."
     },
+    "Live item title copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live item title copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Titel in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy feedback alert for the exact feed-provided podcast:liveItem title."
+    },
+    "Copy live item title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy live item title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Titel kopieren"
+          }
+        }
+      },
+      "comment": "VoiceOver label for copying the exact feed-provided podcast:liveItem title."
+    },
+    "Copies the exact feed-provided live item title as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact feed-provided live item title as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den exakten vom Feed bereitgestellten Live-Item-Titel als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy live item title."
+    },
+    "Share live item title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share live item title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Titel teilen"
+          }
+        }
+      },
+      "comment": "VoiceOver label for sharing the exact feed-provided podcast:liveItem title."
+    },
+    "Shares the exact feed-provided live item title as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact feed-provided live item title as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den exakten vom Feed bereitgestellten Live-Item-Titel als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share live item title."
+    },
     "Live item details copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {

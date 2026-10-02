@@ -118,6 +118,33 @@ struct PodcastLiveItemsListView: View {
                 }
             }
 
+            if let titleText {
+                HStack(spacing: 12) {
+                    Button {
+                        UIPasteboard.general.string = titleText
+                        copiedAlertMessage = String(localized: "Live item title copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy live item title", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy live item title"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided live item title as plain text")
+                    )
+
+                    ShareLink(item: titleText) {
+                        Label("Share live item title", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share live item title"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided live item title as plain text")
+                    )
+                }
+            }
+
             HStack(spacing: 12) {
                 Button {
                     UIPasteboard.general.string = detailsText
