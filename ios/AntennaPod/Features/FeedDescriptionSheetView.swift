@@ -78,6 +78,14 @@ struct FeedDescriptionSheetView: View {
         feed.itunesCompleteShareText
     }
 
+    private var displayExplicitShareText: String {
+        String(localized: "Explicit")
+    }
+
+    private var displayBlockedShareText: String {
+        feed.podcastBlockAccessibilityLabel
+    }
+
     private var displayCategories: [String] {
         feed.displayCategories
     }
@@ -212,6 +220,20 @@ struct FeedDescriptionSheetView: View {
     /// Locked is a display-only transfer claim; neither claim changes subscribe/play behavior.
     @ViewBuilder
     private var feedClaimMetadata: some View {
+        if feed.isExplicit {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(String(localized: "Explicit"))
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.secondary.opacity(0.2), in: Capsule())
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityLabel(String(localized: "Explicit"))
+                explicitActions
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
         if feed.isLocked {
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 6) {
@@ -279,19 +301,23 @@ struct FeedDescriptionSheetView: View {
         }
 
         if feed.isBlocked {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(String(localized: "Blocked"))
-                    .font(.caption.weight(.semibold))
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.secondary.opacity(0.2), in: Capsule())
-                Text(String(localized: "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work."))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(String(localized: "Blocked"))
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.2), in: Capsule())
+                    Text(String(localized: "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work."))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(feed.podcastBlockAccessibilityLabel)
+                blockedActions
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(feed.podcastBlockAccessibilityLabel)
         }
     }
 
@@ -333,7 +359,7 @@ struct FeedDescriptionSheetView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && displayMedium == nil && displayItunesType == nil && !feed.isLocked && !feed.isBlocked && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasLiveItems && !hasTexts && !hasLicenses {
+                if plainDescription.isEmpty && displayMedium == nil && displayItunesType == nil && !feed.isExplicit && !feed.isLocked && !feed.isBlocked && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasLiveItems && !hasTexts && !hasLicenses {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "info.circle",
@@ -828,6 +854,76 @@ struct FeedDescriptionSheetView: View {
     private func copyItunesComplete() {
         UIPasteboard.general.string = displayItunesCompleteShareText
         copiedAlertMessage = String(localized: "Complete claim copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    @ViewBuilder
+    private var explicitActions: some View {
+        HStack(spacing: 12) {
+            Button {
+                copyExplicit()
+            } label: {
+                Label("Copy explicit badge", systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Copy explicit badge"))
+            .accessibilityHint(
+                String(localized: "Copies the localized Explicit badge shown above to the pasteboard; display-only; does not enforce content restrictions")
+            )
+
+            ShareLink(
+                item: displayExplicitShareText,
+                subject: Text(resolvedTitle)
+            ) {
+                Label("Share explicit badge", systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Share explicit badge"))
+            .accessibilityHint(
+                String(localized: "Shares the localized Explicit badge shown above as plain text; display-only; does not enforce content restrictions")
+            )
+        }
+    }
+
+    private func copyExplicit() {
+        UIPasteboard.general.string = displayExplicitShareText
+        copiedAlertMessage = String(localized: "Explicit badge copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    @ViewBuilder
+    private var blockedActions: some View {
+        HStack(spacing: 12) {
+            Button {
+                copyBlocked()
+            } label: {
+                Label("Copy blocked claim", systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Copy blocked claim"))
+            .accessibilityHint(
+                String(localized: "Copies the localized Blocked capsule and its directory footnote to the pasteboard; display-only; subscribe and play still work")
+            )
+
+            ShareLink(
+                item: displayBlockedShareText,
+                subject: Text(resolvedTitle)
+            ) {
+                Label("Share blocked claim", systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Share blocked claim"))
+            .accessibilityHint(
+                String(localized: "Shares the localized Blocked capsule and its directory footnote as plain text; display-only; subscribe and play still work")
+            )
+        }
+    }
+
+    private func copyBlocked() {
+        UIPasteboard.general.string = displayBlockedShareText
+        copiedAlertMessage = String(localized: "Blocked claim copied to the pasteboard.")
         copyFeedbackTick += 1
         showCopiedAlert = true
     }

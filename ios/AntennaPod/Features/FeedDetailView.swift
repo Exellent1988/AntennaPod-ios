@@ -31,6 +31,8 @@ struct FeedDetailView: View {
     @State private var showItunesTypeCopied = false
     @State private var showUpdateFrequencyCopied = false
     @State private var showItunesCompleteCopied = false
+    @State private var showExplicitCopied = false
+    @State private var showBlockedCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
@@ -48,6 +50,8 @@ struct FeedDetailView: View {
     @State private var copyItunesTypeFeedbackTick = 0
     @State private var copyUpdateFrequencyFeedbackTick = 0
     @State private var copyItunesCompleteFeedbackTick = 0
+    @State private var copyExplicitFeedbackTick = 0
+    @State private var copyBlockedFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -206,6 +210,14 @@ struct FeedDetailView: View {
 
     private var displayItunesCompleteShareText: String {
         liveFeed.itunesCompleteShareText
+    }
+
+    private var displayExplicitShareText: String {
+        String(localized: "Explicit")
+    }
+
+    private var displayBlockedShareText: String {
+        feedBlockedAccessibilityLabel
     }
 
     /// Resolved sort for this feed: `FeedSettings.episodeSort` or global `AppSettings.feedEpisodeSort`.
@@ -673,13 +685,16 @@ struct FeedDetailView: View {
             // Channel itunes:explicit only — hide when feed does not mark explicit (never invent).
             if liveFeed.isExplicit {
                 Section {
-                    Text(String(localized: "Explicit"))
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.2), in: Capsule())
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityLabel(String(localized: "Explicit"))
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(String(localized: "Explicit"))
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityLabel(String(localized: "Explicit"))
+                        explicitActions
+                    }
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -750,19 +765,22 @@ struct FeedDetailView: View {
             // Channel podcast:block / itunes:block yes/true — display-only directory metadata; distinct from podcast:locked; no subscribe/play block.
             if liveFeed.isBlocked {
                 Section {
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(String(localized: "Blocked"))
-                            .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.secondary.opacity(0.2), in: Capsule())
-                        Text(String(localized: "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work."))
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(String(localized: "Blocked"))
+                                .font(.caption.weight(.semibold))
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.secondary.opacity(0.2), in: Capsule())
+                            Text(String(localized: "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work."))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(feedBlockedAccessibilityLabel)
+                        blockedActions
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(feedBlockedAccessibilityLabel)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -1660,6 +1678,22 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Complete claim copied to the pasteboard."))
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showExplicitCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Explicit badge copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showBlockedCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Blocked claim copied to the pasteboard."))
+        }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
@@ -1674,6 +1708,8 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyItunesTypeFeedbackTick)
         .sensoryFeedback(.success, trigger: copyUpdateFrequencyFeedbackTick)
         .sensoryFeedback(.success, trigger: copyItunesCompleteFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyExplicitFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyBlockedFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle)
@@ -1855,6 +1891,74 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = displayItunesCompleteShareText
         copyItunesCompleteFeedbackTick += 1
         showItunesCompleteCopied = true
+    }
+
+    @ViewBuilder
+    private var explicitActions: some View {
+        HStack(spacing: 12) {
+            Button {
+                copyExplicit()
+            } label: {
+                Label("Copy explicit badge", systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Copy explicit badge"))
+            .accessibilityHint(
+                String(localized: "Copies the localized Explicit badge shown above to the pasteboard; display-only; does not enforce content restrictions")
+            )
+
+            ShareLink(
+                item: displayExplicitShareText,
+                subject: Text(feedDisplayTitle)
+            ) {
+                Label("Share explicit badge", systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Share explicit badge"))
+            .accessibilityHint(
+                String(localized: "Shares the localized Explicit badge shown above as plain text; display-only; does not enforce content restrictions")
+            )
+        }
+    }
+
+    private func copyExplicit() {
+        UIPasteboard.general.string = displayExplicitShareText
+        copyExplicitFeedbackTick += 1
+        showExplicitCopied = true
+    }
+
+    @ViewBuilder
+    private var blockedActions: some View {
+        HStack(spacing: 12) {
+            Button {
+                copyBlocked()
+            } label: {
+                Label("Copy blocked claim", systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Copy blocked claim"))
+            .accessibilityHint(
+                String(localized: "Copies the localized Blocked capsule and its directory footnote to the pasteboard; display-only; subscribe and play still work")
+            )
+
+            ShareLink(
+                item: displayBlockedShareText,
+                subject: Text(feedDisplayTitle)
+            ) {
+                Label("Share blocked claim", systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Share blocked claim"))
+            .accessibilityHint(
+                String(localized: "Shares the localized Blocked capsule and its directory footnote as plain text; display-only; subscribe and play still work")
+            )
+        }
+    }
+
+    private func copyBlocked() {
+        UIPasteboard.general.string = displayBlockedShareText
+        copyBlockedFeedbackTick += 1
+        showBlockedCopied = true
     }
 
     @ViewBuilder

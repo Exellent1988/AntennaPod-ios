@@ -31349,6 +31349,196 @@
           }
         }
       }
+    },
+
+    "Copy explicit badge": {
+      "extractionState": "manual",
+      "comment": "Copy the feed-provided itunes:explicit badge.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy explicit badge"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explizit-Badge kopieren"
+          }
+        }
+      }
+    },
+
+    "Share explicit badge": {
+      "extractionState": "manual",
+      "comment": "Share the feed-provided itunes:explicit badge as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share explicit badge"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explizit-Badge teilen"
+          }
+        }
+      }
+    },
+
+    "Copies the localized Explicit badge shown above to the pasteboard; display-only; does not enforce content restrictions": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the explicit badge; display-only.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the localized Explicit badge shown above to the pasteboard; display-only; does not enforce content restrictions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den lokalisierten Explizit-Badge oben in die Zwischenablage; nur Anzeige; setzt keine Inhaltsbeschränkungen durch"
+          }
+        }
+      }
+    },
+
+    "Shares the localized Explicit badge shown above as plain text; display-only; does not enforce content restrictions": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the explicit badge; display-only.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the localized Explicit badge shown above as plain text; display-only; does not enforce content restrictions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den lokalisierten Explizit-Badge oben als Klartext; nur Anzeige; setzt keine Inhaltsbeschränkungen durch"
+          }
+        }
+      }
+    },
+
+    "Explicit badge copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the feed-provided itunes:explicit badge.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explicit badge copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explizit-Badge in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+
+    "Copy blocked claim": {
+      "extractionState": "manual",
+      "comment": "Copy the localized podcast:block / itunes:block badge and its display-only footnote.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy blocked claim"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blockierungsanspruch kopieren"
+          }
+        }
+      }
+    },
+
+    "Share blocked claim": {
+      "extractionState": "manual",
+      "comment": "Share the localized podcast:block / itunes:block badge and its display-only footnote as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share blocked claim"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blockierungsanspruch teilen"
+          }
+        }
+      }
+    },
+
+    "Copies the localized Blocked capsule and its directory footnote to the pasteboard; display-only; subscribe and play still work": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the blocked claim; directory metadata only.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the localized Blocked capsule and its directory footnote to the pasteboard; display-only; subscribe and play still work"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die lokalisierte Kapsel „Blockiert“ und ihre Verzeichnis-Fußnote in die Zwischenablage; nur Anzeige; Abonnieren und Abspielen funktionieren weiterhin"
+          }
+        }
+      }
+    },
+
+    "Shares the localized Blocked capsule and its directory footnote as plain text; display-only; subscribe and play still work": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the blocked claim; directory metadata only.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the localized Blocked capsule and its directory footnote as plain text; display-only; subscribe and play still work"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die lokalisierte Kapsel „Blockiert“ und ihre Verzeichnis-Fußnote als Klartext; nur Anzeige; Abonnieren und Abspielen funktionieren weiterhin"
+          }
+        }
+      }
+    },
+
+    "Blocked claim copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the podcast:block / itunes:block claim.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blocked claim copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blockierungsanspruch in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
