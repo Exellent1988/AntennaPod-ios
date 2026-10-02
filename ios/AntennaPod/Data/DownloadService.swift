@@ -490,7 +490,7 @@ final class DownloadService: ObservableObject {
     }
 
     /// Cancels **every** in-flight background download and clears the waiting FIFO.
-    /// Does **not** delete completed offline files (use `clearAllDownloads` / `delete`).
+    /// Does **not** delete completed offline files (use `deleteAllDownloads` / `delete`).
     /// Does not touch played status, queue, favorites, or history. Confirmation is UI
     /// responsibility. Returns how many episode ids were cancelled (pre-clear `inProgress` size).
     @discardableResult
@@ -549,7 +549,7 @@ final class DownloadService: ObservableObject {
         return victims.count
     }
 
-    /// Approximate total byte size of files that `clearAllDownloads` would remove (full completed catalog).
+    /// Approximate total byte size of files that `deleteAllDownloads` would remove (full completed catalog).
     /// Uses on-disk `fileSize` when readable; missing files contribute 0 (same honesty as played-delete size).
     func completedDownloadsByteSize() -> Int64 {
         var total: Int64 = 0
@@ -563,18 +563,15 @@ final class DownloadService: ObservableObject {
     /// Deletes **every** completed offline file in the Downloads catalog — including favorited / starred
     /// episodes (unlike `deletePlayedDownloads` / auto-delete, which skip favorites). Local files only:
     /// does **not** mark unplayed, clear the queue, remove favorites/history entries, or stop playback.
-    /// Cancels in-flight tasks for catalog episode ids. Confirmation is UI responsibility.
-    func clearAllDownloads() {
-        let episodeIds = downloads.map(\.id)
-        for id in episodeIds {
-            cancelTask(for: id)
+    /// Uses the same single-episode `delete(_:)` path as swipe / player deletion, including its
+    /// cancellation, catalog persistence, and storage refresh behavior. Confirmation is UI responsibility.
+    @discardableResult
+    func deleteAllDownloads() -> Int {
+        let victims = downloads
+        for item in victims {
+            delete(item.episode)
         }
-        for item in downloads {
-            try? FileManager.default.removeItem(at: item.localFileURL)
-        }
-        downloads.removeAll()
-        persistCompleted()
-        refreshStorageUsage()
+        return victims.count
     }
 
     /// Completed downloads whose episode id appears in `feed.episodes` (this feed’s current catalog).
@@ -587,7 +584,7 @@ final class DownloadService: ObservableObject {
     }
 
     /// Approximate total byte size of files that `deleteDownloads(forFeed:)` would remove.
-    /// Uses on-disk `fileSize` when readable; missing files contribute 0 (same honesty as Clear all).
+    /// Uses on-disk `fileSize` when readable; missing files contribute 0 (same honesty as Delete all downloads).
     func downloadsByteSize(forFeed feed: PodcastFeed) -> Int64 {
         var total: Int64 = 0
         for item in downloads(forFeed: feed) {
@@ -633,7 +630,7 @@ final class DownloadService: ObservableObject {
     }
 
     /// Approximate total byte size of files that `deleteEligibleDownloads(forFeed:)` would remove.
-    /// Uses on-disk `fileSize` when readable; missing files contribute 0 (same honesty as Clear all).
+    /// Uses on-disk `fileSize` when readable; missing files contribute 0 (same honesty as Delete all downloads).
     func downloadsEligibleByteSize(forFeed feed: PodcastFeed, store: PodcastStore? = nil) -> Int64 {
         var total: Int64 = 0
         for item in downloadsEligibleForDelete(forFeed: feed, store: store) {

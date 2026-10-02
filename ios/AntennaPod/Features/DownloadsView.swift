@@ -11,7 +11,7 @@ struct DownloadsView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
     @State private var showDeletePlayedConfirm = false
-    @State private var showClearAllConfirm = false
+    @State private var showDeleteAllConfirm = false
     @State private var showCancelAllConfirm = false
     @State private var showEnqueueAllConfirm = false
     @State private var showEnqueueAllUnplayedConfirm = false
@@ -34,8 +34,8 @@ struct DownloadsView: View {
     /// Search matches title / descriptionText / episode private note / any bookmark note via
     /// `PodcastStore.episodeMatchesLibraryQuery` (same fields as library / Feed detail / Queue / Favorites / History / Archived), plus
     /// feed display title (`displayTitle(containingEpisodeId:)`). View-only —
-    /// Does not mutate `DownloadService.downloads` (tab badge / Play random / Add all / Delete played / Clear all / Copy / Share stay full-catalog).
-    /// Play random / Add all to queue / Mark all as played / Mark all as unplayed / Delete played / Clear all / Cancel all / Copy downloads / Share downloads stay full-catalog scoped.
+    /// Does not mutate `DownloadService.downloads` (tab badge / Play random / Add all / Delete played / Delete all / Copy / Share stay full-catalog).
+    /// Play random / Add all to queue / Mark all as played / Mark all as unplayed / Delete played / Delete all / Cancel all / Copy downloads / Share downloads stay full-catalog scoped.
     private var filteredDownloads: [DownloadedEpisode] {
         var base = downloads.downloads
         switch settings.downloadsFilter {
@@ -187,8 +187,8 @@ struct DownloadsView: View {
         DownloadStorageUsage.formatBytes(downloads.playedDownloadsEligibleByteSize(store: store))
     }
 
-    /// Full completed catalog size for Clear all confirmation (not chip/search filtered).
-    private var clearAllDownloadsSizeLabel: String {
+    /// Full completed catalog size for Delete all confirmation (not chip/search filtered).
+    private var deleteAllDownloadsSizeLabel: String {
         DownloadStorageUsage.formatBytes(downloads.completedDownloadsByteSize())
     }
 
@@ -228,7 +228,7 @@ struct DownloadsView: View {
     /// Completed Downloads catalog rows with a local playable file on disk via shared
     /// `EpisodePlayRandom` (`.localFileOnly` — `DownloadService.localURL` under Documents/downloads).
     /// Full catalog — **not** played-chip / podcast-chip / searchable filtered.
-    /// Distinct from Add all to queue / Delete played / Clear all / remaining-time visible counts.
+    /// Distinct from Add all to queue / Delete played / Delete all / remaining-time visible counts.
     private var playRandomEligibleEpisodes: [PodcastEpisode] {
         EpisodePlayRandom.eligible(
             from: downloads.downloads.map(\.episode),
@@ -248,7 +248,7 @@ struct DownloadsView: View {
     }
 
     /// Full completed Downloads catalog newest-completed-first (`downloadsSortEpochMs` desc, id
-    /// tiebreak) — same spirit as Home `downloadsCatalogNewestFirst` / Clear all catalog.
+    /// tiebreak) — same spirit as Home `downloadsCatalogNewestFirst` / Delete all catalog.
     /// **Not** chip (`downloadsFilter` / podcast) / searchable / UI `downloadsSort`.
     /// Does **not** include in-flight or waiting rows.
     private var downloadsCatalogNewestFirst: [PodcastEpisode] {
@@ -261,7 +261,7 @@ struct DownloadsView: View {
     }
 
     /// Plain-text list of the **full** completed Downloads catalog — not chip/search/UI sort filtered.
-    /// Same honesty as Clear all / Add all / Play random / tab badge.
+    /// Same honesty as Delete all / Add all / Play random / tab badge.
     private var downloadsPlainText: String {
         DownloadsExport.plainText(episodes: downloadsCatalogNewestFirst) { episode in
             store.displayTitle(containingEpisodeId: episode.id)
@@ -284,7 +284,7 @@ struct DownloadsView: View {
     /// Remaining per episode = `max(0, duration − position)` when duration known; unplayed with
     /// duration contributes full duration; **played** (not current) → 0; **unknown duration skipped**
     /// (tilde when any skipped). Currently playing uses live `PlaybackService` position/duration.
-    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge / Add all / Play random / Delete played / Clear all (full catalog).
+    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge / Add all / Play random / Delete played / Delete all (full catalog).
     private var downloadsRemainingInfoLabel: String? {
         guard !filteredDownloads.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: downloadsRemainingSummary)
@@ -638,23 +638,26 @@ struct DownloadsView: View {
                         .disabled(playedDownloadsForDelete.isEmpty)
 
                         Button(role: .destructive) {
-                            showClearAllConfirm = true
+                            showDeleteAllConfirm = true
                         } label: {
-                            Label("Clear all downloads", systemImage: "trash.fill")
+                            Label("Delete all downloads", systemImage: "trash.fill")
                         }
                         .disabled(downloads.downloads.isEmpty)
-                        .accessibilityHint(String(localized: "Deletes every completed offline file including favorites"))
+                        .accessibilityLabel(String(localized: "Delete all downloads"))
+                        .accessibilityHint(
+                            String(localized: "Deletes every completed offline file in the full Downloads catalog, including favorites; keeps played status, queue membership, favorites, and archive state")
+                        )
                     } label: {
                         Label("Downloads actions", systemImage: "ellipsis.circle")
                     }
                     // Menu available when completed catalog is non-empty **or** anything is in-flight /
                     // waiting (Cancel all). Copy / Share / Play random / Add all / Cancel all / Delete
-                    // played / Mark all as played / Mark all as unplayed / Clear all each disable independently — same honesty as Favorites /
+                    // played / Mark all as played / Mark all as unplayed / Delete all downloads each disable independently — same honesty as Favorites /
                     // History / Archived Copy / Share.
                     .disabled(downloads.downloads.isEmpty && downloads.cancelAllInFlightCount == 0)
                     .accessibilityLabel(String(localized: "Downloads actions"))
                     .accessibilityHint(
-                        String(localized: "Copy downloads, share downloads, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, archive all, cancel all downloads, delete played downloads, or clear all downloads")
+                        String(localized: "Copy downloads, share downloads, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, archive all, cancel all downloads, delete played downloads, or delete all downloads")
                     )
                 }
             }
@@ -758,21 +761,21 @@ struct DownloadsView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text(
-                    "Deletes \(playedDownloadsForDelete.count) played offline file(s) (\(playedDownloadsDeleteSizeLabel)). Keeps unplayed downloads and favorites. Does not mark unplayed, clear the queue, or clear all downloads."
+                    "Deletes \(playedDownloadsForDelete.count) played offline file(s) (\(playedDownloadsDeleteSizeLabel)). Keeps unplayed downloads and favorites. Does not mark unplayed, clear the queue, or delete all downloads."
                 )
             }
             .confirmationDialog(
-                "Clear all downloads?",
-                isPresented: $showClearAllConfirm,
+                "Delete all downloads?",
+                isPresented: $showDeleteAllConfirm,
                 titleVisibility: .visible
             ) {
-                Button("Clear all downloads", role: .destructive) {
-                    downloads.clearAllDownloads()
+                Button("Delete all downloads", role: .destructive) {
+                    downloads.deleteAllDownloads()
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text(
-                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(clearAllDownloadsSizeLabel)), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Local files only — keeps played status, queue, favorites list, and history. Distinct from Delete played downloads and from Clear queue."
+                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(deleteAllDownloadsSizeLabel)), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
                 )
             }
             .confirmationDialog(
@@ -793,7 +796,7 @@ struct DownloadsView: View {
                 }
             } message: { episode in
                 Text(
-                    "Delete download for \"\(episode.title)\"? Removes the local offline file only. Keeps played status, queue, and favorites."
+                    "Delete download for \"\(episode.title)\"? Removes the local offline file only. Keeps played status, queue membership, favorites, and archive state."
                 )
             }
         }

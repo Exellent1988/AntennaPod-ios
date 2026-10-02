@@ -31,7 +31,7 @@ enum EpisodeDownloadActions {
             return String(localized: "Cancels the in-progress download")
         }
         if downloads.isDownloaded(episode) {
-            return String(localized: "Asks for confirmation, then deletes the offline file for this episode")
+            return String(localized: "Asks for confirmation, then deletes the local offline file for this episode; keeps played status, queue membership, favorites, and archive state")
         }
         return String(localized: "Downloads this episode for offline playback")
     }

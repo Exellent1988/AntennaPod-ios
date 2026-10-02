@@ -793,7 +793,7 @@ struct SubscriptionsView: View {
                 )
                 if feedDownloadCount > 0 {
                     Text(
-                        "Unsubscribe from \"\(feedDisplayTitle(feed))\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has \(feedDownloadCount) offline download(s) (\(feedDownloadSize)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Clear all downloads."
+                        "Unsubscribe from \"\(feedDisplayTitle(feed))\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has \(feedDownloadCount) offline download(s) (\(feedDownloadSize)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Delete all downloads."
                     )
                 } else {
                     Text(

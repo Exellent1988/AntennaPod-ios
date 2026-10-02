@@ -52,7 +52,7 @@ struct SettingsView: View {
     @EnvironmentObject private var parental: ParentalControls
 
     @State private var customMB: Int = 500
-    @State private var showClearConfirmation = false
+    @State private var showDeleteAllConfirmation = false
     @State private var showClearEpisodeNotesConfirmation = false
     @State private var showClearFeedNotesConfirmation = false
     @State private var showClearAllBookmarksConfirmation = false
@@ -228,7 +228,7 @@ struct SettingsView: View {
                     "Max downloaded episodes",
                     "Parallel downloads",
                     "Download all unplayed soft cap",
-                    "Clear downloads",
+                    "Delete all downloads",
                     "Unlimited",
                     "Custom (MB)",
                     "10 episodes",
@@ -447,17 +447,17 @@ struct SettingsView: View {
             }
             } // ScrollViewReader
             .confirmationDialog(
-                "Clear all downloads?",
-                isPresented: $showClearConfirmation,
+                "Delete all downloads?",
+                isPresented: $showDeleteAllConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("Clear downloads", role: .destructive) {
-                    downloads.clearAllDownloads()
+                Button("Delete all downloads", role: .destructive) {
+                    downloads.deleteAllDownloads()
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text(
-                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(DownloadStorageUsage.formatBytes(downloads.completedDownloadsByteSize()))), including favorited downloads. Uses the full Downloads catalog. Local files only — keeps played status, queue, favorites list, and history. Distinct from Delete played downloads and from Clear queue."
+                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(DownloadStorageUsage.formatBytes(downloads.completedDownloadsByteSize()))), including favorited downloads. Uses the full Downloads catalog. Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
                 )
             }
             .confirmationDialog(
@@ -559,7 +559,7 @@ struct SettingsView: View {
                 "Max storage",
                 "Parallel downloads",
                 "Download all unplayed soft cap",
-                "Clear downloads"
+                "Delete all downloads"
             )
             || matchesSearch("Discovery", "Charts country", "Discover charts count", "charts", "Top lists", "API key", "API secret")
             || matchesSearch("Sync", "Provider", "Host", "Username", "Sync now", "Login", "Synced", "Local only", "Keychain", "bookmarks", "tags")
@@ -1725,8 +1725,8 @@ struct SettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(feedDownloadUnplayedSoftCapHelpText)
-            Button("Clear downloads", role: .destructive) {
-                showClearConfirmation = true
+            Button("Delete all downloads", role: .destructive) {
+                showDeleteAllConfirmation = true
             }
             .disabled(downloads.downloads.isEmpty)
         } header: {

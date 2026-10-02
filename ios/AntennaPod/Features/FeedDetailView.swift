@@ -1324,11 +1324,11 @@ struct FeedDetailView: View {
         } message: {
             if deleteFeedDownloadsSkippedFavoritesCount > 0 {
                 Text(
-                    "Deletes \(deleteFeedDownloadsEligible.count) offline file(s) for this podcast (\(deleteFeedDownloadsSizeLabel)). Skips \(deleteFeedDownloadsSkippedFavoritesCount) favorited download(s). Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Clear all downloads."
+                    "Deletes \(deleteFeedDownloadsEligible.count) offline file(s) for this podcast (\(deleteFeedDownloadsSizeLabel)). Skips \(deleteFeedDownloadsSkippedFavoritesCount) favorited download(s). Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Delete all downloads."
                 )
             } else {
                 Text(
-                    "Deletes \(deleteFeedDownloadsEligible.count) offline file(s) for this podcast (\(deleteFeedDownloadsSizeLabel)). Skips favorited downloads. Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Clear all downloads."
+                    "Deletes \(deleteFeedDownloadsEligible.count) offline file(s) for this podcast (\(deleteFeedDownloadsSizeLabel)). Skips favorited downloads. Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Delete all downloads."
                 )
             }
         }
@@ -1355,7 +1355,7 @@ struct FeedDetailView: View {
         } message: {
             if unsubscribeFeedDownloadsCount > 0 {
                 Text(
-                    "Unsubscribe from \"\(feedDisplayTitle)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has \(unsubscribeFeedDownloadsCount) offline download(s) (\(unsubscribeFeedDownloadsSizeLabel)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Clear all downloads."
+                    "Unsubscribe from \"\(feedDisplayTitle)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has \(unsubscribeFeedDownloadsCount) offline download(s) (\(unsubscribeFeedDownloadsSizeLabel)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Delete all downloads."
                 )
             } else {
                 Text(
