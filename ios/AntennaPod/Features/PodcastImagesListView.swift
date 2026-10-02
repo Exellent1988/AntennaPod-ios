@@ -153,6 +153,31 @@ struct PodcastImagesListView: View {
                     )
                 }
 
+                if let widthLabel {
+                    Button {
+                        UIPasteboard.general.string = widthLabel
+                        copiedAlertMessage = String(localized: "Image width copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy image width", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy image width"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided image width to the pasteboard")
+                    )
+
+                    ShareLink(item: widthLabel) {
+                        Label("Share image width", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share image width"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided image width as plain text")
+                    )
+                }
+
                 if let alt {
                     Button {
                         UIPasteboard.general.string = alt

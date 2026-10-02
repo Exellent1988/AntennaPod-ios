@@ -35782,6 +35782,96 @@
         }
       }
     }
+  },
+  "Copy image width": {
+    "extractionState": "manual",
+    "comment": "Copy action for the exact displayed feed-provided podcast:image width.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy image width"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Bildbreite kopieren"
+        }
+      }
+    }
+  },
+  "Share image width": {
+    "extractionState": "manual",
+    "comment": "Share action for the exact displayed feed-provided podcast:image width.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share image width"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Bildbreite teilen"
+        }
+      }
+    }
+  },
+  "Image width copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Copied alert after copying the exact displayed feed-provided podcast:image width.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Image width copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Bildbreite in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Copies the exact feed-provided image width to the pasteboard": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for copying the exact displayed feed-provided podcast:image width.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact feed-provided image width to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt vom Feed gelieferte Bildbreite in die Zwischenablage"
+        }
+      }
+    }
+  },
+  "Shares the exact feed-provided image width as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for sharing the exact displayed feed-provided podcast:image width.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact feed-provided image width as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die exakt vom Feed gelieferte Bildbreite als Klartext"
+        }
+      }
+    }
   }
 
   },
