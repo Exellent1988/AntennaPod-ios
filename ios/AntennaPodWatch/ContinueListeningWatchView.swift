@@ -39,15 +39,22 @@ struct ContinueListeningWatchView: View {
                     .buttonStyle(.borderedProminent)
                     .padding(.top, 4)
                 } else {
-                    Image(systemName: "antenna.radiowaves.left.and.right")
-                        .font(.title2)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity)
-                    Text("Open AntennaPod on iPhone to continue")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity)
+                    VStack(spacing: 12) {
+                        Image(systemName: "antenna.radiowaves.left.and.right")
+                            .font(.title2)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity)
+                        Text("Open AntennaPod on iPhone to continue")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "Open AntennaPod on iPhone to continue"))
+                    .accessibilityValue(
+                        String(localized: "No Continue listening snapshot is saved yet. This is not live playback and not the queue. Play an episode in AntennaPod on iPhone to write the snapshot for Watch. Until then there is no episode title or remaining time.")
+                    )
                     Button {
                         model.playOnPhone()
                     } label: {
@@ -56,6 +63,9 @@ struct ContinueListeningWatchView: View {
                     }
                     .buttonStyle(.bordered)
                     .padding(.top, 4)
+                    .accessibilityHint(
+                        String(localized: "Opens AntennaPod on iPhone and sends play. Playback starts only if an episode is already loaded. Does not create a continue episode. No independent Watch playback.")
+                    )
                 }
 
                 if let status = model.statusMessage {

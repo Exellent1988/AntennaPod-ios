@@ -273,6 +273,40 @@
           }
         }
       }
+    },
+    "No Continue listening snapshot is saved yet. This is not live playback and not the queue. Play an episode in AntennaPod on iPhone to write the snapshot for Watch. Until then there is no episode title or remaining time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Continue listening snapshot is saved yet. This is not live playback and not the queue. Play an episode in AntennaPod on iPhone to write the snapshot for Watch. Until then there is no episode title or remaining time."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch kein Weiterspielen-Snapshot gespeichert. Das ist keine Live-Wiedergabe und nicht die Warteschlange. Spiele eine Episode in AntennaPod auf dem iPhone, damit der Snapshot für die Watch geschrieben wird. Bis dahin gibt es keinen Episodentitel und keine Restzeit."
+          }
+        }
+      }
+    },
+    "Opens AntennaPod on iPhone and sends play. Playback starts only if an episode is already loaded. Does not create a continue episode. No independent Watch playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens AntennaPod on iPhone and sends play. Playback starts only if an episode is already loaded. Does not create a continue episode. No independent Watch playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet AntennaPod auf dem iPhone und sendet Wiedergabe. Die Wiedergabe startet nur, wenn bereits eine Episode geladen ist. Es wird keine Weiterspielen-Episode erzeugt. Kein unabhängiges Watch-Playback."
+          }
+        }
+      }
     }
   }
 }
