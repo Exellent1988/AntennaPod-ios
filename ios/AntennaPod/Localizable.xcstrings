@@ -1959,6 +1959,74 @@
         }
       }
     },
+    "On. This starts on each time you open Subscriptions and is not saved. There are no tags, so the list stays one Podcasts section. No tag names are invented. Turning this on does not subscribe, unsubscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On. This starts on each time you open Subscriptions and is not saved. There are no tags, so the list stays one Podcasts section. No tag names are invented. Turning this on does not subscribe, unsubscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An. Das ist beim Öffnen von Abonnements eingeschaltet und wird nicht gespeichert. Es gibt keine Tags, daher bleibt die Liste ein Abschnitt Podcasts. Es werden keine Tag-Namen erfunden. Einschalten abonniert nicht, kündigt kein Abo und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "On. This starts on each time you open Subscriptions and is not saved. While the tag filter is All, podcasts are listed under each of their tags. A podcast with several tags appears in each of those sections. Podcasts with no tag appear under Untagged. Search, category, and language still narrow the list first. The unplayed remaining bar counts each podcast once. Turning this on does not change tags, sort, or Keep at top, and it does not subscribe, unsubscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On. This starts on each time you open Subscriptions and is not saved. While the tag filter is All, podcasts are listed under each of their tags. A podcast with several tags appears in each of those sections. Podcasts with no tag appear under Untagged. Search, category, and language still narrow the list first. The unplayed remaining bar counts each podcast once. Turning this on does not change tags, sort, or Keep at top, and it does not subscribe, unsubscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An. Das ist beim Öffnen von Abonnements eingeschaltet und wird nicht gespeichert. Solange der Tag-Filter Alle ist, stehen Podcasts unter jedem ihrer Tags. Ein Podcast mit mehreren Tags erscheint in jedem dieser Abschnitte. Podcasts ohne Tag stehen unter Ohne Tag. Suche, Kategorie und Sprache grenzen die Liste vorher ein. Die Leiste für ungehörte Restzeit zählt jeden Podcast nur einmal. Einschalten ändert keine Tags, keine Sortierung und nicht Oben halten, und es abonniert nicht, kündigt kein Abo und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Off. This is not how Subscriptions starts. The All list is one Podcasts section. Pinned podcasts still stay first. Tags are unchanged. Turning this off does not remove tags, unsubscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. This is not how Subscriptions starts. The All list is one Podcasts section. Pinned podcasts still stay first. Tags are unchanged. Turning this off does not remove tags, unsubscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. So startet Abonnements nicht. Die Liste Alle ist ein Abschnitt Podcasts. Angepinnte Podcasts bleiben zuerst. Tags bleiben unverändert. Ausschalten entfernt keine Tags, kündigt kein Abo und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Starts on for this visit only. Not saved in Settings or backup, and not synced. Shown only while the tag filter is All. Pinned, a named tag, and Untagged hide this toggle and stay a flat list. On groups by existing tags and does not hide podcasts. Off is one flat list. It does not rename tags or change sort.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts on for this visit only. Not saved in Settings or backup, and not synced. Shown only while the tag filter is All. Pinned, a named tag, and Untagged hide this toggle and stay a flat list. On groups by existing tags and does not hide podcasts. Off is one flat list. It does not rename tags or change sort."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beim Öffnen eingeschaltet, nur für diesen Besuch. Nicht in Einstellungen oder Backup gespeichert und nicht synchronisiert. Nur sichtbar, solange der Tag-Filter Alle ist. Angepinnt, ein benannter Tag und Ohne Tag blenden diesen Schalter aus und bleiben eine flache Liste. An gruppiert nach vorhandenen Tags und blendet keine Podcasts aus. Aus ist eine flache Liste. Es benennt keine Tags um und ändert nicht die Sortierung."
+          }
+        }
+      }
+    },
     "Hide explicit top charts": {
       "extractionState": "manual",
       "localizations": {

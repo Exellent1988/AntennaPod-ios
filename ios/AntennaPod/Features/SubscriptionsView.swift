@@ -500,6 +500,9 @@ struct SubscriptionsView: View {
                         // Group by tag only for All (Pinned / tag / Untagged stay flat — same gate as grouping).
                         if tagFilter == .all {
                             Toggle("Group by tag", isOn: $groupByTag)
+                                .accessibilityLabel(String(localized: "Group by tag"))
+                                .accessibilityValue(groupByTagAccessibilityValue)
+                                .accessibilityHint(groupByTagAccessibilityHint)
                         }
                     } header: {
                         Text("Tags")
@@ -886,6 +889,24 @@ struct SubscriptionsView: View {
             return String(localized: "No pinned podcasts match the active filters. Choose All or change the search, category, or language filter.")
         }
         return String(localized: "No subscriptions match this tag filter. Choose All or another tag.")
+    }
+
+    /// VoiceOver for Subscriptions → Group by tag. Starts on for this visit
+    /// only (not Settings, backup, or sync). On sections the All list by
+    /// existing tags. Off is one flat Podcasts list. Hidden unless the tag
+    /// chip is All. Not a filter and not a sort.
+    private var groupByTagAccessibilityValue: String {
+        if groupByTag {
+            if store.allTags.isEmpty {
+                return String(localized: "On. This starts on each time you open Subscriptions and is not saved. There are no tags, so the list stays one Podcasts section. No tag names are invented. Turning this on does not subscribe, unsubscribe, or download.")
+            }
+            return String(localized: "On. This starts on each time you open Subscriptions and is not saved. While the tag filter is All, podcasts are listed under each of their tags. A podcast with several tags appears in each of those sections. Podcasts with no tag appear under Untagged. Search, category, and language still narrow the list first. The unplayed remaining bar counts each podcast once. Turning this on does not change tags, sort, or Keep at top, and it does not subscribe, unsubscribe, or download.")
+        }
+        return String(localized: "Off. This is not how Subscriptions starts. The All list is one Podcasts section. Pinned podcasts still stay first. Tags are unchanged. Turning this off does not remove tags, unsubscribe, or download.")
+    }
+
+    private var groupByTagAccessibilityHint: String {
+        String(localized: "Starts on for this visit only. Not saved in Settings or backup, and not synced. Shown only while the tag filter is All. Pinned, a named tag, and Untagged hide this toggle and stay a flat list. On groups by existing tags and does not hide podcasts. Off is one flat list. It does not rename tags or change sort.")
     }
 
     /// VoiceOver hint for tag-row chips (Pinned vs tag / Untagged / All).
