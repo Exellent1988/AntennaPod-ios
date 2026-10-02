@@ -823,30 +823,88 @@ struct FeedDescriptionSheetView: View {
 
     @ViewBuilder
     private func updateFrequencyActions(_ frequency: PodcastUpdateFrequency) -> some View {
-        if let text = frequency.shareText {
-            HStack(spacing: 12) {
-                Button {
-                    copyUpdateFrequency(text)
-                } label: {
-                    Label("Copy update frequency", systemImage: "doc.on.doc")
-                        .font(.subheadline)
-                }
-                .accessibilityLabel(String(localized: "Copy update frequency"))
-                .accessibilityHint(
-                    String(localized: "Copies the same feed-provided update-frequency summary shown above to the pasteboard; display-only; does not change Keep updated or refresh")
-                )
+        VStack(alignment: .leading, spacing: 8) {
+            if let text = frequency.shareText {
+                HStack(spacing: 12) {
+                    Button {
+                        copyUpdateFrequency(text)
+                    } label: {
+                        Label("Copy update frequency", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy update frequency"))
+                    .accessibilityHint(
+                        String(localized: "Copies the same feed-provided update-frequency summary shown above to the pasteboard; display-only; does not change Keep updated or refresh")
+                    )
 
-                ShareLink(
-                    item: text,
-                    subject: Text(resolvedTitle)
-                ) {
-                    Label("Share update frequency", systemImage: "square.and.arrow.up")
-                        .font(.subheadline)
+                    ShareLink(
+                        item: text,
+                        subject: Text(resolvedTitle)
+                    ) {
+                        Label("Share update frequency", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share update frequency"))
+                    .accessibilityHint(
+                        String(localized: "Shares the same feed-provided update-frequency summary shown above as plain text; display-only; does not change Keep updated or refresh")
+                    )
                 }
-                .accessibilityLabel(String(localized: "Share update frequency"))
-                .accessibilityHint(
-                    String(localized: "Shares the same feed-provided update-frequency summary shown above as plain text; display-only; does not change Keep updated or refresh")
-                )
+            }
+
+            // Distinct from combined update-frequency summary — exact Recurrence caption only; hide when rrule missing.
+            if let caption = frequency.displayRruleCaption {
+                HStack(spacing: 12) {
+                    Button {
+                        copyUpdateFrequencyRrule(caption)
+                    } label: {
+                        Label("Copy recurrence", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy recurrence"))
+                    .accessibilityHint(
+                        String(localized: "Copies the same Recurrence caption shown above to the pasteboard; display-only; does not change Keep updated or refresh")
+                    )
+
+                    ShareLink(
+                        item: caption,
+                        subject: Text(resolvedTitle)
+                    ) {
+                        Label("Share recurrence", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share recurrence"))
+                    .accessibilityHint(
+                        String(localized: "Shares the same Recurrence caption shown above as plain text; display-only; does not change Keep updated or refresh")
+                    )
+                }
+            }
+
+            // Distinct from combined update-frequency summary — exact Starts caption only; hide when dtstart missing.
+            if let caption = frequency.displayDtstartCaption {
+                HStack(spacing: 12) {
+                    Button {
+                        copyUpdateFrequencyDtstart(caption)
+                    } label: {
+                        Label("Copy start timestamp", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy start timestamp"))
+                    .accessibilityHint(
+                        String(localized: "Copies the same Starts caption shown above to the pasteboard; display-only; does not change Keep updated or refresh")
+                    )
+
+                    ShareLink(
+                        item: caption,
+                        subject: Text(resolvedTitle)
+                    ) {
+                        Label("Share start timestamp", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share start timestamp"))
+                    .accessibilityHint(
+                        String(localized: "Shares the same Starts caption shown above as plain text; display-only; does not change Keep updated or refresh")
+                    )
+                }
             }
         }
     }
@@ -854,6 +912,20 @@ struct FeedDescriptionSheetView: View {
     private func copyUpdateFrequency(_ text: String) {
         UIPasteboard.general.string = text
         copiedAlertMessage = String(localized: "Update frequency copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    private func copyUpdateFrequencyRrule(_ caption: String) {
+        UIPasteboard.general.string = caption
+        copiedAlertMessage = String(localized: "Recurrence copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    private func copyUpdateFrequencyDtstart(_ caption: String) {
+        UIPasteboard.general.string = caption
+        copiedAlertMessage = String(localized: "Start timestamp copied to the pasteboard.")
         copyFeedbackTick += 1
         showCopiedAlert = true
     }

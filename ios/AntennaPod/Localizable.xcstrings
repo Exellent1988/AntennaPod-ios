@@ -34343,6 +34343,186 @@
         }
       }
     },
+    "Copy recurrence": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: copy the exact podcast:updateFrequency Recurrence (rrule) footnote caption; distinct from combined update-frequency summary; display-only; hidden when rrule absent.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy recurrence"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederholung kopieren"
+          }
+        }
+      }
+    },
+    "Share recurrence": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: share the exact podcast:updateFrequency Recurrence (rrule) footnote caption; distinct from combined update-frequency summary; display-only; hidden when rrule absent.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share recurrence"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederholung teilen"
+          }
+        }
+      }
+    },
+    "Copy start timestamp": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: copy the exact podcast:updateFrequency Starts (dtstart) footnote caption; distinct from combined update-frequency summary; display-only; hidden when dtstart absent.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy start timestamp"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beginnzeitstempel kopieren"
+          }
+        }
+      }
+    },
+    "Share start timestamp": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: share the exact podcast:updateFrequency Starts (dtstart) footnote caption; distinct from combined update-frequency summary; display-only; hidden when dtstart absent.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share start timestamp"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beginnzeitstempel teilen"
+          }
+        }
+      }
+    },
+    "Copies the same Recurrence caption shown above to the pasteboard; display-only; does not change Keep updated or refresh": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the feed-backed podcast:updateFrequency Recurrence (rrule) caption.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same Recurrence caption shown above to the pasteboard; display-only; does not change Keep updated or refresh"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe Wiederholungs-Fußnote wie oben in die Zwischenablage; nur Anzeige; ändert weder „Aktualisiert halten“ noch das Aktualisierungsintervall"
+          }
+        }
+      }
+    },
+    "Shares the same Recurrence caption shown above as plain text; display-only; does not change Keep updated or refresh": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the feed-backed podcast:updateFrequency Recurrence (rrule) caption.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same Recurrence caption shown above as plain text; display-only; does not change Keep updated or refresh"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe Wiederholungs-Fußnote wie oben als Klartext; nur Anzeige; ändert weder „Aktualisiert halten“ noch das Aktualisierungsintervall"
+          }
+        }
+      }
+    },
+    "Copies the same Starts caption shown above to the pasteboard; display-only; does not change Keep updated or refresh": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the feed-backed podcast:updateFrequency Starts (dtstart) caption.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same Starts caption shown above to the pasteboard; display-only; does not change Keep updated or refresh"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe Beginn-Fußnote wie oben in die Zwischenablage; nur Anzeige; ändert weder „Aktualisiert halten“ noch das Aktualisierungsintervall"
+          }
+        }
+      }
+    },
+    "Shares the same Starts caption shown above as plain text; display-only; does not change Keep updated or refresh": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the feed-backed podcast:updateFrequency Starts (dtstart) caption.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same Starts caption shown above as plain text; display-only; does not change Keep updated or refresh"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe Beginn-Fußnote wie oben als Klartext; nur Anzeige; ändert weder „Aktualisiert halten“ noch das Aktualisierungsintervall"
+          }
+        }
+      }
+    },
+    "Recurrence copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the exact podcast:updateFrequency Recurrence (rrule) caption.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recurrence copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederholung in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Start timestamp copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the exact podcast:updateFrequency Starts (dtstart) caption.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start timestamp copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beginnzeitstempel in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
     "Complete claim copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Copied alert for the feed-backed itunes:complete claim and footnote.",

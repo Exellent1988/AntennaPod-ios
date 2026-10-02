@@ -2147,11 +2147,25 @@ struct PodcastUpdateFrequency: Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// Exact localized Recurrence footnote caption shown in the UI (same string Copy/Share uses).
+    /// Nil when `displayRrule` is missing — never invent Daily/Weekly.
+    var displayRruleCaption: String? {
+        guard let r = displayRrule else { return nil }
+        return String(localized: "Recurrence \(r)")
+    }
+
     /// Trimmed non-empty raw `dtstart`. Hidden when missing — never invent.
     var displayDtstart: String? {
         guard let dtstart else { return nil }
         let trimmed = dtstart.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Exact localized Starts footnote caption shown in the UI (same string Copy/Share uses).
+    /// Nil when `displayDtstart` is missing — never invent.
+    var displayDtstartCaption: String? {
+        guard let d = displayDtstart else { return nil }
+        return String(localized: "Starts \(d)")
     }
 
     /// Feed claims no further episodes via `complete="true"`.
@@ -2176,11 +2190,11 @@ struct PodcastUpdateFrequency: Hashable, Codable {
         if isComplete {
             parts.append(String(localized: "This podcast claims it will not release further episodes. This does not change Keep updated or refresh."))
         }
-        if let r = displayRrule {
-            parts.append(String(localized: "Recurrence \(r)"))
+        if let r = displayRruleCaption {
+            parts.append(r)
         }
-        if let d = displayDtstart {
-            parts.append(String(localized: "Starts \(d)"))
+        if let d = displayDtstartCaption {
+            parts.append(d)
         }
         return parts.isEmpty ? nil : parts.joined(separator: ". ")
     }
@@ -2198,11 +2212,11 @@ struct PodcastUpdateFrequency: Hashable, Codable {
         if isComplete {
             parts.append(String(localized: "This podcast claims it will not release further episodes. This does not change Keep updated or refresh."))
         }
-        if let r = displayRrule {
-            parts.append(String(localized: "Recurrence \(r)"))
+        if let r = displayRruleCaption {
+            parts.append(r)
         }
-        if let d = displayDtstart {
-            parts.append(String(localized: "Starts \(d)"))
+        if let d = displayDtstartCaption {
+            parts.append(d)
         }
         return parts.joined(separator: ". ")
     }
