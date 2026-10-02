@@ -14093,6 +14093,57 @@
         }
       }
     },
+    "Remote transcript URL from the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote transcript URL from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernte Transkript-URL aus dem Feed."
+          }
+        }
+      }
+    },
+    "Share transcript URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share transcript URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript-URL teilen"
+          }
+        }
+      }
+    },
+    "Shares the feed-provided transcript URL, not the loaded transcript text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the feed-provided transcript URL, not the loaded transcript text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die Transkript-URL aus dem Feed, nicht den geladenen Transkripttext"
+          }
+        }
+      }
+    },
     "Opens the system share sheet with the episode title and transcript": {
       "extractionState": "manual",
       "localizations": {

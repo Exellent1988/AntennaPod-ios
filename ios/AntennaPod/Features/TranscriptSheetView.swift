@@ -59,6 +59,30 @@ struct TranscriptSheetView: View {
     /// Same gate as Copy — Share only when already-loaded text exists.
     private var canShareTranscript: Bool { canCopyTranscript }
 
+    private var transcriptURLString: String? {
+        guard let raw = episode.transcriptUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty else {
+            return nil
+        }
+        return raw
+    }
+
+    private var transcriptURL: URL? {
+        guard let raw = transcriptURLString,
+              let url = URL(string: raw) else {
+            return nil
+        }
+        return url
+    }
+
+    private var canShareTranscriptURL: Bool {
+        transcriptURLString != nil
+    }
+
+    private var transcriptURLShareMessage: String {
+        String(localized: "Remote transcript URL from the feed.")
+    }
+
     /// System share sheet payload: episode title + full loaded transcript body (same join as Copy).
     private var transcriptShareText: String {
         let body = transcriptPlainForCopy
@@ -191,6 +215,36 @@ struct TranscriptSheetView: View {
                     .accessibilityHint(
                         String(localized: "Opens the system share sheet with the episode title and transcript")
                     )
+
+                    if canShareTranscriptURL, let raw = transcriptURLString {
+                        if let url = transcriptURL {
+                            ShareLink(
+                                item: url,
+                                subject: Text(episode.title),
+                                message: Text(transcriptURLShareMessage)
+                            ) {
+                                Image(systemName: "link")
+                            }
+                            .disabled(!canShareTranscriptURL)
+                            .accessibilityLabel(String(localized: "Share transcript URL"))
+                            .accessibilityHint(
+                                String(localized: "Shares the feed-provided transcript URL, not the loaded transcript text")
+                            )
+                        } else {
+                            ShareLink(
+                                item: raw,
+                                subject: Text(episode.title),
+                                message: Text(transcriptURLShareMessage)
+                            ) {
+                                Image(systemName: "link")
+                            }
+                            .disabled(!canShareTranscriptURL)
+                            .accessibilityLabel(String(localized: "Share transcript URL"))
+                            .accessibilityHint(
+                                String(localized: "Shares the feed-provided transcript URL, not the loaded transcript text")
+                            )
+                        }
+                    }
                 }
             }
             .safeAreaInset(edge: .bottom) {
