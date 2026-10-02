@@ -1,10 +1,13 @@
 import SwiftUI
 
 /// Settings → Home layout: show/hide Home sections and drag-reorder (Android HomePreferences lite).
+/// Also reachable from the Home tab toolbar (**Configure Home**, Android `configure_home` parity).
 /// Supports `.searchable` over section **labels** (case-insensitive, ~250 ms debounce).
 /// Toggle still targets the named `HomeSectionId` (safe while filtering). Drag/Edit `.onMove` is
 /// disabled while filtering — filtered IndexSet ≠ full `homeSectionOrder` (same honesty as Queue).
-/// Reset to defaults always rewrites the **full** layout model (not the filtered subset).
+/// Reset to defaults always rewrites the **full** layout model (not the filtered subset) after confirm.
+/// **Honesty:** only the six known `HomeSectionId` cases (Continue, Inbox, Queue, Discover,
+/// Recently updated, Favorites) — no Downloads / Statistics / Echo Home section invented.
 struct HomeLayoutSettingsView: View {
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.editMode) private var editMode
@@ -12,6 +15,7 @@ struct HomeLayoutSettingsView: View {
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
+    @State private var showResetConfirm = false
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -53,8 +57,10 @@ struct HomeLayoutSettingsView: View {
                         )) {
                             Label(section.label, systemImage: section.systemImage)
                         }
+                        .accessibilityLabel(section.label)
+                        .accessibilityValue(visibilityAccessibilityValue(for: section))
                         .accessibilityHint(
-                            String(localized: "Shows or hides this section on the Home tab")
+                            String(localized: "Shows or hides this section on the Home tab. Order among all sections is changed with Edit drag reorder when search is cleared.")
                         )
                     }
                     .onMove(perform: canReorder ? { source, destination in
@@ -65,16 +71,20 @@ struct HomeLayoutSettingsView: View {
                     Text("Sections")
                 } footer: {
                     Text(footerText)
+                        .accessibilityLabel(String(localized: "Home layout help"))
+                        .accessibilityValue(footerText)
                 }
             }
 
             Section {
-                Button("Reset to defaults") {
-                    settings.resetHomeLayout()
+                Button("Reset to defaults", role: .destructive) {
+                    showResetConfirm = true
                 }
                 .accessibilityHint(
-                    String(localized: "Restores the full default Home section order and visibility, not only the filtered list")
+                    String(localized: "Asks for confirmation, then restores the full default Home section order and visibility, not only the filtered list")
                 )
+            } footer: {
+                Text(String(localized: "Reset restores Discover → Continue → Inbox → Queue → Recently updated → Favorites (Favorites hidden). Does not change Home search, subscriptions, queue, or downloads."))
             }
         }
         .navigationTitle("Home layout")
@@ -92,6 +102,19 @@ struct HomeLayoutSettingsView: View {
         .onDisappear {
             debounceTask?.cancel()
         }
+        .confirmationDialog(
+            "Reset Home layout?",
+            isPresented: $showResetConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Reset to defaults", role: .destructive) {
+                editMode?.wrappedValue = .inactive
+                settings.resetHomeLayout()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Restores the full default section order and visibility (Favorites off). Applies to the whole layout — not only rows matching the current search. Home content search, subscriptions, queue, and downloads are unchanged."))
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 EditButton()
@@ -99,7 +122,7 @@ struct HomeLayoutSettingsView: View {
                     .disabled(allSections.isEmpty || !canReorder)
                     .accessibilityHint(
                         canReorder
-                            ? String(localized: "Enables drag reorder of Home sections")
+                            ? String(localized: "Enables drag reorder of Home sections. Hidden sections stay in the order list so you can place them before showing them again.")
                             : String(localized: "Drag reorder is unavailable while searching; clear the search to reorder")
                     )
             }
@@ -108,9 +131,24 @@ struct HomeLayoutSettingsView: View {
 
     private var footerText: String {
         if isFiltering {
-            return String(localized: "Toggle visibility on matching rows. Drag reorder is off while searching (filtered positions would not match the full layout). Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites is off by default.")
+            return String(localized: "Toggle visibility on matching rows. Drag reorder is off while searching (filtered positions would not match the full layout). Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites is off by default. No Downloads Home section — use the Downloads tab.")
         }
-        return String(localized: "Toggle visibility and tap Edit to drag-reorder. Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites is off by default.")
+        return String(localized: "Toggle visibility and tap Edit to drag-reorder. Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites is off by default. No Downloads Home section — use the Downloads tab.")
+    }
+
+    /// VoiceOver value: Visible/Hidden + 1-based position in the full persisted order.
+    private func visibilityAccessibilityValue(for section: HomeSectionId) -> String {
+        let visible = settings.isHomeSectionVisible(section)
+        let visibility = visible
+            ? String(localized: "Visible on Home")
+            : String(localized: "Hidden on Home")
+        guard let index = allSections.firstIndex(of: section) else {
+            return visibility
+        }
+        let position = index + 1
+        let total = allSections.count
+        let order = String(localized: "Order \(position) of \(total)")
+        return "\(visibility). \(order)"
     }
 
     private func scheduleFilter(for term: String) {

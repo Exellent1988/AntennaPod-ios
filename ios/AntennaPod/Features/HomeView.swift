@@ -1,6 +1,7 @@
 import SwiftUI
 
 /// Landing tab: honest previews driven by Settings → Home layout (order + visibility).
+/// Toolbar **Configure Home** opens the same layout editor (Android `configure_home` parity).
 /// `.searchable` filters visible section episode/podcast previews (title + feed); empty sections hide while filtering.
 struct HomeView: View {
     @EnvironmentObject private var store: PodcastStore
@@ -290,6 +291,19 @@ struct HomeView: View {
                 }
             }
             .navigationTitle("Home")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        HomeLayoutSettingsView()
+                    } label: {
+                        Image(systemName: "rectangle.grid.1x2")
+                    }
+                    .accessibilityLabel(String(localized: "Configure Home"))
+                    .accessibilityHint(
+                        String(localized: "Opens Home layout to show, hide, and reorder Home sections. Same editor as Settings → Home layout. Does not invent a Downloads Home section.")
+                    )
+                }
+            }
             .searchable(text: $searchText, prompt: "Search home")
             .onChange(of: searchText) { _, newValue in
                 scheduleFilter(for: newValue)
