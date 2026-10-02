@@ -3,7 +3,8 @@ import UIKit
 
 /// Shared chapter list row for Full player + `EpisodeChaptersSheet` (mini).
 /// Optional http(s) chapter `img` thumbnail beside the title; hidden when missing / failed — never episode art.
-/// Optional http(s) chapter `href`/`url` **Copy / Share / Open link** controls — primary tap remains seek.
+/// Displayed chapter start has distinct **Copy / Share** controls; optional http(s) chapter
+/// `href`/`url` has **Copy / Share / Open link** controls — primary tap remains seek.
 struct ChapterListRow: View {
     @Environment(\.openURL) private var openURL
 
@@ -26,6 +27,11 @@ struct ChapterListRow: View {
     /// A chapter title is feed/media metadata; hide title actions when it is missing.
     private var hasCopyableTitle: Bool {
         !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// A chapter start is feed/media metadata; hide start actions when the displayed value is missing.
+    private var hasCopyableStart: Bool {
+        !startTimeText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private var accessibilityLabelText: String {
@@ -62,7 +68,7 @@ struct ChapterListRow: View {
                 }
                 .padding(.vertical, 8)
                 .padding(.leading, 10)
-                .padding(.trailing, linkURL == nil && !hasCopyableTitle ? 10 : 4)
+                .padding(.trailing, linkURL == nil && !hasCopyableTitle && !hasCopyableStart ? 10 : 4)
                 .background {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .fill(isCurrent ? Color.accentColor.opacity(0.12) : Color.clear)
@@ -72,6 +78,36 @@ struct ChapterListRow: View {
             .accessibilityLabel(accessibilityLabelText)
             .accessibilityHint(String(localized: "Seeks playback to this chapter"))
             .accessibilityAddTraits(isCurrent ? .isSelected : [])
+
+            if hasCopyableStart {
+                Button {
+                    UIPasteboard.general.string = startTimeText
+                    copiedMessage = String(localized: "Chapter start copied to the pasteboard.")
+                    copyFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Image(systemName: "doc.on.doc")
+                        .font(.body)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel(String(localized: "Copy chapter start"))
+                .accessibilityHint(
+                    String(localized: "Copies the exact displayed chapter start time to the pasteboard")
+                )
+
+                ShareLink(item: startTimeText) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.body)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .accessibilityLabel(String(localized: "Share chapter start"))
+                .accessibilityHint(
+                    String(localized: "Shares the exact displayed chapter start time as plain text")
+                )
+            }
 
             if hasCopyableTitle {
                 Button {

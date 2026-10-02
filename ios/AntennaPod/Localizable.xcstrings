@@ -28609,6 +28609,96 @@
         }
       }
     },
+    "Copy chapter start": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy chapter start"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitelbeginn kopieren"
+          }
+        }
+      },
+      "comment": "Secondary control on a chapter row when the displayed chapter start is non-empty."
+    },
+    "Copies the exact displayed chapter start time to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed chapter start time to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigte Startzeit des Kapitels in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for the chapter start copy action."
+    },
+    "Chapter start copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter start copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitelbeginn in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy confirmation for a displayed chapter start."
+    },
+    "Share chapter start": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share chapter start"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitelbeginn teilen"
+          }
+        }
+      },
+      "comment": "Secondary control on a chapter row when the displayed chapter start is non-empty."
+    },
+    "Shares the exact displayed chapter start time as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed chapter start time as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigte Startzeit des Kapitels als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for the chapter start share action."
+    },
     "Copy chapter title": {
       "extractionState": "manual",
       "localizations": {
