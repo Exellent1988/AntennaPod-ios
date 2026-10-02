@@ -109,6 +109,14 @@ struct FullPlayerView: View {
         return title.isEmpty ? nil : title
     }
 
+    /// Current chapter http(s) `img` when present — drives Full player large cover swap.
+    /// Nil when no chapters / no image / non-http(s). Never invent; episode art is the fallback.
+    private var currentChapterDisplayImageURL: URL? {
+        guard let index = currentChapterIndex else { return nil }
+        return chapters[index].displayImageURL
+    }
+
+
     private var canSkipChapters: Bool { !chapters.isEmpty }
 
     private var previousChapterTarget: Double? {
@@ -655,35 +663,65 @@ struct FullPlayerView: View {
         }
     }
 
+    /// Large Full player cover: prefer current chapter http(s) image; on missing/fail → episode/feed art.
+    /// Updates with `currentChapterIndex` (same source as chapter title highlight). List thumbs unchanged.
+    /// Lock Screen / Now Playing / mini stay episode-level (see docs).
     @ViewBuilder
     private func artwork(side: CGFloat) -> some View {
         Group {
-            if let urlString = preferredArtworkURLString, let url = URL(string: urlString) {
-                AsyncImage(url: url) { phase in
+            if let chapterURL = currentChapterDisplayImageURL {
+                AsyncImage(url: chapterURL) { phase in
                     switch phase {
                     case .success(let image):
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                     case .failure:
-                        artworkPlaceholder
+                        episodeArtworkContent
                     case .empty:
                         ZStack {
-                            artworkPlaceholder
+                            episodeArtworkContent
                             ProgressView()
                         }
                     @unknown default:
-                        artworkPlaceholder
+                        episodeArtworkContent
                     }
                 }
+                .id(chapterURL.absoluteString)
             } else {
-                artworkPlaceholder
+                episodeArtworkContent
             }
         }
         .frame(width: side, height: side)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .shadow(color: .black.opacity(0.18), radius: 12, y: 6)
         .accessibilityHidden(true)
+    }
+
+    /// Episode / feed artwork for Full player cover (fallback when chapter has no image or load fails).
+    @ViewBuilder
+    private var episodeArtworkContent: some View {
+        if let urlString = preferredArtworkURLString, let url = URL(string: urlString) {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                case .failure:
+                    artworkPlaceholder
+                case .empty:
+                    ZStack {
+                        artworkPlaceholder
+                        ProgressView()
+                    }
+                @unknown default:
+                    artworkPlaceholder
+                }
+            }
+        } else {
+            artworkPlaceholder
+        }
     }
 
     private var artworkPlaceholder: some View {

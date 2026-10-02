@@ -19,7 +19,8 @@ struct PodcastChapter: Identifiable, Hashable, Codable {
     }
 
     /// http(s) chapter artwork URL from feed/JSON `imageUrl` only. Nil when missing / non-http(s).
-    /// UI shows a list thumbnail when present; hide when nil — never invent / never fall back to episode art.
+    /// List thumbnails: show when present; hide when nil — never invent / never fall back to episode art.
+    /// Full player large cover: prefer this URL for the current chapter; fall back to episode/feed art when nil/fail.
     var displayImageURL: URL? {
         guard let imageUrl else { return nil }
         let trimmed = imageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
