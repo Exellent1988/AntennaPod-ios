@@ -1297,7 +1297,9 @@ struct SettingsView: View {
             }
             if matchesPlaybackPreservePitch {
                 Toggle("Preserve pitch", isOn: $settings.preservePitchEnabled)
-                    .accessibilityHint(String(localized: "Keeps natural pitch when changing playback speed. Off → chipmunk / slow voice. Default on."))
+                    .accessibilityLabel(String(localized: "Preserve pitch"))
+                    .accessibilityValue(preservePitchAccessibilityValue)
+                    .accessibilityHint(preservePitchAccessibilityHint)
                 Text("When on (default), keeps natural pitch while changing playback speed via `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain` (speech-oriented). When off, pitch scales with rate (`.varispeed` — chipmunk / slow voice). Stock `AVPlayer` only — not Android ExoPlayer / Sonic. Not Skip Silence.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -1427,6 +1429,19 @@ struct SettingsView: View {
 
     private var skipSilenceAccessibilityHint: String {
         String(localized: "Saved preference only. This beta does not skip silence on stock AVPlayer, because a custom audio engine would break the video surface, Now Playing, and playback rate. The switch does not start playback. Not Preserve pitch. Default off.")
+    }
+
+    /// VoiceOver for Settings → Preserve pitch. On is stock AVPlayer time-domain
+    /// correction when speed is not 1×. Off is varispeed. Neither state skips silence.
+    private var preservePitchAccessibilityValue: String {
+        if settings.preservePitchEnabled {
+            return String(localized: "On. When playback speed is not 1×, stock AVPlayer keeps a natural pitch. This is the default. At 1× the pitch stays the same either way. If an item is already loaded, the change applies to that item; otherwise it is saved for the next one. This does not start playback, skip silence, seek, or download. Not Android ExoPlayer or Sonic.")
+        }
+        return String(localized: "Off. When playback speed is not 1×, pitch follows the speed on stock AVPlayer, so faster sounds higher and slower sounds lower. At 1× the pitch stays the same either way. If an item is already loaded, the change applies to that item; otherwise it is saved for the next one. This does not start playback, skip silence, seek, or download. Not Android ExoPlayer or Sonic.")
+    }
+
+    private var preservePitchAccessibilityHint: String {
+        String(localized: "On keeps natural pitch when speed is not 1×. Off lets pitch follow speed. The switch does not start playback, skip silence, or download anything. Default on.")
     }
 
     private var refreshHelpText: String {

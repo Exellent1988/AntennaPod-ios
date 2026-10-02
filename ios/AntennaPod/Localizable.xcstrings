@@ -41952,6 +41952,57 @@
           }
         }
       }
+    },
+    "On. When playback speed is not 1×, stock AVPlayer keeps a natural pitch. This is the default. At 1× the pitch stays the same either way. If an item is already loaded, the change applies to that item; otherwise it is saved for the next one. This does not start playback, skip silence, seek, or download. Not Android ExoPlayer or Sonic.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On. When playback speed is not 1×, stock AVPlayer keeps a natural pitch. This is the default. At 1× the pitch stays the same either way. If an item is already loaded, the change applies to that item; otherwise it is saved for the next one. This does not start playback, skip silence, seek, or download. Not Android ExoPlayer or Sonic."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An. Wenn das Wiedergabetempo nicht 1× ist, behält der Standard-AVPlayer eine natürliche Tonhöhe. Das ist der Standard. Bei 1× bleibt die Tonhöhe in beiden Fällen gleich. Ist bereits etwas geladen, gilt die Änderung für dieses Element, sonst wird sie für das nächste gespeichert. Das startet keine Wiedergabe, überspringt keine Stille, sucht nicht und lädt nichts herunter. Kein Android-ExoPlayer und kein Sonic."
+          }
+        }
+      }
+    },
+    "Off. When playback speed is not 1×, pitch follows the speed on stock AVPlayer, so faster sounds higher and slower sounds lower. At 1× the pitch stays the same either way. If an item is already loaded, the change applies to that item; otherwise it is saved for the next one. This does not start playback, skip silence, seek, or download. Not Android ExoPlayer or Sonic.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. When playback speed is not 1×, pitch follows the speed on stock AVPlayer, so faster sounds higher and slower sounds lower. At 1× the pitch stays the same either way. If an item is already loaded, the change applies to that item; otherwise it is saved for the next one. This does not start playback, skip silence, seek, or download. Not Android ExoPlayer or Sonic."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. Wenn das Wiedergabetempo nicht 1× ist, folgt die Tonhöhe dem Tempo auf dem Standard-AVPlayer, schneller klingt höher und langsamer tiefer. Bei 1× bleibt die Tonhöhe in beiden Fällen gleich. Ist bereits etwas geladen, gilt die Änderung für dieses Element, sonst wird sie für das nächste gespeichert. Das startet keine Wiedergabe, überspringt keine Stille, sucht nicht und lädt nichts herunter. Kein Android-ExoPlayer und kein Sonic."
+          }
+        }
+      }
+    },
+    "On keeps natural pitch when speed is not 1×. Off lets pitch follow speed. The switch does not start playback, skip silence, or download anything. Default on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On keeps natural pitch when speed is not 1×. Off lets pitch follow speed. The switch does not start playback, skip silence, or download anything. Default on."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An behält die natürliche Tonhöhe, wenn das Tempo nicht 1× ist. Aus lässt die Tonhöhe dem Tempo folgen. Der Schalter startet keine Wiedergabe, überspringt keine Stille und lädt nichts herunter. Standard an."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
