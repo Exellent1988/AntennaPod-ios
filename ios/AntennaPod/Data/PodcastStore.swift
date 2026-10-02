@@ -1865,6 +1865,28 @@ final class PodcastStore: ObservableObject {
         playbackStates = next
     }
 
+    /// Mark every unplayed, non-archived episode in the History catalog as played.
+    /// Uses full `historyEpisodes` (newest-lastPlayed-first) — **not** podcast/search filter.
+    /// IDs are snapshotted before calling `markPlayed` so per-episode side effects (including
+    /// auto-delete-after-playing) still apply. Callers must confirm first.
+    func markAllHistoryPlayed() {
+        for id in markAllHistoryPlayedCandidateIds {
+            markPlayed(id)
+        }
+    }
+
+    /// Number of unplayed, non-archived episodes in the full History catalog.
+    /// This intentionally ignores all History view filters.
+    func markAllHistoryPlayedCandidateCount() -> Int {
+        markAllHistoryPlayedCandidateIds.count
+    }
+
+    private var markAllHistoryPlayedCandidateIds: [String] {
+        historyEpisodes
+            .map(\.episode.id)
+            .filter { !isPlayed($0) && !isArchived($0) }
+    }
+
     /// Mark every **played** episode in the History catalog as unplayed (bulk).
     /// Uses full `historyEpisodes` (newest-lastPlayed-first) — **not** podcast/search filter.
     /// Eligible = `isPlayed` only (in-progress unplayed stay; same as per-row Mark unplayed).

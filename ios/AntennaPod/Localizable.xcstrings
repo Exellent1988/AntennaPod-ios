@@ -24371,6 +24371,23 @@
       },
       "comment": "Feed detail Mark all as unplayed confirmation — full-feed played count including archived."
     },
+    "Marks unplayed, non-archived episodes in the full History catalog as played; ignores podcast, search, and sort filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks unplayed, non-archived episodes in the full History catalog as played; ignores podcast, search, and sort filters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert ungehörte, nicht archivierte Episoden im vollständigen Verlaufs-Katalog als gehört; ignoriert Podcast-, Such- und Sortierfilter"
+          }
+        }
+      }
+    },
     "Marks played History episodes as unplayed; leaves History when no progress remains": {
       "extractionState": "manual",
       "localizations": {
@@ -24387,6 +24404,24 @@
           }
         }
       }
+    },
+    "Marks %lld unplayed, non-archived History episode(s) as played. Uses the full History catalog (newest last-played first), not the podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not clear History, remove episodes from the catalog, or delete downloads itself.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld unplayed, non-archived History episode(s) as played. Uses the full History catalog (newest last-played first), not the podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not clear History, remove episodes from the catalog, or delete downloads itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld ungehörte, nicht archivierte Verlaufs-Episode(n) als gehört. Nutzt den vollständigen Verlaufs-Katalog (zuletzt gespielt zuerst), nicht den Podcast-, Such- oder Sortierfilter. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert; diese Aktion leert den Verlauf nicht, entfernt keine Episoden aus dem Katalog und löscht Downloads nicht selbst."
+          }
+        }
+      },
+      "comment": "History Mark all as played confirmation — full catalog, unplayed non-archived eligibility, not podcast/search/sort."
     },
     "Marks %lld played episodes in History as unplayed (full catalog, not podcast or search filter). Episodes leave History when no progress remains — same as per-row Mark unplayed. Does not delete downloads, clear the queue, or stop playback.": {
       "extractionState": "manual",
@@ -27344,6 +27379,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Teilen-Menü mit der gesamten Verlaufsliste"
+          }
+        }
+      }
+    },
+    "Copy history, share history, play random, add all to queue, mark all as played, mark all as unplayed, or clear history": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy history, share history, play random, add all to queue, mark all as played, mark all as unplayed, or clear history"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf kopieren, Verlauf teilen, Zufällig abspielen, Alle zur Warteschlange, Alle als gehört markieren, Alle als ungehört markieren oder Verlauf leeren"
           }
         }
       }
