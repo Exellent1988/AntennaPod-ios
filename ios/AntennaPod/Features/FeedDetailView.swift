@@ -27,6 +27,7 @@ struct FeedDetailView: View {
     @State private var showDiscussAccountCopied = false
     @State private var showTrailerURLCopied = false
     @State private var showTrailerTitleCopied = false
+    @State private var showTrailerPubDateCopied = false
     @State private var showLockedOwnerCopied = false
     @State private var showAuthorCopied = false
     @State private var showLanguageCopied = false
@@ -51,6 +52,7 @@ struct FeedDetailView: View {
     @State private var copyDiscussAccountFeedbackTick = 0
     @State private var copyTrailerURLFeedbackTick = 0
     @State private var copyTrailerTitleFeedbackTick = 0
+    @State private var copyTrailerPubDateFeedbackTick = 0
     @State private var copyLockedOwnerFeedbackTick = 0
     @State private var copyAuthorFeedbackTick = 0
     @State private var copyLanguageFeedbackTick = 0
@@ -1743,6 +1745,14 @@ struct FeedDetailView: View {
         }
         .alert(
             String(localized: "Copied"),
+            isPresented: $showTrailerPubDateCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Trailer publication date copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
             isPresented: $showLockedOwnerCopied
         ) {
             Button("OK", role: .cancel) {}
@@ -1839,6 +1849,7 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyDiscussAccountFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerTitleFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyTrailerPubDateFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLockedOwnerFeedbackTick)
         .sensoryFeedback(.success, trigger: copyAuthorFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLanguageFeedbackTick)
@@ -2219,7 +2230,15 @@ struct FeedDetailView: View {
         showTrailerTitleCopied = true
     }
 
-    /// Channel podcast:trailer row — title (+ optional season); Play via PlaybackService when enclosure-like, else openURL.
+    private func copyTrailerPubDate(_ pubDate: String) {
+        let trimmed = pubDate.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        UIPasteboard.general.string = trimmed
+        copyTrailerPubDateFeedbackTick += 1
+        showTrailerPubDateCopied = true
+    }
+
+    /// Channel podcast:trailer row — title, raw pubdate (+ optional season); Play via PlaybackService when enclosure-like, else openURL.
     @ViewBuilder
     private func feedTrailerRow(_ trailer: PodcastTrailer) -> some View {
         let title = trailer.displayTitle ?? trailer.title
@@ -2254,6 +2273,49 @@ struct FeedDetailView: View {
                 .accessibilityHint(
                     String(localized: "Shares the displayed feed-provided trailer title as plain text")
                 )
+            }
+
+            if let pubDate = trailer.displayPubDate {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(String(localized: "Trailer publication date"))
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .accessibilityAddTraits(.isHeader)
+
+                    Text(pubDate)
+                        .font(.caption.monospaced())
+                        .foregroundStyle(.primary)
+                        .textSelection(.enabled)
+                        .accessibilityLabel(
+                            "\(String(localized: "Trailer publication date")), \(pubDate)"
+                        )
+
+                    HStack(spacing: 12) {
+                        Button {
+                            copyTrailerPubDate(pubDate)
+                        } label: {
+                            Label("Copy trailer publication date", systemImage: "doc.on.doc")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Copy trailer publication date"))
+                        .accessibilityHint(
+                            String(localized: "Copies the feed-provided trailer publication date to the pasteboard")
+                        )
+
+                        ShareLink(
+                            item: pubDate,
+                            subject: Text(title),
+                            message: Text(String(localized: "Podcast trailer publication date from the feed."))
+                        ) {
+                            Label("Share trailer publication date", systemImage: "square.and.arrow.up")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Share trailer publication date"))
+                        .accessibilityHint(
+                            String(localized: "Shares the feed-provided trailer publication date as plain text")
+                        )
+                    }
+                }
             }
 
             if let season = trailer.season {

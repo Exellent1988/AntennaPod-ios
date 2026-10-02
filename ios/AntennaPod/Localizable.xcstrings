@@ -14724,6 +14724,132 @@
         }
       }
     },
+    "Copy trailer publication date": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy trailer publication date"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-Veröffentlichungsdatum kopieren"
+          }
+        }
+      },
+      "comment": "Feed detail button: copy the exact raw feed-provided podcast:trailer pubdate string. Hidden when missing or blank; never reformat."
+    },
+    "Podcast trailer publication date from the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast trailer publication date from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veröffentlichungsdatum des Podcast-Trailers aus dem Feed."
+          }
+        }
+      },
+      "comment": "ShareLink message for the exact raw feed-provided podcast:trailer pubdate string."
+    },
+    "Copies the feed-provided trailer publication date to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided trailer publication date to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert das vom Feed gelieferte Veröffentlichungsdatum des Trailers in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy trailer publication date on Feed detail. Raw feed string only; never reformat."
+    },
+    "Share trailer publication date": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share trailer publication date"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-Veröffentlichungsdatum teilen"
+          }
+        }
+      },
+      "comment": "Feed detail button: share the exact raw feed-provided podcast:trailer pubdate string. Hidden when missing or blank; never reformat."
+    },
+    "Shares the feed-provided trailer publication date as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the feed-provided trailer publication date as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt das vom Feed gelieferte Veröffentlichungsdatum des Trailers als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share trailer publication date on Feed detail. Raw feed string only; never reformat."
+    },
+    "Trailer publication date": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer publication date"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-Veröffentlichungsdatum"
+          }
+        }
+      },
+      "comment": "Feed detail label for the exact raw podcast:trailer pubdate string. Hidden when missing or blank; never reformat."
+    },
+    "Trailer publication date copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer publication date copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-Veröffentlichungsdatum in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy confirmation for the exact raw feed-provided podcast:trailer pubdate string."
+    },
     "Trailer": {
       "extractionState": "manual",
       "comment": "Capsule when item itunes:episodeType is trailer (Apple Podcasts). Distinct from channel podcast:trailer. Hidden when missing — never invent. Display-only.",

@@ -89,6 +89,13 @@ struct PodcastTrailer: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// Trimmed raw `pubdate` from the feed. Hidden when absent or blank — never reformat or invent.
+    var displayPubDate: String? {
+        guard let pubDate else { return nil }
+        let trimmed = pubDate.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     /// http(s) media URL from feed `url` only. Nil when missing / non-http(s).
     var mediaURL: URL? {
         guard let url else { return nil }
