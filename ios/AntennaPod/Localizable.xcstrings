@@ -39626,6 +39626,91 @@
           }
         }
       }
+    },
+    "Loading podcast chart preview": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading podcast chart preview"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Chart-Vorschau wird geladen"
+          }
+        }
+      }
+    },
+    "Podcast chart preview unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast chart preview unavailable"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Chart-Vorschau nicht verfügbar"
+          }
+        }
+      }
+    },
+    "Open Discover to try loading charts again": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Discover to try loading charts again"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffne Entdecken, um die Charts erneut zu laden"
+          }
+        }
+      }
+    },
+    "No podcast chart preview results": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No podcast chart preview results"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Podcast-Chart-Vorschauergebnisse"
+          }
+        }
+      }
+    },
+    "Apple Charts returned no podcasts for the selected country": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Charts returned no podcasts for the selected country"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple-Charts haben für das ausgewählte Land keine Podcasts zurückgegeben"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -165,6 +165,7 @@ struct HomeTopListsPreview: View {
     @State private var preview: [ItunesPodcastResult] = []
     @State private var loadError: String?
     @State private var isLoading = false
+    @State private var didLoad = false
 
     private let service = ItunesTopListService()
 
@@ -187,10 +188,27 @@ struct HomeTopListsPreview: View {
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(String(localized: "Loading podcast chart preview"))
+                .accessibilityAddTraits(.updatesFrequently)
             } else if let loadError, preview.isEmpty {
                 Text(loadError)
                     .font(.caption)
                     .foregroundStyle(.red)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(
+                        String(localized: "Podcast chart preview unavailable") + ", " + loadError
+                    )
+                    .accessibilityHint(String(localized: "Open Discover to try loading charts again"))
+            } else if didLoad && preview.isEmpty {
+                Text("No chart results")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "No podcast chart preview results"))
+                    .accessibilityValue(
+                        String(localized: "Apple Charts returned no podcasts for the selected country")
+                    )
             } else if !preview.isEmpty {
                 ForEach(Array(preview.enumerated()), id: \.element.id) { index, item in
                     HStack(spacing: 12) {
@@ -270,10 +288,12 @@ struct HomeTopListsPreview: View {
                 includeExplicit: !parental.shouldHideExplicitCharts
             )
             preview = found
+            didLoad = true
         } catch is CancellationError {
             // ignore
         } catch {
             preview = []
+            didLoad = true
             loadError = error.localizedDescription
         }
     }
