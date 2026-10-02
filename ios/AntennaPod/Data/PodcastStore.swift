@@ -1051,6 +1051,33 @@ final class PodcastStore: ObservableObject {
         return candidates.count
     }
 
+    /// Append unplayed, non-archived, not-already-queued episodes from the soft-capped All Episodes catalog.
+    /// Uses `allEpisodes` store order (newest-first by publish date within the newest-500 soft cap),
+    /// not the UI status, podcast, type, sort, or search filters. This follows the same eligibility
+    /// policy as Feed detail `enqueueAllUnplayedFromFeed`: played, archived, and already-queued
+    /// episodes are skipped. Uses `enqueue` (append), not `playNext`, and remains allowed while the
+    /// queue lock is on.
+    /// Callers must confirm first (All Episodes toolbar `confirmationDialog`).
+    /// - Returns: number of episodes newly appended.
+    @discardableResult
+    func enqueueAllUnplayedEpisodes() -> Int {
+        let candidates = enqueueAllUnplayedEpisodesCandidates()
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
+    /// Eligible episodes for All Episodes **Add all unplayed to queue**. Shared by the confirmation
+    /// count and `enqueueAllUnplayedEpisodes`; the catalog is always the newest-500 soft cap.
+    func enqueueAllUnplayedEpisodesCandidates() -> [PodcastEpisode] {
+        allEpisodes
+            .map(\.episode)
+            .filter { episode in
+                !isPlayed(episode.id) && !isArchived(episode.id) && !isInQueue(episode.id)
+            }
+    }
+
     /// Mark every unplayed, non-archived episode in the soft-capped All Episodes catalog as played.
     /// The catalog is the newest 500 episodes by publish date, matching `allEpisodes` and the
     /// Add all / Play random / Copy / Share catalog. This deliberately ignores UI status, podcast,

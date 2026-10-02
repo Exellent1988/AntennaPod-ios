@@ -8,6 +8,7 @@ struct AllEpisodesView: View {
     @EnvironmentObject private var downloads: DownloadService
     @State private var searchText = ""
     @State private var showEnqueueAllConfirm = false
+    @State private var showEnqueueAllUnplayedConfirm = false
     @State private var showMarkAllPlayedConfirm = false
     @State private var showMarkAllUnplayedConfirm = false
     @State private var showArchiveAllConfirm = false
@@ -56,6 +57,12 @@ struct AllEpisodesView: View {
     /// **Soft-cap honesty:** never claims eligibility beyond the newest-500 set.
     private var enqueueAllEpisodesCandidatesCount: Int {
         catalogItems.filter { !store.isInQueue($0.episode.id) }.count
+    }
+
+    /// Unplayed, non-archived, not-already-queued episodes in the soft-capped All Episodes catalog.
+    /// Deliberately ignores status/podcast/type/sort/search UI filters and never exceeds newest-500.
+    private var enqueueAllUnplayedEpisodesCandidatesCount: Int {
+        store.enqueueAllUnplayedEpisodesCandidates().count
     }
 
     /// Unplayed, non-archived episodes in the soft-capped All Episodes catalog — not status,
@@ -520,6 +527,17 @@ struct AllEpisodesView: View {
                     .accessibilityHint(String(localized: "Appends All Episodes not already queued (newest 500 soft cap)"))
 
                     Button {
+                        showEnqueueAllUnplayedConfirm = true
+                    } label: {
+                        Label("Add all unplayed to queue", systemImage: "text.badge.plus")
+                    }
+                    .disabled(enqueueAllUnplayedEpisodesCandidatesCount == 0)
+                    .accessibilityLabel(String(localized: "Add all unplayed to queue"))
+                    .accessibilityHint(
+                        String(localized: "Appends unplayed, non-archived All Episodes not already queued (newest 500 soft cap); distinct from Add all to queue, which includes played and archived")
+                    )
+
+                    Button {
                         showMarkAllPlayedConfirm = true
                     } label: {
                         Label("Mark all as played", systemImage: "checkmark.circle")
@@ -551,11 +569,11 @@ struct AllEpisodesView: View {
                 } label: {
                     Label("Episodes actions", systemImage: "ellipsis.circle")
                 }
-                // Menu stays available when soft-capped catalog non-empty so Copy / Share / Play random / Add all can disable per eligibility.
+                // Menu stays available when soft-capped catalog non-empty so each action can disable per eligibility.
                 .disabled(catalogItems.isEmpty)
                 .accessibilityLabel(String(localized: "Episodes actions"))
                 .accessibilityHint(
-                    String(localized: "Copy all episodes, share all episodes, play random, add all to queue, mark all as played, mark all as unplayed, or archive all")
+                    String(localized: "Copy all episodes, share all episodes, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, or archive all")
                 )
             }
         }
@@ -580,6 +598,18 @@ struct AllEpisodesView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Appends \(enqueueAllEpisodesCandidatesCount) episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the status, podcast, type, or search filter. Queue lock does not block enqueue.")
+        }
+        .confirmationDialog(
+            "Add all unplayed to queue?",
+            isPresented: $showEnqueueAllUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all unplayed to queue") {
+                store.enqueueAllUnplayedEpisodes()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllUnplayedEpisodesCandidatesCount) unplayed, non-archived episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued, played, and archived episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived episodes.")
         }
         .confirmationDialog(
             "Mark all as played?",
