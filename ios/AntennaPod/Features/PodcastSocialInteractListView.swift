@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Simple feed-provided `podcast:socialInteract` list: Copy / Share the exact protocol and the same http(s) URI; Discuss opens it.
+/// Simple feed-provided `podcast:socialInteract` list: Copy / Share the exact protocol, account ID, and same http(s) URI; Discuss opens it.
 /// Priority-sorted (lower = higher); caps at `PodcastSocialInteractDisplay.displayCap` with honesty footnote.
 /// **openURL / Share / Copy only** — no in-app Fediverse client, no posting / API. Hidden when none / disabled-only.
 struct PodcastSocialInteractListView: View {
@@ -9,8 +9,10 @@ struct PodcastSocialInteractListView: View {
 
     @State private var showCopiedAlert = false
     @State private var showProtocolCopiedAlert = false
+    @State private var showAccountCopiedAlert = false
     @State private var copyFeedbackTick = 0
     @State private var copyProtocolFeedbackTick = 0
+    @State private var copyAccountFeedbackTick = 0
 
     let socialInteracts: [PodcastSocialInteract]
     /// Section title (localized by caller).
@@ -52,8 +54,14 @@ struct PodcastSocialInteractListView: View {
             } message: {
                 Text(String(localized: "Discuss protocol copied to the pasteboard."))
             }
+            .alert(String(localized: "Copied"), isPresented: $showAccountCopiedAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(String(localized: "Discuss account ID copied to the pasteboard."))
+            }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
             .sensoryFeedback(.success, trigger: copyProtocolFeedbackTick)
+            .sensoryFeedback(.success, trigger: copyAccountFeedbackTick)
         }
     }
 
@@ -88,6 +96,32 @@ struct PodcastSocialInteractListView: View {
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(a11yLabel)
+
+            if let account {
+                HStack(spacing: 12) {
+                    Button {
+                        UIPasteboard.general.string = account
+                        copyAccountFeedbackTick += 1
+                        showAccountCopiedAlert = true
+                    } label: {
+                        Label("Copy discuss account ID", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy discuss account ID"))
+                    .accessibilityHint(
+                        String(localized: "Copies the displayed feed-provided discussion account ID as plain text; does not post as you")
+                    )
+
+                    ShareLink(item: account) {
+                        Label("Share discuss account ID", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share discuss account ID"))
+                    .accessibilityHint(
+                        String(localized: "Shares the displayed feed-provided discussion account ID as plain text; does not post as you")
+                    )
+                }
+            }
 
             if let url {
                 VStack(alignment: .leading, spacing: 4) {

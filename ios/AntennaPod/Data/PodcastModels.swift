@@ -415,7 +415,7 @@ enum PodcastLocationDisplay {
 
 /// Podcast Index `podcast:socialInteract` — feed-provided discussion root only (never invent URLs).
 /// Required: `protocol` + `uri` (or `url`); optional `accountId` / `priority` (lower = higher priority).
-/// **openURL only** — no in-app Fediverse client, no posting / API. `protocol=disabled` → no Discuss UI.
+/// **openURL / Share / Copy only** — no in-app Fediverse client, no posting / API. `protocol=disabled` → no Discuss UI.
 struct PodcastSocialInteract: Identifiable, Hashable, Codable {
     /// Stable list identity from feed fields.
     var id: String { "\(protocolName)|\(uri)|\(accountId ?? "")|\(priority.map(String.init) ?? "")" }
@@ -465,7 +465,7 @@ struct PodcastSocialInteract: Identifiable, Hashable, Codable {
     }
 }
 
-/// Display helpers for `podcast:socialInteract` lists (channel or item). Feed-provided only; openURL only.
+/// Display helpers for `podcast:socialInteract` lists (channel or item). Feed-provided only; openURL / Share / Copy only.
 enum PodcastSocialInteractDisplay {
     /// Soft UI cap — show first N after priority sort; honesty footnote when more exist in the feed.
     static let displayCap = 20
@@ -1700,7 +1700,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Empty when absent — never invent locations / never geocode names; UI hides when empty.
     var locations: [PodcastLocation]
     /// Item-level Podcast Index `podcast:socialInteract` entries when the feed provides them.
-    /// Empty when absent — never invent discussion URLs; UI hides when empty / disabled. openURL only.
+    /// Empty when absent — never invent discussion URLs or account IDs; UI hides when empty / disabled. openURL / Share / Copy only.
     var socialInteracts: [PodcastSocialInteract]
     /// Item-level Podcast Index `podcast:value` / valueRecipient blocks when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — no Lightning / wallet sends.
@@ -1893,7 +1893,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         PodcastLocationDisplay.valid(locations)
     }
 
-    /// Openable item-level `podcast:socialInteract` entries (hide when empty / disabled — never invent URLs).
+    /// Openable item-level `podcast:socialInteract` entries (hide when empty / disabled — never invent URLs or account IDs).
     var displaySocialInteracts: [PodcastSocialInteract] {
         PodcastSocialInteractDisplay.valid(socialInteracts)
     }
@@ -2185,7 +2185,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Empty when absent — never invent locations / never geocode names; UI hides when empty.
     var locations: [PodcastLocation]
     /// Channel-level Podcast Index `podcast:socialInteract` entries when the feed provides them.
-    /// Empty when absent — never invent discussion URLs; UI hides when empty / disabled. openURL only.
+    /// Empty when absent — never invent discussion URLs or account IDs; UI hides when empty / disabled. openURL / Share / Copy only.
     var socialInteracts: [PodcastSocialInteract]
     /// Channel-level Podcast Index `podcast:value` / valueRecipient blocks when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — no Lightning / wallet sends.
@@ -2392,7 +2392,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastLocationDisplay.valid(locations)
     }
 
-    /// Openable channel-level `podcast:socialInteract` entries (hide when empty / disabled — never invent URLs).
+    /// Openable channel-level `podcast:socialInteract` entries (hide when empty / disabled — never invent URLs or account IDs).
     var displaySocialInteracts: [PodcastSocialInteract] {
         PodcastSocialInteractDisplay.valid(socialInteracts)
     }

@@ -16109,6 +16109,114 @@
       },
       "comment": "Feed detail ⋯ and socialInteract list row: share the displayed feed-provided podcast:socialInteract protocol as plain text. Distinct from the discussion URL; no posting."
     },
+    "Copy discuss account ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy discuss account ID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diskussions-Account-ID kopieren"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯ and socialInteract list row: copy the exact displayed feed-provided podcast:socialInteract accountId as plain text. Hidden when missing; distinct from protocol and URL; no posting."
+    },
+    "Share discuss account ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share discuss account ID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diskussions-Account-ID teilen"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯ and socialInteract list row: share the exact displayed feed-provided podcast:socialInteract accountId as plain text. Hidden when missing; distinct from protocol and URL; no posting."
+    },
+    "Copies the displayed feed-provided discussion account ID as plain text; does not post as you": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the displayed feed-provided discussion account ID as plain text; does not post as you"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die angezeigte, vom Feed bereitgestellte Diskussions-Account-ID als Klartext; veröffentlicht nicht in deinem Namen"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy discuss account ID in the feed detail menu or socialInteract list. Copy only; no posting."
+    },
+    "Shares the displayed feed-provided discussion account ID as plain text; does not post as you": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the displayed feed-provided discussion account ID as plain text; does not post as you"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die angezeigte, vom Feed bereitgestellte Diskussions-Account-ID als Klartext; veröffentlicht nicht in deinem Namen"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share discuss account ID in the feed detail menu or socialInteract list. Share only; no posting."
+    },
+    "Discuss account ID copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discuss account ID copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diskussions-Account-ID in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Alert message after copying the feed-provided podcast:socialInteract accountId."
+    },
+    "Discuss account ID": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discuss account ID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diskussions-Account-ID"
+          }
+        }
+      },
+      "comment": "Share subject/message label for the feed-provided podcast:socialInteract accountId."
+    },
     "Copies the displayed feed-provided discussion protocol to the pasteboard; does not post as you": {
       "extractionState": "manual",
       "localizations": {

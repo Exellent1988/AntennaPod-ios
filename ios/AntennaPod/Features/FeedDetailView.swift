@@ -24,6 +24,7 @@ struct FeedDetailView: View {
     @State private var showPodcastTitleCopied = false
     @State private var showDiscussURLCopied = false
     @State private var showDiscussProtocolCopied = false
+    @State private var showDiscussAccountCopied = false
     @State private var showTrailerURLCopied = false
     @State private var showTrailerTitleCopied = false
     @State private var showLockedOwnerCopied = false
@@ -47,6 +48,7 @@ struct FeedDetailView: View {
     @State private var copyPodcastTitleFeedbackTick = 0
     @State private var copyDiscussURLFeedbackTick = 0
     @State private var copyDiscussProtocolFeedbackTick = 0
+    @State private var copyDiscussAccountFeedbackTick = 0
     @State private var copyTrailerURLFeedbackTick = 0
     @State private var copyTrailerTitleFeedbackTick = 0
     @State private var copyLockedOwnerFeedbackTick = 0
@@ -913,8 +915,8 @@ struct FeedDetailView: View {
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
-            // Channel podcast:socialInteract — Discuss opens http(s) uri; Copy / Share exact protocol and URL.
-            // Feed-provided only — never invent URLs or protocol values; no in-app Fediverse client / posting.
+            // Channel podcast:socialInteract — Discuss opens http(s) uri; Copy / Share exact protocol, account ID, and URL.
+            // Feed-provided only — never invent URLs, protocol values, or account IDs; no in-app Fediverse client / posting.
             if !displaySocialInteracts.isEmpty {
                 Section {
                     PodcastSocialInteractListView(socialInteracts: displaySocialInteracts)
@@ -1271,6 +1273,30 @@ struct FeedDetailView: View {
 
                         if let interact = liveFeed.preferredSocialInteract,
                            let url = interact.discussionURL {
+                            if let accountId = interact.displayAccountId {
+                                Button {
+                                    copyDiscussAccountId(accountId)
+                                } label: {
+                                    Label("Copy discuss account ID", systemImage: "doc.on.doc")
+                                }
+                                .accessibilityLabel(String(localized: "Copy discuss account ID"))
+                                .accessibilityHint(
+                                    String(localized: "Copies the displayed feed-provided discussion account ID as plain text; does not post as you")
+                                )
+
+                                ShareLink(
+                                    item: accountId,
+                                    subject: Text(feedDisplayTitle),
+                                    message: Text("\(feedDisplayTitle) — \(String(localized: "Discuss account ID"))")
+                                ) {
+                                    Label("Share discuss account ID", systemImage: "square.and.arrow.up")
+                                }
+                                .accessibilityLabel(String(localized: "Share discuss account ID"))
+                                .accessibilityHint(
+                                    String(localized: "Shares the displayed feed-provided discussion account ID as plain text; does not post as you")
+                                )
+                            }
+
                             if let protocolText = interact.displayProtocol {
                                 Button {
                                     copyDiscussProtocol(protocolText)
@@ -1693,6 +1719,14 @@ struct FeedDetailView: View {
         }
         .alert(
             String(localized: "Copied"),
+            isPresented: $showDiscussAccountCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Discuss account ID copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
             isPresented: $showTrailerURLCopied
         ) {
             Button("OK", role: .cancel) {}
@@ -1802,6 +1836,7 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyPodcastTitleFeedbackTick)
         .sensoryFeedback(.success, trigger: copyDiscussURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyDiscussProtocolFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyDiscussAccountFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerTitleFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLockedOwnerFeedbackTick)
@@ -1902,6 +1937,14 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = trimmed
         copyDiscussProtocolFeedbackTick += 1
         showDiscussProtocolCopied = true
+    }
+
+    private func copyDiscussAccountId(_ accountId: String) {
+        let trimmed = accountId.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        UIPasteboard.general.string = trimmed
+        copyDiscussAccountFeedbackTick += 1
+        showDiscussAccountCopied = true
     }
 
     private func copyTrailerURL(_ url: URL) {
