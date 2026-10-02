@@ -7,6 +7,8 @@ struct PodcastChapter: Identifiable, Hashable, Codable {
     /// Start offset from episode beginning.
     var startTimeSeconds: Double
     var href: String?
+    /// Optional chapter artwork from feed PSC `image`/`img` or Podcast Index JSON `img`/`image`.
+    /// Never invent; media-file chapters leave this nil.
     var imageUrl: String?
 
     init(title: String, startTimeSeconds: Double, href: String? = nil, imageUrl: String? = nil) {
@@ -14,6 +16,17 @@ struct PodcastChapter: Identifiable, Hashable, Codable {
         self.startTimeSeconds = startTimeSeconds
         self.href = href
         self.imageUrl = imageUrl
+    }
+
+    /// http(s) chapter artwork URL from feed/JSON `imageUrl` only. Nil when missing / non-http(s).
+    /// UI shows a list thumbnail when present; hide when nil — never invent / never fall back to episode art.
+    var displayImageURL: URL? {
+        guard let imageUrl else { return nil }
+        let trimmed = imageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return url
     }
 }
 

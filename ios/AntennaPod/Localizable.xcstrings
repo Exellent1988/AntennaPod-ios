@@ -24267,6 +24267,23 @@
           }
         }
       }
+    },
+    "Chapter image": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter image"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitelbild"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

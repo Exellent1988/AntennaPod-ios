@@ -461,42 +461,18 @@ struct FullPlayerView: View {
                 } else {
                     ForEach(filteredChapterIndices, id: \.self) { index in
                         let chapter = chapters[index]
-                        Button {
-                            playback.seek(toSeconds: chapter.startTimeSeconds)
-                            scrubSeconds = chapter.startTimeSeconds
-                        } label: {
-                            HStack(alignment: .firstTextBaseline, spacing: 12) {
-                                Text(format(chapter.startTimeSeconds))
-                                    .font(.caption.monospacedDigit())
-                                    .foregroundStyle(.secondary)
-                                    .frame(minWidth: 44, alignment: .trailing)
-                                Text(chapter.title)
-                                    .font(.subheadline.weight(index == currentChapterIndex ? .semibold : .regular))
-                                    .foregroundStyle(index == currentChapterIndex ? .primary : .secondary)
-                                    .multilineTextAlignment(.leading)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                if let trailing = chapterTrailingTimeLabel(index: index) {
-                                    Text(trailing)
-                                        .font(.caption.monospacedDigit())
-                                        .foregroundStyle(.secondary)
-                                }
-                                if index == currentChapterIndex {
-                                    Image(systemName: "waveform")
-                                        .font(.caption)
-                                        .foregroundStyle(.tint)
-                                }
+                        ChapterListRow(
+                            startTimeText: format(chapter.startTimeSeconds),
+                            title: chapter.title,
+                            imageURL: chapter.displayImageURL,
+                            trailingTimeLabel: chapterTrailingTimeLabel(index: index),
+                            isCurrent: index == currentChapterIndex,
+                            accessibilityBaseLabel: chapterAccessibilityLabel(index: index, chapter: chapter),
+                            onSeek: {
+                                playback.seek(toSeconds: chapter.startTimeSeconds)
+                                scrubSeconds = chapter.startTimeSeconds
                             }
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 10)
-                            .background {
-                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .fill(index == currentChapterIndex ? Color.accentColor.opacity(0.12) : Color.clear)
-                            }
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(chapterAccessibilityLabel(index: index, chapter: chapter))
-                        .accessibilityHint(String(localized: "Seeks playback to this chapter"))
-                        .accessibilityAddTraits(index == currentChapterIndex ? .isSelected : [])
+                        )
                     }
                 }
                 if let ep = chaptersEpisode, showChaptersURL {
