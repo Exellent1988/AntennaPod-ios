@@ -14989,6 +14989,114 @@
       },
       "comment": "Feed detail button: open non-enclosure-like podcast:trailer http(s) URL in system browser."
     },
+    "Copy trailer URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy trailer URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-URL kopieren"
+          }
+        }
+      },
+      "comment": "Feed detail button: copy the same feed-provided http(s) podcast:trailer URL used by Play/Open. Hidden when absent or non-http(s)."
+    },
+    "Share trailer URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share trailer URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-URL teilen"
+          }
+        }
+      },
+      "comment": "Feed detail button: share the same feed-provided http(s) podcast:trailer URL used by Play/Open. Hidden when absent or non-http(s)."
+    },
+    "Copies the feed-provided trailer URL to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided trailer URL to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vom Feed gelieferte Trailer-URL in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy trailer URL on Feed detail."
+    },
+    "Shares the feed-provided trailer URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the feed-provided trailer URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die vom Feed gelieferte Trailer-URL"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share trailer URL on Feed detail."
+    },
+    "Podcast trailer URL from the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast trailer URL from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Trailer-URL aus dem Feed."
+          }
+        }
+      },
+      "comment": "ShareLink message for the feed-provided podcast:trailer URL."
+    },
+    "Trailer URL copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer URL copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-URL in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy confirmation message for Feed detail podcast:trailer URL."
+    },
     "Plays the podcast trailer from the feed": {
       "extractionState": "manual",
       "localizations": {

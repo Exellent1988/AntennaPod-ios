@@ -22,6 +22,7 @@ struct FeedDetailView: View {
     @State private var showPodcastWebsiteURLCopied = false
     @State private var showPodcastGuidCopied = false
     @State private var showDiscussURLCopied = false
+    @State private var showTrailerURLCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
@@ -30,6 +31,7 @@ struct FeedDetailView: View {
     @State private var copyPodcastWebsiteURLFeedbackTick = 0
     @State private var copyPodcastGuidFeedbackTick = 0
     @State private var copyDiscussURLFeedbackTick = 0
+    @State private var copyTrailerURLFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -1431,11 +1433,20 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Discuss URL copied to the pasteboard."))
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showTrailerURLCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Trailer URL copied to the pasteboard."))
+        }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastGuidFeedbackTick)
         .sensoryFeedback(.success, trigger: copyDiscussURLFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyTrailerURLFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle)
@@ -1517,6 +1528,12 @@ struct FeedDetailView: View {
         showDiscussURLCopied = true
     }
 
+    private func copyTrailerURL(_ url: URL) {
+        UIPasteboard.general.string = url.absoluteString
+        copyTrailerURLFeedbackTick += 1
+        showTrailerURLCopied = true
+    }
+
     /// Feed-provided Podcast Index `podcast:guid` only — never invent / never derive from feed URL.
     private func copyPodcastGuid() {
         guard let guid = displayPodcastGuid else { return }
@@ -1546,24 +1563,48 @@ struct FeedDetailView: View {
                     .foregroundStyle(.secondary)
             }
 
-            if trailer.prefersInAppPlayback {
-                Button {
-                    playOrOpenTrailer(trailer)
-                } label: {
-                    Label("Play trailer", systemImage: "play.fill")
-                        .font(.subheadline)
+            if let url = trailer.mediaURL {
+                HStack(spacing: 12) {
+                    if trailer.prefersInAppPlayback {
+                        Button {
+                            playOrOpenTrailer(trailer)
+                        } label: {
+                            Label("Play trailer", systemImage: "play.fill")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Play trailer"))
+                        .accessibilityHint(String(localized: "Plays the podcast trailer from the feed"))
+                    } else {
+                        Button {
+                            playOrOpenTrailer(trailer)
+                        } label: {
+                            Label("Open trailer", systemImage: "safari")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Open trailer"))
+                        .accessibilityHint(String(localized: "Opens the trailer URL in the system browser"))
+                    }
+
+                    Button {
+                        copyTrailerURL(url)
+                    } label: {
+                        Label("Copy trailer URL", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy trailer URL"))
+                    .accessibilityHint(String(localized: "Copies the feed-provided trailer URL to the pasteboard"))
+
+                    ShareLink(
+                        item: url,
+                        subject: Text(title),
+                        message: Text(String(localized: "Podcast trailer URL from the feed."))
+                    ) {
+                        Label("Share trailer URL", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share trailer URL"))
+                    .accessibilityHint(String(localized: "Shares the feed-provided trailer URL"))
                 }
-                .accessibilityLabel(String(localized: "Play trailer"))
-                .accessibilityHint(String(localized: "Plays the podcast trailer from the feed"))
-            } else if trailer.mediaURL != nil {
-                Button {
-                    playOrOpenTrailer(trailer)
-                } label: {
-                    Label("Open trailer", systemImage: "safari")
-                        .font(.subheadline)
-                }
-                .accessibilityLabel(String(localized: "Open trailer"))
-                .accessibilityHint(String(localized: "Opens the trailer URL in the system browser"))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
