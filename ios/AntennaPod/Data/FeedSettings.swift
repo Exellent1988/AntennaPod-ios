@@ -15,6 +15,16 @@ enum PerFeedOverride: String, CaseIterable, Identifiable, Codable, Hashable {
         case .never: return String(localized: "Never")
         }
     }
+
+    /// Labels for per-feed **Notify on new episodes** (Use global / On / Off).
+    /// Same storage cases as `label`; On maps to `.always`, Off to `.never`.
+    var notifyLabel: String {
+        switch self {
+        case .useGlobal: return String(localized: "Use global")
+        case .always: return String(localized: "On")
+        case .never: return String(localized: "Off")
+        }
+    }
 }
 
 /// Per-subscription overrides (keyed by `PodcastFeed.id` in a side map), including optional episode list sort.
@@ -109,11 +119,14 @@ struct FeedSettings: Hashable, Codable, Equatable {
         }
     }
 
-    /// Whether new-episode local notifications may fire for this feed (override beats global).
+    /// Whether new-episode local notifications may fire for this feed.
+    /// **Global is master:** when Settings → Notify on new episodes is off, no feed notifies
+    /// (per-feed On / Always is ignored). Per-feed Off / Never silences that podcast when global is on.
+    /// Storage stays `PerFeedOverride` (Use global ≈ nil, On/Always ≈ true, Off/Never ≈ false).
     func allowsNotify(globalEnabled: Bool) -> Bool {
+        guard globalEnabled else { return false }
         switch notifyOnNewEpisodes {
-        case .useGlobal: return globalEnabled
-        case .always: return true
+        case .useGlobal, .always: return true
         case .never: return false
         }
     }

@@ -44,11 +44,13 @@ final class NotificationDeepLinkRouter: ObservableObject {
 ///
 /// **Permission:** requested once from Settings (toggle on) or the first refresh that finds
 /// new episodes while the toggle is on and status is `.notDetermined`.
-/// **Honesty:** posts when global or per-feed Always allows it **and** authorization
-/// is `.authorized` / `.provisional`. Denied stays denied — Settings shows the real status
-/// (Allowed/Denied/Not determined), **Open iOS Settings** when denied, and **Notifies /
-/// Does not notify** coverage (optional download-complete default off; no server-side push).
-/// Per-feed Never suppresses that feed even when global is on.
+/// **Honesty:** posts when the **global** Notify on new episodes toggle is on **and** the
+/// per-feed override allows it (Use global / On) **and** authorization is `.authorized` /
+/// `.provisional`. **Global is master** — per-feed On is ignored while global is off.
+/// Per-feed Off suppresses that feed even when global is on. Denied stays denied — Settings
+/// shows the real status (Allowed/Denied/Not determined), **Open iOS Settings** when denied,
+/// and **Notifies / Does not notify** coverage (optional download-complete default off; no
+/// server-side push).
 /// **Aggregation:** one local banner per refresh (not one per feed) to avoid spam.
 @MainActor
 enum NewEpisodeNotificationCoordinator {
@@ -130,7 +132,8 @@ enum NewEpisodeNotificationCoordinator {
 
     /// After refresh: request permission on first new-episode find if still undetermined, then
     /// post **one** aggregated local notification for all allowed batches.
-    /// Per-feed `notifyOnNewEpisodes` Use global / Always / Never overrides the global toggle.
+    /// Per-feed `notifyOnNewEpisodes` Use global / On / Off (`PerFeedOverride`); **global is
+    /// master** — include a batch only when `(feed override allows) && global enabled`.
     /// Feeds that did not refresh (Keep updated → Never skips bulk refresh) never appear in batches.
     static func handleNewEpisodes(
         _ batches: [NewEpisodeBatch],

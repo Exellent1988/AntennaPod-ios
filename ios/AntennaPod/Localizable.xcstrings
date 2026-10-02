@@ -23908,6 +23908,125 @@
         }
       },
       "comment": "Per-feed Episode sort help when override set — Serial heuristic honesty."
+    },
+    "On": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An"
+          }
+        }
+      }
+    },
+    "Follows Settings → Notify on new episodes (currently %@). Global is the master switch. System permission still required. Local only — no push.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follows Settings → Notify on new episodes (currently %@). Global is the master switch. System permission still required. Local only — no push."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folgt Einstellungen → Bei neuen Folgen benachrichtigen (aktuell %@). Global ist der Master-Schalter. Systemberechtigung weiterhin nötig. Nur lokal — kein Push."
+          }
+        }
+      }
+    },
+    "Notify for this podcast when the global Notify on new episodes toggle is on. Global is master — On does nothing while global is off. System permission still required. Local only — no push.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notify for this podcast when the global Notify on new episodes toggle is on. Global is master — On does nothing while global is off. System permission still required. Local only — no push."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benachrichtigt für diesen Podcast, wenn der globale Schalter „Bei neuen Folgen benachrichtigen“ an ist. Global ist Master — An wirkt nicht, solange global aus ist. Systemberechtigung weiterhin nötig. Nur lokal — kein Push."
+          }
+        }
+      }
+    },
+    "No local notification for this podcast, even when the global toggle is on. Local only — no push.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No local notification for this podcast, even when the global toggle is on. Local only — no push."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine lokale Benachrichtigung für diesen Podcast, auch wenn der globale Schalter an ist. Nur lokal — kein Push."
+          }
+        }
+      }
+    },
+    "Use global, On, or Off. Global Settings → Notify on new episodes is the master switch — Off silences this podcast when global is on; On is ignored while global is off. Local notifications only — no push.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, On, or Off. Global Settings → Notify on new episodes is the master switch — Off silences this podcast when global is on; On is ignored while global is off. Local notifications only — no push."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global verwenden, An oder Aus. Global Einstellungen → Bei neuen Folgen benachrichtigen ist der Master-Schalter — Aus stummelt diesen Podcast wenn global an ist; An wird ignoriert solange global aus ist. Nur lokale Benachrichtigungen — kein Push."
+          }
+        }
+      }
+    },
+    "Global Notify on new episodes is the master switch. Local UserNotifications only — no push / APNs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global Notify on new episodes is the master switch. Local UserNotifications only — no push / APNs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global „Bei neuen Folgen benachrichtigen“ ist der Master-Schalter. Nur lokale UserNotifications — kein Push / APNs."
+          }
+        }
+      }
+    },
+    "Master switch for local new-episode notifications after refresh. Per-podcast Off silences that feed; per-podcast On is ignored while this is off. No push server.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Master switch for local new-episode notifications after refresh. Per-podcast Off silences that feed; per-podcast On is ignored while this is off. No push server."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Master-Schalter für lokale Benachrichtigungen bei neuen Folgen nach dem Refresh. Pro-Podcast Aus stummelt diesen Feed; Pro-Podcast An wird ignoriert solange dieser Schalter aus ist. Kein Push-Server."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -1291,7 +1291,7 @@ struct SettingsView: View {
     private var notificationsSection: some View {
         Section {
             Toggle("Notify on new episodes", isOn: $settings.notifyOnNewEpisodes)
-                .accessibilityHint(String(localized: "Local notifications only after a feed refresh finds new episodes; no push server."))
+                .accessibilityHint(String(localized: "Master switch for local new-episode notifications after refresh. Per-podcast Off silences that feed; per-podcast On is ignored while this is off. No push server."))
             Toggle("Notify on download errors", isOn: $settings.notifyOnDownloadErrors)
                 .accessibilityHint(String(localized: "Local notifications when a download fails — not when a download completes successfully."))
             Toggle("Notify on download complete", isOn: $settings.notifyOnDownloadComplete)

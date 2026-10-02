@@ -107,14 +107,19 @@ struct PerFeedSettingsView: View {
             Section {
                 Picker("Notify on new episodes", selection: notifyBinding) {
                     ForEach(PerFeedOverride.allCases) { option in
-                        Text(option.label).tag(option)
+                        Text(option.notifyLabel).tag(option)
                     }
                 }
+                .accessibilityLabel(String(localized: "Notify on new episodes"))
+                .accessibilityValue(current.notifyOnNewEpisodes.notifyLabel)
+                .accessibilityHint(String(localized: "Use global, On, or Off. Global Settings → Notify on new episodes is the master switch — Off silences this podcast when global is on; On is ignored while global is off. Local notifications only — no push."))
                 Text(notifyHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } header: {
                 Text("Notifications")
+            } footer: {
+                Text(String(localized: "Global Notify on new episodes is the master switch. Local UserNotifications only — no push / APNs."))
             }
 
             Section {
@@ -525,14 +530,14 @@ struct PerFeedSettingsView: View {
     }
 
     private var notifyHelp: String {
-        let global = appSettings.notifyOnNewEpisodes ? "on" : "off"
+        let global = appSettings.notifyOnNewEpisodes ? String(localized: "on") : String(localized: "off")
         switch current.notifyOnNewEpisodes {
         case .useGlobal:
-            return "Follows Settings → Notify on new episodes (currently \(global)). System permission still required."
+            return String(localized: "Follows Settings → Notify on new episodes (currently \(global)). Global is the master switch. System permission still required. Local only — no push.")
         case .always:
-            return "Notify for this podcast even when the global toggle is off (permission still required)."
+            return String(localized: "Notify for this podcast when the global Notify on new episodes toggle is on. Global is master — On does nothing while global is off. System permission still required. Local only — no push.")
         case .never:
-            return "No local notification for this podcast, even when the global toggle is on."
+            return String(localized: "No local notification for this podcast, even when the global toggle is on. Local only — no push.")
         }
     }
 
