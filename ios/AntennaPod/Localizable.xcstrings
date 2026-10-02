@@ -16913,6 +16913,57 @@
         }
       }
     },
+    "Share chapters URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share chapters URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel-URL teilen"
+          }
+        }
+      }
+    },
+    "Shares the remote feed chapters URL, not the in-app table of contents export": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the remote feed chapters URL, not the in-app table of contents export"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die entfernte Kapitel-URL aus dem Feed, nicht den TOC-Export der In-App-Kapitelliste"
+          }
+        }
+      }
+    },
+    "Remote chapters URL from the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remote chapters URL from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernte Kapitel-URL aus dem Feed."
+          }
+        }
+      }
+    },
     "Chapters URL copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {
@@ -16930,19 +16981,19 @@
         }
       }
     },
-    "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — Open / Copy only opens or copies this URL.": {
+    "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — Open / Copy / Share only opens, copies, or shares this URL.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — Open / Copy only opens or copies this URL."
+            "value": "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — Open / Copy / Share only opens, copies, or shares this URL."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remote-Kapitel-URL aus dem Feed. Die In-App-Kapitelliste nutzt weiterhin Podlove Simple Chapters, verzögert geladenes Podcast-Index-JSON beim Öffnen des Vollplayers oder lokale Mediendatei-Tags — Öffnen / Kopieren öffnet oder kopiert nur diese URL."
+            "value": "Remote-Kapitel-URL aus dem Feed. Die In-App-Kapitelliste nutzt weiterhin Podlove Simple Chapters, verzögert geladenes Podcast-Index-JSON beim Öffnen des Vollplayers oder lokale Mediendatei-Tags — Öffnen / Kopieren / Teilen öffnet, kopiert oder teilt nur diese URL."
           }
         }
       }
