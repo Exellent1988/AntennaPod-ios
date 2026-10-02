@@ -954,12 +954,22 @@ struct DownloadErrorsView: View {
                     systemImage: "checkmark.circle",
                     description: Text("Failed downloads will appear here (up to \(DownloadService.downloadErrorRingCapacity) recent).")
                 )
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(String(localized: "No download errors"))
+                .accessibilityValue(
+                    String(localized: "Failed downloads will appear here (up to \(DownloadService.downloadErrorRingCapacity) recent).")
+                )
+                .accessibilityHint(String(localized: "The log is empty. Failed downloads will appear here after a download error."))
             } else if filteredErrors.isEmpty {
                 ContentUnavailableView(
                     "No matching errors",
                     systemImage: "magnifyingglass",
                     description: Text("No download errors match your search.")
                 )
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(String(localized: "No matching download errors"))
+                .accessibilityValue(String(localized: "No download errors match your search."))
+                .accessibilityHint(String(localized: "Change or clear the search to see other saved download errors."))
             } else {
                 ForEach(filteredErrors) { entry in
                     DownloadErrorRow(entry: entry)
