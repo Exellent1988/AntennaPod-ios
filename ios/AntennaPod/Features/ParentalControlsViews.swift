@@ -16,32 +16,40 @@ struct ParentalControlsSettingsView: View {
         Form {
             Section {
                 Toggle("Enable parental controls", isOn: enableBinding)
+                    .accessibilityHint(enableHelpText)
                 if parental.isEnabled {
                     LabeledContent("Status") {
                         Text(parental.isSessionUnlocked ? String(localized: "Unlocked (this session)") : String(localized: "Locked"))
                             .foregroundStyle(.secondary)
                     }
+                    .accessibilityElement(children: .combine)
                     Button("Change PIN") {
                         showChangePIN = true
                     }
+                    .accessibilityHint(enableHelpText)
                 }
                 Text(enableHelpText)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } header: {
                 Text("Parental controls")
+                    .accessibilityAddTraits(.isHeader)
             }
 
             if parental.isEnabled {
                 Section {
                     Toggle("Lock Add / Discover", isOn: $parental.lockAddDiscover)
+                        .accessibilityHint(optionsHelpText)
                     Toggle("Lock Network / Downloads settings", isOn: $parental.lockNetworkDownloadsSettings)
+                        .accessibilityHint(optionsHelpText)
                     Toggle("Hide explicit top charts", isOn: $parental.hideExplicitCharts)
+                        .accessibilityHint(optionsHelpText)
                     Text(optionsHelpText)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } header: {
                     Text("Options")
+                        .accessibilityAddTraits(.isHeader)
                 }
             }
 
@@ -50,6 +58,7 @@ struct ParentalControlsSettingsView: View {
                     Text(statusMessage)
                         .font(.footnote)
                         .foregroundStyle(statusIsError ? .red : .secondary)
+                        .accessibilityAddTraits(.isStaticText)
                 }
             }
         }
@@ -159,10 +168,12 @@ struct ParentalPINPromptSheet: View {
                         .keyboardType(.numberPad)
                         .textContentType(.oneTimeCode)
                         .autocorrectionDisabled()
+                        .accessibilityHint(message)
                     if let errorText {
                         Text(errorText)
                             .font(.caption)
                             .foregroundStyle(.red)
+                            .accessibilityAddTraits(.isStaticText)
                     }
                 }
             }
@@ -213,17 +224,21 @@ struct ParentalSetPINSheet: View {
                     SecureField("PIN (4–6 digits)", text: $pin)
                         .keyboardType(.numberPad)
                         .textContentType(.oneTimeCode)
+                        .accessibilityHint(String(localized: "Choose a 4–6 digit PIN. It is stored only in the Keychain."))
                     SecureField("Confirm PIN", text: $confirm)
                         .keyboardType(.numberPad)
                         .textContentType(.oneTimeCode)
+                        .accessibilityHint(String(localized: "Confirm PIN"))
                     if let errorText {
                         Text(errorText)
                             .font(.caption)
                             .foregroundStyle(.red)
+                            .accessibilityAddTraits(.isStaticText)
                     }
                     Text("Choose a 4–6 digit PIN. It is stored only in the Keychain.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .accessibilityAddTraits(.isStaticText)
                 }
             }
             .navigationTitle(title)
@@ -279,6 +294,7 @@ struct ParentalChangePINSheet: View {
                     SecureField("New PIN (4–6 digits)", text: $newPIN)
                         .keyboardType(.numberPad)
                         .textContentType(.oneTimeCode)
+                        .accessibilityHint(String(localized: "Choose a 4–6 digit PIN. It is stored only in the Keychain."))
                     SecureField("Confirm new PIN", text: $confirm)
                         .keyboardType(.numberPad)
                         .textContentType(.oneTimeCode)
@@ -286,6 +302,7 @@ struct ParentalChangePINSheet: View {
                         Text(errorText)
                             .font(.caption)
                             .foregroundStyle(.red)
+                            .accessibilityAddTraits(.isStaticText)
                     }
                 }
             }

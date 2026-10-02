@@ -371,7 +371,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 
 | DE | EN |
 |----|----|
-| ☐ Parental PIN setzen / Unlock / Disable | ☐ Parental PIN set / unlock / disable |
+| ☐ Parental PIN setzen / Unlock / Disable (Keychain; Session bis Hintergrund; **VoiceOver** für Status, PIN-Felder, Fehler und Keychain-Hinweise; kein voller Geräteschutz) | ☐ Parental PIN set / unlock / disable (Keychain; session until background; **VoiceOver** for status, PIN fields, errors, and Keychain scope; not a full device lock) |
 | ☐ Lock Add/Discover (+ optional Network) | ☐ Lock Add/Discover (+ optional Network) |
 | ☐ Appearance Theme System/Hell/Dunkel + optional Akzent (Systemfarben; `preferredColorScheme` + `.tint`; Backup) | ☐ Appearance Theme System/Light/Dark + optional Accent (system named colors; `preferredColorScheme` + `.tint`; backup) |
 | ☐ Settings: Suche (Titel / Fußnoten; leere Abschnitte aus; NavigationLinks bleiben) | ☐ Settings: search (titles / footnotes; empty sections hide; NavigationLinks stay) |
