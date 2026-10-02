@@ -81,6 +81,7 @@ struct PodcastPublisherListView: View {
         let url = entry.openURL
         let copyText = PodcastPublisherDisplay.copyText(entry)
         let guid = entry.displayFeedGuid
+        let itemGuid = entry.displayItemGuid
         let a11y: String = {
             var parts: [String] = [String(localized: "Publisher")]
             if let title = entry.displayTitle {
@@ -91,6 +92,9 @@ struct PodcastPublisherListView: View {
             }
             if let guid {
                 parts.append(String(localized: "Feed GUID \(guid)"))
+            }
+            if let itemGuid {
+                parts.append(String(localized: "Item GUID \(itemGuid)"))
             }
             if let medium = entry.displayMedium {
                 parts.append(String(localized: "Medium \(medium)"))
@@ -112,8 +116,8 @@ struct PodcastPublisherListView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(a11y)
 
-            if let title = entry.displayTitle, entry.displayFeedUrl != nil || guid != nil {
-                // Secondary line: URL and/or GUID when title already shown as primary.
+            if entry.displayTitle != nil || entry.displayFeedUrl != nil || guid != nil || itemGuid != nil {
+                // Secondary lines: only feed-provided URL/GUID values; never resolve identifiers.
                 if let feedUrl = entry.displayFeedUrl {
                     Text(feedUrl)
                         .font(.caption)
@@ -130,13 +134,14 @@ struct PodcastPublisherListView: View {
                         .textSelection(.enabled)
                         .accessibilityHidden(true)
                 }
-            } else if entry.displayTitle == nil, let guid, entry.displayFeedUrl != nil {
-                Text(guid)
-                    .font(.caption.monospaced())
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
-                    .textSelection(.enabled)
-                    .accessibilityHidden(true)
+                if let itemGuid {
+                    Text(itemGuid)
+                        .font(.caption.monospaced())
+                        .foregroundStyle(.tertiary)
+                        .lineLimit(1)
+                        .textSelection(.enabled)
+                        .accessibilityHidden(true)
+                }
             }
 
             if let medium = entry.displayMedium {
@@ -197,6 +202,31 @@ struct PodcastPublisherListView: View {
                     )
                 }
 
+                if let itemGuid {
+                    Button {
+                        UIPasteboard.general.string = itemGuid
+                        copiedAlertMessage = String(localized: "Publisher item GUID copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy publisher item GUID", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy publisher item GUID"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided publisher item GUID as plain text")
+                    )
+
+                    ShareLink(item: itemGuid, subject: Text(label)) {
+                        Label("Share publisher item GUID", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share publisher item GUID"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided publisher item GUID as plain text")
+                    )
+                }
+
                 if let medium = entry.displayMedium {
                     Button {
                         UIPasteboard.general.string = medium
@@ -229,7 +259,7 @@ struct PodcastPublisherListView: View {
                 }
                 .accessibilityLabel(String(localized: "Copy"))
                 .accessibilityHint(
-                    String(localized: "Copies the publisher title, feed URL, and GUID to the pasteboard")
+                    String(localized: "Copies the publisher title, feed URL, feed GUID, and item GUID to the pasteboard")
                 )
 
                 if !copyText.isEmpty {

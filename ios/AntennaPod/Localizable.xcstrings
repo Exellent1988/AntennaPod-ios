@@ -36252,5 +36252,239 @@
       }
     }
   },
+    "Item GUID %@": {
+      "extractionState": "manual",
+      "comment": "Accessibility label for a feed-provided remote item itemGuid.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item GUID %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Item-GUID %@"
+          }
+        }
+      }
+    },
+    "Recommendation item GUID copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert after copying a podcast:podroll itemGuid.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommendation item GUID copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlungs-Item-GUID in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy recommendation item GUID": {
+      "extractionState": "manual",
+      "comment": "Copy action for the exact feed-provided podcast:podroll itemGuid; hidden when missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy recommendation item GUID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlungs-Item-GUID kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact feed-provided recommendation item GUID as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying a podcast:podroll itemGuid.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact feed-provided recommendation item GUID as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt vom Feed gelieferte Item-GUID der Empfehlung als Klartext"
+          }
+        }
+      }
+    },
+    "Share recommendation item GUID": {
+      "extractionState": "manual",
+      "comment": "Share action for the exact feed-provided podcast:podroll itemGuid; hidden when missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share recommendation item GUID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlungs-Item-GUID teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact feed-provided recommendation item GUID as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing a podcast:podroll itemGuid.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact feed-provided recommendation item GUID as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt vom Feed gelieferte Item-GUID der Empfehlung als Klartext"
+          }
+        }
+      }
+    },
+    "Publisher item GUID copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert after copying a podcast:publisher itemGuid.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher item GUID copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Item-GUID in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy publisher item GUID": {
+      "extractionState": "manual",
+      "comment": "Copy action for the exact feed-provided podcast:publisher itemGuid; hidden when missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy publisher item GUID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Item-GUID kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact feed-provided publisher item GUID as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying a podcast:publisher itemGuid.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact feed-provided publisher item GUID as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt vom Feed gelieferte Publisher-Item-GUID als Klartext"
+          }
+        }
+      }
+    },
+    "Share publisher item GUID": {
+      "extractionState": "manual",
+      "comment": "Share action for the exact feed-provided podcast:publisher itemGuid; hidden when missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share publisher item GUID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Item-GUID teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact feed-provided publisher item GUID as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing a podcast:publisher itemGuid.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact feed-provided publisher item GUID as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt vom Feed gelieferte Publisher-Item-GUID als Klartext"
+          }
+        }
+      }
+    },
+  "Copies the recommended podcast title, feed URL, feed GUID, and item GUID to the pasteboard": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for combined podcast:podroll copy; includes only displayed feed-provided title, URL, feed GUID, and item GUID.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the recommended podcast title, feed URL, feed GUID, and item GUID to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert den Titel, die Feed-URL, die Feed-GUID und die Item-GUID des empfohlenen Podcasts in die Zwischenablage"
+        }
+      }
+    }
+  },
+  "Copies the publisher title, feed URL, feed GUID, and item GUID to the pasteboard": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for combined podcast:publisher copy; includes only displayed feed-provided title, URL, feed GUID, and item GUID.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the publisher title, feed URL, feed GUID, and item GUID to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert den Publisher-Titel, die Feed-URL, die Feed-GUID und die Item-GUID in die Zwischenablage"
+        }
+      }
+    }
+  },
   "version": "1.0"
 }

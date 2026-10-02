@@ -1302,7 +1302,7 @@ enum PodcastImagesDisplay {
 /// Feed-provided only — never invent recommendations/publishers. itemGuid is uncommon for podroll/publisher and ignored for subscribe.
 struct PodcastRemoteItem: Identifiable, Hashable, Codable {
     /// Stable list identity from feed fields.
-    var id: String { "\(feedGuid ?? "")|\(feedUrl ?? "")|\(title ?? "")" }
+    var id: String { "\(feedGuid ?? "")|\(feedUrl ?? "")|\(title ?? "")|\(itemGuid ?? "")" }
     /// Required `feedGuid` from the feed when provided. Nil when absent — never invent.
     var feedGuid: String?
     /// Optional remote feed URL from the feed. Nil when absent — never invent.
@@ -1332,6 +1332,13 @@ struct PodcastRemoteItem: Identifiable, Hashable, Codable {
     var displayFeedGuid: String? {
         guard let feedGuid else { return nil }
         let trimmed = feedGuid.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed non-empty itemGuid when the feed set it. Hidden when missing — never invent.
+    var displayItemGuid: String? {
+        guard let itemGuid else { return nil }
+        let trimmed = itemGuid.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
     }
 
@@ -1412,6 +1419,7 @@ enum PodcastPodrollDisplay {
         if let title = item.displayTitle { parts.append(title) }
         if let url = item.displayFeedUrl { parts.append(url) }
         if let guid = item.displayFeedGuid { parts.append(guid) }
+        if let itemGuid = item.displayItemGuid { parts.append(itemGuid) }
         return parts.joined(separator: "\n")
     }
 }
