@@ -15383,7 +15383,7 @@
           }
         }
       },
-      "comment": "Button / section for podcast:socialInteract — opens feed http(s) uri in system browser. Hidden when absent/disabled."
+      "comment": "Button / section for podcast:socialInteract — opens, copies, or shares the feed http(s) uri. Hidden when absent/disabled."
     },
     "Copy discuss URL": {
       "extractionState": "manual",
@@ -15401,7 +15401,7 @@
           }
         }
       },
-      "comment": "Feed detail ⋯: copy the preferred feed-provided podcast:socialInteract discussion URL. Hidden when no openable URL exists; does not post as the user."
+      "comment": "Feed detail ⋯ and socialInteract list row: copy the feed-provided podcast:socialInteract discussion URL. Hidden when no openable URL exists; does not post as the user."
     },
     "Share discuss URL": {
       "extractionState": "manual",
@@ -15419,7 +15419,7 @@
           }
         }
       },
-      "comment": "Feed detail ⋯: share the preferred feed-provided podcast:socialInteract discussion URL. Hidden when no openable URL exists; does not post as the user."
+      "comment": "Feed detail ⋯ and socialInteract list row: share the feed-provided podcast:socialInteract discussion URL. Hidden when no openable URL exists; does not post as the user."
     },
     "Copies the feed-provided discussion URL to the pasteboard; does not post as you": {
       "extractionState": "manual",
@@ -15437,7 +15437,7 @@
           }
         }
       },
-      "comment": "VoiceOver hint for Copy discuss URL. Copy only; no posting."
+      "comment": "VoiceOver hint for Copy discuss URL in the feed detail menu or socialInteract list. Copy only; no posting."
     },
     "Shares the feed-provided discussion URL; opens only and does not post as you": {
       "extractionState": "manual",
@@ -15455,7 +15455,7 @@
           }
         }
       },
-      "comment": "VoiceOver hint for Share discuss URL. Share only; no posting."
+      "comment": "VoiceOver hint for Share discuss URL in the feed detail menu or socialInteract list. Share only; no posting."
     },
     "Discuss URL copied to the pasteboard.": {
       "extractionState": "manual",
