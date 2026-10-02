@@ -197,6 +197,27 @@ struct PodcastPublisherListView: View {
                     )
                 }
 
+                if let medium = entry.displayMedium {
+                    Button {
+                        UIPasteboard.general.string = medium
+                        copiedAlertMessage = String(localized: "Publisher medium copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy publisher medium", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy publisher medium"))
+                    .accessibilityHint(String(localized: "Copies the exact feed-provided publisher medium as plain text"))
+
+                    ShareLink(item: medium, subject: Text(label)) {
+                        Label("Share publisher medium", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share publisher medium"))
+                    .accessibilityHint(String(localized: "Shares the exact feed-provided publisher medium as plain text"))
+                }
+
                 Button {
                     UIPasteboard.general.string = PodcastPublisherDisplay.copyText(entry)
                     copiedAlertMessage = String(localized: "Publisher copied to the pasteboard.")

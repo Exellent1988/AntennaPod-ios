@@ -35602,6 +35602,186 @@
         }
       }
     }
+  },
+  "Copy recommendation medium": {
+    "extractionState": "manual",
+    "comment": "Recommendation medium copy action for the exact feed-provided podcast:podroll remoteItem medium; hidden when missing.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy recommendation medium"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Empfehlungsmedium kopieren"
+        }
+      }
+    }
+  },
+  "Share recommendation medium": {
+    "extractionState": "manual",
+    "comment": "Recommendation medium share action for the exact feed-provided podcast:podroll remoteItem medium; hidden when missing.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share recommendation medium"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Empfehlungsmedium teilen"
+        }
+      }
+    }
+  },
+  "Recommendation medium copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Copied alert after copying the exact feed-provided podcast:podroll remoteItem medium.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Recommendation medium copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Empfehlungsmedium in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Copies the exact feed-provided recommended podcast medium as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for copying a podcast:podroll remoteItem medium; uses the displayed feed string exactly.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact feed-provided recommended podcast medium as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert das exakt vom Feed gelieferte Medium des empfohlenen Podcasts als Klartext"
+        }
+      }
+    }
+  },
+  "Shares the exact feed-provided recommended podcast medium as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for sharing a podcast:podroll remoteItem medium; uses the displayed feed string exactly.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact feed-provided recommended podcast medium as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt das exakt vom Feed gelieferte Medium des empfohlenen Podcasts als Klartext"
+        }
+      }
+    }
+  },
+  "Copy publisher medium": {
+    "extractionState": "manual",
+    "comment": "Publisher medium copy action for the exact feed-provided podcast:publisher remoteItem medium; hidden when missing.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy publisher medium"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Publishermedium kopieren"
+        }
+      }
+    }
+  },
+  "Share publisher medium": {
+    "extractionState": "manual",
+    "comment": "Publisher medium share action for the exact feed-provided podcast:publisher remoteItem medium; hidden when missing.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share publisher medium"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Publishermedium teilen"
+        }
+      }
+    }
+  },
+  "Publisher medium copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Copied alert after copying the exact feed-provided podcast:publisher remoteItem medium.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Publisher medium copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Publishermedium in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Copies the exact feed-provided publisher medium as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for copying a podcast:publisher remoteItem medium; uses the displayed feed string exactly.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact feed-provided publisher medium as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert das exakt vom Feed gelieferte Publisher-Medium als Klartext"
+        }
+      }
+    }
+  },
+  "Shares the exact feed-provided publisher medium as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for sharing a podcast:publisher remoteItem medium; uses the displayed feed string exactly.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact feed-provided publisher medium as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt das exakt vom Feed gelieferte Publisher-Medium als Klartext"
+        }
+      }
+    }
   }
 
   },

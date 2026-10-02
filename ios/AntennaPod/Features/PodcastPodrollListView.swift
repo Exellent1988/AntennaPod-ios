@@ -197,6 +197,27 @@ struct PodcastPodrollListView: View {
                     )
                 }
 
+                if let medium = entry.displayMedium {
+                    Button {
+                        UIPasteboard.general.string = medium
+                        copiedAlertMessage = String(localized: "Recommendation medium copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy recommendation medium", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy recommendation medium"))
+                    .accessibilityHint(String(localized: "Copies the exact feed-provided recommended podcast medium as plain text"))
+
+                    ShareLink(item: medium, subject: Text(label)) {
+                        Label("Share recommendation medium", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share recommendation medium"))
+                    .accessibilityHint(String(localized: "Shares the exact feed-provided recommended podcast medium as plain text"))
+                }
+
                 Button {
                     UIPasteboard.general.string = PodcastPodrollDisplay.copyText(entry)
                     copiedAlertMessage = String(localized: "Recommendation copied to the pasteboard.")
