@@ -1378,20 +1378,29 @@ struct SettingsView: View {
                     Text(interval.label).tag(interval)
                 }
             }
-            if let last = settings.lastFeedRefreshAt {
-                LabeledContent("Last refresh") {
+            .accessibilityLabel(String(localized: "Refresh interval"))
+            .accessibilityValue(settings.refreshInterval.label)
+            .accessibilityHint(refreshIntervalAccessibilityHint)
+            // Global bulk-refresh stamp — not each podcast's Last refreshed.
+            // Visible relative time stays; VoiceOver uses Never vs absolute finish time.
+            LabeledContent("Last refresh") {
+                if let last = settings.lastFeedRefreshAt {
                     Text(last, style: .relative)
                         .foregroundStyle(.secondary)
-                }
-            } else {
-                LabeledContent("Last refresh") {
+                } else {
                     Text("Never")
                         .foregroundStyle(.secondary)
                 }
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(String(localized: "Last refresh"))
+            .accessibilityValue(lastRefreshAccessibilityValue)
+            .accessibilityHint(lastRefreshAccessibilityHint)
             Text(refreshHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .accessibilityLabel(String(localized: "Feed refresh help"))
+                .accessibilityValue(refreshHelpText)
             Picker("New episodes", selection: $settings.newEpisodeAction) {
                 ForEach(NewEpisodeAction.allCases) { action in
                     Text(action.label).tag(action)
@@ -1410,6 +1419,27 @@ struct SettingsView: View {
             return String(localized: "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).")
         }
         return String(localized: "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch.")
+    }
+
+    /// VoiceOver for Settings → Last refresh. Never means no bulk refresh has finished;
+    /// a date is the last Refresh-all completion, not a per-podcast stamp.
+    private var lastRefreshAccessibilityValue: String {
+        guard let last = settings.lastFeedRefreshAt else {
+            return String(localized: "Never. No bulk subscription refresh has finished yet. This is not a per-podcast Last refreshed time, and no timestamp is invented.")
+        }
+        let formatted = last.formatted(date: .abbreviated, time: .shortened)
+        return String(
+            format: String(localized: "Bulk refresh finished %@. The stamp is written when Refresh all finishes, even if some podcasts failed. It is not each podcast's Last refreshed time."),
+            formatted
+        )
+    }
+
+    private var lastRefreshAccessibilityHint: String {
+        String(localized: "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta.")
+    }
+
+    private var refreshIntervalAccessibilityHint: String {
+        String(localized: "Manual only refreshes when you pull to refresh or refresh a podcast. A timed interval runs when you open the app, not as iOS Background App Refresh. Per-podcast Keep updated Never still skips that podcast.")
     }
 
 

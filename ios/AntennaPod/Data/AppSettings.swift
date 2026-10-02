@@ -154,11 +154,11 @@ enum FeedRefreshInterval: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .manual: return "Manual only"
-        case .oneHour: return "Every 1 hour"
-        case .fourHours: return "Every 4 hours"
-        case .twelveHours: return "Every 12 hours"
-        case .twentyFourHours: return "Every 24 hours"
+        case .manual: return String(localized: "Manual only")
+        case .oneHour: return String(localized: "Every 1 hour")
+        case .fourHours: return String(localized: "Every 4 hours")
+        case .twelveHours: return String(localized: "Every 12 hours")
+        case .twentyFourHours: return String(localized: "Every 24 hours")
         }
     }
 }

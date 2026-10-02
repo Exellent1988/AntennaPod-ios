@@ -40777,6 +40777,210 @@
           }
         }
       }
+    },
+    "Manual only": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual only"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur manuell"
+          }
+        }
+      }
+    },
+    "Every 1 hour": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 1 hour"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede Stunde"
+          }
+        }
+      }
+    },
+    "Every 4 hours": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 4 hours"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle 4 Stunden"
+          }
+        }
+      }
+    },
+    "Every 12 hours": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 12 hours"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle 12 Stunden"
+          }
+        }
+      }
+    },
+    "Every 24 hours": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every 24 hours"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle 24 Stunden"
+          }
+        }
+      }
+    },
+    "Last refresh": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last refresh"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letzte Aktualisierung"
+          }
+        }
+      }
+    },
+    "Refresh interval": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh interval"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisierungsintervall"
+          }
+        }
+      }
+    },
+    "Feed refresh help": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed refresh help"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hilfe zur Feed-Aktualisierung"
+          }
+        }
+      }
+    },
+    "Never. No bulk subscription refresh has finished yet. This is not a per-podcast Last refreshed time, and no timestamp is invented.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never. No bulk subscription refresh has finished yet. This is not a per-podcast Last refreshed time, and no timestamp is invented."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie. Es wurde noch keine Sammelaktualisierung der Abos abgeschlossen. Das ist nicht die Zeit „Zuletzt aktualisiert“ eines einzelnen Podcasts, und es wird kein Zeitpunkt erfunden."
+          }
+        }
+      }
+    },
+    "Bulk refresh finished %@. The stamp is written when Refresh all finishes, even if some podcasts failed. It is not each podcast's Last refreshed time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bulk refresh finished %@. The stamp is written when Refresh all finishes, even if some podcasts failed. It is not each podcast's Last refreshed time."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sammelaktualisierung abgeschlossen %@. Der Stempel wird geschrieben, wenn Alle aktualisieren fertig ist, auch wenn einzelne Podcasts fehlschlagen. Das ist nicht die Zeit „Zuletzt aktualisiert“ jedes Podcasts."
+          }
+        }
+      }
+    },
+    "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Aktualisieren auf Abos, Home oder Eingang ziehen oder Alle aktualisieren nutzen. Ein Zeitintervall prüft auch beim Öffnen der App. iOS-Hintergrundaktualisierung ist in dieser Beta nicht aktiv."
+          }
+        }
+      }
+    },
+    "Manual only refreshes when you pull to refresh or refresh a podcast. A timed interval runs when you open the app, not as iOS Background App Refresh. Per-podcast Keep updated Never still skips that podcast.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual only refreshes when you pull to refresh or refresh a podcast. A timed interval runs when you open the app, not as iOS Background App Refresh. Per-podcast Keep updated Never still skips that podcast."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur manuell aktualisiert, wenn du zum Aktualisieren ziehst oder einen Podcast aktualisierst. Ein Zeitintervall läuft beim Öffnen der App, nicht als iOS-Hintergrundaktualisierung. Pro Podcast „Aktualisiert halten → Nie“ überspringt diesen Podcast weiterhin."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
