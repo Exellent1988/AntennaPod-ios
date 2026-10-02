@@ -39308,6 +39308,96 @@
       }
     },
     "comment": "VoiceOver hint for Share soundbite duration; hide with the soundbite row when the feed-provided value is missing."
+  },
+  "Alternate media URI copied to the pasteboard.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Alternate media URI copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Alternative Medien-URI in die Zwischenablage kopiert."
+        }
+      }
+    },
+    "comment": "Copied alert message for the exact displayed alternate media source URI."
+  },
+  "Copy alternate media URI": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy alternate media URI"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Alternativ-Medien-URI kopieren"
+        }
+      }
+    },
+    "comment": "VoiceOver label and visible action for copying the exact displayed alternate media source URI."
+  },
+  "Copies the exact displayed alternate media source URI to the pasteboard. Only http(s) sources can play in the app.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed alternate media source URI to the pasteboard. Only http(s) sources can play in the app."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt angezeigte URI der alternativen Medienquelle in die Zwischenablage. Nur http(s)-Quellen können in der App abgespielt werden."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for copying the exact displayed alternate media source URI."
+  },
+  "Share alternate media URI": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share alternate media URI"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Alternativ-Medien-URI teilen"
+        }
+      }
+    },
+    "comment": "VoiceOver label and visible action for sharing the exact displayed alternate media source URI or its playable URL."
+  },
+  "Shares the alternate media URL when it is a parseable http(s) URL; otherwise shares the same raw displayed feed URI as Copy": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the alternate media URL when it is a parseable http(s) URL; otherwise shares the same raw displayed feed URI as Copy"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die URL der alternativen Medienquelle, wenn sie als http(s)-URL parsebar ist, sonst dieselbe angezeigte rohe Feed-URI wie beim Kopieren"
+        }
+      }
+    },
+    "comment": "VoiceOver hint for sharing the displayed alternate media source URI with URL preference."
   }
   },
   "version": "1.0"

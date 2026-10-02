@@ -16,7 +16,7 @@ struct PodcastAlternateEnclosuresListView: View {
     var title: String = String(localized: "Alternate media")
 
     @State private var showCopiedAlert = false
-    @State private var copiedMessage = String(localized: "Media URL copied to the pasteboard.")
+    @State private var copiedMessage = String(localized: "Alternate media URI copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     private var capped: (shown: [PodcastAlternateEnclosure], truncated: Bool) {
@@ -448,36 +448,36 @@ struct PodcastAlternateEnclosuresListView: View {
                 Button {
                     copyToPasteboard(
                         copyText,
-                        confirmation: String(localized: "Media URL copied to the pasteboard.")
+                        confirmation: String(localized: "Alternate media URI copied to the pasteboard.")
                     )
                 } label: {
-                    Label("Copy", systemImage: "doc.on.doc")
+                    Label("Copy alternate media URI", systemImage: "doc.on.doc")
                         .font(.subheadline)
                 }
-                .accessibilityLabel(String(localized: "Copy"))
+                .accessibilityLabel(String(localized: "Copy alternate media URI"))
                 .accessibilityHint(
                     String(
-                        localized: "Copies the alternate media URI to the pasteboard. Only http(s) sources can play in the app."
+                        localized: "Copies the exact displayed alternate media source URI to the pasteboard. Only http(s) sources can play in the app."
                     )
                 )
 
                 Group {
                     if let playableURL {
                         ShareLink(item: playableURL) {
-                            Label("Share", systemImage: "square.and.arrow.up")
+                            Label("Share alternate media URI", systemImage: "square.and.arrow.up")
                                 .font(.subheadline)
                         }
                     } else {
                         ShareLink(item: copyText) {
-                            Label("Share", systemImage: "square.and.arrow.up")
+                            Label("Share alternate media URI", systemImage: "square.and.arrow.up")
                                 .font(.subheadline)
                         }
                     }
                 }
-                .accessibilityLabel(String(localized: "Share"))
+                .accessibilityLabel(String(localized: "Share alternate media URI"))
                 .accessibilityHint(
                     String(
-                        localized: "Shares the alternate enclosure URL when it is a parseable http(s) URL; otherwise shares the same raw feed URI as Copy"
+                        localized: "Shares the alternate media URL when it is a parseable http(s) URL; otherwise shares the same raw displayed feed URI as Copy"
                     )
                 )
             }
