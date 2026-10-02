@@ -142,6 +142,62 @@ struct MiniPlayerView: View {
                                 ? String(localized: "Enter a time to seek")
                                 : String(localized: "Duration unknown — jump unavailable.")
                         )
+                        // Library actions — same PodcastStore toggles / labels / symbols as Full secondary.
+                        // State from store side maps (isPlayed / isFavorite / isArchived); id from current episode.
+                        Button {
+                            store.togglePlayed(episode.id)
+                        } label: {
+                            Label(
+                                store.isPlayed(episode.id) ? "Mark unplayed" : "Mark played",
+                                systemImage: store.isPlayed(episode.id) ? "circle" : "checkmark.circle"
+                            )
+                        }
+                        .accessibilityLabel(
+                            store.isPlayed(episode.id)
+                                ? String(localized: "Mark unplayed")
+                                : String(localized: "Mark played")
+                        )
+                        .accessibilityHint(
+                            store.isPlayed(episode.id)
+                                ? String(localized: "Marks this episode as unplayed")
+                                : String(localized: "Marks this episode as played")
+                        )
+                        Button {
+                            store.toggleFavorite(episode.id)
+                        } label: {
+                            Label(
+                                store.isFavorite(episode.id) ? "Unfavorite" : "Favorite",
+                                systemImage: store.isFavorite(episode.id) ? "star.fill" : "star"
+                            )
+                        }
+                        .accessibilityLabel(
+                            store.isFavorite(episode.id)
+                                ? String(localized: "Remove from favorites")
+                                : String(localized: "Add to favorites")
+                        )
+                        .accessibilityHint(
+                            store.isFavorite(episode.id)
+                                ? String(localized: "Removes this episode from favorites")
+                                : String(localized: "Adds this episode to favorites")
+                        )
+                        Button {
+                            store.toggleArchived(episode.id)
+                        } label: {
+                            Label(
+                                store.isArchived(episode.id) ? "Restore" : "Archive",
+                                systemImage: store.isArchived(episode.id) ? "archivebox.fill" : "archivebox"
+                            )
+                        }
+                        .accessibilityLabel(
+                            store.isArchived(episode.id)
+                                ? String(localized: "Restore")
+                                : String(localized: "Archive")
+                        )
+                        .accessibilityHint(
+                            store.isArchived(episode.id)
+                                ? String(localized: "Restores this episode from the archive")
+                                : String(localized: "Hides this episode from Inbox without marking it played")
+                        )
                         // Current episode only (mini always shows current). Hidden when nothing shareable.
                         EpisodeShareLinks.labelStyle(
                             episode: episode,
