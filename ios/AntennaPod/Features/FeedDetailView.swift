@@ -30,6 +30,8 @@ struct FeedDetailView: View {
     @State private var showTrailerTitleCopied = false
     @State private var showTrailerPubDateCopied = false
     @State private var showTrailerSeasonCopied = false
+    @State private var showTrailerTypeCopied = false
+    @State private var showTrailerLengthCopied = false
     @State private var showLockedOwnerCopied = false
     @State private var showAuthorCopied = false
     @State private var showLanguageCopied = false
@@ -57,6 +59,8 @@ struct FeedDetailView: View {
     @State private var copyTrailerTitleFeedbackTick = 0
     @State private var copyTrailerPubDateFeedbackTick = 0
     @State private var copyTrailerSeasonFeedbackTick = 0
+    @State private var copyTrailerTypeFeedbackTick = 0
+    @State private var copyTrailerLengthFeedbackTick = 0
     @State private var copyLockedOwnerFeedbackTick = 0
     @State private var copyAuthorFeedbackTick = 0
     @State private var copyLanguageFeedbackTick = 0
@@ -1796,6 +1800,22 @@ struct FeedDetailView: View {
         }
         .alert(
             String(localized: "Copied"),
+            isPresented: $showTrailerTypeCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Trailer type copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showTrailerLengthCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Trailer size copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
             isPresented: $showLockedOwnerCopied
         ) {
             Button("OK", role: .cancel) {}
@@ -1895,6 +1915,8 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyTrailerTitleFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerPubDateFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerSeasonFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyTrailerTypeFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyTrailerLengthFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLockedOwnerFeedbackTick)
         .sensoryFeedback(.success, trigger: copyAuthorFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLanguageFeedbackTick)
@@ -2298,7 +2320,22 @@ struct FeedDetailView: View {
         showTrailerSeasonCopied = true
     }
 
-    /// Channel podcast:trailer row — title, raw pubdate (+ optional season); Play via PlaybackService when enclosure-like, else openURL.
+    private func copyTrailerType(_ type: String) {
+        guard !type.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        UIPasteboard.general.string = type
+        copyTrailerTypeFeedbackTick += 1
+        showTrailerTypeCopied = true
+    }
+
+    private func copyTrailerLength(_ length: String) {
+        guard !length.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        UIPasteboard.general.string = length
+        copyTrailerLengthFeedbackTick += 1
+        showTrailerLengthCopied = true
+    }
+
+    /// Channel podcast:trailer row — title, raw pubdate, optional season/type/byte size;
+    /// Play via PlaybackService when enclosure-like, else openURL.
     @ViewBuilder
     private func feedTrailerRow(_ trailer: PodcastTrailer) -> some View {
         let title = trailer.displayTitle ?? trailer.title
@@ -2312,6 +2349,84 @@ struct FeedDetailView: View {
                 .font(.subheadline)
                 .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
+
+            if let type = trailer.displayType {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(String(localized: "Trailer type"))
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .accessibilityAddTraits(.isHeader)
+                    Text(type)
+                        .font(.caption.monospaced())
+                        .foregroundStyle(.primary)
+                        .textSelection(.enabled)
+                        .accessibilityLabel("\(String(localized: "Trailer type")), \(type)")
+                    HStack(spacing: 12) {
+                        Button {
+                            copyTrailerType(type)
+                        } label: {
+                            Label("Copy trailer type", systemImage: "doc.on.doc")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Copy trailer type"))
+                        .accessibilityHint(
+                            String(localized: "Copies the exact feed-provided trailer type as plain text")
+                        )
+
+                        ShareLink(
+                            item: type,
+                            subject: Text(title),
+                            message: Text(String(localized: "Podcast trailer type from the feed."))
+                        ) {
+                            Label("Share trailer type", systemImage: "square.and.arrow.up")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Share trailer type"))
+                        .accessibilityHint(
+                            String(localized: "Shares the exact feed-provided trailer type as plain text")
+                        )
+                    }
+                }
+            }
+
+            if let length = trailer.displayLengthLabel {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(String(localized: "Trailer size"))
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .accessibilityAddTraits(.isHeader)
+                    Text(length)
+                        .font(.caption.monospaced())
+                        .foregroundStyle(.primary)
+                        .textSelection(.enabled)
+                        .accessibilityLabel("\(String(localized: "Trailer size")), \(length)")
+                    HStack(spacing: 12) {
+                        Button {
+                            copyTrailerLength(length)
+                        } label: {
+                            Label("Copy trailer size", systemImage: "doc.on.doc")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Copy trailer size"))
+                        .accessibilityHint(
+                            String(localized: "Copies the exact displayed feed-provided trailer size as plain text")
+                        )
+
+                        ShareLink(
+                            item: length,
+                            subject: Text(title),
+                            message: Text(String(localized: "Podcast trailer size from the feed."))
+                        ) {
+                            Label("Share trailer size", systemImage: "square.and.arrow.up")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Share trailer size"))
+                        .accessibilityHint(
+                            String(localized: "Shares the exact displayed feed-provided trailer size as plain text")
+                        )
+                    }
+                }
+            }
 
             HStack(spacing: 12) {
                 Button {

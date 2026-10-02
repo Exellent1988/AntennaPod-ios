@@ -96,6 +96,20 @@ struct PodcastTrailer: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// Trimmed raw MIME type from the feed `type` attribute. Hidden when absent or blank.
+    var displayType: String? {
+        guard let type else { return nil }
+        let trimmed = type.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Feed-provided trailer byte length using the app's existing localized file-size caption.
+    /// Hidden when missing or non-positive; no size is invented.
+    var displayLengthLabel: String? {
+        guard let length, length > 0 else { return nil }
+        return DownloadStorageUsage.formatBytes(length)
+    }
+
     /// http(s) media URL from feed `url` only. Nil when missing / non-http(s).
     var mediaURL: URL? {
         guard let url else { return nil }

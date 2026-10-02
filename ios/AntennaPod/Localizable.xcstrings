@@ -36161,6 +36161,259 @@
       }
     }
   }
+  ,
+  "Trailer type": {
+    "extractionState": "manual",
+    "comment": "Feed trailer type caption.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailer type"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailer-Typ"
+        }
+      }
+    }
+  },
+  "Copy trailer type": {
+    "extractionState": "manual",
+    "comment": "Copy action for feed-provided podcast:trailer type.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy trailer type"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailer-Typ kopieren"
+        }
+      }
+    }
+  },
+  "Copies the exact feed-provided trailer type as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for copying podcast:trailer type.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact feed-provided trailer type as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert den exakt vom Feed gelieferten Trailer-Typ als Klartext"
+        }
+      }
+    }
+  },
+  "Share trailer type": {
+    "extractionState": "manual",
+    "comment": "Share action for feed-provided podcast:trailer type.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share trailer type"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailer-Typ teilen"
+        }
+      }
+    }
+  },
+  "Shares the exact feed-provided trailer type as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for sharing podcast:trailer type.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact feed-provided trailer type as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt den exakt vom Feed gelieferten Trailer-Typ als Klartext"
+        }
+      }
+    }
+  },
+  "Podcast trailer type from the feed.": {
+    "extractionState": "manual",
+    "comment": "Share message for podcast:trailer type.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Podcast trailer type from the feed."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailer-Typ aus dem Feed."
+        }
+      }
+    }
+  },
+  "Trailer type copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Copy confirmation for podcast:trailer type.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailer type copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailer-Typ in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Trailer size": {
+    "extractionState": "manual",
+    "comment": "Feed trailer byte-size caption.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailer size"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailergröße"
+        }
+      }
+    }
+  },
+  "Copy trailer size": {
+    "extractionState": "manual",
+    "comment": "Copy action for feed-provided podcast:trailer length.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy trailer size"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailergröße kopieren"
+        }
+      }
+    }
+  },
+  "Copies the exact displayed feed-provided trailer size as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for copying podcast:trailer length.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed feed-provided trailer size as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt angezeigte, vom Feed gelieferte Trailergröße als Klartext"
+        }
+      }
+    }
+  },
+  "Share trailer size": {
+    "extractionState": "manual",
+    "comment": "Share action for feed-provided podcast:trailer length.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share trailer size"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailergröße teilen"
+        }
+      }
+    }
+  },
+  "Shares the exact displayed feed-provided trailer size as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for sharing podcast:trailer length.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact displayed feed-provided trailer size as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die exakt angezeigte, vom Feed gelieferte Trailergröße als Klartext"
+        }
+      }
+    }
+  },
+  "Podcast trailer size from the feed.": {
+    "extractionState": "manual",
+    "comment": "Share message for podcast:trailer length.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Podcast trailer size from the feed."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailergröße aus dem Feed."
+        }
+      }
+    }
+  },
+  "Trailer size copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Copy confirmation for podcast:trailer length.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailer size copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Trailergröße in die Zwischenablage kopiert."
+        }
+      }
+    }
+  }
   },
   "Alternate media type copied to the pasteboard.": {
     "extractionState": "manual",
