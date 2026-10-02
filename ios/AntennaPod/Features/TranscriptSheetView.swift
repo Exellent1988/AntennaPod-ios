@@ -12,6 +12,8 @@ import UIKit
 /// (`ShareLink`; episode title + cue line when title available) — same disable gate as Copy.
 /// Toolbar **Share transcript** offers the same full loaded plain text (episode title + body)
 /// via the system share sheet (`ShareLink`) — no fake social / no extra fetch.
+/// Toolbar **Copy transcript URL** copies the trimmed non-empty feed URL raw string, while
+/// **Share transcript URL** prefers an http(s) URL and preserves the raw fallback.
 /// Does not fetch or generate transcripts; feed URL only — no STT.
 struct TranscriptSheetView: View {
     @EnvironmentObject private var playback: PlaybackService
@@ -75,7 +77,7 @@ struct TranscriptSheetView: View {
         return url
     }
 
-    private var canShareTranscriptURL: Bool {
+    private var canCopyOrShareTranscriptURL: Bool {
         transcriptURLString != nil
     }
 
@@ -216,7 +218,19 @@ struct TranscriptSheetView: View {
                         String(localized: "Opens the system share sheet with the episode title and transcript")
                     )
 
-                    if canShareTranscriptURL, let raw = transcriptURLString {
+                    if canCopyOrShareTranscriptURL, let raw = transcriptURLString {
+                        Button {
+                            copyTranscriptURL(raw)
+                        } label: {
+                            Image(systemName: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy transcript URL"))
+                        .accessibilityHint(
+                            String(
+                                localized: "Copies the feed-provided transcript URL to the pasteboard, not the loaded transcript text"
+                            )
+                        )
+
                         if let url = transcriptURL {
                             ShareLink(
                                 item: url,
@@ -225,7 +239,7 @@ struct TranscriptSheetView: View {
                             ) {
                                 Image(systemName: "link")
                             }
-                            .disabled(!canShareTranscriptURL)
+                            .disabled(!canCopyOrShareTranscriptURL)
                             .accessibilityLabel(String(localized: "Share transcript URL"))
                             .accessibilityHint(
                                 String(localized: "Shares the feed-provided transcript URL, not the loaded transcript text")
@@ -238,7 +252,7 @@ struct TranscriptSheetView: View {
                             ) {
                                 Image(systemName: "link")
                             }
-                            .disabled(!canShareTranscriptURL)
+                            .disabled(!canCopyOrShareTranscriptURL)
                             .accessibilityLabel(String(localized: "Share transcript URL"))
                             .accessibilityHint(
                                 String(localized: "Shares the feed-provided transcript URL, not the loaded transcript text")
@@ -513,6 +527,13 @@ struct TranscriptSheetView: View {
     private func copyTranscriptType(_ type: String) {
         UIPasteboard.general.string = type
         copiedAlertMessage = String(localized: "Transcript type copied to the pasteboard.")
+        copyFeedbackTick &+= 1
+        showCopiedAlert = true
+    }
+
+    private func copyTranscriptURL(_ rawURL: String) {
+        UIPasteboard.general.string = rawURL
+        copiedAlertMessage = String(localized: "Transcript URL copied to the pasteboard.")
         copyFeedbackTick &+= 1
         showCopiedAlert = true
     }

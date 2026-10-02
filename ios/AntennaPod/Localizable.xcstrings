@@ -14372,6 +14372,23 @@
         }
       }
     },
+    "Copy transcript URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy transcript URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript-URL kopieren"
+          }
+        }
+      }
+    },
     "Copies the episode shownotes to the pasteboard": {
       "extractionState": "manual",
       "localizations": {
@@ -14440,6 +14457,23 @@
         }
       }
     },
+    "Transcript URL copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript URL copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript-URL in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
     "Share transcript": {
       "extractionState": "manual",
       "localizations": {
@@ -14487,6 +14521,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Transkript-URL teilen"
+          }
+        }
+      }
+    },
+    "Copies the feed-provided transcript URL to the pasteboard, not the loaded transcript text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided transcript URL to the pasteboard, not the loaded transcript text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die Transkript-URL aus dem Feed in die Zwischenablage, nicht den geladenen Transkripttext"
           }
         }
       }
