@@ -863,9 +863,14 @@ final class PlaybackService: ObservableObject {
         setupAudioSessionObserversIfNeeded()
     }
 
-    /// Best-effort mono / stereo preference via `setPreferredOutputNumberOfChannels`.
+    /// Best-effort mono / stereo preference via `AVAudioSession.setPreferredOutputNumberOfChannels`.
     /// When Stereo to mono is on → request 1 channel; when off → request up to 2 (or max available).
-    /// The system may ignore this depending on the route (speaker, BT, CarPlay, etc.). Keeps stock AVPlayer.
+    ///
+    /// **Why not `AVMutableAudioMix` / channel volume?** Mix input parameters only scale track volume —
+    /// they do **not** remix L+R → mono. A real channel downmix on `AVPlayerItem` needs
+    /// `MTAudioProcessingTap` (file-based only; **not** HLS/`audioMix`-unsupported streams) or a custom
+    /// `AVAudioEngine` graph (would break shared video surface / PiP / Now Playing). This beta keeps
+    /// stock `AVPlayer` and uses the session preferred-channel API instead (route-dependent; system may ignore).
     private func applyPreferredOutputChannelCount(on session: AVAudioSession) {
         let maxChannels = session.maximumOutputNumberOfChannels
         guard maxChannels >= 1 else { return }
@@ -956,10 +961,18 @@ final class PlaybackService: ObservableObject {
         }
         // Headphones / wireless audio device became unavailable — standard pause.
         // Do not treat newDeviceAvailable / category changes as pause.
-        guard reason == .oldDeviceUnavailable else { return }
-        resumeAfterInterruption = false
-        if isPlaying || (player?.rate ?? 0) > 0 {
-            pauseForAudioSessionEvent()
+        if reason == .oldDeviceUnavailable {
+            resumeAfterInterruption = false
+            if isPlaying || (player?.rate ?? 0) > 0 {
+                pauseForAudioSessionEvent()
+            }
+            return
+        }
+        // Re-apply Stereo to mono (preferred output channels) when the route changes
+        // (new device, category, override) so the preference sticks across speaker ↔ BT ↔ CarPlay.
+        // Best-effort only — system may still ignore preferred channel count on the new route.
+        if player != nil {
+            applyPreferredOutputChannelCount(on: AVAudioSession.sharedInstance())
         }
     }
 

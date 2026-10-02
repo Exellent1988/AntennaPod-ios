@@ -885,8 +885,8 @@ struct SettingsView: View {
             }
             if matchesPlaybackStereo {
                 Toggle("Stereo to mono", isOn: $settings.stereoToMonoEnabled)
-                    .accessibilityHint(String(localized: "Best-effort mono output via AVAudioSession preferred channels. Route-dependent. Default off."))
-                Text("When on, requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)` (restores up to 2 when off). **Best-effort** — the system may ignore this depending on the route (built-in speaker, Bluetooth, CarPlay, etc.). Keeps stock `AVPlayer` (video surface, PiP, Now Playing). Not Android ExoPlayer stereo→mono remix. Default off.")
+                    .accessibilityHint(String(localized: "Best-effort mono via AVAudioSession preferred channels. Route-dependent; not AVAudioMix remix. Default off."))
+                Text("When on, requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)` (restores up to 2 when off). Reapplied on play, Settings change, and audio route change. **Best-effort** — the system may ignore this depending on the route (built-in speaker, Bluetooth, CarPlay, etc.). `AVMutableAudioMix` only scales track volume (no L+R→mono); a real remix needs `MTAudioProcessingTap` (file-based only, not HLS) or `AVAudioEngine` (would break video / PiP / Now Playing). Keeps stock `AVPlayer`. Not Android ExoPlayer stereo→mono remix. Default off.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

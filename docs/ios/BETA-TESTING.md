@@ -107,7 +107,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Keep screen on (Settings; idle timer während Play) | ☐ Keep screen on (Settings; idle timer while playing) |
 | ☐ Continuous playback Toggle (an → **nur Queue-Next**, nicht nächste Feed-Episode; aus → Stop ohne Advance) | ☐ Continuous playback toggle (on → **Queue next only**, not next feed episode; off → stop, no advance) |
 | ☐ Show remaining time (Settings; Mini/Full rechts −Rest; Tippen Full-Label) | ☐ Show remaining time (Settings; mini/full right −remaining; tap full label) |
-| ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; Route kann ignorieren) | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; route may ignore) |
+| ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; auch Routenwechsel; Route kann ignorieren) | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; also on route change; route may ignore) |
 | ☐ Preserve pitch (Settings; Standard an → `.timeDomain`; aus → `.varispeed` Chipmunk; kein Skip Silence) | ☐ Preserve pitch (Settings; default on → `.timeDomain`; off → `.varispeed` chipmunks; not Skip Silence) |
 | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; Pause ≥1s → Seek zurück; kein Cold-Play) | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; pause ≥1s → seek back; not on cold play) |
 | ☐ Progress speichern / Resume | ☐ Progress save / resume |
@@ -330,8 +330,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Volume adaptation: iOS session mode, not Android loudness gain.
 - Statistics honesty: Wanduhr (nicht Speed); aus `playback.json`; Reset = Basislinie (`statisticsResetAtEpochMs`), löscht keinen Verlauf; Streaming ohne gespeicherten Fortschritt zählt nicht; per-Feed gleiche Schätzung; EN/DE + VoiceOver.
   Statistics honesty: wall-clock (not speed); from `playback.json`; Reset = baseline (`statisticsResetAtEpochMs`), does not clear History; streaming without saved progress not counted; per-feed same estimate; EN/DE + VoiceOver.
-- Stereo to mono: Best-Effort `setPreferredOutputNumberOfChannels(1)`; Route kann ignorieren; kein ExoPlayer-Remix; AVPlayer bleibt.  
-  Stereo to mono: best-effort `setPreferredOutputNumberOfChannels(1)`; route may ignore; not ExoPlayer remix; AVPlayer kept.
+- Stereo to mono: Best-Effort `setPreferredOutputNumberOfChannels(1)`; auch bei Routenwechsel; Route kann ignorieren; kein `AVMutableAudioMix`-Remix / kein ExoPlayer; AVPlayer bleibt.  
+  Stereo to mono: best-effort `setPreferredOutputNumberOfChannels(1)`; also on route change; route may ignore; not `AVMutableAudioMix` remix / not ExoPlayer; AVPlayer kept.
 - Preserve pitch: Standard **an** → `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain`; aus → `.varispeed` (Chipmunk); kein Skip Silence / kein ExoPlayer Sonic.  
   Preserve pitch: default **on** → `.timeDomain`; off → `.varispeed` (chipmunks); not Skip Silence / not ExoPlayer Sonic.
 - Keep screen on: nur Idle-Timer (`isIdleTimerDisabled`); kein Low-Power-Override / keine Helligkeit; PiP/Hintergrund-Audio unverändert.  

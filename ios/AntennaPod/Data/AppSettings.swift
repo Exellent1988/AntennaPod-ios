@@ -1200,7 +1200,9 @@ final class AppSettings: ObservableObject {
     }
 
     /// When true, `PlaybackService` best-effort requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)`.
-    /// Default off. Route-dependent (system may ignore); keeps stock `AVPlayer` (video / PiP / Now Playing). **Not** Android ExoPlayer channel remix.
+    /// Default off. Route-dependent (system may ignore); reapplied on play, Settings change, and route change.
+    /// Keeps stock `AVPlayer` (video / PiP / Now Playing). **Not** `AVMutableAudioMix` remix (volume only) /
+    /// **not** `MTAudioProcessingTap` (file-only) / **not** `AVAudioEngine` / **not** Android ExoPlayer channel remix.
     @Published var stereoToMonoEnabled: Bool {
         didSet {
             UserDefaults.standard.set(stereoToMonoEnabled, forKey: Keys.stereoToMonoEnabled)

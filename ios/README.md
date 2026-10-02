@@ -19,7 +19,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Video → audio only (Settings + full-player toggle; default off; Lockscreen stays audio)
 - Volume adaptation (Settings; default off; iOS AVAudioSession spokenAudio / speech optimize — not Android loudness gain)
 - Skip silence (Settings toggle only; not applied on stock AVPlayer — needs custom audio graph)
-- Stereo to mono (Settings; default off; best-effort `AVAudioSession` preferred output channels = 1 — route-dependent; not ExoPlayer remix)
+- Stereo to mono (Settings; default off; best-effort `AVAudioSession` preferred output channels = 1 — route-dependent; reapplied on route change; not AVMutableAudioMix / not ExoPlayer remix)
 - Preserve pitch (Settings; default **on**; `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain` when on, `.varispeed` when off — chipmunks; not Skip Silence / not ExoPlayer Sonic)
 - Keep screen on while playing (Settings; default off; `isIdleTimerDisabled` only — no Low Power Mode override / brightness; PiP/background audio unchanged)
 - Chapters (PSC / Podcast Index from feed + media-file QuickTime/MP4 tags on local files; list in full player; tap to seek; **`.searchable` title filter** on already-loaded chapters; **Previous/Next chapter** when available; **current chapter title** on mini + full player; **chapter duration / current remaining** on list when end known; **Open / Copy `podcast:chapters` URL** + optional type caption when present)
@@ -475,9 +475,9 @@ Settings → **Playback → Skip silence**. Default **off**. Preference is persi
 
 Settings → **Playback → Stereo to mono**. Default **off**. Persisted in `AppSettings` / UserDefaults (`stereoToMonoEnabled`) and included in iOS JSON backup.
 
-When **on**, `PlaybackService` calls `AVAudioSession.setPreferredOutputNumberOfChannels(1)` after configuring category/mode (on play and live via `applyAudioSessionConfiguration`). When **off**, requests up to **2** channels (or the route maximum). Keeps stock `AVPlayer` — video surface, Picture in Picture, and Now Playing stay intact (no `AVAudioEngine` graph).
+When **on**, `PlaybackService` calls `AVAudioSession.setPreferredOutputNumberOfChannels(1)` after configuring category/mode (on play, live via `applyAudioSessionConfiguration`, and on **audio route change** so the preference sticks across speaker ↔ BT ↔ CarPlay). When **off**, requests up to **2** channels (or the route maximum). Keeps stock `AVPlayer` — video surface, Picture in Picture, and Now Playing stay intact.
 
-**Honest:** Best-effort **system preference** only. Many routes ignore preferred channel count (built-in speaker, some Bluetooth / CarPlay). This is **not** AntennaPod Android / ExoPlayer stereo→mono channel remix.
+**Honest:** Best-effort **system preference** only. Many routes ignore preferred channel count (built-in speaker, some Bluetooth / CarPlay). `AVMutableAudioMix` only scales track volume — it does **not** remix L+R → mono. A real channel downmix would need `MTAudioProcessingTap` (file-based media only; **not** HLS / `audioMix`-unsupported streams) or a custom `AVAudioEngine` graph (would break the shared video surface / PiP / Now Playing). This beta does **not** fake those. **Not** AntennaPod Android / ExoPlayer stereo→mono channel remix.
 
 ## Preserve pitch (beta)
 
