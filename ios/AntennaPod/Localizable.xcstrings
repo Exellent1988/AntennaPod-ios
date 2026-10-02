@@ -18178,6 +18178,96 @@
         }
       }
     },
+    "Soundbite details copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbite details copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbite-Details in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy feedback alert for displayed podcast:soundbite title and start/duration details."
+    },
+    "Shares the displayed soundbite title and start/duration times as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the displayed soundbite title and start/duration times as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den angezeigten Soundbite-Titel und die Start-/Dauerzeiten als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share soundbite details."
+    },
+    "Share soundbite details": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share soundbite details"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbite-Details teilen"
+          }
+        }
+      },
+      "comment": "VoiceOver label for sharing the displayed podcast:soundbite title and start/duration details."
+    },
+    "Copies the displayed soundbite title and start/duration times to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the displayed soundbite title and start/duration times to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den angezeigten Soundbite-Titel und die Start-/Dauerzeiten in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy soundbite details."
+    },
+    "Copy soundbite details": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy soundbite details"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbite-Details kopieren"
+          }
+        }
+      },
+      "comment": "VoiceOver label for copying the displayed podcast:soundbite title and start/duration details."
+    },
     "Soundbites": {
       "extractionState": "manual",
       "localizations": {

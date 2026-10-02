@@ -903,7 +903,7 @@ enum PodcastAlternateEnclosureDisplay {
 /// Podcast Index `podcast:soundbite` — short highlight within an item’s enclosure.
 /// Required `startTime` + `duration` (seconds, float). Optional element text = title.
 /// **Not a separate clip player:** UI may **Play soundbite** (seek to `startTime`, auto-pause at
-/// `startTime + duration` via PlaybackService) or Copy times. Feed-provided only — never invent.
+/// `startTime + duration` via PlaybackService) or Copy / Share the displayed title and times. Feed-provided only — never invent.
 struct PodcastSoundbite: Identifiable, Hashable, Codable {
     /// Stable list identity from feed fields.
     var id: String {

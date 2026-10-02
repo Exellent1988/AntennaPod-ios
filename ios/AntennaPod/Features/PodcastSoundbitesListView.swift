@@ -4,7 +4,7 @@ import UIKit
 /// Feed-provided `podcast:soundbite` list — start/duration (+ optional title).
 /// **Play soundbite** seeks to `startTime` and auto-pauses at `startTime + duration` via
 /// `PlaybackService.playSoundbite` (same episode player — **not** a separate clip player).
-/// Works for the current episode or starts playback when media is available; otherwise **Copy**.
+/// Works for the current episode or starts playback when media is available; otherwise **Copy / Share soundbite details**.
 /// Cap + honesty footnote.
 struct PodcastSoundbitesListView: View {
     @EnvironmentObject private var playback: PlaybackService
@@ -73,7 +73,7 @@ struct PodcastSoundbitesListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Soundbite copied to the pasteboard."))
+                Text(String(localized: "Soundbite details copied to the pasteboard."))
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -117,15 +117,7 @@ struct PodcastSoundbitesListView: View {
                     .accessibilityHidden(true)
             }
 
-            let copyText = PodcastSoundbiteDisplay.copyText(bite)
-            let shareURL: URL? = {
-                guard let url = URL(string: copyText),
-                      let scheme = url.scheme?.lowercased(),
-                      scheme == "http" || scheme == "https" else {
-                    return nil
-                }
-                return url
-            }()
+            let detailsText = PodcastSoundbiteDisplay.copyText(bite)
 
             HStack(spacing: 12) {
                 if canPlaySoundbite {
@@ -149,38 +141,29 @@ struct PodcastSoundbitesListView: View {
                 }
 
                 Button {
-                    UIPasteboard.general.string = copyText
+                    UIPasteboard.general.string = detailsText
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {
-                    Label("Copy", systemImage: "doc.on.doc")
+                    Label("Copy soundbite details", systemImage: "doc.on.doc")
                         .font(.subheadline)
                 }
-                .accessibilityLabel(String(localized: "Copy"))
+                .accessibilityLabel(String(localized: "Copy soundbite details"))
                 .accessibilityHint(
                     String(
-                        localized: "Copies the soundbite title and times to the pasteboard"
+                        localized: "Copies the displayed soundbite title and start/duration times to the pasteboard"
                     )
                 )
 
-                if !copyText.isEmpty {
-                    Group {
-                        if let shareURL {
-                            ShareLink(item: shareURL) {
-                                Label("Share", systemImage: "square.and.arrow.up")
-                                    .font(.subheadline)
-                            }
-                        } else {
-                            ShareLink(item: copyText) {
-                                Label("Share", systemImage: "square.and.arrow.up")
-                                    .font(.subheadline)
-                            }
-                        }
+                if !detailsText.isEmpty {
+                    ShareLink(item: detailsText) {
+                        Label("Share soundbite details", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
                     }
-                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityLabel(String(localized: "Share soundbite details"))
                     .accessibilityHint(
                         String(
-                            localized: "Shares the soundbite URL when it is a parseable http(s) URL; otherwise shares the same soundbite value as Copy"
+                            localized: "Shares the displayed soundbite title and start/duration times as plain text"
                         )
                     )
                 }
