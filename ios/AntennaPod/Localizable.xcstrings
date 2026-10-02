@@ -1808,6 +1808,42 @@
         }
       }
     },
+    "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. The Favorites bar is the visible list after the podcast filter, search, and sort. Sort changes order only. Played episodes that are not currently playing count as zero. It is not the full Favorites catalog behind Clear favorites, Add all to queue, Add all unplayed to queue, Mark all as played, Mark all as unplayed, Archive all, Play random, Copy favorites, or Share favorites, and not the Home Favorites preview. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the All Episodes remaining bar, the Queue remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. The Favorites bar is the visible list after the podcast filter, search, and sort. Sort changes order only. Played episodes that are not currently playing count as zero. It is not the full Favorites catalog behind Clear favorites, Add all to queue, Add all unplayed to queue, Mark all as played, Mark all as unplayed, Archive all, Play random, Copy favorites, or Share favorites, and not the Home Favorites preview. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the All Episodes remaining bar, the Queue remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schätzung. Verbleibende Zeit berücksichtigt Tempo ist an, daher wird jede Episode durch die Wiedergabegeschwindigkeit dieses Podcasts geteilt, oder durch die Standardgeschwindigkeit, nie unter 0,5. Das ist nicht die Live-Sitzungsrate und nicht die Lautstärke-Verstärkung. Die Favoriten-Leiste ist die sichtbare Liste nach Podcast-Filter, Suche und Sortierung. Sortieren ändert nur die Reihenfolge. Gehörte Episoden, die nicht gerade spielen, zählen als null. Das ist nicht der volle Favoriten-Katalog hinter Favoriten leeren, Alle zur Warteschlange hinzufügen, Alle ungehörten zur Warteschlange hinzufügen, Alle als gehört markieren, Alle als ungehört markieren, Alle archivieren, Zufällig abspielen, Favoriten kopieren oder Favoriten teilen, und nicht die Home-Favoriten-Vorschau. Unbekannte Dauern bleiben außen vor und es wird keine Zeit erfunden. Die gerade spielende Episode nutzt die Live-Position, der Teiler bleibt aber die Podcast- oder Standardgeschwindigkeit. Das ist nicht die Alle-Episoden-Leiste, die Warteschlangen-Leiste, der Mini-Player oder der Sperrbildschirm. Die Leiste spielt nicht ab, lädt nicht herunter und markiert nichts als gehört."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for the Favorites remaining bar when Remaining time respects speed is on."
+    },
+    "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The Favorites bar is the visible list after the podcast filter, search, and sort. Sort changes order only. Played episodes that are not currently playing count as zero. It is not the full Favorites catalog behind Clear favorites, Add all to queue, Add all unplayed to queue, Mark all as played, Mark all as unplayed, Archive all, Play random, Copy favorites, or Share favorites, and not the Home Favorites preview. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the All Episodes remaining bar, the Queue remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The Favorites bar is the visible list after the podcast filter, search, and sort. Sort changes order only. Played episodes that are not currently playing count as zero. It is not the full Favorites catalog behind Clear favorites, Add all to queue, Add all unplayed to queue, Mark all as played, Mark all as unplayed, Archive all, Play random, Copy favorites, or Share favorites, and not the Home Favorites preview. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the All Episodes remaining bar, the Queue remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wanduhr-Restzeit. Verbleibende Zeit berücksichtigt Tempo ist aus, daher ändert die Wiedergabegeschwindigkeit diese Summe nicht. Die Favoriten-Leiste ist die sichtbare Liste nach Podcast-Filter, Suche und Sortierung. Sortieren ändert nur die Reihenfolge. Gehörte Episoden, die nicht gerade spielen, zählen als null. Das ist nicht der volle Favoriten-Katalog hinter Favoriten leeren, Alle zur Warteschlange hinzufügen, Alle ungehörten zur Warteschlange hinzufügen, Alle als gehört markieren, Alle als ungehört markieren, Alle archivieren, Zufällig abspielen, Favoriten kopieren oder Favoriten teilen, und nicht die Home-Favoriten-Vorschau. Unbekannte Dauern bleiben außen vor und es wird keine Zeit erfunden. Die gerade spielende Episode nutzt die Live-Position. Das ist nicht die Alle-Episoden-Leiste, die Warteschlangen-Leiste, der Mini-Player oder der Sperrbildschirm. Die Leiste spielt nicht ab, lädt nicht herunter und markiert nichts als gehört."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for the Favorites remaining bar when Remaining time respects speed is off."
+    },
     "Feed actions": {
       "extractionState": "manual",
       "localizations": {
