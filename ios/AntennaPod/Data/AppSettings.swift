@@ -443,6 +443,10 @@ enum InboxPodcastFilter: Hashable, Identifiable {
 enum DownloadsSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
+    /// Descending known byte size (`DownloadedEpisode.knownByteSize`); unknown last; id tiebreak.
+    case largestFirst
+    /// Ascending known byte size (`DownloadedEpisode.knownByteSize`); unknown last; id tiebreak.
+    case smallestFirst
 
     var id: String { rawValue }
 
@@ -450,6 +454,8 @@ enum DownloadsSort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return String(localized: "Newest first")
         case .oldestFirst: return String(localized: "Oldest first")
+        case .largestFirst: return String(localized: "Largest first")
+        case .smallestFirst: return String(localized: "Smallest first")
         }
     }
 
@@ -457,6 +463,8 @@ enum DownloadsSort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return "arrow.down"
         case .oldestFirst: return "arrow.up"
+        case .largestFirst: return "arrow.down.to.line"
+        case .smallestFirst: return "arrow.up.to.line"
         }
     }
 }

@@ -22831,6 +22831,42 @@
         }
       },
       "comment": "Subscriptions sort: oldest lastRefreshedAtEpochMs first; nil/local-folder last."
+    },
+    "Largest first": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largest first"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Größte zuerst"
+          }
+        }
+      },
+      "comment": "Downloads sort: known byte size descending; unknown size last."
+    },
+    "Smallest first": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Smallest first"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kleinste zuerst"
+          }
+        }
+      },
+      "comment": "Downloads sort: known byte size ascending; unknown size last."
     }
   },
   "version": "1.0"

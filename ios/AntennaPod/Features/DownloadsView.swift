@@ -20,7 +20,7 @@ struct DownloadsView: View {
     /// Visible downloaded episodes: played chip → podcast chip → search → sort.
     /// Played chip uses `PodcastStore.isPlayed`. Podcast chip uses feeds present in the
     /// current download set only (never invent). Sort by `AppSettings.downloadsSort`
-    /// (prefer `downloadedAtEpochMs`, else `pubDateEpochMs`).
+    /// (date: prefer `downloadedAtEpochMs`, else `pubDateEpochMs`; size: `knownByteSize`).
     private var filteredDownloads: [DownloadedEpisode] {
         var base = downloads.downloads
         switch settings.downloadsFilter {
@@ -58,6 +58,17 @@ struct DownloadsView: View {
             case .oldestFirst:
                 let l = lhs.downloadsSortEpochMs ?? Int64.max
                 let r = rhs.downloadsSortEpochMs ?? Int64.max
+                if l != r { return l < r }
+                return lhs.episode.id < rhs.episode.id
+            case .largestFirst:
+                // Unknown size last (same honesty as row caption — never invent bytes).
+                let l = lhs.knownByteSize() ?? Int64.min
+                let r = rhs.knownByteSize() ?? Int64.min
+                if l != r { return l > r }
+                return lhs.episode.id < rhs.episode.id
+            case .smallestFirst:
+                let l = lhs.knownByteSize() ?? Int64.max
+                let r = rhs.knownByteSize() ?? Int64.max
                 if l != r { return l < r }
                 return lhs.episode.id < rhs.episode.id
             }
