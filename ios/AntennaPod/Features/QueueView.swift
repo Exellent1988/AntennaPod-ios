@@ -187,7 +187,9 @@ struct QueueView: View {
 
     /// Visible queue rows: played chip (`isPlayed`) → podcast chip → search.
     /// Empty query shows the chip+podcast-filtered queue order (persisted order preserved).
-    /// View-only — does not remove episodes from the actual queue.
+    /// Search matches title / descriptionText / episode private note / any bookmark note via
+    /// `PodcastStore.episodeMatchesLibraryQuery` (same fields as library / Feed detail), plus
+    /// feed display title. View-only — does not remove episodes from the actual queue.
     /// Clear queue / Remove played / Shuffle / Play random / lock ops / Play Next stay full-queue scoped (not the visible subset).
     private var filteredQueue: [PodcastEpisode] {
         var base = store.queue
@@ -208,7 +210,7 @@ struct QueueView: View {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         if q.isEmpty { return base }
         return base.filter { episode in
-            if episode.title.localizedCaseInsensitiveContains(q) { return true }
+            if store.episodeMatchesLibraryQuery(episode, query: q) { return true }
             let feedTitle = store.displayTitle(containingEpisodeId: episode.id)
             return feedTitle.localizedCaseInsensitiveContains(q)
         }
