@@ -118,8 +118,11 @@ struct HistoryView: View {
     /// (feed when known, else saved playback — same path as Queue / Inbox / Favorites / Archived;
     /// never invent; unknown last). Stable tiebreaker episode `id`.
     /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
+    /// Search matches title / descriptionText / episode private note / any bookmark note via
+    /// `PodcastStore.episodeMatchesLibraryQuery` (same fields as library / Feed detail / Queue / Favorites), plus
+    /// feed title (`HistoryEpisode.feedTitle` = display title). View-only —
     /// Does not mutate `PodcastStore.historyEpisodes` (Home Continue / Clear history stay newest-first catalog).
-    /// View-only — Clear history / Add all to queue / Mark all as unplayed / Play random stay full-catalog scoped.
+    /// Clear history / Add all to queue / Mark all as unplayed / Play random stay full-catalog scoped.
     /// Respects history size limit catalog as-is (store already trimmed).
     private var filteredItems: [HistoryEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -135,7 +138,7 @@ struct HistoryView: View {
             filtered = afterPodcast
         } else {
             filtered = afterPodcast.filter { item in
-                if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+                if store.episodeMatchesLibraryQuery(item.episode, query: q) { return true }
                 return item.feedTitle.localizedCaseInsensitiveContains(q)
             }
         }
