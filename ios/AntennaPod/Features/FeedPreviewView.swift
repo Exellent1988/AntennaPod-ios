@@ -75,6 +75,52 @@ struct FeedPreviewView: View {
         Array((parsed?.episodes ?? []).prefix(previewEpisodeLimit))
     }
 
+    private var headerAccessibilityLabel: String {
+        var parts = [displayTitle]
+        if let author = displayAuthor {
+            parts.append(String(localized: "Author \(author)"))
+        }
+        if let language = parsed?.displayLanguage {
+            parts.append(String(localized: "Language \(language)"))
+        }
+        if let medium = parsed?.displayMedium {
+            parts.append(String(localized: "Medium \(medium)"))
+        }
+        if let itunesType = parsed?.displayItunesType {
+            parts.append(itunesType)
+        }
+        if let frequency = parsed?.displayUpdateFrequency {
+            parts.append(frequency.accessibilityLabel)
+        }
+        if parsed?.isItunesComplete == true {
+            parts.append(parsed?.itunesCompleteAccessibilityLabel ?? String(localized: "Complete"))
+        }
+        if let categories = parsed?.categoriesCaption {
+            parts.append(String(localized: "Categories \(categories)"))
+        }
+        if parsed?.isExplicit == true {
+            parts.append(String(localized: "Explicit"))
+        }
+        if parsed != nil {
+            parts.append(String(localized: "\(episodeCount) episodes"))
+        }
+        if isAlreadySubscribed {
+            parts.append(String(localized: "Already subscribed"))
+        }
+        if !request.feedUrl.isEmpty {
+            parts.append(String(localized: "Feed URL \(request.feedUrl)"))
+        }
+        return parts.joined(separator: ", ")
+    }
+
+    private func episodeAccessibilityLabel(_ episode: PodcastEpisode) -> String {
+        var parts = [episode.title.nilIfEmpty ?? String(localized: "Episode title unavailable")]
+        if let ms = episode.pubDateEpochMs {
+            parts.append(String(localized: "Published \(Self.shortDate(ms))"))
+        }
+        return parts.joined(separator: ", ")
+    }
+
     var body: some View {
         List {
             Section {
@@ -89,6 +135,9 @@ struct FeedPreviewView: View {
                         Text("Loading feed…")
                             .foregroundStyle(.secondary)
                     }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "Loading feed"))
+                    .accessibilityAddTraits(.updatesFrequently)
                 }
             }
 
@@ -151,6 +200,8 @@ struct FeedPreviewView: View {
                                 }
                             }
                             .padding(.vertical, 2)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(episodeAccessibilityLabel(ep))
                         }
                     } header: {
                         Text(
@@ -168,6 +219,8 @@ struct FeedPreviewView: View {
                         Text("No episodes found in this feed.")
                             .foregroundStyle(.secondary)
                             .font(.subheadline)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(String(localized: "No episodes found in this feed"))
                     }
                 }
             }
@@ -214,6 +267,8 @@ struct FeedPreviewView: View {
                     Text(error)
                         .foregroundStyle(.red)
                         .font(.subheadline)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(String(localized: "Subscribe error \(error)"))
                 }
             }
         }
@@ -304,6 +359,9 @@ struct FeedPreviewView: View {
             Spacer(minLength: 0)
         }
         .padding(.vertical, 4)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(headerAccessibilityLabel)
+        .accessibilityAddTraits(.isHeader)
     }
 
     @ViewBuilder
@@ -326,9 +384,11 @@ struct FeedPreviewView: View {
             }
             .frame(width: size, height: size)
             .clipShape(RoundedRectangle(cornerRadius: 12))
+            .accessibilityHidden(true)
         } else {
             placeholder
                 .frame(width: size, height: size)
+                .accessibilityHidden(true)
         }
     }
 

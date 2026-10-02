@@ -26,7 +26,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 |----|----|
 | ☐ Feed-URL abonnieren (Add → URL; Trim/https-Default; Paste; Timeout/Netz/kein-Feed-Fehler; bereits abonniert) | ☐ Subscribe via feed URL (trim/https default; Paste; timeout/network/not-a-feed errors; already subscribed) |
 | ☐ Aus Zwischenablage hinzufügen (http(s)/ohne Schema→https; Vorschau; kein Auto-Abo) | ☐ Add from Clipboard (http(s)/scheme-less→https; Preview; no auto-subscribe) |
-| ☐ Online-Vorschau → Confirm Subscribe | ☐ Online feed preview → Confirm Subscribe |
+| ☐ Online-Vorschau → Confirm Subscribe (VoiceOver: Feed-Identität/URL/Status, Laden/Fehler, Episodentitel + Datum, Aktionen) | ☐ Online feed preview → Confirm Subscribe (VoiceOver: feed identity/URL/status, loading/errors, episode title + date, actions) |
 | ☐ Discovery: Apple Podcasts / iTunes Search | ☐ Discovery: Apple Podcasts / iTunes Search |
 | ☐ Discovery: Podcast Index (API-Keys Keychain Settings → Discovery; Idle/fehlende Keys/leere Treffer/401·Netzwerk+Retry; Vorschau→Confirm; max 25; keine Secrets in App) | ☐ Discovery: Podcast Index (Keychain API keys Settings → Discovery; idle/missing-keys/empty/401·network+Retry; Preview→Confirm; max 25; no shipped secrets) |
 | ☐ Discovery: fyyd | ☐ Discovery: fyyd |
