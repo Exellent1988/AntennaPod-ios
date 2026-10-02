@@ -22663,6 +22663,91 @@
         }
       }
     },
+    "Enter a whole number from 1 to 600 seconds remaining. The Set button stays unavailable until the value is valid.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a whole number from 1 to 600 seconds remaining. The Set button stays unavailable until the value is valid."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine ganze Zahl von 1 bis 600 Sekunden Restzeit ein. Festlegen bleibt deaktiviert, bis der Wert gültig ist."
+          }
+        }
+      }
+    },
+    "Enter a whole number from 1 to 600 seconds.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a whole number from 1 to 600 seconds."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine ganze Zahl von 1 bis 600 Sekunden ein."
+          }
+        }
+      }
+    },
+    "Adjusts the threshold in one-second steps. Valid range is 1 to 600 seconds remaining.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjusts the threshold in one-second steps. Valid range is 1 to 600 seconds remaining."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passt den Schwellwert in Ein-Sekunden-Schritten an. Gültiger Bereich: 1 bis 600 Sekunden Restzeit."
+          }
+        }
+      }
+    },
+    "Saves this threshold for smart mark as played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saves this threshold for smart mark as played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert diesen Schwellwert für Smart Mark als gehört."
+          }
+        }
+      }
+    },
+    "No threshold entered": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No threshold entered"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Schwellwert eingegeben"
+          }
+        }
+      }
+    },
     "Seconds before end that count as played when leaving. Off marks only on natural end. Presets plus Custom… 1–600. Default 30.": {
       "extractionState": "manual",
       "localizations": {

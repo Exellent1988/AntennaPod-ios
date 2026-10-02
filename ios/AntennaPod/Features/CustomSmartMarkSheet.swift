@@ -26,6 +26,17 @@ struct CustomSmartMarkSheet: View {
                     TextField(String(localized: "Seconds"), text: $secondsText)
                         .keyboardType(.numberPad)
                         .accessibilityLabel(String(localized: "Seconds"))
+                        .accessibilityValue(thresholdAccessibilityValue)
+                        .accessibilityHint(
+                            String(localized: "Enter a whole number from 1 to 600 seconds remaining. The Set button stays unavailable until the value is valid.")
+                        )
+
+                    if !isValid {
+                        Text(String(localized: "Enter a whole number from 1 to 600 seconds."))
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                            .accessibilityElement(children: .combine)
+                    }
 
                     Stepper(value: Binding(
                         get: {
@@ -46,6 +57,10 @@ struct CustomSmartMarkSheet: View {
                         }
                     }
                     .accessibilityLabel(String(localized: "Seconds"))
+                    .accessibilityValue(stepperAccessibilityValue)
+                    .accessibilityHint(
+                        String(localized: "Adjusts the threshold in one-second steps. Valid range is 1 to 600 seconds remaining.")
+                    )
                 } footer: {
                     Text(String(localized: "Choose between 1 and 600 seconds remaining. Presets (Off / 15 / 30 / 60 / 120 / 300 / 600) stay in Settings. Marks played when leaving or stopping within this window — not a percent threshold."))
                 }
@@ -59,6 +74,7 @@ struct CustomSmartMarkSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(String(localized: "Set")) { confirm() }
                         .disabled(!isValid)
+                        .accessibilityHint(String(localized: "Saves this threshold for smart mark as played."))
                 }
             }
         }
@@ -67,6 +83,19 @@ struct CustomSmartMarkSheet: View {
 
     private var parsedSeconds: Int? {
         Int(secondsText.trimmingCharacters(in: .whitespacesAndNewlines))
+    }
+
+    private var thresholdAccessibilityValue: String {
+        guard let seconds = parsedSeconds, range.contains(seconds) else {
+            return secondsText.isEmpty ? String(localized: "No threshold entered") : secondsText
+        }
+        return AppSettings.smartMarkAsPlayedLabel(seconds)
+    }
+
+    private var stepperAccessibilityValue: String {
+        let seconds = parsedSeconds.map { min(max($0, range.lowerBound), range.upperBound) }
+            ?? min(max(settings.smartMarkAsPlayedSeconds == 0 ? AppSettings.defaultSmartMarkAsPlayedSeconds : settings.smartMarkAsPlayedSeconds, range.lowerBound), range.upperBound)
+        return AppSettings.smartMarkAsPlayedLabel(seconds)
     }
 
     private var isValid: Bool {
