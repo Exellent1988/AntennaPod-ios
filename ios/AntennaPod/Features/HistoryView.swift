@@ -10,6 +10,7 @@ struct HistoryView: View {
     @State private var debounceTask: Task<Void, Never>?
     @State private var showClearHistoryConfirm = false
     @State private var showEnqueueAllConfirm = false
+    @State private var showMarkAllUnplayedConfirm = false
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -23,6 +24,12 @@ struct HistoryView: View {
     /// Confirm count and `enqueueAllHistory()` share this eligibility.
     private var enqueueAllHistoryCandidatesCount: Int {
         items.filter { !store.isInQueue($0.episode.id) }.count
+    }
+
+    /// Played episodes in the **full History catalog** (not podcast/search filter) for Mark all as unplayed.
+    /// In-progress unplayed are excluded (already unplayed). Confirm count matches this eligibility.
+    private var markAllHistoryUnplayedCandidatesCount: Int {
+        items.filter { store.isPlayed($0.episode.id) }.count
     }
 
     /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
@@ -90,7 +97,7 @@ struct HistoryView: View {
     /// never invent; unknown last). Stable tiebreaker episode `id`.
     /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
     /// Does not mutate `PodcastStore.historyEpisodes` (Home Continue / Clear history stay newest-first catalog).
-    /// View-only — Clear history / Add all to queue stay full-catalog scoped.
+    /// View-only — Clear history / Add all to queue / Mark all as unplayed stay full-catalog scoped.
     /// Respects history size limit catalog as-is (store already trimmed).
     private var filteredItems: [HistoryEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -354,6 +361,14 @@ struct HistoryView: View {
                     .disabled(enqueueAllHistoryCandidatesCount == 0)
                     .accessibilityHint(String(localized: "Appends history episodes not already queued"))
 
+                    Button {
+                        showMarkAllUnplayedConfirm = true
+                    } label: {
+                        Label("Mark all as unplayed", systemImage: "circle")
+                    }
+                    .disabled(markAllHistoryUnplayedCandidatesCount == 0)
+                    .accessibilityHint(String(localized: "Marks played History episodes as unplayed; leaves History when no progress remains"))
+
                     Button(role: .destructive) {
                         showClearHistoryConfirm = true
                     } label: {
@@ -378,6 +393,18 @@ struct HistoryView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Appends \(enqueueAllHistoryCandidatesCount) history episodes to the end of the queue (newest last-played first). Already queued episodes are skipped. Uses the full History catalog (same as Clear history), not the podcast or searchable filter. Queue lock does not block enqueue.")
+        }
+        .confirmationDialog(
+            "Mark all as unplayed?",
+            isPresented: $showMarkAllUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as unplayed") {
+                store.markAllHistoryUnplayed()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Marks \(markAllHistoryUnplayedCandidatesCount) played episodes in History as unplayed (full catalog, not podcast or search filter). Episodes leave History when no progress remains — same as per-row Mark unplayed. Does not delete downloads, clear the queue, or stop playback.")
         }
         .confirmationDialog(
             "Clear history?",

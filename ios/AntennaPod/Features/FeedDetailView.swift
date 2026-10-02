@@ -11,6 +11,7 @@ struct FeedDetailView: View {
     @State private var showPerFeedSettings = false
     @State private var showDownloadAllConfirm = false
     @State private var showMarkAllPlayedConfirm = false
+    @State private var showMarkAllUnplayedConfirm = false
     @State private var showEnqueueAllConfirm = false
     @State private var showUnsubscribeConfirm = false
     @State private var showFeedURLCopied = false
@@ -300,7 +301,7 @@ struct FeedDetailView: View {
     /// duration known; unplayed with duration contributes full duration; **played** (not current)
     /// → 0; **unknown duration skipped** (tilde when any skipped). Currently playing uses live
     /// `PlaybackService` position/duration. Wall-clock only (no playback-speed divide).
-    /// Distinct from **Download all** / **Mark all as played** / **Add all to queue** full-feed eligibility counts.
+    /// Distinct from **Download all** / **Mark all as played** / **Mark all as unplayed** / **Add all to queue** full-feed eligibility counts.
     private var feedRemainingInfoLabel: String? {
         guard !filteredEpisodes.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: feedRemainingSummary)
@@ -341,9 +342,16 @@ struct FeedDetailView: View {
         liveFeed.episodes.filter { !store.isPlayed($0.id) && !store.isArchived($0.id) }
     }
 
+    /// Played episodes on this feed only (for Mark all as unplayed) — **includes archived**.
+    /// Archive policy: prefer mark unplayed even if archived (Mark all as played skips archived;
+    /// unplayed bulk still flips played archived). Full-feed eligibility (not chip/search).
+    private var markAllUnplayedCandidates: [PodcastEpisode] {
+        liveFeed.episodes.filter { store.isPlayed($0.id) }
+    }
+
     /// Full feed episode catalog minus already queued — Add all to queue always uses this,
     /// **not** the chip/search filtered visible list (`filteredEpisodes`). Same full-feed
-    /// honesty as Download all / Mark all as played (eligibility not limited to visible filter).
+    /// honesty as Download all / Mark all as played / Mark all as unplayed (eligibility not limited to visible filter).
     /// Confirm count and `enqueueAllFromFeed` share this eligibility (played/archived included).
     private var enqueueAllFromFeedCandidatesCount: Int {
         liveFeed.episodes.filter { !store.isInQueue($0.id) }.count
@@ -720,7 +728,7 @@ struct FeedDetailView: View {
             }
 
             // AntennaPod-like Feed detail info bar (visible sort→status→type→search list remaining time).
-            // Distinct from Download all / Mark all as played / Add all to queue full-feed eligibility counts.
+            // Distinct from Download all / Mark all as played / Mark all as unplayed / Add all to queue full-feed eligibility counts.
             if let remainingLabel = feedRemainingInfoLabel {
                 Section {
                     Text(remainingLabel)
@@ -930,6 +938,14 @@ struct FeedDetailView: View {
                         .disabled(markAllPlayedCandidates.isEmpty)
 
                         Button {
+                            showMarkAllUnplayedConfirm = true
+                        } label: {
+                            Label("Mark all as unplayed", systemImage: "circle")
+                        }
+                        .disabled(markAllUnplayedCandidates.isEmpty)
+                        .accessibilityHint(String(localized: "Marks played episodes in this podcast as unplayed, including archived"))
+
+                        Button {
                             showEnqueueAllConfirm = true
                         } label: {
                             Label("Add all to queue", systemImage: "text.append")
@@ -984,6 +1000,20 @@ struct FeedDetailView: View {
         } message: {
             Text(
                 "Marks \(markAllPlayedCandidates.count) unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled."
+            )
+        }
+        .confirmationDialog(
+            "Mark all as unplayed?",
+            isPresented: $showMarkAllUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as unplayed") {
+                store.markAllUnplayed(inFeedId: liveFeed.id)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Marks \(markAllUnplayedCandidates.count) played episodes in this podcast as unplayed (including archived). Does not delete downloads, remove from queue, stop playback, or unarchive."
             )
         }
         .confirmationDialog(

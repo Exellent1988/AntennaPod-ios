@@ -24078,6 +24078,110 @@
           }
         }
       }
+    },
+    "Mark all as unplayed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark all as unplayed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle als ungehört markieren"
+          }
+        }
+      }
+    },
+    "Mark all as unplayed?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark all as unplayed?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle als ungehört markieren?"
+          }
+        }
+      }
+    },
+    "Marks played episodes in this podcast as unplayed, including archived": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks played episodes in this podcast as unplayed, including archived"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert gehörte Episoden in diesem Podcast als ungehört, auch archivierte"
+          }
+        }
+      }
+    },
+    "Marks %lld played episodes in this podcast as unplayed (including archived). Does not delete downloads, remove from queue, stop playback, or unarchive.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld played episodes in this podcast as unplayed (including archived). Does not delete downloads, remove from queue, stop playback, or unarchive."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld gehörte Episoden in diesem Podcast als ungehört (auch archivierte). Löscht keine Downloads, entfernt nicht aus der Warteschlange, stoppt die Wiedergabe nicht und stellt nicht wieder her."
+          }
+        }
+      },
+      "comment": "Feed detail Mark all as unplayed confirmation — full-feed played count including archived."
+    },
+    "Marks played History episodes as unplayed; leaves History when no progress remains": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks played History episodes as unplayed; leaves History when no progress remains"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert gehörte Verlaufs-Episoden als ungehört; verlässt den Verlauf, wenn kein Fortschritt bleibt"
+          }
+        }
+      }
+    },
+    "Marks %lld played episodes in History as unplayed (full catalog, not podcast or search filter). Episodes leave History when no progress remains — same as per-row Mark unplayed. Does not delete downloads, clear the queue, or stop playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld played episodes in History as unplayed (full catalog, not podcast or search filter). Episodes leave History when no progress remains — same as per-row Mark unplayed. Does not delete downloads, clear the queue, or stop playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld gehörte Episoden im Verlauf als ungehört (voller Katalog, nicht Podcast- oder Suchfilter). Episoden verlassen den Verlauf, wenn kein Fortschritt bleibt — wie pro Zeile Als ungehört. Löscht keine Downloads, leert nicht die Warteschlange und stoppt die Wiedergabe nicht."
+          }
+        }
+      },
+      "comment": "History Mark all as unplayed confirmation — full catalog played eligibility, not podcast/search."
     }
   },
   "version": "1.0"

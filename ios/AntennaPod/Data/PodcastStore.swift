@@ -1149,6 +1149,22 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Mark every **played** episode in one feed as unplayed (bulk), **including archived**.
+    /// Archive policy: prefer mark unplayed even if archived (inverted of Mark all as played
+    /// which skips archived unplayed — here any `isPlayed` on this feed is eligible).
+    /// Snapshots eligible ids first, then calls `markUnplayed` per id (same as per-row:
+    /// does **not** delete downloads, remove queue, stop playback, or unarchive).
+    /// Feed-scoped only. Callers must confirm first (Feed detail toolbar).
+    func markAllUnplayed(inFeedId feedId: String) {
+        guard let feed = feeds.first(where: { $0.id == feedId }) else { return }
+        let ids = feed.episodes
+            .filter { isPlayed($0.id) }
+            .map(\.id)
+        for id in ids {
+            markUnplayed(id)
+        }
+    }
+
     /// Append every episode from one feed that is not already queued (bulk).
     /// Uses the **full** stored feed episode catalog (`feed.episodes`), sorted **newest-first**
     /// by `pubDateEpochMs` (missing dates last; title tiebreak — same spirit as Feed Download all).
@@ -1426,6 +1442,21 @@ final class PodcastStore: ObservableObject {
             pendingAutoDeleteIds.remove(id)
         }
         playbackStates = next
+    }
+
+    /// Mark every **played** episode in the History catalog as unplayed (bulk).
+    /// Uses full `historyEpisodes` (newest-lastPlayed-first) — **not** podcast/search filter.
+    /// Eligible = `isPlayed` only (in-progress unplayed stay; same as per-row Mark unplayed).
+    /// `markUnplayed` keeps progress; episodes leave History when no remaining progress
+    /// (`belongsInHistory` = isPlayed || position > 1). Does **not** delete downloads,
+    /// clear queue, unstar, or stop playback. Callers must confirm first.
+    func markAllHistoryUnplayed() {
+        let ids = historyEpisodes
+            .map(\.episode.id)
+            .filter { isPlayed($0) }
+        for id in ids {
+            markUnplayed(id)
+        }
     }
 
     /// Append every History episode that is not already queued (bulk).
