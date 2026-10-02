@@ -17,6 +17,7 @@ struct DownloadsView: View {
     @State private var showEnqueueAllUnplayedConfirm = false
     @State private var showMarkAllPlayedConfirm = false
     @State private var showMarkAllUnplayedConfirm = false
+    @State private var showArchiveAllConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyFeedbackTick = 0
@@ -216,6 +217,12 @@ struct DownloadsView: View {
     /// as unplayed.
     private var markAllDownloadsUnplayedCandidatesCount: Int {
         store.markAllDownloadsUnplayedCandidateCount()
+    }
+
+    /// Non-archived episodes in the **full completed Downloads catalog** — not chip, podcast,
+    /// search, or sort filtered. Completed downloads only; archive is independent of played state.
+    private var archiveAllDownloadsCandidatesCount: Int {
+        downloads.downloads.filter { !store.isArchived($0.episode.id) }.count
     }
 
     /// Completed Downloads catalog rows with a local playable file on disk via shared
@@ -606,6 +613,16 @@ struct DownloadsView: View {
                         )
 
                         Button {
+                            showArchiveAllConfirm = true
+                        } label: {
+                            Label("Archive all", systemImage: "archivebox")
+                        }
+                        .disabled(archiveAllDownloadsCandidatesCount == 0)
+                        .accessibilityHint(
+                            String(localized: "Archives non-archived completed downloads in the full Downloads catalog; ignores chip, podcast, search, and sort filters; archived does not mean played")
+                        )
+
+                        Button {
                             showCancelAllConfirm = true
                         } label: {
                             Label("Cancel all downloads", systemImage: "xmark.circle")
@@ -637,7 +654,7 @@ struct DownloadsView: View {
                     .disabled(downloads.downloads.isEmpty && downloads.cancelAllInFlightCount == 0)
                     .accessibilityLabel(String(localized: "Downloads actions"))
                     .accessibilityHint(
-                        String(localized: "Copy downloads, share downloads, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, cancel all downloads, delete played downloads, or clear all downloads")
+                        String(localized: "Copy downloads, share downloads, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, archive all, cancel all downloads, delete played downloads, or clear all downloads")
                     )
                 }
             }
@@ -700,6 +717,20 @@ struct DownloadsView: View {
             } message: {
                 Text(
                     "Marks \(markAllDownloadsUnplayedCandidatesCount) played downloaded episode(s), including archived episodes, as unplayed. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Does not delete download files, clear the queue, stop playback, or unarchive episodes."
+                )
+            }
+            .confirmationDialog(
+                "Archive all?",
+                isPresented: $showArchiveAllConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Archive all") {
+                    store.archiveAllDownloads()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Archives \(archiveAllDownloadsCandidatesCount) non-archived downloaded episode(s) in the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing."
                 )
             }
             .confirmationDialog(

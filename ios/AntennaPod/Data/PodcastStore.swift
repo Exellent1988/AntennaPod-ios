@@ -1194,6 +1194,31 @@ final class PodcastStore: ObservableObject {
             .map(\.id)
     }
 
+    /// Archive every non-archived episode in the full completed Downloads catalog.
+    ///
+    /// This intentionally ignores the Downloads view's chip, podcast, search, and sort filters.
+    /// Completed downloads only are represented by `DownloadService.downloads`; in-flight and
+    /// waiting transfers are not episodes in this catalog. Archiving is independent of played
+    /// state and does not mark played, delete files, clear the queue, or trigger auto-delete after
+    /// playing. Writes `archivedAtById` once and preserves existing archive timestamps. Callers
+    /// must confirm first (Downloads toolbar `confirmationDialog`).
+    func archiveAllDownloads() {
+        guard let downloads else { return }
+        let ids = downloads.downloads
+            .map(\.episode.id)
+            .filter { !isArchived($0) }
+        guard !ids.isEmpty else { return }
+
+        let now = Int64(Date().timeIntervalSince1970 * 1000)
+        var map = archivedAtById
+        for id in ids {
+            if map[id] == nil {
+                map[id] = now
+            }
+        }
+        archivedAtById = map
+    }
+
     /// Mark every played episode in the soft-capped All Episodes catalog as unplayed.
     /// The catalog is the newest 500 episodes by publish date, matching `allEpisodes` and the
     /// Add all / Play random / Copy / Share catalog. This deliberately ignores UI status, podcast,

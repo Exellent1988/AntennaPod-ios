@@ -29006,20 +29006,56 @@
         }
       }
     },
-    "Copy downloads, share downloads, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, cancel all downloads, delete played downloads, or clear all downloads": {
+    "Copy downloads, share downloads, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, archive all, cancel all downloads, delete played downloads, or clear all downloads": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Downloads actions menu.",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copy downloads, share downloads, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, cancel all downloads, delete played downloads, or clear all downloads"
+            "value": "Copy downloads, share downloads, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, archive all, cancel all downloads, delete played downloads, or clear all downloads"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Downloads kopieren, Downloads teilen, Zufällig abspielen, Alle zur Warteschlange, Alle ungehörten zur Warteschlange, Alle als gehört markieren, Alle als ungehört markieren, Alle Downloads abbrechen, gehörte Downloads löschen oder alle Downloads löschen"
+            "value": "Downloads kopieren, Downloads teilen, Zufällig abspielen, Alle zur Warteschlange, Alle ungehörten zur Warteschlange, Alle als gehört markieren, Alle als ungehört markieren, Alle archivieren, Alle Downloads abbrechen, gehörte Downloads löschen oder alle Downloads löschen"
+          }
+        }
+      }
+    },
+    "Archives %lld non-archived downloaded episode(s) in the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing.": {
+      "extractionState": "manual",
+      "comment": "Downloads Archive all confirmation message — full completed catalog, non-archived eligibility, not chip/podcast/search/sort; archive does not trigger auto-delete.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archives %lld non-archived downloaded episode(s) in the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert %lld nicht archivierte heruntergeladene Episode(n) im vollständigen Katalog abgeschlossener Downloads, unabhängig von Chip-, Podcast-, Such- oder Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nichts als gehört, löscht keine Dateien, leert nicht die Queue und löst kein Auto-Löschen nach Wiedergabe aus."
+          }
+        }
+      }
+    },
+    "Archives non-archived completed downloads in the full Downloads catalog; ignores chip, podcast, search, and sort filters; archived does not mean played": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Downloads Archive all.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archives non-archived completed downloads in the full Downloads catalog; ignores chip, podcast, search, and sort filters; archived does not mean played"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert nicht archivierte abgeschlossene Downloads im vollständigen Katalog; ignoriert Chip-, Podcast-, Such- und Sortierfilter; archiviert bedeutet nicht gehört"
           }
         }
       }
