@@ -117,6 +117,16 @@ struct PodcastSoundbitesListView: View {
                     .accessibilityHidden(true)
             }
 
+            let copyText = PodcastSoundbiteDisplay.copyText(bite)
+            let shareURL: URL? = {
+                guard let url = URL(string: copyText),
+                      let scheme = url.scheme?.lowercased(),
+                      scheme == "http" || scheme == "https" else {
+                    return nil
+                }
+                return url
+            }()
+
             HStack(spacing: 12) {
                 if canPlaySoundbite {
                     Button {
@@ -139,7 +149,7 @@ struct PodcastSoundbitesListView: View {
                 }
 
                 Button {
-                    UIPasteboard.general.string = PodcastSoundbiteDisplay.copyText(bite)
+                    UIPasteboard.general.string = copyText
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {
@@ -152,6 +162,28 @@ struct PodcastSoundbitesListView: View {
                         localized: "Copies the soundbite title and times to the pasteboard"
                     )
                 )
+
+                if !copyText.isEmpty {
+                    Group {
+                        if let shareURL {
+                            ShareLink(item: shareURL) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        } else {
+                            ShareLink(item: copyText) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
+                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the soundbite URL when it is a parseable http(s) URL; otherwise shares the same soundbite value as Copy"
+                        )
+                    )
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
