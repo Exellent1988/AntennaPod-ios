@@ -1027,6 +1027,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     case discover
     case recentlyUpdated
     case favorites
+    case downloads
 
     var id: String { rawValue }
 
@@ -1038,6 +1039,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
         case .discover: return String(localized: "Discover")
         case .recentlyUpdated: return String(localized: "Recently updated")
         case .favorites: return String(localized: "Favorites")
+        case .downloads: return String(localized: "Downloads")
         }
     }
 
@@ -1049,16 +1051,17 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
         case .discover: return "chart.bar"
         case .recentlyUpdated: return "dot.radiowaves.left.and.right"
         case .favorites: return "star"
+        case .downloads: return "arrow.down.circle"
         }
     }
 
     /// Default order matches the previous fixed Home layout (Discover first).
     static let defaultOrder: [HomeSectionId] = [
-        .discover, .continueListening, .inbox, .queue, .recentlyUpdated, .favorites
+        .discover, .continueListening, .inbox, .queue, .recentlyUpdated, .favorites, .downloads
     ]
 
-    /// Favorites starts hidden so enabling it is opt-in (optional Home preview).
-    static let defaultHidden: Set<HomeSectionId> = [.favorites]
+    /// Favorites and Downloads start hidden so enabling them is opt-in (optional Home previews).
+    static let defaultHidden: Set<HomeSectionId> = [.favorites, .downloads]
 }
 
 
@@ -2547,9 +2550,17 @@ final class AppSettings: ObservableObject {
             return HomeSectionId.defaultHidden
         }
         let raw = UserDefaults.standard.string(forKey: Keys.homeHiddenSections) ?? ""
-        let parsed = Set(raw.split(separator: ",").compactMap { HomeSectionId(rawValue: String($0)) })
+        var parsed = Set(raw.split(separator: ",").compactMap { HomeSectionId(rawValue: String($0)) })
         // Ignore ids that are no longer known.
-        return parsed.intersection(Set(HomeSectionId.allCases))
+        parsed = parsed.intersection(Set(HomeSectionId.allCases))
+        // Newly introduced default-hidden sections: if they were not in the previously
+        // persisted order (user never configured them), keep them hidden (opt-in).
+        let orderRaw = UserDefaults.standard.string(forKey: Keys.homeSectionOrder) ?? ""
+        let knownInOrder = Set(orderRaw.split(separator: ",").compactMap { HomeSectionId(rawValue: String($0)) })
+        for id in HomeSectionId.defaultHidden where !knownInOrder.contains(id) {
+            parsed.insert(id)
+        }
+        return parsed
     }
 
     private static func loadStorageLimit() -> DownloadStorageLimit {
@@ -2771,8 +2782,14 @@ final class AppSettings: ObservableObject {
             homeSectionOrder = order
         }
         if let hiddenRaw = snap.homeHiddenSections {
-            homeHiddenSections = Set(hiddenRaw.compactMap { HomeSectionId(rawValue: $0) })
+            var hidden = Set(hiddenRaw.compactMap { HomeSectionId(rawValue: $0) })
                 .intersection(Set(HomeSectionId.allCases))
+            // Newly introduced default-hidden sections absent from the backup order stay opt-in hidden.
+            let knownInOrder = Set((snap.homeSectionOrder ?? []).compactMap { HomeSectionId(rawValue: $0) })
+            for id in HomeSectionId.defaultHidden where !knownInOrder.contains(id) {
+                hidden.insert(id)
+            }
+            homeHiddenSections = hidden
         }
         if let sortRaw = snap.subscriptionsSort {
             subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated

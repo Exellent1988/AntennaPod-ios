@@ -3,11 +3,13 @@ import SwiftUI
 /// Landing tab: honest previews driven by Settings → Home layout (order + visibility).
 /// Toolbar **Configure Home** opens the same layout editor (Android `configure_home` parity).
 /// `.searchable` filters visible section episode/podcast previews (title + feed); empty sections hide while filtering.
+/// Optional **Downloads** preview (newest completed first; off by default) soft-caps like Favorites.
 struct HomeView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var parental: ParentalControls
+    @EnvironmentObject private var downloads: DownloadService
     @Binding var selectedTab: RootTab
     @State private var showDiscoverPINGate = false
     @State private var navigateToDiscover = false
@@ -63,6 +65,34 @@ struct HomeView: View {
 
     private var favoriteItems: [FavoriteEpisode] {
         Array(filterEpisodes(store.favoriteEpisodes).prefix(previewLimit))
+    }
+
+    /// Downloads Home preview catalog: newest completed first (`downloadedAtEpochMs`, else
+    /// `pubDateEpochMs` / id tiebreak). Does **not** follow Downloads tab chips (`downloadsFilter` /
+    /// `downloadsPodcastFilter`) or `downloadsSort` — Home stays newest-completed-first.
+    private var downloadsCatalogNewestFirst: [DownloadedEpisode] {
+        downloads.downloads.sorted { lhs, rhs in
+            let l = lhs.downloadsSortEpochMs ?? Int64.min
+            let r = rhs.downloadsSortEpochMs ?? Int64.min
+            if l != r { return l > r }
+            return lhs.episode.id < rhs.episode.id
+        }
+    }
+
+    /// Title/feed filter over full newest-completed catalog (before soft-cap).
+    private var filteredDownloadsCatalog: [DownloadedEpisode] {
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let base = downloadsCatalogNewestFirst
+        if q.isEmpty { return base }
+        return base.filter { item in
+            if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+            let feedTitle = store.feed(containingEpisodeId: item.episode.id)?.title ?? ""
+            return feedTitle.localizedCaseInsensitiveContains(q)
+        }
+    }
+
+    private var downloadItems: [DownloadedEpisode] {
+        Array(filteredDownloadsCatalog.prefix(previewLimit))
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible Continue preview**
@@ -248,6 +278,52 @@ struct HomeView: View {
         )
     }
 
+    /// AntennaPod-like info bar: episode count + remaining over the **visible Downloads preview**
+    /// rows only (`downloadItems` = newest-completed + title/feed filter then soft-cap
+    /// `previewLimit`). Remaining per episode = `max(0, duration − position)` when duration known;
+    /// unplayed with duration contributes full duration; **played** (not current) → 0; **unknown
+    /// duration skipped** (tilde when any skipped). Currently playing uses live `PlaybackService`
+    /// position/duration. Wall-clock only (no playback-speed divide).
+    /// **Preview soft-cap honesty:** never claims remaining beyond the visible preview rows
+    /// (first `previewLimit` after search filter) — not the full `DownloadService.downloads`
+    /// catalog / Downloads tab chip+search filter / tab badge.
+    /// Preview stays newest-completed-first (does **not** follow Downloads `downloadsSort` /
+    /// chips).
+    private var downloadsRemainingInfoLabel: String? {
+        guard !downloadItems.isEmpty else { return nil }
+        return EpisodeRemainingTime.episodesInfoBarLabel(for: downloadsRemainingSummary)
+    }
+
+    private var downloadsRemainingAccessibilityLabel: String {
+        guard let label = downloadsRemainingInfoLabel else { return "" }
+        var parts = [String(localized: "Home Downloads remaining time \(label)")]
+        let unknown = downloadsRemainingSummary.unknownCount
+        if unknown > 0 {
+            parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
+        }
+        // Soft-cap: filtered downloads catalog longer than visible preview rows.
+        if filteredDownloadsCatalog.count > downloadItems.count {
+            parts.append(
+                String(
+                    localized: "Home Downloads remaining time covers the preview only (first \(previewLimit)), not the full Downloads list"
+                )
+            )
+        }
+        return parts.joined(separator: ". ")
+    }
+
+    private var downloadsRemainingSummary: EpisodeRemainingTime.Summary {
+        EpisodeRemainingTime.summarize(
+            episodes: downloadItems.map(\.episode),
+            currentEpisodeId: playback.currentEpisode?.id,
+            liveDurationSeconds: playback.durationSeconds,
+            livePositionSeconds: playback.positionSeconds,
+            isPlayed: { store.isPlayed($0) },
+            savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
+            savedPositionSeconds: { store.positionSeconds(for: $0) }
+        )
+    }
+
     /// Library content that would appear under visible non-Discover sections (respects search filter).
     private var hasVisibleLibraryContent: Bool {
         for id in settings.visibleHomeSections {
@@ -262,6 +338,8 @@ struct HomeView: View {
                 if !recentFeeds.isEmpty { return true }
             case .favorites:
                 if !favoriteItems.isEmpty { return true }
+            case .downloads:
+                if !downloadItems.isEmpty { return true }
             case .discover:
                 continue
             }
@@ -300,7 +378,7 @@ struct HomeView: View {
                     }
                     .accessibilityLabel(String(localized: "Configure Home"))
                     .accessibilityHint(
-                        String(localized: "Opens Home layout to show, hide, and reorder Home sections. Same editor as Settings → Home layout. Does not invent a Downloads Home section.")
+                        String(localized: "Opens Home layout to show, hide, and reorder Home sections. Same editor as Settings → Home layout. Optional Downloads preview is off by default.")
                     )
                 }
             }
@@ -390,6 +468,10 @@ struct HomeView: View {
         case .favorites:
             if !favoriteItems.isEmpty {
                 favoritesSection
+            }
+        case .downloads:
+            if !downloadItems.isEmpty {
+                downloadsSection
             }
         }
     }
@@ -591,6 +673,48 @@ struct HomeView: View {
                 FavoritesView()
             } label: {
                 Text(store.favoriteEpisodes.count > previewLimit ? "See all Favorites" : "Open Favorites")
+                    .font(.footnote)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var downloadsSection: some View {
+        Section {
+            // AntennaPod-like Downloads preview info bar (visible preview rows remaining time).
+            // Soft-cap honesty: first `previewLimit` after search filter — not full Downloads / tab badge.
+            if let remainingLabel = downloadsRemainingInfoLabel {
+                Text(remainingLabel)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(downloadsRemainingAccessibilityLabel)
+                    .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            }
+            ForEach(downloadItems) { item in
+                EpisodeRow(
+                    episode: item.episode,
+                    feedTitle: store.feed(containingEpisodeId: item.episode.id)?.title ?? "",
+                    dateOverride: item.downloadedAtEpochMs.map {
+                        Date(timeIntervalSince1970: Double($0) / 1000)
+                    },
+                    dateAccessibilityLabel: "Downloaded"
+                )
+            }
+        } header: {
+            homeSectionLink(
+                title: "Downloads",
+                systemImage: "arrow.down.circle",
+                tab: .downloads,
+                total: downloads.downloads.count
+            )
+        } footer: {
+            Button {
+                selectedTab = .downloads
+            } label: {
+                Text(downloads.downloads.count > previewLimit ? "See all in Downloads" : "Open Downloads")
                     .font(.footnote)
             }
         }

@@ -6,8 +6,9 @@ import SwiftUI
 /// Toggle still targets the named `HomeSectionId` (safe while filtering). Drag/Edit `.onMove` is
 /// disabled while filtering — filtered IndexSet ≠ full `homeSectionOrder` (same honesty as Queue).
 /// Reset to defaults always rewrites the **full** layout model (not the filtered subset) after confirm.
-/// **Honesty:** only the six known `HomeSectionId` cases (Continue, Inbox, Queue, Discover,
-/// Recently updated, Favorites) — no Downloads / Statistics / Echo Home section invented.
+/// **Honesty:** only the known `HomeSectionId` cases (Continue, Inbox, Queue, Discover,
+/// Recently updated, Favorites, Downloads) — no Statistics / Echo Home section invented.
+/// Favorites and Downloads are optional / off by default.
 struct HomeLayoutSettingsView: View {
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.editMode) private var editMode
@@ -84,7 +85,7 @@ struct HomeLayoutSettingsView: View {
                     String(localized: "Asks for confirmation, then restores the full default Home section order and visibility, not only the filtered list")
                 )
             } footer: {
-                Text(String(localized: "Reset restores Discover → Continue → Inbox → Queue → Recently updated → Favorites (Favorites hidden). Does not change Home search, subscriptions, queue, or downloads."))
+                Text(String(localized: "Reset restores Discover → Continue → Inbox → Queue → Recently updated → Favorites → Downloads (Favorites and Downloads hidden). Does not change Home search, subscriptions, queue, or the Downloads tab catalog."))
             }
         }
         .navigationTitle("Home layout")
@@ -113,7 +114,7 @@ struct HomeLayoutSettingsView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text(String(localized: "Restores the full default section order and visibility (Favorites off). Applies to the whole layout — not only rows matching the current search. Home content search, subscriptions, queue, and downloads are unchanged."))
+            Text(String(localized: "Restores the full default section order and visibility (Favorites and Downloads off). Applies to the whole layout — not only rows matching the current search. Home content search, subscriptions, queue, and the Downloads tab catalog are unchanged."))
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -131,9 +132,9 @@ struct HomeLayoutSettingsView: View {
 
     private var footerText: String {
         if isFiltering {
-            return String(localized: "Toggle visibility on matching rows. Drag reorder is off while searching (filtered positions would not match the full layout). Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites is off by default. No Downloads Home section — use the Downloads tab.")
+            return String(localized: "Toggle visibility on matching rows. Drag reorder is off while searching (filtered positions would not match the full layout). Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites, Downloads) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites and Downloads are off by default.")
         }
-        return String(localized: "Toggle visibility and tap Edit to drag-reorder. Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites is off by default. No Downloads Home section — use the Downloads tab.")
+        return String(localized: "Toggle visibility and tap Edit to drag-reorder. Empty optional sections (Continue, Inbox, Queue, Recently updated, Favorites, Downloads) still hide on Home when they have no items. Discover always shows its charts preview when enabled. Favorites and Downloads are off by default.")
     }
 
     /// VoiceOver value: Visible/Hidden + 1-based position in the full persisted order.
