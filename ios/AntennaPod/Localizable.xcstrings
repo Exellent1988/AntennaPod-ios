@@ -14329,22 +14329,113 @@
         }
       }
     },
-    "Opens the funding page in the system browser": {
+    "Opens the feed-provided funding/support page in the system browser; does not process payments": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Opens the funding page in the system browser"
+            "value": "Opens the feed-provided funding/support page in the system browser; does not process payments"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Öffnet die Finanzierungsseite im Systembrowser"
+            "value": "Öffnet die vom Feed bereitgestellte Finanzierungs-/Supportseite im Systembrowser; verarbeitet keine Zahlungen"
           }
         }
-      }
+      },
+      "comment": "VoiceOver hint for the feed-provided funding/support page. Display/open only; no payment processing."
+    },
+    "Copy funding URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy funding URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funding-URL kopieren"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯: copy the feed-provided funding/support page URL. Hidden when fundingURL is missing."
+    },
+    "Share funding URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share funding URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funding-URL teilen"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯: share the feed-provided funding/support page URL. Hidden when fundingURL is missing."
+    },
+    "Copies the feed-provided funding/support page URL to the pasteboard; does not process payments": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided funding/support page URL to the pasteboard; does not process payments"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vom Feed bereitgestellte URL der Finanzierungs-/Supportseite in die Zwischenablage; verarbeitet keine Zahlungen"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy funding URL. Display/copy only; no payment processing."
+    },
+    "Shares the feed-provided funding/support page URL; does not process payments": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the feed-provided funding/support page URL; does not process payments"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die vom Feed bereitgestellte URL der Finanzierungs-/Supportseite; verarbeitet keine Zahlungen"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share funding URL. Display/share only; no payment processing."
+    },
+    "Funding URL copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funding URL copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funding-URL in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Alert message after copying the feed-provided funding URL."
     },
     "Category %@": {
       "extractionState": "manual",

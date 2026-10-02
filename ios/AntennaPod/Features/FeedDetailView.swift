@@ -17,11 +17,13 @@ struct FeedDetailView: View {
     @State private var showDeleteDownloadsConfirm = false
     @State private var showUnsubscribeConfirm = false
     @State private var showFeedURLCopied = false
+    @State private var showFundingURLCopied = false
     @State private var showPodcastGuidCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
     @State private var copyFeedURLFeedbackTick = 0
+    @State private var copyFundingURLFeedbackTick = 0
     @State private var copyPodcastGuidFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -986,7 +988,31 @@ struct FeedDetailView: View {
                                 Label(liveFeed.supportActionTitle, systemImage: "heart.circle")
                             }
                             .accessibilityLabel(liveFeed.supportAccessibilityLabel)
-                            .accessibilityHint(String(localized: "Opens the funding page in the system browser"))
+                            .accessibilityHint(
+                                String(localized: "Opens the feed-provided funding/support page in the system browser; does not process payments")
+                            )
+
+                            Button {
+                                copyFundingURL(url)
+                            } label: {
+                                Label("Copy funding URL", systemImage: "doc.on.doc")
+                            }
+                            .accessibilityLabel(String(localized: "Copy funding URL"))
+                            .accessibilityHint(
+                                String(localized: "Copies the feed-provided funding/support page URL to the pasteboard; does not process payments")
+                            )
+
+                            ShareLink(
+                                item: url,
+                                subject: Text(feedDisplayTitle),
+                                message: Text("\(feedDisplayTitle) — \(liveFeed.supportActionTitle)")
+                            ) {
+                                Label("Share funding URL", systemImage: "square.and.arrow.up")
+                            }
+                            .accessibilityLabel(String(localized: "Share funding URL"))
+                            .accessibilityHint(
+                                String(localized: "Shares the feed-provided funding/support page URL; does not process payments")
+                            )
                         }
 
                         if let interact = liveFeed.preferredSocialInteract,
@@ -1244,6 +1270,14 @@ struct FeedDetailView: View {
         }
         .alert(
             String(localized: "Copied"),
+            isPresented: $showFundingURLCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Funding URL copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
             isPresented: $showPodcastGuidCopied
         ) {
             Button("OK", role: .cancel) {}
@@ -1251,6 +1285,7 @@ struct FeedDetailView: View {
             Text(String(localized: "Podcast GUID copied to the pasteboard."))
         }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastGuidFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
@@ -1301,6 +1336,12 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = trimmed
         copyFeedURLFeedbackTick += 1
         showFeedURLCopied = true
+    }
+
+    private func copyFundingURL(_ url: URL) {
+        UIPasteboard.general.string = url.absoluteString
+        copyFundingURLFeedbackTick += 1
+        showFundingURLCopied = true
     }
 
     /// Feed-provided Podcast Index `podcast:guid` only — never invent / never derive from feed URL.
