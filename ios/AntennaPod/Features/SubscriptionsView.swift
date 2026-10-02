@@ -771,6 +771,19 @@ struct SubscriptionsView: View {
                             .lineLimit(1)
                             .accessibilityHidden(true)
                     }
+                    // Last refreshed: subtle caption only when row is not already crowded (no author/language/categories).
+                    // Local-folder / nil hide. Prefer Feed detail + VoiceOver when space is tight.
+                    if feed.displayAuthor == nil,
+                       feed.displayLanguage == nil,
+                       feed.categoriesCaption == nil,
+                       !LocalFolderFeed.isLocalFolderFeed(feed),
+                       let date = feed.lastRefreshedAt {
+                        Text(date, style: .relative)
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                            .lineLimit(1)
+                            .accessibilityHidden(true)
+                    }
                     HStack(spacing: 6) {
                         Text("\(feed.episodes.count) episodes")
                             .font(.subheadline)
@@ -842,6 +855,15 @@ struct SubscriptionsView: View {
         .modifier(OpenPodcastWebsiteContextMenu(url: feed.websiteURL, openURL: openURL))
     }
 
+
+    /// VoiceOver for last successful network refresh. Nil for local-folder / never refreshed (never invent).
+    private func lastRefreshedAccessibility(_ feed: PodcastFeed) -> String? {
+        guard !LocalFolderFeed.isLocalFolderFeed(feed),
+              let date = feed.lastRefreshedAt else { return nil }
+        let caption = date.formatted(date: .abbreviated, time: .shortened)
+        return String(localized: "Last refreshed \(caption)")
+    }
+
     /// Compact per-feed remaining for a subscription row. Hidden when unplayed is 0 or all
     /// durations unknown (no invented time). Prefix `~` when any unplayed episode lacks duration.
     private func feedRowRemainingLabel(_ summary: FeedUnplayedRemainingSummary?) -> String? {
@@ -904,6 +926,9 @@ struct SubscriptionsView: View {
         }
         if let remainingLabel {
             parts.append(remainingLabel)
+        }
+        if let lastRefreshed = lastRefreshedAccessibility(feed) {
+            parts.append(lastRefreshed)
         }
         let tags = store.tags(for: feed.id)
         if !tags.isEmpty, tagFilter == .all, !groupByTag {

@@ -94,7 +94,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Show remaining time (Settings toggle, default off; mini + full player right label −remaining; full-player tap toggles)
 - Rewind after pause (Settings Off/1/2/3/5/10, default 2; resume after pause ≥1s seeks back; not on cold play)
 - Smart mark as played (Settings presets Off/15/30/60/120/300/600 + Custom… 1–600s, default 30; Off = natural end / explicit only; seconds remaining — not percent)
-- Feed refresh / Keep updated (global interval; auto on launch & foreground when due)
+- Feed refresh / Keep updated (global interval; auto on launch & foreground when due; **per-feed Last refreshed** via `lastRefreshedAtEpochMs` — stamp only on successful network parse; Feed detail + VoiceOver; hide when nil / local-folder)
 - New-episode action (Inbox only / Add to Queue / Add to Queue and download; per-feed Use global / Inbox / Queue; after refresh newcomers only)
 - Auto-download (global on/off + episodes-per-feed cap; **new episode IDs after refresh only**; Wi‑Fi only under Network / Downloads; per-feed Use global / Always / Never; skips local-folder)
 - Mobile / Wi‑Fi policy (Current network status + auto / manual download / stream Wi‑Fi-only toggles; shared NWPathMonitor; no VPN/proxy)
@@ -845,6 +845,8 @@ Audio apps often appear on CarPlay through **system Now Playing** once they publ
 ## Feed refresh / Keep updated
 
 Settings → **Feeds / Keep updated** offers refresh presets: Manual only, Every 1 / 4 / 12 / 24 hours (persisted in `AppSettings`). When not manual, opening the app (launch `.task` or returning to foreground via `scenePhase`) calls `PodcastStore.refreshAllFeeds()` if the interval elapsed since `lastFeedRefreshAt` (also stamped after manual Refresh all / Home+Inbox+Subscriptions pull-to-refresh). **Subscriptions** toolbar **Refresh all** (and list pull-to-refresh) call the same `refreshAllFeeds()` — ProgressView while `store.isLoading` shows honest **Refreshing N of M…** (`refreshCompletedCount`/`refreshTotalCount` for Keep-updated-participating feeds; EN/DE + VoiceOver), disabled when empty or in flight. Global interval still drives when auto refresh runs; per-feed **Keep updated → Never** skips that feed in `refreshAllFeeds` (single-feed refresh from Subscriptions swipe still works). Use global / Always both participate today. **BGAppRefreshTask is stubbed**: `Info.plist` only has `UIBackgroundModes` → `audio` (no `fetch`, no `BGTaskSchedulerPermittedIdentifiers`), so `FeedRefreshCoordinator` does not register a background task — enable later by adding those keys.
+
+**Per-feed Last refreshed (beta polish):** Each `PodcastFeed` may store `lastRefreshedAtEpochMs` (`Int64?`; missing in older JSON → nil). Stamped **only** after a successful network fetch+parse in `subscribeQuietly` (Refresh all / Keep updated / pull-to-refresh / single-feed Refresh / first subscribe). A **failed** refresh does **not** update the stamp (previous value kept — never claims success). **Local-folder feeds:** Rescan is **not** a network refresh — leave nil and **hide** the label (do not invent times). Feed detail shows a **Last refreshed** / **Zuletzt aktualisiert** metadata row with a live relative date when known (hide when nil). Subscriptions: VoiceOver includes the stamp; optional subtle caption only when the row is not already crowded (author/language/categories). Unsubscribe removes the feed (and stamp). OPML unchanged; included automatically in feed JSON / iOS backup maps. EN/DE + VoiceOver.
 
 
 ## New-episode action (Inbox / Queue)

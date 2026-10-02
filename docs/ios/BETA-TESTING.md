@@ -309,6 +309,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Per-feed settings (auto-DL / keep / notify / tags / **HTTP Basic Auth Keychain**; Speed Use global·Presets + Custom… 0,50–3,00×) | ☐ Per-feed settings (auto-DL / keep / notify / tags / **HTTP Basic Auth Keychain**; Speed Use global·presets + Custom… 0.50–3.00×) |
 | ☐ Per-feed Keep updated → Never: Refresh all überspringt; Einzel-Refresh OK | ☐ Per-feed Keep updated → Never: Refresh all skips; single-feed refresh OK |
 | ☐ Feed refresh interval / Keep updated | ☐ Feed refresh interval / Keep updated |
+| ☐ Zuletzt aktualisiert pro Feed (Feed-Detail; nur nach erfolgreichem Netz-Refresh; bei Fehler alter Stempel; Lokalordner ausgeblendet — kein erfundenes Datum; VoiceOver) | ☐ Per-feed Last refreshed (Feed detail; only after successful network refresh; failed keeps previous; local-folder hidden — never invent; VoiceOver) |
 | ☐ New-episode action (Inbox / Queue) | ☐ New-episode action (Inbox / Queue) |
 | ☐ Siri / Shortcuts lite (App Intents Play/Pause/Skip + `antennapod://…`; öffnet App; Episode geladen; kein CarPlay-Template) | ☐ Siri / Shortcuts lite (App Intents Play/Pause/Skip + `antennapod://…`; opens app; episode loaded; not CarPlay templates) |
 | ☐ Homescreen widget Continue listening + Restzeit (kann stale sein; `~` wenn Dauer unbekannt) | ☐ Homescreen widget Continue listening + remaining time (may be stale; `~` when duration unknown) |

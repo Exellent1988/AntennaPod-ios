@@ -2135,6 +2135,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Namespace typically has exactly one remoteItem pointing at the publisher feed.
     var publisherItems: [PodcastRemoteItem]
     var episodes: [PodcastEpisode]
+    /// Epoch ms of the last **successful** network feed refresh/parse for this subscription.
+    /// `nil` when never successfully refreshed (legacy JSON) or for local-folder feeds (no network refresh — hide UI; do not invent).
+    /// Updated only on successful `subscribeQuietly` / fetch+parse; failed refresh leaves the previous value.
+    /// Local JSON / backup only — not OPML. Removed with the feed on unsubscribe.
+    var lastRefreshedAtEpochMs: Int64?
 
     /// Non-empty feed description (may still contain HTML).
     var hasDescriptionText: Bool {
@@ -2342,6 +2347,13 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         return nil
     }
 
+
+    /// Date of last successful network refresh when `lastRefreshedAtEpochMs` is set. Hidden when nil / local-folder.
+    var lastRefreshedAt: Date? {
+        guard let ms = lastRefreshedAtEpochMs else { return nil }
+        return Date(timeIntervalSince1970: Double(ms) / 1000.0)
+    }
+
     /// Channel-level `podcast:podroll` remote items (hide when empty — never invent recommendations; display-only).
     var displayPodrollItems: [PodcastRemoteItem] {
         PodcastPodrollDisplay.valid(podrollItems)
@@ -2384,7 +2396,8 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         images: [PodcastImageVariant] = [],
         podrollItems: [PodcastRemoteItem] = [],
         publisherItems: [PodcastRemoteItem] = [],
-        episodes: [PodcastEpisode]
+        episodes: [PodcastEpisode],
+        lastRefreshedAtEpochMs: Int64? = nil
     ) {
         self.id = id
         self.title = title
@@ -2418,6 +2431,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         self.podrollItems = podrollItems
         self.publisherItems = publisherItems
         self.episodes = episodes
+        self.lastRefreshedAtEpochMs = lastRefreshedAtEpochMs
     }
 
     init(from decoder: Decoder) throws {
@@ -2454,10 +2468,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         podrollItems = try c.decodeIfPresent([PodcastRemoteItem].self, forKey: .podrollItems) ?? []
         publisherItems = try c.decodeIfPresent([PodcastRemoteItem].self, forKey: .publisherItems) ?? []
         episodes = try c.decodeIfPresent([PodcastEpisode].self, forKey: .episodes) ?? []
+        lastRefreshedAtEpochMs = try c.decodeIfPresent(Int64.self, forKey: .lastRefreshedAtEpochMs)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, isBlocked, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, licenses, images, podrollItems, publisherItems, episodes
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, isBlocked, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, licenses, images, podrollItems, publisherItems, episodes, lastRefreshedAtEpochMs
     }
 }
 

@@ -1851,6 +1851,10 @@ final class PodcastStore: ObservableObject {
         let resolvedCreds = credentials ?? httpBasicCredentials(forFeedUrl: feedUrl)
         var feed = try await repository.fetchAndParse(feedUrl: feedUrl, credentials: resolvedCreds)
         feed.feedUrl = feedUrl
+        // Stamp only on successful network fetch+parse. Failed refresh throws before this
+        // and leaves any previous `lastRefreshedAtEpochMs` untouched. Local-folder feeds
+        // never go through this path (Rescan is not a network refresh — leave nil / hide).
+        feed.lastRefreshedAtEpochMs = Int64(Date().timeIntervalSince1970 * 1000)
         if let index = feeds.firstIndex(where: { $0.feedUrl == feedUrl }) {
             feed.id = feeds[index].id // keep stable identity across refresh
             feeds[index] = feed

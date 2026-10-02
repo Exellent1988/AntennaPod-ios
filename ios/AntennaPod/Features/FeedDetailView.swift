@@ -55,6 +55,13 @@ struct FeedDetailView: View {
         liveFeed.displayLanguage
     }
 
+
+    /// Last successful network refresh when known — hidden when nil / local-folder (never invent).
+    private var lastRefreshedAt: Date? {
+        guard !LocalFolderFeed.isLocalFolderFeed(liveFeed) else { return nil }
+        return liveFeed.lastRefreshedAt
+    }
+
     /// Channel podcast:medium raw string when the feed provided it — hidden when missing (never invent/remap).
     private var displayMedium: String? {
         liveFeed.displayMedium
@@ -338,6 +345,22 @@ struct FeedDetailView: View {
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityLabel(String(localized: "Language \(language)"))
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Last successful network refresh — hide when nil / local-folder (Rescan is not a network refresh).
+            if let lastRefreshedAt {
+                Section {
+                    LabeledContent(String(localized: "Last refreshed")) {
+                        Text(lastRefreshedAt, style: .relative)
+                            .foregroundStyle(.secondary)
+                    }
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(
+                        String(
+                            localized: "Last refreshed \(lastRefreshedAt.formatted(date: .abbreviated, time: .shortened))"
+                        )
+                    )
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
