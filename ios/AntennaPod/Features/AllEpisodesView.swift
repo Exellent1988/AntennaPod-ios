@@ -311,6 +311,16 @@ struct AllEpisodesView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver hint for the All Episodes remaining bar. The visible label stays the
+    /// count and time. This says whether that time is wall-clock or divided by
+    /// podcast/default speed, and that the bar is the newest-500 visible list.
+    private var allEpisodesRemainingAccessibilityHint: String {
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. The All Episodes bar is the visible list after the newest-500 cap, then sort, status chip (All, Unplayed, Downloaded, or Favorites), podcast filter, episode type, and search. Sort changes order only and does not pull older episodes beyond that cap. Played episodes that are not currently playing count as zero. It is not the newest-500 catalog behind Add all to queue, Add all unplayed to queue, Mark all as played, Mark all as unplayed, Archive all, Play random, Copy all episodes, or Share all episodes. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+        }
+        return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The All Episodes bar is the visible list after the newest-500 cap, then sort, status chip (All, Unplayed, Downloaded, or Favorites), podcast filter, episode type, and search. Sort changes order only and does not pull older episodes beyond that cap. Played episodes that are not currently playing count as zero. It is not the newest-500 catalog behind Add all to queue, Add all unplayed to queue, Mark all as played, Mark all as unplayed, Archive all, Play random, Copy all episodes, or Share all episodes. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+    }
+
     private var allEpisodesRemainingSummary: EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
             episodes: items.map(\.episode),
@@ -432,6 +442,7 @@ struct AllEpisodesView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(allEpisodesRemainingAccessibilityLabel)
+                        .accessibilityHint(allEpisodesRemainingAccessibilityHint)
                 }
                 .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
             }
