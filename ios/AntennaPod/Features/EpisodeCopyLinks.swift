@@ -8,6 +8,59 @@ import UIKit
 /// Pasteboard helpers shared with Full player / Shownotes / EpisodeRow callers.
 /// Used by Full player secondary (via helpers) + mini player ⋯ (via `labelStyle`).
 enum EpisodeCopyLinks {
+    /// Feed or saved playback duration used by EpisodeRow metadata captions.
+    /// A live player duration can be supplied by callers that have media metadata; never invents.
+    static func knownDurationSeconds(
+        for episode: PodcastEpisode,
+        liveDurationSeconds: Double? = nil,
+        savedDurationSeconds: Double? = nil
+    ) -> Double? {
+        if episode.hasKnownDuration { return episode.durationSeconds }
+        if let liveDurationSeconds, liveDurationSeconds.isFinite, liveDurationSeconds > 0 {
+            return liveDurationSeconds
+        }
+        if let savedDurationSeconds, savedDurationSeconds.isFinite, savedDurationSeconds > 0 {
+            return savedDurationSeconds
+        }
+        return nil
+    }
+
+    /// Same human-readable duration caption used by episode metadata surfaces.
+    static func formattedDuration(
+        for episode: PodcastEpisode,
+        liveDurationSeconds: Double? = nil,
+        savedDurationSeconds: Double? = nil
+    ) -> String? {
+        PodcastEpisode.formatPlaybackPosition(
+            knownDurationSeconds(
+                for: episode,
+                liveDurationSeconds: liveDurationSeconds,
+                savedDurationSeconds: savedDurationSeconds
+            )
+        )
+    }
+
+    /// Prefer the on-disk copy's size, then the feed enclosure size; hide unknown/zero values.
+    static func knownByteSize(for episode: PodcastEpisode, downloads: DownloadService) -> Int64? {
+        if let item = downloads.downloads.first(where: { $0.id == episode.id }) {
+            if let size = item.localFileByteSize() { return size }
+            // Retain the persisted feed enclosure value when a download row is stale.
+            if item.episode.size > 0 { return item.episode.size }
+        }
+        if let url = downloads.localURL(for: episode) {
+            let values = try? url.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
+            if values?.isRegularFile != false, let size = values?.fileSize, size > 0 {
+                return Int64(size)
+            }
+        }
+        return episode.size > 0 ? episode.size : nil
+    }
+
+    /// Same human-readable file-size caption used by episode metadata surfaces.
+    static func formattedByteSize(for episode: PodcastEpisode, downloads: DownloadService) -> String? {
+        guard let bytes = knownByteSize(for: episode, downloads: downloads) else { return nil }
+        return DownloadStorageUsage.formatBytes(bytes)
+    }
     /// Copies the episode webpage URL string; returns the localized Copied alert body.
     static func copyEpisodeLink(_ url: URL) -> String {
         UIPasteboard.general.string = url.absoluteString

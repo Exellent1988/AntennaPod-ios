@@ -2569,6 +2569,42 @@ struct EpisodeRow: View {
                 .accessibilityLabel(String(localized: "Share episode type"))
                 .accessibilityHint(String(localized: "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"))
             }
+            if let duration = formattedKnownDuration {
+                Button {
+                    copyEpisodeMetadata(
+                        duration,
+                        message: String(localized: "Episode duration copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy episode duration", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy episode duration"))
+                .accessibilityHint(String(localized: "Copies the same duration caption shown in this episode row to the pasteboard; feed or known playback metadata only; no length invented"))
+
+                ShareLink(item: duration, subject: Text(episode.title)) {
+                    Label("Share episode duration", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share episode duration"))
+                .accessibilityHint(String(localized: "Shares the same duration caption shown in this episode row as plain text; feed or known playback metadata only; no length invented"))
+            }
+            if let size = formattedKnownByteSize {
+                Button {
+                    copyEpisodeMetadata(
+                        size,
+                        message: String(localized: "Episode file size copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy episode file size", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy episode file size"))
+                .accessibilityHint(String(localized: "Copies the same file-size caption shown in this episode row to the pasteboard; on-disk or feed enclosure metadata only; no size invented"))
+
+                ShareLink(item: size, subject: Text(episode.title)) {
+                    Label("Share episode file size", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share episode file size"))
+                .accessibilityHint(String(localized: "Shares the same file-size caption shown in this episode row as plain text; on-disk or feed enclosure metadata only; no size invented"))
+            }
             if let url = episodeShareURL {
                 ShareLink(
                     item: url,
@@ -2837,46 +2873,28 @@ struct EpisodeRow: View {
         return EpisodeDateFormatting.listCaption(for: date)
     }
 
-    /// Prefer feed `itunes:duration` / media duration; fall back to saved playback duration.
-    /// Hidden when both unknown or zero — never invents a length.
+    /// Feed/media duration, then saved playback duration; hidden when unknown — never invents.
     private var knownDurationSeconds: Double? {
-        if episode.hasKnownDuration {
-            return episode.durationSeconds
-        }
-        let played = state.durationSeconds
-        if played.isFinite, played > 0 {
-            return played
-        }
-        return nil
+        EpisodeCopyLinks.knownDurationSeconds(
+            for: episode,
+            savedDurationSeconds: state.durationSeconds
+        )
     }
 
-    /// `m:ss` / `h:mm:ss` via the same formatter as the full-player scrubber / share timestamp.
+    /// Same `m:ss` / `h:mm:ss` caption shown on episode metadata surfaces.
     private var formattedKnownDuration: String? {
-        PodcastEpisode.formatPlaybackPosition(knownDurationSeconds)
+        EpisodeCopyLinks.formattedDuration(
+            for: episode,
+            savedDurationSeconds: state.durationSeconds
+        )
     }
 
-    /// Prefer on-disk file size when an offline copy exists; else feed enclosure `PodcastEpisode.size` when > 0.
-    /// Same honesty as Downloads rows (`DownloadedEpisode.knownByteSize`). Hidden when unknown — never invents MB.
+    /// Prefer the on-disk copy's size, then feed enclosure size; hide when unknown.
     private var knownByteSize: Int64? {
-        if let item = downloads.downloads.first(where: { $0.id == episode.id }) {
-            return item.knownByteSize()
-        }
-        // Local-folder `file://` (or other localURL) not necessarily in the downloads catalog.
-        if let url = downloads.localURL(for: episode) {
-            let values = try? url.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
-            if values?.isRegularFile != false,
-               let size = values?.fileSize,
-               size > 0 {
-                return Int64(size)
-            }
-        }
-        if episode.size > 0 {
-            return episode.size
-        }
-        return nil
+        EpisodeCopyLinks.knownByteSize(for: episode, downloads: downloads)
     }
 
-    /// Compact KB/MB/GB via `DownloadStorageUsage.formatBytes` / `ByteCountFormatter` when `knownByteSize` is set.
+    /// Same compact KB/MB/GB caption shown on episode metadata surfaces.
     private var formattedKnownByteSize: String? {
         guard let bytes = knownByteSize else { return nil }
         return DownloadStorageUsage.formatBytes(bytes)

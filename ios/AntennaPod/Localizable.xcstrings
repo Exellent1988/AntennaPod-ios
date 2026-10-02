@@ -31919,6 +31919,272 @@
           }
         }
       }
+    },
+
+    "Copy episode duration": {
+      "extractionState": "manual",
+      "comment": "Copy the same duration caption shown on the episode surface.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy episode duration"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodendauer kopieren"
+          }
+        }
+      }
+    },
+
+    "Share episode duration": {
+      "extractionState": "manual",
+      "comment": "Share the same duration caption shown on the episode surface as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share episode duration"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodendauer teilen"
+          }
+        }
+      }
+    },
+
+    "Copy episode file size": {
+      "extractionState": "manual",
+      "comment": "Copy the same file-size caption shown on the episode surface.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy episode file size"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dateigröße der Episode kopieren"
+          }
+        }
+      }
+    },
+
+    "Share episode file size": {
+      "extractionState": "manual",
+      "comment": "Share the same file-size caption shown on the episode surface as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share episode file size"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dateigröße der Episode teilen"
+          }
+        }
+      }
+    },
+
+    "Copies the same duration caption shown in this episode row to the pasteboard; feed or known playback metadata only; no length invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the EpisodeRow duration.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same duration caption shown in this episode row to the pasteboard; feed or known playback metadata only; no length invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe in dieser Episodenzeile angezeigte Dauerbeschriftung in die Zwischenablage; nur Feed- oder bekannte Wiedergabe-Metadaten; keine Länge erfunden"
+          }
+        }
+      }
+    },
+
+    "Shares the same duration caption shown in this episode row as plain text; feed or known playback metadata only; no length invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the EpisodeRow duration.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same duration caption shown in this episode row as plain text; feed or known playback metadata only; no length invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe in dieser Episodenzeile angezeigte Dauerbeschriftung als Klartext; nur Feed- oder bekannte Wiedergabe-Metadaten; keine Länge erfunden"
+          }
+        }
+      }
+    },
+
+    "Copies the same file-size caption shown in this episode row to the pasteboard; on-disk or feed enclosure metadata only; no size invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the EpisodeRow file size.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same file-size caption shown in this episode row to the pasteboard; on-disk or feed enclosure metadata only; no size invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe in dieser Episodenzeile angezeigte Dateigrößenbeschriftung in die Zwischenablage; nur Festplatten- oder Feed-Enclosure-Metadaten; keine Größe erfunden"
+          }
+        }
+      }
+    },
+
+    "Shares the same file-size caption shown in this episode row as plain text; on-disk or feed enclosure metadata only; no size invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the EpisodeRow file size.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same file-size caption shown in this episode row as plain text; on-disk or feed enclosure metadata only; no size invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe in dieser Episodenzeile angezeigte Dateigrößenbeschriftung als Klartext; nur Festplatten- oder Feed-Enclosure-Metadaten; keine Größe erfunden"
+          }
+        }
+      }
+    },
+
+    "Copies the same duration caption shown above to the pasteboard; feed or known playback metadata only; no length invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying duration on Shownotes / Full Player.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same duration caption shown above to the pasteboard; feed or known playback metadata only; no length invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe oben angezeigte Dauerbeschriftung in die Zwischenablage; nur Feed- oder bekannte Wiedergabe-Metadaten; keine Länge erfunden"
+          }
+        }
+      }
+    },
+
+    "Shares the same duration caption shown above as plain text; feed or known playback metadata only; no length invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing duration on Shownotes / Full Player.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same duration caption shown above as plain text; feed or known playback metadata only; no length invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe oben angezeigte Dauerbeschriftung als Klartext; nur Feed- oder bekannte Wiedergabe-Metadaten; keine Länge erfunden"
+          }
+        }
+      }
+    },
+
+    "Copies the same file-size caption shown above to the pasteboard; on-disk or feed enclosure metadata only; no size invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying file size on Shownotes / Full Player.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same file-size caption shown above to the pasteboard; on-disk or feed enclosure metadata only; no size invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe oben angezeigte Dateigrößenbeschriftung in die Zwischenablage; nur Festplatten- oder Feed-Enclosure-Metadaten; keine Größe erfunden"
+          }
+        }
+      }
+    },
+
+    "Shares the same file-size caption shown above as plain text; on-disk or feed enclosure metadata only; no size invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing file size on Shownotes / Full Player.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same file-size caption shown above as plain text; on-disk or feed enclosure metadata only; no size invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe oben angezeigte Dateigrößenbeschriftung als Klartext; nur Festplatten- oder Feed-Enclosure-Metadaten; keine Größe erfunden"
+          }
+        }
+      }
+    },
+
+    "Episode duration copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for episode duration.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode duration copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodendauer in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+
+    "Episode file size copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for episode file size.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode file size copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dateigröße der Episode in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

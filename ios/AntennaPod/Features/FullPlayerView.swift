@@ -148,6 +148,22 @@ struct FullPlayerView: View {
         return nil
     }
 
+    /// Total duration caption, never the live scrubber's remaining-time label.
+    private var formattedKnownDuration: String? {
+        guard let episode = resolvedEpisode ?? episode else { return nil }
+        return EpisodeCopyLinks.formattedDuration(
+            for: episode,
+            liveDurationSeconds: playback.durationSeconds,
+            savedDurationSeconds: store.playbackState(for: episode.id).durationSeconds
+        )
+    }
+
+    /// Prefer the local copy's on-disk size, then the feed enclosure size.
+    private var formattedKnownByteSize: String? {
+        guard let episode = resolvedEpisode ?? episode else { return nil }
+        return EpisodeCopyLinks.formattedByteSize(for: episode, downloads: downloads)
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -447,6 +463,40 @@ struct FullPlayerView: View {
                                 copyHint: String(localized: "Copies the same item itunes:episodeType label shown above to the pasteboard; distinct from channel podcast:trailer"),
                                 shareHint: String(localized: "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"),
                                 copiedMessage: String(localized: "Episode type copied to the pasteboard.")
+                            )
+                        }
+                        if let formattedKnownDuration {
+                            Text(formattedKnownDuration)
+                                .font(.caption.weight(.semibold))
+                                .monospacedDigit()
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Color.secondary.opacity(0.15), in: Capsule())
+                                .accessibilityLabel(String(localized: "Duration \(formattedKnownDuration)"))
+                            episodeMetadataActions(
+                                text: formattedKnownDuration,
+                                copyLabel: String(localized: "Copy episode duration"),
+                                shareLabel: String(localized: "Share episode duration"),
+                                copyHint: String(localized: "Copies the same duration caption shown above to the pasteboard; feed or known playback metadata only; no length invented"),
+                                shareHint: String(localized: "Shares the same duration caption shown above as plain text; feed or known playback metadata only; no length invented"),
+                                copiedMessage: String(localized: "Episode duration copied to the pasteboard.")
+                            )
+                        }
+                        if let formattedKnownByteSize {
+                            Text(formattedKnownByteSize)
+                                .font(.caption.weight(.semibold))
+                                .monospacedDigit()
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Color.secondary.opacity(0.15), in: Capsule())
+                                .accessibilityLabel(String(localized: "Size \(formattedKnownByteSize)"))
+                            episodeMetadataActions(
+                                text: formattedKnownByteSize,
+                                copyLabel: String(localized: "Copy episode file size"),
+                                shareLabel: String(localized: "Share episode file size"),
+                                copyHint: String(localized: "Copies the same file-size caption shown above to the pasteboard; on-disk or feed enclosure metadata only; no size invented"),
+                                shareHint: String(localized: "Shares the same file-size caption shown above as plain text; on-disk or feed enclosure metadata only; no size invented"),
+                                copiedMessage: String(localized: "Episode file size copied to the pasteboard.")
                             )
                         }
                         if let chapterTitle = currentChapterTitle {
