@@ -36829,5 +36829,185 @@
       }
     }
   },
+  "Location relation copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Copied alert for the exact displayed feed-provided location relation.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Location relation copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Ortsrelation in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Copy location relation": {
+    "extractionState": "manual",
+    "comment": "VoiceOver label for copying the exact displayed feed-provided location relation.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy location relation"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Ortsrelation kopieren"
+        }
+      }
+    }
+  },
+  "Copies the exact displayed feed-provided location relation to the pasteboard": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for copying the exact displayed feed-provided location relation.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed feed-provided location relation to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt angezeigte, vom Feed gelieferte Ortsrelation in die Zwischenablage"
+        }
+      }
+    }
+  },
+  "Share location relation": {
+    "extractionState": "manual",
+    "comment": "VoiceOver label for sharing the exact displayed feed-provided location relation.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share location relation"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Ortsrelation teilen"
+        }
+      }
+    }
+  },
+  "Shares the exact displayed feed-provided location relation as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for sharing the exact displayed feed-provided location relation.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact displayed feed-provided location relation as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die exakt angezeigte, vom Feed gelieferte Ortsrelation als Klartext"
+        }
+      }
+    }
+  },
+  "Location OSM copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Copied alert for the exact displayed feed-provided location OSM caption.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Location OSM copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Orts-OSM in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Copy location OSM": {
+    "extractionState": "manual",
+    "comment": "VoiceOver label for copying the exact displayed feed-provided location OSM caption.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy location OSM"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Orts-OSM kopieren"
+        }
+      }
+    }
+  },
+  "Copies the exact displayed feed-provided location OSM caption to the pasteboard": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for copying the exact displayed feed-provided location OSM caption.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed feed-provided location OSM caption to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt angezeigte, vom Feed gelieferte Orts-OSM-Beschriftung in die Zwischenablage"
+        }
+      }
+    }
+  },
+  "Share location OSM": {
+    "extractionState": "manual",
+    "comment": "VoiceOver label for sharing the exact displayed feed-provided location OSM caption.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share location OSM"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Orts-OSM teilen"
+        }
+      }
+    }
+  },
+  "Shares the exact displayed feed-provided location OSM caption as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for sharing the exact displayed feed-provided location OSM caption.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact displayed feed-provided location OSM caption as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die exakt angezeigte, vom Feed gelieferte Orts-OSM-Beschriftung als Klartext"
+        }
+      }
+    }
+  },
   "version": "1.0"
 }

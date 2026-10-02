@@ -2,13 +2,14 @@ import SwiftUI
 import UIKit
 
 /// Simple feed-provided `podcast:location` list: name + optional geo/rel/osm; Copy / Share the same text,
-/// and Open in Maps when geo lat,lon is present.
+/// distinct Copy / Share for displayed relation and OSM when present, and Open in Maps when geo lat,lon is present.
 /// Caps at `PodcastLocationDisplay.displayCap` with an honesty footnote when truncated.
 /// **Never geocodes** names — Maps only when the feed supplied a parseable `geo` attribute.
 struct PodcastLocationsListView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var showCopiedAlert = false
+    @State private var copiedMessage = String(localized: "Location copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     let locations: [PodcastLocation]
@@ -44,7 +45,7 @@ struct PodcastLocationsListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Location copied to the pasteboard."))
+                Text(copiedMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -55,6 +56,7 @@ struct PodcastLocationsListView: View {
         let name = location.displayName ?? location.name
         let rel = location.displayRel
         let osm = location.displayOsm
+        let osmCaption: String? = osm.map { String(localized: "OSM \($0)") }
         let mapsURL = location.appleMapsURL
         let copyText = PodcastLocationDisplay.copyText(location)
 
@@ -84,8 +86,8 @@ struct PodcastLocationsListView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(a11yLabel)
 
-            if let osm {
-                Text(String(localized: "OSM \(osm)"))
+            if let osm, let osmCaption {
+                Text(osmCaption)
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
                     .accessibilityLabel(String(localized: "OpenStreetMap \(osm)"))
@@ -94,9 +96,10 @@ struct PodcastLocationsListView: View {
             if !copyText.isEmpty {
                 HStack(spacing: 12) {
                     Button {
-                        UIPasteboard.general.string = copyText
-                        copyFeedbackTick += 1
-                        showCopiedAlert = true
+                        copyToPasteboard(
+                            copyText,
+                            confirmation: String(localized: "Location copied to the pasteboard.")
+                        )
                     } label: {
                         Label("Copy", systemImage: "doc.on.doc")
                             .font(.subheadline)
@@ -117,6 +120,60 @@ struct PodcastLocationsListView: View {
                 }
             }
 
+            if let rel {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            rel,
+                            confirmation: String(localized: "Location relation copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy location relation", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy location relation"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed feed-provided location relation to the pasteboard")
+                    )
+
+                    ShareLink(item: rel) {
+                        Label("Share location relation", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share location relation"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed feed-provided location relation as plain text")
+                    )
+                }
+            }
+
+            if let osmCaption {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            osmCaption,
+                            confirmation: String(localized: "Location OSM copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy location OSM", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy location OSM"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed feed-provided location OSM caption to the pasteboard")
+                    )
+
+                    ShareLink(item: osmCaption) {
+                        Label("Share location OSM", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share location OSM"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed feed-provided location OSM caption as plain text")
+                    )
+                }
+            }
+
             if let url = mapsURL {
                 Button {
                     openURL(url)
@@ -130,5 +187,12 @@ struct PodcastLocationsListView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 2)
+    }
+
+    private func copyToPasteboard(_ string: String, confirmation: String) {
+        UIPasteboard.general.string = string
+        copiedMessage = confirmation
+        copyFeedbackTick &+= 1
+        showCopiedAlert = true
     }
 }
