@@ -590,7 +590,7 @@ struct SettingsView: View {
     private var matchesPlaybackContinuous: Bool {
         matchesSearch(
             "Continuous playback",
-            "When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on."
+            "When on, finishing an episode auto-plays the next item from the Queue only (not the next episode of the same podcast). When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on."
         )
     }
 
@@ -837,8 +837,8 @@ struct SettingsView: View {
             }
             if matchesPlaybackContinuous {
                 Toggle("Continuous playback", isOn: $settings.continuousPlaybackEnabled)
-                    .accessibilityHint(String(localized: "When on, finishing an episode auto-plays the next Queue item. Default on."))
-                Text("When on, finishing an episode auto-plays the next item from the Queue. When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.")
+                    .accessibilityHint(String(localized: "When on, finishing an episode auto-plays the next Queue item only — not the next episode of the same podcast. Default on."))
+                Text("When on, finishing an episode auto-plays the next item from the Queue only (not the next episode of the same podcast). When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

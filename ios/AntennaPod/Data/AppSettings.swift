@@ -1146,7 +1146,7 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// When true, finishing an episode auto-advances to `nextQueueEpisode`. Default on.
+    /// When true, finishing an episode auto-advances to `nextQueueEpisode` (**Queue only** — not the next episode of the same feed). Default on.
     /// When off, episode end still saves progress / marks played (same as today) but does not start the next queue item.
     /// End-of-episode sleep timer always stops without advancing (unchanged).
     @Published var continuousPlaybackEnabled: Bool {

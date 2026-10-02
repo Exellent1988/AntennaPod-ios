@@ -549,7 +549,10 @@ final class PodcastStore: ObservableObject {
         trimHistoryToSizeLimitIfNeeded()
     }
 
-    /// Next queue item after `episodeId`, or the head of the queue if that id is gone.
+    /// Next Queue item after `episodeId` for continuous playback (**Queue order only**).
+    /// If `episodeId` is in the queue, returns the following entry (or `nil` at the tail).
+    /// If not queued, returns the head of the queue (same honesty as Play Next when current is not queued).
+    /// Does **not** walk the feed/podcast episode list — never invents “next episode of this show.”
     func nextQueueEpisode(after episodeId: String) -> PodcastEpisode? {
         if let index = queue.firstIndex(where: { $0.id == episodeId }) {
             let next = index + 1
