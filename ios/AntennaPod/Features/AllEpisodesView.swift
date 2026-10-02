@@ -257,11 +257,36 @@ struct AllEpisodesView: View {
         )
     }
 
-    private var isFiltering: Bool {
-        settings.allEpisodesFilter != .all
-            || isPodcastFiltering
-            || settings.allEpisodesEpisodeTypeFilter != .all
-            || !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    /// VoiceOver value distinguishes an empty soft-capped catalog from a view-only filter/search
+    /// mismatch. Keep the visible ContentUnavailableView copy concise while naming active scopes.
+    private var allEpisodesEmptyStateAccessibilityValue: String {
+        guard !catalogItems.isEmpty else {
+            return String(localized: "There are no episodes in All Episodes. Episodes from your subscriptions appear here, newest first.")
+        }
+
+        let queryIsActive = !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        var activeScopes: [String] = []
+        if settings.allEpisodesFilter != .all {
+            activeScopes.append(settings.allEpisodesFilter.label)
+        }
+        if isPodcastFiltering {
+            activeScopes.append(podcastChipTitle(podcastFilter))
+        }
+        if settings.allEpisodesEpisodeTypeFilter != .all {
+            activeScopes.append(settings.allEpisodesEpisodeTypeFilter.label)
+        }
+        let scope = activeScopes.joined(separator: ", ")
+
+        if queryIsActive, !scope.isEmpty {
+            return String(localized: "No All Episodes match your search and the active filters: \(scope). Clear the search or choose All or another filter.")
+        }
+        if queryIsActive {
+            return String(localized: "No All Episodes match your search. Clear or change the search to see episodes.")
+        }
+        if !scope.isEmpty {
+            return String(localized: "No All Episodes match the active filters: \(scope). Choose All or another filter.")
+        }
+        return String(localized: "No All Episodes match the current view. Choose All or another filter.")
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** All Episodes list
@@ -411,20 +436,24 @@ struct AllEpisodesView: View {
                 .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
             }
 
-            if items.isEmpty {
-                if isFiltering {
-                    ContentUnavailableView(
-                        "No matching episodes",
-                        systemImage: "magnifyingglass",
-                        description: Text("No episodes match your filter.")
-                    )
-                } else {
-                    ContentUnavailableView(
-                        "No episodes yet",
-                        systemImage: "list.bullet.rectangle",
-                        description: Text("Episodes from your subscriptions appear here, newest first.")
-                    )
-                }
+            if catalogItems.isEmpty {
+                ContentUnavailableView(
+                    "No episodes yet",
+                    systemImage: "list.bullet.rectangle",
+                    description: Text("Episodes from your subscriptions appear here, newest first.")
+                )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No episodes yet"))
+                .accessibilityValue(allEpisodesEmptyStateAccessibilityValue)
+            } else if items.isEmpty {
+                ContentUnavailableView(
+                    "No matching episodes",
+                    systemImage: "magnifyingglass",
+                    description: Text("No episodes match your filter.")
+                )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No matching episodes"))
+                .accessibilityValue(allEpisodesEmptyStateAccessibilityValue)
             } else {
                 ForEach(items) { item in
                     EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
