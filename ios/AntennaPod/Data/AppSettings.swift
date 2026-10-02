@@ -609,6 +609,36 @@ enum ArchivedSort: String, CaseIterable, Identifiable {
     }
 }
 
+
+/// Podcast chip selection on the Archived list (feeds that currently have archived
+/// episodes only — never invent podcasts). Empty storage = All; otherwise feed UUID string.
+enum ArchivedPodcastFilter: Hashable, Identifiable {
+    case all
+    case feed(UUID)
+
+    var id: String {
+        switch self {
+        case .all: return "__all__"
+        case .feed(let id): return "feed:\(id.uuidString)"
+        }
+    }
+
+    /// Persistable raw value: empty = All; otherwise the feed UUID string.
+    var storageValue: String {
+        switch self {
+        case .all: return ""
+        case .feed(let id): return id.uuidString
+        }
+    }
+
+    static func fromStorage(_ raw: String?) -> ArchivedPodcastFilter {
+        guard let raw else { return .all }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let id = UUID(uuidString: trimmed) else { return .all }
+        return .feed(id)
+    }
+}
+
 /// Filter chips on Downloads tab. Uses PodcastStore.isPlayed on downloaded episodes.
 enum DownloadsFilter: String, CaseIterable, Identifiable {
     case all
@@ -1011,6 +1041,7 @@ final class AppSettings: ObservableObject {
         static let favoritesSort = "settings.favoritesSort"
         static let favoritesPodcastFilter = "settings.favoritesPodcastFilter"
         static let archivedSort = "settings.archivedSort"
+        static let archivedPodcastFilter = "settings.archivedPodcastFilter"
         static let allEpisodesFilter = "settings.allEpisodesFilter"
         static let allEpisodesPodcastFilter = "settings.allEpisodesPodcastFilter"
         static let allEpisodesSort = "settings.allEpisodesSort"
@@ -1524,10 +1555,22 @@ final class AppSettings: ObservableObject {
     /// Archived list order by `ArchivedEpisode.archivedAtEpochMs` (`archived.json` / `archivedAtById`):
     /// newest first (default) or oldest first.
     /// Stable tiebreaker is episode `id`. Client-side re-sort in ArchivedView only — `PodcastStore.archivedEpisodes`
-    /// stays newest-first for Restore all counts. Applies to search-filtered results too.
+    /// stays newest-first for Restore all counts. Applies to podcast-chip + search-filtered results too.
     @Published var archivedSort: ArchivedSort {
         didSet {
             UserDefaults.standard.set(archivedSort.rawValue, forKey: Keys.archivedSort)
+        }
+    }
+
+    /// Archived podcast chip filter. Empty string = All; otherwise a feed UUID that currently has
+    /// (or recently had) archived episodes. Default All. Persisted (+ backup). Applied before
+    /// `.searchable`; `archivedSort` still orders the filtered list. Chips list only feeds
+    /// present in the current Archived catalog (never invent). Orphan archived without a
+    /// matching library feed match All only. **View-only** — Restore all / Add all to queue
+    /// stay full Archived catalog.
+    @Published var archivedPodcastFilter: String {
+        didSet {
+            UserDefaults.standard.set(archivedPodcastFilter, forKey: Keys.archivedPodcastFilter)
         }
     }
 
@@ -1878,6 +1921,8 @@ final class AppSettings: ObservableObject {
         let archivedSortRaw = UserDefaults.standard.string(forKey: Keys.archivedSort)
             ?? ArchivedSort.newestFirst.rawValue
         archivedSort = ArchivedSort(rawValue: archivedSortRaw) ?? .newestFirst
+        let archivedPodcastFilterRaw = UserDefaults.standard.string(forKey: Keys.archivedPodcastFilter) ?? ""
+        archivedPodcastFilter = ArchivedPodcastFilter.fromStorage(archivedPodcastFilterRaw).storageValue
         let episodesFilterRaw = UserDefaults.standard.string(forKey: Keys.allEpisodesFilter)
             ?? AllEpisodesFilter.all.rawValue
         allEpisodesFilter = AllEpisodesFilter(rawValue: episodesFilterRaw) ?? .all
@@ -2191,6 +2236,7 @@ final class AppSettings: ObservableObject {
             favoritesSort: favoritesSort.rawValue,
             favoritesPodcastFilter: favoritesPodcastFilter,
             archivedSort: archivedSort.rawValue,
+            archivedPodcastFilter: archivedPodcastFilter,
             allEpisodesFilter: allEpisodesFilter.rawValue,
             allEpisodesPodcastFilter: allEpisodesPodcastFilter,
             allEpisodesSort: allEpisodesSort.rawValue,
@@ -2350,6 +2396,9 @@ final class AppSettings: ObservableObject {
         if let archivedSortRaw = snap.archivedSort {
             archivedSort = ArchivedSort(rawValue: archivedSortRaw) ?? .newestFirst
         }
+        if let archivedPodcastFilterRaw = snap.archivedPodcastFilter {
+            archivedPodcastFilter = ArchivedPodcastFilter.fromStorage(archivedPodcastFilterRaw).storageValue
+        }
         if let filterRaw = snap.allEpisodesFilter {
             allEpisodesFilter = AllEpisodesFilter(rawValue: filterRaw) ?? .all
         }
@@ -2474,6 +2523,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var favoritesPodcastFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var archivedSort: String? = nil
+    /// Absent in older backups → All (empty). Feed UUID string or empty for All.
+    var archivedPodcastFilter: String? = nil
     /// Absent in older backups → all (default).
     var allEpisodesFilter: String? = nil
     /// Absent in older backups → All (empty). Feed UUID string or empty for All.

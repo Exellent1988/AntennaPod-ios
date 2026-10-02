@@ -912,7 +912,7 @@ final class PodcastStore: ObservableObject {
 
     /// Append every archived episode that is not already queued (bulk).
     /// Uses store `archivedEpisodes` order (**newest-first** by `archivedAtEpochMs` —
-    /// same catalog as Restore all). Does **not** follow UI `archivedSort` or searchable filter.
+    /// same catalog as Restore all). Does **not** follow UI `archivedSort`, podcast chip, or searchable filter.
     /// Skips already-queued ids (no duplicates). Uses `enqueue` (append), not `playNext`.
     /// Does **not** restore / unarchive (archive side map unchanged).
     /// Safe while queue lock is on (reorder-only — enqueue stays allowed).

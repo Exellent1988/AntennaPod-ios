@@ -11486,23 +11486,6 @@
         }
       }
     },
-    "Appends %lld archived episodes to the end of the queue (newest archived first). Already queued episodes are skipped. Uses the full Archived catalog (same as Restore all), not the searchable filter. Does not restore or unarchive. Queue lock does not block enqueue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends %lld archived episodes to the end of the queue (newest archived first). Already queued episodes are skipped. Uses the full Archived catalog (same as Restore all), not the searchable filter. Does not restore or unarchive. Queue lock does not block enqueue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht %lld archivierte Episoden am Ende der Warteschlange ein (zuletzt archiviert zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Archiv-Katalog (wie Alle wiederherstellen), nicht die Suchfilterung. Stellt nicht wieder her und entarchiviert nicht. Warteschlangen-Sperre blockiert Einreihen nicht."
-          }
-        }
-      }
-    },
     "Episodes actions": {
       "extractionState": "manual",
       "localizations": {
@@ -22454,6 +22437,58 @@
         }
       },
       "comment": "All Episodes Add all to queue confirmation message (soft-cap honesty; not chip/podcast/search)."
+    },
+    "Filters the Archived list by podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Archived list by podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Archiv-Liste nach Podcast"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Archived podcast filter chips."
+    },
+    "No archived episodes match your filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No archived episodes match your filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine archivierten Episoden passen zu deinem Filter."
+          }
+        }
+      }
+    },
+    "Appends %lld archived episodes to the end of the queue (newest archived first). Already queued episodes are skipped. Uses the full Archived catalog (same as Restore all), not the podcast or searchable filter. Does not restore or unarchive. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld archived episodes to the end of the queue (newest archived first). Already queued episodes are skipped. Uses the full Archived catalog (same as Restore all), not the podcast or searchable filter. Does not restore or unarchive. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld archivierte Episoden am Ende der Warteschlange ein (zuletzt archiviert zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Archiv-Katalog (wie Alle wiederherstellen), nicht Podcast- oder Suchfilter. Stellt nicht wieder her und entarchiviert nicht. Warteschlangen-Sperre blockiert Einreihen nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

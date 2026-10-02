@@ -19,25 +19,90 @@ struct ArchivedView: View {
     }
 
     /// Episodes from the **full Archived catalog** (`store.archivedEpisodes`, newest archived first) that are
-    /// not already queued — same catalog as Restore all, **not** the searchable filtered list.
+    /// not already queued — same catalog as Restore all, **not** the podcast-chip or searchable filtered list.
     /// Confirm count and `enqueueAllArchived()` share this eligibility.
     /// Does **not** restore / unarchive.
     private var enqueueAllArchivedCandidatesCount: Int {
         items.filter { !store.isInQueue($0.episode.id) }.count
     }
 
-    /// Visible archived ordered by `AppSettings.archivedSort`.
+    /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
+    private var podcastFilter: ArchivedPodcastFilter {
+        ArchivedPodcastFilter.fromStorage(settings.archivedPodcastFilter)
+    }
+
+    private var isPodcastFiltering: Bool {
+        if case .feed = podcastFilter { return true }
+        return false
+    }
+
+    /// Unique feeds that currently have at least one archived episode (title A–Z).
+    /// Built from the Archived catalog via `feed(containingEpisodeId:)` — never invent.
+    private var archivedPodcastFeeds: [PodcastFeed] {
+        var seen = Set<UUID>()
+        var feeds: [PodcastFeed] = []
+        for item in items {
+            guard let feed = store.feed(containingEpisodeId: item.episode.id) else { continue }
+            if seen.insert(feed.id).inserted {
+                feeds.append(feed)
+            }
+        }
+        return feeds.sorted {
+            $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+    }
+
+    private var podcastFilterChips: [ArchivedPodcastFilter] {
+        var chips: [ArchivedPodcastFilter] = [.all]
+        var feeds = archivedPodcastFeeds
+        // Keep a persisted selection visible (even if that feed no longer has archived
+        // episodes) so the user can see why the list is empty and tap All.
+        if case .feed(let id) = podcastFilter,
+           !feeds.contains(where: { $0.id == id }),
+           let feed = store.feeds.first(where: { $0.id == id }) {
+            feeds.append(feed)
+            feeds.sort {
+                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
+        }
+        chips.append(contentsOf: feeds.map { .feed($0.id) })
+        return chips
+    }
+
+    private func podcastChipTitle(_ chip: ArchivedPodcastFilter) -> String {
+        switch chip {
+        case .all:
+            return String(localized: "All")
+        case .feed(let id):
+            return store.feeds.first(where: { $0.id == id })?.title
+                ?? archivedPodcastFeeds.first(where: { $0.id == id })?.title
+                ?? String(localized: "Podcast")
+        }
+    }
+
+    private var isSearching: Bool {
+        !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Visible archived: podcast chip → search → `archivedSort`.
     /// Sort key: `ArchivedEpisode.archivedAtEpochMs` (`archivedAtById` / `archived.json`).
-    /// Empty query shows the full list; sort applies to search-filtered results too.
+    /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
     /// Does not mutate `PodcastStore.archivedEpisodes` (Restore all counts stay on newest-first catalog).
+    /// View-only — Restore all / Add all to queue stay full-catalog scoped.
     private var filteredItems: [ArchivedEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-        let base = items
+        let afterPodcast: [ArchivedEpisode]
+        switch podcastFilter {
+        case .all:
+            afterPodcast = items
+        case .feed(let feedId):
+            afterPodcast = items.filter { store.feed(containingEpisodeId: $0.episode.id)?.id == feedId }
+        }
         let filtered: [ArchivedEpisode]
         if q.isEmpty {
-            filtered = base
+            filtered = afterPodcast
         } else {
-            filtered = base.filter { item in
+            filtered = afterPodcast.filter { item in
                 if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
                 return item.feedTitle.localizedCaseInsensitiveContains(q)
             }
@@ -59,12 +124,12 @@ struct ArchivedView: View {
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** Archived list
-    /// (sort + searchable filter). **Honesty:** archived ≠ played — use normal duration−position
-    /// rules (not “archived means finished”). Remaining per episode = `max(0, duration − position)`
-    /// when duration known; unplayed with duration contributes full duration; **played** (not
-    /// current) → 0; **unknown duration skipped** (tilde when any skipped). Currently playing uses
-    /// live `PlaybackService` position/duration. Wall-clock only (no playback-speed divide).
-    /// Distinct from Restore all count (always full catalog).
+    /// (podcast chip + searchable filter + sort). **Honesty:** archived ≠ played — use normal
+    /// duration−position rules (not “archived means finished”). Remaining per episode =
+    /// `max(0, duration − position)` when duration known; unplayed with duration contributes
+    /// full duration; **played** (not current) → 0; **unknown duration skipped** (tilde when
+    /// any skipped). Currently playing uses live `PlaybackService` position/duration.
+    /// Wall-clock only (no playback-speed divide). Distinct from Restore all count (always full catalog).
     private var archivedRemainingInfoLabel: String? {
         guard !filteredItems.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: archivedRemainingSummary)
@@ -95,8 +160,30 @@ struct ArchivedView: View {
 
     var body: some View {
         List {
-            // AntennaPod-like archived info bar (visible sorted+filtered list remaining time).
-            // Hidden when catalog empty or search matches nothing — not full-catalog Restore all count.
+            if !items.isEmpty, !archivedPodcastFeeds.isEmpty || isPodcastFiltering {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(podcastFilterChips) { chip in
+                                ArchivedPodcastFilterChip(
+                                    title: podcastChipTitle(chip),
+                                    selected: podcastFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the Archived list by podcast")
+                                ) {
+                                    settings.archivedPodcastFilter = chip.storageValue
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                } header: {
+                    Text("Podcasts")
+                }
+            }
+
+            // AntennaPod-like archived info bar (visible sorted+podcast+search filtered list remaining time).
+            // Hidden when catalog empty or filters match nothing — not full-catalog Restore all count.
             // Archived ≠ played; played (not current) → 0 via normal rules.
             if let remainingLabel = archivedRemainingInfoLabel {
                 Section {
@@ -121,7 +208,11 @@ struct ArchivedView: View {
                 ContentUnavailableView(
                     "No matching archived",
                     systemImage: "magnifyingglass",
-                    description: Text("No archived episodes match your search.")
+                    description: Text(
+                        isPodcastFiltering && !isSearching
+                            ? String(localized: "No archived episodes match your filter.")
+                            : String(localized: "No archived episodes match your search.")
+                    )
                 )
             } else {
                 ForEach(filteredItems) { item in
@@ -200,7 +291,7 @@ struct ArchivedView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Appends \(enqueueAllArchivedCandidatesCount) archived episodes to the end of the queue (newest archived first). Already queued episodes are skipped. Uses the full Archived catalog (same as Restore all), not the searchable filter. Does not restore or unarchive. Queue lock does not block enqueue.")
+            Text("Appends \(enqueueAllArchivedCandidatesCount) archived episodes to the end of the queue (newest archived first). Already queued episodes are skipped. Uses the full Archived catalog (same as Restore all), not the podcast or searchable filter. Does not restore or unarchive. Queue lock does not block enqueue.")
         }
         .confirmationDialog(
             "Restore all?",
@@ -231,3 +322,25 @@ struct ArchivedView: View {
     }
 }
 
+/// Filter chip for Archived podcast chips (mirrors Favorites / History / Inbox).
+private struct ArchivedPodcastFilterChip: View {
+    let title: String
+    let selected: Bool
+    let accessibilityHint: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline.weight(selected ? .semibold : .regular))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(selected ? Color.accentColor : Color.secondary.opacity(0.15), in: Capsule())
+                .foregroundStyle(selected ? Color.white : Color.primary)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(accessibilityHint)
+        .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+}
