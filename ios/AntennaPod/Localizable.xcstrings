@@ -42513,6 +42513,57 @@
           }
         }
       }
+    },
+    "%@. This is the default. No soft gain is applied, and the audio mix stays at unity. If an episode is already loaded, this clears that mix on the current item. If nothing is loaded, it is saved for the next one. Above 100% would be software gain and may clip or distort. This does not start playback, seek, change playback speed, or download. Sleep-timer fade still uses player volume and is separate. Not Volume adaptation, ReplayGain, loudness normalization, Android LoudnessEnhancer, or an audio engine. Some streams, including HLS, may ignore the audio mix. If the item has no audio tracks, or the tracks cannot be read, no boost is invented. Stock AVPlayer keeps video, Picture in Picture, and Now Playing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is the default. No soft gain is applied, and the audio mix stays at unity. If an episode is already loaded, this clears that mix on the current item. If nothing is loaded, it is saved for the next one. Above 100% would be software gain and may clip or distort. This does not start playback, seek, change playback speed, or download. Sleep-timer fade still uses player volume and is separate. Not Volume adaptation, ReplayGain, loudness normalization, Android LoudnessEnhancer, or an audio engine. Some streams, including HLS, may ignore the audio mix. If the item has no audio tracks, or the tracks cannot be read, no boost is invented. Stock AVPlayer keeps video, Picture in Picture, and Now Playing."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist der Standard. Es wird keine sanfte Verstärkung angewendet, und der Audio-Mix bleibt bei Unity. Wenn bereits eine Episode geladen ist, wird dieser Mix am aktuellen Element entfernt. Wenn nichts geladen ist, wird der Wert für das nächste gespeichert. Über 100% wäre Software-Verstärkung und kann clippen oder verzerren. Das startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergabegeschwindigkeit und lädt nichts herunter. Der Schlaf-Timer-Fade nutzt weiter die Player-Lautstärke und ist getrennt. Nicht Lautstärkeanpassung, ReplayGain, Lautheitsnormalisierung, Android LoudnessEnhancer oder eine Audio-Engine. Manche Streams, auch HLS, können den Audio-Mix ignorieren. Wenn das Element keine Audiospuren hat oder die Spuren nicht gelesen werden können, wird keine Verstärkung erfunden. Stock AVPlayer behält Video, Bild-in-Bild und Now Playing."
+          }
+        }
+      }
+    },
+    "%@. This is not the default of 100%. Soft gain is software volume on the audio mix, using this percent divided by 100, and it may clip or distort. If an episode is already loaded and its audio tracks can be read, this applies to that item. If nothing is loaded, or there are no audio tracks, or the tracks cannot be read, nothing is boosted and no louder result is invented. This does not start playback, seek, change playback speed, or download. Sleep-timer fade still uses player volume and multiplies with the mix. Not Volume adaptation, ReplayGain, loudness normalization, Android LoudnessEnhancer, or an audio engine. Some streams, including HLS, may ignore the audio mix, so the boost then has no effect. Stock AVPlayer keeps video, Picture in Picture, and Now Playing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is not the default of 100%. Soft gain is software volume on the audio mix, using this percent divided by 100, and it may clip or distort. If an episode is already loaded and its audio tracks can be read, this applies to that item. If nothing is loaded, or there are no audio tracks, or the tracks cannot be read, nothing is boosted and no louder result is invented. This does not start playback, seek, change playback speed, or download. Sleep-timer fade still uses player volume and multiplies with the mix. Not Volume adaptation, ReplayGain, loudness normalization, Android LoudnessEnhancer, or an audio engine. Some streams, including HLS, may ignore the audio mix, so the boost then has no effect. Stock AVPlayer keeps video, Picture in Picture, and Now Playing."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist nicht der Standard von 100%. Sanfte Verstärkung ist Software-Lautstärke auf dem Audio-Mix, dieser Prozentwert geteilt durch 100, und sie kann clippen oder verzerren. Wenn bereits eine Episode geladen ist und ihre Audiospuren gelesen werden können, gilt das für dieses Element. Wenn nichts geladen ist, keine Audiospuren vorhanden sind oder die Spuren nicht gelesen werden können, wird nichts verstärkt und kein lauteres Ergebnis erfunden. Das startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergabegeschwindigkeit und lädt nichts herunter. Der Schlaf-Timer-Fade nutzt weiter die Player-Lautstärke und multipliziert mit dem Mix. Nicht Lautstärkeanpassung, ReplayGain, Lautheitsnormalisierung, Android LoudnessEnhancer oder eine Audio-Engine. Manche Streams, auch HLS, können den Audio-Mix ignorieren, dann hat die Verstärkung keinen Effekt. Stock AVPlayer behält Video, Bild-in-Bild und Now Playing."
+          }
+        }
+      }
+    },
+    "Presets are 100%, 125%, 150%, 175%, 200%, 250%, and 300%. There is no custom percent. The default is 100%, which is unity and clears the audio mix. Above 100% is soft gain and may clip or distort. Changing this applies to a loaded item only when its audio tracks can be read; otherwise it is saved and no boost is invented. It does not start playback, seek, change playback speed, or download. Not Volume adaptation, Preserve pitch, Skip silence, ReplayGain, or LoudnessEnhancer. Sleep-timer fade stays on player volume.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are 100%, 125%, 150%, 175%, 200%, 250%, and 300%. There is no custom percent. The default is 100%, which is unity and clears the audio mix. Above 100% is soft gain and may clip or distort. Changing this applies to a loaded item only when its audio tracks can be read; otherwise it is saved and no boost is invented. It does not start playback, seek, change playback speed, or download. Not Volume adaptation, Preserve pitch, Skip silence, ReplayGain, or LoudnessEnhancer. Sleep-timer fade stays on player volume."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorgaben sind 100%, 125%, 150%, 175%, 200%, 250% und 300%. Es gibt keinen benutzerdefinierten Prozentwert. Der Standard ist 100%, das ist Unity und entfernt den Audio-Mix. Über 100% ist sanfte Verstärkung und kann clippen oder verzerren. Die Änderung gilt für ein geladenes Element nur, wenn seine Audiospuren gelesen werden können; sonst wird sie gespeichert und keine Verstärkung erfunden. Sie startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergabegeschwindigkeit und lädt nichts herunter. Nicht Lautstärkeanpassung, Tonhöhe beibehalten, Stille überspringen, ReplayGain oder LoudnessEnhancer. Der Schlaf-Timer-Fade bleibt auf der Player-Lautstärke."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
