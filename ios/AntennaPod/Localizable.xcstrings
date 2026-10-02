@@ -19761,6 +19761,96 @@
         }
       }
     },
+    "Copy publisher title": {
+      "extractionState": "manual",
+      "comment": "Copy action for the exact feed-provided podcast:publisher title; hidden when the title is missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy publisher title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Titel kopieren"
+          }
+        }
+      }
+    },
+    "Share publisher title": {
+      "extractionState": "manual",
+      "comment": "Share action for the exact feed-provided podcast:publisher title; hidden when the title is missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share publisher title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Titel teilen"
+          }
+        }
+      }
+    },
+    "Publisher title copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Alert message after copying the exact feed-provided podcast:publisher title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher title copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Titel in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the exact feed-provided publisher title as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy publisher title on a podcast:publisher row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact feed-provided publisher title as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den exakten vom Feed bereitgestellten Publisher-Titel als Klartext"
+          }
+        }
+      }
+    },
+    "Shares the exact feed-provided publisher title as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share publisher title on a podcast:publisher row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact feed-provided publisher title as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den exakten vom Feed bereitgestellten Publisher-Titel als Klartext"
+          }
+        }
+      }
+    },
     "Publisher copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Alert message after copying a podcast:publisher remoteItem.",

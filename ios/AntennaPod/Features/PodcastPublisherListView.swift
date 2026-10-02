@@ -15,6 +15,7 @@ struct PodcastPublisherListView: View {
     var title: String = String(localized: "Publisher")
 
     @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = String(localized: "Publisher copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
     @State private var previewRequest: FeedPreviewRequest?
 
@@ -62,7 +63,7 @@ struct PodcastPublisherListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Publisher copied to the pasteboard."))
+                Text(copiedAlertMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
             .sheet(item: $previewRequest) { request in
@@ -146,8 +147,34 @@ struct PodcastPublisherListView: View {
             }
 
             HStack(spacing: 12) {
+                if let title = entry.displayTitle {
+                    Button {
+                        UIPasteboard.general.string = title
+                        copiedAlertMessage = String(localized: "Publisher title copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy publisher title", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy publisher title"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided publisher title as plain text")
+                    )
+
+                    ShareLink(item: title) {
+                        Label("Share publisher title", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share publisher title"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided publisher title as plain text")
+                    )
+                }
+
                 Button {
                     UIPasteboard.general.string = PodcastPublisherDisplay.copyText(entry)
+                    copiedAlertMessage = String(localized: "Publisher copied to the pasteboard.")
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {
