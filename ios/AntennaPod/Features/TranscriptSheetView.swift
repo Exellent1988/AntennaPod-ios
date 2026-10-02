@@ -1,8 +1,11 @@
 import SwiftUI
+import UIKit
 
 /// Scrollable transcript sheet opened from the full player when the feed provides a URL.
 /// Cue list supports `.searchable` filter over already-loaded cue text (case-insensitive,
-/// ~250 ms debounce). Does not fetch or generate transcripts; feed URL only — no STT.
+/// ~250 ms debounce). Toolbar **Copy transcript** joins already-loaded cues (or plain-text
+/// fallback) to the pasteboard — full loaded text, not the search-filtered subset.
+/// Does not fetch or generate transcripts; feed URL only — no STT.
 struct TranscriptSheetView: View {
     @EnvironmentObject private var playback: PlaybackService
     @Environment(\.dismiss) private var dismiss
@@ -17,9 +20,34 @@ struct TranscriptSheetView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
 
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
+
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
     private var cues: [TranscriptCue] { transcript?.cues ?? [] }
+
+    /// Plain text for pasteboard: **full** already-loaded cues (speaker prefixes when set),
+    /// else plain-text fallback. Ignores the search filter so Copy always exports the whole load.
+    private var transcriptPlainForCopy: String {
+        if !cues.isEmpty {
+            return cues.map { cue in
+                let text = cue.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                if let speaker = cue.speaker?.trimmingCharacters(in: .whitespacesAndNewlines),
+                   !speaker.isEmpty {
+                    return "\(speaker): \(text)"
+                }
+                return text
+            }.joined(separator: "\n")
+        }
+        return transcript?.plainText?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    }
+
+    /// Enabled only when already-loaded transcript text is available (not loading / error / empty).
+    private var canCopyTranscript: Bool {
+        !transcriptPlainForCopy.isEmpty
+    }
 
     /// Visible cues after light-debounced case-insensitive filter on cue text (+ speaker when set).
     private var filteredCues: [TranscriptCue] {
@@ -69,6 +97,16 @@ struct TranscriptSheetView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
                 }
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        copyTranscript()
+                    } label: {
+                        Image(systemName: "doc.plaintext")
+                    }
+                    .disabled(!canCopyTranscript)
+                    .accessibilityLabel(String(localized: "Copy transcript"))
+                    .accessibilityHint(String(localized: "Copies the transcript to the pasteboard"))
+                }
             }
             .safeAreaInset(edge: .bottom) {
                 Text("From feed URL only — no speech-to-text")
@@ -78,6 +116,15 @@ struct TranscriptSheetView: View {
                     .padding(.vertical, 6)
                     .background(.bar)
             }
+            .alert(
+                String(localized: "Copied"),
+                isPresented: $showCopiedAlert
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(copiedAlertMessage)
+            }
+            .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
         .task(id: episode.transcriptUrl) {
             await load()
@@ -213,6 +260,15 @@ struct TranscriptSheetView: View {
             errorMessage = error.localizedDescription
             transcript = nil
         }
+    }
+
+    private func copyTranscript() {
+        let text = transcriptPlainForCopy
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Transcript copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private func format(_ seconds: Double) -> String {

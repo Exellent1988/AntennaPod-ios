@@ -13863,6 +13863,23 @@
         }
       }
     },
+    "Copy transcript": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy transcript"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript kopieren"
+          }
+        }
+      }
+    },
     "Copies the episode shownotes to the pasteboard": {
       "extractionState": "manual",
       "localizations": {
@@ -13880,6 +13897,23 @@
         }
       }
     },
+    "Copies the transcript to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the transcript to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert das Transkript in die Zwischenablage"
+          }
+        }
+      }
+    },
     "Shownotes copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {
@@ -13893,6 +13927,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Shownotes in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Transcript copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript in die Zwischenablage kopiert."
           }
         }
       }
