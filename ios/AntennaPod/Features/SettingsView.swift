@@ -252,6 +252,13 @@ struct SettingsView: View {
                 if matchesSearch(
                     "Discovery",
                     "Charts country",
+                    "Discover charts count",
+                    "charts",
+                    "Top lists",
+                    "10 podcasts",
+                    "25 podcasts",
+                    "50 podcasts",
+                    "100 podcasts",
                     "API key",
                     "API secret",
                     "Replace keys…",
@@ -259,7 +266,8 @@ struct SettingsView: View {
                     "Save keys",
                     "Stored in Keychain",
                     "Free API key + secret from podcastindex.org (register / API docs). Stored only in the Keychain — not hardcoded and not shipped with the app. Used by Add podcast → Podcast Index search; Subscribe still follows the feed URL pipeline.",
-                    "Used by Home → Discover / Charts and Subscriptions → Discover. Apple iTunes RSS top podcasts (no API key). Automatic uses the device region, or de if unknown."
+                    "Used by Home → Discover / Charts and Subscriptions → Discover. Apple iTunes RSS top podcasts (no API key). Automatic uses the device region, or de if unknown.",
+                    "How many podcasts the full Discover / Top lists screen loads from Apple iTunes charts. Does not change the Home Discover preview, episode-list or Recently updated Home soft-caps, or Podcast Index search. Default 25. Always capped — no unlimited."
                 ) {
                     podcastIndexDiscoverySection
                 }
@@ -553,7 +561,7 @@ struct SettingsView: View {
                 "Download all unplayed soft cap",
                 "Clear downloads"
             )
-            || matchesSearch("Discovery", "Charts country", "API key", "API secret")
+            || matchesSearch("Discovery", "Charts country", "Discover charts count", "charts", "Top lists", "API key", "API secret")
             || matchesSearch("Sync", "Provider", "Host", "Username", "Sync now", "Login", "Synced", "Local only", "Keychain", "bookmarks", "tags")
             || matchesLibrarySection
             || matchesSearch("Privacy", "Parental controls")
@@ -597,7 +605,7 @@ struct SettingsView: View {
             "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Archived, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Archived, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home.",
             "How many episode rows each Home section preview shows (Continue, Inbox, Queue, Favorites, History, Archived, Downloads). Soft-cap after search filter — preview is not the full tab. Does not change Discover charts or Recently updated feed cards. Default 5. Always capped — no unlimited.",
             "How many Recently updated feed cards Home shows. Soft-cap after search filter — preview is not the full Subscriptions list. Does not change Discover charts / Top lists or episode-list Home preview rows. Default 5. Always capped — no unlimited.",
-            "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."
+            "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (Settings → Discovery → Discover charts count). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."
         )
     }
 
@@ -882,11 +890,11 @@ struct SettingsView: View {
             }
             .accessibilityLabel(String(localized: "Home Discover charts"))
             .accessibilityValue(settings.homeDiscoverPreviewLimit.label)
-            .accessibilityHint(String(localized: "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."))
-            Text(String(localized: "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."))
+            .accessibilityHint(String(localized: "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (Settings → Discovery → Discover charts count). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."))
+            Text(String(localized: "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (Settings → Discovery → Discover charts count). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."))
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .accessibilityLabel(String(localized: "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."))
+                .accessibilityLabel(String(localized: "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (Settings → Discovery → Discover charts count). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."))
         }
     }
 
@@ -1769,6 +1777,19 @@ struct SettingsView: View {
             Text("Used by Home → Discover / Charts and Subscriptions → Discover. Apple iTunes RSS top podcasts (no API key). Automatic uses the device region, or de if unknown.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+
+            Picker(String(localized: "Discover charts count"), selection: $settings.discoverChartsLimit) {
+                ForEach(DiscoverChartsLimit.allCases) { limit in
+                    Text(limit.label).tag(limit)
+                }
+            }
+            .accessibilityLabel(String(localized: "Discover charts count"))
+            .accessibilityValue(settings.discoverChartsLimit.label)
+            .accessibilityHint(String(localized: "How many podcasts the full Discover / Top lists screen loads from Apple iTunes charts. Does not change the Home Discover preview, episode-list or Recently updated Home soft-caps, or Podcast Index search. Default 25. Always capped — no unlimited."))
+            Text(String(localized: "How many podcasts the full Discover / Top lists screen loads from Apple iTunes charts. Does not change the Home Discover preview, episode-list or Recently updated Home soft-caps, or Podcast Index search. Default 25. Always capped — no unlimited."))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(String(localized: "How many podcasts the full Discover / Top lists screen loads from Apple iTunes charts. Does not change the Home Discover preview, episode-list or Recently updated Home soft-caps, or Podcast Index search. Default 25. Always capped — no unlimited."))
 
             if podcastIndexKeysSaved {
                 LabeledContent("API key") {

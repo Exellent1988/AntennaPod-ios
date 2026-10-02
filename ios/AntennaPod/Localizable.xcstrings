@@ -26300,24 +26300,6 @@
       },
       "comment": "Settings → Home picker for Home Discover charts preview soft-cap."
     },
-    "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wie viele Chart-Zeilen die Home-Discover-Vorschau zeigt. Soft-Cap nur für Home Discover — nicht den vollen Discover- / Top-Listen-Bildschirm (weiterhin bis 25). Ändert weder Episoden-Home-Vorschaizeilen noch kürzlich aktualisierte Feed-Karten. Standard 5. Immer begrenzt — kein Unlimited."
-          }
-        }
-      },
-      "comment": "Help caption / VoiceOver hint under Home Discover charts picker."
-    },
     "Pinned": {
       "extractionState": "manual",
       "localizations": {
@@ -27954,6 +27936,132 @@
         }
       },
       "comment": "VoiceOver hint for Subscriptions actions menu."
+    },
+    "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (Settings → Discovery → Discover charts count). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (Settings → Discovery → Discover charts count). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wie viele Chart-Zeilen die Home-Discover-Vorschau zeigt. Soft-Cap nur für Home Discover — nicht den vollen Discover- / Top-Listen-Bildschirm (Einstellungen → Entdeckung → Discover-Charts-Anzahl). Ändert weder Episoden-Home-Vorschaizeilen noch kürzlich aktualisierte Feed-Karten. Standard 5. Immer begrenzt — kein Unlimited."
+          }
+        }
+      },
+      "comment": "Help caption / VoiceOver hint under Home Discover charts picker."
+    },
+    "Discover charts count": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discover charts count"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discover-Charts-Anzahl"
+          }
+        }
+      },
+      "comment": "Settings → Discovery picker for full Discover / TopListsView Apple charts soft-cap."
+    },
+    "10 podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 Podcasts"
+          }
+        }
+      },
+      "comment": "DiscoverChartsLimit picker label (10)."
+    },
+    "25 podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "25 podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "25 Podcasts"
+          }
+        }
+      },
+      "comment": "DiscoverChartsLimit picker label (25, default)."
+    },
+    "50 podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50 podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "50 Podcasts"
+          }
+        }
+      },
+      "comment": "DiscoverChartsLimit picker label (50)."
+    },
+    "100 podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "100 podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "100 Podcasts"
+          }
+        }
+      },
+      "comment": "DiscoverChartsLimit picker label (100)."
+    },
+    "How many podcasts the full Discover / Top lists screen loads from Apple iTunes charts. Does not change the Home Discover preview, episode-list or Recently updated Home soft-caps, or Podcast Index search. Default 25. Always capped — no unlimited.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How many podcasts the full Discover / Top lists screen loads from Apple iTunes charts. Does not change the Home Discover preview, episode-list or Recently updated Home soft-caps, or Podcast Index search. Default 25. Always capped — no unlimited."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wie viele Podcasts der volle Discover- / Top-Listen-Bildschirm aus den Apple-iTunes-Charts lädt. Ändert weder die Home-Discover-Vorschau noch Episoden-/Recently-updated-Home-Soft-Caps noch die Podcast-Index-Suche. Standard 25. Immer begrenzt — kein Unlimited."
+          }
+        }
+      },
+      "comment": "Help caption / VoiceOver hint under Discover charts count picker."
     }
   },
   "version": "1.0"

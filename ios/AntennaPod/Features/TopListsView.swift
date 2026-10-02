@@ -107,6 +107,9 @@ struct TopListsView: View {
         .onChange(of: settings.chartsCountryCode) { _, _ in
             Task { await loadCharts() }
         }
+        .onChange(of: settings.discoverChartsLimit) { _, _ in
+            Task { await loadCharts() }
+        }
         .onChange(of: parental.hideExplicitCharts) { _, _ in
             Task { await loadCharts() }
         }
@@ -123,6 +126,7 @@ struct TopListsView: View {
         do {
             let found = try await service.loadTopList(
                 country: countryCode,
+                limit: settings.discoverChartsLimit.rowCap,
                 includeExplicit: !parental.shouldHideExplicitCharts
             )
             results = found
@@ -137,7 +141,8 @@ struct TopListsView: View {
     }
 }
 
-/// Compact Home preview of top charts (Quick discovery). Soft-cap via `homeDiscoverPreviewLimit` (not full TopListsView).
+/// Compact Home preview of top charts (Quick discovery). Soft-cap via `homeDiscoverPreviewLimit`
+/// (not full TopListsView / `discoverChartsLimit`).
 struct HomeTopListsPreview: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
@@ -150,7 +155,7 @@ struct HomeTopListsPreview: View {
     private let service = ItunesTopListService()
 
     /// Soft-cap from `AppSettings.homeDiscoverPreviewLimit` (3/5/8/10, default 5). Full Discover /
-    /// TopListsView still uses `ItunesTopListService.defaultLimit` (25).
+    /// TopListsView uses `AppSettings.discoverChartsLimit` (`DiscoverChartsLimit` 10/25/50/100, default 25).
     private var limit: Int {
         let allowed = Set(HomePreviewLimit.allCases.map(\.rawValue))
         let raw = settings.homeDiscoverPreviewLimit.rawValue

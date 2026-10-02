@@ -354,6 +354,33 @@ enum ChartsCountryPreference: Equatable, Hashable, Identifiable {
 }
 
 
+/// Soft-cap presets for full Discover / TopListsView Apple iTunes charts count
+/// (10/25/50/100; default **25**; always capped — no Unlimited).
+/// Used by `AppSettings.discoverChartsLimit` only. Does **not** change Home Discover
+/// preview (`homeDiscoverPreviewLimit`), episode/feeds Home soft-caps, or Podcast Index search.
+enum DiscoverChartsLimit: Int, CaseIterable, Identifiable {
+    case ten = 10
+    case twentyFive = 25
+    case fifty = 50
+    case oneHundred = 100
+
+    var id: Int { rawValue }
+
+    /// Clamped row count (≥1). Preset raw values are already in the allowed set.
+    var rowCap: Int { max(1, rawValue) }
+
+    var label: String {
+        switch self {
+        case .ten: return String(localized: "10 podcasts")
+        case .twentyFive: return String(localized: "25 podcasts")
+        case .fifty: return String(localized: "50 podcasts")
+        case .oneHundred: return String(localized: "100 podcasts")
+        }
+    }
+}
+
+
+
 
 /// How the Subscriptions tab orders the feed list (client-side only; no drag-reorder).
 enum SubscriptionsSort: String, CaseIterable, Identifiable {
@@ -1127,7 +1154,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
 /// Used by `AppSettings.homePreviewLimit` (episode-list section previews),
 /// `AppSettings.homeFeedsPreviewLimit` (Recently updated feed cards), and
 /// `AppSettings.homeDiscoverPreviewLimit` (Home Discover charts preview rows only).
-/// Full Discover / TopListsView still uses `ItunesTopListService.defaultLimit` (25) — not these soft-caps.
+/// Full Discover / TopListsView uses `AppSettings.discoverChartsLimit` (`DiscoverChartsLimit`) — not these soft-caps.
 enum HomePreviewLimit: Int, CaseIterable, Identifiable {
     case three = 3
     case five = 5
@@ -1316,6 +1343,7 @@ final class AppSettings: ObservableObject {
         static let lastCustomSleepTimerMinutes = "settings.lastCustomSleepTimerMinutes"
         static let sleepTimerFadeEnabled = "settings.sleepTimerFadeEnabled"
         static let chartsCountryCode = "settings.chartsCountryCode"
+        static let discoverChartsLimit = "settings.discovery.chartsLimit"
         static let askForAppStoreRating = "settings.askForAppStoreRating"
         static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
         static let volumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
@@ -1590,6 +1618,16 @@ final class AppSettings: ObservableObject {
     @Published var chartsCountryCode: String {
         didSet {
             UserDefaults.standard.set(chartsCountryCode, forKey: Keys.chartsCountryCode)
+        }
+    }
+
+    /// Soft cap for full Discover / TopListsView Apple iTunes charts count (10/25/50/100; default 25).
+    /// Always capped — no Unlimited. Full Discover only — does **not** change Home Discover preview
+    /// (`homeDiscoverPreviewLimit`), episode-list `homePreviewLimit`, Recently updated
+    /// `homeFeedsPreviewLimit`, or Podcast Index search.
+    @Published var discoverChartsLimit: DiscoverChartsLimit {
+        didSet {
+            UserDefaults.standard.set(discoverChartsLimit.rawValue, forKey: Keys.discoverChartsLimit)
         }
     }
 
@@ -1869,7 +1907,7 @@ final class AppSettings: ObservableObject {
 
     /// Soft cap for Home **Discover** charts preview rows (3/5/8/10; default 5). Always capped.
     /// Reuses `HomePreviewLimit` presets. Home `HomeTopListsPreview` only — does **not** change
-    /// full Discover / TopListsView (`ItunesTopListService.defaultLimit` 25), episode-list
+    /// full Discover / TopListsView (`discoverChartsLimit`), episode-list
     /// `homePreviewLimit`, or Recently updated `homeFeedsPreviewLimit`.
     @Published var homeDiscoverPreviewLimit: HomePreviewLimit {
         didSet {
@@ -2456,6 +2494,9 @@ final class AppSettings: ObservableObject {
         smartMarkAsPlayedSeconds = Self.loadSmartMarkAsPlayedSeconds()
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
+        let discoverChartsRaw = UserDefaults.standard.object(forKey: Keys.discoverChartsLimit) as? Int
+            ?? DiscoverChartsLimit.twentyFive.rawValue
+        discoverChartsLimit = DiscoverChartsLimit(rawValue: discoverChartsRaw) ?? .twentyFive
         homeSectionOrder = Self.loadHomeSectionOrder()
         homeHiddenSections = Self.loadHomeHiddenSections()
         let homePreviewRaw = UserDefaults.standard.object(forKey: Keys.homePreviewLimit) as? Int
@@ -2831,6 +2872,7 @@ final class AppSettings: ObservableObject {
             rewindAfterPauseSeconds: rewindAfterPauseSeconds,
             smartMarkAsPlayedSeconds: smartMarkAsPlayedSeconds,
             chartsCountryCode: chartsCountryCode,
+            discoverChartsLimit: discoverChartsLimit.rawValue,
             homeSectionOrder: homeSectionOrder.map(\.rawValue),
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
             homePreviewLimit: homePreviewLimit.rawValue,
@@ -2963,6 +3005,10 @@ final class AppSettings: ObservableObject {
         let smartMark = snap.smartMarkAsPlayedSeconds ?? Self.defaultSmartMarkAsPlayedSeconds
         smartMarkAsPlayedSeconds = Self.clampSmartMarkAsPlayedSeconds(smartMark)
         chartsCountryCode = ChartsCountryPreference.fromStorage(snap.chartsCountryCode).storageValue
+        discoverChartsLimit =
+            DiscoverChartsLimit(
+                rawValue: snap.discoverChartsLimit ?? DiscoverChartsLimit.twentyFive.rawValue
+            ) ?? .twentyFive
         if let orderRaw = snap.homeSectionOrder, !orderRaw.isEmpty {
             var order: [HomeSectionId] = []
             var seen = Set<HomeSectionId>()
@@ -3168,6 +3214,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     /// Absent in older backups → treated as 30 (AntennaPod default).
     var smartMarkAsPlayedSeconds: Int? = 30
     var chartsCountryCode: String
+    /// Absent in older backups → 25 (prior hard ItunesTopListService.defaultLimit). Raw `DiscoverChartsLimit` value.
+    var discoverChartsLimit: Int? = 25
     /// Absent in older backups → default order.
     var homeSectionOrder: [String]? = nil
     /// Absent in older backups → default hidden (Favorites).

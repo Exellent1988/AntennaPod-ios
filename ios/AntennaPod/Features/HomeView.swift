@@ -22,7 +22,7 @@ struct HomeView: View {
     /// Soft-cap for episode-list Home previews (Continue / Inbox / Queue / Favorites / History /
     /// Archived / Downloads). From `AppSettings.homePreviewLimit` (3/5/8/10, default 5); clamp to
     /// the allowed preset set if UserDefaults holds an unexpected value. Discover charts preview
-    /// uses `homeDiscoverPreviewLimit`; full TopListsView still uses `ItunesTopListService.defaultLimit`.
+    /// uses `homeDiscoverPreviewLimit`; full TopListsView uses `AppSettings.discoverChartsLimit`.
     private var previewLimit: Int {
         let allowed = Set(HomePreviewLimit.allCases.map(\.rawValue))
         let raw = settings.homePreviewLimit.rawValue

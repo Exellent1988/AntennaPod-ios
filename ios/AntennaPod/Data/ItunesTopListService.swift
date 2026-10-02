@@ -2,10 +2,15 @@ import Foundation
 
 /// Apple iTunes RSS top podcasts charts (no API key).
 /// Mirrors Android `ItunesTopListLoader`
-/// (`https://itunes.apple.com/{country}/rss/toppodcasts/limit=25/explicit={true|false}/json`).
-/// Chart entries expose a collection id; real RSS `feedUrl` comes from a batch `lookup`.
+/// (`https://itunes.apple.com/{country}/rss/toppodcasts/limit={N}/explicit={true|false}/json`).
+/// `N` comes from the caller (full Discover → `AppSettings.discoverChartsLimit`; Home preview →
+/// `homeDiscoverPreviewLimit`); clamped to `appleChartsLimitRange` (1…200). Default parameter
+/// fallback remains `defaultLimit` (25). Chart entries expose a collection id; real RSS `feedUrl`
+/// comes from a batch `lookup`.
 struct ItunesTopListService {
     static let defaultLimit = 25
+    /// Sane Apple iTunes RSS `limit=` clamp (inclusive). Presets stay well inside this range.
+    static let appleChartsLimitRange = 1...200
 
     enum TopListError: LocalizedError {
         case invalidCountry
@@ -44,7 +49,7 @@ struct ItunesTopListService {
         let code = Self.normalizedCountryCode(country)
         guard !code.isEmpty else { throw TopListError.invalidCountry }
 
-        let entries = try await fetchChartEntries(country: code, includeExplicit: includeExplicit)
+        let entries = try await fetchChartEntries(country: code, limit: limit, includeExplicit: includeExplicit)
         guard !entries.isEmpty else { return [] }
 
         let feedByCollectionId = try await lookupFeedUrls(collectionIds: entries.map(\.collectionId))
@@ -94,11 +99,13 @@ struct ItunesTopListService {
 
     // MARK: - Charts RSS
 
-    private func fetchChartEntries(country: String, includeExplicit: Bool = true) async throws -> [ChartEntry] {
+    private func fetchChartEntries(country: String, limit: Int = Self.defaultLimit, includeExplicit: Bool = true) async throws -> [ChartEntry] {
+        // Clamp requested limit into a sane Apple RSS range; put that N into the URL.
+        let clamped = min(max(limit, Self.appleChartsLimitRange.lowerBound), Self.appleChartsLimitRange.upperBound)
         // Match Android URL shape; parental controls may request explicit=false.
         let explicitFlag = includeExplicit ? "true" : "false"
         let urlString =
-            "https://itunes.apple.com/\(country)/rss/toppodcasts/limit=\(Self.defaultLimit)/explicit=\(explicitFlag)/json"
+            "https://itunes.apple.com/\(country)/rss/toppodcasts/limit=\(clamped)/explicit=\(explicitFlag)/json"
         guard let url = URL(string: urlString) else {
             throw TopListError.invalidCountry
         }
