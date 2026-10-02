@@ -29457,6 +29457,159 @@
           }
         }
       }
+    },
+    "Bookmarks saved from the player will appear here.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmarks saved from the player will appear here."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gespeicherte Lesezeichen aus dem Player werden hier angezeigt."
+          }
+        }
+      }
+    },
+    "No matching bookmarks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No matching bookmarks"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine passenden Lesezeichen"
+          }
+        }
+      }
+    },
+    "No bookmarks match your search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No bookmarks match your search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Lesezeichen passen zu deiner Suche."
+          }
+        }
+      }
+    },
+    "Search bookmarks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search bookmarks"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesezeichen suchen"
+          }
+        }
+      }
+    },
+    "Opens this episode’s bookmarks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens this episode’s bookmarks"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Lesezeichen dieser Episode"
+          }
+        }
+      }
+    },
+    "Copies the full bookmarks catalog to the pasteboard; search is ignored": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full bookmarks catalog to the pasteboard; search is ignored"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den vollständigen Lesezeichenkatalog in die Zwischenablage; die Suche wird ignoriert"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the full bookmarks catalog; search is ignored": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the full bookmarks catalog; search is ignored"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen mit dem vollständigen Lesezeichenkatalog; die Suche wird ignoriert"
+          }
+        }
+      }
+    },
+    "Bookmark actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmark actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesezeichen-Aktionen"
+          }
+        }
+      }
+    },
+    "Copy or share the full bookmarks catalog": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy or share the full bookmarks catalog"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vollständigen Lesezeichenkatalog kopieren oder teilen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -388,6 +388,11 @@ struct SubscriptionsView: View {
                         Label("Favorites", systemImage: "star")
                     }
                     NavigationLink {
+                        BookmarksView()
+                    } label: {
+                        Label("Bookmarks", systemImage: "bookmark")
+                    }
+                    NavigationLink {
                         ArchivedView()
                     } label: {
                         Label("Archived", systemImage: "archivebox")
