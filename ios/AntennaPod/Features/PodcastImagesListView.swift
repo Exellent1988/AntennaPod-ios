@@ -74,7 +74,6 @@ struct PodcastImagesListView: View {
         let purpose = entry.displayPurpose
         let alt = entry.displayAlt
         let open = entry.openURL
-        let copyText = PodcastImagesDisplay.copyText(entry)
         let a11y: String = {
             var parts: [String] = [String(localized: "Image")]
             if let widthLabel {
@@ -239,34 +238,35 @@ struct PodcastImagesListView: View {
                 }
 
                 Button {
-                    UIPasteboard.general.string = PodcastImagesDisplay.copyText(entry)
+                    // Copy only the exact URL/text shown above; metadata has separate actions.
+                    UIPasteboard.general.string = urlString
                     copiedAlertMessage = String(localized: "Image URL copied to the pasteboard.")
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {
-                    Label("Copy", systemImage: "doc.on.doc")
+                    Label("Copy image URL", systemImage: "doc.on.doc")
                         .font(.subheadline)
                 }
-                .accessibilityLabel(String(localized: "Copy"))
+                .accessibilityLabel(String(localized: "Copy image URL"))
                 .accessibilityHint(
                     String(localized: "Copies the image URL from the feed to the pasteboard")
                 )
 
-                if !copyText.isEmpty {
+                if !urlString.isEmpty {
                     Group {
                         if let open {
                             ShareLink(item: open) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Share image URL", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         } else {
-                            ShareLink(item: copyText) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                            ShareLink(item: urlString) {
+                                Label("Share image URL", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         }
                     }
-                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityLabel(String(localized: "Share image URL"))
                     .accessibilityHint(
                         String(
                             localized: "Shares the image URL when it is a parseable http(s) URL; otherwise shares the same image text as Copy"

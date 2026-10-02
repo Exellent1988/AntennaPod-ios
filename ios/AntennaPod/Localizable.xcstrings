@@ -21759,6 +21759,42 @@
         }
       }
     },
+    "Copy image URL": {
+      "extractionState": "manual",
+      "comment": "Visible action and VoiceOver label for copying a podcast image URL.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy image URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bild-URL kopieren"
+          }
+        }
+      }
+    },
+    "Share image URL": {
+      "extractionState": "manual",
+      "comment": "Visible action and VoiceOver label for sharing a podcast image URL.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share image URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bild-URL teilen"
+          }
+        }
+      }
+    },
     "Image URL copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Alert message after copying a podcast image URL.",
