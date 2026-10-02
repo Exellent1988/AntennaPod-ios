@@ -11,6 +11,7 @@ struct DownloadsView: View {
     @State private var debounceTask: Task<Void, Never>?
     @State private var showDeletePlayedConfirm = false
     @State private var showClearAllConfirm = false
+    @State private var showCancelAllConfirm = false
     @State private var showEnqueueAllConfirm = false
     /// Single download pending swipe-delete confirmation (nil = dialog dismissed).
     @State private var episodePendingDelete: PodcastEpisode?
@@ -453,6 +454,14 @@ struct DownloadsView: View {
                         .disabled(enqueueAllDownloadsCandidatesCount == 0)
                         .accessibilityHint(String(localized: "Appends downloaded episodes not already queued"))
 
+                        Button {
+                            showCancelAllConfirm = true
+                        } label: {
+                            Label("Cancel all downloads", systemImage: "xmark.circle")
+                        }
+                        .disabled(downloads.cancelAllInFlightCount == 0)
+                        .accessibilityHint(String(localized: "Cancels in-progress and waiting downloads without deleting completed files"))
+
                         Button(role: .destructive) {
                             showDeletePlayedConfirm = true
                         } label: {
@@ -470,9 +479,10 @@ struct DownloadsView: View {
                     } label: {
                         Label("Downloads actions", systemImage: "ellipsis.circle")
                     }
-                    // Menu available whenever the completed catalog is non-empty (Add all / Delete played /
-                    // Clear all each disable independently — same honesty as Favorites Add all + Clear).
-                    .disabled(downloads.downloads.isEmpty)
+                    // Menu available when completed catalog is non-empty **or** anything is in-flight /
+                    // waiting (Cancel all). Add all / Cancel all / Delete played / Clear all each
+                    // disable independently — same honesty as Favorites Add all + Clear.
+                    .disabled(downloads.downloads.isEmpty && downloads.cancelAllInFlightCount == 0)
                 }
             }
             .confirmationDialog(
@@ -486,6 +496,20 @@ struct DownloadsView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Appends \(enqueueAllDownloadsCandidatesCount) downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue.")
+            }
+            .confirmationDialog(
+                "Cancel all downloads?",
+                isPresented: $showCancelAllConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Cancel all downloads") {
+                    downloads.cancelAllInFlightDownloads()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Cancels \(downloads.cancelAllInFlightCount) in-progress or waiting download(s). Stops active transfers and clears the waiting queue. Does not delete completed offline files."
+                )
             }
             .confirmationDialog(
                 "Delete played downloads?",

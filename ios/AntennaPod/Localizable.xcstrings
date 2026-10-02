@@ -24699,6 +24699,74 @@
           }
         }
       }
+    },
+    "Cancel all downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel all downloads"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Downloads abbrechen"
+          }
+        }
+      }
+    },
+    "Cancel all downloads?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel all downloads?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Downloads abbrechen?"
+          }
+        }
+      }
+    },
+    "Cancels in-progress and waiting downloads without deleting completed files": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancels in-progress and waiting downloads without deleting completed files"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bricht laufende und wartende Downloads ab, ohne abgeschlossene Dateien zu löschen"
+          }
+        }
+      }
+    },
+    "Cancels %lld in-progress or waiting download(s). Stops active transfers and clears the waiting queue. Does not delete completed offline files.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancels %lld in-progress or waiting download(s). Stops active transfers and clears the waiting queue. Does not delete completed offline files."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bricht %lld laufende oder wartende Download(s) ab. Stoppt aktive Übertragungen und leert die Warteschlange. Löscht keine abgeschlossenen Offline-Dateien."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

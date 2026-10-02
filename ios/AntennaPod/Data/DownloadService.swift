@@ -479,6 +479,37 @@ final class DownloadService: ObservableObject {
         cancelTask(for: episode.id)
     }
 
+    /// Count of downloads that `cancelAllInFlightDownloads` would cancel: active `URLSession`
+    /// tasks + waiting FIFO items. Equals `inProgress.count` in steady state (published for UI).
+    var cancelAllInFlightCount: Int {
+        inProgress.count
+    }
+
+    /// Cancels **every** in-flight background download and clears the waiting FIFO.
+    /// Does **not** delete completed offline files (use `clearAllDownloads` / `delete`).
+    /// Does not touch played status, queue, favorites, or history. Confirmation is UI
+    /// responsibility. Returns how many episode ids were cancelled (pre-clear `inProgress` size).
+    @discardableResult
+    func cancelAllInFlightDownloads() -> Int {
+        let count = inProgress.count
+        // Snapshot task ids before clearing maps so async cancel still targets the right tasks.
+        let taskIds = Array(pendingByTaskId.keys)
+        waitingQueue.removeAll()
+        pendingByTaskId.removeAll()
+        sessionDelegate.removeAllPending()
+        persistPending()
+        inProgress.removeAll()
+        if !taskIds.isEmpty {
+            session.getTasksWithCompletionHandler { _, _, downloadTasks in
+                for task in downloadTasks where taskIds.contains(task.taskIdentifier) {
+                    task.cancel()
+                }
+            }
+        }
+        // Do not pumpWaitingQueue — waiting was cleared intentionally.
+        return count
+    }
+
     /// Completed downloads marked **played**, excluding favorited / starred episodes.
     /// Matches auto-delete-after-playing favorite protection (`PodcastStore.isFavorite`).
     /// Unplayed downloads are never included.
