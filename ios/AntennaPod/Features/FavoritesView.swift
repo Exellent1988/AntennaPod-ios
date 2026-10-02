@@ -177,7 +177,7 @@ struct FavoritesView: View {
     /// (podcast chip + searchable filter + sort). Remaining per episode = `max(0, duration − position)` when
     /// duration known; unplayed with duration contributes full duration; **played** (not current)
     /// → 0; **unknown duration skipped** (tilde when any skipped). Currently playing uses live
-    /// `PlaybackService` position/duration. Wall-clock only (no playback-speed divide).
+    /// `PlaybackService` position/duration. Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate).
     /// Distinct from Clear favorites count (always full catalog).
     private var favoritesRemainingInfoLabel: String? {
         guard !filteredItems.isEmpty else { return nil }
@@ -202,7 +202,12 @@ struct FavoritesView: View {
             livePositionSeconds: playback.positionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
-            savedPositionSeconds: { store.positionSeconds(for: $0) }
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
         )
     }
 

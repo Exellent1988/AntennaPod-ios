@@ -180,7 +180,7 @@ struct ArchivedView: View {
     /// `max(0, duration − position)` when duration known; unplayed with duration contributes
     /// full duration; **played** (not current) → 0; **unknown duration skipped** (tilde when
     /// any skipped). Currently playing uses live `PlaybackService` position/duration.
-    /// Wall-clock only (no playback-speed divide). Distinct from Restore all count (always full catalog).
+    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from Restore all count (always full catalog).
     private var archivedRemainingInfoLabel: String? {
         guard !filteredItems.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: archivedRemainingSummary)
@@ -204,7 +204,12 @@ struct ArchivedView: View {
             livePositionSeconds: playback.positionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
-            savedPositionSeconds: { store.positionSeconds(for: $0) }
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
         )
     }
 

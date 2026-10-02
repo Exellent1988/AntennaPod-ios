@@ -24627,6 +24627,57 @@
           }
         }
       }
+    },
+    "Remaining time respects speed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining time respects speed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Zeit berücksichtigt Tempo"
+          }
+        }
+      }
+    },
+    "When on, list remaining-time bars estimate listening time using each podcast’s playback speed. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, list remaining-time bars estimate listening time using each podcast’s playback speed. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, schätzen Listen-Restzeit-Leisten die Hörzeit mit der Abspielgeschwindigkeit jedes Podcasts. Standard aus."
+          }
+        }
+      }
+    },
+    "When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Volume boost is not speed. Default off (wall-clock). Mini/full player −remaining labels stay wall-clock.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Volume boost is not speed. Default off (wall-clock). Mini/full player −remaining labels stay wall-clock."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, teilen Listen- und Home-Restzeit-Infoleisten die verbleibende Zeit jeder Episode durch die effektive Abspielgeschwindigkeit des Podcasts (Feed-Override oder Standardtempo, mindestens 0,5). Nur Schätzung — kein Live-ETA. Verwendet nicht die aktuelle Player-Session-Rate für Listen-Summen. Lautstärke-Boost ist kein Tempo. Standard aus (Wanduhr). Mini-/Vollbild-Player −Restzeit-Labels bleiben Wanduhr."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -1,17 +1,23 @@
 import Foundation
 
-/// Shared wall-clock remaining-time math for list / Home info bars (and Subscriptions
-/// unplayed map). Callers pass the **exact episode set** they already filtered (visible /
-/// preview / soft-cap / search hits / etc.) — this type never chooses scopes.
+/// Shared remaining-time math for list / Home info bars (and Subscriptions unplayed map).
+/// Callers pass the **exact episode set** they already filtered (visible / preview /
+/// soft-cap / search hits / etc.) — this type never chooses scopes.
 ///
-/// Per episode when duration is known: `max(0, duration − position)`. Unplayed with known
-/// duration contributes full duration (position 0). **Played** (not the live current episode)
-/// → 0 remaining (regardless of stored position; mark-played clears position only when Settings reset-on-mark-played is on). **Unknown duration skipped** (`unknownCount`;
-/// UI prefixes `~` when any skipped). Currently playing prefers live `PlaybackService`
-/// position/duration when the caller supplies them. Wall-clock only (no playback-speed divide).
+/// Per episode when duration is known: wall-clock `max(0, duration − position)`. Unplayed
+/// with known duration contributes full duration (position 0). **Played** (not the live
+/// current episode) → 0 remaining (regardless of stored position; mark-played clears
+/// position only when Settings reset-on-mark-played is on). **Unknown duration skipped**
+/// (`unknownCount`; UI prefixes `~` when any skipped). Currently playing prefers live
+/// `PlaybackService` position/duration when the caller supplies them.
+///
+/// Default is **wall-clock**. When callers pass `effectivePlaybackSpeed`, each episode’s
+/// remaining is divided by `max(0.5, speed)` (feed override ?? global default — estimate;
+/// session rate / volume boost are not applied here).
 ///
 /// Distinct from `WidgetRemainingTime` (single Continue snapshot labels) and from
-/// `ChapterIndexing.remainingSeconds` (chapter end − position).
+/// `ChapterIndexing.remainingSeconds` (chapter end − position). Player chrome −remaining
+/// (mini/full) stays wall-clock — not this helper.
 enum EpisodeRemainingTime {
     /// Aggregate over one caller-chosen episode list.
     struct Summary: Equatable {
@@ -75,6 +81,16 @@ enum EpisodeRemainingTime {
     // MARK: - Sum
 
     /// Sum remaining over `episodes` (caller-owned set). Same edge cases as former per-view loops.
+    /// Minimum divisor when speed-adjusting (matches custom playback speed lower bound).
+    static let minimumPlaybackSpeedDivisor: Float = 0.5
+
+    /// Wall-clock remaining divided by effective speed (clamped to ≥ `minimumPlaybackSpeedDivisor`).
+    static func speedAdjustedRemainingSeconds(wallClockSeconds: Double, playbackSpeed: Float) -> Double {
+        let divisor = max(Double(minimumPlaybackSpeedDivisor), Double(playbackSpeed))
+        guard divisor > 0, wallClockSeconds.isFinite else { return max(0, wallClockSeconds) }
+        return max(0, wallClockSeconds) / divisor
+    }
+
     static func summarize(
         episodes: some Sequence<PodcastEpisode>,
         currentEpisodeId: String?,
@@ -82,7 +98,10 @@ enum EpisodeRemainingTime {
         livePositionSeconds: Double,
         isPlayed: (String) -> Bool,
         savedDurationSeconds: (String) -> Double,
-        savedPositionSeconds: (String) -> Double
+        savedPositionSeconds: (String) -> Double,
+        /// When non-nil, divide each episode’s wall-clock remaining by that speed (estimate).
+        /// Nil keeps today’s wall-clock default. Played → 0 is unchanged (skipped before divide).
+        effectivePlaybackSpeed: ((PodcastEpisode) -> Float)? = nil
     ) -> Summary {
         var remaining = 0.0
         var known = 0
@@ -111,7 +130,15 @@ enum EpisodeRemainingTime {
                 livePositionSeconds: livePositionSeconds,
                 savedPositionSeconds: savedPositionSeconds(episode.id)
             )
-            remaining += max(0, duration - position)
+            let wallClock = max(0, duration - position)
+            if let speedFor = effectivePlaybackSpeed {
+                remaining += speedAdjustedRemainingSeconds(
+                    wallClockSeconds: wallClock,
+                    playbackSpeed: speedFor(episode)
+                )
+            } else {
+                remaining += wallClock
+            }
         }
         return Summary(
             episodeCount: count,

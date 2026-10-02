@@ -250,6 +250,9 @@ struct SubscriptionsView: View {
         _ = playback.currentEpisode?.id
         _ = playback.positionSeconds
         _ = playback.durationSeconds
+        // Observe remaining-time speed prefs so per-feed / list bars refresh when toggled.
+        _ = settings.remainingTimeRespectsSpeed
+        _ = settings.defaultPlaybackSpeed
         return store.unplayedRemainingByFeedId()
     }
 
@@ -260,7 +263,7 @@ struct SubscriptionsView: View {
     /// Inbox / per-feed row remaining. Full stored feed catalogs — **not** the All Episodes
     /// newest-500 soft cap. Remaining per episode = `max(0, duration − position)` when
     /// duration known; **unknown duration skipped** (tilde when any skipped); live player
-    /// when current. Wall-clock only (no playback-speed divide). Distinct from Inbox tab
+    /// when current. Wall-clock by default; optional Remaining time respects speed divides by feed/default speed (estimate). Distinct from Inbox tab
     /// remaining (`inboxSort` / full Inbox). Hidden when no visible feeds or no unplayed
     /// episodes among them.
     private var subscriptionsRemainingInfoLabel: String? {

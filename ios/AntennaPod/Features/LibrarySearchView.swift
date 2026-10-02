@@ -4,6 +4,7 @@ import SwiftUI
 struct LibrarySearchResultsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var settings: AppSettings
     let query: String
 
     private var feeds: [PodcastFeed] {
@@ -24,7 +25,7 @@ struct LibrarySearchResultsView: View {
     /// `max(0, duration − position)` when duration known; unplayed with duration contributes
     /// full duration; **played** (not current) → 0; **unknown duration skipped** (tilde when
     /// any skipped). Currently playing uses live `PlaybackService` position/duration.
-    /// Wall-clock only (no playback-speed divide). Distinct from Inbox remaining (hidden while
+    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from Inbox remaining (hidden while
     /// this view replaces Inbox rows) and from full-library / tab-badge totals.
     private var librarySearchRemainingInfoLabel: String? {
         guard !episodes.isEmpty else { return nil }
@@ -52,7 +53,12 @@ struct LibrarySearchResultsView: View {
             livePositionSeconds: playback.positionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
-            savedPositionSeconds: { store.positionSeconds(for: $0) }
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
         )
     }
 

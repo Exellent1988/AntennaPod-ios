@@ -190,7 +190,7 @@ struct DownloadsView: View {
     /// Remaining per episode = `max(0, duration − position)` when duration known; unplayed with
     /// duration contributes full duration; **played** (not current) → 0; **unknown duration skipped**
     /// (tilde when any skipped). Currently playing uses live `PlaybackService` position/duration.
-    /// Wall-clock only (no playback-speed divide). Distinct from tab badge (full catalog count).
+    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge (full catalog count).
     private var downloadsRemainingInfoLabel: String? {
         guard !filteredDownloads.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: downloadsRemainingSummary)
@@ -214,7 +214,12 @@ struct DownloadsView: View {
             livePositionSeconds: playback.positionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
-            savedPositionSeconds: { store.positionSeconds(for: $0) }
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
         )
     }
 

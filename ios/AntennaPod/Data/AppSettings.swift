@@ -1161,7 +1161,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, sleep timer volume fade, skip intro/outro, volume adaptation, volume boost (100–300%), skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / download-complete / sync-error / sleep-timer-end notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes podcast filter, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Feed/All Episodes/Inbox itunes:episodeType filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
+/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, sleep timer volume fade, skip intro/outro, volume adaptation, volume boost (100–300%), skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / download-complete / sync-error / sleep-timer-end notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, Remaining time respects speed, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes podcast filter, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Feed/All Episodes/Inbox itunes:episodeType filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -1272,6 +1272,7 @@ final class AppSettings: ObservableObject {
         static let continuousPlaybackMode = "settings.continuousPlaybackMode"
         static let resetPositionWhenMarkedPlayed = "settings.resetPositionWhenMarkedPlayed"
         static let showRemainingTime = "settings.showRemainingTime"
+        static let remainingTimeRespectsSpeed = "settings.remainingTimeRespectsSpeed"
         static let rewindAfterPauseSeconds = "settings.rewindAfterPauseSeconds"
         static let smartMarkAsPlayedSeconds = "settings.smartMarkAsPlayedSeconds"
         static let homeSectionOrder = "settings.home.sectionOrder"
@@ -1726,6 +1727,17 @@ final class AppSettings: ObservableObject {
     @Published var showRemainingTime: Bool {
         didSet {
             UserDefaults.standard.set(showRemainingTime, forKey: Keys.showRemainingTime)
+        }
+    }
+
+    /// When true, list/Home remaining-time info bars divide each episode’s remaining by that
+    /// podcast’s effective playback speed (`FeedSettings.playbackSpeed` ?? `defaultPlaybackSpeed`,
+    /// clamped ≥ 0.5). Default **false** (wall-clock — today’s behavior). Estimate only: does
+    /// **not** use the live player session rate for list totals; volume boost ≠ speed.
+    /// Mini/full player −remaining labels stay wall-clock (not this flag).
+    @Published var remainingTimeRespectsSpeed: Bool {
+        didSet {
+            UserDefaults.standard.set(remainingTimeRespectsSpeed, forKey: Keys.remainingTimeRespectsSpeed)
         }
     }
 
@@ -2328,6 +2340,12 @@ final class AppSettings: ObservableObject {
             // Default off: show total duration (Android pref_show_remain_time unchecked).
             showRemainingTime = false
         }
+        if UserDefaults.standard.object(forKey: Keys.remainingTimeRespectsSpeed) != nil {
+            remainingTimeRespectsSpeed = UserDefaults.standard.bool(forKey: Keys.remainingTimeRespectsSpeed)
+        } else {
+            // Default off: wall-clock list/Home remaining (prior beta honesty).
+            remainingTimeRespectsSpeed = false
+        }
         rewindAfterPauseSeconds = Self.loadRewindAfterPauseSeconds()
         smartMarkAsPlayedSeconds = Self.loadSmartMarkAsPlayedSeconds()
         let chartsRaw = UserDefaults.standard.string(forKey: Keys.chartsCountryCode) ?? "auto"
@@ -2693,6 +2711,7 @@ final class AppSettings: ObservableObject {
             continuousPlaybackMode: continuousPlaybackMode.rawValue,
             resetPositionWhenMarkedPlayed: resetPositionWhenMarkedPlayed,
             showRemainingTime: showRemainingTime,
+            remainingTimeRespectsSpeed: remainingTimeRespectsSpeed,
             rewindAfterPauseSeconds: rewindAfterPauseSeconds,
             smartMarkAsPlayedSeconds: smartMarkAsPlayedSeconds,
             chartsCountryCode: chartsCountryCode,
@@ -2813,6 +2832,7 @@ final class AppSettings: ObservableObject {
         )
         resetPositionWhenMarkedPlayed = snap.resetPositionWhenMarkedPlayed ?? true
         showRemainingTime = snap.showRemainingTime ?? false
+        remainingTimeRespectsSpeed = snap.remainingTimeRespectsSpeed ?? false
         let rewindAfter = snap.rewindAfterPauseSeconds ?? Self.defaultRewindAfterPauseSeconds
         rewindAfterPauseSeconds = Self.rewindAfterPausePresets.contains(rewindAfter)
             ? rewindAfter
@@ -3004,6 +3024,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var resetPositionWhenMarkedPlayed: Bool? = true
     /// Absent in older backups → treated as off (show total duration).
     var showRemainingTime: Bool? = false
+    /// Absent in older backups → treated as off (wall-clock list remaining).
+    var remainingTimeRespectsSpeed: Bool? = false
     /// Absent in older backups → treated as 2 (honest beta default).
     var rewindAfterPauseSeconds: Int? = 2
     /// Absent in older backups → treated as 30 (AntennaPod default).

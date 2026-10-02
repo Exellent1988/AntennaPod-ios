@@ -137,7 +137,12 @@ struct HomeView: View {
             livePositionSeconds: playback.positionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
-            savedPositionSeconds: { store.positionSeconds(for: $0) }
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
         )
     }
 
@@ -183,7 +188,12 @@ struct HomeView: View {
             livePositionSeconds: playback.positionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
-            savedPositionSeconds: { store.positionSeconds(for: $0) }
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
         )
     }
 
@@ -192,7 +202,7 @@ struct HomeView: View {
     /// episode = `max(0, duration − position)` when duration known; unplayed with duration
     /// contributes full duration; **played** (not current) → 0; **unknown duration skipped**
     /// (tilde when any skipped). Currently playing uses live `PlaybackService`
-    /// position/duration. Wall-clock only (no playback-speed divide).
+    /// position/duration. Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate).
     /// **Preview soft-cap honesty:** never claims remaining beyond the visible preview rows
     /// (first `previewLimit` after search filter) — not the full `store.queue` / Queue tab /
     /// tab badge / Queue screen chip+search filter.
@@ -228,7 +238,12 @@ struct HomeView: View {
             livePositionSeconds: playback.positionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
-            savedPositionSeconds: { store.positionSeconds(for: $0) }
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
         )
     }
 
@@ -274,7 +289,12 @@ struct HomeView: View {
             livePositionSeconds: playback.positionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
-            savedPositionSeconds: { store.positionSeconds(for: $0) }
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
         )
     }
 
@@ -283,7 +303,7 @@ struct HomeView: View {
     /// `previewLimit`). Remaining per episode = `max(0, duration − position)` when duration known;
     /// unplayed with duration contributes full duration; **played** (not current) → 0; **unknown
     /// duration skipped** (tilde when any skipped). Currently playing uses live `PlaybackService`
-    /// position/duration. Wall-clock only (no playback-speed divide).
+    /// position/duration. Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate).
     /// **Preview soft-cap honesty:** never claims remaining beyond the visible preview rows
     /// (first `previewLimit` after search filter) — not the full `DownloadService.downloads`
     /// catalog / Downloads tab chip+search filter / tab badge.
@@ -320,7 +340,12 @@ struct HomeView: View {
             livePositionSeconds: playback.positionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
-            savedPositionSeconds: { store.positionSeconds(for: $0) }
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
         )
     }
 

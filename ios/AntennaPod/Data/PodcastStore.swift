@@ -131,6 +131,33 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    // MARK: - Remaining time (list / Home speed estimate)
+
+    /// Effective playback speed for list/Home remaining-time estimates: per-feed
+    /// `FeedSettings.playbackSpeed` if set, else `AppSettings.defaultPlaybackSpeed`.
+    /// Clamped to ≥ `EpisodeRemainingTime.minimumPlaybackSpeedDivisor` (0.5). Does **not**
+    /// use the live player session rate or volume boost.
+    func resolvedPlaybackSpeedForRemaining(for episode: PodcastEpisode) -> Float {
+        let global = settings?.defaultPlaybackSpeed ?? 1.0
+        let raw: Float
+        if let feed = feed(containingEpisodeId: episode.id) {
+            raw = feedSettings(for: feed.id).resolvedPlaybackSpeed(global: global)
+        } else {
+            raw = global
+        }
+        return max(EpisodeRemainingTime.minimumPlaybackSpeedDivisor, raw)
+    }
+
+    /// Non-nil speed closure when Settings → Remaining time respects speed is on; else nil
+    /// (wall-clock). Safe to pass straight into `EpisodeRemainingTime.summarize`.
+    func remainingTimeEffectivePlaybackSpeedClosure() -> ((PodcastEpisode) -> Float)? {
+        guard settings?.remainingTimeRespectsSpeed == true else { return nil }
+        return { [weak self] episode in
+            self?.resolvedPlaybackSpeedForRemaining(for: episode)
+                ?? EpisodeRemainingTime.minimumPlaybackSpeedDivisor
+        }
+    }
+
     // MARK: - Per-feed settings
 
     func feedSettings(for feedId: UUID) -> FeedSettings {
@@ -878,17 +905,19 @@ final class PodcastStore: ObservableObject {
     /// Per-feed unplayed remaining (`!isPlayed && !isArchived`), **one pass** over stored
     /// `feed.episodes` — same definition / catalog honesty as `unplayedCountsByFeedId` / Inbox
     /// (full stored feed catalog; **not** All Episodes newest-500 soft cap; RSS window inherent).
-    /// Remaining = wall-clock sum of `max(0, duration − position)` when duration known; unknown
+    /// Remaining = sum of `max(0, duration − position)` when duration known; unknown
     /// durations skipped (`unknownCount`); live `PlaybackService` position/duration when that
     /// episode is current (if `playback` is wired). **Played** (not current) → 0 (defensive —
-    /// set is already unplayed). Omits feeds with zero unplayed (callers treat missing as 0 /
-    /// hide remaining).
+    /// set is already unplayed). When `AppSettings.remainingTimeRespectsSpeed` is on, divides
+    /// each episode by effective feed/default speed (estimate; not session rate). Omits feeds
+    /// with zero unplayed (callers treat missing as 0 / hide remaining).
     func unplayedRemainingByFeedId() -> [UUID: FeedUnplayedRemainingSummary] {
         var result: [UUID: FeedUnplayedRemainingSummary] = [:]
         result.reserveCapacity(feeds.count)
         let currentId = playback?.currentEpisode?.id
         let liveDur = playback?.durationSeconds ?? 0
         let livePos = playback?.positionSeconds ?? 0
+        let speedClosure = remainingTimeEffectivePlaybackSpeedClosure()
         for feed in feeds {
             let episodes = feed.episodes.filter { !isPlayed($0.id) && !isArchived($0.id) }
             guard !episodes.isEmpty else { continue }
@@ -899,7 +928,8 @@ final class PodcastStore: ObservableObject {
                 livePositionSeconds: livePos,
                 isPlayed: { isPlayed($0) },
                 savedDurationSeconds: { playbackState(for: $0).durationSeconds },
-                savedPositionSeconds: { positionSeconds(for: $0) }
+                savedPositionSeconds: { positionSeconds(for: $0) },
+                effectivePlaybackSpeed: speedClosure
             )
             result[feed.id] = FeedUnplayedRemainingSummary(
                 unplayedCount: summary.episodeCount,

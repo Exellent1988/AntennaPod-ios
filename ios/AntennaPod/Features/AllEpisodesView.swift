@@ -174,7 +174,7 @@ struct AllEpisodesView: View {
     /// `max(0, duration − position)` when duration known; unplayed with duration contributes
     /// full duration; **played** (not current) → 0; **unknown duration skipped** (tilde when
     /// any skipped). Currently playing uses live `PlaybackService` position/duration.
-    /// Wall-clock only (no playback-speed divide).
+    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate).
     /// **Soft-cap honesty:** never claims remaining beyond the capped+filtered visible set.
     private var allEpisodesRemainingInfoLabel: String? {
         guard !items.isEmpty else { return nil }
@@ -199,7 +199,12 @@ struct AllEpisodesView: View {
             livePositionSeconds: playback.positionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
-            savedPositionSeconds: { store.positionSeconds(for: $0) }
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
         )
     }
 
