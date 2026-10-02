@@ -79,7 +79,7 @@ struct EpisodeDescriptionSheetView: View {
         !episode.displayAlternateEnclosures.isEmpty
     }
 
-    /// Item podcast:soundbite when the feed provided clips — empty → hide (seek when current / else Copy; no clip player).
+    /// Item podcast:soundbite when the feed provided clips — empty → hide (Play soundbite / Copy; no separate clip player).
     private var displaySoundbites: [PodcastSoundbite] {
         episode.soundbites
     }
@@ -230,7 +230,7 @@ struct EpisodeDescriptionSheetView: View {
                                 PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures, episode: episode)
                             }
                             if hasSoundbites {
-                                PodcastSoundbitesListView(soundbites: displaySoundbites, episodeId: episode.id)
+                                PodcastSoundbitesListView(soundbites: displaySoundbites, episode: episode)
                             }
                             if hasTexts {
                                 PodcastTxtListView(texts: displayTexts)
@@ -375,7 +375,7 @@ struct EpisodeDescriptionSheetView: View {
                         PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures, episode: episode)
                     }
                     if hasSoundbites {
-                        PodcastSoundbitesListView(soundbites: displaySoundbites, episodeId: episode.id)
+                        PodcastSoundbitesListView(soundbites: displaySoundbites, episode: episode)
                     }
                     if hasTexts {
                         PodcastTxtListView(texts: displayTexts)
@@ -419,7 +419,7 @@ struct EpisodeDescriptionSheetView: View {
                         PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures, episode: episode)
                     }
                     if hasSoundbites {
-                        PodcastSoundbitesListView(soundbites: displaySoundbites, episodeId: episode.id)
+                        PodcastSoundbitesListView(soundbites: displaySoundbites, episode: episode)
                     }
                     if hasTexts {
                         PodcastTxtListView(texts: displayTexts)

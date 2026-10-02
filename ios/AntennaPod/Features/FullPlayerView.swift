@@ -515,14 +515,14 @@ struct FullPlayerView: View {
         // No chapters and no remote URL → hide section entirely (no empty placeholder).
     }
 
-    /// Item podcast:soundbite — feed-provided only; seek via PlaybackService (current episode); no clip player.
+    /// Item podcast:soundbite — feed-provided only; Play soundbite via PlaybackService (seek + auto-pause at end); no separate clip player.
     /// Prefer store-resolved episode so refresh-populated soundbites appear without restarting playback.
     @ViewBuilder
     private var soundbitesSection: some View {
         if let ep = resolvedEpisode ?? episode, !ep.displaySoundbites.isEmpty {
             PodcastSoundbitesListView(
                 soundbites: ep.displaySoundbites,
-                episodeId: ep.id
+                episode: ep
             )
             .padding(.top, 8)
         }

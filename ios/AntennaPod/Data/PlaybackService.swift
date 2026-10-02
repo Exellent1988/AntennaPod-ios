@@ -132,6 +132,12 @@ final class PlaybackService: ObservableObject {
     /// When the current item was paused (user / audio-session / sleep-timer). `nil` means no rewind-after-pause.
     private var pausedAt: Date?
 
+    /// Wall-clock end (seconds) for feed `podcast:soundbite` play-until-end.
+    /// When set and playing, auto-pause at this position (like user pause — no queue advance).
+    /// Cleared on user seek/skip/pause, episode change, sleep-timer fire, or when the end is reached.
+    /// Not a separate clip player — same AVPlayer / episode progress.
+    private var soundbiteEndSeconds: Double?
+
     init() {
         setupRemoteCommandsIfNeeded()
         UIApplication.shared.beginReceivingRemoteControlEvents()
@@ -172,6 +178,8 @@ final class PlaybackService: ObservableObject {
             }
         }
         lastError = nil
+        // New play / episode switch replaces any pending soundbite end window.
+        clearSoundbiteEndMarker()
 
         let isFreshEpisode = currentEpisode?.id != episode.id
         var leavingEpisodeId: String?
@@ -264,6 +272,8 @@ final class PlaybackService: ObservableObject {
         if isPlaying {
             player.pause()
             isPlaying = false
+            // User pause clears pending soundbite end (same as seek/skip).
+            clearSoundbiteEndMarker()
             // Pause only saves progress; smart-mark happens on leave/end (AntennaPod-like).
             persistProgress(force: true)
             pauseSleepTimerCountdown()
@@ -283,6 +293,7 @@ final class PlaybackService: ObservableObject {
     func stop() {
         resumeAfterInterruption = false
         pausedAt = nil
+        clearSoundbiteEndMarker()
         let leavingId = currentEpisode?.id
         finishCurrentEpisode(ended: false)
         tearDownPlayer(clearSleepTimer: true)
@@ -324,10 +335,16 @@ final class PlaybackService: ObservableObject {
         seek(toSeconds: positionSeconds + delta)
     }
 
-    /// Absolute seek for scrubber / Now Playing position changes.
-    func seek(toSeconds seconds: Double) {
+    /// Absolute seek for scrubber / Now Playing / chapter / soundbite start.
+    /// - Parameter clearSoundbiteEndMarker: When `true` (default), cancels a pending soundbite
+    ///   play-until-end window (user scrub / skip / chapter). Pass `false` when `playSoundbite`
+    ///   seeks to the clip start before arming the end marker.
+    func seek(toSeconds seconds: Double, clearSoundbiteEndMarker clearEnd: Bool = true) {
         guard let player else {
             return
+        }
+        if clearEnd {
+            clearSoundbiteEndMarker()
         }
         let target = max(0, seconds)
         let capped: Double
@@ -370,6 +387,62 @@ final class PlaybackService: ObservableObject {
             return true
         }
         return play(episode: episode, fileURL: fileURL, fromBeginning: true)
+    }
+
+    /// Play a feed-provided `podcast:soundbite`: seek to `startTime`, then **auto-pause** when
+    /// wall-clock position reaches `startTime + duration`. Same episode / AVPlayer / progress —
+    /// **not** a separate clip player. Pause at end is like user pause (no continuous queue advance).
+    /// Requires finite duration > 0. Clears any prior end marker. If this episode is not current,
+    /// starts playback (`fromBeginning: true`) then seeks into the window when media is available.
+    @discardableResult
+    func playSoundbite(
+        episode: PodcastEpisode,
+        startTimeSeconds: Double,
+        durationSeconds: Double,
+        fileURL: URL? = nil
+    ) -> Bool {
+        guard startTimeSeconds.isFinite, startTimeSeconds >= 0,
+              durationSeconds.isFinite, durationSeconds > 0 else {
+            return false
+        }
+        let end = startTimeSeconds + durationSeconds
+        guard end.isFinite, end > startTimeSeconds else {
+            return false
+        }
+
+        let isCurrent = currentEpisode?.id == episode.id && player != nil
+        if !isCurrent {
+            // Fresh load at 0 so skip-intro / resume do not steal the soundbite start; seek next.
+            guard play(episode: episode, fileURL: fileURL, fromBeginning: true) else {
+                return false
+            }
+        }
+
+        seek(toSeconds: startTimeSeconds, clearSoundbiteEndMarker: false)
+        soundbiteEndSeconds = end
+
+        if let player, !isPlaying {
+            // Intentional soundbite start — do not apply rewind-after-pause.
+            pausedAt = nil
+            activateSession()
+            player.play()
+            player.rate = rate
+            isPlaying = true
+            resumeSleepTimerIfNeeded()
+            updateNowPlayingInfo(force: true)
+            applyIdleTimerPolicy()
+        }
+        return true
+    }
+
+    /// Cancel pending soundbite play-until-end (no-op when none armed).
+    func clearSoundbiteEndMarker() {
+        soundbiteEndSeconds = nil
+    }
+
+    /// Whether a soundbite end window is armed for the current item.
+    var hasSoundbiteEndMarker: Bool {
+        soundbiteEndSeconds != nil
     }
 
     // MARK: - Sleep timer
@@ -623,6 +696,7 @@ final class PlaybackService: ObservableObject {
                 self.persistProgress(force: false)
                 self.tickSleepTimer()
                 self.checkEndOfChapterSleepTimer()
+                self.checkSoundbiteEnd()
                 self.checkSkipOutro()
                 self.updateNowPlayingInfo(force: false)
             }
@@ -654,6 +728,8 @@ final class PlaybackService: ObservableObject {
     }
 
     private func handlePlaybackEnded() {
+        // Natural episode end — drop any pending soundbite window (queue advance is separate).
+        clearSoundbiteEndMarker()
         // End-of-episode / end-of-chapter (last chapter) sleep timer: mark finished, stop — do not auto-advance.
         if isSleepTimerActive, let mode = sleepTimerMode {
             switch mode {
@@ -733,6 +809,41 @@ final class PlaybackService: ObservableObject {
         guard remaining.isFinite, remaining <= outro else { return }
         didTriggerSkipOutroForSession = true
         handlePlaybackEnded()
+    }
+
+    /// Feed soundbite play-until-end: pause at wall-clock `soundbiteEndSeconds` like user pause.
+    /// Does **not** call `handlePlaybackEnded` — no continuous queue advance / mark-played-from-end.
+    private func checkSoundbiteEnd() {
+        guard let end = soundbiteEndSeconds, end.isFinite else { return }
+        guard isPlaying else { return }
+        // Small epsilon so 0.5s observer cadence does not need an exact hit.
+        if positionSeconds + 0.05 >= end {
+            pauseForSoundbiteEnd(at: end)
+        }
+    }
+
+    private func pauseForSoundbiteEnd(at end: Double) {
+        clearSoundbiteEndMarker()
+        guard let player else { return }
+        if isPlaying {
+            player.pause()
+            isPlaying = false
+        }
+        // Snap to the feed end boundary for an honest stop position.
+        let target: Double
+        if durationSeconds.isFinite, durationSeconds > 0 {
+            target = min(max(0, end), durationSeconds)
+        } else {
+            target = max(0, end)
+        }
+        let time = CMTime(seconds: target, preferredTimescale: 600)
+        player.seek(to: time)
+        positionSeconds = target
+        persistProgress(force: true)
+        pauseSleepTimerCountdown()
+        recordPausedAt()
+        updateNowPlayingInfo(force: true)
+        applyIdleTimerPolicy()
     }
 
     private func almostEnded(position: Double, duration: Double) -> Bool {
@@ -832,6 +943,8 @@ final class PlaybackService: ObservableObject {
     }
 
     private func expireSleepTimer() {
+        // Sleep-timer fire cancels pending soundbite end (user-equivalent stop).
+        clearSoundbiteEndMarker()
         let notificationKind: SleepTimerEndNotificationCoordinator.Kind
         switch sleepTimerMode {
         case .endOfEpisode:
@@ -904,6 +1017,7 @@ final class PlaybackService: ObservableObject {
     }
 
     private func tearDownPlayer(clearSleepTimer: Bool) {
+        clearSoundbiteEndMarker()
         if clearSleepTimer {
             disableSleepTimer()
         } else {

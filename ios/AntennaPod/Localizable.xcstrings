@@ -16015,24 +16015,6 @@
       },
       "comment": "VoiceOver start time for a soundbite (m:ss / h:mm:ss)."
     },
-    "Soundbites come from the feed. Tapping seeks in the current episode when it is playing; there is no separate clip player.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Soundbites come from the feed. Tapping seeks in the current episode when it is playing; there is no separate clip player."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Soundbites stammen aus dem Feed. Tippen springt in der aktuellen Episode zum Start; es gibt keinen eigenen Clip-Player."
-          }
-        }
-      },
-      "comment": "Honesty footnote: soundbites seek via PlaybackService only — no separate clip player."
-    },
     "Showing first 20 soundbites from the feed.": {
       "extractionState": "manual",
       "localizations": {
@@ -16050,60 +16032,6 @@
         }
       },
       "comment": "Honesty when more than 20 valid podcast:soundbite entries exist."
-    },
-    "Seek to start": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seek to start"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zum Start springen"
-          }
-        }
-      },
-      "comment": "Button: seek PlaybackService to soundbite startTime when episode is current."
-    },
-    "Seeks playback to the soundbite start time in the current episode": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seeks playback to the soundbite start time in the current episode"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Springt in der aktuellen Episode zur Startzeit des Soundbites"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Seek to start."
-    },
-    "Copies the soundbite title and times to the pasteboard. Seek is available when this episode is playing.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the soundbite title and times to the pasteboard. Seek is available when this episode is playing."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert Titel und Zeiten des Soundbites in die Zwischenablage. Springen ist verfügbar, wenn diese Episode läuft."
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Copy when episode is not current."
     },
     "Soundbite copied to the pasteboard.": {
       "extractionState": "manual",
@@ -23464,6 +23392,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiv, deaktiviert der Warteschlangen-Tab Bearbeiten-Ziehen-Neuordnen, Mischen, Mischen (aktuell spielende zuerst), Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Nach Titel sortieren, Aktuelle Wiedergabe an den Anfang und blendet An Anfang / Ans Ende aus. Einreihen, Als Nächstes, Entfernen, Gehörte entfernen, Archiv-Swipe und Warteschlange leeren bleiben (nur Reihenfolge-Sperre — wie AntennaPod Android). Gleiche Einstellung wie der Warteschlangen-Toolbar-Sperr-Button. Standard aus."
+          }
+        }
+      }
+    },
+    "Play soundbite": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play soundbite"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbite abspielen"
+          }
+        }
+      }
+    },
+    "Plays this soundbite in the episode player from the start time and pauses at the end": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays this soundbite in the episode player from the start time and pauses at the end"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt dieses Soundbite im Episoden-Player ab der Startzeit und pausiert am Ende"
+          }
+        }
+      }
+    },
+    "Copies the soundbite title and times to the pasteboard": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the soundbite title and times to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert Titel und Zeiten des Soundbites in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbites stammen aus dem Feed. Abspielen springt zum Start und pausiert am Ende des Clips im Episoden-Player; es gibt keinen eigenen Clip-Player."
           }
         }
       }

@@ -860,8 +860,8 @@ enum PodcastAlternateEnclosureDisplay {
 
 /// Podcast Index `podcast:soundbite` — short highlight within an item’s enclosure.
 /// Required `startTime` + `duration` (seconds, float). Optional element text = title.
-/// **Not a separate clip player:** when this episode is the current PlaybackService item,
-/// UI may seek to `startTime`; otherwise times (+ Copy). Feed-provided only — never invent.
+/// **Not a separate clip player:** UI may **Play soundbite** (seek to `startTime`, auto-pause at
+/// `startTime + duration` via PlaybackService) or Copy times. Feed-provided only — never invent.
 struct PodcastSoundbite: Identifiable, Hashable, Codable {
     /// Stable list identity from feed fields.
     var id: String {
@@ -894,12 +894,12 @@ struct PodcastSoundbite: Identifiable, Hashable, Codable {
     }
 }
 
-/// Display helpers for item `podcast:soundbite` lists. Feed-provided only; seek only via existing PlaybackService.
+/// Display helpers for item `podcast:soundbite` lists. Feed-provided only; play/seek via existing PlaybackService.
 enum PodcastSoundbiteDisplay {
     /// Soft UI cap — show first N after feed order; honesty footnote when more exist.
     static let displayCap = 20
 
-    /// Soundbites with required startTime (≥0) + duration (>0). Feed order. No invented entries / no clip player.
+    /// Soundbites with required startTime (≥0) + duration (>0). Feed order. No invented entries / no separate clip player.
     static func valid(_ items: [PodcastSoundbite]) -> [PodcastSoundbite] {
         items.compactMap { item in
             guard item.isValid else { return nil }
@@ -1667,7 +1667,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — Open URL / Copy; does **not** switch the player.
     var alternateEnclosures: [PodcastAlternateEnclosure]
     /// Item-level Podcast Index `podcast:soundbite` (startTime + duration; optional title) when the feed provides them.
-    /// Empty when absent — never invent; UI hides when empty. Seek via PlaybackService when this episode is current — **no** separate clip player.
+    /// Empty when absent — never invent; UI hides when empty. Play soundbite via PlaybackService (seek + end pause) — **no** separate clip player.
     var soundbites: [PodcastSoundbite]
     /// Item-level Podcast Index `podcast:txt` (optional purpose + text) when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. **Display-only** — Copy / Open http(s); no Social / Matrix clients.
@@ -1863,7 +1863,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         PodcastAlternateEnclosureDisplay.valid(alternateEnclosures)
     }
 
-    /// Valid item-level `podcast:soundbite` entries (hide when empty — never invent; seek when current episode / else Copy).
+    /// Valid item-level `podcast:soundbite` entries (hide when empty — never invent; Play soundbite / Copy).
     var displaySoundbites: [PodcastSoundbite] {
         PodcastSoundbiteDisplay.valid(soundbites)
     }

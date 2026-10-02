@@ -2,14 +2,16 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided `podcast:soundbite` list — start/duration (+ optional title).
-/// When `episodeId` matches the current `PlaybackService` episode, tap seeks to startTime.
-/// Otherwise shows times + **Copy** (no separate clip player). Cap + honesty footnote.
+/// **Play soundbite** seeks to `startTime` and auto-pauses at `startTime + duration` via
+/// `PlaybackService.playSoundbite` (same episode player — **not** a separate clip player).
+/// Works for the current episode or starts playback when media is available; otherwise **Copy**.
+/// Cap + honesty footnote.
 struct PodcastSoundbitesListView: View {
     @EnvironmentObject private var playback: PlaybackService
 
     let soundbites: [PodcastSoundbite]
-    /// Episode these soundbites belong to — seek only when it is the current playback item.
-    let episodeId: String
+    /// Episode these soundbites belong to — Play uses this episode’s media / id.
+    let episode: PodcastEpisode
     /// Section title (localized by caller).
     var title: String = String(localized: "Soundbites")
 
@@ -20,9 +22,15 @@ struct PodcastSoundbitesListView: View {
         PodcastSoundbiteDisplay.capped(soundbites)
     }
 
-    /// Seek only when this episode is loaded as the current PlaybackService item (existing seek API).
-    private var canSeek: Bool {
-        playback.currentEpisode?.id == episodeId
+    /// Play when enclosure or local file can resolve (PlaybackService gates Wi‑Fi / errors).
+    private var canPlaySoundbite: Bool {
+        if episode.downloadUrl.flatMap({ URL(string: $0) }) != nil {
+            return true
+        }
+        if playback.downloads?.localURL(for: episode) != nil {
+            return true
+        }
+        return false
     }
 
     var body: some View {
@@ -40,14 +48,14 @@ struct PodcastSoundbitesListView: View {
 
                 Text(
                     String(
-                        localized: "Soundbites come from the feed. Tapping seeks in the current episode when it is playing; there is no separate clip player."
+                        localized: "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player."
                     )
                 )
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(
                     String(
-                        localized: "Soundbites come from the feed. Tapping seeks in the current episode when it is playing; there is no separate clip player."
+                        localized: "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player."
                     )
                 )
 
@@ -109,18 +117,27 @@ struct PodcastSoundbitesListView: View {
                     .accessibilityHidden(true)
             }
 
-            if canSeek {
-                Button {
-                    playback.seek(toSeconds: bite.startTimeSeconds)
-                } label: {
-                    Label("Seek to start", systemImage: "goforward")
-                        .font(.subheadline)
+            HStack(spacing: 12) {
+                if canPlaySoundbite {
+                    Button {
+                        // RootTabView surfaces lastError when stream Wi‑Fi-only blocks.
+                        _ = playback.playSoundbite(
+                            episode: episode,
+                            startTimeSeconds: bite.startTimeSeconds,
+                            durationSeconds: bite.durationSeconds
+                        )
+                    } label: {
+                        Label("Play soundbite", systemImage: "play.fill")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Play soundbite"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Plays this soundbite in the episode player from the start time and pauses at the end"
+                        )
+                    )
                 }
-                .accessibilityLabel(String(localized: "Seek to start"))
-                .accessibilityHint(
-                    String(localized: "Seeks playback to the soundbite start time in the current episode")
-                )
-            } else {
+
                 Button {
                     UIPasteboard.general.string = PodcastSoundbiteDisplay.copyText(bite)
                     copyFeedbackTick += 1
@@ -132,7 +149,7 @@ struct PodcastSoundbitesListView: View {
                 .accessibilityLabel(String(localized: "Copy"))
                 .accessibilityHint(
                     String(
-                        localized: "Copies the soundbite title and times to the pasteboard. Seek is available when this episode is playing."
+                        localized: "Copies the soundbite title and times to the pasteboard"
                     )
                 )
             }
