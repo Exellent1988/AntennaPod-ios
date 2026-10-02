@@ -1069,6 +1069,23 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Mark every played episode in the soft-capped All Episodes catalog as unplayed.
+    /// The catalog is the newest 500 episodes by publish date, matching `allEpisodes` and the
+    /// Add all / Play random / Copy / Share catalog. This deliberately ignores UI status, podcast,
+    /// type, sort, and search filters; older episodes beyond the soft cap are not included.
+    /// Includes archived played episodes, mirroring feed `markAllUnplayed(inFeedId:)`.
+    /// Snapshots eligible ids first, then calls `markUnplayed` per id (same as per-row: does not
+    /// delete downloads, remove queue, stop playback, or unarchive).
+    /// Callers must confirm first (All Episodes toolbar `confirmationDialog`).
+    func markAllEpisodesUnplayed() {
+        let ids = allEpisodes
+            .map(\.episode.id)
+            .filter { isPlayed($0) }
+        for id in ids {
+            markUnplayed(id)
+        }
+    }
+
     // MARK: - Home sections
 
     /// In-progress (not played) episodes with meaningful progress, newest `lastPlayedAt` first.
