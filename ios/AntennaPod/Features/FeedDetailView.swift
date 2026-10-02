@@ -392,6 +392,18 @@ struct FeedDetailView: View {
         return EpisodeRemainingTime.episodesInfoBarLabel(for: feedRemainingSummary)
     }
 
+    private var feedEpisodesEmptyStateAccessibilityValue: String {
+        if liveFeed.episodes.isEmpty {
+            if LocalFolderFeed.isLocalFolderFeed(liveFeed) {
+                return String(localized: "This folder has no \(LocalFolderFeed.audioFormatsDisplay) files yet. Add files in Files, then rescan the folder or refresh Subscriptions.")
+            }
+            return String(localized: "This podcast has no episodes yet. Pull to refresh on Subscriptions.")
+        }
+        return isFiltering
+            ? String(localized: "No episodes match the selected filters.")
+            : String(localized: "No episodes match your search.")
+    }
+
     private var feedRemainingAccessibilityLabel: String {
         guard let label = feedRemainingInfoLabel else { return "" }
         var parts = [String(localized: "Feed remaining time \(label)")]
@@ -1095,12 +1107,18 @@ struct FeedDetailView: View {
                             systemImage: "folder",
                             description: Text("This folder has no \(LocalFolderFeed.audioFormatsDisplay) files yet (subfolders are not scanned). Add files in Files, then Rescan folder, or swipe Refresh on Subscriptions.")
                         )
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(String(localized: "No audio files"))
+                        .accessibilityValue(feedEpisodesEmptyStateAccessibilityValue)
                     } else {
                         ContentUnavailableView(
                             "No episodes",
                             systemImage: "list.bullet",
                             description: Text("This podcast has no episodes yet. Pull to refresh on Subscriptions.")
                         )
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(String(localized: "No episodes"))
+                        .accessibilityValue(feedEpisodesEmptyStateAccessibilityValue)
                     }
                 } else if filteredEpisodes.isEmpty {
                     ContentUnavailableView(
@@ -1112,6 +1130,9 @@ struct FeedDetailView: View {
                                 : String(localized: "No episodes match your search.")
                         )
                     )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "No matching episodes"))
+                    .accessibilityValue(feedEpisodesEmptyStateAccessibilityValue)
                 } else {
                     ForEach(filteredEpisodes) { episode in
                         EpisodeRow(episode: episode, feedTitle: feedDisplayTitle)
