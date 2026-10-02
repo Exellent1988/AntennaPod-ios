@@ -1447,20 +1447,49 @@ struct SettingsView: View {
     private var autoDownloadSection: some View {
         Section {
             Toggle("Auto-download", isOn: $settings.autoDownloadEnabled)
-                .accessibilityHint(String(localized: "Downloads newly appeared unplayed episodes after a feed refresh when enabled."))
+                .accessibilityLabel(String(localized: "Auto-download"))
+                .accessibilityValue(autoDownloadToggleAccessibilityValue)
+                .accessibilityHint(autoDownloadToggleAccessibilityHint)
             if settings.autoDownloadEnabled {
                 Picker(String(localized: "Episodes per feed"), selection: $settings.autoDownloadEpisodesPerFeed) {
                     ForEach(AutoDownloadEpisodesPerFeed.allCases) { cap in
                         Text(cap.label).tag(cap)
                     }
                 }
+                .accessibilityLabel(String(localized: "Episodes per feed"))
+                .accessibilityValue(autoDownloadCapAccessibilityValue)
+                .accessibilityHint(autoDownloadCapAccessibilityHint)
             }
             Text(autoDownloadHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .accessibilityLabel(String(localized: "Auto-download help"))
+                .accessibilityValue(autoDownloadHelpText)
         } header: {
             Text("Auto-download")
         }
+    }
+
+    /// VoiceOver for the global Auto-download switch. Off does not mean every podcast
+    /// is skipped: per-podcast Always can still enqueue newly appeared IDs.
+    private var autoDownloadToggleAccessibilityValue: String {
+        guard settings.autoDownloadEnabled else {
+            return String(localized: "Off. This global switch does not enqueue episodes. A per-podcast Always override can still enqueue newly appeared episodes for that podcast. The unplayed backlog is not downloaded, and no download is invented.")
+        }
+        return String(localized: "On. After a successful feed refresh, up to \(settings.autoDownloadEpisodesPerFeed.rawValue) newly appeared unplayed episode(s) per feed may be enqueued. Not the whole unplayed backlog.")
+    }
+
+    private var autoDownloadToggleAccessibilityHint: String {
+        String(localized: "Only newly appeared episode IDs after a successful refresh are candidates. Local-folder and file feeds are skipped. There is no separate Background App Refresh download. Wi‑Fi-only for auto-download is under Network / Downloads. Per-podcast Never skips that podcast. Manual downloads are unchanged.")
+    }
+
+    /// VoiceOver for Episodes per feed. The visible preset stays; the value states the cap is not a backlog download.
+    private var autoDownloadCapAccessibilityValue: String {
+        String(localized: "\(settings.autoDownloadEpisodesPerFeed.label). This cap counts only newly appeared unplayed episodes after a successful feed refresh, not the unplayed backlog.")
+    }
+
+    private var autoDownloadCapAccessibilityHint: String {
+        String(localized: "Shown only while global auto-download is on. The same cap applies when a podcast is set to Always. Per-podcast Never still skips that podcast. Does not change the Wi‑Fi-only gate under Network / Downloads. Local-folder feeds are skipped. Not a silent background download.")
     }
 
     private var autoDownloadHelpText: String {
