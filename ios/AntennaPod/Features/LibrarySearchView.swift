@@ -91,7 +91,7 @@ struct LibrarySearchResultsView: View {
                     ForEach(feeds) { feed in
                         NavigationLink(value: feed) {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(feed.title)
+                                Text(store.displayTitle(for: feed))
                                     .font(.headline)
                                 Text("\(feed.episodes.count) episodes")
                                     .font(.subheadline)

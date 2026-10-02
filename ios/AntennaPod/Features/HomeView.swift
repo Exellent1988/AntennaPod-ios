@@ -42,7 +42,7 @@ struct HomeView: View {
         if q.isEmpty { return base }
         return base.filter { episode in
             if episode.title.localizedCaseInsensitiveContains(q) { return true }
-            let feedTitle = store.feed(containingEpisodeId: episode.id)?.title ?? ""
+            let feedTitle = store.displayTitle(containingEpisodeId: episode.id)
             return feedTitle.localizedCaseInsensitiveContains(q)
         }
     }
@@ -58,7 +58,7 @@ struct HomeView: View {
         if q.isEmpty {
             filtered = base
         } else {
-            filtered = base.filter { $0.title.localizedCaseInsensitiveContains(q) }
+            filtered = base.filter { store.displayTitle(for: $0).localizedCaseInsensitiveContains(q) }
         }
         return Array(filtered.prefix(feedsLimit))
     }
@@ -100,7 +100,7 @@ struct HomeView: View {
         if q.isEmpty { return base }
         return base.filter { item in
             if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
-            let feedTitle = store.feed(containingEpisodeId: item.episode.id)?.title ?? ""
+            let feedTitle = store.displayTitle(containingEpisodeId: item.episode.id)
             return feedTitle.localizedCaseInsensitiveContains(q)
         }
     }
@@ -744,7 +744,7 @@ struct HomeView: View {
             ForEach(queueItems) { episode in
                 EpisodeRow(
                     episode: episode,
-                    feedTitle: store.feed(containingEpisodeId: episode.id)?.title ?? ""
+                    feedTitle: store.displayTitle(containingEpisodeId: episode.id)
                 )
             }
         } header: {
@@ -770,7 +770,7 @@ struct HomeView: View {
             ForEach(recentFeeds) { feed in
                 NavigationLink(value: feed) {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(feed.title)
+                        Text(store.displayTitle(for: feed))
                             .font(.headline)
                         HStack(spacing: 8) {
                             Text("\(feed.episodes.count) episodes")
@@ -919,7 +919,7 @@ struct HomeView: View {
             ForEach(downloadItems) { item in
                 EpisodeRow(
                     episode: item.episode,
-                    feedTitle: store.feed(containingEpisodeId: item.episode.id)?.title ?? "",
+                    feedTitle: store.displayTitle(containingEpisodeId: item.episode.id),
                     dateOverride: item.downloadedAtEpochMs.map {
                         Date(timeIntervalSince1970: Double($0) / 1000)
                     },

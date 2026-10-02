@@ -184,6 +184,23 @@ final class PodcastStore: ObservableObject {
         setFeedSettings(current, for: feedId)
     }
 
+    /// User-facing podcast name for lists / nav / player / search (customTitle ?? RSS title).
+    func displayTitle(for feed: PodcastFeed) -> String {
+        feed.displayTitle(settings: feedSettings(for: feed.id))
+    }
+
+    /// Display title for a known feed id; `nil` when the feed is not in the library.
+    func displayTitle(forFeedId feedId: UUID) -> String? {
+        guard let feed = feeds.first(where: { $0.id == feedId }) else { return nil }
+        return displayTitle(for: feed)
+    }
+
+    /// Display title for the feed containing `episodeId`, or empty string when unknown.
+    func displayTitle(containingEpisodeId episodeId: String) -> String {
+        guard let feed = feed(containingEpisodeId: episodeId) else { return "" }
+        return displayTitle(for: feed)
+    }
+
     /// Serial narrative default (one-shot / nil-only): when channel `itunes:type` canonicalizes to
     /// `serial` and per-feed `episodeSort` is still `nil`, set **Oldest first** once.
     /// - Never invents type (parsed channel only via `ItunesTypeParsing.canonical`).
@@ -305,7 +322,7 @@ final class PodcastStore: ObservableObject {
             if !newcomers.isEmpty {
                 newBatches = [
                     NewEpisodeBatch(
-                        feedTitle: updated.title,
+                        feedTitle: displayTitle(for: updated),
                         feedId: updated.id,
                         feedUrl: updated.feedUrl,
                         episodes: newcomers
@@ -869,7 +886,7 @@ final class PodcastStore: ObservableObject {
         var items: [InboxEpisode] = []
         for feed in feeds {
             for episode in feed.episodes where !isPlayed(episode.id) && !isArchived(episode.id) {
-                items.append(InboxEpisode(episode: episode, feedTitle: feed.title))
+                items.append(InboxEpisode(episode: episode, feedTitle: displayTitle(for: feed)))
             }
         }
         items.sort { lhs, rhs in
@@ -954,7 +971,7 @@ final class PodcastStore: ObservableObject {
         var items: [InboxEpisode] = []
         for feed in feeds {
             for episode in feed.episodes {
-                items.append(InboxEpisode(episode: episode, feedTitle: feed.title))
+                items.append(InboxEpisode(episode: episode, feedTitle: displayTitle(for: feed)))
             }
         }
         items.sort { lhs, rhs in
@@ -1043,7 +1060,10 @@ final class PodcastStore: ObservableObject {
         WidgetSnapshotPublisher.publish(
             currentEpisodeId: current?.id,
             currentEpisodeTitle: current?.title,
-            currentFeedTitle: current.flatMap { feed(containingEpisodeId: $0.id)?.title },
+            currentFeedTitle: current.flatMap { episode in
+                let title = displayTitle(containingEpisodeId: episode.id)
+                return title.isEmpty ? nil : title
+            },
             currentPositionSeconds: currentPosition,
             currentDurationSeconds: currentDuration,
             continueEpisodeId: cont?.episode.id,
@@ -1267,7 +1287,7 @@ final class PodcastStore: ObservableObject {
                 items.append(
                     ArchivedEpisode(
                         episode: episode,
-                        feedTitle: feed.title,
+                        feedTitle: displayTitle(for: feed),
                         archivedAtEpochMs: at
                     )
                 )
@@ -1276,7 +1296,7 @@ final class PodcastStore: ObservableObject {
         let knownIds = Set(items.map(\.id))
         for episode in queue where !knownIds.contains(episode.id) {
             guard let at = archivedAtById[episode.id] else { continue }
-            let title = feed(containingEpisodeId: episode.id)?.title ?? ""
+            let title = displayTitle(containingEpisodeId: episode.id)
             items.append(
                 ArchivedEpisode(
                     episode: episode,
@@ -1434,7 +1454,7 @@ final class PodcastStore: ObservableObject {
                 items.append(
                     FavoriteEpisode(
                         episode: episode,
-                        feedTitle: feed.title,
+                        feedTitle: displayTitle(for: feed),
                         favoritedAtEpochMs: at
                     )
                 )
@@ -1444,7 +1464,7 @@ final class PodcastStore: ObservableObject {
         let knownIds = Set(items.map(\.id))
         for episode in queue where !knownIds.contains(episode.id) {
             guard let at = favoriteAtById[episode.id] else { continue }
-            let title = feed(containingEpisodeId: episode.id)?.title ?? ""
+            let title = displayTitle(containingEpisodeId: episode.id)
             items.append(
                 FavoriteEpisode(
                     episode: episode,
@@ -1475,7 +1495,7 @@ final class PodcastStore: ObservableObject {
                 items.append(
                     HistoryEpisode(
                         episode: episode,
-                        feedTitle: feed.title,
+                        feedTitle: displayTitle(for: feed),
                         lastPlayedAtEpochMs: lastPlayed
                     )
                 )
@@ -1487,7 +1507,7 @@ final class PodcastStore: ObservableObject {
             let state = playbackState(for: episode.id)
             guard state.belongsInHistory else { continue }
             let lastPlayed = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
-            let title = feed(containingEpisodeId: episode.id)?.title ?? ""
+            let title = displayTitle(containingEpisodeId: episode.id)
             items.append(
                 HistoryEpisode(
                     episode: episode,
@@ -1629,7 +1649,7 @@ final class PodcastStore: ObservableObject {
                 feedSeconds += secs
             }
             if feedPlayed > 0 || feedInProgress > 0 {
-                perFeed[feed.id] = (feed.title, feedPlayed, feedInProgress, feedSeconds)
+                perFeed[feed.id] = (displayTitle(for: feed), feedPlayed, feedInProgress, feedSeconds)
             }
         }
 
@@ -1646,7 +1666,7 @@ final class PodcastStore: ObservableObject {
             }
             totalSeconds += secs
             if let feed = feed(containingEpisodeId: episode.id) {
-                var entry = perFeed[feed.id] ?? (feed.title, 0, 0, 0)
+                var entry = perFeed[feed.id] ?? (displayTitle(for: feed), 0, 0, 0)
                 if state.isPlayed {
                     entry.played += 1
                 } else {
@@ -1729,7 +1749,7 @@ final class PodcastStore: ObservableObject {
 
         for feed in feeds {
             for episode in feed.episodes {
-                consider(episodeId: episode.id, feedId: feed.id, feedTitle: feed.title)
+                consider(episodeId: episode.id, feedId: feed.id, feedTitle: displayTitle(for: feed))
             }
         }
         let knownEpisodeIds = Set(feeds.flatMap { $0.episodes.map(\.id) })
@@ -1738,7 +1758,7 @@ final class PodcastStore: ObservableObject {
             consider(
                 episodeId: episode.id,
                 feedId: feed?.id,
-                feedTitle: feed?.title ?? ""
+                feedTitle: feed.map { displayTitle(for: $0) } ?? ""
             )
         }
 
@@ -1817,7 +1837,7 @@ final class PodcastStore: ObservableObject {
                     if !newcomers.isEmpty {
                         newBatches.append(
                             NewEpisodeBatch(
-                                feedTitle: updated.title,
+                                feedTitle: displayTitle(for: updated),
                                 feedId: updated.id,
                                 feedUrl: updated.feedUrl,
                                 episodes: newcomers
@@ -1838,7 +1858,7 @@ final class PodcastStore: ObservableObject {
                     if !newcomers.isEmpty {
                         newBatches.append(
                             NewEpisodeBatch(
-                                feedTitle: updated.title,
+                                feedTitle: displayTitle(for: updated),
                                 feedId: updated.id,
                                 feedUrl: updated.feedUrl,
                                 episodes: newcomers
@@ -1870,19 +1890,23 @@ final class PodcastStore: ObservableObject {
 
     // MARK: - Library search (local only)
 
-    /// Matching subscriptions by feed title, optional descriptionText, author, language, or categories (case-insensitive).
+    /// Matching subscriptions by display title (customTitle ?? RSS), optional descriptionText, author, language, or categories (case-insensitive).
     func matchingFeeds(query: String) -> [PodcastFeed] {
         let q = Self.normalizedQuery(query)
         guard !q.isEmpty else { return [] }
         return feeds.filter { feed in
-            Self.matches(feed.title, query: q)
+            let shown = displayTitle(for: feed)
+            return Self.matches(shown, query: q)
+                || Self.matches(feed.title, query: q)
                 || Self.matches(feed.descriptionText, query: q)
                 || Self.matches(feed.author, query: q)
                 || Self.matches(feed.language, query: q)
                 || Self.matches(feed.displayLanguage, query: q)
                 || feed.displayCategories.contains(where: { Self.matches($0, query: q) })
         }
-        .sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
+        .sorted {
+            displayTitle(for: $0).localizedCaseInsensitiveCompare(displayTitle(for: $1)) == .orderedAscending
+        }
     }
 
     /// Matching episodes across subscriptions by episode title (feeds listed separately).
@@ -1896,7 +1920,7 @@ final class PodcastStore: ObservableObject {
                 hits.append(
                     LibraryEpisodeHit(
                         episode: episode,
-                        feedTitle: feed.title,
+                        feedTitle: displayTitle(for: feed),
                         feedId: feed.id
                     )
                 )
@@ -1968,7 +1992,7 @@ final class PodcastStore: ObservableObject {
             if !newcomers.isEmpty {
                 newBatches = [
                     NewEpisodeBatch(
-                        feedTitle: updated.title,
+                        feedTitle: displayTitle(for: updated),
                         feedId: updated.id,
                         feedUrl: updated.feedUrl,
                         episodes: newcomers
@@ -2029,11 +2053,11 @@ final class PodcastStore: ObservableObject {
     // MARK: - OPML import / export
 
     func exportOpmlXML() -> String {
-        OpmlWriter.writeDocument(feeds: feeds)
+        OpmlWriter.writeDocument(feeds: feeds, titleForFeed: { displayTitle(for: $0) })
     }
 
     func exportOpmlTemporaryFile() throws -> URL {
-        try OpmlWriter.writeTemporaryFile(feeds: feeds)
+        try OpmlWriter.writeTemporaryFile(feeds: feeds, titleForFeed: { displayTitle(for: $0) })
     }
 
     /// Feeds written to OPML / HTML export (excludes empty URLs and local folder feeds).
@@ -2042,7 +2066,7 @@ final class PodcastStore: ObservableObject {
     }
 
     func exportOpmlData() throws -> Data {
-        let xml = OpmlWriter.writeDocument(feeds: feeds)
+        let xml = OpmlWriter.writeDocument(feeds: feeds, titleForFeed: { displayTitle(for: $0) })
         guard let data = xml.data(using: .utf8) else {
             throw CocoaError(.fileWriteInapplicableStringEncoding)
         }
@@ -2052,11 +2076,11 @@ final class PodcastStore: ObservableObject {
     // MARK: - HTML export (subscriptions)
 
     func exportSubscriptionsHTML(includeEpisodeCount: Bool = true) -> String {
-        HtmlExportWriter.writeDocument(feeds: feeds, includeEpisodeCount: includeEpisodeCount)
+        HtmlExportWriter.writeDocument(feeds: feeds, includeEpisodeCount: includeEpisodeCount, titleForFeed: { displayTitle(for: $0) })
     }
 
     func exportSubscriptionsHTMLTemporaryFile(includeEpisodeCount: Bool = true) throws -> URL {
-        try HtmlExportWriter.writeTemporaryFile(feeds: feeds, includeEpisodeCount: includeEpisodeCount)
+        try HtmlExportWriter.writeTemporaryFile(feeds: feeds, includeEpisodeCount: includeEpisodeCount, titleForFeed: { displayTitle(for: $0) })
     }
 
     /// Parse OPML and subscribe each feed URL via the existing fetch/parse pipeline.

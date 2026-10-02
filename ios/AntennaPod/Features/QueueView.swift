@@ -158,7 +158,7 @@ struct QueueView: View {
         case .all:
             return String(localized: "All")
         case .feed(let id):
-            return store.feeds.first(where: { $0.id == id })?.title
+            return store.displayTitle(forFeedId: id)
                 ?? queuePodcastFeeds.first(where: { $0.id == id })?.title
                 ?? String(localized: "Podcast")
         }
@@ -188,7 +188,7 @@ struct QueueView: View {
         if q.isEmpty { return base }
         return base.filter { episode in
             if episode.title.localizedCaseInsensitiveContains(q) { return true }
-            let feedTitle = store.feed(containingEpisodeId: episode.id)?.title ?? ""
+            let feedTitle = store.displayTitle(containingEpisodeId: episode.id)
             return feedTitle.localizedCaseInsensitiveContains(q)
         }
     }
@@ -312,7 +312,7 @@ struct QueueView: View {
                     ForEach(filteredQueue) { episode in
                         EpisodeRow(
                             episode: episode,
-                            feedTitle: store.feed(containingEpisodeId: episode.id)?.title ?? ""
+                            feedTitle: store.displayTitle(containingEpisodeId: episode.id)
                         )
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {

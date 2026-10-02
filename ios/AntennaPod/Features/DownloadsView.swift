@@ -46,7 +46,7 @@ struct DownloadsView: View {
         } else {
             filtered = base.filter { item in
                 if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
-                let feedTitle = store.feed(containingEpisodeId: item.episode.id)?.title ?? ""
+                let feedTitle = store.displayTitle(containingEpisodeId: item.episode.id)
                 return feedTitle.localizedCaseInsensitiveContains(q)
             }
         }
@@ -151,7 +151,7 @@ struct DownloadsView: View {
         case .all:
             return String(localized: "All")
         case .feed(let id):
-            return store.feeds.first(where: { $0.id == id })?.title
+            return store.displayTitle(forFeedId: id)
                 ?? downloadPodcastFeeds.first(where: { $0.id == id })?.title
                 ?? String(localized: "Podcast")
         }

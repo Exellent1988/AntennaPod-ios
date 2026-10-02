@@ -48,6 +48,11 @@ struct FullPlayerView: View {
         return store.feed(containingEpisodeId: episode.id)
     }
 
+    /// Local nickname when set, else RSS title (player Open podcast label).
+    private var feedDisplayTitle: String? {
+        feed.map { store.displayTitle(for: $0) }
+    }
+
     /// Prefer store episode (post-refresh) over a possibly stale player/queue copy.
     private var resolvedEpisode: PodcastEpisode? {
         guard let episode else { return nil }
@@ -246,7 +251,7 @@ struct FullPlayerView: View {
         }
         .sheet(isPresented: $showDescription) {
             if let episode = resolvedEpisode ?? episode {
-                EpisodeDescriptionSheetView(episode: episode, feedTitle: feed?.title)
+                EpisodeDescriptionSheetView(episode: episode, feedTitle: feedDisplayTitle)
             }
         }
         .alert(
@@ -357,7 +362,7 @@ struct FullPlayerView: View {
                         Button {
                             openPodcastFromPlayer()
                         } label: {
-                            Text(feed?.title ?? String(localized: "Podcast"))
+                            Text(feedDisplayTitle ?? String(localized: "Podcast"))
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .lineLimit(2)
@@ -365,7 +370,7 @@ struct FullPlayerView: View {
                         .buttonStyle(.plain)
                         .disabled(feed == nil)
                         .accessibilityLabel(String(localized: "Open podcast"))
-                        .accessibilityValue(feed?.title ?? String(localized: "Podcast unavailable"))
+                        .accessibilityValue(feedDisplayTitle ?? String(localized: "Podcast unavailable"))
                         .accessibilityHint(
                             feed == nil
                                 ? String(localized: "Podcast unavailable")
@@ -1222,7 +1227,8 @@ struct FullPlayerView: View {
             EpisodeShareLinks.labelStyle(
                 episode: episode,
                 feed: feed,
-                positionSeconds: playback.positionSeconds
+                positionSeconds: playback.positionSeconds,
+                feedDisplayTitle: feedDisplayTitle
             )
         }
         .buttonStyle(.bordered)

@@ -47,6 +47,32 @@ struct PerFeedSettingsView: View {
     var body: some View {
         Form {
             Section {
+                TextField(String(localized: "Display name"), text: displayNameBinding)
+                    .textInputAutocapitalization(.words)
+                    .autocorrectionDisabled()
+                    .accessibilityLabel(String(localized: "Display name"))
+                    .accessibilityHint(String(localized: "Optional local nickname for this podcast. Leave empty to use the feed title from RSS."))
+                    .accessibilityValue(current.customTitle ?? String(localized: "Using feed title"))
+                if current.customTitle != nil {
+                    Button(String(localized: "Reset display name")) {
+                        store.updateFeedSettings(for: feedId) { $0.customTitle = nil }
+                    }
+                    .accessibilityLabel(String(localized: "Reset display name"))
+                    .accessibilityHint(String(localized: "Clears the local nickname and shows the feed title from RSS again."))
+                }
+                if let rss = liveFeed?.title, !rss.isEmpty, current.customTitle != nil {
+                    Text(String(localized: "Feed title: \(rss)"))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .accessibilityLabel(String(localized: "Feed title: \(rss)"))
+                }
+            } header: {
+                Text(String(localized: "Display name"))
+            } footer: {
+                Text(String(localized: "Local only — does not rename the RSS title on this device’s feed object. Survives refresh; cleared when you unsubscribe."))
+            }
+
+            Section {
                 Picker("Auto-download", selection: autoDownloadBinding) {
                     ForEach(PerFeedOverride.allCases) { option in
                         Text(option.label).tag(option)
@@ -375,6 +401,17 @@ struct PerFeedSettingsView: View {
             .environmentObject(appSettings)
         }
         .onAppear(perform: loadHttpBasicAuthState)
+    }
+
+    private var displayNameBinding: Binding<String> {
+        Binding(
+            get: { current.customTitle ?? "" },
+            set: { newValue in
+                store.updateFeedSettings(for: feedId) {
+                    $0.customTitle = FeedSettings.normalizedCustomTitle(newValue)
+                }
+            }
+        )
     }
 
     private var authFooter: String {

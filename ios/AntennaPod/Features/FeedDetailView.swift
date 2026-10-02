@@ -34,6 +34,11 @@ struct FeedDetailView: View {
         store.feeds.first(where: { $0.id == feed.id }) ?? feed
     }
 
+    /// Local nickname when set, else RSS `liveFeed.title`.
+    private var feedDisplayTitle: String {
+        store.displayTitle(for: liveFeed)
+    }
+
     private var feedTags: [String] {
         store.tags(for: liveFeed.id)
     }
@@ -826,7 +831,7 @@ struct FeedDetailView: View {
                     )
                 } else {
                     ForEach(filteredEpisodes) { episode in
-                        EpisodeRow(episode: episode, feedTitle: liveFeed.title)
+                        EpisodeRow(episode: episode, feedTitle: feedDisplayTitle)
                             .swipeActions(edge: .leading, allowsFullSwipe: true) {
                                 Button {
                                     store.togglePlayed(episode.id)
@@ -871,7 +876,7 @@ struct FeedDetailView: View {
                                     ShareLink(
                                         item: url,
                                         subject: Text(episode.title),
-                                        message: Text(episode.shareMessage(feedTitle: liveFeed.title))
+                                        message: Text(episode.shareMessage(feedTitle: feedDisplayTitle))
                                     ) {
                                         Label("Share", systemImage: "square.and.arrow.up")
                                     }
@@ -883,7 +888,7 @@ struct FeedDetailView: View {
                 }
             }
         }
-        .navigationTitle(liveFeed.title)
+        .navigationTitle(feedDisplayTitle)
         .searchable(text: $searchText, prompt: "Search episodes")
         .onChange(of: searchText) { _, newValue in
             scheduleFilter(for: newValue)
@@ -923,8 +928,8 @@ struct FeedDetailView: View {
                     if let url = liveFeed.shareURL {
                         ShareLink(
                             item: url,
-                            subject: Text(liveFeed.title),
-                            message: Text(liveFeed.title)
+                            subject: Text(feedDisplayTitle),
+                            message: Text(feedDisplayTitle)
                         ) {
                             Image(systemName: "square.and.arrow.up")
                         }
@@ -1172,11 +1177,11 @@ struct FeedDetailView: View {
         } message: {
             if unsubscribeFeedDownloadsCount > 0 {
                 Text(
-                    "Unsubscribe from \"\(liveFeed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has \(unsubscribeFeedDownloadsCount) offline download(s) (\(unsubscribeFeedDownloadsSizeLabel)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Clear all downloads."
+                    "Unsubscribe from \"\(feedDisplayTitle)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has \(unsubscribeFeedDownloadsCount) offline download(s) (\(unsubscribeFeedDownloadsSizeLabel)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Clear all downloads."
                 )
             } else {
                 Text(
-                    "Unsubscribe from \"\(liveFeed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
+                    "Unsubscribe from \"\(feedDisplayTitle)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
                 )
             }
         }
@@ -1200,7 +1205,7 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyPodcastGuidFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
-                PerFeedSettingsView(feedId: feed.id, feedTitle: liveFeed.title)
+                PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle)
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
                             Button("Done") { showPerFeedSettings = false }
@@ -1209,7 +1214,7 @@ struct FeedDetailView: View {
             }
         }
         .sheet(isPresented: $showFeedDescription) {
-            FeedDescriptionSheetView(feed: liveFeed)
+            FeedDescriptionSheetView(feed: liveFeed, displayTitle: feedDisplayTitle)
                 .environmentObject(store)
         }
         .safeAreaInset(edge: .bottom) {

@@ -135,7 +135,7 @@ struct InboxView: View {
         case .all:
             return String(localized: "All")
         case .feed(let id):
-            return store.feeds.first(where: { $0.id == id })?.title
+            return store.displayTitle(forFeedId: id)
                 ?? inboxPodcastFeeds.first(where: { $0.id == id })?.title
                 ?? String(localized: "Podcast")
         }

@@ -24,6 +24,12 @@ struct SubscriptionsView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
+    /// Local nickname (`FeedSettings.customTitle`) when set, else RSS title.
+    private func feedDisplayTitle(_ feed: PodcastFeed) -> String {
+        store.displayTitle(for: feed)
+    }
+
+
     /// Client-side list order after search/category/language/tag filters (no drag-reorder of subscriptions).
     /// Author / language: A–Z by feed-provided `displayAuthor` / `displayLanguage`; missing values last; title tiebreak.
     /// Most unplayed: descending per-feed unplayed count (`!isPlayed && !isArchived`, same as badges /
@@ -37,17 +43,17 @@ struct SubscriptionsView: View {
                 let l = lhs.episodes.compactMap(\.pubDateEpochMs).max() ?? Int64.min
                 let r = rhs.episodes.compactMap(\.pubDateEpochMs).max() ?? Int64.min
                 if l != r { return l > r }
-                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
             }
         case .alphabetical:
             return feeds.sorted {
-                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+                feedDisplayTitle($0).localizedCaseInsensitiveCompare(feedDisplayTitle($1)) == .orderedAscending
             }
         case .byAuthor:
             return feeds.sorted { lhs, rhs in
                 switch (lhs.displayAuthor, rhs.displayAuthor) {
                 case (nil, nil):
-                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                    return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
                 case (nil, _):
                     return false
                 case (_, nil):
@@ -55,14 +61,14 @@ struct SubscriptionsView: View {
                 case let (l?, r?):
                     let cmp = l.localizedCaseInsensitiveCompare(r)
                     if cmp != .orderedSame { return cmp == .orderedAscending }
-                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                    return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
                 }
             }
         case .byLanguage:
             return feeds.sorted { lhs, rhs in
                 switch (lhs.displayLanguage, rhs.displayLanguage) {
                 case (nil, nil):
-                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                    return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
                 case (nil, _):
                     return false
                 case (_, nil):
@@ -70,7 +76,7 @@ struct SubscriptionsView: View {
                 case let (l?, r?):
                     let cmp = l.localizedCaseInsensitiveCompare(r)
                     if cmp != .orderedSame { return cmp == .orderedAscending }
-                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                    return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
                 }
             }
         case .mostUnplayed:
@@ -80,21 +86,21 @@ struct SubscriptionsView: View {
                 let l = counts[lhs.id] ?? 0
                 let r = counts[rhs.id] ?? 0
                 if l != r { return l > r }
-                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
             }
         case .recentlyRefreshed:
             // Newest successful network stamp first; nil / local-folder last (never invent).
             return feeds.sorted { lhs, rhs in
                 switch (lhs.lastRefreshedAtEpochMs, rhs.lastRefreshedAtEpochMs) {
                 case (nil, nil):
-                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                    return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
                 case (nil, _):
                     return false
                 case (_, nil):
                     return true
                 case let (l?, r?):
                     if l != r { return l > r }
-                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                    return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
                 }
             }
         case .leastRecentlyRefreshed:
@@ -102,21 +108,21 @@ struct SubscriptionsView: View {
             return feeds.sorted { lhs, rhs in
                 switch (lhs.lastRefreshedAtEpochMs, rhs.lastRefreshedAtEpochMs) {
                 case (nil, nil):
-                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                    return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
                 case (nil, _):
                     return false
                 case (_, nil):
                     return true
                 case let (l?, r?):
                     if l != r { return l < r }
-                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                    return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
                 }
             }
         }
     }
 
     /// Visible subscriptions after search; empty query shows full list under current sort.
-    /// Matches feed **title**, optional **descriptionText**, optional **author**, optional **language**,
+    /// Matches feed **display title** (customTitle ?? RSS), optional **descriptionText**, optional **author**, optional **language**,
     /// and optional **categories** (`PodcastStore.matchingFeeds`).
     private var searchFilteredFeeds: [PodcastFeed] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -662,11 +668,11 @@ struct SubscriptionsView: View {
                 )
                 if feedDownloadCount > 0 {
                     Text(
-                        "Unsubscribe from \"\(feed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has \(feedDownloadCount) offline download(s) (\(feedDownloadSize)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Clear all downloads."
+                        "Unsubscribe from \"\(feedDisplayTitle(feed))\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has \(feedDownloadCount) offline download(s) (\(feedDownloadSize)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Clear all downloads."
                     )
                 } else {
                     Text(
-                        "Unsubscribe from \"\(feed.title)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
+                        "Unsubscribe from \"\(feedDisplayTitle(feed))\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
                     )
                 }
             }
@@ -729,7 +735,7 @@ struct SubscriptionsView: View {
                 }
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
-                        Text(feed.title)
+                        Text(feedDisplayTitle(feed))
                             .font(.headline)
                         if LocalFolderFeed.isLocalFolderFeed(feed) {
                             Text("Folder")
@@ -922,7 +928,7 @@ struct SubscriptionsView: View {
         unplayed: Int,
         remainingLabel: String?
     ) -> String {
-        var parts: [String] = [feed.title]
+        var parts: [String] = [feedDisplayTitle(feed)]
         if LocalFolderFeed.isLocalFolderFeed(feed) {
             parts.append(String(localized: "Folder"))
         }

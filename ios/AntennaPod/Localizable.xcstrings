@@ -25553,6 +25553,125 @@
           }
         }
       }
+    },
+    "Display name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Display name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anzeigename"
+          }
+        }
+      }
+    },
+    "Reset display name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset display name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anzeigename zurücksetzen"
+          }
+        }
+      }
+    },
+    "Optional local nickname for this podcast. Leave empty to use the feed title from RSS.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional local nickname for this podcast. Leave empty to use the feed title from RSS."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optionaler lokaler Spitzname für diesen Podcast. Leer lassen, um den Feed-Titel aus dem RSS zu verwenden."
+          }
+        }
+      }
+    },
+    "Clears the local nickname and shows the feed title from RSS again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clears the local nickname and shows the feed title from RSS again."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht den lokalen Spitznamen und zeigt wieder den Feed-Titel aus dem RSS."
+          }
+        }
+      }
+    },
+    "Local only — does not rename the RSS title on this device’s feed object. Survives refresh; cleared when you unsubscribe.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local only — does not rename the RSS title on this device’s feed object. Survives refresh; cleared when you unsubscribe."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur lokal — benennt den RSS-Titel am Feed-Objekt auf diesem Gerät nicht um. Übersteht Aktualisieren; wird beim Abbestellen gelöscht."
+          }
+        }
+      }
+    },
+    "Using feed title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Using feed title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-Titel wird verwendet"
+          }
+        }
+      }
+    },
+    "Feed title: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed title: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-Titel: %@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

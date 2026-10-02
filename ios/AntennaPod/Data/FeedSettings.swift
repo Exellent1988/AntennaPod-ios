@@ -48,6 +48,14 @@ struct FeedSettings: Hashable, Codable, Equatable {
     /// Newest / Oldest by pubDate; Shortest / Longest by known duration (unknown last).
     /// Capsule itunes:type is display-only; a separate one-shot may set this to `.oldestFirst` when type is serial and this is still nil (never override a user-chosen value; never touch global).
     var episodeSort: FeedEpisodeSort?
+    /// Optional local display nickname for this subscription (Android-style custom title).
+    /// `nil` = use feed RSS/`PodcastFeed.title`. Trimmed; empty clears to nil; capped at `customTitleMaxLength`.
+    /// Local only in `feed-settings.json` — does **not** rename the on-disk feed object or RSS title.
+    /// Survives feed refresh; cleared with other FeedSettings on unsubscribe.
+    var customTitle: String?
+
+    /// Max stored length for `customTitle` (trim first; empty → nil).
+    static let customTitleMaxLength = 100
 
     static let `default` = FeedSettings(
         autoDownload: .useGlobal,
@@ -58,7 +66,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
         skipIntroSeconds: nil,
         skipOutroSeconds: nil,
         playbackSpeed: nil,
-        episodeSort: nil
+        episodeSort: nil,
+        customTitle: nil
     )
 
     init(
@@ -70,7 +79,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
         skipIntroSeconds: Int? = nil,
         skipOutroSeconds: Int? = nil,
         playbackSpeed: Float? = nil,
-        episodeSort: FeedEpisodeSort? = nil
+        episodeSort: FeedEpisodeSort? = nil,
+        customTitle: String? = nil
     ) {
         self.autoDownload = autoDownload
         self.keepUpdated = keepUpdated
@@ -81,6 +91,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         self.skipOutroSeconds = Self.normalizedSkipIntroOutro(skipOutroSeconds)
         self.playbackSpeed = Self.normalizedSpeed(playbackSpeed)
         self.episodeSort = episodeSort
+        self.customTitle = Self.normalizedCustomTitle(customTitle)
     }
 
     init(from decoder: Decoder) throws {
@@ -100,6 +111,9 @@ struct FeedSettings: Hashable, Codable, Equatable {
             try c.decodeIfPresent(Float.self, forKey: .playbackSpeed)
         )
         episodeSort = try c.decodeIfPresent(FeedEpisodeSort.self, forKey: .episodeSort)
+        customTitle = Self.normalizedCustomTitle(
+            try c.decodeIfPresent(String.self, forKey: .customTitle)
+        )
     }
 
     /// Whether auto-download may enqueue for this feed (override beats global).
@@ -193,6 +207,19 @@ struct FeedSettings: Hashable, Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case autoDownload, keepUpdated, notifyOnNewEpisodes, autoDeleteAfterPlaying, newEpisodeAction
-        case skipIntroSeconds, skipOutroSeconds, playbackSpeed, episodeSort
+        case skipIntroSeconds, skipOutroSeconds, playbackSpeed, episodeSort, customTitle
+    }
+
+    /// Trim, empty → nil, cap at `customTitleMaxLength` (grapheme-aware via String count).
+    static func normalizedCustomTitle(_ value: String?) -> String? {
+        guard let value else { return nil }
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        if trimmed.count <= customTitleMaxLength {
+            return trimmed
+        }
+        let end = trimmed.index(trimmed.startIndex, offsetBy: customTitleMaxLength)
+        let capped = String(trimmed[..<end]).trimmingCharacters(in: .whitespacesAndNewlines)
+        return capped.isEmpty ? nil : capped
     }
 }

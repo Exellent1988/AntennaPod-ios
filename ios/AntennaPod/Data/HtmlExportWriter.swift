@@ -11,9 +11,13 @@ enum HtmlExportWriter {
 
     /// Build a simple self-contained HTML document: title, feed URL links, optional episode count,
     /// plus author / language / categories / funding when the feed provides them.
-    static func writeDocument(feeds: [PodcastFeed], includeEpisodeCount: Bool = true) -> String {
+    static func writeDocument(
+        feeds: [PodcastFeed],
+        includeEpisodeCount: Bool = true,
+        titleForFeed: (PodcastFeed) -> String = { $0.title }
+    ) -> String {
         let sorted = feeds.sorted {
-            $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            titleForFeed($0).localizedCaseInsensitiveCompare(titleForFeed($1)) == .orderedAscending
         }
         let exportable = sorted.filter { feed in
             !feed.feedUrl.isEmpty && !LocalFolderFeed.isLocalFolderFeed(feed)
@@ -45,7 +49,7 @@ enum HtmlExportWriter {
         body += "  </header>\n"
         body += "  <ul class=\"feeds\">\n"
         for feed in exportable {
-            body += feedItemHTML(feed: feed, includeEpisodeCount: includeEpisodeCount)
+            body += feedItemHTML(feed: feed, includeEpisodeCount: includeEpisodeCount, title: titleForFeed(feed))
         }
         body += "  </ul>\n"
         body += "  <footer>\n"
@@ -59,8 +63,12 @@ enum HtmlExportWriter {
     }
 
     /// Write HTML to a temporary file suitable for the share sheet.
-    static func writeTemporaryFile(feeds: [PodcastFeed], includeEpisodeCount: Bool = true) throws -> URL {
-        let html = writeDocument(feeds: feeds, includeEpisodeCount: includeEpisodeCount)
+    static func writeTemporaryFile(
+        feeds: [PodcastFeed],
+        includeEpisodeCount: Bool = true,
+        titleForFeed: (PodcastFeed) -> String = { $0.title }
+    ) throws -> URL {
+        let html = writeDocument(feeds: feeds, includeEpisodeCount: includeEpisodeCount, titleForFeed: titleForFeed)
         let dir = FileManager.default.temporaryDirectory
         let name = "AntennaPod-subscriptions-\(fileStamp()).html"
         let url = dir.appendingPathComponent(name)
@@ -85,16 +93,16 @@ enum HtmlExportWriter {
         return shared
     }
 
-    private static func feedItemHTML(feed: PodcastFeed, includeEpisodeCount: Bool) -> String {
+    private static func feedItemHTML(feed: PodcastFeed, includeEpisodeCount: Bool, title: String) -> String {
         // Title links to site when feed provides a usable http(s) siteLink (existing behavior).
         let titleHTML: String
         if let siteURL = feed.websiteURL {
-            titleHTML = "<a class=\"title\" href=\"\(escapeAttr(siteURL.absoluteString))\">\(escape(feed.title))</a>"
+            titleHTML = "<a class=\"title\" href=\"\(escapeAttr(siteURL.absoluteString))\">\(escape(title))</a>"
         } else if let site = feed.siteLink?.trimmingCharacters(in: .whitespacesAndNewlines), !site.isEmpty {
             // Preserve prior attr escape for non-http(s) site strings when present (rare).
-            titleHTML = "<a class=\"title\" href=\"\(escapeAttr(site))\">\(escape(feed.title))</a>"
+            titleHTML = "<a class=\"title\" href=\"\(escapeAttr(site))\">\(escape(title))</a>"
         } else {
-            titleHTML = "<span class=\"title\">\(escape(feed.title))</span>"
+            titleHTML = "<span class=\"title\">\(escape(title))</span>"
         }
 
         var metaParts: [String] = []

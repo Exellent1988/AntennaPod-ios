@@ -97,7 +97,7 @@ struct HistoryView: View {
         case .all:
             return String(localized: "All")
         case .feed(let id):
-            return store.feeds.first(where: { $0.id == id })?.title
+            return store.displayTitle(forFeedId: id)
                 ?? historyPodcastFeeds.first(where: { $0.id == id })?.title
                 ?? String(localized: "Podcast")
         }

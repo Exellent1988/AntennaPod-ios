@@ -2178,6 +2178,15 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         return !descriptionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    /// User-facing podcast name: `FeedSettings.customTitle` when set, else RSS/`title`.
+    /// Does not mutate this feed object — nickname lives only in feed settings.
+    func displayTitle(settings: FeedSettings) -> String {
+        if let custom = settings.customTitle, !custom.isEmpty {
+            return custom
+        }
+        return title
+    }
+
     /// Trimmed non-empty author for UI / VoiceOver / search. Hidden when missing.
     var displayAuthor: String? {
         guard let author else { return nil }

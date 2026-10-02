@@ -12,6 +12,8 @@ struct FeedDescriptionSheetView: View {
     @Environment(\.openURL) private var openURL
 
     let feed: PodcastFeed
+    /// Local nickname when set; defaults to RSS `feed.title`.
+    var displayTitle: String? = nil
 
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -22,6 +24,11 @@ struct FeedDescriptionSheetView: View {
     @State private var copyFeedbackTick = 0
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
+
+    private var resolvedTitle: String {
+        let trimmed = displayTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return trimmed.isEmpty ? feed.title : trimmed
+    }
 
     private var plainDescription: String {
         guard let raw = feed.descriptionText else { return "" }
@@ -291,7 +298,7 @@ struct FeedDescriptionSheetView: View {
         } else if isFiltering {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 16) {
-                    Text(feed.title)
+                    Text(resolvedTitle)
                         .font(.title2.weight(.semibold))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityAddTraits(.isHeader)
@@ -423,7 +430,7 @@ struct FeedDescriptionSheetView: View {
         } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text(feed.title)
+                    Text(resolvedTitle)
                         .font(.title2.weight(.semibold))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityAddTraits(.isHeader)

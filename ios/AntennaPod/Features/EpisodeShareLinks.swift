@@ -15,13 +15,19 @@ enum EpisodeShareLinks {
     static func labelStyle(
         episode: PodcastEpisode,
         feed: PodcastFeed?,
-        positionSeconds: Double?
+        positionSeconds: Double?,
+        feedDisplayTitle: String? = nil
     ) -> some View {
+        let shownFeedTitle = {
+            let trimmed = feedDisplayTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if !trimmed.isEmpty { return trimmed }
+            return feed?.title
+        }()
         if let url = episode.shareURL(feed: feed) {
             ShareLink(
                 item: url,
                 subject: Text(episode.title),
-                message: Text(episode.shareMessage(feedTitle: feed?.title))
+                message: Text(episode.shareMessage(feedTitle: shownFeedTitle))
             ) {
                 Label("Share", systemImage: "square.and.arrow.up")
             }
@@ -34,7 +40,7 @@ enum EpisodeShareLinks {
                     subject: Text(episode.title),
                     message: Text(
                         episode.shareMessage(
-                            feedTitle: feed?.title,
+                            feedTitle: shownFeedTitle,
                             positionSeconds: positionSeconds
                         )
                     )

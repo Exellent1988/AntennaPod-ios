@@ -768,7 +768,7 @@ final class DownloadService: ObservableObject {
         _ = enforceEpisodeCacheLimit(keepEpisodeId: episode.id)
         // Optional success banner (Settings default off). Foreground + background session finish
         // both land here after a successful temp→Documents move — not on cancel/failure.
-        let feedTitle = store?.feed(containingEpisodeId: episode.id)?.title
+        let feedTitle = store.map { $0.displayTitle(containingEpisodeId: episode.id) }
         Task {
             await DownloadCompleteNotificationCoordinator.notifyIfNeeded(
                 episode: episode,
@@ -862,7 +862,7 @@ final class DownloadService: ObservableObject {
     // MARK: - Error log
 
     private func recordFailure(episode: PodcastEpisode, message: String) {
-        let feedTitle = store?.feed(containingEpisodeId: episode.id)?.title ?? ""
+        let feedTitle = store?.displayTitle(containingEpisodeId: episode.id) ?? ""
         let entry = DownloadErrorEntry(
             episodeId: episode.id,
             episodeTitle: episode.title,

@@ -88,9 +88,13 @@ struct AllEpisodesView: View {
         case .all:
             return String(localized: "All")
         case .feed(let id):
-            return store.feeds.first(where: { $0.id == id })?.title
-                ?? allEpisodesPodcastFeeds.first(where: { $0.id == id })?.title
-                ?? String(localized: "Podcast")
+            if let shown = store.displayTitle(forFeedId: id) {
+                return shown
+            }
+            if let feed = allEpisodesPodcastFeeds.first(where: { $0.id == id }) {
+                return store.displayTitle(for: feed)
+            }
+            return String(localized: "Podcast")
         }
     }
 

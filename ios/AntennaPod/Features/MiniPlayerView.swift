@@ -307,7 +307,8 @@ struct MiniPlayerView: View {
                         EpisodeShareLinks.labelStyle(
                             episode: episode,
                             feed: feedForCurrentEpisode,
-                            positionSeconds: playback.positionSeconds
+                            positionSeconds: playback.positionSeconds,
+                            feedDisplayTitle: feedForCurrentEpisode.map { store.displayTitle(for: $0) }
                         )
                     } label: {
                         Image(systemName: "ellipsis.circle")
@@ -422,7 +423,7 @@ struct MiniPlayerView: View {
                 // Prefer store episode (post-refresh) over a possibly stale player copy — same as Full.
                 EpisodeDescriptionSheetView(
                     episode: store.episode(id: episode.id) ?? episode,
-                    feedTitle: feedForCurrentEpisode?.title
+                    feedTitle: feedForCurrentEpisode.map { store.displayTitle(for: $0) }
                 )
             }
             .sheet(isPresented: $showTranscript) {

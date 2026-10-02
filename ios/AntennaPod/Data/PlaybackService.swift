@@ -1543,11 +1543,12 @@ final class PlaybackService: ObservableObject {
 
         guard let episode = currentEpisode else { return }
         let feed = store?.feed(containingEpisodeId: episode.id)
+        let feedName = feed.map { store?.displayTitle(for: $0) ?? $0.title } ?? "Podcast"
 
         var info = [String: Any]()
         info[MPMediaItemPropertyTitle] = episode.title
-        info[MPMediaItemPropertyArtist] = feed?.title ?? "Podcast"
-        info[MPMediaItemPropertyAlbumTitle] = feed?.title ?? "Podcast"
+        info[MPMediaItemPropertyArtist] = feedName
+        info[MPMediaItemPropertyAlbumTitle] = feedName
         info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
         info[MPNowPlayingInfoPropertyIsLiveStream] = false
         if durationSeconds.isFinite, durationSeconds > 0 {

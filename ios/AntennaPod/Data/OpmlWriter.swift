@@ -4,7 +4,11 @@ enum OpmlWriter {
     private static let title = "AntennaPod Subscriptions"
 
     /// Build OPML 2.0 XML matching Android `OpmlWriter` field names.
-    static func writeDocument(feeds: [PodcastFeed]) -> String {
+    /// `titleForFeed` supplies the outline text/title (display nickname when set).
+    static func writeDocument(
+        feeds: [PodcastFeed],
+        titleForFeed: (PodcastFeed) -> String = { $0.title }
+    ) -> String {
         var lines: [String] = []
         lines.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
         lines.append("<opml version=\"2.0\">")
@@ -16,9 +20,10 @@ enum OpmlWriter {
         for feed in feeds {
             guard !feed.feedUrl.isEmpty else { continue }
             guard !LocalFolderFeed.isLocalFolderFeed(feed) else { continue }
+            let outlineTitle = titleForFeed(feed)
             var attrs = [
-                "text=\"\(escapeAttr(feed.title))\"",
-                "title=\"\(escapeAttr(feed.title))\"",
+                "text=\"\(escapeAttr(outlineTitle))\"",
+                "title=\"\(escapeAttr(outlineTitle))\"",
                 "type=\"rss\"",
                 "xmlUrl=\"\(escapeAttr(feed.feedUrl))\""
             ]
@@ -33,8 +38,11 @@ enum OpmlWriter {
     }
 
     /// Write OPML to a temporary file suitable for the share sheet.
-    static func writeTemporaryFile(feeds: [PodcastFeed]) throws -> URL {
-        let xml = writeDocument(feeds: feeds)
+    static func writeTemporaryFile(
+        feeds: [PodcastFeed],
+        titleForFeed: (PodcastFeed) -> String = { $0.title }
+    ) throws -> URL {
+        let xml = writeDocument(feeds: feeds, titleForFeed: titleForFeed)
         let dir = FileManager.default.temporaryDirectory
         let name = "AntennaPod-subscriptions-\(fileStamp()).opml"
         let url = dir.appendingPathComponent(name)
