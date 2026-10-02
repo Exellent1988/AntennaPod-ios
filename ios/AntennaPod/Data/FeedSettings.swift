@@ -33,7 +33,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
     /// Playback speed override; `nil` = Use global. Presets or Custom… (0.50–3.00× @ 0.05).
     var playbackSpeed: Float?
     /// Feed detail episode list sort override; `nil` = Use global (`AppSettings.feedEpisodeSort`).
-    /// Newest first / Oldest first only (no duration/title modes — not invented). itunes:type does **not** change this.
+    /// Newest / Oldest by pubDate; Shortest / Longest by known duration (unknown last). itunes:type does **not** change this.
     var episodeSort: FeedEpisodeSort?
 
     static let `default` = FeedSettings(

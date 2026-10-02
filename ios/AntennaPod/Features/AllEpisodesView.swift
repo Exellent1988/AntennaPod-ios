@@ -79,9 +79,9 @@ struct AllEpisodesView: View {
 
     /// Soft cap first (newest 500 via `store.allEpisodes`), then sort → status chip → podcast → search.
     /// **Honesty:** `store.allEpisodes` is already the newest-500 by `pubDateEpochMs`.
-    /// Oldest first only reorders within that capped set — it does **not** pull older
-    /// episodes from beyond the soft limit. Missing dates sort last; stable tiebreaker
-    /// is episode `id` (same as Inbox). Orphan episodes (missing feed) match **All** only.
+    /// Oldest / Shortest / Longest only reorder within that capped set — they do **not** pull older
+    /// episodes from beyond the soft limit. Missing dates / unknown durations sort last; stable
+    /// tiebreaker is episode `id` (same as Inbox). Orphan episodes (missing feed) match **All** only.
     private var items: [InboxEpisode] {
         var base = store.allEpisodes.sorted { lhs, rhs in
             switch settings.allEpisodesSort {
@@ -95,6 +95,24 @@ struct AllEpisodesView: View {
                 let r = rhs.episode.pubDateEpochMs ?? Int64.max
                 if l != r { return l < r }
                 return lhs.episode.id < rhs.episode.id
+            case .shortestFirst, .longestFirst:
+                let shortestFirst = settings.allEpisodesSort == .shortestFirst
+                switch (
+                    knownDurationSecondsForAllEpisodesSort(lhs.episode),
+                    knownDurationSecondsForAllEpisodesSort(rhs.episode)
+                ) {
+                case let (l?, r?):
+                    if l != r {
+                        return shortestFirst ? (l < r) : (l > r)
+                    }
+                    return lhs.episode.id < rhs.episode.id
+                case (_?, nil):
+                    return true // known before unknown
+                case (nil, _?):
+                    return false
+                case (nil, nil):
+                    return lhs.episode.id < rhs.episode.id
+                }
             }
         }
         switch settings.allEpisodesFilter {
@@ -160,6 +178,15 @@ struct AllEpisodesView: View {
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
             savedPositionSeconds: { store.positionSeconds(for: $0) }
+        )
+    }
+
+    /// Feed duration when known; else saved playback duration. Never invents a length.
+    /// Same known-duration path as Queue / Feed detail duration sort (no live player).
+    private func knownDurationSecondsForAllEpisodesSort(_ episode: PodcastEpisode) -> Double? {
+        EpisodeRemainingTime.knownDurationSeconds(
+            for: episode,
+            savedDurationSeconds: store.playbackState(for: episode.id).durationSeconds
         )
     }
 
@@ -290,6 +317,8 @@ struct AllEpisodesView: View {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
                 .accessibilityLabel(String(localized: "Sort all episodes"))
+                .accessibilityValue(settings.allEpisodesSort.label)
+                .accessibilityHint(String(localized: "Orders the All Episodes list within the newest-500 soft cap. Shortest and Longest use known duration; unknown last. Does not pull older episodes beyond the cap."))
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {

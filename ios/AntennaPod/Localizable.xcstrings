@@ -21382,23 +21382,6 @@
         }
       }
     },
-    "Use global, Newest first, or Oldest first for this podcast’s episode list. Does not follow itunes:type.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Use global, Newest first, or Oldest first for this podcast’s episode list. Does not follow itunes:type."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Global verwenden, Neueste zuerst oder Älteste zuerst für die Episodenliste dieses Podcasts. Folgt nicht itunes:type."
-          }
-        }
-      }
-    },
     "This podcast: %@. Feed detail Sort menu saves per podcast. itunes:type does not change sort.": {
       "extractionState": "manual",
       "localizations": {
@@ -22867,6 +22850,40 @@
         }
       },
       "comment": "Downloads sort: known byte size ascending; unknown size last."
+    },
+    "Use global, Newest first, Oldest first, Shortest first, or Longest first for this podcast’s episode list. Does not follow itunes:type.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, Newest first, Oldest first, Shortest first, or Longest first for this podcast’s episode list. Does not follow itunes:type."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global verwenden, Neueste zuerst, Älteste zuerst, Kürzeste zuerst oder Längste zuerst für die Episodenliste dieses Podcasts. Folgt nicht itunes:type."
+          }
+        }
+      }
+    },
+    "Orders the All Episodes list within the newest-500 soft cap. Shortest and Longest use known duration; unknown last. Does not pull older episodes beyond the cap.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the All Episodes list within the newest-500 soft cap. Shortest and Longest use known duration; unknown last. Does not pull older episodes beyond the cap."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Alle-Episoden-Liste innerhalb der Soft-Obergrenze der neuesten 500. Kürzeste und Längste nutzen bekannte Dauer; unbekannte zuletzt. Zieht keine älteren Episoden über die Soft-Obergrenze hinaus."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -346,12 +346,18 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
 
 
 
-/// How Feed detail orders episodes in one podcast (client-side; All Episodes unchanged; Inbox has its own `inboxSort`).
+/// How Feed detail orders episodes in one podcast (client-side; All Episodes uses `allEpisodesSort`; Inbox has its own `inboxSort`).
 /// Global default for feeds with `FeedSettings.episodeSort == nil` (Use global). Per-feed override lives in `feed-settings.json`.
-/// Newest / Oldest by `pubDateEpochMs` only — no duration/title modes. itunes:type must not auto-change this.
+/// Newest / Oldest by `pubDateEpochMs`; Shortest / Longest by known duration (feed `durationSeconds` when known,
+/// else saved playback duration — same path as Queue duration sort; unknown last; title tiebreak).
+/// itunes:type must not auto-change this. No title-only sort mode.
 enum FeedEpisodeSort: String, CaseIterable, Identifiable, Codable {
     case newestFirst
     case oldestFirst
+    /// Ascending known duration; unknown last; title then id tiebreak.
+    case shortestFirst
+    /// Descending known duration; unknown last; title then id tiebreak.
+    case longestFirst
 
     var id: String { rawValue }
 
@@ -359,6 +365,8 @@ enum FeedEpisodeSort: String, CaseIterable, Identifiable, Codable {
         switch self {
         case .newestFirst: return String(localized: "Newest first")
         case .oldestFirst: return String(localized: "Oldest first")
+        case .shortestFirst: return String(localized: "Shortest first")
+        case .longestFirst: return String(localized: "Longest first")
         }
     }
 
@@ -366,6 +374,8 @@ enum FeedEpisodeSort: String, CaseIterable, Identifiable, Codable {
         switch self {
         case .newestFirst: return "arrow.down"
         case .oldestFirst: return "arrow.up"
+        case .shortestFirst: return "timer"
+        case .longestFirst: return "timer"
         }
     }
 }
@@ -798,10 +808,18 @@ enum AllEpisodesPodcastFilter: Hashable, Identifiable {
     }
 }
 
-/// How Library → Episodes (All Episodes) orders the soft-capped list (client-side; by pubDate).
+/// How Library → Episodes (All Episodes) orders the soft-capped list (client-side).
+/// Newest / Oldest by `pubDateEpochMs`; Shortest / Longest by known duration (feed when known,
+/// else saved playback — same path as Queue; unknown last; id tiebreak).
+/// **Soft-cap honesty:** only reorders within newest-500 — does **not** pull older episodes beyond the cap
+/// (same honesty as Oldest date sort).
 enum AllEpisodesSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
+    /// Ascending known duration within soft-capped set; unknown last; id tiebreak.
+    case shortestFirst
+    /// Descending known duration within soft-capped set; unknown last; id tiebreak.
+    case longestFirst
 
     var id: String { rawValue }
 
@@ -809,6 +827,8 @@ enum AllEpisodesSort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return String(localized: "Newest first")
         case .oldestFirst: return String(localized: "Oldest first")
+        case .shortestFirst: return String(localized: "Shortest first")
+        case .longestFirst: return String(localized: "Longest first")
         }
     }
 
@@ -816,6 +836,8 @@ enum AllEpisodesSort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return "arrow.down"
         case .oldestFirst: return "arrow.up"
+        case .shortestFirst: return "timer"
+        case .longestFirst: return "timer"
         }
     }
 }
@@ -1534,7 +1556,7 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// Global default for Feed detail episode list order (`pubDateEpochMs`: newest / oldest).
+    /// Global default for Feed detail episode list order (Newest / Oldest by pubDate; Shortest / Longest by known duration).
     /// Per-feed override: `FeedSettings.episodeSort` (nil = Use global). All Episodes uses `allEpisodesSort`; Inbox uses `inboxSort`.
     /// itunes:type is display-only and must not change this.
     @Published var feedEpisodeSort: FeedEpisodeSort {
@@ -1698,10 +1720,10 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// Library → Episodes list order by `pubDateEpochMs`: newest first (default) or oldest first.
-    /// **Soft-cap honesty:** `PodcastStore.allEpisodes` is already the newest-500; Oldest only
-    /// reorders within that capped set (does not surface older episodes beyond the limit).
-    /// Missing dates sort last; stable tiebreaker episode `id`. Pipeline: soft cap → sort → chip → podcast → search.
+    /// Library → Episodes list order: Newest / Oldest by `pubDateEpochMs`, or Shortest / Longest by known duration.
+    /// **Soft-cap honesty:** `PodcastStore.allEpisodes` is already the newest-500; Oldest / Shortest / Longest only
+    /// reorder within that capped set (do not surface older episodes beyond the limit).
+    /// Missing dates / unknown durations sort last; stable tiebreaker episode `id`. Pipeline: soft cap → sort → chip → podcast → search.
     /// Client-side re-sort in AllEpisodesView only — store catalog stays newest-first.
     @Published var allEpisodesSort: AllEpisodesSort {
         didSet {

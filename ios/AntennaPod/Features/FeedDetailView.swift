@@ -169,9 +169,11 @@ struct FeedDetailView: View {
         store.feedSettings(for: feed.id).resolvedEpisodeSort(global: settings.feedEpisodeSort)
     }
 
-    /// Episodes for this feed ordered by resolved per-feed/`Use global` sort (`pubDateEpochMs`).
-    /// Missing dates sort last in both modes. Does not mutate stored feed order.
-    /// itunes:type is display-only — never auto-changes this sort.
+    /// Episodes for this feed ordered by resolved per-feed/`Use global` sort.
+    /// Date modes: `pubDateEpochMs` (missing last). Duration modes: known duration via
+    /// `EpisodeRemainingTime.knownDurationSeconds` (feed when known, else saved playback —
+    /// same path as Queue; never invent; unknown last). Title then id tiebreak.
+    /// Does not mutate stored feed order. itunes:type is display-only — never auto-changes this sort.
     private var sortedEpisodes: [PodcastEpisode] {
         liveFeed.episodes.sorted { lhs, rhs in
             switch resolvedEpisodeSort {
@@ -179,14 +181,43 @@ struct FeedDetailView: View {
                 let l = lhs.pubDateEpochMs ?? Int64.min
                 let r = rhs.pubDateEpochMs ?? Int64.min
                 if l != r { return l > r }
-                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                return feedEpisodeTitleTiebreak(lhs, rhs)
             case .oldestFirst:
                 let l = lhs.pubDateEpochMs ?? Int64.max
                 let r = rhs.pubDateEpochMs ?? Int64.max
                 if l != r { return l < r }
-                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                return feedEpisodeTitleTiebreak(lhs, rhs)
+            case .shortestFirst, .longestFirst:
+                let shortestFirst = resolvedEpisodeSort == .shortestFirst
+                switch (knownDurationSecondsForFeedSort(lhs), knownDurationSecondsForFeedSort(rhs)) {
+                case let (l?, r?):
+                    if l != r {
+                        return shortestFirst ? (l < r) : (l > r)
+                    }
+                    return feedEpisodeTitleTiebreak(lhs, rhs)
+                case (_?, nil):
+                    return true // known before unknown
+                case (nil, _?):
+                    return false
+                case (nil, nil):
+                    return feedEpisodeTitleTiebreak(lhs, rhs)
+                }
             }
         }
+    }
+
+    /// Feed duration when known; else saved playback duration. Never invents a length.
+    private func knownDurationSecondsForFeedSort(_ episode: PodcastEpisode) -> Double? {
+        EpisodeRemainingTime.knownDurationSeconds(
+            for: episode,
+            savedDurationSeconds: store.playbackState(for: episode.id).durationSeconds
+        )
+    }
+
+    private func feedEpisodeTitleTiebreak(_ lhs: PodcastEpisode, _ rhs: PodcastEpisode) -> Bool {
+        let cmp = lhs.title.localizedCaseInsensitiveCompare(rhs.title)
+        if cmp != .orderedSame { return cmp == .orderedAscending }
+        return lhs.id < rhs.id
     }
 
     /// Toolbar Sort writes an explicit per-feed override (`feed-settings.json`); does not change other feeds.
