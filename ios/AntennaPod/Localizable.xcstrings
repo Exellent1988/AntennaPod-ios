@@ -40341,6 +40341,74 @@
         }
       }
     },
+    "Full Discover charts returned no podcasts with a resolved RSS feed URL for the selected country. This is Apple iTunes charts, not the Home preview, not your subscriptions, and not Podcast Index or fyyd. Parental controls requested non-explicit charts, so shows can be hidden. Changing the chart count does not invent results.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full Discover charts returned no podcasts with a resolved RSS feed URL for the selected country. This is Apple iTunes charts, not the Home preview, not your subscriptions, and not Podcast Index or fyyd. Parental controls requested non-explicit charts, so shows can be hidden. Changing the chart count does not invent results."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die vollen Entdecken-Charts haben für das ausgewählte Land keine Podcasts mit aufgelöster RSS-Feed-URL zurückgegeben. Das sind Apple-iTunes-Charts, nicht die Home-Vorschau, nicht deine Abos und nicht Podcast Index oder fyyd. Der Elternschutz hat nicht-explizite Charts angefordert, dadurch können Sendungen fehlen. Die Charts-Anzahl erfindet keine Ergebnisse."
+          }
+        }
+      }
+    },
+    "Full Discover charts returned no podcasts with a resolved RSS feed URL for the selected country. This is Apple iTunes charts, not the Home preview, not your subscriptions, and not Podcast Index or fyyd. Hide explicit top charts is off, so this is not an explicit filter. Rows without a feed URL are omitted. Changing the chart count does not invent results.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full Discover charts returned no podcasts with a resolved RSS feed URL for the selected country. This is Apple iTunes charts, not the Home preview, not your subscriptions, and not Podcast Index or fyyd. Hide explicit top charts is off, so this is not an explicit filter. Rows without a feed URL are omitted. Changing the chart count does not invent results."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die vollen Entdecken-Charts haben für das ausgewählte Land keine Podcasts mit aufgelöster RSS-Feed-URL zurückgegeben. Das sind Apple-iTunes-Charts, nicht die Home-Vorschau, nicht deine Abos und nicht Podcast Index oder fyyd. Explizite Top-Charts ausblenden ist aus, das ist also kein Explicit-Filter. Zeilen ohne Feed-URL werden weggelassen. Die Charts-Anzahl erfindet keine Ergebnisse."
+          }
+        }
+      }
+    },
+    "Change the charts country under Settings → Discovery, or turn off Hide explicit top charts in parental controls. This empty list is not a subscription search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change the charts country under Settings → Discovery, or turn off Hide explicit top charts in parental controls. This empty list is not a subscription search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere das Charts-Land unter Einstellungen → Discovery oder schalte Explizite Top-Charts ausblenden im Elternschutz aus. Diese leere Liste ist keine Abonnement-Suche."
+          }
+        }
+      }
+    },
+    "Change the charts country under Settings → Discovery. This empty list is not a subscription search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change the charts country under Settings → Discovery. This empty list is not a subscription search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere das Charts-Land unter Einstellungen → Discovery. Diese leere Liste ist keine Abonnement-Suche."
+          }
+        }
+      }
+    },
     "Enter a playback speed from 0.50× to 3.00×. Slider and Stepper use 0.05 steps.": {
       "extractionState": "manual",
       "localizations": {

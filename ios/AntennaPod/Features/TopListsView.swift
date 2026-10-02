@@ -31,6 +31,31 @@ struct TopListsView: View {
         return String(format: template, locale: .current, countryLabel)
     }
 
+    /// VoiceOver for the full Discover empty list. Visible copy stays concise; this names Apple
+    /// charts versus the Home preview, the library, and other directories, and whether the
+    /// explicit filter is actually on. Does not invent chart rows.
+    private var discoverEmptyAccessibilityValue: String {
+        if parental.shouldHideExplicitCharts {
+            return String(
+                localized: "Full Discover charts returned no podcasts with a resolved RSS feed URL for the selected country. This is Apple iTunes charts, not the Home preview, not your subscriptions, and not Podcast Index or fyyd. Parental controls requested non-explicit charts, so shows can be hidden. Changing the chart count does not invent results."
+            )
+        }
+        return String(
+            localized: "Full Discover charts returned no podcasts with a resolved RSS feed URL for the selected country. This is Apple iTunes charts, not the Home preview, not your subscriptions, and not Podcast Index or fyyd. Hide explicit top charts is off, so this is not an explicit filter. Rows without a feed URL are omitted. Changing the chart count does not invent results."
+        )
+    }
+
+    private var discoverEmptyAccessibilityHint: String {
+        if parental.shouldHideExplicitCharts {
+            return String(
+                localized: "Change the charts country under Settings → Discovery, or turn off Hide explicit top charts in parental controls. This empty list is not a subscription search."
+            )
+        }
+        return String(
+            localized: "Change the charts country under Settings → Discovery. This empty list is not a subscription search."
+        )
+    }
+
     var body: some View {
         List {
             Section {
@@ -67,7 +92,10 @@ struct TopListsView: View {
                         systemImage: "chart.bar",
                         description: Text("iTunes returned no podcasts for this country, or feed URLs could not be resolved. Try another country in Settings.")
                     )
-                    .accessibilityElement(children: .combine)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "No chart results"))
+                    .accessibilityValue(discoverEmptyAccessibilityValue)
+                    .accessibilityHint(discoverEmptyAccessibilityHint)
                     .listRowBackground(Color.clear)
                 }
             }
