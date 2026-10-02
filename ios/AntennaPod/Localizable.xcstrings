@@ -17206,6 +17206,96 @@
         }
       }
     },
+    "Bitrate copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for an alternate enclosure bitrate.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitrate copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitrate in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy bitrate": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying an alternate enclosure bitrate.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy bitrate"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitrate kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed alternate enclosure bitrate to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying an alternate enclosure bitrate.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed alternate enclosure bitrate to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigte Bitrate der alternativen Enclosure in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Share bitrate": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing an alternate enclosure bitrate.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share bitrate"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitrate teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed alternate enclosure bitrate as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing an alternate enclosure bitrate.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed alternate enclosure bitrate as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigte Bitrate der alternativen Enclosure als reinen Text"
+          }
+        }
+      }
+    },
     "Content type copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Copied alert message for alternate source content type.",

@@ -72,13 +72,14 @@ struct PodcastAlternateEnclosuresListView: View {
     @ViewBuilder
     private func enclosureRow(_ enclosure: PodcastAlternateEnclosure) -> some View {
         let headline = enclosure.displayTitle ?? enclosure.displayType ?? enclosure.type
+        let bitrate = PodcastAlternateEnclosureDisplay.bitrateLabel(enclosure.bitrate)
         let captionParts: [String] = {
             var parts: [String] = []
             if enclosure.displayTitle != nil, let mime = enclosure.displayType {
                 parts.append(mime)
             }
-            if let br = PodcastAlternateEnclosureDisplay.bitrateLabel(enclosure.bitrate) {
-                parts.append(br)
+            if let bitrate {
+                parts.append(bitrate)
             }
             if let len = PodcastAlternateEnclosureDisplay.lengthLabel(enclosure.length) {
                 parts.append(len)
@@ -138,6 +139,33 @@ struct PodcastAlternateEnclosuresListView: View {
 
             ForEach(Array(enclosure.validSources.enumerated()), id: \.offset) { _, source in
                 sourceRow(source)
+            }
+
+            if let bitrate {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            bitrate,
+                            confirmation: String(localized: "Bitrate copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy bitrate", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy bitrate"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed alternate enclosure bitrate to the pasteboard")
+                    )
+
+                    ShareLink(item: bitrate) {
+                        Label("Share bitrate", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share bitrate"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed alternate enclosure bitrate as plain text")
+                    )
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
