@@ -1133,7 +1133,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, sleep timer volume fade, skip intro/outro, volume adaptation, volume boost (100–300%), skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes podcast filter, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Feed/All Episodes/Inbox itunes:episodeType filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
+/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, sleep timer volume fade, skip intro/outro, volume adaptation, volume boost (100–300%), skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / download-complete / sync-error / sleep-timer-end notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes podcast filter, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Feed/All Episodes/Inbox itunes:episodeType filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -1220,6 +1220,7 @@ final class AppSettings: ObservableObject {
         static let skipOutroSeconds = "settings.skipOutroSeconds"
         static let notifyOnNewEpisodes = "settings.notifyOnNewEpisodes"
         static let notifyOnDownloadErrors = "settings.notifyOnDownloadErrors"
+        static let notifyOnDownloadComplete = "settings.notifyOnDownloadComplete"
         static let notifyOnSyncErrors = "settings.notifyOnSyncErrors"
         static let notifyOnSleepTimerEnd = "settings.notifyOnSleepTimerEnd"
         static let lastCustomSleepTimerMinutes = "settings.lastCustomSleepTimerMinutes"
@@ -1437,6 +1438,14 @@ final class AppSettings: ObservableObject {
     @Published var notifyOnDownloadErrors: Bool {
         didSet {
             UserDefaults.standard.set(notifyOnDownloadErrors, forKey: Keys.notifyOnDownloadErrors)
+        }
+    }
+
+    /// Notify when an episode download **completes successfully** (local UserNotifications; no push).
+    /// Defaults **off** (quieter than errors); shares the same system permission as DL-error alerts.
+    @Published var notifyOnDownloadComplete: Bool {
+        didSet {
+            UserDefaults.standard.set(notifyOnDownloadComplete, forKey: Keys.notifyOnDownloadComplete)
         }
     }
 
@@ -2147,6 +2156,12 @@ final class AppSettings: ObservableObject {
             // Default on; same permission gate as new-episode alerts.
             notifyOnDownloadErrors = true
         }
+        if UserDefaults.standard.object(forKey: Keys.notifyOnDownloadComplete) != nil {
+            notifyOnDownloadComplete = UserDefaults.standard.bool(forKey: Keys.notifyOnDownloadComplete)
+        } else {
+            // Default off — quieter than download-error alerts; opt-in.
+            notifyOnDownloadComplete = false
+        }
         if UserDefaults.standard.object(forKey: Keys.notifyOnSyncErrors) != nil {
             notifyOnSyncErrors = UserDefaults.standard.bool(forKey: Keys.notifyOnSyncErrors)
         } else {
@@ -2593,6 +2608,7 @@ final class AppSettings: ObservableObject {
             skipOutroSeconds: skipOutroSeconds,
             notifyOnNewEpisodes: notifyOnNewEpisodes,
             notifyOnDownloadErrors: notifyOnDownloadErrors,
+            notifyOnDownloadComplete: notifyOnDownloadComplete,
             notifyOnSyncErrors: notifyOnSyncErrors,
             notifyOnSleepTimerEnd: notifyOnSleepTimerEnd,
             lastCustomSleepTimerMinutes: lastCustomSleepTimerMinutes,
@@ -2702,6 +2718,7 @@ final class AppSettings: ObservableObject {
         }
         notifyOnNewEpisodes = snap.notifyOnNewEpisodes
         notifyOnDownloadErrors = snap.notifyOnDownloadErrors
+        notifyOnDownloadComplete = snap.notifyOnDownloadComplete ?? false
         notifyOnSyncErrors = snap.notifyOnSyncErrors ?? true
         notifyOnSleepTimerEnd = snap.notifyOnSleepTimerEnd ?? true
         let customSleep = snap.lastCustomSleepTimerMinutes ?? Self.defaultLastCustomSleepTimerMinutes
@@ -2870,6 +2887,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var skipOutroSeconds: Int
     var notifyOnNewEpisodes: Bool
     var notifyOnDownloadErrors: Bool
+    /// Absent in older backups → treated as off (default; quieter than errors).
+    var notifyOnDownloadComplete: Bool? = false
     /// Absent in older backups → treated as on (default).
     var notifyOnSyncErrors: Bool? = true
     /// Absent in older backups → treated as on (default).

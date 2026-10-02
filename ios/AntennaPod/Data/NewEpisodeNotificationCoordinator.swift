@@ -47,7 +47,7 @@ final class NotificationDeepLinkRouter: ObservableObject {
 /// **Honesty:** posts when global or per-feed Always allows it **and** authorization
 /// is `.authorized` / `.provisional`. Denied stays denied — Settings shows the real status
 /// (Allowed/Denied/Not determined), **Open iOS Settings** when denied, and **Notifies /
-/// Does not notify** coverage (no download-complete / no server-side push).
+/// Does not notify** coverage (optional download-complete default off; no server-side push).
 /// Per-feed Never suppresses that feed even when global is on.
 /// **Aggregation:** one local banner per refresh (not one per feed) to avoid spam.
 @MainActor
@@ -96,7 +96,13 @@ enum NewEpisodeNotificationCoordinator {
             intentIdentifiers: [],
             options: []
         )
-        center.setNotificationCategories([category, dlCategory, syncCategory, sleepCategory])
+        let dlCompleteCategory = UNNotificationCategory(
+            identifier: DownloadCompleteNotificationCoordinator.categoryId,
+            actions: [],
+            intentIdentifiers: [],
+            options: []
+        )
+        center.setNotificationCategories([category, dlCategory, syncCategory, sleepCategory, dlCompleteCategory])
     }
 
     static func authorizationStatus() async -> UNAuthorizationStatus {

@@ -689,6 +689,16 @@ final class DownloadService: ObservableObject {
         // Keep the episode we just finished; evict older/played peers if over budget.
         _ = enforceStorageLimit(keepEpisodeId: episode.id)
         _ = enforceEpisodeCacheLimit(keepEpisodeId: episode.id)
+        // Optional success banner (Settings default off). Foreground + background session finish
+        // both land here after a successful temp→Documents move — not on cancel/failure.
+        let feedTitle = store?.feed(containingEpisodeId: episode.id)?.title
+        Task {
+            await DownloadCompleteNotificationCoordinator.notifyIfNeeded(
+                episode: episode,
+                feedTitle: feedTitle,
+                settings: settings
+            )
+        }
     }
 
     fileprivate func handleTaskCompleted(taskIdentifier: Int, error: Error?) {

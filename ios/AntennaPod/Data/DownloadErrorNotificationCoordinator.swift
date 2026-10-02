@@ -1,7 +1,8 @@
 import Foundation
 import UserNotifications
 
-/// Local UserNotifications for download **failures** only (no push / APNs; no download-complete success banners).
+/// Local UserNotifications for download **failures** only (no push / APNs).
+/// Success banners are optional via `DownloadCompleteNotificationCoordinator` (separate toggle, default off).
 /// Reuses the same UNUserNotificationCenter permission path as new-episode alerts.
 @MainActor
 enum DownloadErrorNotificationCoordinator {

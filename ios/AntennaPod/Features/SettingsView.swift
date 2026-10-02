@@ -199,6 +199,7 @@ struct SettingsView: View {
                     "Notifications",
                     "Notify on new episodes",
                     "Notify on download errors",
+                    "Notify on download complete",
                     "Notify on sync errors",
                     "Notify when sleep timer ends",
                     "Permission",
@@ -395,6 +396,13 @@ struct SettingsView: View {
                     await refreshNotificationAuthLabel()
                 }
             }
+            .onChange(of: settings.notifyOnDownloadComplete) { _, enabled in
+                guard enabled else { return }
+                Task {
+                    await NewEpisodeNotificationCoordinator.requestPermissionIfNeeded()
+                    await refreshNotificationAuthLabel()
+                }
+            }
             .onChange(of: settings.notifyOnSyncErrors) { _, enabled in
                 guard enabled else { return }
                 Task {
@@ -484,6 +492,7 @@ struct SettingsView: View {
                 "Notifications",
                 "Notify on new episodes",
                 "Notify on download errors",
+                "Notify on download complete",
                 "Notify on sync errors",
                 "Notify when sleep timer ends",
                 "Download errors"
@@ -1285,6 +1294,8 @@ struct SettingsView: View {
                 .accessibilityHint(String(localized: "Local notifications only after a feed refresh finds new episodes; no push server."))
             Toggle("Notify on download errors", isOn: $settings.notifyOnDownloadErrors)
                 .accessibilityHint(String(localized: "Local notifications when a download fails — not when a download completes successfully."))
+            Toggle("Notify on download complete", isOn: $settings.notifyOnDownloadComplete)
+                .accessibilityHint(String(localized: "Optional local notifications when a download finishes successfully. Default off — quieter than download errors."))
             Toggle("Notify on sync errors", isOn: $settings.notifyOnSyncErrors)
                 .accessibilityHint(String(localized: "Local notifications when gpodder or Nextcloud sync fails."))
             Toggle("Notify when sleep timer ends", isOn: $settings.notifyOnSleepTimerEnd)
@@ -1306,24 +1317,24 @@ struct SettingsView: View {
             }
 
             LabeledContent("Notifies") {
-                Text(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)"))
+                Text(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.trailing)
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(String(localized: "Notifies"))
-            .accessibilityValue(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)"))
+            .accessibilityValue(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)"))
 
             LabeledContent("Does not notify") {
-                Text(String(localized: "No push / APNs / server-side alerts. No download-complete success banners. No episode-level deep link for new episodes (Inbox only). Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push."))
+                Text(String(localized: "No push / APNs / server-side alerts. Download-complete banners only when that optional toggle is on (default off). No episode-level deep link for new episodes (Inbox only). Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.trailing)
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(String(localized: "Does not notify"))
-            .accessibilityValue(String(localized: "No push / APNs / server-side alerts. No download-complete success banners. No episode-level deep link for new episodes (Inbox only). Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push."))
+            .accessibilityValue(String(localized: "No push / APNs / server-side alerts. Download-complete banners only when that optional toggle is on (default off). No episode-level deep link for new episodes (Inbox only). Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push."))
 
             NavigationLink {
                 DownloadErrorsView()
@@ -1349,13 +1360,13 @@ struct SettingsView: View {
 
     private var notificationsHelpText: String {
         if notificationAuthStatus == .denied {
-            return String(localized: "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings (Open iOS Settings). Toggles stay on so your preference is clear. Local UserNotifications only — never push / APNs / server-side alerts. No download-complete banners.")
+            return String(localized: "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings (Open iOS Settings). Toggles stay on so your preference is clear. Local UserNotifications only — never push / APNs / server-side alerts. Download-complete is optional (default off).")
         }
-        if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors && !settings.notifyOnSyncErrors && !settings.notifyOnSleepTimerEnd {
-            return String(localized: "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync, and/or sleep timer end (banner + foreground haptic). Local only — no push / APNs; iOS Notifications permission required. Does not notify on download complete.")
+        if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors && !settings.notifyOnDownloadComplete && !settings.notifyOnSyncErrors && !settings.notifyOnSleepTimerEnd {
+            return String(localized: "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync, and/or sleep timer end (banner + foreground haptic). Local only — no push / APNs; iOS Notifications permission required.")
         }
         if notificationAuthStatus == .notDetermined {
-            return String(localized: "iOS permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails / sleep timer ends. Local UserNotifications only — no push / APNs / server-side alerts. No download-complete banners.")
+            return String(localized: "iOS permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails or completes / sync fails / sleep timer ends. Local UserNotifications only — no push / APNs / server-side alerts. Download-complete is optional (default off).")
         }
         var parts: [String] = []
         if settings.notifyOnNewEpisodes {
@@ -1364,13 +1375,16 @@ struct SettingsView: View {
         if settings.notifyOnDownloadErrors {
             parts.append(String(localized: "Download failures → Downloads (title = episode, body = error)"))
         }
+        if settings.notifyOnDownloadComplete {
+            parts.append(String(localized: "Download complete → Downloads (title = episode, body = feed)"))
+        }
         if settings.notifyOnSyncErrors {
             parts.append(String(localized: "Sync / login failures → Settings Sync (short error)"))
         }
         if settings.notifyOnSleepTimerEnd {
             parts.append(String(localized: "Sleep timer end → local banner + foreground haptic (one per fire)"))
         }
-        return parts.joined(separator: ". ") + ". " + String(localized: "Local only — no APNs / push / download-complete. OS Notifications permission required.")
+        return parts.joined(separator: ". ") + ". " + String(localized: "Local only — no APNs / push. OS Notifications permission required.")
     }
 
     @MainActor
