@@ -14935,6 +14935,96 @@
       },
       "comment": "VoiceOver hint when podcast:person has an http(s) href."
     },
+    "Copy person link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy person link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personenlink kopieren"
+          }
+        }
+      },
+      "comment": "VoiceOver label for copying a feed-provided podcast:person href. Hidden when href is missing or blank."
+    },
+    "Copies this person’s feed-provided link to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies this person’s feed-provided link to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den vom Feed bereitgestellten Link dieser Person in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for copying a podcast:person href."
+    },
+    "Share person link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share person link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personenlink teilen"
+          }
+        }
+      },
+      "comment": "VoiceOver label for sharing a feed-provided podcast:person href. Hidden when href is missing or blank."
+    },
+    "Shares this person’s http(s) URL when parseable; otherwise shares the same feed-provided link text as Copy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares this person’s http(s) URL when parseable; otherwise shares the same feed-provided link text as Copy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die http(s)-URL dieser Person, wenn sie parsebar ist; andernfalls denselben vom Feed bereitgestellten Linktext wie beim Kopieren"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for sharing a podcast:person href. ShareLink prefers an http(s) URL and falls back to the raw feed string."
+    },
+    "Person link copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person link copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personenlink in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy confirmation message for a podcast:person href."
+    },
     "Person %@, role %@": {
       "extractionState": "manual",
       "localizations": {
