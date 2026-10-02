@@ -209,6 +209,33 @@ struct PodcastLiveItemsListView: View {
             ForEach(Array(contentLinks.enumerated()), id: \.offset) { _, contentLink in
                 if let url = contentLink.browserURL {
                     let label = contentLink.displayLabel ?? String(localized: "Open content link")
+                    if let feedLabel = contentLink.displayLabel {
+                        HStack(spacing: 12) {
+                            Button {
+                                UIPasteboard.general.string = feedLabel
+                                copiedAlertMessage = String(localized: "Content link label copied to the pasteboard.")
+                                copyFeedbackTick += 1
+                                showCopiedAlert = true
+                            } label: {
+                                Label("Copy content link label", systemImage: "doc.on.doc")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Copy content link label"))
+                            .accessibilityHint(
+                                String(localized: "Copies the exact feed-provided content link label shown above as plain text")
+                            )
+
+                            ShareLink(item: feedLabel) {
+                                Label("Share content link label", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Share content link label"))
+                            .accessibilityHint(
+                                String(localized: "Shares the exact feed-provided content link label shown above as plain text")
+                            )
+                        }
+                    }
+
                     HStack(spacing: 12) {
                         Button {
                             UIPasteboard.general.string = url.absoluteString

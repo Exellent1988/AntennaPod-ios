@@ -36070,8 +36070,97 @@
         }
       }
     }
+  },
+  "Content link label copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Copy confirmation for a feed-provided podcast:contentLink label.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Content link label copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Content-Link-Label in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Copy content link label": {
+    "extractionState": "manual",
+    "comment": "VoiceOver label for copying a feed-provided podcast:contentLink label.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy content link label"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Content-Link-Label kopieren"
+        }
+      }
+    }
+  },
+  "Copies the exact feed-provided content link label shown above as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for Copy content link label.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact feed-provided content link label shown above as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert das exakte, vom Feed bereitgestellte Content-Link-Label oben als Klartext"
+        }
+      }
+    }
+  },
+  "Share content link label": {
+    "extractionState": "manual",
+    "comment": "VoiceOver label for sharing a feed-provided podcast:contentLink label.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share content link label"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Content-Link-Label teilen"
+        }
+      }
+    }
+  },
+  "Shares the exact feed-provided content link label shown above as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for Share content link label.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact feed-provided content link label shown above as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt das exakte, vom Feed bereitgestellte Content-Link-Label oben als Klartext"
+        }
+      }
+    }
   }
-
   },
   "version": "1.0"
 }
