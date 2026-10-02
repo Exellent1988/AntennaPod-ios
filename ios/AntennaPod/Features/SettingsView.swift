@@ -1772,14 +1772,19 @@ struct SettingsView: View {
     private var notificationsSection: some View {
         Section {
             Toggle("Notify on new episodes", isOn: $settings.notifyOnNewEpisodes)
+                .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnNewEpisodes, role: .newEpisodes))
                 .accessibilityHint(String(localized: "Master switch for local new-episode notifications after refresh. Per-podcast Off silences that feed; per-podcast On is ignored while this is off. No push server."))
             Toggle("Notify on download errors", isOn: $settings.notifyOnDownloadErrors)
+                .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnDownloadErrors, role: .downloadErrors))
                 .accessibilityHint(String(localized: "Local notifications when a download fails — not when a download completes successfully."))
             Toggle("Notify on download complete", isOn: $settings.notifyOnDownloadComplete)
+                .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnDownloadComplete, role: .downloadComplete))
                 .accessibilityHint(String(localized: "Optional local notifications when a download finishes successfully. Default off — quieter than download errors."))
             Toggle("Notify on sync errors", isOn: $settings.notifyOnSyncErrors)
+                .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnSyncErrors, role: .syncErrors))
                 .accessibilityHint(String(localized: "Local notifications when gpodder or Nextcloud sync fails."))
             Toggle("Notify when sleep timer ends", isOn: $settings.notifyOnSleepTimerEnd)
+                .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnSleepTimerEnd, role: .sleepTimer))
                 .accessibilityHint(String(localized: "Local notification and haptic when the sleep timer pauses or stops playback."))
 
             LabeledContent("Permission") {
@@ -1788,7 +1793,8 @@ struct SettingsView: View {
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(String(localized: "Permission"))
-            .accessibilityValue(notificationAuthStatus.label)
+            .accessibilityValue(notificationPermissionAccessibilityValue)
+            .accessibilityHint(String(localized: "Rechecked when Settings appears and when AntennaPod becomes active. Open iOS Settings is shown only when permission is Denied."))
 
             if notificationAuthStatus == .denied {
                 Button("Open iOS Settings") {
@@ -1839,7 +1845,87 @@ struct SettingsView: View {
         }
     }
 
+    /// VoiceOver for a notification toggle. On/Off is the saved preference only.
+    /// The permission clause is the last read status — Checking does not claim a banner.
+    private func notificationToggleAccessibilityValue(isOn: Bool, role: NotificationVoiceOverRole) -> String {
+        [
+            isOn ? String(localized: "On.") : String(localized: "Off."),
+            notificationPolicySentence(isOn: isOn, role: role),
+            notificationPermissionClause,
+        ].joined(separator: " ")
+    }
+
+    private func notificationPolicySentence(isOn: Bool, role: NotificationVoiceOverRole) -> String {
+        switch (role, isOn) {
+        case (.newEpisodes, true):
+            return String(localized: "After a successful refresh, one local banner may open Inbox for newly appeared episodes. A per-podcast Off still silences that feed. This toggle does not post a banner by itself and does not download episodes.")
+        case (.newEpisodes, false):
+            return String(localized: "New-episode banners stay off for every podcast. A per-podcast On does not override this. This does not post a banner and does not change downloads.")
+        case (.downloadErrors, true):
+            return String(localized: "When a download fails, one local banner may open Downloads, with the episode title and a short error. Successful downloads use the separate download-complete toggle. This toggle does not post a banner by itself.")
+        case (.downloadErrors, false):
+            return String(localized: "Download-failure banners stay off. Failures can still appear in Download errors. Successful downloads are unchanged. This does not post a banner.")
+        case (.downloadComplete, true):
+            return String(localized: "When a download finishes and the file is saved, one local banner may open Downloads. Cancelled and failed downloads are not included. This toggle does not post a banner by itself.")
+        case (.downloadComplete, false):
+            return String(localized: "Successful-download banners stay off. Failures stay on their own toggle. This does not post a banner.")
+        case (.syncErrors, true):
+            return String(localized: "When gpodder or Nextcloud login or sync fails, one local banner may open Settings Sync. This toggle does not post a banner by itself and does not start a sync.")
+        case (.syncErrors, false):
+            return String(localized: "Sync and login failure banners stay off. This does not post a banner and does not start a sync.")
+        case (.sleepTimer, true):
+            return String(localized: "When the sleep timer pauses or stops playback, a foreground haptic may play if AntennaPod is active, and a local banner may be posted only if iOS permission allows banners. This toggle does not start or end a timer.")
+        case (.sleepTimer, false):
+            return String(localized: "Sleep-timer banners and the foreground haptic stay off. The timer itself is unchanged. This toggle does not start or end a timer.")
+        }
+    }
+
+    /// Spoken with each toggle. Does not treat an unread status as Allowed.
+    private var notificationPermissionClause: String {
+        switch notificationAuthStatus {
+        case .checking:
+            return String(localized: "iOS notification permission is still being checked. This is not Allowed, Denied, Not determined, Temporary, or Unknown, and this toggle does not claim a banner will appear.")
+        case .allowed:
+            return String(localized: "iOS notification permission is Allowed. A local banner can be posted when this toggle is on and the event happens. Not a push or APNs grant.")
+        case .denied:
+            return String(localized: "iOS notification permission is Denied. The saved On or Off choice stays, but no local banner is posted until Notifications are allowed in iOS Settings.")
+        case .notDetermined:
+            return String(localized: "iOS notification permission is Not determined. Turning this on asks iOS for permission. This toggle does not post a banner by itself.")
+        case .unknown:
+            return String(localized: "iOS notification permission is Unknown. This toggle does not claim a banner will appear.")
+        case .ephemeral:
+            return String(localized: "iOS notification permission is Temporary. This beta posts local banners only for authorized or provisional, so no banner is posted.")
+        }
+    }
+
+    /// Permission row. Ephemeral is not labeled Allowed: banners are not posted for it.
+    private var notificationPermissionAccessibilityValue: String {
+        switch notificationAuthStatus {
+        case .checking:
+            return String(localized: "Checking. iOS notification authorization has not been read yet, so this is not Allowed, Denied, Not determined, Temporary, or Unknown. No permission is invented. Local UserNotifications only — no push or APNs.")
+        case .allowed:
+            return String(localized: "Allowed. Local banners can be posted when a notification toggle is on and an event happens. This is not a push or APNs grant.")
+        case .denied:
+            return String(localized: "Denied. Saved On or Off choices stay, but local banners stay off until Notifications are allowed in iOS Settings. No push or APNs.")
+        case .notDetermined:
+            return String(localized: "Not determined. iOS has not been asked. Turning a notification toggle on asks for permission and does not post a banner by itself. No push or APNs.")
+        case .unknown:
+            return String(localized: "Unknown. Notification authorization could not be read. This row does not claim banners are allowed or blocked. No push or APNs.")
+        case .ephemeral:
+            return String(localized: "Temporary. iOS granted ephemeral authorization. This beta posts local banners only for authorized or provisional, so banners stay off. A foreground sleep-timer haptic can still run when that toggle is on. No push or APNs.")
+        }
+    }
+
     private var notificationsHelpText: String {
+        if notificationAuthStatus == .checking {
+            return String(localized: "Notification permission is still being checked. Toggles show the saved choice. This does not claim banners are allowed yet. Local UserNotifications only — no push or APNs.")
+        }
+        if notificationAuthStatus == .unknown {
+            return String(localized: "Notification permission could not be read. This does not claim banners are allowed or blocked. Local UserNotifications only — no push or APNs.")
+        }
+        if notificationAuthStatus == .ephemeral {
+            return String(localized: "iOS reports a temporary (ephemeral) notification authorization. This beta posts local banners only for authorized or provisional, so banners stay off. Toggles stay as saved. A foreground sleep-timer haptic can still run when that toggle is on. No push or APNs.")
+        }
         if notificationAuthStatus == .denied {
             return String(localized: "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings (Open iOS Settings). Toggles stay on so your preference is clear. Local UserNotifications only — never push / APNs / server-side alerts. Download-complete is optional (default off).")
         }
@@ -1872,8 +1958,11 @@ struct SettingsView: View {
     private func refreshNotificationAuthLabel() async {
         let status = await NewEpisodeNotificationCoordinator.authorizationStatus()
         switch status {
-        case .authorized, .provisional, .ephemeral:
+        case .authorized, .provisional:
             notificationAuthStatus = .allowed
+        case .ephemeral:
+            // Coordinators post only for authorized or provisional. Do not call this Allowed.
+            notificationAuthStatus = .ephemeral
         case .denied:
             notificationAuthStatus = .denied
         case .notDetermined:
@@ -2385,6 +2474,8 @@ private enum NotificationAuthStatus: Equatable {
     case denied
     case notDetermined
     case unknown
+    /// `UNAuthorizationStatus.ephemeral`. Not Allowed: local banners are not posted.
+    case ephemeral
 
     var label: String {
         switch self {
@@ -2398,6 +2489,16 @@ private enum NotificationAuthStatus: Equatable {
             return String(localized: "Not determined")
         case .unknown:
             return String(localized: "Unknown")
+        case .ephemeral:
+            return String(localized: "Temporary")
         }
     }
+}
+
+private enum NotificationVoiceOverRole {
+    case newEpisodes
+    case downloadErrors
+    case downloadComplete
+    case syncErrors
+    case sleepTimer
 }

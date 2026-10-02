@@ -41425,6 +41425,466 @@
         }
       }
     }
+,
+    "Temporary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temporary"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorübergehend"
+          }
+        }
+      }
+    },
+    "Rechecked when Settings appears and when AntennaPod becomes active. Open iOS Settings is shown only when permission is Denied.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechecked when Settings appears and when AntennaPod becomes active. Open iOS Settings is shown only when permission is Denied."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird erneut gelesen, wenn Einstellungen erscheinen und wenn AntennaPod aktiv wird. iOS-Einstellungen öffnen erscheint nur bei Abgelehnt."
+          }
+        }
+      }
+    },
+    "After a successful refresh, one local banner may open Inbox for newly appeared episodes. A per-podcast Off still silences that feed. This toggle does not post a banner by itself and does not download episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After a successful refresh, one local banner may open Inbox for newly appeared episodes. A per-podcast Off still silences that feed. This toggle does not post a banner by itself and does not download episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach einem erfolgreichen Refresh kann ein lokales Banner den Posteingang für neu erschienene Episoden öffnen. Aus pro Podcast schaltet diesen Feed weiter stumm. Dieser Schalter postet selbst kein Banner und lädt keine Episoden herunter."
+          }
+        }
+      }
+    },
+    "New-episode banners stay off for every podcast. A per-podcast On does not override this. This does not post a banner and does not change downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New-episode banners stay off for every podcast. A per-podcast On does not override this. This does not post a banner and does not change downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banner für neue Episoden bleiben für jeden Podcast aus. An pro Podcast setzt das nicht außer Kraft. Das postet kein Banner und ändert keine Downloads."
+          }
+        }
+      }
+    },
+    "When a download fails, one local banner may open Downloads, with the episode title and a short error. Successful downloads use the separate download-complete toggle. This toggle does not post a banner by itself.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When a download fails, one local banner may open Downloads, with the episode title and a short error. Successful downloads use the separate download-complete toggle. This toggle does not post a banner by itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn ein Download fehlschlägt, kann ein lokales Banner Downloads öffnen, mit Episodentitel und kurzem Fehler. Erfolgreiche Downloads nutzen den eigenen Schalter Download abgeschlossen. Dieser Schalter postet selbst kein Banner."
+          }
+        }
+      }
+    },
+    "Download-failure banners stay off. Failures can still appear in Download errors. Successful downloads are unchanged. This does not post a banner.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-failure banners stay off. Failures can still appear in Download errors. Successful downloads are unchanged. This does not post a banner."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banner für fehlgeschlagene Downloads bleiben aus. Fehler können weiter unter Download-Fehler erscheinen. Erfolgreiche Downloads bleiben unverändert. Das postet kein Banner."
+          }
+        }
+      }
+    },
+    "When a download finishes and the file is saved, one local banner may open Downloads. Cancelled and failed downloads are not included. This toggle does not post a banner by itself.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When a download finishes and the file is saved, one local banner may open Downloads. Cancelled and failed downloads are not included. This toggle does not post a banner by itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn ein Download fertig ist und die Datei gespeichert wurde, kann ein lokales Banner Downloads öffnen. Abgebrochene und fehlgeschlagene Downloads gehören nicht dazu. Dieser Schalter postet selbst kein Banner."
+          }
+        }
+      }
+    },
+    "Successful-download banners stay off. Failures stay on their own toggle. This does not post a banner.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Successful-download banners stay off. Failures stay on their own toggle. This does not post a banner."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banner für erfolgreiche Downloads bleiben aus. Fehler bleiben bei ihrem eigenen Schalter. Das postet kein Banner."
+          }
+        }
+      }
+    },
+    "When gpodder or Nextcloud login or sync fails, one local banner may open Settings Sync. This toggle does not post a banner by itself and does not start a sync.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When gpodder or Nextcloud login or sync fails, one local banner may open Settings Sync. This toggle does not post a banner by itself and does not start a sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn Anmeldung oder Sync bei gpodder oder Nextcloud fehlschlägt, kann ein lokales Banner Einstellungen Sync öffnen. Dieser Schalter postet selbst kein Banner und startet keinen Sync."
+          }
+        }
+      }
+    },
+    "Sync and login failure banners stay off. This does not post a banner and does not start a sync.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync and login failure banners stay off. This does not post a banner and does not start a sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banner für Sync- und Anmeldefehler bleiben aus. Das postet kein Banner und startet keinen Sync."
+          }
+        }
+      }
+    },
+    "When the sleep timer pauses or stops playback, a foreground haptic may play if AntennaPod is active, and a local banner may be posted only if iOS permission allows banners. This toggle does not start or end a timer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When the sleep timer pauses or stops playback, a foreground haptic may play if AntennaPod is active, and a local banner may be posted only if iOS permission allows banners. This toggle does not start or end a timer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn der Schlaf-Timer die Wiedergabe pausiert oder stoppt, kann eine Vordergrund-Haptik spielen, wenn AntennaPod aktiv ist, und ein lokales Banner nur, wenn die iOS-Berechtigung Banner erlaubt. Dieser Schalter startet oder beendet keinen Timer."
+          }
+        }
+      }
+    },
+    "Sleep-timer banners and the foreground haptic stay off. The timer itself is unchanged. This toggle does not start or end a timer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep-timer banners and the foreground haptic stay off. The timer itself is unchanged. This toggle does not start or end a timer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Banner und Vordergrund-Haptik zum Schlaf-Timer bleiben aus. Der Timer selbst bleibt unverändert. Dieser Schalter startet oder beendet keinen Timer."
+          }
+        }
+      }
+    },
+    "iOS notification permission is still being checked. This is not Allowed, Denied, Not determined, Temporary, or Unknown, and this toggle does not claim a banner will appear.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iOS notification permission is still being checked. This is not Allowed, Denied, Not determined, Temporary, or Unknown, and this toggle does not claim a banner will appear."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die iOS-Benachrichtigungsberechtigung wird noch geprüft. Das ist weder Erlaubt, Abgelehnt, Nicht festgelegt, Vorübergehend noch Unbekannt, und dieser Schalter behauptet nicht, dass ein Banner erscheint."
+          }
+        }
+      }
+    },
+    "iOS notification permission is Allowed. A local banner can be posted when this toggle is on and the event happens. Not a push or APNs grant.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iOS notification permission is Allowed. A local banner can be posted when this toggle is on and the event happens. Not a push or APNs grant."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die iOS-Benachrichtigungsberechtigung ist Erlaubt. Ein lokales Banner kann erscheinen, wenn dieser Schalter an ist und das Ereignis eintritt. Keine Push- oder APNs-Freigabe."
+          }
+        }
+      }
+    },
+    "iOS notification permission is Denied. The saved On or Off choice stays, but no local banner is posted until Notifications are allowed in iOS Settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iOS notification permission is Denied. The saved On or Off choice stays, but no local banner is posted until Notifications are allowed in iOS Settings."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die iOS-Benachrichtigungsberechtigung ist Abgelehnt. Die gespeicherte An- oder Aus-Wahl bleibt, aber es wird kein lokales Banner gepostet, bis Mitteilungen in den iOS-Einstellungen erlaubt sind."
+          }
+        }
+      }
+    },
+    "iOS notification permission is Not determined. Turning this on asks iOS for permission. This toggle does not post a banner by itself.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iOS notification permission is Not determined. Turning this on asks iOS for permission. This toggle does not post a banner by itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die iOS-Benachrichtigungsberechtigung ist Nicht festgelegt. Einschalten fragt iOS nach der Berechtigung. Dieser Schalter postet selbst kein Banner."
+          }
+        }
+      }
+    },
+    "iOS notification permission is Unknown. This toggle does not claim a banner will appear.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iOS notification permission is Unknown. This toggle does not claim a banner will appear."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die iOS-Benachrichtigungsberechtigung ist Unbekannt. Dieser Schalter behauptet nicht, dass ein Banner erscheint."
+          }
+        }
+      }
+    },
+    "iOS notification permission is Temporary. This beta posts local banners only for authorized or provisional, so no banner is posted.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iOS notification permission is Temporary. This beta posts local banners only for authorized or provisional, so no banner is posted."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die iOS-Benachrichtigungsberechtigung ist Vorübergehend. Diese Beta postet lokale Banner nur bei authorized oder provisional, daher wird kein Banner gepostet."
+          }
+        }
+      }
+    },
+    "Checking. iOS notification authorization has not been read yet, so this is not Allowed, Denied, Not determined, Temporary, or Unknown. No permission is invented. Local UserNotifications only — no push or APNs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking. iOS notification authorization has not been read yet, so this is not Allowed, Denied, Not determined, Temporary, or Unknown. No permission is invented. Local UserNotifications only — no push or APNs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfe. Die iOS-Benachrichtigungsberechtigung wurde noch nicht gelesen, also ist das weder Erlaubt, Abgelehnt, Nicht festgelegt, Vorübergehend noch Unbekannt. Es wird keine Berechtigung erfunden. Nur lokale UserNotifications — kein Push und kein APNs."
+          }
+        }
+      }
+    },
+    "Allowed. Local banners can be posted when a notification toggle is on and an event happens. This is not a push or APNs grant.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allowed. Local banners can be posted when a notification toggle is on and an event happens. This is not a push or APNs grant."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erlaubt. Lokale Banner können erscheinen, wenn ein Benachrichtigungsschalter an ist und ein Ereignis eintritt. Das ist keine Push- oder APNs-Freigabe."
+          }
+        }
+      }
+    },
+    "Denied. Saved On or Off choices stay, but local banners stay off until Notifications are allowed in iOS Settings. No push or APNs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denied. Saved On or Off choices stay, but local banners stay off until Notifications are allowed in iOS Settings. No push or APNs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abgelehnt. Gespeicherte An- oder Aus-Wahl bleibt, aber lokale Banner bleiben aus, bis Mitteilungen in den iOS-Einstellungen erlaubt sind. Kein Push und kein APNs."
+          }
+        }
+      }
+    },
+    "Not determined. iOS has not been asked. Turning a notification toggle on asks for permission and does not post a banner by itself. No push or APNs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not determined. iOS has not been asked. Turning a notification toggle on asks for permission and does not post a banner by itself. No push or APNs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht festgelegt. iOS wurde noch nicht gefragt. Einen Benachrichtigungsschalter einzuschalten fragt nach der Berechtigung und postet selbst kein Banner. Kein Push und kein APNs."
+          }
+        }
+      }
+    },
+    "Unknown. Notification authorization could not be read. This row does not claim banners are allowed or blocked. No push or APNs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown. Notification authorization could not be read. This row does not claim banners are allowed or blocked. No push or APNs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbekannt. Die Benachrichtigungsberechtigung konnte nicht gelesen werden. Diese Zeile behauptet nicht, dass Banner erlaubt oder blockiert sind. Kein Push und kein APNs."
+          }
+        }
+      }
+    },
+    "Temporary. iOS granted ephemeral authorization. This beta posts local banners only for authorized or provisional, so banners stay off. A foreground sleep-timer haptic can still run when that toggle is on. No push or APNs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temporary. iOS granted ephemeral authorization. This beta posts local banners only for authorized or provisional, so banners stay off. A foreground sleep-timer haptic can still run when that toggle is on. No push or APNs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorübergehend. iOS hat eine ephemere Berechtigung erteilt. Diese Beta postet lokale Banner nur bei authorized oder provisional, daher bleiben Banner aus. Eine Vordergrund-Haptik beim Schlaf-Timer kann weiter laufen, wenn dieser Schalter an ist. Kein Push und kein APNs."
+          }
+        }
+      }
+    },
+    "Notification permission is still being checked. Toggles show the saved choice. This does not claim banners are allowed yet. Local UserNotifications only — no push or APNs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notification permission is still being checked. Toggles show the saved choice. This does not claim banners are allowed yet. Local UserNotifications only — no push or APNs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Benachrichtigungsberechtigung wird noch geprüft. Die Schalter zeigen die gespeicherte Wahl. Es wird noch nicht behauptet, dass Banner erlaubt sind. Nur lokale UserNotifications — kein Push und kein APNs."
+          }
+        }
+      }
+    },
+    "Notification permission could not be read. This does not claim banners are allowed or blocked. Local UserNotifications only — no push or APNs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notification permission could not be read. This does not claim banners are allowed or blocked. Local UserNotifications only — no push or APNs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Benachrichtigungsberechtigung konnte nicht gelesen werden. Es wird nicht behauptet, dass Banner erlaubt oder blockiert sind. Nur lokale UserNotifications — kein Push und kein APNs."
+          }
+        }
+      }
+    },
+    "iOS reports a temporary (ephemeral) notification authorization. This beta posts local banners only for authorized or provisional, so banners stay off. Toggles stay as saved. A foreground sleep-timer haptic can still run when that toggle is on. No push or APNs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iOS reports a temporary (ephemeral) notification authorization. This beta posts local banners only for authorized or provisional, so banners stay off. Toggles stay as saved. A foreground sleep-timer haptic can still run when that toggle is on. No push or APNs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iOS meldet eine vorübergehende (ephemere) Benachrichtigungsberechtigung. Diese Beta postet lokale Banner nur bei authorized oder provisional, daher bleiben Banner aus. Die Schalter bleiben wie gespeichert. Eine Vordergrund-Haptik beim Schlaf-Timer kann weiter laufen, wenn dieser Schalter an ist. Kein Push und kein APNs."
+          }
+        }
+      }
+    }
   },
   "version": "1.0"
 }
