@@ -42615,6 +42615,57 @@
           }
         }
       }
+    },
+    "On. This is not the default. The mini player and the full player show remaining time on the right instead of total duration: duration minus position, with a leading minus. The left side stays the current position. Tapping the full-player right time label toggles this same setting. If duration is unknown, no remaining time and no total duration are invented. List and Home remaining-time bars already show remaining time and are not turned on by this switch. Chapter remaining is separate and stays as it is. When Remaining time respects speed is also on, this player remaining time uses the live session rate, or the podcast or default speed if there is no live rate, clamped from 0.5 to 3.0. When that setting is off, this label stays wall-clock. Lock Screen and Now Playing keep elapsed time and playback duration. The widget and Watch stay wall-clock. Turning this on does not start playback, seek, change the playback rate, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On. This is not the default. The mini player and the full player show remaining time on the right instead of total duration: duration minus position, with a leading minus. The left side stays the current position. Tapping the full-player right time label toggles this same setting. If duration is unknown, no remaining time and no total duration are invented. List and Home remaining-time bars already show remaining time and are not turned on by this switch. Chapter remaining is separate and stays as it is. When Remaining time respects speed is also on, this player remaining time uses the live session rate, or the podcast or default speed if there is no live rate, clamped from 0.5 to 3.0. When that setting is off, this label stays wall-clock. Lock Screen and Now Playing keep elapsed time and playback duration. The widget and Watch stay wall-clock. Turning this on does not start playback, seek, change the playback rate, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An. Das ist nicht der Standard. Mini-Player und Vollbild-Player zeigen rechts die Restzeit statt der Gesamtdauer: Dauer minus Position, mit führendem Minus. Links bleibt die aktuelle Position. Tippen auf die rechte Zeitangabe im Vollbild-Player schaltet dieselbe Einstellung um. Ist die Dauer unbekannt, werden weder Restzeit noch Gesamtdauer erfunden. Listen- und Home-Restzeit-Leisten zeigen die Restzeit bereits und werden von diesem Schalter nicht eingeschaltet. Die Kapitel-Restzeit ist getrennt und bleibt, wie sie ist. Wenn Verbleibende Zeit berücksichtigt Tempo ebenfalls an ist, nutzt diese Player-Restzeit die Live-Sitzungsrate, oder die Podcast- oder Standardgeschwindigkeit, wenn keine Live-Rate da ist, begrenzt von 0,5 bis 3,0. Ist diese Einstellung aus, bleibt diese Anzeige Wanduhr. Sperrbildschirm und Now Playing behalten verstrichene Zeit und Wiedergabedauer. Widget und Watch bleiben Wanduhr. Einschalten startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergaberate und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Off. This is the default. The mini player and the full player show total duration on the right. The left side stays the current position. If duration is unknown, no total duration is invented. List and Home remaining-time bars still show remaining time; this switch does not turn those bars off. Chapter remaining is unchanged. Lock Screen, Now Playing, the widget, and Watch do not switch to a minus-remaining label. Turning this off does not start playback, seek, change the playback rate, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. This is the default. The mini player and the full player show total duration on the right. The left side stays the current position. If duration is unknown, no total duration is invented. List and Home remaining-time bars still show remaining time; this switch does not turn those bars off. Chapter remaining is unchanged. Lock Screen, Now Playing, the widget, and Watch do not switch to a minus-remaining label. Turning this off does not start playback, seek, change the playback rate, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. Das ist der Standard. Mini-Player und Vollbild-Player zeigen rechts die Gesamtdauer. Links bleibt die aktuelle Position. Ist die Dauer unbekannt, wird keine Gesamtdauer erfunden. Listen- und Home-Restzeit-Leisten zeigen weiter die Restzeit; dieser Schalter schaltet diese Leisten nicht aus. Die Kapitel-Restzeit bleibt unverändert. Sperrbildschirm, Now Playing, das Widget und die Watch wechseln nicht zu einer Minus-Restzeit. Ausschalten startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergaberate und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Off is the default and shows total duration on the right of the mini player and the full player. On shows remaining time there instead, duration minus position, with a leading minus. The left side stays the current position. Tapping the full-player right time label toggles the same setting. Unknown duration invents neither a remaining time nor a total duration. List and Home remaining-time bars, chapter remaining, Lock Screen, Now Playing, the widget, and Watch are not changed by this switch. The player remaining label is divided by speed only when Remaining time respects speed is also on; otherwise it is wall-clock. The switch does not start playback, seek, change the playback rate, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off is the default and shows total duration on the right of the mini player and the full player. On shows remaining time there instead, duration minus position, with a leading minus. The left side stays the current position. Tapping the full-player right time label toggles the same setting. Unknown duration invents neither a remaining time nor a total duration. List and Home remaining-time bars, chapter remaining, Lock Screen, Now Playing, the widget, and Watch are not changed by this switch. The player remaining label is divided by speed only when Remaining time respects speed is also on; otherwise it is wall-clock. The switch does not start playback, seek, change the playback rate, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus ist der Standard und zeigt rechts im Mini-Player und im Vollbild-Player die Gesamtdauer. An zeigt dort stattdessen die Restzeit, Dauer minus Position, mit führendem Minus. Links bleibt die aktuelle Position. Tippen auf die rechte Zeitangabe im Vollbild-Player schaltet dieselbe Einstellung um. Unbekannte Dauer erfindet weder eine Restzeit noch eine Gesamtdauer. Listen- und Home-Restzeit-Leisten, die Kapitel-Restzeit, Sperrbildschirm, Now Playing, das Widget und die Watch werden von diesem Schalter nicht geändert. Die Player-Restzeit wird nur durch Tempo geteilt, wenn Verbleibende Zeit berücksichtigt Tempo ebenfalls an ist; sonst ist sie Wanduhr. Der Schalter startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergaberate und lädt nichts herunter."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

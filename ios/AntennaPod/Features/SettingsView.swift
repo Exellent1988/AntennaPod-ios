@@ -1350,7 +1350,9 @@ struct SettingsView: View {
             }
             if matchesPlaybackRemaining {
                 Toggle("Show remaining time", isOn: $settings.showRemainingTime)
-                    .accessibilityHint(String(localized: "When on, player time labels show time left instead of total duration. Default off."))
+                    .accessibilityLabel(String(localized: "Show remaining time"))
+                    .accessibilityValue(showRemainingTimeAccessibilityValue)
+                    .accessibilityHint(showRemainingTimeAccessibilityHint)
                 Text("When on, the mini and full player show remaining time (−m:ss) on the right instead of total duration. Left stays current position. Tap the full-player duration/remaining label to toggle. Default off.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -1597,6 +1599,21 @@ struct SettingsView: View {
 
     private var skipOutroAccessibilityHint: String {
         String(localized: "Presets are Off, 5, 10, 15, 30, and 60 seconds. The default is Off. Off never finishes early. Any other value finishes once per play session when remaining time is within that window, duration is known, and playback is past 1 second, the same as a natural end. Continuous playback chooses what plays next. Changing the picker does not mark played now, seek, start playback, or download. Feed detail can override this for one podcast. Not Smart mark as played, Skip intro, Skip silence, or Rewind after pause.")
+    }
+
+    /// VoiceOver for Settings → Show remaining time. Off is the default and
+    /// keeps total duration on the mini and full player right label. On shows
+    /// −remaining there. List/Home bars, chapter remaining, Lock Screen,
+    /// Now Playing, widget, and Watch are not this switch.
+    private var showRemainingTimeAccessibilityValue: String {
+        if settings.showRemainingTime {
+            return String(localized: "On. This is not the default. The mini player and the full player show remaining time on the right instead of total duration: duration minus position, with a leading minus. The left side stays the current position. Tapping the full-player right time label toggles this same setting. If duration is unknown, no remaining time and no total duration are invented. List and Home remaining-time bars already show remaining time and are not turned on by this switch. Chapter remaining is separate and stays as it is. When Remaining time respects speed is also on, this player remaining time uses the live session rate, or the podcast or default speed if there is no live rate, clamped from 0.5 to 3.0. When that setting is off, this label stays wall-clock. Lock Screen and Now Playing keep elapsed time and playback duration. The widget and Watch stay wall-clock. Turning this on does not start playback, seek, change the playback rate, or download.")
+        }
+        return String(localized: "Off. This is the default. The mini player and the full player show total duration on the right. The left side stays the current position. If duration is unknown, no total duration is invented. List and Home remaining-time bars still show remaining time; this switch does not turn those bars off. Chapter remaining is unchanged. Lock Screen, Now Playing, the widget, and Watch do not switch to a minus-remaining label. Turning this off does not start playback, seek, change the playback rate, or download.")
+    }
+
+    private var showRemainingTimeAccessibilityHint: String {
+        String(localized: "Off is the default and shows total duration on the right of the mini player and the full player. On shows remaining time there instead, duration minus position, with a leading minus. The left side stays the current position. Tapping the full-player right time label toggles the same setting. Unknown duration invents neither a remaining time nor a total duration. List and Home remaining-time bars, chapter remaining, Lock Screen, Now Playing, the widget, and Watch are not changed by this switch. The player remaining label is divided by speed only when Remaining time respects speed is also on; otherwise it is wall-clock. The switch does not start playback, seek, change the playback rate, or download.")
     }
 
     /// VoiceOver for Settings → Remaining time respects speed. Off is the default
