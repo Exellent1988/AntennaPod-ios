@@ -312,6 +312,10 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
     case byLanguage
     /// Descending unplayed count (`!isPlayed && !isArchived` — same as badges / Inbox).
     case mostUnplayed
+    /// Newest successful network `lastRefreshedAtEpochMs` first; nil / local-folder last; title tiebreak.
+    case recentlyRefreshed
+    /// Oldest successful network `lastRefreshedAtEpochMs` first; nil / local-folder last; title tiebreak.
+    case leastRecentlyRefreshed
 
     var id: String { rawValue }
 
@@ -322,6 +326,8 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
         case .byAuthor: return String(localized: "Author A–Z")
         case .byLanguage: return String(localized: "Language A–Z")
         case .mostUnplayed: return String(localized: "Most unplayed")
+        case .recentlyRefreshed: return String(localized: "Recently refreshed")
+        case .leastRecentlyRefreshed: return String(localized: "Least recently refreshed")
         }
     }
 
@@ -332,6 +338,8 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
         case .byAuthor: return "person"
         case .byLanguage: return "globe"
         case .mostUnplayed: return "number"
+        case .recentlyRefreshed: return "arrow.clockwise"
+        case .leastRecentlyRefreshed: return "hourglass"
         }
     }
 }

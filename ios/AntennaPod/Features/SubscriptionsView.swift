@@ -28,6 +28,8 @@ struct SubscriptionsView: View {
     /// Author / language: A–Z by feed-provided `displayAuthor` / `displayLanguage`; missing values last; title tiebreak.
     /// Most unplayed: descending per-feed unplayed count (`!isPlayed && !isArchived`, same as badges /
     /// Inbox / `unplayedCountsByFeedId`); equal counts → title A–Z tiebreak.
+    /// Recently / Least recently refreshed: by `lastRefreshedAtEpochMs` (successful network only);
+    /// nil / local-folder last — never invent; title tiebreak.
     private func sortedFeeds(_ feeds: [PodcastFeed]) -> [PodcastFeed] {
         switch settings.subscriptionsSort {
         case .recentlyUpdated:
@@ -79,6 +81,36 @@ struct SubscriptionsView: View {
                 let r = counts[rhs.id] ?? 0
                 if l != r { return l > r }
                 return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+            }
+        case .recentlyRefreshed:
+            // Newest successful network stamp first; nil / local-folder last (never invent).
+            return feeds.sorted { lhs, rhs in
+                switch (lhs.lastRefreshedAtEpochMs, rhs.lastRefreshedAtEpochMs) {
+                case (nil, nil):
+                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                case (nil, _):
+                    return false
+                case (_, nil):
+                    return true
+                case let (l?, r?):
+                    if l != r { return l > r }
+                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                }
+            }
+        case .leastRecentlyRefreshed:
+            // Oldest successful network stamp first; nil / local-folder last (never invent).
+            return feeds.sorted { lhs, rhs in
+                switch (lhs.lastRefreshedAtEpochMs, rhs.lastRefreshedAtEpochMs) {
+                case (nil, nil):
+                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                case (nil, _):
+                    return false
+                case (_, nil):
+                    return true
+                case let (l?, r?):
+                    if l != r { return l < r }
+                    return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+                }
             }
         }
     }

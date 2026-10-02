@@ -22795,6 +22795,42 @@
           }
         }
       }
+    },
+    "Recently refreshed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recently refreshed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zuletzt abgerufen"
+          }
+        }
+      },
+      "comment": "Subscriptions sort: newest lastRefreshedAtEpochMs first; nil/local-folder last."
+    },
+    "Least recently refreshed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Least recently refreshed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Am längsten nicht abgerufen"
+          }
+        }
+      },
+      "comment": "Subscriptions sort: oldest lastRefreshedAtEpochMs first; nil/local-folder last."
     }
   },
   "version": "1.0"
