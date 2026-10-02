@@ -452,6 +452,39 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Sort the **full** persisted queue by episode title (A–Z or Z–A).
+    /// Uses `localizedCaseInsensitiveCompare` on trimmed titles. Episodes with **empty** titles
+    /// sort **last** in both modes; equal titles (or both empty) break ties by stable episode `id`.
+    /// Persists via `queue` `didSet` (same path as `moveQueue` / `shuffleQueue` / `reverseQueue` /
+    /// `sortQueueByPublishDate` / `sortQueueByDuration`). No-op when fewer than 2 items.
+    /// Does **not** change `PlaybackService.currentEpisode` identity, seek, or stop playback —
+    /// the currently playing episode (if any) **moves with its episode id** to its new list index
+    /// (it is not pinned at the same index). Continuous next still uses `nextQueueEpisode(after:)`
+    /// by id, so auto-next becomes whatever follows that id after the sort.
+    /// One-shot reorder of `queue.json` — **not** a persistent filter preference (unlike Inbox/`inboxSort`).
+    /// Callers must gate on queue unlock (reorder-only lock, same as Shuffle/Reverse/Sort by date/duration) and confirm first.
+    func sortQueueByTitle(ascending: Bool) {
+        guard queue.count >= 2 else { return }
+        queue = queue.sorted { lhs, rhs in
+            let lt = lhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+            let rt = rhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+            switch (lt.isEmpty, rt.isEmpty) {
+            case (false, true):
+                return true // non-empty before empty
+            case (true, false):
+                return false
+            case (true, true):
+                return lhs.id < rhs.id
+            case (false, false):
+                let cmp = lt.localizedCaseInsensitiveCompare(rt)
+                if cmp != .orderedSame {
+                    return ascending ? (cmp == .orderedAscending) : (cmp == .orderedDescending)
+                }
+                return lhs.id < rhs.id
+            }
+        }
+    }
+
     /// Feed duration when known; else saved playback duration. Never invents a length.
     /// Matches remaining-time known-duration path except live player (store sort has no PlaybackService).
     private func knownDurationSecondsForQueueSort(_ episode: PodcastEpisode) -> Double? {

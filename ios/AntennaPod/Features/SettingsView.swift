@@ -534,7 +534,7 @@ struct SettingsView: View {
         matchesSearch(
             "Queue",
             "Lock queue",
-            "When on, the Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Move playing to top, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off."
+            "When on, the Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off."
         )
     }
 
@@ -758,8 +758,8 @@ struct SettingsView: View {
     private var queueSettingsSection: some View {
         Section("Queue") {
             Toggle("Lock queue", isOn: $settings.queueLocked)
-                .accessibilityHint(String(localized: "When on, disables Queue drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off."))
-            Text("When on, the Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Move playing to top, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.")
+                .accessibilityHint(String(localized: "When on, disables Queue drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off."))
+            Text("When on, the Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

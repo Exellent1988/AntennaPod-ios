@@ -18,6 +18,8 @@ struct QueueView: View {
     @State private var showSortOldestQueueConfirm = false
     @State private var showSortShortestQueueConfirm = false
     @State private var showSortLongestQueueConfirm = false
+    @State private var showSortTitleAZQueueConfirm = false
+    @State private var showSortTitleZAQueueConfirm = false
     /// Single episode pending swipe-remove confirmation (nil = dialog dismissed).
     @State private var episodePendingRemove: PodcastEpisode?
 
@@ -57,6 +59,12 @@ struct QueueView: View {
     /// Sort by duration always targets the **full** persisted queue (not chip/search). Same gate as
     /// Shuffle/Reverse/Sort by date: unlocked and at least two items — filter state does not matter.
     private var canSortByDuration: Bool {
+        !settings.queueLocked && store.queue.count >= 2
+    }
+
+    /// Sort by title always targets the **full** persisted queue (not chip/search). Same gate as
+    /// Shuffle/Reverse/Sort by date/duration: unlocked and at least two items — filter state does not matter.
+    private var canSortByTitle: Bool {
         !settings.queueLocked && store.queue.count >= 2
     }
 
@@ -351,8 +359,8 @@ struct QueueView: View {
                     )
                     .accessibilityHint(
                         settings.queueLocked
-                            ? String(localized: "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom")
-                            : String(localized: "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom")
+                            ? String(localized: "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and Move to top or bottom")
+                            : String(localized: "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and Move to top or bottom")
                     )
                     .accessibilityAddTraits(.isButton)
                 }
@@ -453,6 +461,32 @@ struct QueueView: View {
                             String(localized: "Asks for confirmation, then sorts the entire queue by known duration, longest first")
                         )
                         Button {
+                            // Always confirm before sortQueueByTitle — reorders the full list.
+                            showSortTitleAZQueueConfirm = true
+                        } label: {
+                            Label("Title A–Z", systemImage: "textformat.abc")
+                        }
+                        // Sort always targets the full queue (not the filtered subset).
+                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                        .disabled(!canSortByTitle)
+                        .accessibilityLabel(String(localized: "Sort title A–Z"))
+                        .accessibilityHint(
+                            String(localized: "Asks for confirmation, then sorts the entire queue by title, A to Z")
+                        )
+                        Button {
+                            // Always confirm before sortQueueByTitle — reorders the full list.
+                            showSortTitleZAQueueConfirm = true
+                        } label: {
+                            Label("Title Z–A", systemImage: "textformat.abc")
+                        }
+                        // Sort always targets the full queue (not the filtered subset).
+                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                        .disabled(!canSortByTitle)
+                        .accessibilityLabel(String(localized: "Sort title Z–A"))
+                        .accessibilityHint(
+                            String(localized: "Asks for confirmation, then sorts the entire queue by title, Z to A")
+                        )
+                        Button {
                             // Reuse moveQueueItemToTop — no seek/stop; no confirm (single-item reorder).
                             if let current = playback.currentEpisode {
                                 store.moveQueueItemToTop(current)
@@ -485,7 +519,7 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, move playing to top, or clear the entire queue")
+                        String(localized: "Shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, or clear the entire queue")
                     )
                 }
             }
@@ -599,6 +633,34 @@ struct QueueView: View {
             } message: {
                 Text(
                     "Sorts all \(store.queue.count) episodes in the entire queue by known duration, longest first (not only the current filter). Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+                )
+            }
+            .confirmationDialog(
+                "Sort queue title A–Z?",
+                isPresented: $showSortTitleAZQueueConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Title A–Z") {
+                    store.sortQueueByTitle(ascending: true)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Sorts all \(store.queue.count) episodes in the entire queue by title, A to Z (not only the current filter). Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+                )
+            }
+            .confirmationDialog(
+                "Sort queue title Z–A?",
+                isPresented: $showSortTitleZAQueueConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Title Z–A") {
+                    store.sortQueueByTitle(ascending: false)
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Sorts all \(store.queue.count) episodes in the entire queue by title, Z to A (not only the current filter). Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
                 )
             }
             .confirmationDialog(

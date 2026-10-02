@@ -12204,91 +12204,6 @@
         }
       }
     },
-    "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ermöglicht Ziehen-Neuordnen, Mischen, Mischen Wiedergabe zuerst, Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Aktuelle Wiedergabe an den Anfang und An Anfang/Ende"
-          }
-        }
-      }
-    },
-    "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deaktiviert Ziehen-Neuordnen, Mischen, Mischen Wiedergabe zuerst, Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Aktuelle Wiedergabe an den Anfang und An Anfang/Ende"
-          }
-        }
-      }
-    },
-    "When on, disables Queue drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When on, disables Queue drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Move playing to top, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn aktiv, deaktiviert Warteschlangen-Ziehen-Neuordnen, Mischen, Mischen (aktuell spielende zuerst), Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Aktuelle Wiedergabe an den Anfang und An Anfang/Ende. Einreihen, Als Nächstes, Entfernen und Warteschlange leeren bleiben. Standard aus."
-          }
-        }
-      }
-    },
-    "When on, the Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Move playing to top, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When on, the Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Move playing to top, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn aktiv, deaktiviert der Warteschlangen-Tab Bearbeiten-Ziehen-Neuordnen, Mischen, Mischen (aktuell spielende zuerst), Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Aktuelle Wiedergabe an den Anfang und blendet An Anfang / Ans Ende aus. Einreihen, Als Nächstes, Entfernen, Archiv-Swipe und Warteschlange leeren bleiben (nur Reihenfolge-Sperre — wie AntennaPod Android). Gleiche Einstellung wie der Warteschlangen-Toolbar-Sperr-Button. Standard aus."
-          }
-        }
-      }
-    },
-    "Shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, move playing to top, or clear the entire queue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, move playing to top, or clear the entire queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mischen, Mischen Wiedergabe zuerst, umkehren, nach Datum sortieren, nach Dauer sortieren, aktuelle Wiedergabe an den Anfang, oder gesamte Warteschlange leeren"
-          }
-        }
-      }
-    },
     "Shortest first": {
       "extractionState": "manual",
       "localizations": {
@@ -23102,6 +23017,244 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sortiert die Downloads-Liste. Größte und Kleinste nutzen bekannte Größe; Titel A–Z / Z–A nach Titel; leere oder unbekannte zuletzt. Ändert die Speicher-/Eviction-Reihenfolge nicht."
+          }
+        }
+      }
+    },
+    "Sort title A–Z": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort title A–Z"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel A–Z sortieren"
+          }
+        }
+      }
+    },
+    "Sort title Z–A": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort title Z–A"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel Z–A sortieren"
+          }
+        }
+      }
+    },
+    "Sort queue title A–Z?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort queue title A–Z?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange Titel A–Z sortieren?"
+          }
+        }
+      }
+    },
+    "Sort queue title Z–A?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort queue title Z–A?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange Titel Z–A sortieren?"
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then sorts the entire queue by title, A to Z": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then sorts the entire queue by title, A to Z"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach Titel, A bis Z"
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then sorts the entire queue by title, Z to A": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then sorts the entire queue by title, Z to A"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach Titel, Z bis A"
+          }
+        }
+      }
+    },
+    "Sorts all %lld episodes in the entire queue by title, A to Z (not only the current filter). Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorts all %lld episodes in the entire queue by title, A to Z (not only the current filter). Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert alle %lld Episoden der gesamten Warteschlange nach Titel, A bis Z (nicht nur dem aktuellen Filter). Leere Titel kommen zuletzt. Stoppt die Wiedergabe nicht, ändert den Fortschritt nicht, markiert nicht als gehört und löscht keine Downloads. Die aktuell spielende Episode bleibt dieselbe und wandert mit ihrer neuen Position in der Liste."
+          }
+        }
+      }
+    },
+    "Sorts all %lld episodes in the entire queue by title, Z to A (not only the current filter). Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorts all %lld episodes in the entire queue by title, Z to A (not only the current filter). Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert alle %lld Episoden der gesamten Warteschlange nach Titel, Z bis A (nicht nur dem aktuellen Filter). Leere Titel kommen zuletzt. Stoppt die Wiedergabe nicht, ändert den Fortschritt nicht, markiert nicht als gehört und löscht keine Downloads. Die aktuell spielende Episode bleibt dieselbe und wandert mit ihrer neuen Position in der Liste."
+          }
+        }
+      }
+    },
+    "Sort by title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sort by title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach Titel sortieren"
+          }
+        }
+      }
+    },
+    "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and Move to top or bottom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and Move to top or bottom"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ermöglicht Ziehen-Neuordnen, Mischen, Mischen Wiedergabe zuerst, Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Nach Titel sortieren, Aktuelle Wiedergabe an den Anfang und An Anfang/Ende"
+          }
+        }
+      }
+    },
+    "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and Move to top or bottom": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and Move to top or bottom"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deaktiviert Ziehen-Neuordnen, Mischen, Mischen Wiedergabe zuerst, Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Nach Titel sortieren, Aktuelle Wiedergabe an den Anfang und An Anfang/Ende"
+          }
+        }
+      }
+    },
+    "Shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, or clear the entire queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, or clear the entire queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mischen, Mischen Wiedergabe zuerst, umkehren, nach Datum sortieren, nach Dauer sortieren, nach Titel sortieren, aktuelle Wiedergabe an den Anfang, oder gesamte Warteschlange leeren"
+          }
+        }
+      }
+    },
+    "When on, disables Queue drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, disables Queue drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and Move to top or bottom. Enqueue, Play Next, Remove, and Clear queue still work. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, deaktiviert Warteschlangen-Ziehen-Neuordnen, Mischen, Mischen (aktuell spielende zuerst), Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Nach Titel sortieren, Aktuelle Wiedergabe an den Anfang und An Anfang/Ende. Einreihen, Als Nächstes, Entfernen und Warteschlange leeren bleiben. Standard aus."
+          }
+        }
+      }
+    },
+    "When on, the Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, the Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, deaktiviert der Warteschlangen-Tab Bearbeiten-Ziehen-Neuordnen, Mischen, Mischen (aktuell spielende zuerst), Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Nach Titel sortieren, Aktuelle Wiedergabe an den Anfang und blendet An Anfang / Ans Ende aus. Einreihen, Als Nächstes, Entfernen, Archiv-Swipe und Warteschlange leeren bleiben (nur Reihenfolge-Sperre — wie AntennaPod Android). Gleiche Einstellung wie der Warteschlangen-Toolbar-Sperr-Button. Standard aus."
           }
         }
       }
