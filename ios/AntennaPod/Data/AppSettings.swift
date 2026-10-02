@@ -1124,9 +1124,10 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
 
 
 /// Shared soft-cap presets (3/5/8/10; default **5**; always capped — no Unlimited) for Home.
-/// Used by `AppSettings.homePreviewLimit` (episode-list section previews) and
-/// `AppSettings.homeFeedsPreviewLimit` (Recently updated feed cards). Discover charts /
-/// Top lists use their own chart limit — not this enum.
+/// Used by `AppSettings.homePreviewLimit` (episode-list section previews),
+/// `AppSettings.homeFeedsPreviewLimit` (Recently updated feed cards), and
+/// `AppSettings.homeDiscoverPreviewLimit` (Home Discover charts preview rows only).
+/// Full Discover / TopListsView still uses `ItunesTopListService.defaultLimit` (25) — not these soft-caps.
 enum HomePreviewLimit: Int, CaseIterable, Identifiable {
     case three = 3
     case five = 5
@@ -1340,6 +1341,7 @@ final class AppSettings: ObservableObject {
         static let homeHiddenSections = "settings.home.hiddenSections"
         static let homePreviewLimit = "settings.home.previewLimit"
         static let homeFeedsPreviewLimit = "settings.home.feedsPreviewLimit"
+        static let homeDiscoverPreviewLimit = "settings.home.discoverPreviewLimit"
         static let subscriptionsSort = "settings.subscriptionsSort"
         static let subscriptionsCategoryFilter = "settings.subscriptionsCategoryFilter"
         static let subscriptionsLanguageFilter = "settings.subscriptionsLanguageFilter"
@@ -1848,8 +1850,8 @@ final class AppSettings: ObservableObject {
     }
 
     /// Soft cap for Home episode-list section previews (3/5/8/10 rows; default 5). Always capped.
-    /// Continue / Inbox / Queue / Favorites / History / Archived / Downloads only — not Discover /
-    /// Recently updated feed cards (`homeFeedsPreviewLimit`).
+    /// Continue / Inbox / Queue / Favorites / History / Archived / Downloads only — not Discover
+    /// charts preview (`homeDiscoverPreviewLimit`) / Recently updated feed cards (`homeFeedsPreviewLimit`).
     @Published var homePreviewLimit: HomePreviewLimit {
         didSet {
             UserDefaults.standard.set(homePreviewLimit.rawValue, forKey: Keys.homePreviewLimit)
@@ -1857,11 +1859,21 @@ final class AppSettings: ObservableObject {
     }
 
     /// Soft cap for Home **Recently updated** feed cards (3/5/8/10; default 5). Always capped.
-    /// Reuses `HomePreviewLimit` presets. Does **not** change Discover charts / Top lists or
-    /// episode-list `homePreviewLimit`.
+    /// Reuses `HomePreviewLimit` presets. Does **not** change Discover charts preview /
+    /// full Top lists or episode-list `homePreviewLimit`.
     @Published var homeFeedsPreviewLimit: HomePreviewLimit {
         didSet {
             UserDefaults.standard.set(homeFeedsPreviewLimit.rawValue, forKey: Keys.homeFeedsPreviewLimit)
+        }
+    }
+
+    /// Soft cap for Home **Discover** charts preview rows (3/5/8/10; default 5). Always capped.
+    /// Reuses `HomePreviewLimit` presets. Home `HomeTopListsPreview` only — does **not** change
+    /// full Discover / TopListsView (`ItunesTopListService.defaultLimit` 25), episode-list
+    /// `homePreviewLimit`, or Recently updated `homeFeedsPreviewLimit`.
+    @Published var homeDiscoverPreviewLimit: HomePreviewLimit {
+        didSet {
+            UserDefaults.standard.set(homeDiscoverPreviewLimit.rawValue, forKey: Keys.homeDiscoverPreviewLimit)
         }
     }
 
@@ -2452,6 +2464,9 @@ final class AppSettings: ObservableObject {
         let homeFeedsPreviewRaw = UserDefaults.standard.object(forKey: Keys.homeFeedsPreviewLimit) as? Int
             ?? HomePreviewLimit.five.rawValue
         homeFeedsPreviewLimit = HomePreviewLimit(rawValue: homeFeedsPreviewRaw) ?? .five
+        let homeDiscoverPreviewRaw = UserDefaults.standard.object(forKey: Keys.homeDiscoverPreviewLimit) as? Int
+            ?? HomePreviewLimit.five.rawValue
+        homeDiscoverPreviewLimit = HomePreviewLimit(rawValue: homeDiscoverPreviewRaw) ?? .five
         let sortRaw = UserDefaults.standard.string(forKey: Keys.subscriptionsSort)
             ?? SubscriptionsSort.recentlyUpdated.rawValue
         subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
@@ -2820,6 +2835,7 @@ final class AppSettings: ObservableObject {
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
             homePreviewLimit: homePreviewLimit.rawValue,
             homeFeedsPreviewLimit: homeFeedsPreviewLimit.rawValue,
+            homeDiscoverPreviewLimit: homeDiscoverPreviewLimit.rawValue,
             subscriptionsSort: subscriptionsSort.rawValue,
             subscriptionsCategoryFilter: subscriptionsCategoryFilter,
             subscriptionsLanguageFilter: subscriptionsLanguageFilter,
@@ -2981,6 +2997,10 @@ final class AppSettings: ObservableObject {
         homeFeedsPreviewLimit =
             HomePreviewLimit(
                 rawValue: snap.homeFeedsPreviewLimit ?? HomePreviewLimit.five.rawValue
+            ) ?? .five
+        homeDiscoverPreviewLimit =
+            HomePreviewLimit(
+                rawValue: snap.homeDiscoverPreviewLimit ?? HomePreviewLimit.five.rawValue
             ) ?? .five
         if let sortRaw = snap.subscriptionsSort {
             subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
@@ -3156,6 +3176,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var homePreviewLimit: Int? = 5
     /// Absent in older backups → 5 (prior hard `feedsLimit`). Raw `HomePreviewLimit` value.
     var homeFeedsPreviewLimit: Int? = 5
+    /// Absent in older backups → 5 (prior hard Home Discover preview `limit`). Raw `HomePreviewLimit` value.
+    var homeDiscoverPreviewLimit: Int? = 5
     /// Absent in older backups → recentlyUpdated (default).
     var subscriptionsSort: String? = nil
     /// Absent in older backups → All (empty). Feed category text or empty for All.

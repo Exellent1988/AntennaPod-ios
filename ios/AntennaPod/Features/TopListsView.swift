@@ -137,7 +137,7 @@ struct TopListsView: View {
     }
 }
 
-/// Compact Home preview of top charts (Quick discovery).
+/// Compact Home preview of top charts (Quick discovery). Soft-cap via `homeDiscoverPreviewLimit` (not full TopListsView).
 struct HomeTopListsPreview: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
@@ -148,7 +148,14 @@ struct HomeTopListsPreview: View {
     @State private var isLoading = false
 
     private let service = ItunesTopListService()
-    private let limit = 5
+
+    /// Soft-cap from `AppSettings.homeDiscoverPreviewLimit` (3/5/8/10, default 5). Full Discover /
+    /// TopListsView still uses `ItunesTopListService.defaultLimit` (25).
+    private var limit: Int {
+        let allowed = Set(HomePreviewLimit.allCases.map(\.rawValue))
+        let raw = settings.homeDiscoverPreviewLimit.rawValue
+        return allowed.contains(raw) ? raw : HomePreviewLimit.five.rawValue
+    }
 
     var body: some View {
         Group {
@@ -196,6 +203,9 @@ struct HomeTopListsPreview: View {
             await loadPreview()
         }
         .onChange(of: settings.chartsCountryCode) { _, _ in
+            Task { await loadPreview() }
+        }
+        .onChange(of: settings.homeDiscoverPreviewLimit) { _, _ in
             Task { await loadPreview() }
         }
         .onChange(of: parental.hideExplicitCharts) { _, _ in

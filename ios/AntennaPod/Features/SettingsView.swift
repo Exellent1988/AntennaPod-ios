@@ -571,14 +571,18 @@ struct SettingsView: View {
             "Downloads",
             "Home preview rows",
             "Home feed cards",
+            "Home Discover charts",
             "Recently updated",
+            "Discover",
+            "charts",
             "3 rows",
             "5 rows",
             "8 rows",
             "10 rows",
             "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Archived, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Archived, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home.",
             "How many episode rows each Home section preview shows (Continue, Inbox, Queue, Favorites, History, Archived, Downloads). Soft-cap after search filter — preview is not the full tab. Does not change Discover charts or Recently updated feed cards. Default 5. Always capped — no unlimited.",
-            "How many Recently updated feed cards Home shows. Soft-cap after search filter — preview is not the full Subscriptions list. Does not change Discover charts / Top lists or episode-list Home preview rows. Default 5. Always capped — no unlimited."
+            "How many Recently updated feed cards Home shows. Soft-cap after search filter — preview is not the full Subscriptions list. Does not change Discover charts / Top lists or episode-list Home preview rows. Default 5. Always capped — no unlimited.",
+            "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."
         )
     }
 
@@ -852,6 +856,18 @@ struct SettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(String(localized: "How many Recently updated feed cards Home shows. Soft-cap after search filter — preview is not the full Subscriptions list. Does not change Discover charts / Top lists or episode-list Home preview rows. Default 5. Always capped — no unlimited."))
+            Picker(String(localized: "Home Discover charts"), selection: $settings.homeDiscoverPreviewLimit) {
+                ForEach(HomePreviewLimit.allCases) { limit in
+                    Text(limit.label).tag(limit)
+                }
+            }
+            .accessibilityLabel(String(localized: "Home Discover charts"))
+            .accessibilityValue(settings.homeDiscoverPreviewLimit.label)
+            .accessibilityHint(String(localized: "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."))
+            Text(String(localized: "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(String(localized: "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."))
         }
     }
 

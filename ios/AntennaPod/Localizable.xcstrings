@@ -26282,6 +26282,42 @@
       },
       "comment": "Help caption / VoiceOver hint under Home feed cards picker."
     },
+    "Home Discover charts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home Discover charts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home-Discover-Charts"
+          }
+        }
+      },
+      "comment": "Settings → Home picker for Home Discover charts preview soft-cap."
+    },
+    "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How many chart rows the Home Discover preview shows. Soft-cap for Home Discover only — not the full Discover / Top lists screen (still up to 25). Does not change episode-list Home preview rows or Recently updated feed cards. Default 5. Always capped — no unlimited."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wie viele Chart-Zeilen die Home-Discover-Vorschau zeigt. Soft-Cap nur für Home Discover — nicht den vollen Discover- / Top-Listen-Bildschirm (weiterhin bis 25). Ändert weder Episoden-Home-Vorschaizeilen noch kürzlich aktualisierte Feed-Karten. Standard 5. Immer begrenzt — kein Unlimited."
+          }
+        }
+      },
+      "comment": "Help caption / VoiceOver hint under Home Discover charts picker."
+    },
     "Pinned": {
       "extractionState": "manual",
       "localizations": {

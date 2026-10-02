@@ -21,8 +21,8 @@ struct HomeView: View {
 
     /// Soft-cap for episode-list Home previews (Continue / Inbox / Queue / Favorites / History /
     /// Archived / Downloads). From `AppSettings.homePreviewLimit` (3/5/8/10, default 5); clamp to
-    /// the allowed preset set if UserDefaults holds an unexpected value. Discover charts use
-    /// their own chart limit — not these soft-caps.
+    /// the allowed preset set if UserDefaults holds an unexpected value. Discover charts preview
+    /// uses `homeDiscoverPreviewLimit`; full TopListsView still uses `ItunesTopListService.defaultLimit`.
     private var previewLimit: Int {
         let allowed = Set(HomePreviewLimit.allCases.map(\.rawValue))
         let raw = settings.homePreviewLimit.rawValue
@@ -31,7 +31,7 @@ struct HomeView: View {
 
     /// Soft-cap for Home **Recently updated** feed cards. From `AppSettings.homeFeedsPreviewLimit`
     /// (same 3/5/8/10 presets, default 5); clamp to the allowed preset set. Does **not** affect
-    /// Discover charts / Top lists or episode-list `previewLimit`.
+    /// Discover charts preview (`homeDiscoverPreviewLimit`) / full Top lists or episode-list `previewLimit`.
     private var feedsLimit: Int {
         let allowed = Set(HomePreviewLimit.allCases.map(\.rawValue))
         let raw = settings.homeFeedsPreviewLimit.rawValue
