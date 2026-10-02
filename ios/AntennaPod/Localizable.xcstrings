@@ -16073,6 +16073,96 @@
       },
       "comment": "VoiceOver hint for Share discuss URL in the feed detail menu or socialInteract list. Share only; no posting."
     },
+    "Copy discuss protocol": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy discuss protocol"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diskussionsprotokoll kopieren"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯ and socialInteract list row: copy the displayed feed-provided podcast:socialInteract protocol as plain text. Distinct from the discussion URL; no posting."
+    },
+    "Share discuss protocol": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share discuss protocol"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diskussionsprotokoll teilen"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯ and socialInteract list row: share the displayed feed-provided podcast:socialInteract protocol as plain text. Distinct from the discussion URL; no posting."
+    },
+    "Copies the displayed feed-provided discussion protocol to the pasteboard; does not post as you": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the displayed feed-provided discussion protocol to the pasteboard; does not post as you"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert das angezeigte, vom Feed bereitgestellte Diskussionsprotokoll in die Zwischenablage; veröffentlicht nicht in deinem Namen"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy discuss protocol in the feed detail menu or socialInteract list. Copy only; no posting."
+    },
+    "Shares the displayed feed-provided discussion protocol as plain text; does not post as you": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the displayed feed-provided discussion protocol as plain text; does not post as you"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt das angezeigte, vom Feed bereitgestellte Diskussionsprotokoll als Klartext; veröffentlicht nicht in deinem Namen"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share discuss protocol in the feed detail menu or socialInteract list. Share only; no posting."
+    },
+    "Discuss protocol copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discuss protocol copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diskussionsprotokoll in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Alert message after copying the feed-provided podcast:socialInteract protocol."
+    },
     "Discuss URL copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {

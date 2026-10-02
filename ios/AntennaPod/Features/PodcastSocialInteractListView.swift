@@ -1,14 +1,16 @@
 import SwiftUI
 import UIKit
 
-/// Simple feed-provided `podcast:socialInteract` list: Copy / Share / Discuss use the same http(s) URI.
+/// Simple feed-provided `podcast:socialInteract` list: Copy / Share the exact protocol and the same http(s) URI; Discuss opens it.
 /// Priority-sorted (lower = higher); caps at `PodcastSocialInteractDisplay.displayCap` with honesty footnote.
 /// **openURL / Share / Copy only** — no in-app Fediverse client, no posting / API. Hidden when none / disabled-only.
 struct PodcastSocialInteractListView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var showCopiedAlert = false
+    @State private var showProtocolCopiedAlert = false
     @State private var copyFeedbackTick = 0
+    @State private var copyProtocolFeedbackTick = 0
 
     let socialInteracts: [PodcastSocialInteract]
     /// Section title (localized by caller).
@@ -45,7 +47,13 @@ struct PodcastSocialInteractListView: View {
             } message: {
                 Text(String(localized: "Discuss URL copied to the pasteboard."))
             }
+            .alert(String(localized: "Copied"), isPresented: $showProtocolCopiedAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(String(localized: "Discuss protocol copied to the pasteboard."))
+            }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
+            .sensoryFeedback(.success, trigger: copyProtocolFeedbackTick)
         }
     }
 
@@ -82,37 +90,65 @@ struct PodcastSocialInteractListView: View {
             .accessibilityLabel(a11yLabel)
 
             if let url {
-                HStack(spacing: 12) {
-                    Button {
-                        UIPasteboard.general.string = url.absoluteString
-                        copyFeedbackTick += 1
-                        showCopiedAlert = true
-                    } label: {
-                        Label("Copy", systemImage: "doc.on.doc")
-                            .font(.subheadline)
-                    }
-                    .accessibilityLabel(String(localized: "Copy discuss URL"))
-                    .accessibilityHint(
-                        String(localized: "Copies the feed-provided discussion URL to the pasteboard; does not post as you")
-                    )
+                VStack(alignment: .leading, spacing: 4) {
+                    if let protocolText = interact.displayProtocol {
+                        HStack(spacing: 12) {
+                            Button {
+                                UIPasteboard.general.string = protocolText
+                                copyProtocolFeedbackTick += 1
+                                showProtocolCopiedAlert = true
+                            } label: {
+                                Label("Copy discuss protocol", systemImage: "doc.on.doc")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Copy discuss protocol"))
+                            .accessibilityHint(
+                                String(localized: "Copies the displayed feed-provided discussion protocol to the pasteboard; does not post as you")
+                            )
 
-                    ShareLink(item: url) {
-                        Label("Share", systemImage: "square.and.arrow.up")
-                            .font(.subheadline)
+                            ShareLink(item: protocolText) {
+                                Label("Share discuss protocol", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Share discuss protocol"))
+                            .accessibilityHint(
+                                String(localized: "Shares the displayed feed-provided discussion protocol as plain text; does not post as you")
+                            )
+                        }
                     }
-                    .accessibilityLabel(String(localized: "Share discuss URL"))
-                    .accessibilityHint(
-                        String(localized: "Shares the feed-provided discussion URL; opens only and does not post as you")
-                    )
 
-                    Button {
-                        openURL(url)
-                    } label: {
-                        Label("Discuss", systemImage: "safari")
-                            .font(.subheadline)
+                    HStack(spacing: 12) {
+                        Button {
+                            UIPasteboard.general.string = url.absoluteString
+                            copyFeedbackTick += 1
+                            showCopiedAlert = true
+                        } label: {
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Copy discuss URL"))
+                        .accessibilityHint(
+                            String(localized: "Copies the feed-provided discussion URL to the pasteboard; does not post as you")
+                        )
+
+                        ShareLink(item: url) {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Share discuss URL"))
+                        .accessibilityHint(
+                            String(localized: "Shares the feed-provided discussion URL; opens only and does not post as you")
+                        )
+
+                        Button {
+                            openURL(url)
+                        } label: {
+                            Label("Discuss", systemImage: "safari")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Discuss"))
+                        .accessibilityHint(String(localized: "Opens the discussion link from the feed in the system browser"))
                     }
-                    .accessibilityLabel(String(localized: "Discuss"))
-                    .accessibilityHint(String(localized: "Opens the discussion link from the feed in the system browser"))
                 }
             }
         }

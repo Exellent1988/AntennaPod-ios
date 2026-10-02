@@ -23,6 +23,7 @@ struct FeedDetailView: View {
     @State private var showPodcastGuidCopied = false
     @State private var showPodcastTitleCopied = false
     @State private var showDiscussURLCopied = false
+    @State private var showDiscussProtocolCopied = false
     @State private var showTrailerURLCopied = false
     @State private var showTrailerTitleCopied = false
     @State private var showLockedOwnerCopied = false
@@ -45,6 +46,7 @@ struct FeedDetailView: View {
     @State private var copyPodcastGuidFeedbackTick = 0
     @State private var copyPodcastTitleFeedbackTick = 0
     @State private var copyDiscussURLFeedbackTick = 0
+    @State private var copyDiscussProtocolFeedbackTick = 0
     @State private var copyTrailerURLFeedbackTick = 0
     @State private var copyTrailerTitleFeedbackTick = 0
     @State private var copyLockedOwnerFeedbackTick = 0
@@ -911,8 +913,8 @@ struct FeedDetailView: View {
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
-            // Channel podcast:socialInteract — Discuss opens http(s) uri in system browser; hide when none / disabled.
-            // Feed-provided only — never invent URLs; no in-app Fediverse client / posting.
+            // Channel podcast:socialInteract — Discuss opens http(s) uri; Copy / Share exact protocol and URL.
+            // Feed-provided only — never invent URLs or protocol values; no in-app Fediverse client / posting.
             if !displaySocialInteracts.isEmpty {
                 Section {
                     PodcastSocialInteractListView(socialInteracts: displaySocialInteracts)
@@ -1269,6 +1271,26 @@ struct FeedDetailView: View {
 
                         if let interact = liveFeed.preferredSocialInteract,
                            let url = interact.discussionURL {
+                            if let protocolText = interact.displayProtocol {
+                                Button {
+                                    copyDiscussProtocol(protocolText)
+                                } label: {
+                                    Label("Copy discuss protocol", systemImage: "doc.on.doc")
+                                }
+                                .accessibilityLabel(String(localized: "Copy discuss protocol"))
+                                .accessibilityHint(
+                                    String(localized: "Copies the displayed feed-provided discussion protocol to the pasteboard; does not post as you")
+                                )
+
+                                ShareLink(item: protocolText) {
+                                    Label("Share discuss protocol", systemImage: "square.and.arrow.up")
+                                }
+                                .accessibilityLabel(String(localized: "Share discuss protocol"))
+                                .accessibilityHint(
+                                    String(localized: "Shares the displayed feed-provided discussion protocol as plain text; does not post as you")
+                                )
+                            }
+
                             Button {
                                 openURL(url)
                             } label: {
@@ -1663,6 +1685,14 @@ struct FeedDetailView: View {
         }
         .alert(
             String(localized: "Copied"),
+            isPresented: $showDiscussProtocolCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Discuss protocol copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
             isPresented: $showTrailerURLCopied
         ) {
             Button("OK", role: .cancel) {}
@@ -1771,6 +1801,7 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyPodcastGuidFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastTitleFeedbackTick)
         .sensoryFeedback(.success, trigger: copyDiscussURLFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyDiscussProtocolFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerTitleFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLockedOwnerFeedbackTick)
@@ -1863,6 +1894,14 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = url.absoluteString
         copyDiscussURLFeedbackTick += 1
         showDiscussURLCopied = true
+    }
+
+    private func copyDiscussProtocol(_ protocolText: String) {
+        let trimmed = protocolText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        UIPasteboard.general.string = trimmed
+        copyDiscussProtocolFeedbackTick += 1
+        showDiscussProtocolCopied = true
     }
 
     private func copyTrailerURL(_ url: URL) {
