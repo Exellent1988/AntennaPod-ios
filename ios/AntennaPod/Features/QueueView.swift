@@ -81,6 +81,18 @@ struct QueueView: View {
         return index > 0
     }
 
+    /// Move the **currently playing** episode to the end of the queue (`moveQueueItemToBottom`).
+    /// Enabled when unlocked, current episode is in the queue, and not already last.
+    /// Mirror of `canMovePlayingToTop` — same reorder-only gate; no confirm (single-item reorder).
+    private var canMovePlayingToBottom: Bool {
+        guard !settings.queueLocked,
+              let current = playback.currentEpisode,
+              let index = store.queue.firstIndex(where: { $0.id == current.id }) else {
+            return false
+        }
+        return index < store.queue.count - 1
+    }
+
     /// Count of **played** episodes in the **full** persisted queue (`isPlayed`) — not chip/search.
     /// Used for Remove played enablement + confirmation count (same honesty as Clear queue).
     private var playedInFullQueueCount: Int {
@@ -400,8 +412,8 @@ struct QueueView: View {
                     )
                     .accessibilityHint(
                         settings.queueLocked
-                            ? String(localized: "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and Move to top or bottom")
-                            : String(localized: "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, and Move to top or bottom")
+                            ? String(localized: "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom")
+                            : String(localized: "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom")
                     )
                     .accessibilityAddTraits(.isButton)
                 }
@@ -553,6 +565,21 @@ struct QueueView: View {
                         .accessibilityHint(
                             String(localized: "Moves the currently playing episode to the start of the queue")
                         )
+                        Button {
+                            // Reuse moveQueueItemToBottom — no seek/stop; no confirm (single-item reorder).
+                            if let current = playback.currentEpisode {
+                                store.moveQueueItemToBottom(current)
+                            }
+                        } label: {
+                            Label("Move playing to bottom", systemImage: "arrow.down.to.line")
+                        }
+                        // Enabled only when current episode is queued and not already last;
+                        // blocked when Queue locked (reorder-only, same gate as Move playing to top).
+                        .disabled(!canMovePlayingToBottom)
+                        .accessibilityLabel(String(localized: "Move playing to bottom"))
+                        .accessibilityHint(
+                            String(localized: "Moves the currently playing episode to the end of the queue")
+                        )
                         Button(role: .destructive) {
                             // Always confirm before removePlayedFromQueue() — never remove from the menu alone.
                             showRemovePlayedConfirm = true
@@ -584,7 +611,7 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, remove played, or clear the entire queue")
+                        String(localized: "Play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, remove played, or clear the entire queue")
                     )
                 }
             }

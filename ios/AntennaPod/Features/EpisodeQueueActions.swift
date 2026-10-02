@@ -7,6 +7,7 @@ import SwiftUI
 /// - **Remove from queue** → caller shows `confirmationDialog`, then `removeFromQueue`
 /// - **Play Next** → `playNext` when not already next (hidden when already next)
 /// - **Move playing to top** → `moveQueueItemToTop` when queued, not index 0, unlocked
+/// - **Move playing to bottom** → `moveQueueItemToBottom` when queued, not last, unlocked
 ///
 /// Nested `Menu` keeps the mini ⋯ root from overcrowding (same labels/symbols/a11y as Full).
 enum EpisodeQueueActions {
@@ -44,6 +45,21 @@ enum EpisodeQueueActions {
         return index > 0
     }
 
+    /// True when **Move playing to bottom** can be offered: in queue, not already
+    /// last, and Queue lock is off (reorder-only — same gate as Move to top).
+    /// Does not seek/stop.
+    static func canMovePlayingEpisodeToBottom(
+        _ episode: PodcastEpisode,
+        store: PodcastStore,
+        queueLocked: Bool
+    ) -> Bool {
+        guard !queueLocked,
+              let index = store.queue.firstIndex(where: { $0.id == episode.id }) else {
+            return false
+        }
+        return index < store.queue.count - 1
+    }
+
     /// Full Menu control (outer label Queue / In queue). Use as a secondary HStack
     /// button (Full) or nest inside another `Menu` for a mini ⋯ submenu.
     @ViewBuilder
@@ -56,6 +72,11 @@ enum EpisodeQueueActions {
     ) -> some View {
         let inQueue = store.isInQueue(episode.id)
         let canMovePlayingToTop = canMovePlayingEpisodeToTop(
+            episode,
+            store: store,
+            queueLocked: queueLocked
+        )
+        let canMovePlayingToBottom = canMovePlayingEpisodeToBottom(
             episode,
             store: store,
             queueLocked: queueLocked
@@ -111,6 +132,19 @@ enum EpisodeQueueActions {
                     String(localized: "Moves the currently playing episode to the start of the queue")
                 )
             }
+
+            // Hidden when not queued / already last / locked — mirror of Move playing to top.
+            if canMovePlayingToBottom {
+                Button {
+                    store.moveQueueItemToBottom(episode)
+                } label: {
+                    Label("Move playing to bottom", systemImage: "arrow.down.to.line")
+                }
+                .accessibilityLabel(String(localized: "Move playing to bottom"))
+                .accessibilityHint(
+                    String(localized: "Moves the currently playing episode to the end of the queue")
+                )
+            }
         } label: {
             Label(
                 inQueue ? "In queue" : "Queue",
@@ -123,6 +157,6 @@ enum EpisodeQueueActions {
                 ? String(localized: "In queue")
                 : String(localized: "Not in queue")
         )
-        .accessibilityHint(String(localized: "Opens add, remove, Play Next, and Move playing to top queue actions"))
+        .accessibilityHint(String(localized: "Opens add, remove, Play Next, Move playing to top, and Move playing to bottom queue actions"))
     }
 }
