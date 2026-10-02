@@ -79,9 +79,10 @@ struct AllEpisodesView: View {
 
     /// Soft cap first (newest 500 via `store.allEpisodes`), then sort → status chip → podcast → search.
     /// **Honesty:** `store.allEpisodes` is already the newest-500 by `pubDateEpochMs`.
-    /// Oldest / Shortest / Longest only reorder within that capped set — they do **not** pull older
-    /// episodes from beyond the soft limit. Missing dates / unknown durations sort last; stable
-    /// tiebreaker is episode `id` (same as Inbox). Orphan episodes (missing feed) match **All** only.
+    /// Oldest / Shortest / Longest / Title A–Z / Title Z–A only reorder within that capped set — they do
+    /// **not** pull older episodes from beyond the soft limit. Missing dates / unknown durations /
+    /// empty titles sort last; stable tiebreaker is episode `id` (same as Inbox). Orphan episodes
+    /// (missing feed) match **All** only.
     private var items: [InboxEpisode] {
         var base = store.allEpisodes.sorted { lhs, rhs in
             switch settings.allEpisodesSort {
@@ -113,6 +114,8 @@ struct AllEpisodesView: View {
                 case (nil, nil):
                     return lhs.episode.id < rhs.episode.id
                 }
+            case .titleAscending, .titleDescending:
+                return allEpisodesTitleSort(lhs.episode, rhs.episode, ascending: settings.allEpisodesSort == .titleAscending)
             }
         }
         switch settings.allEpisodesFilter {
@@ -188,6 +191,26 @@ struct AllEpisodesView: View {
             for: episode,
             savedDurationSeconds: store.playbackState(for: episode.id).durationSeconds
         )
+    }
+
+    /// Title A–Z / Z–A within soft-capped set: empty titles last; id tiebreak.
+    private func allEpisodesTitleSort(_ lhs: PodcastEpisode, _ rhs: PodcastEpisode, ascending: Bool) -> Bool {
+        let lt = lhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let rt = rhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch (lt.isEmpty, rt.isEmpty) {
+        case (false, true):
+            return true
+        case (true, false):
+            return false
+        case (true, true):
+            return lhs.id < rhs.id
+        case (false, false):
+            let cmp = lt.localizedCaseInsensitiveCompare(rt)
+            if cmp != .orderedSame {
+                return ascending ? (cmp == .orderedAscending) : (cmp == .orderedDescending)
+            }
+            return lhs.id < rhs.id
+        }
     }
 
 
@@ -318,7 +341,7 @@ struct AllEpisodesView: View {
                 }
                 .accessibilityLabel(String(localized: "Sort all episodes"))
                 .accessibilityValue(settings.allEpisodesSort.label)
-                .accessibilityHint(String(localized: "Orders the All Episodes list within the newest-500 soft cap. Shortest and Longest use known duration; unknown last. Does not pull older episodes beyond the cap."))
+                .accessibilityHint(String(localized: "Orders the All Episodes list within the newest-500 soft cap. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Does not pull older episodes beyond the cap."))
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {

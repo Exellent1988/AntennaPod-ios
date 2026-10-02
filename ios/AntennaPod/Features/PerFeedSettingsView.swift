@@ -172,7 +172,7 @@ struct PerFeedSettingsView: View {
                     }
                 }
                 .accessibilityLabel(String(localized: "Episode sort"))
-                .accessibilityHint(String(localized: "Use global, Newest first, Oldest first, Shortest first, or Longest first for this podcast’s episode list. Does not follow itunes:type."))
+                .accessibilityHint(String(localized: "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list. Does not follow itunes:type."))
                 .accessibilityValue(episodeSortAccessibilityValue)
                 Text(episodeSortHelp)
                     .font(.caption)

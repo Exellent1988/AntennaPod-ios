@@ -22851,108 +22851,6 @@
       },
       "comment": "Downloads sort: known byte size ascending; unknown size last."
     },
-    "Use global, Newest first, Oldest first, Shortest first, or Longest first for this podcast’s episode list. Does not follow itunes:type.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Use global, Newest first, Oldest first, Shortest first, or Longest first for this podcast’s episode list. Does not follow itunes:type."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Global verwenden, Neueste zuerst, Älteste zuerst, Kürzeste zuerst oder Längste zuerst für die Episodenliste dieses Podcasts. Folgt nicht itunes:type."
-          }
-        }
-      }
-    },
-    "Orders the All Episodes list within the newest-500 soft cap. Shortest and Longest use known duration; unknown last. Does not pull older episodes beyond the cap.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Orders the All Episodes list within the newest-500 soft cap. Shortest and Longest use known duration; unknown last. Does not pull older episodes beyond the cap."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sortiert die Alle-Episoden-Liste innerhalb der Soft-Obergrenze der neuesten 500. Kürzeste und Längste nutzen bekannte Dauer; unbekannte zuletzt. Zieht keine älteren Episoden über die Soft-Obergrenze hinaus."
-          }
-        }
-      }
-    },
-    "Orders the Inbox list. Shortest and Longest use known duration; unknown last. Home New preview stays newest-first.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Orders the Inbox list. Shortest and Longest use known duration; unknown last. Home New preview stays newest-first."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sortiert die Posteingangs-Liste. Kürzeste und Längste nutzen bekannte Dauer; unbekannte zuletzt. Home-Neu-Vorschau bleibt neueste zuerst."
-          }
-        }
-      }
-    },
-    "Orders the Favorites list. Shortest and Longest use known duration; unknown last. Home Favorites preview stays newest-first.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Orders the Favorites list. Shortest and Longest use known duration; unknown last. Home Favorites preview stays newest-first."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sortiert die Favoriten-Liste. Kürzeste und Längste nutzen bekannte Dauer; unbekannte zuletzt. Home-Favoriten-Vorschau bleibt neueste zuerst."
-          }
-        }
-      }
-    },
-    "Orders the History list. Shortest and Longest use known duration; unknown last. Home Continue preview stays newest-first.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Orders the History list. Shortest and Longest use known duration; unknown last. Home Continue preview stays newest-first."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sortiert die Verlaufs-Liste. Kürzeste und Längste nutzen bekannte Dauer; unbekannte zuletzt. Home-Weiterhören-Vorschau bleibt neueste zuerst."
-          }
-        }
-      }
-    },
-    "Orders the Archived list. Shortest and Longest use known duration; unknown last. Restore all stays full catalog.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Orders the Archived list. Shortest and Longest use known duration; unknown last. Restore all stays full catalog."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sortiert die Archiviert-Liste. Kürzeste und Längste nutzen bekannte Dauer; unbekannte zuletzt. Alle wiederherstellen bleibt voller Katalog."
-          }
-        }
-      }
-    },
     "End of chapter": {
       "extractionState": "manual",
       "localizations": {
@@ -23051,6 +22949,142 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Kapitel verfügbar"
+          }
+        }
+      }
+    },
+    "Title A–Z": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title A–Z"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel A–Z"
+          }
+        }
+      }
+    },
+    "Title Z–A": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title Z–A"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel Z–A"
+          }
+        }
+      }
+    },
+    "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list. Does not follow itunes:type.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list. Does not follow itunes:type."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global verwenden, Neueste zuerst, Älteste zuerst, Kürzeste zuerst, Längste zuerst, Titel A–Z oder Titel Z–A für die Episodenliste dieses Podcasts. Folgt nicht itunes:type."
+          }
+        }
+      }
+    },
+    "Orders the Inbox list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home New preview stays newest-first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the Inbox list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home New preview stays newest-first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Posteingangs-Liste. Kürzeste und Längste nutzen bekannte Dauer; Titel A–Z / Z–A nach Titel; leere oder unbekannte zuletzt. Home-Neu-Vorschau bleibt neueste zuerst."
+          }
+        }
+      }
+    },
+    "Orders the All Episodes list within the newest-500 soft cap. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Does not pull older episodes beyond the cap.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the All Episodes list within the newest-500 soft cap. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Does not pull older episodes beyond the cap."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Alle-Episoden-Liste innerhalb der Soft-Obergrenze der neuesten 500. Kürzeste und Längste nutzen bekannte Dauer; Titel A–Z / Z–A nach Titel; leere oder unbekannte zuletzt. Zieht keine älteren Episoden über die Soft-Obergrenze hinaus."
+          }
+        }
+      }
+    },
+    "Orders the Favorites list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home Favorites preview stays newest-first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the Favorites list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home Favorites preview stays newest-first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Favoriten-Liste. Kürzeste und Längste nutzen bekannte Dauer; Titel A–Z / Z–A nach Titel; leere oder unbekannte zuletzt. Home-Favoriten-Vorschau bleibt neueste zuerst."
+          }
+        }
+      }
+    },
+    "Orders the History list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home Continue preview stays newest-first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the History list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home Continue preview stays newest-first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Verlaufs-Liste. Kürzeste und Längste nutzen bekannte Dauer; Titel A–Z / Z–A nach Titel; leere oder unbekannte zuletzt. Home-Weiterhören-Vorschau bleibt neueste zuerst."
+          }
+        }
+      }
+    },
+    "Orders the Archived list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Restore all stays full catalog.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the Archived list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Restore all stays full catalog."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Archiviert-Liste. Kürzeste und Längste nutzen bekannte Dauer; Titel A–Z / Z–A nach Titel; leere oder unbekannte zuletzt. Alle wiederherstellen bleibt voller Katalog."
           }
         }
       }

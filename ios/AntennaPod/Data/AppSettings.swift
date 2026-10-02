@@ -349,8 +349,9 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
 /// How Feed detail orders episodes in one podcast (client-side; All Episodes uses `allEpisodesSort`; Inbox has its own `inboxSort`).
 /// Global default for feeds with `FeedSettings.episodeSort == nil` (Use global). Per-feed override lives in `feed-settings.json`.
 /// Newest / Oldest by `pubDateEpochMs`; Shortest / Longest by known duration (feed `durationSeconds` when known,
-/// else saved playback duration — same path as Queue duration sort; unknown last; title tiebreak).
-/// itunes:type must not auto-change this. No title-only sort mode.
+/// else saved playback duration — same path as Queue duration sort; unknown last; title tiebreak);
+/// Title A–Z / Z–A by `localizedCaseInsensitiveCompare` (empty titles last; id tiebreak).
+/// itunes:type must not auto-change this.
 enum FeedEpisodeSort: String, CaseIterable, Identifiable, Codable {
     case newestFirst
     case oldestFirst
@@ -358,6 +359,10 @@ enum FeedEpisodeSort: String, CaseIterable, Identifiable, Codable {
     case shortestFirst
     /// Descending known duration; unknown last; title then id tiebreak.
     case longestFirst
+    /// Ascending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleAscending
+    /// Descending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleDescending
 
     var id: String { rawValue }
 
@@ -367,6 +372,8 @@ enum FeedEpisodeSort: String, CaseIterable, Identifiable, Codable {
         case .oldestFirst: return String(localized: "Oldest first")
         case .shortestFirst: return String(localized: "Shortest first")
         case .longestFirst: return String(localized: "Longest first")
+        case .titleAscending: return String(localized: "Title A–Z")
+        case .titleDescending: return String(localized: "Title Z–A")
         }
     }
 
@@ -376,6 +383,8 @@ enum FeedEpisodeSort: String, CaseIterable, Identifiable, Codable {
         case .oldestFirst: return "arrow.up"
         case .shortestFirst: return "timer"
         case .longestFirst: return "timer"
+        case .titleAscending: return "textformat.abc"
+        case .titleDescending: return "textformat.abc"
         }
     }
 }
@@ -400,7 +409,8 @@ enum FeedEpisodeFilter: String, CaseIterable, Identifiable {
 
 /// How the Inbox tab orders episodes (client-side; Home New preview stays newest-first).
 /// Newest / Oldest by `pubDateEpochMs`; Shortest / Longest by known duration (feed when known,
-/// else saved playback — same path as Queue / Feed / All Episodes; unknown last; id tiebreak).
+/// else saved playback — same path as Queue / Feed / All Episodes; unknown last; id tiebreak);
+/// Title A–Z / Z–A by `localizedCaseInsensitiveCompare` (empty titles last; id tiebreak).
 enum InboxSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
@@ -408,6 +418,10 @@ enum InboxSort: String, CaseIterable, Identifiable {
     case shortestFirst
     /// Descending known duration; unknown last; id tiebreak.
     case longestFirst
+    /// Ascending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleAscending
+    /// Descending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleDescending
 
     var id: String { rawValue }
 
@@ -417,6 +431,8 @@ enum InboxSort: String, CaseIterable, Identifiable {
         case .oldestFirst: return String(localized: "Oldest first")
         case .shortestFirst: return String(localized: "Shortest first")
         case .longestFirst: return String(localized: "Longest first")
+        case .titleAscending: return String(localized: "Title A–Z")
+        case .titleDescending: return String(localized: "Title Z–A")
         }
     }
 
@@ -426,6 +442,8 @@ enum InboxSort: String, CaseIterable, Identifiable {
         case .oldestFirst: return "arrow.up"
         case .shortestFirst: return "timer"
         case .longestFirst: return "timer"
+        case .titleAscending: return "textformat.abc"
+        case .titleDescending: return "textformat.abc"
         }
     }
 }
@@ -492,7 +510,8 @@ enum DownloadsSort: String, CaseIterable, Identifiable {
 /// How the History list orders episodes (client-side).
 /// Newest / Oldest by last-played / history timestamp; Shortest / Longest by known duration
 /// (feed when known, else saved playback — same path as Queue / Inbox / Favorites / Archived;
-/// unknown last; id tiebreak). Home Continue preview stays newest-first.
+/// unknown last; id tiebreak); Title A–Z / Z–A by `localizedCaseInsensitiveCompare`
+/// (empty titles last; id tiebreak). Home Continue preview stays newest-first.
 enum HistorySort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
@@ -500,6 +519,10 @@ enum HistorySort: String, CaseIterable, Identifiable {
     case shortestFirst
     /// Descending known duration; unknown last; id tiebreak.
     case longestFirst
+    /// Ascending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleAscending
+    /// Descending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleDescending
 
     var id: String { rawValue }
 
@@ -509,6 +532,8 @@ enum HistorySort: String, CaseIterable, Identifiable {
         case .oldestFirst: return String(localized: "Oldest first")
         case .shortestFirst: return String(localized: "Shortest first")
         case .longestFirst: return String(localized: "Longest first")
+        case .titleAscending: return String(localized: "Title A–Z")
+        case .titleDescending: return String(localized: "Title Z–A")
         }
     }
 
@@ -518,6 +543,8 @@ enum HistorySort: String, CaseIterable, Identifiable {
         case .oldestFirst: return "arrow.up"
         case .shortestFirst: return "timer"
         case .longestFirst: return "timer"
+        case .titleAscending: return "textformat.abc"
+        case .titleDescending: return "textformat.abc"
         }
     }
 }
@@ -584,7 +611,8 @@ enum HistorySizeLimit: Int, CaseIterable, Identifiable {
 /// How the Favorites list orders episodes (client-side).
 /// Newest / Oldest by favorited-at timestamp; Shortest / Longest by known duration
 /// (feed when known, else saved playback — same path as Queue / Inbox / History / Archived;
-/// unknown last; id tiebreak). Home Favorites preview stays newest-first.
+/// unknown last; id tiebreak); Title A–Z / Z–A by `localizedCaseInsensitiveCompare`
+/// (empty titles last; id tiebreak). Home Favorites preview stays newest-first.
 enum FavoritesSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
@@ -592,6 +620,10 @@ enum FavoritesSort: String, CaseIterable, Identifiable {
     case shortestFirst
     /// Descending known duration; unknown last; id tiebreak.
     case longestFirst
+    /// Ascending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleAscending
+    /// Descending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleDescending
 
     var id: String { rawValue }
 
@@ -601,6 +633,8 @@ enum FavoritesSort: String, CaseIterable, Identifiable {
         case .oldestFirst: return String(localized: "Oldest first")
         case .shortestFirst: return String(localized: "Shortest first")
         case .longestFirst: return String(localized: "Longest first")
+        case .titleAscending: return String(localized: "Title A–Z")
+        case .titleDescending: return String(localized: "Title Z–A")
         }
     }
 
@@ -610,6 +644,8 @@ enum FavoritesSort: String, CaseIterable, Identifiable {
         case .oldestFirst: return "arrow.up"
         case .shortestFirst: return "timer"
         case .longestFirst: return "timer"
+        case .titleAscending: return "textformat.abc"
+        case .titleDescending: return "textformat.abc"
         }
     }
 }
@@ -648,7 +684,8 @@ enum FavoritesPodcastFilter: Hashable, Identifiable {
 /// How the Archived list orders episodes (client-side).
 /// Newest / Oldest by archived-at timestamp; Shortest / Longest by known duration
 /// (feed when known, else saved playback — same path as Queue / Inbox / Favorites / History;
-/// unknown last; id tiebreak). Restore all / Add all stay full newest-first catalog.
+/// unknown last; id tiebreak); Title A–Z / Z–A by `localizedCaseInsensitiveCompare`
+/// (empty titles last; id tiebreak). Restore all / Add all stay full newest-first catalog.
 enum ArchivedSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
@@ -656,6 +693,10 @@ enum ArchivedSort: String, CaseIterable, Identifiable {
     case shortestFirst
     /// Descending known duration; unknown last; id tiebreak.
     case longestFirst
+    /// Ascending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleAscending
+    /// Descending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleDescending
 
     var id: String { rawValue }
 
@@ -665,6 +706,8 @@ enum ArchivedSort: String, CaseIterable, Identifiable {
         case .oldestFirst: return String(localized: "Oldest first")
         case .shortestFirst: return String(localized: "Shortest first")
         case .longestFirst: return String(localized: "Longest first")
+        case .titleAscending: return String(localized: "Title A–Z")
+        case .titleDescending: return String(localized: "Title Z–A")
         }
     }
 
@@ -674,6 +717,8 @@ enum ArchivedSort: String, CaseIterable, Identifiable {
         case .oldestFirst: return "arrow.up"
         case .shortestFirst: return "timer"
         case .longestFirst: return "timer"
+        case .titleAscending: return "textformat.abc"
+        case .titleDescending: return "textformat.abc"
         }
     }
 }
@@ -853,9 +898,10 @@ enum AllEpisodesPodcastFilter: Hashable, Identifiable {
 
 /// How Library → Episodes (All Episodes) orders the soft-capped list (client-side).
 /// Newest / Oldest by `pubDateEpochMs`; Shortest / Longest by known duration (feed when known,
-/// else saved playback — same path as Queue; unknown last; id tiebreak).
+/// else saved playback — same path as Queue; unknown last; id tiebreak);
+/// Title A–Z / Z–A by `localizedCaseInsensitiveCompare` (empty titles last; id tiebreak).
 /// **Soft-cap honesty:** only reorders within newest-500 — does **not** pull older episodes beyond the cap
-/// (same honesty as Oldest date sort).
+/// (same honesty as Oldest date sort / Title sorts).
 enum AllEpisodesSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
@@ -863,6 +909,10 @@ enum AllEpisodesSort: String, CaseIterable, Identifiable {
     case shortestFirst
     /// Descending known duration within soft-capped set; unknown last; id tiebreak.
     case longestFirst
+    /// Ascending episode title within soft-capped set; empty last; id tiebreak.
+    case titleAscending
+    /// Descending episode title within soft-capped set; empty last; id tiebreak.
+    case titleDescending
 
     var id: String { rawValue }
 
@@ -872,6 +922,8 @@ enum AllEpisodesSort: String, CaseIterable, Identifiable {
         case .oldestFirst: return String(localized: "Oldest first")
         case .shortestFirst: return String(localized: "Shortest first")
         case .longestFirst: return String(localized: "Longest first")
+        case .titleAscending: return String(localized: "Title A–Z")
+        case .titleDescending: return String(localized: "Title Z–A")
         }
     }
 
@@ -881,6 +933,8 @@ enum AllEpisodesSort: String, CaseIterable, Identifiable {
         case .oldestFirst: return "arrow.up"
         case .shortestFirst: return "timer"
         case .longestFirst: return "timer"
+        case .titleAscending: return "textformat.abc"
+        case .titleDescending: return "textformat.abc"
         }
     }
 }

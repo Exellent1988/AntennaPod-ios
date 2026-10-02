@@ -17,6 +17,7 @@ struct InboxView: View {
     /// Date modes: `pubDateEpochMs` (missing last). Duration modes: known duration via
     /// `EpisodeRemainingTime.knownDurationSeconds` (feed when known, else saved playback —
     /// same path as Queue / Feed / All Episodes; never invent; unknown last).
+    /// Title modes: `localizedCaseInsensitiveCompare` (empty titles last).
     /// Stable tiebreaker is episode `id` (no `dateAdded` on `PodcastEpisode`).
     /// Does not mutate `PodcastStore.inboxEpisodes` (Home New preview stays newest-first).
     /// Used for bulk Mark all / Archive all counts.
@@ -51,6 +52,8 @@ struct InboxView: View {
                 case (nil, nil):
                     return lhs.episode.id < rhs.episode.id
                 }
+            case .titleAscending, .titleDescending:
+                return inboxTitleSort(lhs.episode, rhs.episode, ascending: settings.inboxSort == .titleAscending)
             }
         }
     }
@@ -61,6 +64,26 @@ struct InboxView: View {
             for: episode,
             savedDurationSeconds: store.playbackState(for: episode.id).durationSeconds
         )
+    }
+
+    /// Title A–Z / Z–A: empty titles last; id tiebreak.
+    private func inboxTitleSort(_ lhs: PodcastEpisode, _ rhs: PodcastEpisode, ascending: Bool) -> Bool {
+        let lt = lhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let rt = rhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch (lt.isEmpty, rt.isEmpty) {
+        case (false, true):
+            return true
+        case (true, false):
+            return false
+        case (true, true):
+            return lhs.id < rhs.id
+        case (false, false):
+            let cmp = lt.localizedCaseInsensitiveCompare(rt)
+            if cmp != .orderedSame {
+                return ascending ? (cmp == .orderedAscending) : (cmp == .orderedDescending)
+            }
+            return lhs.id < rhs.id
+        }
     }
 
     /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
@@ -295,7 +318,7 @@ struct InboxView: View {
                         Label("Sort", systemImage: "arrow.up.arrow.down")
                     }
                     .accessibilityLabel(String(localized: "Sort inbox"))
-                    .accessibilityHint(String(localized: "Orders the Inbox list. Shortest and Longest use known duration; unknown last. Home New preview stays newest-first."))
+                    .accessibilityHint(String(localized: "Orders the Inbox list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home New preview stays newest-first."))
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Menu {

@@ -172,7 +172,8 @@ struct FeedDetailView: View {
     /// Episodes for this feed ordered by resolved per-feed/`Use global` sort.
     /// Date modes: `pubDateEpochMs` (missing last). Duration modes: known duration via
     /// `EpisodeRemainingTime.knownDurationSeconds` (feed when known, else saved playback —
-    /// same path as Queue; never invent; unknown last). Title then id tiebreak.
+    /// same path as Queue; never invent; unknown last). Title modes: `localizedCaseInsensitiveCompare`
+    /// (empty titles last). Title then id tiebreak (date/duration); id only for title modes.
     /// Does not mutate stored feed order. itunes:type is display-only — never auto-changes this sort.
     private var sortedEpisodes: [PodcastEpisode] {
         liveFeed.episodes.sorted { lhs, rhs in
@@ -202,6 +203,8 @@ struct FeedDetailView: View {
                 case (nil, nil):
                     return feedEpisodeTitleTiebreak(lhs, rhs)
                 }
+            case .titleAscending, .titleDescending:
+                return feedEpisodeTitleSort(lhs, rhs, ascending: resolvedEpisodeSort == .titleAscending)
             }
         }
     }
@@ -218,6 +221,26 @@ struct FeedDetailView: View {
         let cmp = lhs.title.localizedCaseInsensitiveCompare(rhs.title)
         if cmp != .orderedSame { return cmp == .orderedAscending }
         return lhs.id < rhs.id
+    }
+
+    /// Title A–Z / Z–A: `localizedCaseInsensitiveCompare` on trimmed title; empty last; id tiebreak.
+    private func feedEpisodeTitleSort(_ lhs: PodcastEpisode, _ rhs: PodcastEpisode, ascending: Bool) -> Bool {
+        let lt = lhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let rt = rhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch (lt.isEmpty, rt.isEmpty) {
+        case (false, true):
+            return true // non-empty before empty
+        case (true, false):
+            return false
+        case (true, true):
+            return lhs.id < rhs.id
+        case (false, false):
+            let cmp = lt.localizedCaseInsensitiveCompare(rt)
+            if cmp != .orderedSame {
+                return ascending ? (cmp == .orderedAscending) : (cmp == .orderedDescending)
+            }
+            return lhs.id < rhs.id
+        }
     }
 
     /// Toolbar Sort writes an explicit per-feed override (`feed-settings.json`); does not change other feeds.

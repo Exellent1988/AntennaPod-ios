@@ -139,6 +139,8 @@ struct FavoritesView: View {
                 case (nil, nil):
                     return lhs.episode.id < rhs.episode.id
                 }
+            case .titleAscending, .titleDescending:
+                return favoritesTitleSort(lhs.episode, rhs.episode, ascending: settings.favoritesSort == .titleAscending)
             }
         }
     }
@@ -149,6 +151,26 @@ struct FavoritesView: View {
             for: episode,
             savedDurationSeconds: store.playbackState(for: episode.id).durationSeconds
         )
+    }
+
+    /// Title A–Z / Z–A: empty titles last; id tiebreak.
+    private func favoritesTitleSort(_ lhs: PodcastEpisode, _ rhs: PodcastEpisode, ascending: Bool) -> Bool {
+        let lt = lhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let rt = rhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch (lt.isEmpty, rt.isEmpty) {
+        case (false, true):
+            return true
+        case (true, false):
+            return false
+        case (true, true):
+            return lhs.id < rhs.id
+        case (false, false):
+            let cmp = lt.localizedCaseInsensitiveCompare(rt)
+            if cmp != .orderedSame {
+                return ascending ? (cmp == .orderedAscending) : (cmp == .orderedDescending)
+            }
+            return lhs.id < rhs.id
+        }
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** Favorites list
@@ -306,7 +328,7 @@ struct FavoritesView: View {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
                 .accessibilityLabel(String(localized: "Sort favorites"))
-                .accessibilityHint(String(localized: "Orders the Favorites list. Shortest and Longest use known duration; unknown last. Home Favorites preview stays newest-first."))
+                .accessibilityHint(String(localized: "Orders the Favorites list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home Favorites preview stays newest-first."))
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
