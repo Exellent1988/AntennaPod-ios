@@ -144,9 +144,23 @@ final class PlaybackService: ObservableObject {
     /// (current player left unchanged; `lastError` set for UI).
     /// - Parameter fromBeginning: When `true`, start at position 0 (ignore saved resume) and do **not**
     ///   apply skip-intro — user asked for the literal start. Does not flip played/unplayed flags.
+    /// - Parameter preferredMediaURL: Optional http(s) media URL override (e.g. `podcast:alternateEnclosure`
+    ///   source). Same episode id / metadata / queue / favorites; AVPlayer uses this URL. Download cache
+    ///   still keys on the primary enclosure — local file is reused only when that primary remote URL
+    ///   matches `preferredMediaURL`. Non-http(s) URLs are rejected (return false). Video-as-audio,
+    ///   HTTP proxy, and Wi‑Fi stream gates still apply.
     @discardableResult
-    func play(episode: PodcastEpisode, fileURL: URL? = nil, fromBeginning: Bool = false) -> Bool {
-        guard let url = resolvePlaybackURL(for: episode, preferredFileURL: fileURL) else {
+    func play(
+        episode: PodcastEpisode,
+        fileURL: URL? = nil,
+        preferredMediaURL: URL? = nil,
+        fromBeginning: Bool = false
+    ) -> Bool {
+        guard let url = resolvePlaybackURL(
+            for: episode,
+            preferredFileURL: fileURL,
+            preferredMediaURL: preferredMediaURL
+        ) else {
             return false
         }
         let playingLocal = url.isFileURL
@@ -509,6 +523,9 @@ final class PlaybackService: ObservableObject {
     /// - Prefer stream: always network URL when available (falls back to local if no remote).
     /// Optional `preferredFileURL` is treated as a known local path (same as `localURL`) and
     /// still subject to Prefer stream.
+    /// Optional `preferredMediaURL` (http(s) only): play that remote instead of the primary enclosure.
+    /// Local download reuse requires the primary `downloadUrl` to match `preferredMediaURL`
+    /// (downloads are keyed by episode id for the primary URL only).
     /// Stream URLs are additionally gated by `streamWifiOnly` in `play` (local files always OK).
 
     /// Feed override playback speed when set; otherwise AppSettings default.
@@ -538,13 +555,36 @@ final class PlaybackService: ObservableObject {
         return store.feedSettings(for: feed.id).resolvedSkipOutroSeconds(global: global)
     }
 
-    private func resolvePlaybackURL(for episode: PodcastEpisode, preferredFileURL: URL?) -> URL? {
+    private func resolvePlaybackURL(
+        for episode: PodcastEpisode,
+        preferredFileURL: URL?,
+        preferredMediaURL: URL? = nil
+    ) -> URL? {
         let preference = settings?.playbackSourcePreference ?? .automatic
         let local = preferredFileURL ?? downloads?.localURL(for: episode)
         // Local folder episodes need security-scoped access before AVPlayer can open the file.
         if let local, local.isFileURL, let store {
             LocalFolderAccess.ensureAccessForEpisodeFileURL(local, feeds: store.feeds)
         }
+
+        // Alternate / override http(s) media (e.g. podcast:alternateEnclosure source).
+        // Same episode identity; stream the chosen URL unless a primary download matches it.
+        if let preferred = preferredMediaURL {
+            let scheme = preferred.scheme?.lowercased()
+            guard scheme == "http" || scheme == "https" else { return nil }
+            let primaryRemote = episode.downloadUrl.flatMap { URL(string: $0) }
+            let urlsMatch = primaryRemote.map {
+                $0.absoluteString == preferred.absoluteString
+            } ?? false
+            switch preference {
+            case .preferStream:
+                return preferred
+            case .preferDownload, .automatic:
+                if urlsMatch, let local { return local }
+                return preferred
+            }
+        }
+
         let remote = episode.downloadUrl.flatMap { URL(string: $0) }
 
         switch preference {

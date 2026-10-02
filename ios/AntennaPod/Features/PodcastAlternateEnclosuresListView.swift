@@ -1,13 +1,17 @@
 import SwiftUI
 import UIKit
 
-/// Feed-provided `podcast:alternateEnclosure` / `podcast:source` list — **display-only**.
-/// Shows type, bitrate, length, title/lang/height when available. http(s) source → Open URL; else Copy URI.
-/// **Does not switch PlaybackService** to alternate streams. Cap + honesty footnote.
+/// Feed-provided `podcast:alternateEnclosure` / `podcast:source` list.
+/// http(s) sources: **Play** (same episode via `PlaybackService.preferredMediaURL`) + **Open URL**.
+/// ipfs / magnet / other schemes: **Copy** URI only — no invented playback.
+/// Cap + honesty footnote (progress on episode id; downloads primary-URL keyed; no Lightning).
 struct PodcastAlternateEnclosuresListView: View {
     @Environment(\.openURL) private var openURL
+    @EnvironmentObject private var playback: PlaybackService
 
     let alternateEnclosures: [PodcastAlternateEnclosure]
+    /// Episode these alternates belong to — Play keeps this id / metadata / queue / favorites.
+    let episode: PodcastEpisode
     /// Section title (localized by caller).
     var title: String = String(localized: "Alternate media")
 
@@ -33,14 +37,14 @@ struct PodcastAlternateEnclosuresListView: View {
 
                 Text(
                     String(
-                        localized: "This app lists alternate media from the feed for information only. It does not switch playback to these streams."
+                        localized: "http(s) alternate sources can play this episode in the app. Progress and mark-as-played stay on the episode. Chapters or transcripts may not match an alternate bitrate. Downloads use the primary enclosure — playing an alternate streams unless the URLs match. ipfs and magnet stay Copy or Open only. Video-as-audio, proxy, and Wi‑Fi stream settings still apply."
                     )
                 )
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(
                     String(
-                        localized: "This app lists alternate media from the feed for information only. It does not switch playback to these streams."
+                        localized: "http(s) alternate sources can play this episode in the app. Progress and mark-as-played stay on the episode. Chapters or transcripts may not match an alternate bitrate. Downloads use the primary enclosure — playing an alternate streams unless the URLs match. ipfs and magnet stay Copy or Open only. Video-as-audio, proxy, and Wi‑Fi stream settings still apply."
                     )
                 )
 
@@ -141,17 +145,34 @@ struct PodcastAlternateEnclosuresListView: View {
 
     @ViewBuilder
     private func sourceRow(_ source: PodcastAlternateSource) -> some View {
-        if let url = source.browserURL {
-            Button {
-                openURL(url)
-            } label: {
-                Label("Open URL", systemImage: "safari")
-                    .font(.subheadline)
+        if let url = source.playableMediaURL {
+            HStack(spacing: 12) {
+                Button {
+                    // Same episode id; chosen http(s) URL for AVPlayer. RootTabView surfaces lastError
+                    // (e.g. Wi‑Fi-only stream block). Resume / smart-mark stay on episode id.
+                    _ = playback.play(episode: episode, preferredMediaURL: url)
+                } label: {
+                    Label("Play", systemImage: "play.fill")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Play"))
+                .accessibilityHint(
+                    String(
+                        localized: "Plays this episode using the alternate http(s) media URL from the feed"
+                    )
+                )
+
+                Button {
+                    openURL(url)
+                } label: {
+                    Label("Open URL", systemImage: "safari")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Open URL"))
+                .accessibilityHint(
+                    String(localized: "Opens this alternate media URL from the feed in the system browser")
+                )
             }
-            .accessibilityLabel(String(localized: "Open URL"))
-            .accessibilityHint(
-                String(localized: "Opens this alternate media URL from the feed in the system browser")
-            )
         } else if let uri = source.displayURI {
             Text(uri)
                 .font(.caption.monospaced())
@@ -178,7 +199,7 @@ struct PodcastAlternateEnclosuresListView: View {
             .accessibilityLabel(String(localized: "Copy"))
             .accessibilityHint(
                 String(
-                    localized: "Copies the alternate media URI to the pasteboard. Playback is not switched."
+                    localized: "Copies the alternate media URI to the pasteboard. Only http(s) sources can play in the app."
                 )
             )
         }

@@ -15837,7 +15837,7 @@
     },
     "Alternate media": {
       "extractionState": "manual",
-      "comment": "Section title for podcast:alternateEnclosure list in Shownotes (display-only).",
+      "comment": "Section title for podcast:alternateEnclosure list in Shownotes / Full player (http(s) Play + Open; other schemes Copy).",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -15849,24 +15849,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alternative Medien"
-          }
-        }
-      }
-    },
-    "This app lists alternate media from the feed for information only. It does not switch playback to these streams.": {
-      "extractionState": "manual",
-      "comment": "Honesty footnote: alternateEnclosure is display-only — no PlaybackService switch.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This app lists alternate media from the feed for information only. It does not switch playback to these streams."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die App listet alternative Medien aus dem Feed nur zur Information. Die Wiedergabe wird nicht auf diese Streams umgestellt."
           }
         }
       }
@@ -15921,24 +15903,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet diese Alternativ-Medien-URL aus dem Feed im Systembrowser"
-          }
-        }
-      }
-    },
-    "Copies the alternate media URI to the pasteboard. Playback is not switched.": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Copy on alternateEnclosure source.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the alternate media URI to the pasteboard. Playback is not switched."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert die Alternativ-Medien-URI in die Zwischenablage. Die Wiedergabe wird nicht umgestellt."
           }
         }
       }
@@ -23255,6 +23219,60 @@
           "stringUnit": {
             "state": "translated",
             "value": "Blendet die Videofläche aus, deaktiviert Video-Spuren und zeigt das Cover. Sperrbildschirm bleibt Audio. Entfernt Video nicht aus der Datei."
+          }
+        }
+      }
+    },
+    "http(s) alternate sources can play this episode in the app. Progress and mark-as-played stay on the episode. Chapters or transcripts may not match an alternate bitrate. Downloads use the primary enclosure — playing an alternate streams unless the URLs match. ipfs and magnet stay Copy or Open only. Video-as-audio, proxy, and Wi‑Fi stream settings still apply.": {
+      "extractionState": "manual",
+      "comment": "Honesty footnote: alternateEnclosure http(s) Play same episode; limits on chapters/download/ipfs.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "http(s) alternate sources can play this episode in the app. Progress and mark-as-played stay on the episode. Chapters or transcripts may not match an alternate bitrate. Downloads use the primary enclosure — playing an alternate streams unless the URLs match. ipfs and magnet stay Copy or Open only. Video-as-audio, proxy, and Wi‑Fi stream settings still apply."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "http(s)-Alternativquellen können diese Episode in der App abspielen. Fortschritt und Als gehört bleiben an der Episode. Kapitel oder Transkripte passen ggf. nicht zu einer anderen Bitrate. Downloads nutzen die primäre Enclosure — eine Alternative wird gestreamt, außer die URLs stimmen überein. ipfs und magnet bleiben nur Kopieren oder Öffnen. Video als Audio, Proxy und WLAN-Stream-Einstellungen gelten weiterhin."
+          }
+        }
+      }
+    },
+    "Plays this episode using the alternate http(s) media URL from the feed": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Play on an alternateEnclosure http(s) source.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays this episode using the alternate http(s) media URL from the feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt diese Episode mit der alternativen http(s)-Medien-URL aus dem Feed ab"
+          }
+        }
+      }
+    },
+    "Copies the alternate media URI to the pasteboard. Only http(s) sources can play in the app.": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy on non-http(s) alternateEnclosure source.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the alternate media URI to the pasteboard. Only http(s) sources can play in the app."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die Alternativ-Medien-URI in die Zwischenablage. Nur http(s)-Quellen können in der App abgespielt werden."
           }
         }
       }

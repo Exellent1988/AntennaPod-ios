@@ -672,12 +672,16 @@ struct PodcastAlternateSource: Identifiable, Hashable, Codable {
         guard scheme == "http" || scheme == "https" else { return nil }
         return url
     }
+
+    /// http(s) URI suitable for in-app `PlaybackService` / AVPlayer. Same as `browserURL`.
+    /// Nil for ipfs / magnet / other schemes — those stay Copy / Open outside the player.
+    var playableMediaURL: URL? { browserURL }
 }
 
 /// Podcast Index `podcast:alternateEnclosure` — alternate / companion media for an item.
 /// Required `type` + ≥1 `podcast:source`. Optional length/bitrate/height/lang/title/rel/codecs/default.
-/// **Display-only:** this app does **not** switch `PlaybackService` to alternate streams — Open URL / Copy only.
-/// Feed-provided only — never invent enclosures.
+/// http(s) sources can **Play** the same episode via `PlaybackService` (`preferredMediaURL`);
+/// ipfs / magnet stay Copy / Open. Feed-provided only — never invent enclosures.
 struct PodcastAlternateEnclosure: Identifiable, Hashable, Codable {
     /// Stable list identity from feed fields + sources.
     var id: String {
@@ -777,12 +781,13 @@ struct PodcastAlternateEnclosure: Identifiable, Hashable, Codable {
     }
 }
 
-/// Display helpers for item `podcast:alternateEnclosure` lists. Feed-provided only; Open URL / Copy — no player switch.
+/// Display helpers for item `podcast:alternateEnclosure` lists. Feed-provided only.
+/// http(s) → Play (same episode) + Open URL; other schemes → Copy.
 enum PodcastAlternateEnclosureDisplay {
     /// Soft UI cap — show first N after feed order; honesty footnote when more exist.
     static let displayCap = 20
 
-    /// Enclosures with required type + ≥1 source URI. Feed order. No invented entries / no player switch.
+    /// Enclosures with required type + ≥1 source URI. Feed order. No invented entries.
     static func valid(_ items: [PodcastAlternateEnclosure]) -> [PodcastAlternateEnclosure] {
         items.compactMap { item in
             guard let mime = item.displayType else { return nil }
@@ -1853,7 +1858,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         PodcastValueDisplay.valid(values)
     }
 
-    /// Valid item-level `podcast:alternateEnclosure` entries (hide when empty — never invent; display-only Open/Copy).
+    /// Valid item-level `podcast:alternateEnclosure` entries (hide when empty — never invent; http(s) Play + Open / else Copy).
     var displayAlternateEnclosures: [PodcastAlternateEnclosure] {
         PodcastAlternateEnclosureDisplay.valid(alternateEnclosures)
     }

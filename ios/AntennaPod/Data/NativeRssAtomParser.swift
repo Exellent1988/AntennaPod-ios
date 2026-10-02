@@ -133,7 +133,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itemSocialInteracts: [PodcastSocialInteract] = []
     /// Item podcast:value / valueRecipient — feed-provided only; display-only (no payments).
     private var itemValues: [PodcastValue] = []
-    /// Item podcast:alternateEnclosure (+ nested source) — feed-provided only; display-only (Open/Copy; no player switch).
+    /// Item podcast:alternateEnclosure (+ nested source) — feed-provided only; http(s) Play via preferredMediaURL / else Copy.
     private var itemAlternateEnclosures: [PodcastAlternateEnclosure] = []
     /// Item podcast:soundbite — feed-provided only; display / seek-to-start when current episode (no clip player).
     private var itemSoundbites: [PodcastSoundbite] = []
@@ -1115,7 +1115,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         )
     }
 
-    /// Finish podcast:alternateEnclosure — append when type + ≥1 source; display-only (no player switch).
+    /// Finish podcast:alternateEnclosure — append when type + ≥1 source; UI Play http(s) via preferredMediaURL.
     private func finishAlternateEnclosure() {
         defer {
             capturingAlternateEnclosure = false

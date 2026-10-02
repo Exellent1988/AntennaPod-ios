@@ -70,7 +70,7 @@ struct EpisodeDescriptionSheetView: View {
         !episode.displayValueRecipients.isEmpty
     }
 
-    /// Item podcast:alternateEnclosure when the feed provided options — empty → hide (display-only; no player switch).
+    /// Item podcast:alternateEnclosure when the feed provided options — empty → hide (http(s) Play + Open; else Copy).
     private var displayAlternateEnclosures: [PodcastAlternateEnclosure] {
         episode.alternateEnclosures
     }
@@ -227,7 +227,7 @@ struct EpisodeDescriptionSheetView: View {
                                 PodcastValueRecipientsListView(values: displayValues)
                             }
                             if hasAlternateEnclosures {
-                                PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures)
+                                PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures, episode: episode)
                             }
                             if hasSoundbites {
                                 PodcastSoundbitesListView(soundbites: displaySoundbites, episodeId: episode.id)
@@ -372,7 +372,7 @@ struct EpisodeDescriptionSheetView: View {
                         PodcastValueRecipientsListView(values: displayValues)
                     }
                     if hasAlternateEnclosures {
-                        PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures)
+                        PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures, episode: episode)
                     }
                     if hasSoundbites {
                         PodcastSoundbitesListView(soundbites: displaySoundbites, episodeId: episode.id)
@@ -416,7 +416,7 @@ struct EpisodeDescriptionSheetView: View {
                         PodcastValueRecipientsListView(values: displayValues)
                     }
                     if hasAlternateEnclosures {
-                        PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures)
+                        PodcastAlternateEnclosuresListView(alternateEnclosures: displayAlternateEnclosures, episode: episode)
                     }
                     if hasSoundbites {
                         PodcastSoundbitesListView(soundbites: displaySoundbites, episodeId: episode.id)

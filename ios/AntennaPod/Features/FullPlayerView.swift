@@ -409,6 +409,9 @@ struct FullPlayerView: View {
                     soundbitesSection
                         .padding(.horizontal)
 
+                    alternateEnclosuresSection
+                        .padding(.horizontal)
+
                     descriptionButton
                         .padding(.horizontal)
 
@@ -520,6 +523,19 @@ struct FullPlayerView: View {
             PodcastSoundbitesListView(
                 soundbites: ep.displaySoundbites,
                 episodeId: ep.id
+            )
+            .padding(.top, 8)
+        }
+    }
+
+    /// Item podcast:alternateEnclosure — http(s) Play same episode via preferredMediaURL; ipfs/magnet Copy.
+    /// Prefer store-resolved episode so refresh-populated alternates appear without restarting playback.
+    @ViewBuilder
+    private var alternateEnclosuresSection: some View {
+        if let ep = resolvedEpisode ?? episode, !ep.displayAlternateEnclosures.isEmpty {
+            PodcastAlternateEnclosuresListView(
+                alternateEnclosures: ep.displayAlternateEnclosures,
+                episode: ep
             )
             .padding(.top, 8)
         }
