@@ -228,8 +228,8 @@ struct HistoryView: View {
     /// duration known; unplayed with duration contributes full duration; **played** (not current)
     /// → 0 (History is mostly played / in-progress — low totals are expected and correct; still
     /// useful for in-progress); **unknown duration skipped** (tilde when any skipped). Currently
-    /// playing uses live `PlaybackService` position/duration. Wall-clock only (no playback-speed
-    /// divide). Distinct from Clear history / Add all to queue / Mark all as unplayed / Play random eligibility (always full catalog). Respects history size
+    /// playing uses live `PlaybackService` position/duration. Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate).
+    /// Distinct from Clear history / Add all to queue / Mark all as played / Mark all as unplayed / Archive all / Play random / Copy / Share (always full stored catalog). Respects history size
     /// limit catalog as-is — never invents beyond the store-trimmed set.
     private var historyRemainingInfoLabel: String? {
         guard !filteredItems.isEmpty else { return nil }
@@ -244,6 +244,16 @@ struct HistoryView: View {
             parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
         }
         return parts.joined(separator: ". ")
+    }
+
+    /// VoiceOver hint for the History remaining bar. The visible label stays the
+    /// count and time. This says whether that time is wall-clock or divided by
+    /// podcast/default speed, and that the bar is the podcast+search+sort list.
+    private var historyRemainingAccessibilityHint: String {
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. The History bar is the visible list after the podcast filter, search, and sort. Sort changes order only. The stored catalog already follows History size, and this bar does not add episodes beyond that stored set. Played episodes that are not currently playing count as zero. It is not the full History catalog behind Clear history, Add all to queue, Mark all as played, Mark all as unplayed, Archive all, Play random, Copy history, or Share history, and not the Home History preview or the Home Continue preview. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+        }
+        return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The History bar is the visible list after the podcast filter, search, and sort. Sort changes order only. The stored catalog already follows History size, and this bar does not add episodes beyond that stored set. Played episodes that are not currently playing count as zero. It is not the full History catalog behind Clear history, Add all to queue, Mark all as played, Mark all as unplayed, Archive all, Play random, Copy history, or Share history, and not the Home History preview or the Home Continue preview. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
     }
 
     /// VoiceOver context for the catalog-empty state versus a podcast/search mismatch.
@@ -334,6 +344,7 @@ struct HistoryView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(historyRemainingAccessibilityLabel)
+                        .accessibilityHint(historyRemainingAccessibilityHint)
                 }
                 .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
             }
