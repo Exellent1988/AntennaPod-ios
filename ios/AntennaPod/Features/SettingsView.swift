@@ -1355,7 +1355,9 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Toggle("Remaining time respects speed", isOn: $settings.remainingTimeRespectsSpeed)
-                    .accessibilityHint(String(localized: "When on, list remaining-time bars use each podcast’s playback speed; mini/full −remaining and chapter remaining use the live session rate. Default off."))
+                    .accessibilityLabel(String(localized: "Remaining time respects speed"))
+                    .accessibilityValue(remainingTimeRespectsSpeedAccessibilityValue)
+                    .accessibilityHint(remainingTimeRespectsSpeedAccessibilityHint)
                 Text("When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining and chapter list current remaining use the live session rate (fallback feed/default, 0.5…3.0). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue stay wall-clock.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -1595,6 +1597,22 @@ struct SettingsView: View {
 
     private var skipOutroAccessibilityHint: String {
         String(localized: "Presets are Off, 5, 10, 15, 30, and 60 seconds. The default is Off. Off never finishes early. Any other value finishes once per play session when remaining time is within that window, duration is known, and playback is past 1 second, the same as a natural end. Continuous playback chooses what plays next. Changing the picker does not mark played now, seek, start playback, or download. Feed detail can override this for one podcast. Not Smart mark as played, Skip intro, Skip silence, or Rewind after pause.")
+    }
+
+    /// VoiceOver for Settings → Remaining time respects speed. Off is the default
+    /// and keeps wall-clock remaining. On divides list/Home bars by feed or
+    /// default speed (≥ 0.5), not the live session rate. Player −remaining
+    /// (only when Show remaining time is on) and current-chapter remaining use
+    /// the live session rate, clamped 0.5…3.0.
+    private var remainingTimeRespectsSpeedAccessibilityValue: String {
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "On. This is not the default. List and Home remaining-time bars divide each episode’s remaining by that podcast’s playback speed: the per-podcast speed if one is set, otherwise Default speed, and never below 0.5. It is an estimate, not a live ETA, and those bars do not use the current player session rate. Unknown durations stay marked with a tilde, and a played episode that is not the current one still counts as zero remaining. Mini and full player remaining time, only when Show remaining time is also on, and the current chapter’s remaining, use the live session rate, or the podcast or default speed if there is no live rate, clamped from 0.5 to 3.0. Chapter duration labels stay wall-clock. Sleep-timer end of chapter stays wall-clock. Volume boost is not speed. Widget and Watch Continue, Lock Screen, and Now Playing stay wall-clock. Turning this on does not start playback, seek, change the playback rate, or download, and it does not invent a duration.")
+        }
+        return String(localized: "Off. This is the default. List and Home remaining-time bars, mini and full player remaining time, and chapter remaining stay wall-clock. No speed-adjusted time is invented. Unknown durations stay marked with a tilde, and a played episode that is not the current one still counts as zero remaining. Widget and Watch Continue, Lock Screen, and Now Playing stay wall-clock either way. Turning this off does not start playback, seek, change the playback rate, or download.")
+    }
+
+    private var remainingTimeRespectsSpeedAccessibilityHint: String {
+        String(localized: "Off is the default and keeps remaining time as wall-clock. On divides list and Home remaining by each podcast’s speed, the per-podcast override or Default speed, at least 0.5, as an estimate and not the live session rate. Mini and full remaining, when Show remaining time is on, and the current chapter’s remaining use the live session rate, clamped from 0.5 to 3.0. Chapter durations, sleep-timer end of chapter, the widget, Watch, Lock Screen, and Now Playing stay wall-clock. Volume boost is not speed. The switch does not start playback, seek, change the playback rate, or download, and it does not invent a duration.")
     }
 
     /// VoiceOver for Settings → Volume boost. 100% is unity (no soft gain).

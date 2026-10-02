@@ -42564,6 +42564,57 @@
           }
         }
       }
+    },
+  "On. This is not the default. List and Home remaining-time bars divide each episode’s remaining by that podcast’s playback speed: the per-podcast speed if one is set, otherwise Default speed, and never below 0.5. It is an estimate, not a live ETA, and those bars do not use the current player session rate. Unknown durations stay marked with a tilde, and a played episode that is not the current one still counts as zero remaining. Mini and full player remaining time, only when Show remaining time is also on, and the current chapter’s remaining, use the live session rate, or the podcast or default speed if there is no live rate, clamped from 0.5 to 3.0. Chapter duration labels stay wall-clock. Sleep-timer end of chapter stays wall-clock. Volume boost is not speed. Widget and Watch Continue, Lock Screen, and Now Playing stay wall-clock. Turning this on does not start playback, seek, change the playback rate, or download, and it does not invent a duration.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On. This is not the default. List and Home remaining-time bars divide each episode’s remaining by that podcast’s playback speed: the per-podcast speed if one is set, otherwise Default speed, and never below 0.5. It is an estimate, not a live ETA, and those bars do not use the current player session rate. Unknown durations stay marked with a tilde, and a played episode that is not the current one still counts as zero remaining. Mini and full player remaining time, only when Show remaining time is also on, and the current chapter’s remaining, use the live session rate, or the podcast or default speed if there is no live rate, clamped from 0.5 to 3.0. Chapter duration labels stay wall-clock. Sleep-timer end of chapter stays wall-clock. Volume boost is not speed. Widget and Watch Continue, Lock Screen, and Now Playing stay wall-clock. Turning this on does not start playback, seek, change the playback rate, or download, and it does not invent a duration."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An. Das ist nicht der Standard. Listen- und Home-Restzeit-Leisten teilen die Restzeit jeder Episode durch die Wiedergabegeschwindigkeit dieses Podcasts: die Podcast-Geschwindigkeit, falls eine gesetzt ist, sonst die Standardgeschwindigkeit, und nie unter 0,5. Es ist eine Schätzung, keine Live-ETA, und diese Leisten nutzen nicht die aktuelle Sitzungsrate des Players. Unbekannte Dauern bleiben mit einer Tilde markiert, und eine gehörte Episode, die nicht die aktuelle ist, zählt weiter als null Restzeit. Die Restzeit im Mini- und Vollbild-Player, nur wenn Verbleibende Zeit anzeigen ebenfalls an ist, und die Restzeit des aktuellen Kapitels nutzen die Live-Sitzungsrate, oder die Podcast- oder Standardgeschwindigkeit, wenn keine Live-Rate da ist, begrenzt von 0,5 bis 3,0. Kapitel-Dauer-Beschriftungen bleiben Wanduhr. Das Schlaf-Timer-Ende des Kapitels bleibt Wanduhr. Lautstärke-Verstärkung ist kein Tempo. Widget und Watch Weiterhören, Sperrbildschirm und Now Playing bleiben Wanduhr. Einschalten startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergaberate und lädt nichts herunter und erfindet keine Dauer."
+          }
+        }
+      }
+    },
+  "Off. This is the default. List and Home remaining-time bars, mini and full player remaining time, and chapter remaining stay wall-clock. No speed-adjusted time is invented. Unknown durations stay marked with a tilde, and a played episode that is not the current one still counts as zero remaining. Widget and Watch Continue, Lock Screen, and Now Playing stay wall-clock either way. Turning this off does not start playback, seek, change the playback rate, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. This is the default. List and Home remaining-time bars, mini and full player remaining time, and chapter remaining stay wall-clock. No speed-adjusted time is invented. Unknown durations stay marked with a tilde, and a played episode that is not the current one still counts as zero remaining. Widget and Watch Continue, Lock Screen, and Now Playing stay wall-clock either way. Turning this off does not start playback, seek, change the playback rate, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. Das ist der Standard. Listen- und Home-Restzeit-Leisten, die Restzeit im Mini- und Vollbild-Player und die Kapitel-Restzeit bleiben Wanduhr. Es wird keine tempoangepasste Zeit erfunden. Unbekannte Dauern bleiben mit einer Tilde markiert, und eine gehörte Episode, die nicht die aktuelle ist, zählt weiter als null Restzeit. Widget und Watch Weiterhören, Sperrbildschirm und Now Playing bleiben so oder so Wanduhr. Ausschalten startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergaberate und lädt nichts herunter."
+          }
+        }
+      }
+    },
+  "Off is the default and keeps remaining time as wall-clock. On divides list and Home remaining by each podcast’s speed, the per-podcast override or Default speed, at least 0.5, as an estimate and not the live session rate. Mini and full remaining, when Show remaining time is on, and the current chapter’s remaining use the live session rate, clamped from 0.5 to 3.0. Chapter durations, sleep-timer end of chapter, the widget, Watch, Lock Screen, and Now Playing stay wall-clock. Volume boost is not speed. The switch does not start playback, seek, change the playback rate, or download, and it does not invent a duration.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off is the default and keeps remaining time as wall-clock. On divides list and Home remaining by each podcast’s speed, the per-podcast override or Default speed, at least 0.5, as an estimate and not the live session rate. Mini and full remaining, when Show remaining time is on, and the current chapter’s remaining use the live session rate, clamped from 0.5 to 3.0. Chapter durations, sleep-timer end of chapter, the widget, Watch, Lock Screen, and Now Playing stay wall-clock. Volume boost is not speed. The switch does not start playback, seek, change the playback rate, or download, and it does not invent a duration."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus ist der Standard und lässt die Restzeit als Wanduhr. An teilt Listen- und Home-Restzeit durch die Geschwindigkeit jedes Podcasts, den Podcast-Override oder die Standardgeschwindigkeit, mindestens 0,5, als Schätzung und nicht als Live-Sitzungsrate. Mini- und Vollbild-Restzeit, wenn Verbleibende Zeit anzeigen an ist, und die Restzeit des aktuellen Kapitels nutzen die Live-Sitzungsrate, begrenzt von 0,5 bis 3,0. Kapitel-Dauern, das Schlaf-Timer-Kapitelende, das Widget, die Watch, der Sperrbildschirm und Now Playing bleiben Wanduhr. Lautstärke-Verstärkung ist kein Tempo. Der Schalter startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergaberate und lädt nichts herunter und erfindet keine Dauer."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
