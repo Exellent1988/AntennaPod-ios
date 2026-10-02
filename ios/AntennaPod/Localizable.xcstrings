@@ -25365,6 +25365,93 @@
         }
       }
     },
+    "Copy chapter link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy chapter link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel-Link kopieren"
+          }
+        }
+      },
+      "comment": "Secondary control on a chapter row when PSC/Podcast Index provides an http(s) href/url."
+    },
+    "Copies this chapter’s link to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies this chapter’s link to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den Link dieses Kapitels in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Share chapter link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share chapter link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel-Link teilen"
+          }
+        }
+      },
+      "comment": "Secondary control on a chapter row when PSC/Podcast Index provides an http(s) href/url."
+    },
+    "Shares this chapter’s link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares this chapter’s link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den Link dieses Kapitels"
+          }
+        }
+      }
+    },
+    "Chapter link copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter link copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel-Link in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
     "Open link": {
       "extractionState": "manual",
       "localizations": {

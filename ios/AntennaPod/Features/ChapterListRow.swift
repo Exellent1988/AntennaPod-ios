@@ -1,15 +1,16 @@
 import SwiftUI
+import UIKit
 
 /// Shared chapter list row for Full player + `EpisodeChaptersSheet` (mini).
 /// Optional http(s) chapter `img` thumbnail beside the title; hidden when missing / failed — never episode art.
-/// Optional http(s) chapter `href`/`url` **Open link** as a secondary control — primary tap remains seek.
+/// Optional http(s) chapter `href`/`url` **Copy / Share / Open link** controls — primary tap remains seek.
 struct ChapterListRow: View {
     @Environment(\.openURL) private var openURL
 
     let startTimeText: String
     let title: String
     let imageURL: URL?
-    /// Feed/JSON chapter link when http(s); nil hides Open link — never invent.
+    /// Feed/JSON chapter link when http(s); nil hides Copy / Share / Open — never invent.
     let linkURL: URL?
     let trailingTimeLabel: String?
     let isCurrent: Bool
@@ -18,6 +19,8 @@ struct ChapterListRow: View {
     let onSeek: () -> Void
 
     @State private var imageLoaded = false
+    @State private var showCopiedAlert = false
+    @State private var copyFeedbackTick = 0
 
     private var accessibilityLabelText: String {
         if imageURL != nil, imageLoaded {
@@ -66,6 +69,29 @@ struct ChapterListRow: View {
 
             if let linkURL {
                 Button {
+                    UIPasteboard.general.string = linkURL.absoluteString
+                    copyFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Image(systemName: "doc.on.doc")
+                        .font(.body)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel(String(localized: "Copy chapter link"))
+                .accessibilityHint(String(localized: "Copies this chapter’s link to the pasteboard"))
+
+                ShareLink(item: linkURL) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.body)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .accessibilityLabel(String(localized: "Share chapter link"))
+                .accessibilityHint(String(localized: "Shares this chapter’s link"))
+
+                Button {
                     openURL(linkURL)
                 } label: {
                     Image(systemName: "safari")
@@ -79,5 +105,11 @@ struct ChapterListRow: View {
                 .padding(.trailing, 4)
             }
         }
+        .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Chapter link copied to the pasteboard."))
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
     }
 }
