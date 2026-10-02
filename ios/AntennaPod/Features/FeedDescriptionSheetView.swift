@@ -490,6 +490,10 @@ struct FeedDescriptionSheetView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityAddTraits(.isHeader)
 
+                    if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(resolvedTitle) {
+                        podcastTitleActions(podcastTitle)
+                    }
+
                     if let author = displayAuthor {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(author)
@@ -607,6 +611,10 @@ struct FeedDescriptionSheetView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityAddTraits(.isHeader)
 
+                    if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(resolvedTitle) {
+                        podcastTitleActions(podcastTitle)
+                    }
+
                     if let author = displayAuthor {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(author)
@@ -717,6 +725,33 @@ struct FeedDescriptionSheetView: View {
     }
 
     @ViewBuilder
+    private func podcastTitleActions(_ title: String) -> some View {
+        HStack(spacing: 12) {
+            Button {
+                copyPodcastTitle(title)
+            } label: {
+                Label("Copy podcast title", systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Copy podcast title"))
+            .accessibilityHint(String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"))
+
+            ShareLink(item: title, subject: Text(title)) {
+                Label("Share podcast title", systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Share podcast title"))
+            .accessibilityHint(String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"))
+        }
+    }
+
+    private func copyPodcastTitle(_ title: String) {
+        guard let trimmed = EpisodeCopyLinks.trimmedFeedTitle(title) else { return }
+        copiedAlertMessage = EpisodeCopyLinks.copyPodcastTitle(trimmed)
+        copyFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
     private func authorActions(_ author: String) -> some View {
         HStack(spacing: 12) {
             Button {

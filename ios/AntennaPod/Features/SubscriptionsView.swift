@@ -1074,10 +1074,16 @@ struct SubscriptionsView: View {
         }
         .modifier(SubscriptionRowContextMenu(
             feedId: feed.id,
+            podcastTitle: EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle(feed)),
             websiteURL: feed.websiteURL,
             isPinned: store.isPinned(feedId: feed.id),
             openURL: openURL,
-            onTogglePin: { store.togglePinned(feedId: feed.id) }
+            onTogglePin: { store.togglePinned(feedId: feed.id) },
+            onCopyPodcastTitle: { title in
+                copiedAlertMessage = EpisodeCopyLinks.copyPodcastTitle(title)
+                copyFeedbackTick += 1
+                showCopiedAlert = true
+            }
         ))
     }
 
@@ -1171,10 +1177,12 @@ struct SubscriptionsView: View {
 /// Subscriptions row context menu: Keep at top toggle + optional Open podcast website.
 private struct SubscriptionRowContextMenu: ViewModifier {
     let feedId: UUID
+    let podcastTitle: String?
     let websiteURL: URL?
     let isPinned: Bool
     let openURL: OpenURLAction
     let onTogglePin: () -> Void
+    let onCopyPodcastTitle: (String) -> Void
 
     func body(content: Content) -> some View {
         content.contextMenu {
@@ -1193,6 +1201,22 @@ private struct SubscriptionRowContextMenu: ViewModifier {
                     : String(localized: "Keep at top")
             )
             .accessibilityHint(String(localized: "Pins or unpins this podcast at the top of the Subscriptions list"))
+
+            if let podcastTitle {
+                Button {
+                    onCopyPodcastTitle(podcastTitle)
+                } label: {
+                    Label("Copy podcast title", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy podcast title"))
+                .accessibilityHint(String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"))
+
+                ShareLink(item: podcastTitle, subject: Text(podcastTitle)) {
+                    Label("Share podcast title", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share podcast title"))
+                .accessibilityHint(String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"))
+            }
 
             if let url = websiteURL {
                 Button {

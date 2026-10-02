@@ -32527,6 +32527,115 @@
           }
         }
       }
+    },
+
+    "Copy podcast title": {
+      "extractionState": "manual",
+      "comment": "Copy the trimmed podcast display title as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy podcast title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcasttitel kopieren"
+          }
+        }
+      }
+    },
+    "Share podcast title": {
+      "extractionState": "manual",
+      "comment": "Share the trimmed podcast display title as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share podcast title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcasttitel teilen"
+          }
+        }
+      }
+    },
+    "Podcast title": {
+      "extractionState": "manual",
+      "comment": "Accessibility label for a displayed podcast title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcasttitel"
+          }
+        }
+      }
+    },
+    "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the podcast display title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den gekürzten Podcast-Anzeigetitel in die Zwischenablage; bei leerem Titel ausgeblendet; kein Titel erfunden"
+          }
+        }
+      }
+    },
+    "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the podcast display title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den gekürzten Podcast-Anzeigetitel als Klartext; bei leerem Titel ausgeblendet; kein Titel erfunden"
+          }
+        }
+      }
+    },
+    "Podcast title copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the podcast display title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast title copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcasttitel in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

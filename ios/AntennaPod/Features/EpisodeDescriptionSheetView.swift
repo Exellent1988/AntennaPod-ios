@@ -175,6 +175,7 @@ struct EpisodeDescriptionSheetView: View {
             || formattedKnownDuration != nil
             || formattedKnownByteSize != nil
             || EpisodeCopyLinks.trimmedTitle(for: episode) != nil
+            || EpisodeCopyLinks.trimmedFeedTitle(resolvedFeedTitle) != nil
     }
 
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
@@ -212,7 +213,8 @@ struct EpisodeDescriptionSheetView: View {
         if let feedTitle, !feedTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return feedTitle
         }
-        return resolvedFeed?.title ?? ""
+        guard let resolvedFeed else { return "" }
+        return store.displayTitle(for: resolvedFeed)
     }
 
     private var shareURL: URL? {
@@ -633,6 +635,22 @@ struct EpisodeDescriptionSheetView: View {
                         copyHint: String(localized: "Copies the same file-size caption shown above to the pasteboard; on-disk or feed enclosure metadata only; no size invented"),
                         shareHint: String(localized: "Shares the same file-size caption shown above as plain text; on-disk or feed enclosure metadata only; no size invented"),
                         copiedMessage: String(localized: "Episode file size copied to the pasteboard.")
+                    )
+                }
+                if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(resolvedFeedTitle) {
+                    Text(podcastTitle)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityLabel(String(localized: "Podcast title"))
+                        .accessibilityValue(podcastTitle)
+                    episodeMetadataActions(
+                        text: podcastTitle,
+                        copyLabel: String(localized: "Copy podcast title"),
+                        shareLabel: String(localized: "Share podcast title"),
+                        copyHint: String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"),
+                        shareHint: String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"),
+                        copiedMessage: String(localized: "Podcast title copied to the pasteboard.")
                     )
                 }
                 if let title = EpisodeCopyLinks.trimmedTitle(for: episode) {

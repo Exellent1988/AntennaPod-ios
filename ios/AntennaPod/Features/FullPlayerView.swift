@@ -388,23 +388,29 @@ struct FullPlayerView: View {
                             .font(.title2.weight(.semibold))
                             .multilineTextAlignment(.center)
                             .lineLimit(3)
-                        Button {
-                            openPodcastFromPlayer()
-                        } label: {
-                            Text(feedDisplayTitle ?? String(localized: "Podcast"))
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(2)
+                        if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle) {
+                            Button {
+                                openPodcastFromPlayer()
+                            } label: {
+                                Text(podcastTitle)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(2)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel(String(localized: "Open podcast"))
+                            .accessibilityValue(podcastTitle)
+                            .accessibilityHint(String(localized: "Opens this episode's podcast in Subscriptions"))
+
+                            episodeMetadataActions(
+                                text: podcastTitle,
+                                copyLabel: String(localized: "Copy podcast title"),
+                                shareLabel: String(localized: "Share podcast title"),
+                                copyHint: String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"),
+                                shareHint: String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"),
+                                copiedMessage: String(localized: "Podcast title copied to the pasteboard.")
+                            )
                         }
-                        .buttonStyle(.plain)
-                        .disabled(feed == nil)
-                        .accessibilityLabel(String(localized: "Open podcast"))
-                        .accessibilityValue(feedDisplayTitle ?? String(localized: "Podcast unavailable"))
-                        .accessibilityHint(
-                            feed == nil
-                                ? String(localized: "Podcast unavailable")
-                                : String(localized: "Opens this episode's podcast in Subscriptions")
-                        )
                         // Item season/episode and itunes:episodeType metadata; hide when missing, never invent.
                         if let seasonEpisodeCaption = episode.seasonEpisodeCaption {
                             Text(seasonEpisodeCaption)

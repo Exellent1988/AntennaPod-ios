@@ -21,6 +21,7 @@ struct FeedDetailView: View {
     @State private var showFundingURLCopied = false
     @State private var showPodcastWebsiteURLCopied = false
     @State private var showPodcastGuidCopied = false
+    @State private var showPodcastTitleCopied = false
     @State private var showDiscussURLCopied = false
     @State private var showTrailerURLCopied = false
     @State private var showLockedOwnerCopied = false
@@ -41,6 +42,7 @@ struct FeedDetailView: View {
     @State private var copyFundingURLFeedbackTick = 0
     @State private var copyPodcastWebsiteURLFeedbackTick = 0
     @State private var copyPodcastGuidFeedbackTick = 0
+    @State private var copyPodcastTitleFeedbackTick = 0
     @State private var copyDiscussURLFeedbackTick = 0
     @State private var copyTrailerURLFeedbackTick = 0
     @State private var copyLockedOwnerFeedbackTick = 0
@@ -1296,6 +1298,22 @@ struct FeedDetailView: View {
                             )
                         }
 
+                        if let title = EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle) {
+                            Button {
+                                copyPodcastTitle(title)
+                            } label: {
+                                Label("Copy podcast title", systemImage: "doc.on.doc")
+                            }
+                            .accessibilityLabel(String(localized: "Copy podcast title"))
+                            .accessibilityHint(String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"))
+
+                            ShareLink(item: title, subject: Text(title)) {
+                                Label("Share podcast title", systemImage: "square.and.arrow.up")
+                            }
+                            .accessibilityLabel(String(localized: "Share podcast title"))
+                            .accessibilityHint(String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"))
+                        }
+
                         Button {
                             copyFeedURL()
                         } label: {
@@ -1627,6 +1645,14 @@ struct FeedDetailView: View {
         }
         .alert(
             String(localized: "Copied"),
+            isPresented: $showPodcastTitleCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Podcast title copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
             isPresented: $showDiscussURLCopied
         ) {
             Button("OK", role: .cancel) {}
@@ -1733,6 +1759,7 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastGuidFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyPodcastTitleFeedbackTick)
         .sensoryFeedback(.success, trigger: copyDiscussURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLockedOwnerFeedbackTick)
@@ -2083,6 +2110,13 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = guid
         copyPodcastGuidFeedbackTick += 1
         showPodcastGuidCopied = true
+    }
+
+    private func copyPodcastTitle(_ title: String) {
+        guard let trimmed = EpisodeCopyLinks.trimmedFeedTitle(title) else { return }
+        UIPasteboard.general.string = trimmed
+        copyPodcastTitleFeedbackTick += 1
+        showPodcastTitleCopied = true
     }
 
     /// Channel podcast:trailer row — title (+ optional season); Play via PlaybackService when enclosure-like, else openURL.
@@ -2664,6 +2698,23 @@ struct EpisodeRow: View {
                 }
                 .accessibilityLabel(String(localized: "Share episode file size"))
                 .accessibilityHint(String(localized: "Shares the same file-size caption shown in this episode row as plain text; on-disk or feed enclosure metadata only; no size invented"))
+            }
+            if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(feedTitle) {
+                Button {
+                    copiedAlertMessage = EpisodeCopyLinks.copyPodcastTitle(podcastTitle)
+                    copyURLFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Label("Copy podcast title", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy podcast title"))
+                .accessibilityHint(String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"))
+
+                ShareLink(item: podcastTitle, subject: Text(podcastTitle)) {
+                    Label("Share podcast title", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share podcast title"))
+                .accessibilityHint(String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"))
             }
             if let title = EpisodeCopyLinks.trimmedTitle(for: episode) {
                 Button {

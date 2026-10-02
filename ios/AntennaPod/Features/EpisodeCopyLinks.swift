@@ -76,6 +76,19 @@ enum EpisodeCopyLinks {
         return title.isEmpty ? nil : title
     }
 
+    /// Feed display title trimmed for plain-text copy/share; hide when empty.
+    static func trimmedFeedTitle(_ title: String?) -> String? {
+        guard let title else { return nil }
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Copies the trimmed podcast display title; returns the localized Copied alert body.
+    static func copyPodcastTitle(_ title: String) -> String {
+        UIPasteboard.general.string = title
+        return String(localized: "Podcast title copied to the pasteboard.")
+    }
+
     /// Copies the trimmed episode title; returns the localized Copied alert body.
     static func copyEpisodeTitle(_ title: String) -> String {
         UIPasteboard.general.string = title
