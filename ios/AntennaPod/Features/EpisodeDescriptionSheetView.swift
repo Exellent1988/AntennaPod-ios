@@ -34,6 +34,21 @@ struct EpisodeDescriptionSheetView: View {
         !plainDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    /// Full plain shownotes body with an episode-title header for system sharing.
+    /// This intentionally ignores the searchable, visible subset.
+    private var shownotesShareText: String {
+        let body = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !body.isEmpty else { return "" }
+        let title = episode.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let header = title.isEmpty ? String(localized: "Shownotes") : title
+        return "\(header)\n\n\(body)"
+    }
+
+    private var shownotesShareSubject: String {
+        let title = episode.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return title.isEmpty ? String(localized: "Shownotes") : title
+    }
+
     /// Item podcast:person when the feed provided them — empty → hide (never invent).
     private var displayPeople: [PodcastPerson] {
         episode.displayPeople
@@ -270,6 +285,18 @@ struct EpisodeDescriptionSheetView: View {
                     .disabled(!hasPlainShownotes)
                     .accessibilityLabel(String(localized: "Copy shownotes"))
                     .accessibilityHint(String(localized: "Copies the episode shownotes to the pasteboard"))
+
+                    ShareLink(
+                        item: shownotesShareText,
+                        subject: Text(shownotesShareSubject)
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .disabled(!hasPlainShownotes)
+                    .accessibilityLabel(String(localized: "Share shownotes"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the full shownotes as plain text, with HTML stripped; ignores search filters")
+                    )
 
                     if let url = websiteURL {
                         Button {
