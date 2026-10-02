@@ -180,6 +180,11 @@ struct AllEpisodesView: View {
                                 )
                             }
                             .tint(.blue)
+                            .accessibilityHint(
+                                store.isPlayed(item.episode.id)
+                                    ? String(localized: "Marks this episode as unplayed")
+                                    : String(localized: "Marks this episode as played")
+                            )
                         }
                 }
             }

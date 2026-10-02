@@ -245,6 +245,7 @@ struct InboxView: View {
                                     Label("Mark played", systemImage: "checkmark.circle")
                                 }
                                 .tint(.blue)
+                                .accessibilityHint(String(localized: "Marks this episode as played"))
                             }
                     }
                 }

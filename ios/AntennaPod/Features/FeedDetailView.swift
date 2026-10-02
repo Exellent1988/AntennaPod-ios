@@ -637,6 +637,11 @@ struct FeedDetailView: View {
                                     )
                                 }
                                 .tint(.blue)
+                                .accessibilityHint(
+                                    store.isPlayed(episode.id)
+                                        ? String(localized: "Marks this episode as unplayed")
+                                        : String(localized: "Marks this episode as played")
+                                )
                                 Button {
                                     store.toggleArchived(episode.id)
                                 } label: {

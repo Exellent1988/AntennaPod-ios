@@ -283,6 +283,22 @@ struct QueueView: View {
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
                             Button {
+                                store.togglePlayed(episode.id)
+                            } label: {
+                                Label(
+                                    store.isPlayed(episode.id)
+                                        ? String(localized: "Mark unplayed")
+                                        : String(localized: "Mark played"),
+                                    systemImage: store.isPlayed(episode.id) ? "circle" : "checkmark.circle"
+                                )
+                            }
+                            .tint(.blue)
+                            .accessibilityHint(
+                                store.isPlayed(episode.id)
+                                    ? String(localized: "Marks this episode as unplayed")
+                                    : String(localized: "Marks this episode as played")
+                            )
+                            Button {
                                 store.archive(episode.id)
                             } label: {
                                 Label("Archive", systemImage: "archivebox")

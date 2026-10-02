@@ -312,6 +312,24 @@ struct DownloadsView: View {
                                 .buttonStyle(.bordered)
                                 .accessibilityLabel(String(localized: "Play"))
                             }
+                            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                                Button {
+                                    store.togglePlayed(item.episode.id)
+                                } label: {
+                                    Label(
+                                        store.isPlayed(item.episode.id)
+                                            ? String(localized: "Mark unplayed")
+                                            : String(localized: "Mark played"),
+                                        systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
+                                    )
+                                }
+                                .tint(.blue)
+                                .accessibilityHint(
+                                    store.isPlayed(item.episode.id)
+                                        ? String(localized: "Marks this episode as unplayed")
+                                        : String(localized: "Marks this episode as played")
+                                )
+                            }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button {
                                     store.playNext(

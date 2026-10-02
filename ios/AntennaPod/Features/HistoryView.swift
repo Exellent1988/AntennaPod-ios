@@ -230,15 +230,23 @@ struct HistoryView: View {
                             Label("Remove", systemImage: "trash")
                         }
                     }
-                    .swipeActions(edge: .leading) {
-                        if store.isPlayed(item.episode.id) {
-                            Button {
-                                store.markUnplayed(item.episode.id)
-                            } label: {
-                                Label("Mark unplayed", systemImage: "circle")
-                            }
-                            .tint(.orange)
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button {
+                            store.togglePlayed(item.episode.id)
+                        } label: {
+                            Label(
+                                store.isPlayed(item.episode.id)
+                                    ? String(localized: "Mark unplayed")
+                                    : String(localized: "Mark played"),
+                                systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
+                            )
                         }
+                        .tint(.blue)
+                        .accessibilityHint(
+                            store.isPlayed(item.episode.id)
+                                ? String(localized: "Marks this episode as unplayed")
+                                : String(localized: "Marks this episode as played")
+                        )
                     }
                 }
                 if let limit = settings.historySizeLimit.entryLimit {
