@@ -35728,6 +35728,96 @@
     },
     "comment": "VoiceOver hint for Share value recipient name; honesty: no payments."
   },
+  "Copy value type/method": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy value type/method"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Typ/Methode kopieren"
+        }
+      }
+    },
+    "comment": "Distinct Copy action for the exact displayed podcast:value type/method caption (not name, details, or address)."
+  },
+  "Share value type/method": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share value type/method"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Typ/Methode teilen"
+        }
+      }
+    },
+    "comment": "Distinct Share action for the exact displayed podcast:value type/method caption (not name, details, or address)."
+  },
+  "Value type/method copied to the pasteboard.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Value type/method copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Typ/Methode in die Zwischenablage kopiert."
+        }
+      }
+    },
+    "comment": "Alert message after copying the exact displayed podcast:value type/method caption."
+  },
+  "Copies the exact displayed value type/method caption as plain text; this app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed value type/method caption as plain text; this app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt angezeigte Wert-Typ/Methode-Beschriftung als Klartext; diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Copy value type/method; honesty: no payments."
+  },
+  "Shares the exact displayed value type/method caption as plain text; this app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact displayed value type/method caption as plain text; this app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die exakt angezeigte Wert-Typ/Methode-Beschriftung als Klartext; diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Share value type/method; honesty: no payments."
+  },
   "Copy text purpose": {
     "extractionState": "manual",
     "comment": "Copy action for the exact feed-provided podcast:txt purpose; hidden when purpose is missing.",

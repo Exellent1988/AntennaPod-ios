@@ -3,7 +3,9 @@ import UIKit
 
 /// Feed-provided `podcast:value` / `valueRecipient` list — **Value / Support creators** metadata only.
 /// Shows name, type/method, split % when known. When a feed name is shown, distinct Copy / Share value recipient name
-/// uses that exact text (separate from details + address). http(s) address → Share / Open in browser; otherwise Copy / Share address.
+/// uses that exact text (separate from details + address). When type/method caption is shown, distinct Copy / Share
+/// value type/method uses that exact caption (separate from name, details, address). http(s) address → Share / Open
+/// in browser; otherwise Copy / Share address.
 /// **Does not send Lightning / wallet payments** — informational display only. Cap + honesty footnote.
 struct PodcastValueRecipientsListView: View {
     @Environment(\.openURL) private var openURL
@@ -69,10 +71,12 @@ struct PodcastValueRecipientsListView: View {
             return String(localized: "Split shares \(row.split)")
         }()
         let feeLabel = String(localized: "Fee")
+        let typeMethodCaption = row.typeMethodCaption
+        let hasTypeMethodCaption = !typeMethodCaption.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let detailsText: String = {
             var parts: [String] = []
             if let name { parts.append(name) }
-            parts.append(row.typeMethodCaption)
+            if hasTypeMethodCaption { parts.append(typeMethodCaption) }
             parts.append(splitLabel)
             if row.isFee { parts.append(feeLabel) }
             return parts.joined(separator: " · ")
@@ -101,10 +105,12 @@ struct PodcastValueRecipientsListView: View {
                         .font(.subheadline)
                         .foregroundStyle(.primary)
                 }
-                Text(row.typeMethodCaption)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
+                if hasTypeMethodCaption {
+                    Text(typeMethodCaption)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
                 Text(splitLabel)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.secondary)
@@ -143,6 +149,37 @@ struct PodcastValueRecipientsListView: View {
                     .accessibilityHint(
                         String(
                             localized: "Shares the exact displayed value recipient name as plain text; this app does not send payments."
+                        )
+                    )
+                }
+            }
+
+            if hasTypeMethodCaption {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            typeMethodCaption,
+                            confirmation: String(localized: "Value type/method copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy value type/method", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy value type/method"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Copies the exact displayed value type/method caption as plain text; this app does not send payments."
+                        )
+                    )
+
+                    ShareLink(item: typeMethodCaption) {
+                        Label("Share value type/method", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share value type/method"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the exact displayed value type/method caption as plain text; this app does not send payments."
                         )
                     )
                 }
