@@ -100,16 +100,26 @@ extension PodcastEpisode {
         return url
     }
 
-    /// Enclosure / media download URL (`http` / `https` only).
-    /// Distinct from `websiteURL` (episode page). Never invents a URL; `file://` /
-    /// `local-folder://` omitted. Used only for a clearly labeled “Copy media URL”.
-    var mediaURL: URL? {
+    /// Trimmed feed-provided enclosure / media URL when it has an `http(s)` scheme.
+    /// Keeps the raw string for sharing/copying when Foundation cannot make a URL value.
+    /// Never invents a URL; local `file://` / `local-folder://` values are omitted.
+    var mediaURLString: String? {
         guard let downloadUrl else { return nil }
         let trimmed = downloadUrl.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
-        let scheme = url.scheme?.lowercased()
-        guard scheme == "http" || scheme == "https" else { return nil }
-        return url
+        guard !trimmed.isEmpty else { return nil }
+        guard let components = URLComponents(string: trimmed),
+              let scheme = components.scheme?.lowercased(),
+              (scheme == "http" || scheme == "https"),
+              components.host != nil else { return nil }
+        return trimmed
+    }
+
+    /// Enclosure / media download URL (`http` / `https` only), when parseable.
+    /// Distinct from `websiteURL` (episode page). Never invents a URL; `file://` /
+    /// `local-folder://` omitted. Used to prefer URL-typed sharing over raw text.
+    var mediaURL: URL? {
+        guard let raw = mediaURLString else { return nil }
+        return URL(string: raw)
     }
 }
 

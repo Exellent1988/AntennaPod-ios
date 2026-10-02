@@ -1914,14 +1914,16 @@ struct EpisodeRow: View {
                 .accessibilityLabel(String(localized: "Copy episode link"))
                 .accessibilityHint(String(localized: "Copies the episode webpage URL to the pasteboard"))
             }
-            if let url = episode.mediaURL {
+            if let rawMediaURL = episode.mediaURLString {
                 Button {
-                    copyMediaURL(url)
+                    copyMediaURL(rawMediaURL)
                 } label: {
                     Label("Copy media URL", systemImage: "link")
                 }
                 .accessibilityLabel(String(localized: "Copy media URL"))
                 .accessibilityHint(String(localized: "Copies the episode media / enclosure URL to the pasteboard"))
+
+                EpisodeShareLinks.mediaURLLabelStyle(episode: episode)
             }
             if let url = episodeShareURL {
                 ShareLink(
@@ -2033,8 +2035,8 @@ struct EpisodeRow: View {
         showCopiedAlert = true
     }
 
-    private func copyMediaURL(_ url: URL) {
-        copiedAlertMessage = EpisodeCopyLinks.copyMediaURL(url)
+    private func copyMediaURL(_ rawURL: String) {
+        copiedAlertMessage = EpisodeCopyLinks.copyMediaURL(rawURL)
         copyURLFeedbackTick += 1
         showCopiedAlert = true
     }

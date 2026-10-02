@@ -16,6 +16,9 @@ Download errors (iOS): The error screen exports the full persisted ring buffer i
 Podcast chapters URL (iOS): Open / Copy / Share acts on the feed-provided remote URL; ShareLink uses an openable http(s) URL when available and otherwise the raw string. This is not the in-app chapter TOC export.
 Podcast chapters URL (iOS): Open / Copy / Share nutzt nur die entfernte, vom Feed gelieferte URL; ShareLink verwendet eine öffnende http(s)-URL, sonst den Rohstring. Das ist nicht der In-App-Kapitel-TOC-Export.
 
+Episode media URL (iOS): Episode detail/shownotes, Feed episode overflow, Full Player, and Mini Player pair Copy media URL with a distinct Share media URL. Only feed-provided http(s) enclosures are shown; ShareLink prefers a URL value and falls back to the raw string when parsing fails. The share subject/message identifies the episode and Media URL.
+Episoden-Medien-URL (iOS): Episodendetails/Shownotes, Episoden-Overflow im Feed, Vollplayer und Mini-Player stellen „Medien-URL kopieren“ und „Medien-URL teilen“ gemeinsam bereit. Nur vom Feed gelieferte http(s)-Enclosures werden angezeigt; ShareLink bevorzugt einen URL-Wert und nutzt bei Parsing-Fehlern den Rohstring. Betreff/Text nennen Episode und Medien-URL.
+
 Verwandte Ordner: `shared/kmp/`, `shared/specs/`, `ios/`.
 
 Downloads Archive all (iOS): The Downloads toolbar menu archives only non-archived completed downloads from the full catalog, ignoring chip/podcast/search/sort filters. It writes the `archivedAtById` side map in one batch; archived ≠ played and no files, queue entries, playback state, or auto-delete-after-playing behavior are changed.

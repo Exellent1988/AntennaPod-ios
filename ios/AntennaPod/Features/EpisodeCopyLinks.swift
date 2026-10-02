@@ -3,8 +3,8 @@ import UIKit
 
 /// Label-style **Copy episode link** + **Copy media URL** for an episode.
 ///
-/// Reuses `PodcastEpisode.websiteURL` / `mediaURL` (http(s) only; never invents;
-/// `file://` / `local-folder` omitted). Emits nothing when neither URL is usable.
+/// Reuses `PodcastEpisode.websiteURL` / `mediaURLString` (feed-provided http(s) only;
+/// never invents; `file://` / `local-folder` omitted). Emits nothing when neither URL is usable.
 /// Pasteboard helpers shared with Full player / Shownotes / EpisodeRow callers.
 /// Used by Full player secondary (via helpers) + mini player ⋯ (via `labelStyle`).
 enum EpisodeCopyLinks {
@@ -14,10 +14,15 @@ enum EpisodeCopyLinks {
         return String(localized: "Episode link copied to the pasteboard.")
     }
 
-    /// Copies the enclosure / media URL string; returns the localized Copied alert body.
-    static func copyMediaURL(_ url: URL) -> String {
-        UIPasteboard.general.string = url.absoluteString
+    /// Copies the feed-provided enclosure / media URL string; returns the localized alert body.
+    static func copyMediaURL(_ string: String) -> String {
+        UIPasteboard.general.string = string
         return String(localized: "Media URL copied to the pasteboard.")
+    }
+
+    /// URL overload for callers that already parsed the media URL.
+    static func copyMediaURL(_ url: URL) -> String {
+        copyMediaURL(url.absoluteString)
     }
 
     /// Sibling `Button`s for `Menu` / `HStack` (same `@ViewBuilder` pattern as
@@ -37,9 +42,9 @@ enum EpisodeCopyLinks {
             .accessibilityHint(String(localized: "Copies the episode webpage URL to the pasteboard"))
         }
 
-        if let url = episode.mediaURL {
+        if let raw = episode.mediaURLString {
             Button {
-                onCopied(copyMediaURL(url))
+                onCopied(copyMediaURL(raw))
             } label: {
                 Label("Copy media URL", systemImage: "link")
             }

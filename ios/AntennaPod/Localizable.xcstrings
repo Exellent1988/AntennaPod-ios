@@ -7845,6 +7845,40 @@
         }
       }
     },
+    "Share media URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share media URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medien-URL teilen"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the episode title and media / enclosure URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title and media / enclosure URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit Episodentitel und Medien-/Enclosure-URL"
+          }
+        }
+      }
+    },
     "Share episode": {
       "extractionState": "manual",
       "localizations": {
@@ -8691,6 +8725,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Episoden-Link in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Media URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Media URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medien-URL"
           }
         }
       }

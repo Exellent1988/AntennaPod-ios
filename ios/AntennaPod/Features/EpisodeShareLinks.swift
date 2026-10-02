@@ -23,6 +23,7 @@ enum EpisodeShareLinks {
             if !trimmed.isEmpty { return trimmed }
             return feed?.title
         }()
+        mediaURLLabelStyle(episode: episode)
         if let url = episode.shareURL(feed: feed) {
             ShareLink(
                 item: url,
@@ -53,5 +54,42 @@ enum EpisodeShareLinks {
                 )
             }
         }
+    }
+
+    /// Shares the same feed-provided media/enclosure URL exposed by Copy media URL.
+    /// URL values are preferred; an http(s) raw string is retained as a fallback.
+    @ViewBuilder
+    static func mediaURLLabelStyle(episode: PodcastEpisode) -> some View {
+        if let rawMediaURL = episode.mediaURLString {
+            if let mediaURL = episode.mediaURL {
+                mediaURLShareLink(item: mediaURL, episode: episode)
+            } else {
+                mediaURLShareLink(item: rawMediaURL, episode: episode)
+            }
+        }
+    }
+
+    private static func mediaURLShareMessage(for episode: PodcastEpisode) -> String {
+        let title = episode.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let mediaLabel = String(localized: "Media URL")
+        return title.isEmpty ? mediaLabel : "\(title) — \(mediaLabel)"
+    }
+
+    private static func mediaURLShareLink<Item: Transferable>(
+        item: Item,
+        episode: PodcastEpisode
+    ) -> some View {
+        let message = mediaURLShareMessage(for: episode)
+        return ShareLink(
+            item: item,
+            subject: Text(message),
+            message: Text(message)
+        ) {
+            Label("Share media URL", systemImage: "square.and.arrow.up")
+        }
+        .accessibilityLabel(String(localized: "Share media URL"))
+        .accessibilityHint(
+            String(localized: "Opens the system share sheet with the episode title and media / enclosure URL")
+        )
     }
 }

@@ -1172,8 +1172,8 @@ struct FullPlayerView: View {
         showCopiedAlert = true
     }
 
-    private func copyMediaURL(_ url: URL) {
-        copiedAlertMessage = EpisodeCopyLinks.copyMediaURL(url)
+    private func copyMediaURL(_ rawURL: String) {
+        copiedAlertMessage = EpisodeCopyLinks.copyMediaURL(rawURL)
         copyURLFeedbackTick += 1
         showCopiedAlert = true
     }
@@ -1318,9 +1318,9 @@ struct FullPlayerView: View {
                 .accessibilityHint(String(localized: "Opens the discussion link from the feed in the system browser"))
             }
 
-            if let url = episode.mediaURL {
+            if let rawMediaURL = episode.mediaURLString {
                 Button {
-                    copyMediaURL(url)
+                    copyMediaURL(rawMediaURL)
                 } label: {
                     Label("Copy media URL", systemImage: "link")
                 }
