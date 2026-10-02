@@ -23,8 +23,8 @@ final class PlaybackService: ObservableObject {
     /// Custom sleep timer UI range (minutes). Presets stay 5–60; fade unchanged.
     static let customSleepTimerMinutesRange: ClosedRange<Int> = 1...180
     /// Custom playback speed UI / clamp range for stock `AVPlayer.rate`.
-    /// Honest: pitch-preserving quality is typically best ~0.5–2.0; 2.0–3.0 is allowed
-    /// (AntennaPod-like) but may sound worse. Not Android ExoPlayer.
+    /// Honest: with **Preserve pitch** on (default), quality is typically best ~0.5–2.0; 2.0–3.0 is allowed
+    /// (AntennaPod-like) but may sound worse. Off → pitch scales with rate (chipmunks). Not Android ExoPlayer.
     static let customPlaybackSpeedRange: ClosedRange<Float> = 0.5...3.0
     /// Step for Custom… sheet (Slider / Stepper).
     static let customPlaybackSpeedStep: Float = 0.05
@@ -172,6 +172,7 @@ final class PlaybackService: ObservableObject {
             store?.flushAutoDeleteAfterPlaying(for: leavingEpisodeId)
         }
         let item = AVPlayerItem(url: url)
+        applyTimePitchAlgorithm(to: item)
         let newPlayer = AVPlayer(playerItem: item)
         newPlayer.rate = rate
         newPlayer.volume = sleepVolume
@@ -793,6 +794,22 @@ final class PlaybackService: ObservableObject {
     func applyAudioSessionConfiguration() {
         guard player != nil else { return }
         activateSession()
+    }
+
+    /// Re-apply `AVPlayerItem.audioTimePitchAlgorithm` after Settings **Preserve pitch** changes
+    /// while a player item is loaded. No-op when nothing is loaded.
+    func applyTimePitchAlgorithm() {
+        guard let item = player?.currentItem else { return }
+        applyTimePitchAlgorithm(to: item)
+    }
+
+    /// Map Settings **Preserve pitch** to stock `AVPlayerItem.audioTimePitchAlgorithm`.
+    /// On (default) → `.timeDomain` (speech-oriented pitch correction when rate ≠ 1×).
+    /// Off → `.varispeed` (pitch scales with rate — chipmunk / slow voice). Keeps stock AVPlayer.
+    private func applyTimePitchAlgorithm(to item: AVPlayerItem) {
+        // Default on when settings unbound (matches AppSettings default / speech-friendly iOS default).
+        let preserve = settings?.preservePitchEnabled ?? true
+        item.audioTimePitchAlgorithm = preserve ? .timeDomain : .varispeed
     }
 
     /// Keep screen awake only while Settings **Keep screen on** is enabled and playback is actively playing.

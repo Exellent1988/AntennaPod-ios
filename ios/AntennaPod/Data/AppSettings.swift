@@ -857,7 +857,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -936,6 +936,7 @@ final class AppSettings: ObservableObject {
         static let volumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
         static let stereoToMonoEnabled = "settings.stereoToMonoEnabled"
+        static let preservePitchEnabled = "settings.preservePitchEnabled"
         static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
         static let continuousPlaybackEnabled = "settings.continuousPlaybackEnabled"
         static let resetPositionWhenMarkedPlayed = "settings.resetPositionWhenMarkedPlayed"
@@ -1201,6 +1202,15 @@ final class AppSettings: ObservableObject {
     @Published var stereoToMonoEnabled: Bool {
         didSet {
             UserDefaults.standard.set(stereoToMonoEnabled, forKey: Keys.stereoToMonoEnabled)
+        }
+    }
+
+    /// When true, `PlaybackService` sets `AVPlayerItem.audioTimePitchAlgorithm` to `.timeDomain` (pitch stays natural when speed ≠ 1×).
+    /// When false → `.varispeed` (pitch scales with rate — chipmunk / slow voice). Default **on** (speech-friendly; matches common iOS AVPlayer pitch correction).
+    /// Stock `AVPlayer` only — not Android ExoPlayer / Sonic. Not Skip Silence.
+    @Published var preservePitchEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(preservePitchEnabled, forKey: Keys.preservePitchEnabled)
         }
     }
 
@@ -1661,6 +1671,12 @@ final class AppSettings: ObservableObject {
             // Default off: leave preferred output channel count alone (stereo routes stay stereo).
             stereoToMonoEnabled = false
         }
+        if UserDefaults.standard.object(forKey: Keys.preservePitchEnabled) != nil {
+            preservePitchEnabled = UserDefaults.standard.bool(forKey: Keys.preservePitchEnabled)
+        } else {
+            // Default on: speech-friendly pitch correction (AVPlayerItem .timeDomain).
+            preservePitchEnabled = true
+        }
         if UserDefaults.standard.object(forKey: Keys.keepScreenOnWhilePlaying) != nil {
             keepScreenOnWhilePlaying = UserDefaults.standard.bool(forKey: Keys.keepScreenOnWhilePlaying)
         } else {
@@ -2011,6 +2027,7 @@ final class AppSettings: ObservableObject {
             volumeAdaptationEnabled: volumeAdaptationEnabled,
             skipSilenceEnabled: skipSilenceEnabled,
             stereoToMonoEnabled: stereoToMonoEnabled,
+            preservePitchEnabled: preservePitchEnabled,
             keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
             continuousPlaybackEnabled: continuousPlaybackEnabled,
             resetPositionWhenMarkedPlayed: resetPositionWhenMarkedPlayed,
@@ -2108,6 +2125,7 @@ final class AppSettings: ObservableObject {
         volumeAdaptationEnabled = snap.volumeAdaptationEnabled ?? false
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
         stereoToMonoEnabled = snap.stereoToMonoEnabled ?? false
+        preservePitchEnabled = snap.preservePitchEnabled ?? true
         keepScreenOnWhilePlaying = snap.keepScreenOnWhilePlaying ?? false
         continuousPlaybackEnabled = snap.continuousPlaybackEnabled ?? true
         resetPositionWhenMarkedPlayed = snap.resetPositionWhenMarkedPlayed ?? true
@@ -2251,6 +2269,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var skipSilenceEnabled: Bool? = false
     /// Absent in older backups → treated as off (stereo / system default channel count).
     var stereoToMonoEnabled: Bool? = false
+    /// Absent in older backups → treated as on (speech-friendly pitch correction).
+    var preservePitchEnabled: Bool? = true
     /// Absent in older backups → treated as off (allow idle lock).
     var keepScreenOnWhilePlaying: Bool? = false
     /// Absent in older backups → treated as on (auto-next from queue).

@@ -108,6 +108,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Continuous playback Toggle (an → **nur Queue-Next**, nicht nächste Feed-Episode; aus → Stop ohne Advance) | ☐ Continuous playback toggle (on → **Queue next only**, not next feed episode; off → stop, no advance) |
 | ☐ Show remaining time (Settings; Mini/Full rechts −Rest; Tippen Full-Label) | ☐ Show remaining time (Settings; mini/full right −remaining; tap full label) |
 | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; Route kann ignorieren) | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; route may ignore) |
+| ☐ Preserve pitch (Settings; Standard an → `.timeDomain`; aus → `.varispeed` Chipmunk; kein Skip Silence) | ☐ Preserve pitch (Settings; default on → `.timeDomain`; off → `.varispeed` chipmunks; not Skip Silence) |
 | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; Pause ≥1s → Seek zurück; kein Cold-Play) | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; pause ≥1s → seek back; not on cold play) |
 | ☐ Progress speichern / Resume | ☐ Progress save / resume |
 | ☐ Mark played / unplayed (EpisodeRow, Feed/Queue/Downloads/Favorites/History/Alle-Episoden-Swipe, Full Player; Inbox nur Mark played; VoiceOver Hints; Smart mark Off/15/30/60/120/300/600 + Custom… 1–600s, default 30; nur Restsekunden) | ☐ Mark played / unplayed (EpisodeRow, Feed/Queue/Downloads/Favorites/History/All Episodes swipe, Full Player; Inbox Mark played only; VoiceOver hints; Smart mark Off/15/30/60/120/300/600 + Custom… 1–600s, default 30; seconds remaining only) |
@@ -327,6 +328,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Volume adaptation: iOS session mode, not Android loudness gain.
 - Stereo to mono: Best-Effort `setPreferredOutputNumberOfChannels(1)`; Route kann ignorieren; kein ExoPlayer-Remix; AVPlayer bleibt.  
   Stereo to mono: best-effort `setPreferredOutputNumberOfChannels(1)`; route may ignore; not ExoPlayer remix; AVPlayer kept.
+- Preserve pitch: Standard **an** → `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain`; aus → `.varispeed` (Chipmunk); kein Skip Silence / kein ExoPlayer Sonic.  
+  Preserve pitch: default **on** → `.timeDomain`; off → `.varispeed` (chipmunks); not Skip Silence / not ExoPlayer Sonic.
 - Keep screen on: nur Idle-Timer (`isIdleTimerDisabled`); kein Low-Power-Override / keine Helligkeit; PiP/Hintergrund-Audio unverändert.  
   Keep screen on: idle timer only; no Low Power Mode override / no brightness; PiP/background audio unchanged.
 - Queue played filter: Chips **Alle** / **Ungehört** / **Gehört** via `isPlayed` (nicht archive-aware); persistiert `AppSettings.queueFilter` (Default Alle). Pipeline Played-Chip → Podcast → Suche. Edit/Ziehen-Reorder aus bei Chip ≠ Alle, Podcast ≠ Alle oder Suche (wie Suche allein); Move to top/bottom bleibt id-basiert wenn entsperrt; **Shuffle** / **Shuffle (keep playing first)** / **Reverse order** / **Newest first** / **Oldest first** / **Clear queue** bleiben full-queue (Shuffle-Varianten/Reverse/Sort auch bei aktivem Filter, wenn entsperrt und ≥2).

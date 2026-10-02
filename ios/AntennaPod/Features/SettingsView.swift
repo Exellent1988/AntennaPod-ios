@@ -543,6 +543,7 @@ struct SettingsView: View {
             || matchesPlaybackVolume
             || matchesPlaybackSkipSilence
             || matchesPlaybackStereo
+            || matchesPlaybackPreservePitch
             || matchesPlaybackKeepScreen
             || matchesPlaybackContinuous
             || matchesPlaybackResetPosition
@@ -608,6 +609,13 @@ struct SettingsView: View {
         matchesSearch(
             "Stereo to mono",
             "When on, requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)` (restores up to 2 when off). **Best-effort** — the system may ignore this depending on the route (built-in speaker, Bluetooth, CarPlay, etc.). Keeps stock `AVPlayer` (video surface, PiP, Now Playing). Not Android ExoPlayer stereo→mono remix. Default off."
+        )
+    }
+
+    private var matchesPlaybackPreservePitch: Bool {
+        matchesSearch(
+            "Preserve pitch",
+            "When on (default), keeps natural pitch while changing playback speed via `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain` (speech-oriented). When off, pitch scales with rate (`.varispeed` — chipmunk / slow voice). Stock `AVPlayer` only — not Android ExoPlayer / Sonic. Not Skip Silence."
         )
     }
 
@@ -879,6 +887,13 @@ struct SettingsView: View {
                 Toggle("Stereo to mono", isOn: $settings.stereoToMonoEnabled)
                     .accessibilityHint(String(localized: "Best-effort mono output via AVAudioSession preferred channels. Route-dependent. Default off."))
                 Text("When on, requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)` (restores up to 2 when off). **Best-effort** — the system may ignore this depending on the route (built-in speaker, Bluetooth, CarPlay, etc.). Keeps stock `AVPlayer` (video surface, PiP, Now Playing). Not Android ExoPlayer stereo→mono remix. Default off.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackPreservePitch {
+                Toggle("Preserve pitch", isOn: $settings.preservePitchEnabled)
+                    .accessibilityHint(String(localized: "Keeps natural pitch when changing playback speed. Off → chipmunk / slow voice. Default on."))
+                Text("When on (default), keeps natural pitch while changing playback speed via `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain` (speech-oriented). When off, pitch scales with rate (`.varispeed` — chipmunk / slow voice). Stock `AVPlayer` only — not Android ExoPlayer / Sonic. Not Skip Silence.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

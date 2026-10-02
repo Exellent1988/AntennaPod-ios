@@ -21517,6 +21517,57 @@
           }
         }
       }
+    },
+    "Preserve pitch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preserve pitch"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tonhöhe beibehalten"
+          }
+        }
+      }
+    },
+    "Keeps natural pitch when changing playback speed. Off → chipmunk / slow voice. Default on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keeps natural pitch when changing playback speed. Off → chipmunk / slow voice. Default on."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hält die natürliche Tonhöhe bei Geschwindigkeitsänderung. Aus → Chipmunk / langsame Stimme. Standard an."
+          }
+        }
+      }
+    },
+    "When on (default), keeps natural pitch while changing playback speed via `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain` (speech-oriented). When off, pitch scales with rate (`.varispeed` — chipmunk / slow voice). Stock `AVPlayer` only — not Android ExoPlayer / Sonic. Not Skip Silence.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on (default), keeps natural pitch while changing playback speed via `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain` (speech-oriented). When off, pitch scales with rate (`.varispeed` — chipmunk / slow voice). Stock `AVPlayer` only — not Android ExoPlayer / Sonic. Not Skip Silence."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv (Standard), bleibt die natürliche Tonhöhe bei Geschwindigkeitsänderung über `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain` (sprachorientiert). Aus → Tonhöhe skaliert mit der Rate (`.varispeed` — Chipmunk / langsame Stimme). Nur stock `AVPlayer` — nicht Android ExoPlayer / Sonic. Nicht Skip Silence."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

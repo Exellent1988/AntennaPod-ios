@@ -89,6 +89,9 @@ struct RootTabView: View {
         .onChange(of: settings.stereoToMonoEnabled) { _, _ in
             playback.applyAudioSessionConfiguration()
         }
+        .onChange(of: settings.preservePitchEnabled) { _, _ in
+            playback.applyTimePitchAlgorithm()
+        }
         .onChange(of: settings.playVideoAsAudioOnly) { _, _ in
             playback.applyAudioSessionConfiguration()
         }
