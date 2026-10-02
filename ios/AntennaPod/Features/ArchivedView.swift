@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ArchivedView: View {
     @EnvironmentObject private var store: PodcastStore
@@ -11,6 +12,9 @@ struct ArchivedView: View {
     @State private var debounceTask: Task<Void, Never>?
     @State private var showRestoreAllConfirm = false
     @State private var showEnqueueAllConfirm = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -239,6 +243,26 @@ struct ArchivedView: View {
     }
 
 
+    /// Plain-text list of the **full** Archived catalog — not podcast-chip / search / UI sort filtered.
+    /// Same honesty as Restore all / Add all to queue / Play random (`store.archivedEpisodes`, newest archived first).
+    private var archivedPlainText: String {
+        ArchivedExport.plainText(episodes: items.map(\.episode)) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
+    }
+
+    /// Enabled when the full Archived catalog is non-empty (read-only export).
+    private var canExportArchived: Bool {
+        !items.isEmpty
+    }
+
+    /// “Archived” header + body for system share sheet (same body as Copy).
+    private var archivedShareText: String {
+        ArchivedExport.shareText(episodes: items.map(\.episode)) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
+    }
+
     var body: some View {
         List {
             if !items.isEmpty, !archivedPodcastFeeds.isEmpty || isPodcastFiltering {
@@ -343,6 +367,31 @@ struct ArchivedView: View {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {
+                        copyArchived()
+                    } label: {
+                        Label("Copy archived", systemImage: "doc.plaintext")
+                    }
+                    // Full Archived catalog (not podcast/search/UI sort).
+                    .disabled(!canExportArchived)
+                    .accessibilityLabel(String(localized: "Copy archived"))
+                    .accessibilityHint(
+                        String(localized: "Copies the full archived list to the pasteboard")
+                    )
+
+                    ShareLink(
+                        item: archivedShareText,
+                        subject: Text(String(localized: "Archived"))
+                    ) {
+                        Label("Share archived", systemImage: "square.and.arrow.up")
+                    }
+                    // Same gates as Copy archived — full catalog.
+                    .disabled(!canExportArchived)
+                    .accessibilityLabel(String(localized: "Share archived"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the full archived list")
+                    )
+
+                    Button {
                         playRandomEpisode()
                     } label: {
                         Label("Play random", systemImage: "shuffle")
@@ -371,8 +420,21 @@ struct ArchivedView: View {
                 }
                 // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
                 .disabled(items.isEmpty)
+                .accessibilityLabel(String(localized: "Archived actions"))
+                .accessibilityHint(
+                    String(localized: "Copy archived, share archived, play random, add all to queue, or restore all")
+                )
             }
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
         .confirmationDialog(
             "Add all to queue?",
             isPresented: $showEnqueueAllConfirm,
@@ -397,6 +459,16 @@ struct ArchivedView: View {
         } message: {
             Text("Restores \(items.count) archived episodes. Does not mark unplayed or delete downloads.")
         }
+    }
+
+    /// Pasteboard copy of the **full** Archived catalog (not podcast/search/UI sort). Read-only.
+    private func copyArchived() {
+        let text = archivedPlainText
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Archived copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     /// Uniform pick via shared `EpisodePlayRandom.pick` among eligible (prefer unplayed);

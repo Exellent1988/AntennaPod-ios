@@ -26934,6 +26934,108 @@
           }
         }
       }
+    },
+    "Copy archived": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy archived"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert kopieren"
+          }
+        }
+      }
+    },
+    "Share archived": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share archived"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert teilen"
+          }
+        }
+      }
+    },
+    "Archived copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archived copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the full archived list to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full archived list to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die gesamte Archivliste in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the full archived list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the full archived list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit der gesamten Archivliste"
+          }
+        }
+      }
+    },
+    "Copy archived, share archived, play random, add all to queue, or restore all": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy archived, share archived, play random, add all to queue, or restore all"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert kopieren, Archiviert teilen, Zufällig abspielen, Alle zur Warteschlange, oder Alle wiederherstellen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
