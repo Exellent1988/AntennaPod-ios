@@ -25,6 +25,7 @@ struct FeedDetailView: View {
     @State private var showTrailerURLCopied = false
     @State private var showLockedOwnerCopied = false
     @State private var showAuthorCopied = false
+    @State private var showLanguageCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
@@ -36,6 +37,7 @@ struct FeedDetailView: View {
     @State private var copyTrailerURLFeedbackTick = 0
     @State private var copyLockedOwnerFeedbackTick = 0
     @State private var copyAuthorFeedbackTick = 0
+    @State private var copyLanguageFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -527,11 +529,38 @@ struct FeedDetailView: View {
             // Feed language when present (itunes:language / RSS language / xml:lang); hide when missing.
             if let language = displayLanguage {
                 Section {
-                    Text(language)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityLabel(String(localized: "Language \(language)"))
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(language)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityLabel(String(localized: "Language \(language)"))
+
+                        HStack(spacing: 12) {
+                            Button {
+                                copyLanguage(language)
+                            } label: {
+                                Label("Copy language", systemImage: "doc.on.doc")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Copy language"))
+                            .accessibilityHint(
+                                String(localized: "Copies the same feed-provided language string shown above to the pasteboard; display-only; no code invented")
+                            )
+
+                            ShareLink(
+                                item: language,
+                                subject: Text(feedDisplayTitle)
+                            ) {
+                                Label("Share language", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Share language"))
+                            .accessibilityHint(
+                                String(localized: "Shares the same feed-provided language string shown above as plain text; display-only; no code invented")
+                            )
+                        }
+                    }
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -1525,6 +1554,14 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Podcast author copied to the pasteboard."))
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showLanguageCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Podcast language copied to the pasteboard."))
+        }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
@@ -1533,6 +1570,7 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyTrailerURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLockedOwnerFeedbackTick)
         .sensoryFeedback(.success, trigger: copyAuthorFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyLanguageFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle)
@@ -1631,6 +1669,12 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = author
         copyAuthorFeedbackTick += 1
         showAuthorCopied = true
+    }
+
+    private func copyLanguage(_ language: String) {
+        UIPasteboard.general.string = language
+        copyLanguageFeedbackTick += 1
+        showLanguageCopied = true
     }
 
     private func copyLockedOwner(_ owner: String) {

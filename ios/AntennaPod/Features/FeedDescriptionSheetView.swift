@@ -431,11 +431,14 @@ struct FeedDescriptionSheetView: View {
                     }
 
                     if let language = displayLanguage {
-                        Text(language)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .accessibilityLabel(String(localized: "Language \(language)"))
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(language)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .accessibilityLabel(String(localized: "Language \(language)"))
+                            languageActions(language)
+                        }
                     }
 
                     if let medium = displayMedium {
@@ -552,11 +555,14 @@ struct FeedDescriptionSheetView: View {
                     }
 
                     if let language = displayLanguage {
-                        Text(language)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .accessibilityLabel(String(localized: "Language \(language)"))
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(language)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .accessibilityLabel(String(localized: "Language \(language)"))
+                            languageActions(language)
+                        }
                     }
 
                     if let medium = displayMedium {
@@ -684,6 +690,41 @@ struct FeedDescriptionSheetView: View {
     private func copyAuthor(_ author: String) {
         UIPasteboard.general.string = author
         copiedAlertMessage = String(localized: "Podcast author copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    @ViewBuilder
+    private func languageActions(_ language: String) -> some View {
+        HStack(spacing: 12) {
+            Button {
+                copyLanguage(language)
+            } label: {
+                Label("Copy language", systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Copy language"))
+            .accessibilityHint(
+                String(localized: "Copies the same feed-provided language string shown above to the pasteboard; display-only; no code invented")
+            )
+
+            ShareLink(
+                item: language,
+                subject: Text(resolvedTitle)
+            ) {
+                Label("Share language", systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Share language"))
+            .accessibilityHint(
+                String(localized: "Shares the same feed-provided language string shown above as plain text; display-only; no code invented")
+            )
+        }
+    }
+
+    private func copyLanguage(_ language: String) {
+        UIPasteboard.general.string = language
+        copiedAlertMessage = String(localized: "Podcast language copied to the pasteboard.")
         copyFeedbackTick += 1
         showCopiedAlert = true
     }

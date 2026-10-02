@@ -30809,6 +30809,96 @@
           }
         }
       }
+    },
+    "Copy language": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: copy the displayed feed-provided language string. Hidden when displayLanguage is missing; no code is invented.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy language"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprache kopieren"
+          }
+        }
+      }
+    },
+    "Share language": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: share the same displayed feed-provided language string as plain text. Hidden when displayLanguage is missing; no code is invented.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share language"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprache teilen"
+          }
+        }
+      }
+    },
+    "Copies the same feed-provided language string shown above to the pasteboard; display-only; no code invented": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy language. Uses exactly the displayed localized language name or raw feed code.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same feed-provided language string shown above to the pasteboard; display-only; no code invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe oben angezeigte, vom Feed bereitgestellte Sprachangabe in die Zwischenablage; nur Anzeige; kein Code wird erfunden"
+          }
+        }
+      }
+    },
+    "Shares the same feed-provided language string shown above as plain text; display-only; no code invented": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share language. Uses exactly the displayed localized language name or raw feed code.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same feed-provided language string shown above as plain text; display-only; no code invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe oben angezeigte, vom Feed bereitgestellte Sprachangabe als Klartext; nur Anzeige; kein Code wird erfunden"
+          }
+        }
+      }
+    },
+    "Podcast language copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for the displayed feed-provided language string.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast language copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Sprache in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
