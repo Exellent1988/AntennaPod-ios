@@ -222,6 +222,40 @@
           }
         }
       }
+    },
+    "No Continue listening snapshot is saved yet. This is not live playback and not the queue. Play an episode in AntennaPod to write the App Group snapshot. Until then there is no episode title or remaining time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Continue listening snapshot is saved yet. This is not live playback and not the queue. Play an episode in AntennaPod to write the App Group snapshot. Until then there is no episode title or remaining time."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch kein Weiterspielen-Snapshot gespeichert. Das ist keine Live-Wiedergabe und nicht die Warteschlange. Spiele eine Episode in AntennaPod, damit die App den App-Group-Snapshot schreibt. Bis dahin gibt es keinen Episodentitel und keine Restzeit."
+          }
+        }
+      }
+    },
+    "Opens AntennaPod and sends play. Playback starts only if an episode is already loaded. Does not create a continue episode.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens AntennaPod and sends play. Playback starts only if an episode is already loaded. Does not create a continue episode."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet AntennaPod und sendet Wiedergabe. Die Wiedergabe startet nur, wenn bereits eine Episode geladen ist. Es wird keine Weiterspielen-Episode erzeugt."
+          }
+        }
+      }
     }
   }
 }

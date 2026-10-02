@@ -96,6 +96,14 @@ struct ContinueListeningWidgetView: View {
                     Spacer(minLength: 0)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(String(localized: "Open AntennaPod to continue"))
+                .accessibilityValue(
+                    String(localized: "No Continue listening snapshot is saved yet. This is not live playback and not the queue. Play an episode in AntennaPod to write the App Group snapshot. Until then there is no episode title or remaining time.")
+                )
+                .accessibilityHint(
+                    String(localized: "Opens AntennaPod and sends play. Playback starts only if an episode is already loaded. Does not create a continue episode.")
+                )
             }
         }
         .widgetURL(WidgetContinueSnapshot.playURL)
