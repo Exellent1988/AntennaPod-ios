@@ -24284,6 +24284,41 @@
           }
         }
       }
+    },
+    "Open link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link öffnen"
+          }
+        }
+      },
+      "comment": "Secondary control on a chapter row when PSC/Podcast Index provides an http(s) href/url."
+    },
+    "Opens this chapter’s link in the system browser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens this chapter’s link in the system browser"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den Link dieses Kapitels im Systembrowser"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

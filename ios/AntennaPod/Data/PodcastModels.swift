@@ -28,6 +28,17 @@ struct PodcastChapter: Identifiable, Hashable, Codable {
         guard scheme == "http" || scheme == "https" else { return nil }
         return url
     }
+
+    /// http(s) chapter link from feed PSC `href`/`url` or Podcast Index JSON `url` only.
+    /// Nil when missing / non-http(s). UI Open control when present — never invent.
+    var displayLinkURL: URL? {
+        guard let href else { return nil }
+        let trimmed = href.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return url
+    }
 }
 
 

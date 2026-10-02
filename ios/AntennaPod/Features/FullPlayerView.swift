@@ -465,6 +465,7 @@ struct FullPlayerView: View {
                             startTimeText: format(chapter.startTimeSeconds),
                             title: chapter.title,
                             imageURL: chapter.displayImageURL,
+                            linkURL: chapter.displayLinkURL,
                             trailingTimeLabel: chapterTrailingTimeLabel(index: index),
                             isCurrent: index == currentChapterIndex,
                             accessibilityBaseLabel: chapterAccessibilityLabel(index: index, chapter: chapter),

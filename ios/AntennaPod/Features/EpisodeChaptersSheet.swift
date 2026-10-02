@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Chapters list sheet mirroring Full player list UX: searchable titles, tap → seek,
-/// current highlight, duration / current remaining when end known, optional chapters URL.
+/// current highlight, duration / current remaining when end known, optional per-chapter
+/// Open link (http(s) href), optional chapters URL.
 ///
 /// Already-loaded chapters only — does **not** fetch remote Podcast Index JSON or
 /// media-file tags (same honesty as mini Previous/Next). Full Player still lazy-loads.
@@ -117,6 +118,7 @@ struct EpisodeChaptersSheet: View {
             startTimeText: format(chapter.startTimeSeconds),
             title: chapter.title,
             imageURL: chapter.displayImageURL,
+            linkURL: chapter.displayLinkURL,
             trailingTimeLabel: chapterTrailingTimeLabel(index: index),
             isCurrent: index == currentChapterIndex,
             accessibilityBaseLabel: chapterAccessibilityLabel(index: index, chapter: chapter),
