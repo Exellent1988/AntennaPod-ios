@@ -7896,6 +7896,41 @@
         }
       }
     },
+    "Share episode link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share episode link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden-Link teilen"
+          }
+        }
+      },
+      "comment": "Shares the episode webpage URL only; distinct from generic Share episode and Share media URL."
+    },
+    "Opens the system share sheet with the episode title and episode webpage URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title and episode webpage URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit Episodentitel und Episoden-Webseiten-URL"
+          }
+        }
+      }
+    },
     "Opens the system share sheet with the episode title and link": {
       "extractionState": "manual",
       "localizations": {
@@ -8660,6 +8695,24 @@
           }
         }
       }
+    },
+    "Episode link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden-Link"
+          }
+        }
+      },
+      "comment": "Honesty label in the Share episode link message; this is the webpage URL, not the enclosure."
     },
     "Copy media URL": {
       "extractionState": "manual",

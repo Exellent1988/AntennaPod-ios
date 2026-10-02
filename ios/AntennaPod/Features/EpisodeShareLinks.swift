@@ -11,6 +11,33 @@ import SwiftUI
 /// `@ViewBuilder` so callers in `HStack` / `Menu` get sibling controls (not one
 /// nested wrapper). Used by Full player secondary + mini player ⋯.
 enum EpisodeShareLinks {
+    /// Shares only the feed-provided episode webpage URL (`link`).
+    /// This is intentionally distinct from generic **Share episode**, which may fall back
+    /// to an enclosure or feed URL when the webpage link is absent.
+    @ViewBuilder
+    static func episodeLinkLabelStyle(episode: PodcastEpisode) -> some View {
+        if let url = episode.websiteURL {
+            let message = episodeLinkShareMessage(for: episode)
+            ShareLink(
+                item: url,
+                subject: Text(message),
+                message: Text(message)
+            ) {
+                Label("Share episode link", systemImage: "square.and.arrow.up")
+            }
+            .accessibilityLabel(String(localized: "Share episode link"))
+            .accessibilityHint(
+                String(localized: "Opens the system share sheet with the episode title and episode webpage URL")
+            )
+        }
+    }
+
+    private static func episodeLinkShareMessage(for episode: PodcastEpisode) -> String {
+        let title = episode.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let linkLabel = String(localized: "Episode link")
+        return title.isEmpty ? linkLabel : "\(title) — \(linkLabel)"
+    }
+
     @ViewBuilder
     static func labelStyle(
         episode: PodcastEpisode,

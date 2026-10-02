@@ -1983,6 +1983,7 @@ struct EpisodeRow: View {
                 .accessibilityLabel(String(localized: "Copy episode link"))
                 .accessibilityHint(String(localized: "Copies the episode webpage URL to the pasteboard"))
             }
+            EpisodeShareLinks.episodeLinkLabelStyle(episode: episode)
             if let rawMediaURL = episode.mediaURLString {
                 Button {
                     copyMediaURL(rawMediaURL)

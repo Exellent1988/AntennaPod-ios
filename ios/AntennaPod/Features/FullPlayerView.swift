@@ -1305,6 +1305,8 @@ struct FullPlayerView: View {
                 .accessibilityHint(String(localized: "Copies the episode webpage URL to the pasteboard"))
             }
 
+            EpisodeShareLinks.episodeLinkLabelStyle(episode: episode)
+
             // Item podcast:socialInteract — Discuss opens highest-priority http(s) uri; hide when none.
             // Feed-provided only — never invent; openURL only (no Fediverse client / posting).
             if let interact = episode.preferredSocialInteract,

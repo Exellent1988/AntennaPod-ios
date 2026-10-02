@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Label-style **Copy episode link** + **Copy media URL** for an episode.
+/// Label-style **Copy episode link** + **Share episode link** + **Copy media URL** for an episode.
 ///
 /// Reuses `PodcastEpisode.websiteURL` / `mediaURLString` (feed-provided http(s) only;
 /// never invents; `file://` / `local-folder` omitted). Emits nothing when neither URL is usable.
@@ -40,6 +40,9 @@ enum EpisodeCopyLinks {
             }
             .accessibilityLabel(String(localized: "Copy episode link"))
             .accessibilityHint(String(localized: "Copies the episode webpage URL to the pasteboard"))
+
+            // Keep the webpage ShareLink directly beside its Copy twin in every caller.
+            EpisodeShareLinks.episodeLinkLabelStyle(episode: episode)
         }
 
         if let raw = episode.mediaURLString {
