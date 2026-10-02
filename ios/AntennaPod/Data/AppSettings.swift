@@ -1123,6 +1123,33 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
 }
 
 
+/// Soft cap for how many episode rows each Home section preview shows (after search filter).
+/// Applies to Continue / Inbox / Queue / Favorites / History / Archived / Downloads episode
+/// previews only — **not** Discover charts or Recently updated feed cards (`feedsLimit`).
+/// Always capped — no Unlimited. Default **5** (same as the prior hard soft-cap).
+enum HomePreviewLimit: Int, CaseIterable, Identifiable {
+    case three = 3
+    case five = 5
+    case eight = 8
+    case ten = 10
+
+    var id: Int { rawValue }
+
+    /// Clamped row count (≥1). Preset raw values are already in the allowed set.
+    var rowCap: Int { max(1, rawValue) }
+
+    var label: String {
+        switch self {
+        case .three: return String(localized: "3 rows")
+        case .five: return String(localized: "5 rows")
+        case .eight: return String(localized: "8 rows")
+        case .ten: return String(localized: "10 rows")
+        }
+    }
+}
+
+
+
 /// Time range for Statistics / Echo aggregations (device calendar; default All time).
 /// Filters by `lastPlayedAtEpochMs` else `updatedAtEpochMs` — coarse episode-level stamps, not per-session listen windows.
 enum StatisticsTimeRange: String, CaseIterable, Identifiable {
@@ -1311,6 +1338,7 @@ final class AppSettings: ObservableObject {
         static let smartMarkAsPlayedSeconds = "settings.smartMarkAsPlayedSeconds"
         static let homeSectionOrder = "settings.home.sectionOrder"
         static let homeHiddenSections = "settings.home.hiddenSections"
+        static let homePreviewLimit = "settings.home.previewLimit"
         static let subscriptionsSort = "settings.subscriptionsSort"
         static let subscriptionsCategoryFilter = "settings.subscriptionsCategoryFilter"
         static let subscriptionsLanguageFilter = "settings.subscriptionsLanguageFilter"
@@ -1817,6 +1845,16 @@ final class AppSettings: ObservableObject {
             UserDefaults.standard.set(raw, forKey: Keys.homeHiddenSections)
         }
     }
+
+    /// Soft cap for Home episode-list section previews (3/5/8/10 rows; default 5). Always capped.
+    /// Continue / Inbox / Queue / Favorites / History / Archived / Downloads only — not Discover /
+    /// Recently updated feed cards.
+    @Published var homePreviewLimit: HomePreviewLimit {
+        didSet {
+            UserDefaults.standard.set(homePreviewLimit.rawValue, forKey: Keys.homePreviewLimit)
+        }
+    }
+
 
 
     /// Subscriptions tab list order: recently updated (default) or alphabetical A–Z. Client-side only.
@@ -2398,6 +2436,9 @@ final class AppSettings: ObservableObject {
         chartsCountryCode = ChartsCountryPreference.fromStorage(chartsRaw).storageValue
         homeSectionOrder = Self.loadHomeSectionOrder()
         homeHiddenSections = Self.loadHomeHiddenSections()
+        let homePreviewRaw = UserDefaults.standard.object(forKey: Keys.homePreviewLimit) as? Int
+            ?? HomePreviewLimit.five.rawValue
+        homePreviewLimit = HomePreviewLimit(rawValue: homePreviewRaw) ?? .five
         let sortRaw = UserDefaults.standard.string(forKey: Keys.subscriptionsSort)
             ?? SubscriptionsSort.recentlyUpdated.rawValue
         subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
@@ -2764,6 +2805,7 @@ final class AppSettings: ObservableObject {
             chartsCountryCode: chartsCountryCode,
             homeSectionOrder: homeSectionOrder.map(\.rawValue),
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
+            homePreviewLimit: homePreviewLimit.rawValue,
             subscriptionsSort: subscriptionsSort.rawValue,
             subscriptionsCategoryFilter: subscriptionsCategoryFilter,
             subscriptionsLanguageFilter: subscriptionsLanguageFilter,
@@ -2918,6 +2960,10 @@ final class AppSettings: ObservableObject {
             }
             homeHiddenSections = hidden
         }
+        homePreviewLimit =
+            HomePreviewLimit(
+                rawValue: snap.homePreviewLimit ?? HomePreviewLimit.five.rawValue
+            ) ?? .five
         if let sortRaw = snap.subscriptionsSort {
             subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
         }
@@ -3088,6 +3134,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var homeSectionOrder: [String]? = nil
     /// Absent in older backups → default hidden (Favorites).
     var homeHiddenSections: [String]? = nil
+    /// Absent in older backups → 5 (prior hard soft-cap). Raw `HomePreviewLimit` value.
+    var homePreviewLimit: Int? = 5
     /// Absent in older backups → recentlyUpdated (default).
     var subscriptionsSort: String? = nil
     /// Absent in older backups → All (empty). Feed category text or empty for All.

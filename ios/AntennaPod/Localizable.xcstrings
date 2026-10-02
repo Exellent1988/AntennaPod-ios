@@ -26312,6 +26312,110 @@
           }
         }
       }
+    },
+    "Home preview rows": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home preview rows"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home-Vorschaizeilen"
+          }
+        }
+      },
+      "comment": "Settings → Home picker for Home episode-list preview soft-cap."
+    },
+    "3 rows": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 rows"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 Zeilen"
+          }
+        }
+      }
+    },
+    "5 rows": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 rows"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 Zeilen"
+          }
+        }
+      }
+    },
+    "8 rows": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8 rows"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "8 Zeilen"
+          }
+        }
+      }
+    },
+    "10 rows": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 rows"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 Zeilen"
+          }
+        }
+      }
+    },
+    "How many episode rows each Home section preview shows (Continue, Inbox, Queue, Favorites, History, Archived, Downloads). Soft-cap after search filter — preview is not the full tab. Does not change Discover charts or Recently updated feed cards. Default 5. Always capped — no unlimited.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How many episode rows each Home section preview shows (Continue, Inbox, Queue, Favorites, History, Archived, Downloads). Soft-cap after search filter — preview is not the full tab. Does not change Discover charts or Recently updated feed cards. Default 5. Always capped — no unlimited."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wie viele Episoden-Zeilen jede Home-Abschnittsvorschau zeigt (Weiterhören, Posteingang, Warteschlange, Favoriten, Verlauf, Archiviert, Downloads). Soft-Cap nach Suchfilter — Vorschau ist nicht der volle Tab. Ändert weder Discover-Charts noch kürzlich aktualisierte Feed-Karten. Standard 5. Immer begrenzt — kein Unlimited."
+          }
+        }
+      },
+      "comment": "Help caption / VoiceOver hint under Home preview rows picker."
     }
   },
   "version": "1.0"

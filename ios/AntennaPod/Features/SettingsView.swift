@@ -539,7 +539,13 @@ struct SettingsView: View {
             "Configure Home",
             "reorder",
             "Downloads",
-            "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Archived, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Archived, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home."
+            "Home preview rows",
+            "3 rows",
+            "5 rows",
+            "8 rows",
+            "10 rows",
+            "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Archived, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Archived, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home.",
+            "How many episode rows each Home section preview shows (Continue, Inbox, Queue, Favorites, History, Archived, Downloads). Soft-cap after search filter — preview is not the full tab. Does not change Discover charts or Recently updated feed cards. Default 5. Always capped — no unlimited."
         )
     }
 
@@ -777,6 +783,18 @@ struct SettingsView: View {
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(String(localized: "Home layout help"))
                 .accessibilityValue(String(localized: "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Archived, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Archived, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home."))
+            Picker(String(localized: "Home preview rows"), selection: $settings.homePreviewLimit) {
+                ForEach(HomePreviewLimit.allCases) { limit in
+                    Text(limit.label).tag(limit)
+                }
+            }
+            .accessibilityLabel(String(localized: "Home preview rows"))
+            .accessibilityValue(settings.homePreviewLimit.label)
+            .accessibilityHint(String(localized: "How many episode rows each Home section preview shows (Continue, Inbox, Queue, Favorites, History, Archived, Downloads). Soft-cap after search filter — preview is not the full tab. Does not change Discover charts or Recently updated feed cards. Default 5. Always capped — no unlimited."))
+            Text(String(localized: "How many episode rows each Home section preview shows (Continue, Inbox, Queue, Favorites, History, Archived, Downloads). Soft-cap after search filter — preview is not the full tab. Does not change Discover charts or Recently updated feed cards. Default 5. Always capped — no unlimited."))
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(String(localized: "How many episode rows each Home section preview shows (Continue, Inbox, Queue, Favorites, History, Archived, Downloads). Soft-cap after search filter — preview is not the full tab. Does not change Discover charts or Recently updated feed cards. Default 5. Always capped — no unlimited."))
         }
     }
 

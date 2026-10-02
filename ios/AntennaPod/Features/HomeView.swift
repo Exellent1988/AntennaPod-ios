@@ -17,7 +17,15 @@ struct HomeView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
 
-    private let previewLimit = 5
+    /// Soft-cap for episode-list Home previews (Continue / Inbox / Queue / Favorites / History /
+    /// Archived / Downloads). From `AppSettings.homePreviewLimit` (3/5/8/10, default 5); clamp to
+    /// the allowed preset set if UserDefaults holds an unexpected value. Discover charts /
+    /// Recently updated still use `feedsLimit` (unchanged).
+    private var previewLimit: Int {
+        let allowed = Set(HomePreviewLimit.allCases.map(\.rawValue))
+        let raw = settings.homePreviewLimit.rawValue
+        return allowed.contains(raw) ? raw : HomePreviewLimit.five.rawValue
+    }
     private let feedsLimit = 5
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
