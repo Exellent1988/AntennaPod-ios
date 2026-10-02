@@ -2,7 +2,9 @@ import SwiftUI
 
 /// Landing tab: honest previews driven by Settings → Home layout (order + visibility).
 /// Toolbar **Configure Home** opens the same layout editor (Android `configure_home` parity).
-/// `.searchable` filters visible section episode/podcast previews (title + feed); empty sections hide while filtering.
+/// `.searchable` filters visible section episode previews via `episodeMatchesLibraryQuery` (title /
+/// descriptionText / private note / bookmark notes) + feed title, and Recently updated feed cards by
+/// display title only; empty sections hide while filtering. **Not** chapters / transcripts.
 /// Optional **History** / **Archived** / **Favorites** / **Downloads** previews (off by default) soft-cap like Continue.
 struct HomeView: View {
     @EnvironmentObject private var store: PodcastStore
@@ -41,7 +43,8 @@ struct HomeView: View {
         !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    /// Continue preview: filter full continue catalog by title/feed, then cap (matches while searching beyond first 5).
+    /// Continue preview: filter full continue catalog by library query + feed title, then cap
+    /// (matches while searching beyond first `previewLimit`).
     private var continueItems: [HistoryEpisode] {
         Array(filterEpisodes(store.continueListeningEpisodes).prefix(previewLimit))
     }
@@ -50,14 +53,15 @@ struct HomeView: View {
         Array(filterEpisodes(store.inboxEpisodes).prefix(previewLimit))
     }
 
-    /// Queue preview catalog after Home title/feed search filter (before soft-cap).
+    /// Queue preview catalog after Home library-query + feed-title search filter (before soft-cap).
+    /// Same fields as Queue tab: `episodeMatchesLibraryQuery` + `displayTitle(containingEpisodeId:)`.
     /// Does **not** follow Queue tab chips (`queueFilter`) — Home uses full queue order.
     private var filteredQueueCatalog: [PodcastEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base = store.queue
         if q.isEmpty { return base }
         return base.filter { episode in
-            if episode.title.localizedCaseInsensitiveContains(q) { return true }
+            if store.episodeMatchesLibraryQuery(episode, query: q) { return true }
             let feedTitle = store.displayTitle(containingEpisodeId: episode.id)
             return feedTitle.localizedCaseInsensitiveContains(q)
         }
@@ -109,13 +113,14 @@ struct HomeView: View {
         }
     }
 
-    /// Title/feed filter over full newest-completed catalog (before soft-cap).
+    /// Library-query + feed-title filter over full newest-completed catalog (before soft-cap).
+    /// Same fields as Downloads tab: `episodeMatchesLibraryQuery` + `displayTitle(containingEpisodeId:)`.
     private var filteredDownloadsCatalog: [DownloadedEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base = downloadsCatalogNewestFirst
         if q.isEmpty { return base }
         return base.filter { item in
-            if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+            if store.episodeMatchesLibraryQuery(item.episode, query: q) { return true }
             let feedTitle = store.displayTitle(containingEpisodeId: item.episode.id)
             return feedTitle.localizedCaseInsensitiveContains(q)
         }
@@ -987,13 +992,14 @@ struct HomeView: View {
         }
     }
 
-    /// Episode-like items with `episode.title` + `feedTitle` (Continue / Inbox / History / Archived / Favorites).
+    /// Episode-like items (Continue / Inbox / Favorites / History / Archived): library query fields
+    /// via `episodeMatchesLibraryQuery` and/or `feedTitle` (display title on those wrappers).
     private func filterEpisodes<T>(_ items: [T]) -> [T] where T: HomeSearchableEpisode {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !q.isEmpty else { return items }
         return items.filter { item in
-            if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
-            return item.feedTitle.localizedCaseInsensitiveContains(q)
+            store.episodeMatchesLibraryQuery(item.episode, query: q)
+                || item.feedTitle.localizedCaseInsensitiveContains(q)
         }
     }
 
@@ -1012,7 +1018,7 @@ struct HomeView: View {
     }
 }
 
-/// Shared title/feed fields for Home section episode previews (Continue / Inbox / History / Favorites).
+/// Shared episode + feedTitle fields for Home section episode previews (Continue / Inbox / History / Favorites / Archived).
 private protocol HomeSearchableEpisode {
     var episode: PodcastEpisode { get }
     var feedTitle: String { get }
