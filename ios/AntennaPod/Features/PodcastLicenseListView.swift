@@ -2,7 +2,11 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided `podcast:license` list — license text (+ optional url attribute).
-/// **Copy** always; **Share** when copyable (prefers an http(s) url); **Open** when url is http(s). Cap + honesty footnote.
+/// When license text is shown: distinct **Copy / Share license text**.
+/// When a feed url is shown: distinct **Copy / Share license URL** for that exact
+/// displayed string (Copy always pastes the raw displayed URL string; Share prefers
+/// parseable http(s) when available, otherwise the same raw string; **Open** http(s)
+/// unchanged; hide when missing — never invent).
 /// **Display-only** — no DRM enforcement. Hidden when none.
 struct PodcastLicenseListView: View {
     @Environment(\.openURL) private var openURL
@@ -68,14 +72,15 @@ struct PodcastLicenseListView: View {
     @ViewBuilder
     private func licenseRow(_ entry: PodcastLicense) -> some View {
         let body = entry.displayText
-        let url = entry.openURL
+        let urlString = entry.displayUrlString
+        let browserURL = entry.openURL
         let a11y: String = {
             var parts: [String] = [String(localized: "License")]
             if let body {
                 parts.append(body)
             }
-            if let url {
-                parts.append(url.absoluteString)
+            if let urlString {
+                parts.append(urlString)
             }
             return parts.joined(separator: ", ")
         }()
@@ -92,8 +97,8 @@ struct PodcastLicenseListView: View {
                         .foregroundStyle(.primary)
                         .lineLimit(3)
                         .textSelection(.enabled)
-                } else if let url {
-                    Text(url.absoluteString)
+                } else if let urlString {
+                    Text(urlString)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .lineLimit(2)
@@ -103,8 +108,8 @@ struct PodcastLicenseListView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(a11y)
 
-            if body != nil, let url {
-                Text(url.absoluteString)
+            if body != nil, let urlString {
+                Text(urlString)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
@@ -139,55 +144,56 @@ struct PodcastLicenseListView: View {
                 }
             }
 
-            HStack(spacing: 12) {
-                Button {
-                    UIPasteboard.general.string = PodcastLicenseDisplay.copyText(entry)
-                    copiedAlertMessage = String(localized: "License copied to the pasteboard.")
-                    copyFeedbackTick += 1
-                    showCopiedAlert = true
-                } label: {
-                    Label("Copy", systemImage: "doc.on.doc")
-                        .font(.subheadline)
-                }
-                .accessibilityLabel(String(localized: "Copy"))
-                .accessibilityHint(
-                    String(localized: "Copies the license text to the pasteboard")
-                )
+            if let urlString {
+                HStack(spacing: 12) {
+                    Button {
+                        UIPasteboard.general.string = urlString
+                        copiedAlertMessage = String(localized: "License URL copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy license URL", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy license URL"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Copies the exact feed-provided license URL shown above as plain text. Display only — this app does not enforce DRM."
+                        )
+                    )
 
-                let copyText = PodcastLicenseDisplay.copyText(entry)
-                if !copyText.isEmpty {
                     Group {
-                        if let url {
-                            ShareLink(item: url) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                        if let browserURL {
+                            ShareLink(item: browserURL) {
+                                Label("Share license URL", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         } else {
-                            ShareLink(item: copyText) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                            ShareLink(item: urlString) {
+                                Label("Share license URL", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         }
                     }
-                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityLabel(String(localized: "Share license URL"))
                     .accessibilityHint(
                         String(
-                            localized: "Shares the license URL when it is a parseable http(s) URL; otherwise shares the same license text as Copy"
+                            localized: "Shares the feed-provided http(s) license URL when available; otherwise shares the same raw license URL as Copy. Display only — this app does not enforce DRM."
                         )
                     )
-                }
 
-                if let url {
-                    Button {
-                        openURL(url)
-                    } label: {
-                        Label("Open", systemImage: "safari")
-                            .font(.subheadline)
+                    if let browserURL {
+                        Button {
+                            openURL(browserURL)
+                        } label: {
+                            Label("Open", systemImage: "safari")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Open"))
+                        .accessibilityHint(
+                            String(localized: "Opens the license URL in the system browser")
+                        )
                     }
-                    .accessibilityLabel(String(localized: "Open"))
-                    .accessibilityHint(
-                        String(localized: "Opens the license URL in the system browser")
-                    )
                 }
             }
         }

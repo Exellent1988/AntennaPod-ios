@@ -38609,6 +38609,96 @@
         }
       }
     }
+  },
+  "Copy license URL": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy license URL"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Lizenz-URL kopieren"
+        }
+      }
+    },
+    "comment": "Distinct plain-text Copy action for the feed-provided podcast:license url attribute."
+  },
+  "Share license URL": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share license URL"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Lizenz-URL teilen"
+        }
+      }
+    },
+    "comment": "Distinct Share action for the feed-provided podcast:license url attribute; prefers parseable http(s) when available, otherwise the same raw URL as Copy."
+  },
+  "License URL copied to the pasteboard.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "License URL copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Lizenz-URL in die Zwischenablage kopiert."
+        }
+      }
+    },
+    "comment": "Copied confirmation when pasting the feed-provided podcast:license url."
+  },
+  "Copies the exact feed-provided license URL shown above as plain text. Display only — this app does not enforce DRM.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact feed-provided license URL shown above as plain text. Display only — this app does not enforce DRM."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt vom Feed gelieferte oben angezeigte Lizenz-URL als Klartext. Nur Anzeige — diese App setzt kein DRM durch."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Copy license URL; honesty: display-only, no DRM."
+  },
+  "Shares the feed-provided http(s) license URL when available; otherwise shares the same raw license URL as Copy. Display only — this app does not enforce DRM.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the feed-provided http(s) license URL when available; otherwise shares the same raw license URL as Copy. Display only — this app does not enforce DRM."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die vom Feed gelieferte http(s)-Lizenz-URL, wenn verfügbar; sonst dieselbe rohe Lizenz-URL wie Kopieren. Nur Anzeige — diese App setzt kein DRM durch."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Share license URL; prefers http(s), else raw; honesty: display-only, no DRM."
   }
   },
   "version": "1.0"

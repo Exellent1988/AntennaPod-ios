@@ -1146,29 +1146,35 @@ struct PodcastLicense: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
-    /// http(s) URL from the `url` attribute when valid. Nil otherwise — never invent.
-    var openURL: URL? {
+    /// Trimmed non-empty `url` attribute string. Nil when blank — never invent.
+    var displayUrlString: String? {
         guard let url else { return nil }
         let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, let parsed = URL(string: trimmed) else { return nil }
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// http(s) URL from the `url` attribute when valid. Nil otherwise — never invent.
+    var openURL: URL? {
+        guard let trimmed = displayUrlString, let parsed = URL(string: trimmed) else { return nil }
         let scheme = parsed.scheme?.lowercased()
         guard scheme == "http" || scheme == "https" else { return nil }
         return parsed
     }
 }
 
-/// Display helpers for `podcast:license` lists (channel or item). Feed-provided only; Copy + Share + optional Open.
+/// Display helpers for `podcast:license` lists (channel or item). Feed-provided only;
+/// distinct Copy/Share license text + Copy/Share license URL + optional Open http(s).
 enum PodcastLicenseDisplay {
     /// Soft UI cap — namespace is typically single; show first N if a feed lists more + honesty footnote.
     static let displayCap = 5
 
-    /// Entries with non-empty text and/or a valid http(s) url. Feed order. No invented licenses.
+    /// Entries with non-empty text and/or a non-empty url attribute. Feed order. No invented licenses.
     static func valid(_ items: [PodcastLicense]) -> [PodcastLicense] {
         items.compactMap { item in
             let body = item.displayText
-            let open = item.openURL
-            guard body != nil || open != nil else { return nil }
-            return PodcastLicense(url: open?.absoluteString ?? item.url, text: body ?? "")
+            let urlString = item.displayUrlString
+            guard body != nil || urlString != nil else { return nil }
+            return PodcastLicense(url: urlString, text: body ?? "")
         }
     }
 
@@ -1181,10 +1187,10 @@ enum PodcastLicenseDisplay {
         return (Array(list.prefix(displayCap)), true)
     }
 
-    /// Pasteboard line: license text + optional URL.
+    /// Combined pasteboard line: license text + optional URL string (helper; UI uses distinct actions).
     static func copyText(_ item: PodcastLicense) -> String {
         let body = item.displayText
-        let url = item.openURL?.absoluteString
+        let url = item.displayUrlString
         switch (body, url) {
         case let (b?, u?):
             return "\(b)\n\(u)"
