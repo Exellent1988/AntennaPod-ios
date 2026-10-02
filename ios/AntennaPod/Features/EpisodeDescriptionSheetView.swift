@@ -251,6 +251,10 @@ struct EpisodeDescriptionSheetView: View {
                         systemImage: "doc.text",
                         description: Text("This episode has no shownotes in the feed.")
                     )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "No description"))
+                    .accessibilityValue(String(localized: "This episode has no shownotes in the feed."))
+                    .accessibilityHint(String(localized: "There is no episode description to read."))
                 } else if plainDescription.isEmpty {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
@@ -412,6 +416,10 @@ struct EpisodeDescriptionSheetView: View {
                 systemImage: "magnifyingglass",
                 description: Text("No shownotes text matches your search.")
             )
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "No matching text"))
+            .accessibilityValue(String(localized: "No shownotes text matches your search."))
+            .accessibilityHint(String(localized: "Change or clear the shownotes search to see other text."))
         } else if isFiltering {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 16) {
