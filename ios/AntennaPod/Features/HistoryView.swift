@@ -14,6 +14,7 @@ struct HistoryView: View {
     @State private var showEnqueueAllConfirm = false
     @State private var showMarkAllPlayedConfirm = false
     @State private var showMarkAllUnplayedConfirm = false
+    @State private var showArchiveAllConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyFeedbackTick = 0
@@ -36,6 +37,11 @@ struct HistoryView: View {
     /// or sort filtered. Same archive policy as Favorites / Downloads / All Episodes.
     private var markAllHistoryPlayedCandidatesCount: Int {
         store.markAllHistoryPlayedCandidateCount()
+    }
+
+    /// Non-archived episodes in the **full History catalog** — not podcast, search, or sort filtered.
+    private var archiveAllHistoryCandidatesCount: Int {
+        items.filter { !store.isArchived($0.episode.id) }.count
     }
 
     /// Played episodes in the **full History catalog** (not podcast/search filter) for Mark all as unplayed.
@@ -475,6 +481,16 @@ struct HistoryView: View {
                     .disabled(markAllHistoryUnplayedCandidatesCount == 0)
                     .accessibilityHint(String(localized: "Marks played History episodes as unplayed; leaves History when no progress remains"))
 
+                    Button {
+                        showArchiveAllConfirm = true
+                    } label: {
+                        Label("Archive all", systemImage: "archivebox")
+                    }
+                    .disabled(archiveAllHistoryCandidatesCount == 0)
+                    .accessibilityHint(
+                        String(localized: "Archives non-archived episodes in the full History catalog; ignores podcast, search, and sort filters")
+                    )
+
                     Button(role: .destructive) {
                         showClearHistoryConfirm = true
                     } label: {
@@ -489,7 +505,7 @@ struct HistoryView: View {
                 .disabled(items.isEmpty)
                 .accessibilityLabel(String(localized: "History actions"))
                 .accessibilityHint(
-                    String(localized: "Copy history, share history, play random, add all to queue, mark all as played, mark all as unplayed, or clear history")
+                    String(localized: "Copy history, share history, play random, add all to queue, mark all as played, mark all as unplayed, archive all, or clear history")
                 )
             }
         }
@@ -537,6 +553,18 @@ struct HistoryView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Marks \(markAllHistoryUnplayedCandidatesCount) played episodes in History as unplayed (full catalog, not podcast or search filter). Episodes leave History when no progress remains — same as per-row Mark unplayed. Does not delete downloads, clear the queue, or stop playback.")
+        }
+        .confirmationDialog(
+            "Archive all?",
+            isPresented: $showArchiveAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Archive all") {
+                store.archiveAllHistory()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Archives \(archiveAllHistoryCandidatesCount) non-archived History episode(s) in the full History catalog (newest last-played first), not the podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
         }
         .confirmationDialog(
             "Clear history?",

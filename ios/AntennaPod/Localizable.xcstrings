@@ -28844,8 +28844,7 @@
           }
         }
       }
-    }
-  },
+    },
     "Archive all?": {
       "extractionState": "manual",
       "localizations": {
@@ -28917,5 +28916,60 @@
       },
       "comment": "VoiceOver hint for Favorites actions menu."
     },
+    "Archives non-archived episodes in the full History catalog; ignores podcast, search, and sort filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archives non-archived episodes in the full History catalog; ignores podcast, search, and sort filters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert nicht archivierte Episoden im vollständigen Verlaufs-Katalog; ignoriert Podcast-, Such- und Sortierfilter"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for History Archive all."
+    },
+    "Archives %lld non-archived History episode(s) in the full History catalog (newest last-played first), not the podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archives %lld non-archived History episode(s) in the full History catalog (newest last-played first), not the podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert %lld nicht archivierte Verlaufs-Episode(n) im vollständigen Verlaufs-Katalog (zuletzt gespielt zuerst), nicht nach Podcast-, Such- oder Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange."
+          }
+        }
+      },
+      "comment": "History Archive all confirmation message — full catalog, non-archived eligibility, not podcast/search/sort."
+    },
+    "Copy history, share history, play random, add all to queue, mark all as played, mark all as unplayed, archive all, or clear history": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy history, share history, play random, add all to queue, mark all as played, mark all as unplayed, archive all, or clear history"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf kopieren, Verlauf teilen, Zufällig abspielen, Alle zur Warteschlange, Alle als gehört markieren, Alle als ungehört markieren, Alle archivieren oder Verlauf leeren"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for History actions menu."
+    }
+  },
   "version": "1.0"
 }

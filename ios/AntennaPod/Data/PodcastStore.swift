@@ -1947,6 +1947,28 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Archive every non-archived episode in the full History catalog (bulk).
+    /// Uses store `historyEpisodes` order (**newest-first** by `lastPlayedAtEpochMs`) and ignores
+    /// podcast, search, and sort filters. Writes `archivedAtById` once, preserving existing archive
+    /// timestamps for any already-archived ids. Archiving is independent from played state and does
+    /// not mark played, delete downloads, clear the queue, or remove History entries. Callers must
+    /// confirm first (History toolbar `confirmationDialog`).
+    func archiveAllHistory() {
+        let ids = historyEpisodes
+            .map(\.episode.id)
+            .filter { !isArchived($0) }
+        guard !ids.isEmpty else { return }
+
+        let now = Int64(Date().timeIntervalSince1970 * 1000)
+        var map = archivedAtById
+        for id in ids {
+            if map[id] == nil {
+                map[id] = now
+            }
+        }
+        archivedAtById = map
+    }
+
     /// Append every History episode that is not already queued (bulk).
     /// Uses store `historyEpisodes` order (**newest-first** by `lastPlayedAtEpochMs` —
     /// `lastPlayedAt` else `updatedAt` — same catalog as Clear history / Home Continue).
