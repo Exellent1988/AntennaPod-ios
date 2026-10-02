@@ -207,6 +207,8 @@ final class DownloadService: ObservableObject {
 
     private let sessionDelegate = DownloadSessionDelegate()
     private var session: URLSession!
+    /// Retains block-based observer for `AppHTTPProxy.didChangeNotification`.
+    private var proxyChangeObserver: NSObjectProtocol?
     /// Live task id → episode (+ destination file name).
     private var pendingByTaskId: [Int: PendingDownloadMapping] = [:]
     /// Episodes accepted but not yet started as URLSession tasks (FIFO). In-memory only —
@@ -222,6 +224,7 @@ final class DownloadService: ObservableObject {
         config.sessionSendsLaunchEvents = true
         config.isDiscretionary = false
         config.allowsCellularAccess = true
+        AppURLSession.applyProxy(to: config)
         session = URLSession(configuration: config, delegate: sessionDelegate, delegateQueue: nil)
         sessionDelegate.owner = self
 
@@ -231,10 +234,33 @@ final class DownloadService: ObservableObject {
             Self.pendingBackgroundCompletionHandler = nil
         }
 
+        proxyChangeObserver = NotificationCenter.default.addObserver(
+            forName: AppHTTPProxy.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.recreateSessionIfIdleForProxyChange()
+        }
+
         reloadFromDisk()
         reconnectOutstandingTasks()
         refreshStorageUsage()
         recentErrors = PodcastPersistence.loadDownloadErrors()
+    }
+
+    /// Background sessions cannot mutate `connectionProxyDictionary` in place.
+    /// When idle (no live tasks / waiting queue), invalidate and recreate so the new proxy applies.
+    /// If downloads are active, the next cold start / idle recreate picks it up — honest beta limit.
+    private func recreateSessionIfIdleForProxyChange() {
+        guard pendingByTaskId.isEmpty, waitingQueue.isEmpty else { return }
+        let old = session
+        old?.finishTasksAndInvalidate()
+        let config = URLSessionConfiguration.background(withIdentifier: Self.backgroundSessionIdentifier)
+        config.sessionSendsLaunchEvents = true
+        config.isDiscretionary = false
+        config.allowsCellularAccess = true
+        AppURLSession.applyProxy(to: config)
+        session = URLSession(configuration: config, delegate: sessionDelegate, delegateQueue: nil)
     }
 
     /// Called from `AppDelegate` when iOS relaunches / wakes the app for this background session.
@@ -1005,8 +1031,9 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
         }
     }
 
-    /// HTTP Basic challenge: use Keychain credentials for the pending episode’s feed when the
-    /// challenge host matches the feed host. Never logs the password. Cancel on failure / mismatch.
+    /// HTTP Basic challenge: proxy credentials from `AppHTTPProxy` Keychain when
+    /// `protectionSpace.isProxy`; otherwise per-feed Keychain for the pending episode’s feed
+    /// when the challenge host matches the feed host. Never logs the password.
     func urlSession(
         _ session: URLSession,
         task: URLSessionTask,
@@ -1023,6 +1050,20 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
         // Avoid retry loops after a failed Basic attempt.
         if challenge.previousFailureCount > 0 {
             completionHandler(.cancelAuthenticationChallenge, nil)
+            return
+        }
+        // Authenticated HTTP(S) proxy (optional username/password).
+        if challenge.protectionSpace.isProxy {
+            guard let proxy = AppHTTPProxy.resolved(), proxy.hasCredentials else {
+                completionHandler(.performDefaultHandling, nil)
+                return
+            }
+            let credential = URLCredential(
+                user: proxy.username,
+                password: proxy.password,
+                persistence: .forSession
+            )
+            completionHandler(.useCredential, credential)
             return
         }
         guard let mapping = pending(for: task.taskIdentifier) else {

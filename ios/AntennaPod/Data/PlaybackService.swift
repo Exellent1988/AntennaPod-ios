@@ -1241,7 +1241,7 @@ final class PlaybackService: ObservableObject {
         let episodeId = episode.id
         Task {
             do {
-                let (data, _) = try await URLSession.shared.data(from: url)
+                let (data, _) = try await AppURLSession.shared.data(from: url)
                 guard let image = UIImage(data: data) else { return }
                 let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
                 await MainActor.run {

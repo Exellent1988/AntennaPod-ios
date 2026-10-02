@@ -75,7 +75,7 @@ struct PodcastIndexSearchService {
         let data: Data
         let response: URLResponse
         do {
-            (data, response) = try await URLSession.shared.data(for: request)
+            (data, response) = try await AppURLSession.shared.data(for: request)
         } catch let urlError as URLError {
             throw SearchError.network(urlError.localizedDescription)
         } catch {

@@ -98,7 +98,8 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - New-episode action (Inbox only / Add to Queue / Add to Queue and download; per-feed Use global / Inbox / Queue; after refresh newcomers only)
 - Auto-download (global on/off + episodes-per-feed cap; **new episode IDs after refresh only**; Wi‑Fi only under Network / Downloads; per-feed Use global / Always / Never; skips local-folder)
 - Mobile / Wi‑Fi policy (Current network status + auto / manual download / stream Wi‑Fi-only toggles; shared NWPathMonitor; no VPN/proxy)
-- Custom User-Agent (Settings → Network / Downloads; optional override, empty → `AntennaPod-iOS/0.1`; newlines stripped; feed refresh + downloads + other URLSession clients; **AVPlayer streaming may still use system UA**; not a proxy / not certificate pinning)
+- Custom User-Agent (Settings → Network / Downloads; optional override, empty → `AntennaPod-iOS/0.1`; newlines stripped; feed refresh + downloads + other URLSession clients; **AVPlayer streaming may still use system UA**; see HTTP proxy; not certificate pinning)
+- HTTP proxy (Settings → Network / Downloads; enable + host + port + optional username; **password Keychain only**; `AppURLSession` / DownloadService HTTP+HTTPS `connectionProxyDictionary`; **AVPlayer streaming may bypass**; not VPN detection / not certificate pinning / not SOCKS)
 - Per-feed settings (Feed detail → gear: Auto-download, Keep updated, New episodes, Notify, Skip intro/outro, Playback speed overrides, **HTTP Basic Authentication** in Keychain — never in feed-settings.json; local-folder N/A)
 - Tags / Folders for subscriptions (side map `feed-tags.json`; assign on per-feed settings; **Manage tags** in Settings → Library + Subscriptions toolbar — searchable list with counts, rename, delete with confirm; filter chips + optional group-by-tag; untagged)
 - Unsubscribe confirm (Subscriptions trailing swipe + Feed detail ⋯; destructive dialog with podcast title; removes feed + feed-settings + tags + queue items from that feed + favorites/archive/bookmarks/playback history for its episodes; **Unsubscribe** keeps downloaded files; optional **Unsubscribe and delete N downloads (~size)** deletes only this feed’s offline files via `deleteDownloads(forFeed:)` before unsubscribe — incl. favorited; cancels in-flight; not Clear all; local-folder releases bookmark; dismisses Feed detail after confirm)
@@ -471,8 +472,18 @@ Settings → **Network / Downloads → Custom User-Agent**. Default **empty** (u
 
 - **Sanitize:** CR/LF and other control characters are removed (HTTP header safety). Whitespace is collapsed/trimmed. Empty after sanitize → default.
 - **Applied on:** feed refresh (`FeedRepository`), media downloads (`DownloadService`), and other app `URLSession` clients (discovery search, chapters JSON, transcripts, gpodder). Shared helper `AppUserAgent`.
-- **Honest limits:** stock `AVPlayer` **streaming** may still send the **system** User-Agent — this override is not wired into AVPlayer. This is **not** an HTTP proxy setting and **not** certificate pinning.
+- **Honest limits:** stock `AVPlayer` **streaming** may still send the **system** User-Agent — this override is not wired into AVPlayer. For an HTTP(S) proxy see **HTTP proxy** below. **Not** certificate pinning.
 - EN/DE strings + VoiceOver (label, hint, effective value).
+
+## HTTP proxy (beta polish)
+
+Settings → **Network / Downloads → HTTP proxy**. Optional Android AntennaPod parity lite for app `URLSession` networking.
+
+- **Prefs:** enable toggle + host + port + optional username in `AppSettings` (UserDefaults + iOS JSON backup). **Password in Keychain only** (`AppHTTPProxyKeychain`) — never UserDefaults / never backup plaintext (same pattern as HTTP Basic / gpodder / Podcast Index secrets).
+- **When applied:** enable on, non-empty sanitized host, port in **1…65535** → `AppHTTPProxy` builds `connectionProxyDictionary` for **HTTP + HTTPS** on `AppURLSession` (feeds, downloads, search, chapters, transcripts, gpodder, …) and on the background `DownloadService` session. Empty host or invalid port → treat as disabled / ignore proxy. Disable clears the dictionary (foreground sessions recreate immediately; background session recreates when idle).
+- **Sanitize:** host trimmed; `http://` / `https://` stripped; path/`user@` fragments dropped; control/newline characters removed. Port outside 1…65535 ignored.
+- **Honest limits:** applies to **URLSession** clients only. Stock **AVPlayer streaming may bypass** the app proxy (system path / no custom `AVURLAsset` inventing). **Not** VPN detection; **not** certificate pinning; **not** SOCKS (HTTP/HTTPS only for v1).
+- EN/DE strings + VoiceOver (toggle, fields, footnote).
 
 ## Volume adaptation (P3 lite)
 

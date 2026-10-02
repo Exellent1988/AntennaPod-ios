@@ -1017,6 +1017,10 @@ final class AppSettings: ObservableObject {
         static let stereoToMonoEnabled = "settings.stereoToMonoEnabled"
         static let preservePitchEnabled = "settings.preservePitchEnabled"
         static let customUserAgent = "settings.customUserAgent"
+        static let httpProxyEnabled = "settings.httpProxy.enabled"
+        static let httpProxyHost = "settings.httpProxy.host"
+        static let httpProxyPort = "settings.httpProxy.port"
+        static let httpProxyUsername = "settings.httpProxy.username"
         static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
         static let continuousPlaybackEnabled = "settings.continuousPlaybackEnabled"
         static let resetPositionWhenMarkedPlayed = "settings.resetPositionWhenMarkedPlayed"
@@ -1334,6 +1338,91 @@ final class AppSettings: ObservableObject {
     /// Effective User-Agent string currently sent on feed/download requests.
     var effectiveUserAgent: String {
         AppUserAgent.resolved(override: customUserAgent)
+    }
+
+    /// When true, attempt to use the configured HTTP(S) proxy for URLSession clients.
+    /// Ignored when host is empty or port is outside 1…65535. Default off.
+    /// Password stays in Keychain only — never UserDefaults / never JSON backup plaintext.
+    /// **Not** VPN detection / **not** certificate pinning / **not** SOCKS; AVPlayer streaming may bypass.
+    @Published var httpProxyEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(httpProxyEnabled, forKey: Keys.httpProxyEnabled)
+            AppURLSession.invalidate()
+            AppHTTPProxy.notifyDidChange()
+        }
+    }
+
+    /// Proxy host (no scheme). Sanitized on set; empty → proxy ignored even when enabled.
+    @Published var httpProxyHost: String {
+        didSet {
+            let sanitized = AppHTTPProxy.sanitizeHost(httpProxyHost)
+            if sanitized != httpProxyHost {
+                httpProxyHost = sanitized
+                return
+            }
+            UserDefaults.standard.set(httpProxyHost, forKey: Keys.httpProxyHost)
+            AppURLSession.invalidate()
+            AppHTTPProxy.notifyDidChange()
+        }
+    }
+
+    /// Proxy port 1…65535. Values outside that range are stored but treated as disabled by `AppHTTPProxy.resolved`.
+    @Published var httpProxyPort: Int {
+        didSet {
+            UserDefaults.standard.set(httpProxyPort, forKey: Keys.httpProxyPort)
+            AppURLSession.invalidate()
+            AppHTTPProxy.notifyDidChange()
+        }
+    }
+
+    /// Optional proxy username (UserDefaults + backup). Password is Keychain-only.
+    @Published var httpProxyUsername: String {
+        didSet {
+            let sanitized = AppHTTPProxy.sanitizeUsername(httpProxyUsername)
+            if sanitized != httpProxyUsername {
+                httpProxyUsername = sanitized
+                return
+            }
+            UserDefaults.standard.set(httpProxyUsername, forKey: Keys.httpProxyUsername)
+            AppURLSession.invalidate()
+            AppHTTPProxy.notifyDidChange()
+        }
+    }
+
+    /// Whether a proxy password is stored in the Keychain (never expose the value to UI lists).
+    var httpProxyHasStoredPassword: Bool {
+        AppHTTPProxyKeychain.hasStoredPassword()
+    }
+
+    /// Effective resolved proxy, or `nil` when disabled / invalid host/port.
+    var effectiveHTTPProxy: AppHTTPProxy.Resolved? {
+        AppHTTPProxy.resolved(
+            enabled: httpProxyEnabled,
+            host: httpProxyHost,
+            port: httpProxyPort,
+            username: httpProxyUsername
+        )
+    }
+
+    /// Save or clear proxy password (Keychain only). Empty clears. Triggers session refresh.
+    func setHTTPProxyPassword(_ password: String) {
+        do {
+            try AppHTTPProxyKeychain.savePassword(password)
+        } catch {
+            // Best-effort; UI can show a generic failure if needed later.
+            return
+        }
+        objectWillChange.send()
+        AppURLSession.invalidate()
+        AppHTTPProxy.notifyDidChange()
+    }
+
+    /// Clear Keychain proxy password and refresh sessions.
+    func clearHTTPProxyPassword() {
+        AppHTTPProxyKeychain.deletePassword()
+        objectWillChange.send()
+        AppURLSession.invalidate()
+        AppHTTPProxy.notifyDidChange()
     }
 
     /// When true, keep the screen awake (`UIApplication.isIdleTimerDisabled`) while playback is actively playing.
@@ -1849,6 +1938,27 @@ final class AppSettings: ObservableObject {
         customUserAgent = AppUserAgent.sanitize(
             UserDefaults.standard.string(forKey: Keys.customUserAgent) ?? ""
         )
+        if UserDefaults.standard.object(forKey: Keys.httpProxyEnabled) != nil {
+            httpProxyEnabled = UserDefaults.standard.bool(forKey: Keys.httpProxyEnabled)
+        } else {
+            httpProxyEnabled = false
+        }
+        httpProxyHost = AppHTTPProxy.sanitizeHost(
+            UserDefaults.standard.string(forKey: Keys.httpProxyHost) ?? ""
+        )
+        if UserDefaults.standard.object(forKey: Keys.httpProxyPort) != nil {
+            httpProxyPort = UserDefaults.standard.integer(forKey: Keys.httpProxyPort)
+        } else {
+            httpProxyPort = AppHTTPProxy.defaultPort
+        }
+        httpProxyUsername = AppHTTPProxy.sanitizeUsername(
+            UserDefaults.standard.string(forKey: Keys.httpProxyUsername) ?? ""
+        )
+        // didSet does not run during init — seed UserDefaults so AppHTTPProxy.resolved matches in-memory prefs.
+        UserDefaults.standard.set(httpProxyEnabled, forKey: Keys.httpProxyEnabled)
+        UserDefaults.standard.set(httpProxyHost, forKey: Keys.httpProxyHost)
+        UserDefaults.standard.set(httpProxyPort, forKey: Keys.httpProxyPort)
+        UserDefaults.standard.set(httpProxyUsername, forKey: Keys.httpProxyUsername)
         if UserDefaults.standard.object(forKey: Keys.keepScreenOnWhilePlaying) != nil {
             keepScreenOnWhilePlaying = UserDefaults.standard.bool(forKey: Keys.keepScreenOnWhilePlaying)
         } else {
@@ -2211,6 +2321,10 @@ final class AppSettings: ObservableObject {
             stereoToMonoEnabled: stereoToMonoEnabled,
             preservePitchEnabled: preservePitchEnabled,
             customUserAgent: customUserAgent,
+            httpProxyEnabled: httpProxyEnabled,
+            httpProxyHost: httpProxyHost,
+            httpProxyPort: httpProxyPort,
+            httpProxyUsername: httpProxyUsername,
             keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
             continuousPlaybackEnabled: continuousPlaybackEnabled,
             resetPositionWhenMarkedPlayed: resetPositionWhenMarkedPlayed,
@@ -2316,6 +2430,13 @@ final class AppSettings: ObservableObject {
         stereoToMonoEnabled = snap.stereoToMonoEnabled ?? false
         preservePitchEnabled = snap.preservePitchEnabled ?? true
         customUserAgent = AppUserAgent.sanitize(snap.customUserAgent ?? "")
+        httpProxyEnabled = snap.httpProxyEnabled ?? false
+        httpProxyHost = AppHTTPProxy.sanitizeHost(snap.httpProxyHost ?? "")
+        if let port = snap.httpProxyPort {
+            httpProxyPort = port
+        }
+        httpProxyUsername = AppHTTPProxy.sanitizeUsername(snap.httpProxyUsername ?? "")
+        // Password never in backup JSON — Keychain only (unchanged on restore).
         keepScreenOnWhilePlaying = snap.keepScreenOnWhilePlaying ?? false
         continuousPlaybackEnabled = snap.continuousPlaybackEnabled ?? true
         resetPositionWhenMarkedPlayed = snap.resetPositionWhenMarkedPlayed ?? true
@@ -2474,6 +2595,14 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var preservePitchEnabled: Bool? = true
     /// Absent in older backups → empty (app default User-Agent).
     var customUserAgent: String? = nil
+    /// Absent in older backups → treated as off (no proxy).
+    var httpProxyEnabled: Bool? = false
+    /// Absent in older backups → empty host (proxy ignored).
+    var httpProxyHost: String? = nil
+    /// Absent in older backups → 8080 default display port.
+    var httpProxyPort: Int? = 8080
+    /// Absent in older backups → empty. Password never in backup (Keychain only).
+    var httpProxyUsername: String? = nil
     /// Absent in older backups → treated as off (allow idle lock).
     var keepScreenOnWhilePlaying: Bool? = false
     /// Absent in older backups → treated as on (auto-next from queue).

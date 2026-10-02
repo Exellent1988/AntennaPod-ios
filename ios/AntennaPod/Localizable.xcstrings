@@ -22266,23 +22266,6 @@
         }
       }
     },
-    "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Not a proxy.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Not a proxy."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optionaler Override für Feed-Aktualisierung und Downloads. Leer = App-Standard. Zeilenumbrüche werden entfernt. AVPlayer-Streaming kann weiterhin die System-User-Agent nutzen. Kein Proxy."
-          }
-        }
-      }
-    },
     "Volume boost": {
       "extractionState": "manual",
       "localizations": {
@@ -22486,6 +22469,278 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reiht %lld archivierte Episoden am Ende der Warteschlange ein (zuletzt archiviert zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Archiv-Katalog (wie Alle wiederherstellen), nicht Podcast- oder Suchfilter. Stellt nicht wieder her und entarchiviert nicht. Warteschlangen-Sperre blockiert Einreihen nicht."
+          }
+        }
+      }
+    },
+    "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. See HTTP proxy for proxy settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. See HTTP proxy for proxy settings."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optionaler Override für Feed-Aktualisierung und Downloads. Leer = App-Standard. Zeilenumbrüche werden entfernt. AVPlayer-Streaming kann weiterhin die System-UA nutzen. Siehe HTTP-Proxy für Proxy-Einstellungen."
+          }
+        }
+      }
+    },
+    "HTTP proxy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP proxy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP-Proxy"
+          }
+        }
+      }
+    },
+    "Proxy host": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy host"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy-Host"
+          }
+        }
+      }
+    },
+    "Proxy port": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy port"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy-Port"
+          }
+        }
+      }
+    },
+    "Proxy username": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy username"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy-Benutzername"
+          }
+        }
+      }
+    },
+    "Proxy password": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy password"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy-Passwort"
+          }
+        }
+      }
+    },
+    "example.com": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "example.com"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "example.com"
+          }
+        }
+      }
+    },
+    "Optional": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional"
+          }
+        }
+      }
+    },
+    "Save password": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save password"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwort speichern"
+          }
+        }
+      }
+    },
+    "Clear password": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear password"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwort löschen"
+          }
+        }
+      }
+    },
+    "When on and host plus port are valid, URLSession clients use this HTTP(S) proxy. AVPlayer streaming may bypass it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on and host plus port are valid, URLSession clients use this HTTP(S) proxy. AVPlayer streaming may bypass it."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv und Host sowie Port gültig sind, nutzen URLSession-Clients diesen HTTP(S)-Proxy. AVPlayer-Streaming kann ihn umgehen."
+          }
+        }
+      }
+    },
+    "Hostname without http or https. Empty host disables the proxy.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hostname without http or https. Empty host disables the proxy."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hostname ohne http oder https. Leerer Host deaktiviert den Proxy."
+          }
+        }
+      }
+    },
+    "Port from 1 to 65535. Invalid port disables the proxy.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Port from 1 to 65535. Invalid port disables the proxy."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Port von 1 bis 65535. Ungültiger Port deaktiviert den Proxy."
+          }
+        }
+      }
+    },
+    "Optional. Password is stored in the Keychain only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional. Password is stored in the Keychain only."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional. Passwort nur im Schlüsselbund."
+          }
+        }
+      }
+    },
+    "Optional. Saved to Keychain only — never in backup JSON. Leave blank to keep the stored password.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional. Saved to Keychain only — never in backup JSON. Leave blank to keep the stored password."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional. Nur im Schlüsselbund — nie im Backup-JSON. Leer lassen, um das gespeicherte Passwort zu behalten."
+          }
+        }
+      }
+    },
+    "Optional HTTP(S) proxy for URLSession clients (feeds, downloads, search, …). AVPlayer streaming may bypass the app proxy. Not VPN detection; not certificate pinning; not SOCKS.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional HTTP(S) proxy for URLSession clients (feeds, downloads, search, …). AVPlayer streaming may bypass the app proxy. Not VPN detection; not certificate pinning; not SOCKS."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optionaler HTTP(S)-Proxy für URLSession-Clients (Feeds, Downloads, Suche, …). AVPlayer-Streaming kann den App-Proxy umgehen. Keine VPN-Erkennung; kein Certificate Pinning; kein SOCKS."
           }
         }
       }

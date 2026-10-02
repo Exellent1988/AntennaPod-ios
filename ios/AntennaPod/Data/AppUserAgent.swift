@@ -3,6 +3,7 @@ import Foundation
 /// Shared User-Agent for feed refresh, media downloads, and other URLSession clients.
 /// Optional Settings override (empty → app default). Newlines are stripped (header safety).
 /// **Not** applied to stock `AVPlayer` streaming (system UA) — honesty documented in Settings / docs.
+/// For HTTP(S) proxy see `AppHTTPProxy` / Settings → Network / Downloads → HTTP proxy (not this type).
 enum AppUserAgent {
     /// Default when Settings override is empty after sanitize.
     static let defaultValue = "AntennaPod-iOS/0.1"

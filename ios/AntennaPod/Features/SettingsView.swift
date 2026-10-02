@@ -65,6 +65,8 @@ struct SettingsView: View {
     @State private var podcastIndexKeyError: String?
     @State private var showNetworkPINGate = false
     @State private var pendingNetworkUnlockAction: (() -> Void)?
+    /// Proxy password SecureField (write-only; never prefilled from Keychain).
+    @State private var httpProxyPasswordDraft = ""
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
     @ObservedObject private var networkPath = NetworkPathGate.shared
     @State private var ratingPromptUITick = 0
@@ -179,9 +181,17 @@ struct SettingsView: View {
                     "Custom User-Agent",
                     "User-Agent",
                     "AntennaPod-iOS",
+                    "HTTP proxy",
+                    "Proxy",
+                    "Proxy host",
+                    "Proxy port",
+                    "Proxy username",
+                    "Proxy password",
+                    "HTTP-Proxy",
                     "Network / Downloads settings are locked. Enter the parental PIN to change these toggles.",
                     "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action.",
-                    "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Not a proxy."
+                    "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. See HTTP proxy for proxy settings.",
+                    "Optional HTTP(S) proxy for URLSession clients (feeds, downloads, search, …). AVPlayer streaming may bypass the app proxy. Not VPN detection; not certificate pinning; not SOCKS."
                 ) {
                     networkDownloadsSection
                 }
@@ -462,7 +472,10 @@ struct SettingsView: View {
                 "Manual download Wi‑Fi only",
                 "Stream Wi‑Fi only",
                 "Custom User-Agent",
-                "User-Agent"
+                "User-Agent",
+                "HTTP proxy",
+                "Proxy host",
+                "Proxy port"
             )
             || matchesSearch(
                 "Notifications",
@@ -1087,7 +1100,7 @@ struct SettingsView: View {
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .accessibilityLabel(String(localized: "Custom User-Agent"))
-            .accessibilityHint(String(localized: "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Not a proxy."))
+            .accessibilityHint(String(localized: "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. See HTTP proxy for proxy settings."))
             .accessibilityValue(
                 settings.customUserAgent.isEmpty
                     ? String(localized: "Using app default")
@@ -1108,6 +1121,79 @@ struct SettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(customUserAgentHelpText)
+
+            Toggle(String(localized: "HTTP proxy"), isOn: $settings.httpProxyEnabled)
+                .accessibilityLabel(String(localized: "HTTP proxy"))
+                .accessibilityHint(String(localized: "When on and host plus port are valid, URLSession clients use this HTTP(S) proxy. AVPlayer streaming may bypass it."))
+
+            if settings.httpProxyEnabled {
+                TextField(
+                    String(localized: "Proxy host"),
+                    text: $settings.httpProxyHost,
+                    prompt: Text(String(localized: "example.com"))
+                )
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .keyboardType(.URL)
+                .accessibilityLabel(String(localized: "Proxy host"))
+                .accessibilityHint(String(localized: "Hostname without http or https. Empty host disables the proxy."))
+
+                TextField(
+                    String(localized: "Proxy port"),
+                    value: $settings.httpProxyPort,
+                    format: .number.grouping(.never),
+                    prompt: Text("8080")
+                )
+                .keyboardType(.numberPad)
+                .accessibilityLabel(String(localized: "Proxy port"))
+                .accessibilityHint(String(localized: "Port from 1 to 65535. Invalid port disables the proxy."))
+                .accessibilityValue("\(settings.httpProxyPort)")
+
+                TextField(
+                    String(localized: "Proxy username"),
+                    text: $settings.httpProxyUsername,
+                    prompt: Text(String(localized: "Optional"))
+                )
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .accessibilityLabel(String(localized: "Proxy username"))
+                .accessibilityHint(String(localized: "Optional. Password is stored in the Keychain only."))
+
+                SecureField(
+                    String(localized: "Proxy password"),
+                    text: $httpProxyPasswordDraft,
+                    prompt: Text(
+                        settings.httpProxyHasStoredPassword
+                            ? String(localized: "Stored in Keychain")
+                            : String(localized: "Optional")
+                    )
+                )
+                .textContentType(.password)
+                .accessibilityLabel(String(localized: "Proxy password"))
+                .accessibilityHint(String(localized: "Optional. Saved to Keychain only — never in backup JSON. Leave blank to keep the stored password."))
+                .onSubmit {
+                    commitHTTPProxyPasswordDraft()
+                }
+
+                HStack {
+                    Button(String(localized: "Save password")) {
+                        commitHTTPProxyPasswordDraft()
+                    }
+                    .disabled(httpProxyPasswordDraft.isEmpty)
+                    if settings.httpProxyHasStoredPassword {
+                        Button(String(localized: "Clear password"), role: .destructive) {
+                            settings.clearHTTPProxyPassword()
+                            httpProxyPasswordDraft = ""
+                        }
+                    }
+                }
+                .font(.subheadline)
+            }
+
+            Text(httpProxyHelpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(httpProxyHelpText)
 
             Text(networkDownloadsHelpText)
                 .font(.caption)
@@ -1160,7 +1246,18 @@ struct SettingsView: View {
     }
 
     private var customUserAgentHelpText: String {
-        String(localized: "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Not a proxy.")
+        String(localized: "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. See HTTP proxy for proxy settings.")
+    }
+
+    private var httpProxyHelpText: String {
+        String(localized: "Optional HTTP(S) proxy for URLSession clients (feeds, downloads, search, …). AVPlayer streaming may bypass the app proxy. Not VPN detection; not certificate pinning; not SOCKS.")
+    }
+
+    private func commitHTTPProxyPasswordDraft() {
+        let draft = httpProxyPasswordDraft
+        guard !draft.isEmpty else { return }
+        settings.setHTTPProxyPassword(draft)
+        httpProxyPasswordDraft = ""
     }
 
     @ViewBuilder

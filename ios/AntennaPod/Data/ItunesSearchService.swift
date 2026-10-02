@@ -45,7 +45,7 @@ struct ItunesSearchService {
         AppUserAgent.apply(to: &request)
         request.timeoutInterval = 20
 
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await AppURLSession.shared.data(for: request)
         if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
             throw SearchError.httpStatus(http.statusCode)
         }

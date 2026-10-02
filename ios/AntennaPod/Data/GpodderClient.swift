@@ -41,7 +41,7 @@ struct GpodderClient {
         password: String,
         deviceId: String,
         provider: GpodderProvider = .gpodderNet,
-        session: URLSession = .shared
+        session: URLSession = AppURLSession.shared
     ) throws {
         let trimmed = host.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let url = Self.normalizeBaseURL(trimmed, provider: provider) else {

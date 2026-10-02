@@ -41,7 +41,7 @@ enum PodcastIndexChapterParser {
         }
         var request = URLRequest(url: url)
         AppUserAgent.apply(to: &request)
-        let (data, response) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await AppURLSession.shared.data(for: request)
         if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
             throw FeedParsingError.message("Chapters HTTP \(http.statusCode)")
         }
