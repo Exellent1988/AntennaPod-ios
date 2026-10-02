@@ -24526,7 +24526,7 @@
     },
     "Play random": {
       "extractionState": "manual",
-      "comment": "Feed detail ⋯: play a uniformly random non-archived playable episode from this podcast. Prefers unplayed when any remain; no confirm.",
+      "comment": "Feed detail / Favorites ⋯: play a uniformly random playable episode. Feed: non-archived on this podcast. Favorites: full favorites catalog. Prefers unplayed when any remain; no confirm.",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -24556,6 +24556,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spielt eine zufällige nicht archivierte Episode dieses Podcasts. Bevorzugt ungehörte, wenn vorhanden."
+          }
+        }
+      }
+    },
+    "Plays a random favorited episode with playable media. Prefers unplayed when any remain.": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Favorites toolbar Play random.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random favorited episode with playable media. Prefers unplayed when any remain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine zufällige favorisierte Episode mit abspielbarem Medium. Bevorzugt ungehörte, wenn vorhanden."
           }
         }
       }
