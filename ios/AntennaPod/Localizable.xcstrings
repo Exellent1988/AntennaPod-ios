@@ -24526,7 +24526,7 @@
     },
     "Play random": {
       "extractionState": "manual",
-      "comment": "Feed detail / Favorites / Downloads / Queue ⋯: play a uniformly random playable episode. Feed: non-archived on this podcast. Favorites: full favorites catalog. Downloads: completed offline with local file. Queue: full queue with playable media. Prefers unplayed when any remain; no confirm. Distinct from Queue Shuffle (reorder).",
+      "comment": "Feed detail / Favorites / Downloads / Queue / History ⋯: play a uniformly random playable episode. Feed: non-archived on this podcast. Favorites: full favorites catalog. Downloads: completed offline with local file. Queue: full queue with playable media. History: full history catalog. Prefers unplayed when any remain; no confirm. Distinct from Queue Shuffle (reorder).",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -25018,6 +25018,24 @@
         }
       },
       "comment": "Help caption under Download all unplayed soft cap picker."
+    },
+    "Plays a random history episode with playable media. Prefers unplayed when any remain.": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for History toolbar Play random.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random history episode with playable media. Prefers unplayed when any remain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine zufällige Verlaufs-Episode mit abspielbarem Medium. Bevorzugt ungehörte, wenn vorhanden."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

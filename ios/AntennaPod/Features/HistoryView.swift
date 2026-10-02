@@ -3,6 +3,7 @@ import SwiftUI
 struct HistoryView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var settings: AppSettings
 
     @State private var searchText = ""
@@ -30,6 +31,22 @@ struct HistoryView: View {
     /// In-progress unplayed are excluded (already unplayed). Confirm count matches this eligibility.
     private var markAllHistoryUnplayedCandidatesCount: Int {
         items.filter { store.isPlayed($0.episode.id) }.count
+    }
+
+    /// History episodes with playable media (local file via `DownloadService.localURL` —
+    /// downloads + local-folder `file://` — or streamable http(s) `downloadUrl`).
+    /// Full History catalog — **not** podcast-chip or searchable filtered.
+    /// Distinct from Clear history / Add all to queue / Mark all as unplayed / remaining-time visible counts.
+    private var playRandomEligibleEpisodes: [PodcastEpisode] {
+        items.map(\.episode).filter { episodeHasPlayableMedia($0) }
+    }
+
+    /// Prefer unplayed among `playRandomEligibleEpisodes` when any remain; otherwise all eligible
+    /// (played allowed when every eligible history episode is played, or none unplayed eligible).
+    private var playRandomCandidates: [PodcastEpisode] {
+        let eligible = playRandomEligibleEpisodes
+        let unplayed = eligible.filter { !store.isPlayed($0.id) }
+        return unplayed.isEmpty ? eligible : unplayed
     }
 
     /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
@@ -97,7 +114,7 @@ struct HistoryView: View {
     /// never invent; unknown last). Stable tiebreaker episode `id`.
     /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
     /// Does not mutate `PodcastStore.historyEpisodes` (Home Continue / Clear history stay newest-first catalog).
-    /// View-only — Clear history / Add all to queue / Mark all as unplayed stay full-catalog scoped.
+    /// View-only — Clear history / Add all to queue / Mark all as unplayed / Play random stay full-catalog scoped.
     /// Respects history size limit catalog as-is (store already trimmed).
     private var filteredItems: [HistoryEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -187,7 +204,7 @@ struct HistoryView: View {
     /// → 0 (History is mostly played / in-progress — low totals are expected and correct; still
     /// useful for in-progress); **unknown duration skipped** (tilde when any skipped). Currently
     /// playing uses live `PlaybackService` position/duration. Wall-clock only (no playback-speed
-    /// divide). Distinct from Clear history count (always full catalog). Respects history size
+    /// divide). Distinct from Clear history / Add all to queue / Mark all as unplayed / Play random eligibility (always full catalog). Respects history size
     /// limit catalog as-is — never invents beyond the store-trimmed set.
     private var historyRemainingInfoLabel: String? {
         guard !filteredItems.isEmpty else { return nil }
@@ -359,6 +376,15 @@ struct HistoryView: View {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {
+                        playRandomEpisode()
+                    } label: {
+                        Label("Play random", systemImage: "shuffle")
+                    }
+                    .disabled(playRandomCandidates.isEmpty)
+                    .accessibilityLabel(String(localized: "Play random"))
+                    .accessibilityHint(String(localized: "Plays a random history episode with playable media. Prefers unplayed when any remain."))
+
+                    Button {
                         showEnqueueAllConfirm = true
                     } label: {
                         Label("Add all to queue", systemImage: "text.append")
@@ -384,6 +410,7 @@ struct HistoryView: View {
                 } label: {
                     Label("History actions", systemImage: "ellipsis.circle")
                 }
+                // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
                 .disabled(items.isEmpty)
             }
         }
@@ -423,6 +450,24 @@ struct HistoryView: View {
         } message: {
             Text("Removes \(items.count) episodes from history. Does not unsubscribe, delete downloads, or clear the queue.")
         }
+    }
+
+    /// Local download / local-folder file, or streamable http(s) enclosure — same honesty as
+    /// Favorites / Feed detail Play random / `PlaybackService.resolvePlaybackURL` inputs (Wi‑Fi stream gate still applies at play time).
+    private func episodeHasPlayableMedia(_ episode: PodcastEpisode) -> Bool {
+        if downloads.localURL(for: episode) != nil { return true }
+        guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty,
+              let url = URL(string: raw) else { return false }
+        let scheme = url.scheme?.lowercased()
+        return scheme == "http" || scheme == "https"
+    }
+
+    /// Uniform pick among `playRandomCandidates`; starts via `PlaybackService.play` (resume rules unchanged).
+    /// No confirm; does not reorder History or invent queue mutations beyond what `play` already does.
+    private func playRandomEpisode() {
+        guard let episode = playRandomCandidates.randomElement() else { return }
+        _ = playback.play(episode: episode)
     }
 
     private func scheduleFilter(for term: String) {
