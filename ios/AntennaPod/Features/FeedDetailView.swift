@@ -337,10 +337,15 @@ struct FeedDetailView: View {
     }
 
 
-    /// Unplayed, not archived, not downloaded, http(s) enclosure — newest first, soft-capped.
+    /// Unplayed, not archived, not downloaded, http(s) enclosure — newest first, soft-capped
+    /// by `AppSettings.feedDownloadUnplayedSoftCap` (default 50; always ≥1).
     /// Bulk **Download all unplayed** always uses full-feed eligibility (not the filtered subset).
     private var downloadAllCandidates: [PodcastEpisode] {
-        downloads.eligibleForFeedDownloadAll(in: liveFeed, store: store)
+        downloads.eligibleForFeedDownloadAll(
+            in: liveFeed,
+            store: store,
+            cap: settings.feedDownloadUnplayedSoftCap.episodeCap
+        )
     }
 
     /// Unplayed, non-archived episodes on this feed only (for Mark all as played).
@@ -1065,7 +1070,7 @@ struct FeedDetailView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text(
-                "Queues download of \(downloadAllCandidates.count) unplayed episodes (newest first, max \(DownloadService.feedDownloadAllCap)). Played, archived, already downloaded, and local-folder files are skipped. Requires http(s) enclosure. Uses the full feed catalog — not the chip or search filter. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply."
+                "Queues download of \(downloadAllCandidates.count) unplayed episodes (newest first, max \(settings.feedDownloadUnplayedSoftCap.episodeCap)). Played, archived, already downloaded, and local-folder files are skipped. Requires http(s) enclosure. Uses the full feed catalog — not the chip or search filter. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply."
             )
         }
         .confirmationDialog(

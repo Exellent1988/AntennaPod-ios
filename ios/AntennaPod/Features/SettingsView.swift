@@ -224,9 +224,11 @@ struct SettingsView: View {
                     "Max storage",
                     "Max downloaded episodes",
                     "Parallel downloads",
+                    "Download all unplayed soft cap",
                     "Clear downloads",
                     "Unlimited",
                     "Custom (MB)",
+                    "10 episodes",
                     "25 episodes",
                     "50 episodes",
                     "100 episodes",
@@ -239,7 +241,8 @@ struct SettingsView: View {
                     "5 parallel",
                     "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch.",
                     "When over the episode count, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU). Favorites and queued episodes are never auto-deleted by this cap. Runs after each successful download, when opening Settings, and on launch. Separate from the Max storage byte budget.",
-                    "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch."
+                    "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch.",
+                    "Limits how many newest unplayed episodes Feed detail Download all unplayed may enqueue at once (10–200, default 50). Always soft-capped — no unlimited. Full-feed eligibility still applies."
                 ) {
                     storageSection
                 }
@@ -502,6 +505,7 @@ struct SettingsView: View {
                 "Delete episode after playing",
                 "Max storage",
                 "Parallel downloads",
+                "Download all unplayed soft cap",
                 "Clear downloads"
             )
             || matchesSearch("Discovery", "Charts country", "API key", "API secret")
@@ -1473,6 +1477,17 @@ struct SettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(parallelDownloadsHelpText)
+            Picker(String(localized: "Download all unplayed soft cap"), selection: $settings.feedDownloadUnplayedSoftCap) {
+                ForEach(FeedDownloadUnplayedSoftCap.allCases) { cap in
+                    Text(cap.label).tag(cap)
+                }
+            }
+            .accessibilityLabel(String(localized: "Download all unplayed soft cap"))
+            .accessibilityHint(String(localized: "Maximum number of newest unplayed episodes Feed detail Download all unplayed may enqueue at once. Default 50. Always soft-capped — no unlimited."))
+            Text(feedDownloadUnplayedSoftCapHelpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(feedDownloadUnplayedSoftCapHelpText)
             Button("Clear downloads", role: .destructive) {
                 showClearConfirmation = true
             }
@@ -1488,6 +1503,10 @@ struct SettingsView: View {
 
     private var parallelDownloadsHelpText: String {
         String(localized: "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch.")
+    }
+
+    private var feedDownloadUnplayedSoftCapHelpText: String {
+        String(localized: "Limits how many newest unplayed episodes Feed detail Download all unplayed may enqueue at once (10–200, default 50). Always soft-capped — no unlimited. Full-feed eligibility still applies.")
     }
 
     private var autoDeleteHelpText: String {

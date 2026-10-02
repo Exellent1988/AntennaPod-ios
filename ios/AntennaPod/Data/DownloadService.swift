@@ -296,18 +296,22 @@ final class DownloadService: ObservableObject {
     static let manualCellularBlockedMessage =
         "Manual downloads are Wi‑Fi only. Connect to Wi‑Fi or Ethernet, or turn off Manual download Wi‑Fi only in Settings → Network / Downloads."
 
-    /// Soft cap for Feed detail **Download all unplayed** (newest eligible first).
-    static let feedDownloadAllCap = 50
+    /// Default soft cap for Feed detail **Download all unplayed** when no setting is passed
+    /// (matches `FeedDownloadUnplayedSoftCap.fifty` / prior hard soft-cap of 50).
+    static let feedDownloadAllCap = FeedDownloadUnplayedSoftCap.fifty.rawValue
 
     /// Episodes on `feed` eligible for manual bulk **Download all unplayed**: unplayed, not
     /// archived, not already downloaded / in-flight, with an **http(s)** media enclosure
     /// (skips local-folder `file://` and non-http schemes). Newest `pubDateEpochMs` first,
-    /// limited to `cap` (default `feedDownloadAllCap`). Full-feed catalog — not chip/search.
+    /// limited to `cap` (default `feedDownloadAllCap` / settings default 50). Cap is always
+    /// ≥1 — callers pass `AppSettings.feedDownloadUnplayedSoftCap.episodeCap`. Full-feed
+    /// catalog — not chip/search.
     func eligibleForFeedDownloadAll(
         in feed: PodcastFeed,
         store: PodcastStore,
         cap: Int = DownloadService.feedDownloadAllCap
     ) -> [PodcastEpisode] {
+        let effectiveCap = max(1, cap)
         let sorted = feed.episodes.sorted { lhs, rhs in
             let l = lhs.pubDateEpochMs ?? Int64.min
             let r = rhs.pubDateEpochMs ?? Int64.min
@@ -316,7 +320,7 @@ final class DownloadService: ObservableObject {
         }
         var picked: [PodcastEpisode] = []
         for episode in sorted {
-            guard picked.count < cap else { break }
+            guard picked.count < effectiveCap else { break }
             guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
                   !raw.isEmpty,
                   let url = URL(string: raw) else { continue }

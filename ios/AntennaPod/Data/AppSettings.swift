@@ -206,6 +206,32 @@ enum MaxParallelDownloads: Int, CaseIterable, Identifiable {
 }
 
 
+/// Soft cap for Feed detail **Download all unplayed** (newest eligible first).
+/// Always capped — no Unlimited / 0-as-infinite. Default **50** (same as the prior hard soft-cap).
+enum FeedDownloadUnplayedSoftCap: Int, CaseIterable, Identifiable {
+    case ten = 10
+    case twentyFive = 25
+    case fifty = 50
+    case oneHundred = 100
+    case twoHundred = 200
+
+    var id: Int { rawValue }
+
+    /// Clamped episode count (≥1). Preset raw values are already in range.
+    var episodeCap: Int { max(1, rawValue) }
+
+    var label: String {
+        switch self {
+        case .ten: return String(localized: "10 episodes")
+        case .twentyFive: return String(localized: "25 episodes")
+        case .fifty: return String(localized: "50 episodes")
+        case .oneHundred: return String(localized: "100 episodes")
+        case .twoHundred: return String(localized: "200 episodes")
+        }
+    }
+}
+
+
 /// Cap: how many **completed** offline downloads to keep (episode count cache).
 /// `0` = Unlimited. When over the cap, `DownloadService` evicts eligible files
 /// (played non-favorite non-queued first; favorites and queued are never auto-deleted by this cap).
@@ -1237,6 +1263,7 @@ final class AppSettings: ObservableObject {
         static let autoDownloadEpisodesPerFeed = "settings.autoDownload.episodesPerFeed"
         static let maxParallelDownloads = "settings.maxParallelDownloads"
         static let downloadEpisodeCacheLimit = "settings.downloadEpisodeCacheLimit"
+        static let feedDownloadUnplayedSoftCap = "settings.feedDownloadUnplayedSoftCap"
         static let autoDownloadWifiOnly = "settings.autoDownload.wifiOnly"
         static let manualDownloadWifiOnly = "settings.manualDownload.wifiOnly"
         static let streamWifiOnly = "settings.stream.wifiOnly"
@@ -1390,6 +1417,13 @@ final class AppSettings: ObservableObject {
     @Published var downloadEpisodeCacheLimit: DownloadEpisodeCacheLimit {
         didSet {
             UserDefaults.standard.set(downloadEpisodeCacheLimit.rawValue, forKey: Keys.downloadEpisodeCacheLimit)
+        }
+    }
+
+    /// Soft cap for Feed detail **Download all unplayed** (10/25/50/100/200; default 50). Always capped.
+    @Published var feedDownloadUnplayedSoftCap: FeedDownloadUnplayedSoftCap {
+        didSet {
+            UserDefaults.standard.set(feedDownloadUnplayedSoftCap.rawValue, forKey: Keys.feedDownloadUnplayedSoftCap)
         }
     }
 
@@ -2185,6 +2219,9 @@ final class AppSettings: ObservableObject {
         let cacheRaw = UserDefaults.standard.object(forKey: Keys.downloadEpisodeCacheLimit) as? Int
             ?? DownloadEpisodeCacheLimit.unlimited.rawValue
         downloadEpisodeCacheLimit = DownloadEpisodeCacheLimit(rawValue: cacheRaw) ?? .unlimited
+        let feedDlSoftCapRaw = UserDefaults.standard.object(forKey: Keys.feedDownloadUnplayedSoftCap) as? Int
+            ?? FeedDownloadUnplayedSoftCap.fifty.rawValue
+        feedDownloadUnplayedSoftCap = FeedDownloadUnplayedSoftCap(rawValue: feedDlSoftCapRaw) ?? .fifty
         if UserDefaults.standard.object(forKey: Keys.autoDownloadWifiOnly) != nil {
             autoDownloadWifiOnly = UserDefaults.standard.bool(forKey: Keys.autoDownloadWifiOnly)
         } else {
@@ -2680,6 +2717,7 @@ final class AppSettings: ObservableObject {
             autoDownloadEpisodesPerFeed: autoDownloadEpisodesPerFeed.rawValue,
             maxParallelDownloads: maxParallelDownloads.rawValue,
             downloadEpisodeCacheLimit: downloadEpisodeCacheLimit.rawValue,
+            feedDownloadUnplayedSoftCap: feedDownloadUnplayedSoftCap.rawValue,
             autoDownloadWifiOnly: autoDownloadWifiOnly,
             manualDownloadWifiOnly: manualDownloadWifiOnly,
             streamWifiOnly: streamWifiOnly,
@@ -2786,6 +2824,10 @@ final class AppSettings: ObservableObject {
         downloadEpisodeCacheLimit =
             DownloadEpisodeCacheLimit(rawValue: snap.downloadEpisodeCacheLimit ?? DownloadEpisodeCacheLimit.unlimited.rawValue)
             ?? .unlimited
+        feedDownloadUnplayedSoftCap =
+            FeedDownloadUnplayedSoftCap(
+                rawValue: snap.feedDownloadUnplayedSoftCap ?? FeedDownloadUnplayedSoftCap.fifty.rawValue
+            ) ?? .fifty
         autoDownloadWifiOnly = snap.autoDownloadWifiOnly
         manualDownloadWifiOnly = snap.manualDownloadWifiOnly
         streamWifiOnly = snap.streamWifiOnly
@@ -2970,6 +3012,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var maxParallelDownloads: Int? = 3
     /// Absent in older backups → Unlimited (0). Raw `DownloadEpisodeCacheLimit` value.
     var downloadEpisodeCacheLimit: Int? = 0
+    /// Absent in older backups → 50 (prior hard soft-cap). Raw `FeedDownloadUnplayedSoftCap` value.
+    var feedDownloadUnplayedSoftCap: Int? = 50
     var autoDownloadWifiOnly: Bool
     var manualDownloadWifiOnly: Bool
     var streamWifiOnly: Bool

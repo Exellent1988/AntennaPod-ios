@@ -24947,6 +24947,77 @@
           }
         }
       }
+    },
+    "10 episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 Episoden"
+          }
+        }
+      }
+    },
+    "Download all unplayed soft cap": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download all unplayed soft cap"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soft-Cap für Alle ungehörten herunterladen"
+          }
+        }
+      },
+      "comment": "Settings → Downloads / Storage picker for Feed detail Download all unplayed soft cap."
+    },
+    "Maximum number of newest unplayed episodes Feed detail Download all unplayed may enqueue at once. Default 50. Always soft-capped — no unlimited.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximum number of newest unplayed episodes Feed detail Download all unplayed may enqueue at once. Default 50. Always soft-capped — no unlimited."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximale Anzahl der neuesten ungehörten Episoden, die Feed-Detail „Alle ungehörten herunterladen“ auf einmal einreihen darf. Standard 50. Immer Soft-Cap — kein Unlimited."
+          }
+        }
+      },
+      "comment": "VoiceOver accessibilityHint for Download all unplayed soft cap picker."
+    },
+    "Limits how many newest unplayed episodes Feed detail Download all unplayed may enqueue at once (10–200, default 50). Always soft-capped — no unlimited. Full-feed eligibility still applies.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Limits how many newest unplayed episodes Feed detail Download all unplayed may enqueue at once (10–200, default 50). Always soft-capped — no unlimited. Full-feed eligibility still applies."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Begrenzt, wie viele neueste ungehörte Episoden Feed-Detail „Alle ungehörten herunterladen“ auf einmal einreihen darf (10–200, Standard 50). Immer Soft-Cap — kein Unlimited. Full-Feed-Eligibility gilt weiterhin."
+          }
+        }
+      },
+      "comment": "Help caption under Download all unplayed soft cap picker."
     }
   },
   "version": "1.0"
