@@ -14933,6 +14933,57 @@
         }
       }
     },
+    "No Home layout sections match your search. Clear the search or try another section name.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Home layout sections match your search. Clear the search or try another section name."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Home-Layout-Abschnitte passen zu deiner Suche. Lösche die Suche oder versuche einen anderen Abschnittsnamen."
+          }
+        }
+      }
+    },
+    "No matching Home layout sections": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No matching Home layout sections"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine passenden Home-Layout-Abschnitte"
+          }
+        }
+      }
+    },
+    "Clear the search or try another section name to show Home layout sections again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear the search or try another section name to show Home layout sections again."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lösche die Suche oder versuche einen anderen Abschnittsnamen, um die Home-Layout-Abschnitte wieder anzuzeigen."
+          }
+        }
+      }
+    },
     "Shows or hides this section on the Home tab": {
       "extractionState": "manual",
       "localizations": {

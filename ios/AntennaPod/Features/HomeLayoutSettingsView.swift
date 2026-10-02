@@ -49,6 +49,14 @@ struct HomeLayoutSettingsView: View {
                     systemImage: "magnifyingglass",
                     description: Text("No Home layout sections match your search.")
                 )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No matching Home layout sections"))
+                .accessibilityValue(
+                    String(localized: "No Home layout sections match your search. Clear the search or try another section name.")
+                )
+                .accessibilityHint(
+                    String(localized: "Clear the search or try another section name to show Home layout sections again.")
+                )
             } else {
                 Section {
                     ForEach(filteredSections) { section in
