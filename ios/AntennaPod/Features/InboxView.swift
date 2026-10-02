@@ -13,6 +13,7 @@ struct InboxView: View {
     @State private var showMarkAllPlayedConfirm = false
     @State private var showMarkAllUnplayedConfirm = false
     @State private var showEnqueueAllConfirm = false
+    @State private var showEnqueueAllUnplayedConfirm = false
     @State private var showArchiveAllConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
@@ -193,6 +194,13 @@ struct InboxView: View {
     /// Confirm count and `enqueueAllInbox()` share this eligibility. Menu disabled while searching.
     private var enqueueAllInboxCandidatesCount: Int {
         store.inboxEpisodes.filter { !store.isInQueue($0.episode.id) }.count
+    }
+
+    /// Unplayed, non-archived, not-already-queued episodes in the full Inbox catalog.
+    /// Inbox is normally unplayed-only, so this may match Add all to queue in practice; the
+    /// explicit guards preserve the feature's eligibility contract.
+    private var enqueueAllUnplayedInboxCandidatesCount: Int {
+        store.enqueueAllUnplayedInboxCandidates().count
     }
 
     /// Full Inbox catalog episodes that are still non-archived. The Inbox normally excludes
@@ -484,6 +492,17 @@ struct InboxView: View {
                         .accessibilityHint(String(localized: "Appends Inbox episodes not already queued"))
 
                         Button {
+                            showEnqueueAllUnplayedConfirm = true
+                        } label: {
+                            Label("Add all unplayed to queue", systemImage: "text.badge.plus")
+                        }
+                        .disabled(enqueueAllUnplayedInboxCandidatesCount == 0)
+                        .accessibilityLabel(String(localized: "Add all unplayed to queue"))
+                        .accessibilityHint(
+                            String(localized: "Appends unplayed, non-archived Inbox episodes not already queued; ignores podcast, episode type, search, and sort filters")
+                        )
+
+                        Button {
                             showMarkAllPlayedConfirm = true
                         } label: {
                             Label("Mark all as played", systemImage: "checkmark.circle")
@@ -521,7 +540,7 @@ struct InboxView: View {
                     .disabled((sortedItems.isEmpty && markAllInboxUnplayedCandidatesCount == 0) || isSearching)
                     .accessibilityLabel(String(localized: "Inbox actions"))
                     .accessibilityHint(
-                        String(localized: "Copy inbox, share inbox, play random, add all to queue, mark all as played, mark all as unplayed, or archive all")
+                        String(localized: "Copy inbox, share inbox, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, or archive all")
                     )
                 }
             }
@@ -545,6 +564,18 @@ struct InboxView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Appends \(enqueueAllInboxCandidatesCount) Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full current-Inbox catalog (same as Mark all as played / Archive all), not library search or the podcast filter. Queue lock does not block enqueue.")
+            }
+            .confirmationDialog(
+                "Add all unplayed to queue?",
+                isPresented: $showEnqueueAllUnplayedConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Add all unplayed to queue") {
+                    store.enqueueAllUnplayedInbox()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Appends \(enqueueAllUnplayedInboxCandidatesCount) unplayed, non-archived Inbox episode(s) to the end of the queue (newest first). Already queued, played, and archived episodes are skipped. Uses the full current Inbox catalog, not the podcast, episode type, search, or sort filter. Inbox is already unplayed-only in normal operation, so this may match Add all to queue. Queue lock does not block enqueue.")
             }
             .confirmationDialog(
                 "Mark all as played?",

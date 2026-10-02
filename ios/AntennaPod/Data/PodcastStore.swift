@@ -1466,6 +1466,29 @@ final class PodcastStore: ObservableObject {
         return candidates.count
     }
 
+    /// Append unplayed, non-archived, not-already-queued episodes from the full Inbox catalog.
+    /// Inbox is normally already unplayed-only, but the explicit status/archive guards keep this
+    /// helper honest if the derived Inbox policy changes. Uses newest-first store order, not UI
+    /// sort, podcast, episode-type, or search filters. Queue lock does not block enqueue.
+    /// Callers must confirm first (Inbox toolbar `confirmationDialog`).
+    @discardableResult
+    func enqueueAllUnplayedInbox() -> Int {
+        let candidates = enqueueAllUnplayedInboxCandidates()
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
+    /// Eligible episodes for Inbox **Add all unplayed to queue**.
+    func enqueueAllUnplayedInboxCandidates() -> [PodcastEpisode] {
+        inboxEpisodes
+            .map(\.episode)
+            .filter { episode in
+                !isPlayed(episode.id) && !isArchived(episode.id) && !isInQueue(episode.id)
+            }
+    }
+
     /// Mark every unplayed, non-archived episode in one feed as played (bulk).
     /// Snapshots eligible ids first, then calls `markPlayed` per id so auto-delete-after-playing
     /// and queue removal side effects still apply. Feed-scoped only; does not archive.
