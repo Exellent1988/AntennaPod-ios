@@ -13948,6 +13948,40 @@
         }
       }
     },
+    "Share transcript": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share transcript"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript teilen"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the episode title and transcript": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title and transcript"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit Episodentitel und Transkript"
+          }
+        }
+      }
+    },
     "Copy podcast description": {
       "extractionState": "manual",
       "localizations": {

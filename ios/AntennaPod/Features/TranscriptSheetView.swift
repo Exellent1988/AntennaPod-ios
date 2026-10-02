@@ -5,6 +5,8 @@ import UIKit
 /// Cue list supports `.searchable` filter over already-loaded cue text (case-insensitive,
 /// ~250 ms debounce). Toolbar **Copy transcript** joins already-loaded cues (or plain-text
 /// fallback) to the pasteboard — full loaded text, not the search-filtered subset.
+/// Toolbar **Share transcript** offers the same full loaded plain text (episode title + body)
+/// via the system share sheet (`ShareLink`) — no fake social / no extra fetch.
 /// Does not fetch or generate transcripts; feed URL only — no STT.
 struct TranscriptSheetView: View {
     @EnvironmentObject private var playback: PlaybackService
@@ -28,8 +30,8 @@ struct TranscriptSheetView: View {
 
     private var cues: [TranscriptCue] { transcript?.cues ?? [] }
 
-    /// Plain text for pasteboard: **full** already-loaded cues (speaker prefixes when set),
-    /// else plain-text fallback. Ignores the search filter so Copy always exports the whole load.
+    /// Plain text for pasteboard / share: **full** already-loaded cues (speaker prefixes when set),
+    /// else plain-text fallback. Ignores the search filter so Copy / Share always export the whole load.
     private var transcriptPlainForCopy: String {
         if !cues.isEmpty {
             return cues.map { cue in
@@ -47,6 +49,18 @@ struct TranscriptSheetView: View {
     /// Enabled only when already-loaded transcript text is available (not loading / error / empty).
     private var canCopyTranscript: Bool {
         !transcriptPlainForCopy.isEmpty
+    }
+
+    /// Same gate as Copy — Share only when already-loaded text exists.
+    private var canShareTranscript: Bool { canCopyTranscript }
+
+    /// System share sheet payload: episode title + full loaded transcript body (same join as Copy).
+    private var transcriptShareText: String {
+        let body = transcriptPlainForCopy
+        guard !body.isEmpty else { return "" }
+        let title = episode.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        if title.isEmpty { return body }
+        return "\(title)\n\n\(body)"
     }
 
     /// Visible cues after light-debounced case-insensitive filter on cue text (+ speaker when set).
@@ -97,7 +111,7 @@ struct TranscriptSheetView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
                 }
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItemGroup(placement: .primaryAction) {
                     Button {
                         copyTranscript()
                     } label: {
@@ -106,6 +120,18 @@ struct TranscriptSheetView: View {
                     .disabled(!canCopyTranscript)
                     .accessibilityLabel(String(localized: "Copy transcript"))
                     .accessibilityHint(String(localized: "Copies the transcript to the pasteboard"))
+
+                    ShareLink(
+                        item: transcriptShareText,
+                        subject: Text(episode.title)
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .disabled(!canShareTranscript)
+                    .accessibilityLabel(String(localized: "Share transcript"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the episode title and transcript")
+                    )
                 }
             }
             .safeAreaInset(edge: .bottom) {
