@@ -802,9 +802,22 @@ struct DownloadsView: View {
         }
     }
 
-    /// VoiceOver: title, size when known, file name.
+    /// VoiceOver: title, podcast when known, size when known, and local file name.
+    /// The feed title is deliberately omitted when the downloaded episode is stale or its
+    /// feed metadata is missing; this keeps the spoken label honest instead of inventing a podcast.
     private func downloadsRowAccessibilityLabel(for item: DownloadedEpisode) -> String {
-        var parts: [String] = [item.episode.title]
+        var parts: [String] = []
+        let episodeTitle = item.episode.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !episodeTitle.isEmpty {
+            parts.append(episodeTitle)
+        }
+
+        let feedTitle = store.displayTitle(containingEpisodeId: item.episode.id)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if !feedTitle.isEmpty {
+            parts.append(String(localized: "Podcast \(feedTitle)"))
+        }
+
         if let sizeLabel = item.formattedKnownByteSize {
             parts.append(String(localized: "Size \(sizeLabel)"))
         }
