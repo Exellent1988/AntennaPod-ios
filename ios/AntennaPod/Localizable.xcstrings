@@ -31169,6 +31169,186 @@
           }
         }
       }
+    },
+    "Copy update frequency": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: copy the same feed-backed podcast:updateFrequency summary shown in the metadata block; display-only; hidden when absent.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy update frequency"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisierungshäufigkeit kopieren"
+          }
+        }
+      }
+    },
+    "Share update frequency": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: share the same feed-backed podcast:updateFrequency summary shown in the metadata block; display-only; hidden when absent.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share update frequency"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisierungshäufigkeit teilen"
+          }
+        }
+      }
+    },
+    "Copies the same feed-provided update-frequency summary shown above to the pasteboard; display-only; does not change Keep updated or refresh": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the feed-backed podcast:updateFrequency summary.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same feed-provided update-frequency summary shown above to the pasteboard; display-only; does not change Keep updated or refresh"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe vom Feed bereitgestellte Zusammenfassung der Aktualisierungshäufigkeit wie oben in die Zwischenablage; nur Anzeige; ändert weder „Aktualisiert halten“ noch das Aktualisierungsintervall"
+          }
+        }
+      }
+    },
+    "Shares the same feed-provided update-frequency summary shown above as plain text; display-only; does not change Keep updated or refresh": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the feed-backed podcast:updateFrequency summary.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same feed-provided update-frequency summary shown above as plain text; display-only; does not change Keep updated or refresh"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe vom Feed bereitgestellte Zusammenfassung der Aktualisierungshäufigkeit wie oben als Klartext; nur Anzeige; ändert weder „Aktualisiert halten“ noch das Aktualisierungsintervall"
+          }
+        }
+      }
+    },
+    "Copy complete claim": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: copy the localized itunes:complete claim and its footnote; display-only; hidden when the feed does not mark itunes:complete.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy complete claim"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abschlussanspruch kopieren"
+          }
+        }
+      }
+    },
+    "Share complete claim": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: share the localized itunes:complete claim and its footnote; display-only; hidden when the feed does not mark itunes:complete.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share complete claim"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abschlussanspruch teilen"
+          }
+        }
+      }
+    },
+    "Copies the localized Complete claim and its feed-provided itunes:complete footnote to the pasteboard; display-only; does not change Keep updated or refresh": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the localized itunes:complete claim and footnote.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the localized Complete claim and its feed-provided itunes:complete footnote to the pasteboard; display-only; does not change Keep updated or refresh"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den lokalisierten Abschlussanspruch und die vom Feed bereitgestellte itunes:complete-Fußnote in die Zwischenablage; nur Anzeige; ändert weder „Aktualisiert halten“ noch das Aktualisierungsintervall"
+          }
+        }
+      }
+    },
+    "Shares the localized Complete claim and its feed-provided itunes:complete footnote as plain text; display-only; does not change Keep updated or refresh": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the localized itunes:complete claim and footnote.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the localized Complete claim and its feed-provided itunes:complete footnote as plain text; display-only; does not change Keep updated or refresh"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den lokalisierten Abschlussanspruch und die vom Feed bereitgestellte itunes:complete-Fußnote als Klartext; nur Anzeige; ändert weder „Aktualisiert halten“ noch das Aktualisierungsintervall"
+          }
+        }
+      }
+    },
+    "Update frequency copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the feed-backed podcast:updateFrequency summary.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update frequency copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisierungshäufigkeit in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Complete claim copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the feed-backed itunes:complete claim and footnote.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Complete claim copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abschlussanspruch in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -74,6 +74,10 @@ struct FeedDescriptionSheetView: View {
         feed.displayUpdateFrequency
     }
 
+    private var displayItunesCompleteShareText: String {
+        feed.itunesCompleteShareText
+    }
+
     private var displayCategories: [String] {
         feed.displayCategories
     }
@@ -485,24 +489,30 @@ struct FeedDescriptionSheetView: View {
                     feedTypeMetadata
 
                     if let uf = displayUpdateFrequency {
-                        FeedUpdateFrequencyDetailBlock(frequency: uf)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        VStack(alignment: .leading, spacing: 8) {
+                            FeedUpdateFrequencyDetailBlock(frequency: uf)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            updateFrequencyActions(uf)
+                        }
                     }
 
                     if feed.isItunesComplete {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(String(localized: "Complete"))
-                                .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.secondary.opacity(0.2), in: Capsule())
-                            Text(String(localized: "This podcast marks itunes:complete. The publisher claims no further episodes. This does not change Keep updated or refresh."))
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
+                        VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(String(localized: "Complete"))
+                                    .font(.caption.weight(.semibold))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.secondary.opacity(0.2), in: Capsule())
+                                Text(String(localized: "This podcast marks itunes:complete. The publisher claims no further episodes. This does not change Keep updated or refresh."))
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(feed.itunesCompleteAccessibilityLabel)
+                            itunesCompleteActions
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(feed.itunesCompleteAccessibilityLabel)
                     }
 
                     feedClaimMetadata
@@ -596,24 +606,30 @@ struct FeedDescriptionSheetView: View {
                     feedTypeMetadata
 
                     if let uf = displayUpdateFrequency {
-                        FeedUpdateFrequencyDetailBlock(frequency: uf)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        VStack(alignment: .leading, spacing: 8) {
+                            FeedUpdateFrequencyDetailBlock(frequency: uf)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            updateFrequencyActions(uf)
+                        }
                     }
 
                     if feed.isItunesComplete {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(String(localized: "Complete"))
-                                .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.secondary.opacity(0.2), in: Capsule())
-                            Text(String(localized: "This podcast marks itunes:complete. The publisher claims no further episodes. This does not change Keep updated or refresh."))
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
+                        VStack(alignment: .leading, spacing: 8) {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(String(localized: "Complete"))
+                                    .font(.caption.weight(.semibold))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.secondary.opacity(0.2), in: Capsule())
+                                Text(String(localized: "This podcast marks itunes:complete. The publisher claims no further episodes. This does not change Keep updated or refresh."))
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(feed.itunesCompleteAccessibilityLabel)
+                            itunesCompleteActions
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(feed.itunesCompleteAccessibilityLabel)
                     }
 
                     feedClaimMetadata
@@ -740,6 +756,78 @@ struct FeedDescriptionSheetView: View {
     private func copyLanguage(_ language: String) {
         UIPasteboard.general.string = language
         copiedAlertMessage = String(localized: "Podcast language copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    @ViewBuilder
+    private func updateFrequencyActions(_ frequency: PodcastUpdateFrequency) -> some View {
+        if let text = frequency.shareText {
+            HStack(spacing: 12) {
+                Button {
+                    copyUpdateFrequency(text)
+                } label: {
+                    Label("Copy update frequency", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy update frequency"))
+                .accessibilityHint(
+                    String(localized: "Copies the same feed-provided update-frequency summary shown above to the pasteboard; display-only; does not change Keep updated or refresh")
+                )
+
+                ShareLink(
+                    item: text,
+                    subject: Text(resolvedTitle)
+                ) {
+                    Label("Share update frequency", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share update frequency"))
+                .accessibilityHint(
+                    String(localized: "Shares the same feed-provided update-frequency summary shown above as plain text; display-only; does not change Keep updated or refresh")
+                )
+            }
+        }
+    }
+
+    private func copyUpdateFrequency(_ text: String) {
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Update frequency copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    @ViewBuilder
+    private var itunesCompleteActions: some View {
+        HStack(spacing: 12) {
+            Button {
+                copyItunesComplete()
+            } label: {
+                Label("Copy complete claim", systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Copy complete claim"))
+            .accessibilityHint(
+                String(localized: "Copies the localized Complete claim and its feed-provided itunes:complete footnote to the pasteboard; display-only; does not change Keep updated or refresh")
+            )
+
+            ShareLink(
+                item: displayItunesCompleteShareText,
+                subject: Text(resolvedTitle)
+            ) {
+                Label("Share complete claim", systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Share complete claim"))
+            .accessibilityHint(
+                String(localized: "Shares the localized Complete claim and its feed-provided itunes:complete footnote as plain text; display-only; does not change Keep updated or refresh")
+            )
+        }
+    }
+
+    private func copyItunesComplete() {
+        UIPasteboard.general.string = displayItunesCompleteShareText
+        copiedAlertMessage = String(localized: "Complete claim copied to the pasteboard.")
         copyFeedbackTick += 1
         showCopiedAlert = true
     }

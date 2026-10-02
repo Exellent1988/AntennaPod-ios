@@ -2074,6 +2074,25 @@ struct PodcastUpdateFrequency: Hashable, Codable {
         return nil
     }
 
+    /// Same human-visible, feed-backed summary used by Copy and Share.
+    /// The generic “Update frequency” placeholder is intentionally omitted: it is UI scaffolding, not feed data.
+    var shareText: String? {
+        var parts: [String] = []
+        if let label = displayLabel {
+            parts.append(label)
+        }
+        if isComplete {
+            parts.append(String(localized: "This podcast claims it will not release further episodes. This does not change Keep updated or refresh."))
+        }
+        if let r = displayRrule {
+            parts.append(String(localized: "Recurrence \(r)"))
+        }
+        if let d = displayDtstart {
+            parts.append(String(localized: "Starts \(d)"))
+        }
+        return parts.isEmpty ? nil : parts.joined(separator: ". ")
+    }
+
     /// VoiceOver summary for the update-frequency block.
     var accessibilityLabel: String {
         var parts: [String] = []
@@ -2280,11 +2299,17 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
 
     /// VoiceOver for channel `itunes:complete=yes` badge + honest display-only footnote.
     /// Distinct from `podcast:updateFrequency` complete VoiceOver (both may appear).
-    var itunesCompleteAccessibilityLabel: String {
+    var itunesCompleteShareText: String {
         [
             String(localized: "Complete"),
             String(localized: "This podcast marks itunes:complete. The publisher claims no further episodes. This does not change Keep updated or refresh.")
         ].joined(separator: ". ")
+    }
+
+    /// VoiceOver for channel `itunes:complete=yes` badge + honest display-only footnote.
+    /// Distinct from `podcast:updateFrequency` complete VoiceOver (both may appear).
+    var itunesCompleteAccessibilityLabel: String {
+        itunesCompleteShareText
     }
 
     /// Trimmed non-empty funding label from the feed when provided. Hidden/fallback when missing.
