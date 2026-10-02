@@ -183,14 +183,18 @@ struct AddFeedView: View {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
                     TextField("Search Apple Podcasts", text: $appleSearchText)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .submitLabel(.search)
                         .onSubmit { runAppleSearchImmediately() }
+                        .accessibilityLabel(String(localized: "Search Apple Podcasts"))
+                        .accessibilityHint(String(localized: "Searches Apple Podcasts. Results open Preview before subscribe."))
                     if appleIsSearching {
                         ProgressView()
                             .controlSize(.small)
+                            .accessibilityLabel(String(localized: "Searching Apple Podcasts"))
                     } else if !appleSearchText.isEmpty {
                         Button {
                             appleSearchText = ""
@@ -213,6 +217,8 @@ struct AddFeedView: View {
                     Text(appleSearchError)
                         .foregroundStyle(.red)
                         .font(.subheadline)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(appleSearchError)
                 }
             }
 
@@ -224,6 +230,7 @@ struct AddFeedView: View {
                         description: Text("Try another name or artist, or switch to Index / fyyd / URL.")
                     )
                     .listRowBackground(Color.clear)
+                    .accessibilityElement(children: .combine)
                 }
             }
 
@@ -805,14 +812,18 @@ struct AddFeedView: View {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
                     TextField("Search fyyd", text: $fyydSearchText)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .submitLabel(.search)
                         .onSubmit { runFyydSearchImmediately() }
+                        .accessibilityLabel(String(localized: "Search fyyd"))
+                        .accessibilityHint(String(localized: "Searches fyyd. Results open Preview before subscribe."))
                     if fyydIsSearching {
                         ProgressView()
                             .controlSize(.small)
+                            .accessibilityLabel(String(localized: "Searching fyyd"))
                     } else if !fyydSearchText.isEmpty {
                         Button {
                             fyydSearchText = ""
@@ -841,6 +852,8 @@ struct AddFeedView: View {
                     Text(fyydSearchError)
                         .foregroundStyle(.red)
                         .font(.subheadline)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(fyydSearchError)
                 }
             }
 
@@ -852,6 +865,7 @@ struct AddFeedView: View {
                         description: Text("Try another name or author, or switch to Apple / Index / URL.")
                     )
                     .listRowBackground(Color.clear)
+                    .accessibilityElement(children: .combine)
                 }
             }
 

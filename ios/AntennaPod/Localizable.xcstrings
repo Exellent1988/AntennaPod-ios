@@ -39864,6 +39864,78 @@
           }
         }
       }
+    },
+    "Searches Apple Podcasts. Results open Preview before subscribe.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searches Apple Podcasts. Results open Preview before subscribe."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durchsucht Apple Podcasts. Ergebnisse öffnen die Vorschau vor dem Abonnieren."
+          }
+        }
+      },
+      "comment": "Apple search field VoiceOver hint"
+    },
+    "Searching Apple Podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searching Apple Podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Podcasts wird durchsucht"
+          }
+        }
+      },
+      "comment": "ProgressView accessibility label while Apple search runs"
+    },
+    "Searches fyyd. Results open Preview before subscribe.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searches fyyd. Results open Preview before subscribe."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durchsucht fyyd. Ergebnisse öffnen die Vorschau vor dem Abonnieren."
+          }
+        }
+      },
+      "comment": "fyyd search field VoiceOver hint"
+    },
+    "Searching fyyd": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searching fyyd"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fyyd wird durchsucht"
+          }
+        }
+      },
+      "comment": "ProgressView accessibility label while fyyd search runs"
     }
   },
   "version": "1.0"
