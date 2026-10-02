@@ -12099,6 +12099,42 @@
         }
       }
     },
+    "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. Inbox is unplayed and not archived, including in-progress episodes, over the visible list after sort, podcast filter, and episode type. Sort changes order only. It is not the All Episodes newest-500 cap, not the full catalog behind the tab badge, Mark all, Add all to queue, Archive all, Play random, Copy, or Share, and not library-search episode hits. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Subscriptions unplayed remaining bar, the Home New / Inbox preview, the mini player, or Lock Screen. It does not play, download, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. Inbox is unplayed and not archived, including in-progress episodes, over the visible list after sort, podcast filter, and episode type. Sort changes order only. It is not the All Episodes newest-500 cap, not the full catalog behind the tab badge, Mark all, Add all to queue, Archive all, Play random, Copy, or Share, and not library-search episode hits. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Subscriptions unplayed remaining bar, the Home New / Inbox preview, the mini player, or Lock Screen. It does not play, download, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schätzung. Verbleibende Zeit berücksichtigt Tempo ist an, daher wird jede Episode durch die Wiedergabegeschwindigkeit dieses Podcasts geteilt, oder durch die Standardgeschwindigkeit, nie unter 0,5. Das ist nicht die Live-Sitzungsrate und nicht die Lautstärke-Verstärkung. Der Posteingang ist ungehört und nicht archiviert, inklusive laufender Episoden, über die sichtbare Liste nach Sortierung, Podcast-Filter und Episodentyp. Die Sortierung ändert nur die Reihenfolge. Das ist nicht der Soft-Cap der neuesten 500 von Alle Episoden, nicht der volle Katalog hinter Tab-Badge, Alle als gehört markieren, Alle zur Warteschlange hinzufügen, Alle archivieren, Zufällig abspielen, Posteingang kopieren oder Posteingang teilen, und nicht die Episoden-Treffer der Bibliothekssuche. Unbekannte Dauern bleiben außen vor und es wird keine Zeit erfunden. Die gerade spielende Episode nutzt die Live-Position, der Teiler bleibt aber die Podcast- oder Standardgeschwindigkeit. Das ist nicht die Restzeit der Abonnements, der Home-Vorschau Neu / Posteingang, des Mini-Players oder des Sperrbildschirms. Die Leiste spielt nicht ab, lädt nicht herunter und markiert nichts als gehört."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for the Inbox remaining bar when Remaining time respects speed is on."
+    },
+    "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. Inbox is unplayed and not archived, including in-progress episodes, over the visible list after sort, podcast filter, and episode type. Sort changes order only. It is not the All Episodes newest-500 cap, not the full catalog behind the tab badge, Mark all, Add all to queue, Archive all, Play random, Copy, or Share, and not library-search episode hits. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Subscriptions unplayed remaining bar, the Home New / Inbox preview, the mini player, or Lock Screen. It does not play, download, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. Inbox is unplayed and not archived, including in-progress episodes, over the visible list after sort, podcast filter, and episode type. Sort changes order only. It is not the All Episodes newest-500 cap, not the full catalog behind the tab badge, Mark all, Add all to queue, Archive all, Play random, Copy, or Share, and not library-search episode hits. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Subscriptions unplayed remaining bar, the Home New / Inbox preview, the mini player, or Lock Screen. It does not play, download, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wanduhr-Restzeit. Verbleibende Zeit berücksichtigt Tempo ist aus, daher ändert die Wiedergabegeschwindigkeit diese Summe nicht. Der Posteingang ist ungehört und nicht archiviert, inklusive laufender Episoden, über die sichtbare Liste nach Sortierung, Podcast-Filter und Episodentyp. Die Sortierung ändert nur die Reihenfolge. Das ist nicht der Soft-Cap der neuesten 500 von Alle Episoden, nicht der volle Katalog hinter Tab-Badge, Alle als gehört markieren, Alle zur Warteschlange hinzufügen, Alle archivieren, Zufällig abspielen, Posteingang kopieren oder Posteingang teilen, und nicht die Episoden-Treffer der Bibliothekssuche. Unbekannte Dauern bleiben außen vor und es wird keine Zeit erfunden. Die gerade spielende Episode nutzt die Live-Position. Das ist nicht die Restzeit der Abonnements, der Home-Vorschau Neu / Posteingang, des Mini-Players oder des Sperrbildschirms. Die Leiste spielt nicht ab, lädt nicht herunter und markiert nichts als gehört."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for the Inbox remaining bar when Remaining time respects speed is off."
+    },
     "History remaining time %@": {
       "extractionState": "manual",
       "comment": "VoiceOver for History info bar (episode count + remaining duration over visible sort+search list; played→0).",

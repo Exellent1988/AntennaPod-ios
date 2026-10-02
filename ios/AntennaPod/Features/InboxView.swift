@@ -265,6 +265,16 @@ struct InboxView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver hint for the Inbox remaining bar. The visible label stays the
+    /// count and time. This says whether that time is wall-clock or divided by
+    /// podcast/default speed, and what the bar is not.
+    private var inboxRemainingAccessibilityHint: String {
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. Inbox is unplayed and not archived, including in-progress episodes, over the visible list after sort, podcast filter, and episode type. Sort changes order only. It is not the All Episodes newest-500 cap, not the full catalog behind the tab badge, Mark all, Add all to queue, Archive all, Play random, Copy, or Share, and not library-search episode hits. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Subscriptions unplayed remaining bar, the Home New / Inbox preview, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+        }
+        return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. Inbox is unplayed and not archived, including in-progress episodes, over the visible list after sort, podcast filter, and episode type. Sort changes order only. It is not the All Episodes newest-500 cap, not the full catalog behind the tab badge, Mark all, Add all to queue, Archive all, Play random, Copy, or Share, and not library-search episode hits. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Subscriptions unplayed remaining bar, the Home New / Inbox preview, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+    }
+
     private var inboxRemainingSummary: EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
             episodes: visibleInboxForRemaining.map(\.episode),
@@ -391,6 +401,7 @@ struct InboxView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .accessibilityElement(children: .ignore)
                             .accessibilityLabel(inboxRemainingAccessibilityLabel)
+                            .accessibilityHint(inboxRemainingAccessibilityHint)
                     }
                     .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
                 }
