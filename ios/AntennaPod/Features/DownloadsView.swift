@@ -20,7 +20,8 @@ struct DownloadsView: View {
     /// Visible downloaded episodes: played chip → podcast chip → search → sort.
     /// Played chip uses `PodcastStore.isPlayed`. Podcast chip uses feeds present in the
     /// current download set only (never invent). Sort by `AppSettings.downloadsSort`
-    /// (date: prefer `downloadedAtEpochMs`, else `pubDateEpochMs`; size: `knownByteSize`).
+    /// (date: prefer `downloadedAtEpochMs`, else `pubDateEpochMs`; size: `knownByteSize`;
+    /// title: `localizedCaseInsensitiveCompare`, empty last; id tiebreak).
     private var filteredDownloads: [DownloadedEpisode] {
         var base = downloads.downloads
         switch settings.downloadsFilter {
@@ -71,7 +72,33 @@ struct DownloadsView: View {
                 let r = rhs.knownByteSize() ?? Int64.max
                 if l != r { return l < r }
                 return lhs.episode.id < rhs.episode.id
+            case .titleAscending, .titleDescending:
+                return downloadsTitleSort(
+                    lhs.episode,
+                    rhs.episode,
+                    ascending: settings.downloadsSort == .titleAscending
+                )
             }
+        }
+    }
+
+    /// Title A–Z / Z–A: empty titles last; id tiebreak.
+    private func downloadsTitleSort(_ lhs: PodcastEpisode, _ rhs: PodcastEpisode, ascending: Bool) -> Bool {
+        let lt = lhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let rt = rhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch (lt.isEmpty, rt.isEmpty) {
+        case (false, true):
+            return true
+        case (true, false):
+            return false
+        case (true, true):
+            return lhs.id < rhs.id
+        case (false, false):
+            let cmp = lt.localizedCaseInsensitiveCompare(rt)
+            if cmp != .orderedSame {
+                return ascending ? (cmp == .orderedAscending) : (cmp == .orderedDescending)
+            }
+            return lhs.id < rhs.id
         }
     }
 
@@ -390,6 +417,7 @@ struct DownloadsView: View {
                         Label("Sort", systemImage: "arrow.up.arrow.down")
                     }
                     .accessibilityLabel(String(localized: "Sort downloads"))
+                    .accessibilityHint(String(localized: "Orders the Downloads list. Largest and Smallest use known size; Title A–Z / Z–A by title; empty or unknown last. Does not change eviction order."))
                 }
                 ToolbarItem(placement: .status) {
                     if !downloads.downloads.isEmpty, downloads.storageUsage.fileCount > 0 {

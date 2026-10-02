@@ -23088,6 +23088,23 @@
           }
         }
       }
+    },
+    "Orders the Downloads list. Largest and Smallest use known size; Title A–Z / Z–A by title; empty or unknown last. Does not change eviction order.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the Downloads list. Largest and Smallest use known size; Title A–Z / Z–A by title; empty or unknown last. Does not change eviction order."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Downloads-Liste. Größte und Kleinste nutzen bekannte Größe; Titel A–Z / Z–A nach Titel; leere oder unbekannte zuletzt. Ändert die Speicher-/Eviction-Reihenfolge nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

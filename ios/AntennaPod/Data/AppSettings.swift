@@ -478,6 +478,9 @@ enum InboxPodcastFilter: Hashable, Identifiable {
 }
 
 /// How the Downloads tab orders offline episodes (client-side; prefer download completion time).
+/// Newest / Oldest by download completion else pubDate; Largest / Smallest by known byte size
+/// (`DownloadedEpisode.knownByteSize`; unknown last; id tiebreak); Title A–Z / Z–A by
+/// `localizedCaseInsensitiveCompare` (empty titles last; id tiebreak). Eviction/storage order unchanged.
 enum DownloadsSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
@@ -485,6 +488,10 @@ enum DownloadsSort: String, CaseIterable, Identifiable {
     case largestFirst
     /// Ascending known byte size (`DownloadedEpisode.knownByteSize`); unknown last; id tiebreak.
     case smallestFirst
+    /// Ascending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleAscending
+    /// Descending episode title (`localizedCaseInsensitiveCompare`); empty last; id tiebreak.
+    case titleDescending
 
     var id: String { rawValue }
 
@@ -494,6 +501,8 @@ enum DownloadsSort: String, CaseIterable, Identifiable {
         case .oldestFirst: return String(localized: "Oldest first")
         case .largestFirst: return String(localized: "Largest first")
         case .smallestFirst: return String(localized: "Smallest first")
+        case .titleAscending: return String(localized: "Title A–Z")
+        case .titleDescending: return String(localized: "Title Z–A")
         }
     }
 
@@ -503,6 +512,8 @@ enum DownloadsSort: String, CaseIterable, Identifiable {
         case .oldestFirst: return "arrow.up"
         case .largestFirst: return "arrow.down.to.line"
         case .smallestFirst: return "arrow.up.to.line"
+        case .titleAscending: return "textformat.abc"
+        case .titleDescending: return "textformat.abc"
         }
     }
 }
