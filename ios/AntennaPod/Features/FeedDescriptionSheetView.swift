@@ -420,11 +420,14 @@ struct FeedDescriptionSheetView: View {
                         .accessibilityAddTraits(.isHeader)
 
                     if let author = displayAuthor {
-                        Text(author)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .accessibilityLabel(String(localized: "Author \(author)"))
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(author)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .accessibilityLabel(String(localized: "Author \(author)"))
+                            authorActions(author)
+                        }
                     }
 
                     if let language = displayLanguage {
@@ -538,11 +541,14 @@ struct FeedDescriptionSheetView: View {
                         .accessibilityAddTraits(.isHeader)
 
                     if let author = displayAuthor {
-                        Text(author)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .accessibilityLabel(String(localized: "Author \(author)"))
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(author)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .accessibilityLabel(String(localized: "Author \(author)"))
+                            authorActions(author)
+                        }
                     }
 
                     if let language = displayLanguage {
@@ -645,6 +651,41 @@ struct FeedDescriptionSheetView: View {
                 .padding()
             }
         }
+    }
+
+    @ViewBuilder
+    private func authorActions(_ author: String) -> some View {
+        HStack(spacing: 12) {
+            Button {
+                copyAuthor(author)
+            } label: {
+                Label("Copy author", systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Copy author"))
+            .accessibilityHint(
+                String(localized: "Copies the feed-provided author string to the pasteboard; display-only; no profile URL")
+            )
+
+            ShareLink(
+                item: author,
+                subject: Text(resolvedTitle)
+            ) {
+                Label("Share author", systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Share author"))
+            .accessibilityHint(
+                String(localized: "Shares the same feed-provided author string as plain text; no profile URL")
+            )
+        }
+    }
+
+    private func copyAuthor(_ author: String) {
+        UIPasteboard.general.string = author
+        copiedAlertMessage = String(localized: "Podcast author copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private func lockedOwnerShareURL(_ owner: String) -> URL? {

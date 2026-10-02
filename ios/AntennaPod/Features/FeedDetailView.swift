@@ -24,6 +24,7 @@ struct FeedDetailView: View {
     @State private var showDiscussURLCopied = false
     @State private var showTrailerURLCopied = false
     @State private var showLockedOwnerCopied = false
+    @State private var showAuthorCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
@@ -34,6 +35,7 @@ struct FeedDetailView: View {
     @State private var copyDiscussURLFeedbackTick = 0
     @State private var copyTrailerURLFeedbackTick = 0
     @State private var copyLockedOwnerFeedbackTick = 0
+    @State private var copyAuthorFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -487,11 +489,38 @@ struct FeedDetailView: View {
             }
             if let author = displayAuthor {
                 Section {
-                    Text(author)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityLabel(String(localized: "Author \(author)"))
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(author)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityLabel(String(localized: "Author \(author)"))
+
+                        HStack(spacing: 12) {
+                            Button {
+                                copyAuthor(author)
+                            } label: {
+                                Label("Copy author", systemImage: "doc.on.doc")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Copy author"))
+                            .accessibilityHint(
+                                String(localized: "Copies the feed-provided author string to the pasteboard; display-only; no profile URL")
+                            )
+
+                            ShareLink(
+                                item: author,
+                                subject: Text(feedDisplayTitle)
+                            ) {
+                                Label("Share author", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Share author"))
+                            .accessibilityHint(
+                                String(localized: "Shares the same feed-provided author string as plain text; no profile URL")
+                            )
+                        }
+                    }
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -1488,6 +1517,14 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Locked owner copied to the pasteboard."))
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showAuthorCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Podcast author copied to the pasteboard."))
+        }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
@@ -1495,6 +1532,7 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyDiscussURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLockedOwnerFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyAuthorFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle)
@@ -1587,6 +1625,12 @@ struct FeedDetailView: View {
         let scheme = url.scheme?.lowercased()
         guard scheme == "mailto" || scheme == "http" || scheme == "https" else { return nil }
         return url
+    }
+
+    private func copyAuthor(_ author: String) {
+        UIPasteboard.general.string = author
+        copyAuthorFeedbackTick += 1
+        showAuthorCopied = true
     }
 
     private func copyLockedOwner(_ owner: String) {

@@ -30719,6 +30719,96 @@
           }
         }
       }
+    },
+    "Copy author": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: copy the feed-provided author string. Hidden when displayAuthor is missing; no profile URL is invented.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy author"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autor kopieren"
+          }
+        }
+      }
+    },
+    "Share author": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: share the same feed-provided author string as plain text. Hidden when displayAuthor is missing; no profile URL is invented.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share author"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autor teilen"
+          }
+        }
+      }
+    },
+    "Copies the feed-provided author string to the pasteboard; display-only; no profile URL": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy author. Uses only the feed-provided displayAuthor string.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided author string to the pasteboard; display-only; no profile URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vom Feed bereitgestellte Autorenangabe in die Zwischenablage; nur Anzeige; keine Profil-URL"
+          }
+        }
+      }
+    },
+    "Shares the same feed-provided author string as plain text; no profile URL": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share author. Shares only the feed-provided displayAuthor string.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same feed-provided author string as plain text; no profile URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe vom Feed bereitgestellte Autorenangabe als Klartext; keine Profil-URL"
+          }
+        }
+      }
+    },
+    "Podcast author copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for the feed-provided author string.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast author copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Autor in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
