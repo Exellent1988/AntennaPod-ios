@@ -10,6 +10,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 
 **Fehlende Feed-Titel / Missing feed titles:** Podcast-Filterchips zeigen ehrlich **Unbekannter Podcast / Unknown podcast**, wenn kein Feed-Anzeigename verfügbar ist; sie erfinden keinen Titel und **Alle / All** bleibt als Rückweg verfügbar. / Podcast filter chips honestly show **Unbekannter Podcast / Unknown podcast** when no feed display title is available; they never invent a title, and **All / Alle** remains available as the way back.
 
+**Linux verification boundary / Linux-Verifikationsgrenze:** This repository can be inspected and Swift-checked on Linux, but Linux has no Xcode, Apple SDK, signing, simulator, or device runtime. Do not mark the device/simulator build, App Group, background-audio, Widget, Watch, VoiceOver, or TestFlight checks below as verified from Linux; perform those checks on a Mac with Xcode and the required signing entitlements. / Das Repository kann unter Linux geprüft und Swift-kohärent gehalten werden, aber Linux hat kein Xcode, Apple-SDK, Signing, Simulator oder Gerätelaufzeit. Geräte-/Simulator-Build, App Group, Hintergrundaudio, Widget, Watch, VoiceOver und TestFlight daher unter Linux nicht als verifiziert markieren; diese Prüfungen benötigen einen Mac mit Xcode und den nötigen Signing-Entitlements.
+
 ---
 
 ## Setup / Einrichtung
