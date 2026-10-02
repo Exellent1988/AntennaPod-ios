@@ -16718,6 +16718,42 @@
       },
       "comment": "Copy confirmation message for feed-provided podcast:location text."
     },
+    "Copy location text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy location text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ortstext kopieren"
+          }
+        }
+      },
+      "comment": "Visible and VoiceOver action label for copying the composed feed-provided podcast:location text."
+    },
+    "Share location text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share location text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ortstext teilen"
+          }
+        }
+      },
+      "comment": "Visible and VoiceOver action label for sharing the same composed feed-provided podcast:location text."
+    },
     "Copy location": {
       "extractionState": "manual",
       "localizations": {

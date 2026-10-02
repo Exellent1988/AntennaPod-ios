@@ -142,19 +142,19 @@ struct PodcastLocationsListView: View {
                             confirmation: String(localized: "Location copied to the pasteboard.")
                         )
                     } label: {
-                        Label("Copy", systemImage: "doc.on.doc")
+                        Label("Copy location text", systemImage: "doc.on.doc")
                             .font(.subheadline)
                     }
-                    .accessibilityLabel(String(localized: "Copy location"))
+                    .accessibilityLabel(String(localized: "Copy location text"))
                     .accessibilityHint(
                         String(localized: "Copies the feed-provided location name and attributes to the pasteboard")
                     )
 
                     ShareLink(item: copyText) {
-                        Label("Share", systemImage: "square.and.arrow.up")
+                        Label("Share location text", systemImage: "square.and.arrow.up")
                             .font(.subheadline)
                     }
-                    .accessibilityLabel(String(localized: "Share location"))
+                    .accessibilityLabel(String(localized: "Share location text"))
                     .accessibilityHint(
                         String(localized: "Shares the same feed-provided location text as Copy; does not open Maps or geocode")
                     )
