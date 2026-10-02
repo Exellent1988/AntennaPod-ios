@@ -257,6 +257,19 @@ struct QueueView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver value for the two queue empty states. Keep the full-catalog empty
+    /// state distinct from a view-only chip/search mismatch, including Queue lock guidance.
+    private var queueEmptyStateAccessibilityValue: String {
+        if store.queue.isEmpty {
+            return settings.queueLocked
+                ? String(localized: "Add episodes from a podcast feed. Queue is locked — unlock to drag reorder.")
+                : String(localized: "Add episodes from a podcast feed. Edit mode lets you drag to reorder.")
+        }
+        return isFiltering
+            ? String(localized: "No queue episodes match your filter.")
+            : String(localized: "No queue episodes match your search.")
+    }
+
     private var queueRemainingSummary: EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
             episodes: filteredQueue,
@@ -361,6 +374,9 @@ struct QueueView: View {
                                 : String(localized: "Add episodes from a podcast feed. Edit mode lets you drag to reorder.")
                         )
                     )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "Queue empty"))
+                    .accessibilityValue(queueEmptyStateAccessibilityValue)
                 } else if filteredQueue.isEmpty {
                     ContentUnavailableView(
                         "No matching queue episodes",
@@ -371,6 +387,9 @@ struct QueueView: View {
                                 : String(localized: "No queue episodes match your search.")
                         )
                     )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "No matching queue episodes"))
+                    .accessibilityValue(queueEmptyStateAccessibilityValue)
                 } else {
                     ForEach(filteredQueue) { episode in
                         EpisodeRow(
