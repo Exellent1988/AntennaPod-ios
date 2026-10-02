@@ -70,6 +70,11 @@ struct LibrarySearchResultsView: View {
                 systemImage: "magnifyingglass",
                 description: Text("No subscriptions or episodes match “\(displayQuery)”.")
             )
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "No library search results"))
+            .accessibilityValue(
+                String(localized: "No subscriptions or episodes match “\(displayQuery)”.")
+            )
         } else {
             // AntennaPod-like library search info bar (visible episode hits only remaining time).
             // Hidden when no episode matches — podcast feed hits alone do not invent remaining.
@@ -98,6 +103,10 @@ struct LibrarySearchResultsView: View {
                                     .foregroundStyle(.secondary)
                             }
                         }
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(librarySearchPodcastAccessibilityLabel(for: feed))
+                        .accessibilityValue(librarySearchPodcastAccessibilityValue(for: feed))
+                        .accessibilityHint(String(localized: "Opens this podcast"))
                     }
                 }
             }
@@ -109,6 +118,18 @@ struct LibrarySearchResultsView: View {
                 }
             }
         }
+    }
+
+    private func librarySearchPodcastAccessibilityLabel(for feed: PodcastFeed) -> String {
+        let title = store.displayTitle(for: feed).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty else {
+            return String(localized: "Podcast title unavailable")
+        }
+        return String(localized: "Podcast \(title)")
+    }
+
+    private func librarySearchPodcastAccessibilityValue(for feed: PodcastFeed) -> String {
+        String(localized: "\(feed.episodes.count) episodes")
     }
 
     private var displayQuery: String {
