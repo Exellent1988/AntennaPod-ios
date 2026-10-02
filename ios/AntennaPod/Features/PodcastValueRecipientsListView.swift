@@ -2,7 +2,8 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided `podcast:value` / `valueRecipient` list — **Value / Support creators** metadata only.
-/// Shows name, type/method, split % when known. http(s) address → Share / Open in browser; otherwise Copy / Share address.
+/// Shows name, type/method, split % when known. When a feed name is shown, distinct Copy / Share value recipient name
+/// uses that exact text (separate from details + address). http(s) address → Share / Open in browser; otherwise Copy / Share address.
 /// **Does not send Lightning / wallet payments** — informational display only. Cap + honesty footnote.
 struct PodcastValueRecipientsListView: View {
     @Environment(\.openURL) private var openURL
@@ -115,6 +116,37 @@ struct PodcastValueRecipientsListView: View {
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(a11y)
+
+            if let name {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            name,
+                            confirmation: String(localized: "Value recipient name copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy value recipient name", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy value recipient name"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Copies the exact displayed value recipient name as plain text; this app does not send payments."
+                        )
+                    )
+
+                    ShareLink(item: name) {
+                        Label("Share value recipient name", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share value recipient name"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the exact displayed value recipient name as plain text; this app does not send payments."
+                        )
+                    )
+                }
+            }
 
             HStack(spacing: 12) {
                 Button {
