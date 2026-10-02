@@ -254,32 +254,32 @@ struct PodcastPodrollListView: View {
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {
-                    Label("Copy", systemImage: "doc.on.doc")
+                    Label("Copy recommendation", systemImage: "doc.on.doc")
                         .font(.subheadline)
                 }
-                .accessibilityLabel(String(localized: "Copy"))
+                .accessibilityLabel(String(localized: "Copy recommendation"))
                 .accessibilityHint(
-                    String(localized: "Copies the recommended podcast title, feed URL, feed GUID, and item GUID to the pasteboard")
+                    String(localized: "Copies the complete feed-provided recommended podcast entry to the pasteboard")
                 )
 
                 if !copyText.isEmpty {
                     Group {
                         if let url {
                             ShareLink(item: url) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Share recommendation", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         } else {
                             ShareLink(item: copyText) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Share recommendation", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         }
                     }
-                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityLabel(String(localized: "Share recommendation"))
                     .accessibilityHint(
                         String(
-                            localized: "Shares the recommended feed URL when it is a parseable http(s) URL; otherwise shares the same feed-provided text as Copy"
+                            localized: "Shares the recommended feed URL when it is a parseable http(s) URL; otherwise shares the same complete feed-provided entry as Copy"
                         )
                     )
                 }

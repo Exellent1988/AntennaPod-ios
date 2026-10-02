@@ -20604,6 +20604,78 @@
         }
       }
     },
+    "Copy recommendation": {
+      "extractionState": "manual",
+      "comment": "Combined Copy action for a podcast:podroll remoteItem; distinct from title, GUID, item GUID, and medium actions.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy recommendation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlung kopieren"
+          }
+        }
+      }
+    },
+    "Share recommendation": {
+      "extractionState": "manual",
+      "comment": "Combined Share action for a podcast:podroll remoteItem; distinct from title, GUID, item GUID, and medium actions.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share recommendation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlung teilen"
+          }
+        }
+      }
+    },
+    "Copies the complete feed-provided recommended podcast entry to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for the combined Copy action on a podcast:podroll remoteItem.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the complete feed-provided recommended podcast entry to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den vollständigen vom Feed gelieferten Eintrag der Podcast-Empfehlung in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Shares the recommended feed URL when it is a parseable http(s) URL; otherwise shares the same complete feed-provided entry as Copy": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for the combined Share action on a podcast:podroll remoteItem; prefers a parseable feed URL and otherwise shares the same raw entry as Copy.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the recommended feed URL when it is a parseable http(s) URL; otherwise shares the same complete feed-provided entry as Copy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die Empfehlungs-Feed-URL, wenn sie als http(s) parsebar ist; andernfalls wird derselbe vollständige vom Feed gelieferte Eintrag wie beim Kopieren geteilt"
+          }
+        }
+      }
+    },
     "Recommendation copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Alert message after copying a podcast:podroll remoteItem.",
