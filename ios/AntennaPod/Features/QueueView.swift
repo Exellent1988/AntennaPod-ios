@@ -93,6 +93,23 @@ struct QueueView: View {
         playedInFullQueueCount > 0
     }
 
+    /// Queued episodes with playable media (local file via `DownloadService.localURL` —
+    /// downloads + local-folder `file://` — or streamable http(s) `downloadUrl`).
+    /// Full persisted queue — **not** played-chip / podcast-chip / searchable filtered.
+    /// Distinct from Shuffle (reorder) / Clear / Remove played / remaining-time visible counts.
+    /// Queue lock does **not** gate Play random (not a reorder).
+    private var playRandomEligibleEpisodes: [PodcastEpisode] {
+        store.queue.filter { episodeHasPlayableMedia($0) }
+    }
+
+    /// Prefer unplayed among `playRandomEligibleEpisodes` when any remain; otherwise all eligible
+    /// (played allowed when every eligible queued episode is played, or none unplayed eligible).
+    private var playRandomCandidates: [PodcastEpisode] {
+        let eligible = playRandomEligibleEpisodes
+        let unplayed = eligible.filter { !store.isPlayed($0.id) }
+        return unplayed.isEmpty ? eligible : unplayed
+    }
+
     /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
     private var podcastFilter: QueuePodcastFilter {
         QueuePodcastFilter.fromStorage(settings.queuePodcastFilter)
@@ -150,7 +167,7 @@ struct QueueView: View {
     /// Visible queue rows: played chip (`isPlayed`) → podcast chip → search.
     /// Empty query shows the chip+podcast-filtered queue order (persisted order preserved).
     /// View-only — does not remove episodes from the actual queue.
-    /// Clear queue / Remove played / Shuffle / lock ops / Play Next stay full-queue scoped (not the visible subset).
+    /// Clear queue / Remove played / Shuffle / Play random / lock ops / Play Next stay full-queue scoped (not the visible subset).
     private var filteredQueue: [PodcastEpisode] {
         var base = store.queue
         switch settings.queueFilter {
@@ -181,6 +198,7 @@ struct QueueView: View {
     /// duration contributes full duration; **played** (not current) → 0; **unknown duration skipped**
     /// (tilde when any skipped). Currently playing uses live `PlaybackService` position/duration.
     /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate).
+    /// Distinct from Clear queue / Remove played / Shuffle / Play random eligibility (always full queue).
     private var queueRemainingInfoLabel: String? {
         guard !filteredQueue.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: queueRemainingSummary)
@@ -390,6 +408,17 @@ struct QueueView: View {
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button {
+                            playRandomEpisode()
+                        } label: {
+                            Label("Play random", systemImage: "shuffle")
+                        }
+                        // Play random: uniform among full-queue playable; prefer unplayed; no confirm.
+                        // Distinct from Shuffle (reorder). Queue lock does **not** disable.
+                        .disabled(playRandomCandidates.isEmpty)
+                        .accessibilityLabel(String(localized: "Play random"))
+                        .accessibilityHint(String(localized: "Plays a random queued episode with playable media. Prefers unplayed when any remain."))
+
+                        Button {
                             // Always confirm before shuffleQueue() — reorders the full list.
                             showShuffleQueueConfirm = true
                         } label: {
@@ -550,7 +579,7 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, remove played, or clear the entire queue")
+                        String(localized: "Play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, remove played, or clear the entire queue")
                     )
                 }
             }
@@ -730,6 +759,25 @@ struct QueueView: View {
                 )
             }
         }
+    }
+
+    /// Local download / local-folder file, or streamable http(s) enclosure — same honesty as
+    /// Feed detail / Favorites Play random / `PlaybackService.resolvePlaybackURL` inputs (Wi‑Fi stream gate still applies at play time).
+    private func episodeHasPlayableMedia(_ episode: PodcastEpisode) -> Bool {
+        if downloads.localURL(for: episode) != nil { return true }
+        guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty,
+              let url = URL(string: raw) else { return false }
+        let scheme = url.scheme?.lowercased()
+        return scheme == "http" || scheme == "https"
+    }
+
+    /// Uniform pick among `playRandomCandidates`; starts via `PlaybackService.play` (resume rules unchanged).
+    /// No confirm; does not reshuffle or otherwise mutate queue order beyond what `play` already does.
+    /// Distinct from toolbar Shuffle / Shuffle (keep playing first).
+    private func playRandomEpisode() {
+        guard let episode = playRandomCandidates.randomElement() else { return }
+        _ = playback.play(episode: episode)
     }
 
     private func scheduleFilter(for term: String) {
