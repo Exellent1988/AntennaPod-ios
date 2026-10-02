@@ -414,6 +414,20 @@ struct FeedDetailView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver hint for the Feed remaining bar. The visible label stays the
+    /// count and time. This says whether that time is wall-clock or divided by
+    /// podcast/default speed, and that the bar is this feed's sort, status,
+    /// episode-type, and search list. Distinct from Download all unplayed /
+    /// Mark all as played / Mark all as unplayed / Archive all /
+    /// Add all unplayed to queue / Add all to queue / Delete downloads /
+    /// Play random (full feed) and from other remaining bars.
+    private var feedRemainingAccessibilityHint: String {
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. The Feed bar is this feed’s visible episode list after sort, the status chip (All, Unplayed, or Played), the episode type (All, Full, Trailer, Bonus, or Other), and search. Sort changes order only. Unplayed means not played and not archived. Played episodes that are not currently playing count as zero. It is not the full feed catalog behind Download all unplayed, Mark all as played, Mark all as unplayed, Archive all, Add all unplayed to queue, Add all to queue, Delete downloads, or Play random. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Archived remaining bar, the Downloads remaining bar, the History remaining bar, the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+        }
+        return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The Feed bar is this feed’s visible episode list after sort, the status chip (All, Unplayed, or Played), the episode type (All, Full, Trailer, Bonus, or Other), and search. Sort changes order only. Unplayed means not played and not archived. Played episodes that are not currently playing count as zero. It is not the full feed catalog behind Download all unplayed, Mark all as played, Mark all as unplayed, Archive all, Add all unplayed to queue, Add all to queue, Delete downloads, or Play random. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Archived remaining bar, the Downloads remaining bar, the History remaining bar, the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+    }
+
     private var feedRemainingSummary: EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
             episodes: filteredEpisodes,
@@ -1095,6 +1109,7 @@ struct FeedDetailView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(feedRemainingAccessibilityLabel)
+                        .accessibilityHint(feedRemainingAccessibilityHint)
                 }
                 .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
             }
