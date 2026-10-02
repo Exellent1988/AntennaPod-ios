@@ -610,7 +610,7 @@ struct SettingsView: View {
     private var matchesPlaybackVideoAudio: Bool {
         matchesSearch(
             "Play video as audio only",
-            "When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off."
+            "When on, video episodes (MIME video/* or mp4/m4v/mov/webm) hide the video surface (artwork instead), disable AVPlayer video tracks, and skip PiP. Does not remux or strip video from the file; background audio continues; streaming/HLS may still download a video stream. Lockscreen / Now Playing stays audio. Default off."
         )
     }
 
@@ -894,8 +894,8 @@ struct SettingsView: View {
             }
             if matchesPlaybackVideoAudio {
                 Toggle("Play video as audio only", isOn: $settings.playVideoAsAudioOnly)
-                    .accessibilityHint(String(localized: "Hides the video surface and shows artwork instead. Lockscreen stays audio."))
-                Text("When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off.")
+                    .accessibilityHint(String(localized: "Hides the video surface, disables video tracks, and shows artwork. Lockscreen stays audio. Does not strip video from the file."))
+                Text("When on, video episodes (MIME video/* or mp4/m4v/mov/webm) hide the video surface (artwork instead), disable AVPlayer video tracks, and skip PiP. Does not remux or strip video from the file; background audio continues; streaming/HLS may still download a video stream. Lockscreen / Now Playing stays audio. Default off.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

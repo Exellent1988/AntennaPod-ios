@@ -1407,8 +1407,10 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// When true, video episodes hide the full-player video surface and show artwork (audio-style).
-    /// Default off; Lockscreen / Now Playing stays audio either way. Media item is unchanged (lite).
+    /// When true, video episodes play as audio-only: hide full-player video surface (artwork),
+    /// disable `AVPlayerItem` video tracks, skip PiP. Default off.
+    /// Honesty: does **not** remux/strip video from the file; streaming/HLS may still download video;
+    /// Lockscreen / Now Playing stays audio either way. Live toggle (no full restart).
     @Published var playVideoAsAudioOnly: Bool {
         didSet {
             UserDefaults.standard.set(playVideoAsAudioOnly, forKey: Keys.playVideoAsAudioOnly)
@@ -2048,7 +2050,7 @@ final class AppSettings: ObservableObject {
         if UserDefaults.standard.object(forKey: Keys.playVideoAsAudioOnly) != nil {
             playVideoAsAudioOnly = UserDefaults.standard.bool(forKey: Keys.playVideoAsAudioOnly)
         } else {
-            // Default off: show video surface when the episode is video.
+            // Default off: show video surface + keep video tracks enabled when the episode is video.
             playVideoAsAudioOnly = false
         }
         if UserDefaults.standard.object(forKey: Keys.volumeAdaptationEnabled) != nil {

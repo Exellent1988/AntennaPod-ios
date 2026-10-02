@@ -97,6 +97,7 @@ struct RootTabView: View {
         }
         .onChange(of: settings.playVideoAsAudioOnly) { _, _ in
             playback.applyAudioSessionConfiguration()
+            playback.applyVideoAsAudioOnlyPolicy()
         }
         .onChange(of: settings.keepScreenOnWhilePlaying) { _, _ in
             playback.applyIdleTimerPolicy()

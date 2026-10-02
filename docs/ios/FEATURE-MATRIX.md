@@ -144,7 +144,7 @@ Stand abgeleitet aus Android-Navigation (`NavigationNames`), Preferences (`ui/pr
 | Transcripts | 2 | done | Feed `podcast:transcript` URL+type (JSON>VTT>SRT preference); full player button + **mini ⋯** (`text.bubble` when `hasTranscriptURL`) → same `TranscriptSheetView` (prefer store episode); fetch + scrollable sheet; tap cue seek when timed; **`.searchable` cue-text filter** (case-insensitive, ~250 ms debounce; empty state when no matches; filters already-loaded cues only); session memory/disk cache; **only when feed provides URL — no Whisper/on-device STT** |
 | Headset / Bluetooth pause | 4 | done | AVAudioSession interruption (pause / resume if shouldResume) + routeChange oldDeviceUnavailable (unplug); remotes/Now Playing unchanged |
 | Prefer stream vs download | 5 | done | Settings: Prefer download / Prefer stream / Automatic (default); `PlaybackService.play` resolves via `DownloadService.localURL`; mini + full player show Local/Stream |
-| Video → audio-only | 1 | done | **Beta lite**: Settings + full-player toggle **Play video as audio only** (`AppSettings.playVideoAsAudioOnly`, default off, persisted + backup); hides video surface → artwork. Same AVPlayer item (no track swap). Lockscreen / Now Playing unchanged (audio) |
+| Video → audio-only | 1 | done | **Beta polish**: Settings + full-player toggle **Play video as audio only** (`AppSettings.playVideoAsAudioOnly`, default off, persisted + backup); hides video surface → artwork; disables `AVPlayerItem` video tracks (`isEnabled = false`) live without restart. Does **not** remux/strip video from the file; HLS/adaptive streams may still download video variants; no PiP obligation in audio-only. Lockscreen / Now Playing unchanged (audio) |
 
 ## Downloads
 

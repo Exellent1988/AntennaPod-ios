@@ -5988,23 +5988,6 @@
         }
       }
     },
-    "When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When on, video episodes (MIME video/* or mp4/m4v/mov/webm) show artwork in the full player instead of a video surface. Lockscreen / Now Playing stays audio either way. Picture-in-picture is not included in this beta. Default off."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn aktiv, zeigen Video-Episoden (MIME video/* oder mp4/m4v/mov/webm) im Vollbild-Player Cover statt Videofläche. Sperrbildschirm/Now Playing bleibt Audio. Picture-in-Picture ist in dieser Beta nicht enthalten. Standard aus."
-          }
-        }
-      }
-    },
     "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch.": {
       "extractionState": "manual",
       "localizations": {
@@ -12719,23 +12702,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Passt die Wiedergabeposition an"
-          }
-        }
-      }
-    },
-    "Hides the video surface and shows artwork instead. Lockscreen stays audio.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hides the video surface and shows artwork instead. Lockscreen stays audio."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Blendet die Videofläche aus und zeigt stattdessen das Cover. Sperrbildschirm bleibt Audio."
           }
         }
       }
@@ -23255,6 +23221,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiv, deaktiviert der Warteschlangen-Tab Bearbeiten-Ziehen-Neuordnen, Mischen, Mischen (aktuell spielende zuerst), Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Nach Titel sortieren, Aktuelle Wiedergabe an den Anfang und blendet An Anfang / Ans Ende aus. Einreihen, Als Nächstes, Entfernen, Archiv-Swipe und Warteschlange leeren bleiben (nur Reihenfolge-Sperre — wie AntennaPod Android). Gleiche Einstellung wie der Warteschlangen-Toolbar-Sperr-Button. Standard aus."
+          }
+        }
+      }
+    },
+    "When on, video episodes (MIME video/* or mp4/m4v/mov/webm) hide the video surface (artwork instead), disable AVPlayer video tracks, and skip PiP. Does not remux or strip video from the file; background audio continues; streaming/HLS may still download a video stream. Lockscreen / Now Playing stays audio. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, video episodes (MIME video/* or mp4/m4v/mov/webm) hide the video surface (artwork instead), disable AVPlayer video tracks, and skip PiP. Does not remux or strip video from the file; background audio continues; streaming/HLS may still download a video stream. Lockscreen / Now Playing stays audio. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, blenden Video-Episoden (MIME video/* oder mp4/m4v/mov/webm) die Videofläche aus (stattdessen Cover), deaktivieren AVPlayer-Video-Spuren und überspringen PiP. Remuxt oder entfernt Video nicht aus der Datei; Hintergrund-Audio läuft weiter; Streaming/HLS kann weiterhin einen Video-Stream laden. Sperrbildschirm/Now Playing bleibt Audio. Standard aus."
+          }
+        }
+      }
+    },
+    "Hides the video surface, disables video tracks, and shows artwork. Lockscreen stays audio. Does not strip video from the file.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hides the video surface, disables video tracks, and shows artwork. Lockscreen stays audio. Does not strip video from the file."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Blendet die Videofläche aus, deaktiviert Video-Spuren und zeigt das Cover. Sperrbildschirm bleibt Audio. Entfernt Video nicht aus der Datei."
           }
         }
       }

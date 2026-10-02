@@ -104,6 +104,8 @@ final class PlaybackService: ObservableObject {
     private var timeObserver: Any?
     private var statusCancellable: AnyCancellable?
     private var pipCancellable: AnyCancellable?
+    /// Re-applies video-track enable/disable when `AVPlayerItem.tracks` populates after ready.
+    private var videoTrackPolicyCancellable: AnyCancellable?
     private var endObserver: NSObjectProtocol?
     private var lastPersistedAt: Date = .distantPast
 
@@ -185,6 +187,7 @@ final class PlaybackService: ObservableObject {
         newPlayer.volume = sleepVolume
         player = newPlayer
         applyVolumeBoost(to: item)
+        applyVideoAsAudioOnlyPolicy(to: item)
         observe(player: newPlayer, item: item)
 
         // New play session for this episode item — reset intro/outro once-guards.
@@ -871,6 +874,8 @@ final class PlaybackService: ObservableObject {
         }
         timeObserver = nil
         statusCancellable = nil
+        videoTrackPolicyCancellable?.cancel()
+        videoTrackPolicyCancellable = nil
         if let endObserver {
             NotificationCenter.default.removeObserver(endObserver)
         }
@@ -900,6 +905,13 @@ final class PlaybackService: ObservableObject {
     func applyVolumeBoost() {
         guard let item = player?.currentItem else { return }
         applyVolumeBoost(to: item)
+    }
+
+    /// Re-apply video-track enable/disable after Settings **Play video as audio only** changes
+    /// while a player item is loaded. Live toggle — no full restart required. No-op when nothing loaded.
+    func applyVideoAsAudioOnlyPolicy() {
+        guard let item = player?.currentItem else { return }
+        applyVideoAsAudioOnlyPolicy(to: item)
     }
 
     /// Map Settings **Preserve pitch** to stock `AVPlayerItem.audioTimePitchAlgorithm`.
@@ -962,6 +974,41 @@ final class PlaybackService: ObservableObject {
                 self.player?.volume = self.sleepVolume
             }
         }
+    }
+
+    /// Configure stock `AVPlayer` for video→audio-only without remuxing.
+    ///
+    /// When Settings **Play video as audio only** is on, disables `AVPlayerItem` video tracks
+    /// (`AVPlayerItemTrack.isEnabled = false`) so playback continues as audio without requiring a
+    /// video layer / PiP surface. When off, re-enables video tracks.
+    ///
+    /// **Honesty:**
+    /// - Does **not** strip or remux video bits out of the file — same media URL / item.
+    /// - Background audio (UIBackgroundModes audio) continues; no PiP obligation in audio-only mode.
+    /// - Streaming / HLS / adaptive containers may still download a video stream or variant; disabling
+    ///   tracks does not force an audio-only rendition selection.
+    /// - Tracks often arrive after the item becomes ready — observe `AVPlayerItem.tracks` and re-apply.
+    /// - Live toggle: no player restart; Full player hides the surface separately via Settings binding.
+    private func applyVideoAsAudioOnlyPolicy(to item: AVPlayerItem) {
+        videoTrackPolicyCancellable?.cancel()
+        videoTrackPolicyCancellable = nil
+
+        let apply: () -> Void = { [weak self] in
+            guard let self, self.player?.currentItem === item else { return }
+            let audioOnly = self.settings?.playVideoAsAudioOnly == true
+            for track in item.tracks {
+                guard track.assetTrack?.mediaType == .video else { continue }
+                let shouldEnable = !audioOnly
+                if track.isEnabled != shouldEnable {
+                    track.isEnabled = shouldEnable
+                }
+            }
+        }
+
+        apply()
+        videoTrackPolicyCancellable = item.publisher(for: \.tracks)
+            .receive(on: RunLoop.main)
+            .sink { _ in apply() }
     }
 
     /// Keep screen awake only while Settings **Keep screen on** is enabled and playback is actively playing.

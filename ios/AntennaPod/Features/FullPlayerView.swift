@@ -658,7 +658,7 @@ struct FullPlayerView: View {
             Toggle(isOn: $settings.playVideoAsAudioOnly) {
                 Label("Play video as audio only", systemImage: "speaker.wave.2")
             }
-            .accessibilityHint(String(localized: "Hides the video surface and shows artwork instead. Lockscreen stays audio."))
+            .accessibilityHint(String(localized: "Hides the video surface, disables video tracks, and shows artwork. Lockscreen stays audio. Does not strip video from the file."))
         }
     }
 
