@@ -337,6 +337,13 @@ struct PodcastLocation: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// Trimmed non-empty `geo` when the feed set it. Hidden when missing — never invent / never geocode.
+    var displayGeo: String? {
+        guard let geo else { return nil }
+        let trimmed = geo.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     /// Parsed latitude/longitude from feed `geo` only (RFC5870 `geo:lat,lon`[,alt][;params]).
     /// Nil when missing / unparsable — **never geocode** from name.
     var coordinates: (latitude: Double, longitude: Double)? {
@@ -400,10 +407,7 @@ enum PodcastLocationDisplay {
             guard let name = location.displayName else { return nil }
             return PodcastLocation(
                 name: name,
-                geo: location.geo.flatMap { g in
-                    let t = g.trimmingCharacters(in: .whitespacesAndNewlines)
-                    return t.isEmpty ? nil : t
-                },
+                geo: location.displayGeo,
                 osm: location.displayOsm,
                 rel: location.displayRel
             )
@@ -424,7 +428,7 @@ enum PodcastLocationDisplay {
     static func copyText(_ location: PodcastLocation) -> String {
         guard let name = location.displayName else { return "" }
         var lines = [name]
-        if let geo = location.geo?.trimmingCharacters(in: .whitespacesAndNewlines), !geo.isEmpty {
+        if let geo = location.displayGeo {
             lines.append("geo: \(geo)")
         }
         if let osm = location.displayOsm {

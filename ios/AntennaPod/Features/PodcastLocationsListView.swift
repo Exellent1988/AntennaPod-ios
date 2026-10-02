@@ -2,9 +2,9 @@ import SwiftUI
 import UIKit
 
 /// Simple feed-provided `podcast:location` list: name + optional geo/rel/osm; Copy / Share the same text,
-/// distinct Copy / Share for displayed relation and OSM when present, and Open in Maps when geo lat,lon is present.
+/// distinct Copy / Share for displayed relation, OSM, and geo when present, and Open in Maps when geo lat,lon parses.
 /// Caps at `PodcastLocationDisplay.displayCap` with an honesty footnote when truncated.
-/// **Never geocodes** names — Maps only when the feed supplied a parseable `geo` attribute.
+/// **Never geocodes** names — geo caption/Copy/Share use the exact feed `geo` string; Maps only when it parses to lat,lon.
 struct PodcastLocationsListView: View {
     @Environment(\.openURL) private var openURL
 
@@ -57,6 +57,7 @@ struct PodcastLocationsListView: View {
         let rel = location.displayRel
         let osm = location.displayOsm
         let osmCaption: String? = osm.map { String(localized: "OSM \($0)") }
+        let geo = location.displayGeo
         let mapsURL = location.appleMapsURL
         let copyText = PodcastLocationDisplay.copyText(location)
 
@@ -64,6 +65,7 @@ struct PodcastLocationsListView: View {
             var parts = [name]
             if let rel { parts.append(String(localized: "Relation \(rel)")) }
             if let osm { parts.append(String(localized: "OpenStreetMap \(osm)")) }
+            if let geo { parts.append(String(localized: "Geo \(geo)")) }
             if mapsURL != nil { parts.append(String(localized: "Has map coordinates from the feed")) }
             return parts.joined(separator: ", ")
         }()
@@ -85,6 +87,13 @@ struct PodcastLocationsListView: View {
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(a11yLabel)
+
+            if let geo {
+                Text(geo)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                    .accessibilityLabel(String(localized: "Geo \(geo)"))
+            }
 
             if let osm, let osmCaption {
                 Text(osmCaption)
@@ -170,6 +179,37 @@ struct PodcastLocationsListView: View {
                     .accessibilityLabel(String(localized: "Share location OSM"))
                     .accessibilityHint(
                         String(localized: "Shares the exact displayed feed-provided location OSM caption as plain text")
+                    )
+                }
+            }
+
+            if let geo {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            geo,
+                            confirmation: String(localized: "Location geo copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy location geo", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy location geo"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Copies the exact displayed feed-provided location geo string to the pasteboard; does not geocode or invent coordinates"
+                        )
+                    )
+
+                    ShareLink(item: geo) {
+                        Label("Share location geo", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share location geo"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the exact displayed feed-provided location geo string as plain text; does not geocode or invent coordinates"
+                        )
                     )
                 }
             }
