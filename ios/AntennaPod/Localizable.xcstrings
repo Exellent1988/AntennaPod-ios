@@ -20293,6 +20293,312 @@
         }
       },
       "comment": "Subscriptions Refresh a11y hint"
+    },
+    "Subscriptions only (beta — not full sync): Synced = http(s) podcast feed URLs (pull missing + push local not on server). Merge is additive — remote removes do not unsubscribe local feeds. Password in Keychain (never plaintext Settings/backup). Not synced (local-only): episode actions (play/download/position), queue, favorites, bookmarks, tags, downloads, local folder feeds, playback progress, archive, inbox. Last sync status and errors stay visible here. Default host https://gpodder.net (editable).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions only (beta — not full sync): Synced = http(s) podcast feed URLs (pull missing + push local not on server). Merge is additive — remote removes do not unsubscribe local feeds. Password in Keychain (never plaintext Settings/backup). Not synced (local-only): episode actions (play/download/position), queue, favorites, bookmarks, tags, downloads, local folder feeds, playback progress, archive, inbox. Last sync status and errors stay visible here. Default host https://gpodder.net (editable)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Abonnements (Beta — kein voller Sync): Synchronisiert = http(s)-Podcast-Feed-URLs (fehlende holen + lokale pushen, die nicht auf dem Server sind). Merge ist additiv — Remote-Entfernungen deabonnieren lokale Feeds nicht. Passwort im Keychain (nie Klartext in Settings/Backup). Nicht synchronisiert (nur lokal): Episodenaktionen (Play/Download/Position), Warteschlange, Favoriten, Lesezeichen, Tags, Downloads, lokale Ordner-Feeds, Wiedergabefortschritt, Archiv, Inbox. Letzter Sync-Status und Fehler bleiben hier sichtbar. Standard-Host https://gpodder.net (änderbar)."
+          }
+        }
+      },
+      "comment": "gpodder.net Sync coverage help (honesty polish)"
+    },
+    "Nextcloud Gpodder Sync (beta — not full sync): same subscription limits as gpodder.net — additive http(s) feed URLs only; remote removes do not unsubscribe local feeds. Not synced: episode actions, queue, favorites, bookmarks, tags, downloads, local folder feeds, playback, archive, inbox. Enter Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is UI/state only (Nextcloud has no device API). Password in Keychain.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud Gpodder Sync (beta — not full sync): same subscription limits as gpodder.net — additive http(s) feed URLs only; remote removes do not unsubscribe local feeds. Not synced: episode actions, queue, favorites, bookmarks, tags, downloads, local folder feeds, playback, archive, inbox. Enter Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is UI/state only (Nextcloud has no device API). Password in Keychain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud Gpodder Sync (Beta — kein voller Sync): gleiche Abonnement-Grenzen wie gpodder.net — nur additive http(s)-Feed-URLs; Remote-Entfernungen deabonnieren lokal nicht. Nicht synchronisiert: Episodenaktionen, Warteschlange, Favoriten, Lesezeichen, Tags, Downloads, lokale Ordner-Feeds, Wiedergabe, Archiv, Inbox. Nextcloud-Basis eingeben (Server-Root oder voller API-Root wie https://cloud.example.com/index.php/apps/gpoddersync/). HTTP Basic (App-Passwort empfohlen). Braucht die Gpodder-Sync-App auf dem Server. Geräte-ID nur UI/Status (Nextcloud hat keine Geräte-API). Passwort im Keychain."
+          }
+        }
+      },
+      "comment": "Nextcloud Sync coverage help (honesty polish)"
+    },
+    "http(s) subscription feed URLs (additive pull/push)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "http(s) subscription feed URLs (additive pull/push)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "http(s)-Abo-Feed-URLs (additives Pull/Push)"
+          }
+        }
+      },
+      "comment": "Sync coverage Synced value"
+    },
+    "Episode actions, queue, favorites, bookmarks, tags, downloads, local folders, playback, archive, inbox": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode actions, queue, favorites, bookmarks, tags, downloads, local folders, playback, archive, inbox"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodenaktionen, Warteschlange, Favoriten, Lesezeichen, Tags, Downloads, lokale Ordner, Wiedergabe, Archiv, Inbox"
+          }
+        }
+      },
+      "comment": "Sync coverage Local only value"
+    },
+    "Synced": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synced"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisiert"
+          }
+        }
+      },
+      "comment": "Sync coverage row label"
+    },
+    "Local only": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local only"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur lokal"
+          }
+        }
+      },
+      "comment": "Sync coverage row label"
+    },
+    "Sync status": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync status"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync-Status"
+          }
+        }
+      },
+      "comment": "VoiceOver label for lastSyncStatus"
+    },
+    "Sync error": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync error"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync-Fehler"
+          }
+        }
+      },
+      "comment": "VoiceOver label for lastSyncError"
+    },
+    "Sync coverage help": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync coverage help"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync-Abdeckung Hilfe"
+          }
+        }
+      },
+      "comment": "VoiceOver label for help caption"
+    },
+    "gpodder.net or Nextcloud Gpodder Sync. Switching logs out and clears sync cursors.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gpodder.net or Nextcloud Gpodder Sync. Switching logs out and clears sync cursors."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gpodder.net oder Nextcloud Gpodder Sync. Wechsel meldet ab und löscht Sync-Cursor."
+          }
+        }
+      },
+      "comment": "Provider picker VoiceOver hint"
+    },
+    "Nextcloud server root or full Gpodder Sync API path.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud server root or full Gpodder Sync API path."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud-Server-Root oder voller Gpodder-Sync-API-Pfad."
+          }
+        }
+      },
+      "comment": "Nextcloud host field VoiceOver hint"
+    },
+    "gpodder.net host. Default is https://gpodder.net.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gpodder.net host. Default is https://gpodder.net."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gpodder.net-Host. Standard ist https://gpodder.net."
+          }
+        }
+      },
+      "comment": "gpodder.net host field VoiceOver hint"
+    },
+    "Stored in the Keychain on Login — never in Settings backup.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stored in the Keychain on Login — never in Settings backup."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird beim Login im Keychain gespeichert — nie im Settings-Backup."
+          }
+        }
+      },
+      "comment": "Password field VoiceOver hint"
+    },
+    "Creates a new device id from the device name and forces a full subscription pull next sync.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creates a new device id from the device name and forces a full subscription pull next sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erzeugt eine neue Geräte-ID aus dem Gerätenamen und erzwingt beim nächsten Sync einen vollen Abo-Abruf."
+          }
+        }
+      },
+      "comment": "Regenerate device id VoiceOver hint"
+    },
+    "Syncs http(s) subscription feed URLs only. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Syncs http(s) subscription feed URLs only. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisiert nur http(s)-Abo-Feed-URLs. Keine Episodenaktionen, Warteschlange, Lesezeichen, Tags, Downloads oder lokale Ordner."
+          }
+        }
+      },
+      "comment": "Sync now VoiceOver hint"
+    },
+    "Removes the Keychain password and clears sync cursors. Host and username stay for re-login.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the Keychain password and clears sync cursors. Host and username stay for re-login."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt das Keychain-Passwort und löscht Sync-Cursor. Host und Benutzername bleiben für erneutes Login."
+          }
+        }
+      },
+      "comment": "Logout VoiceOver hint"
+    },
+    "Logs in and stores the password in the Keychain. Sync remains subscriptions-only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logs in and stores the password in the Keychain. Sync remains subscriptions-only."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meldet an und speichert das Passwort im Keychain. Sync bleibt abo-only."
+          }
+        }
+      },
+      "comment": "Login VoiceOver hint"
     }
   },
   "version": "1.0"

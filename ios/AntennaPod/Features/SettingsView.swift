@@ -250,7 +250,17 @@ struct SettingsView: View {
                     "Working…",
                     "Logging in…",
                     "gpodder.net",
-                    "Nextcloud"
+                    "Nextcloud",
+                    "Synced",
+                    "Local only",
+                    "subscriptions",
+                    "episode actions",
+                    "bookmarks",
+                    "tags",
+                    "downloads",
+                    "local folder",
+                    "Keychain",
+                    "additive"
                 ) {
                     gpodderSyncSection
                         .id("settings-sync")
@@ -451,7 +461,7 @@ struct SettingsView: View {
                 "Clear downloads"
             )
             || matchesSearch("Discovery", "Charts country", "API key", "API secret")
-            || matchesSearch("Sync", "Provider", "Host", "Username", "Sync now", "Login")
+            || matchesSearch("Sync", "Provider", "Host", "Username", "Sync now", "Login", "Synced", "Local only", "Keychain", "bookmarks", "tags")
             || matchesLibrarySection
             || matchesSearch("Privacy", "Parental controls")
             || matchesSearch("App Store", "Ask for App Store rating", "Reset rating prompt state")
@@ -1405,6 +1415,8 @@ struct SettingsView: View {
                 }
             }
             .disabled(gpodder.isBusy)
+            .accessibilityLabel(String(localized: "Provider"))
+            .accessibilityHint(String(localized: "gpodder.net or Nextcloud Gpodder Sync. Switching logs out and clears sync cursors."))
 
             if gpodder.provider == .nextcloud {
                 TextField(
@@ -1415,30 +1427,41 @@ struct SettingsView: View {
                 .autocorrectionDisabled()
                 .keyboardType(.URL)
                 .disabled(gpodder.isLoggedIn)
+                .accessibilityLabel(String(localized: "Host"))
+                .accessibilityHint(String(localized: "Nextcloud server root or full Gpodder Sync API path."))
             } else {
                 TextField("Host", text: $gpodder.host)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .keyboardType(.URL)
                     .disabled(gpodder.isLoggedIn)
+                    .accessibilityLabel(String(localized: "Host"))
+                    .accessibilityHint(String(localized: "gpodder.net host. Default is https://gpodder.net."))
             }
 
             TextField("Username", text: $gpodder.username)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .disabled(gpodder.isLoggedIn)
+                .accessibilityLabel(String(localized: "Username"))
             if !gpodder.isLoggedIn {
                 SecureField("Password", text: $gpodder.passwordDraft)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
+                    .accessibilityLabel(String(localized: "Password"))
+                    .accessibilityHint(String(localized: "Stored in the Keychain on Login — never in Settings backup."))
             } else {
                 LabeledContent("Password") {
                     Text("Stored in Keychain")
                         .foregroundStyle(.secondary)
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "Password"))
+                .accessibilityValue(String(localized: "Stored in Keychain"))
             }
             TextField("Device name", text: $gpodder.deviceName)
                 .disabled(gpodder.isBusy)
+                .accessibilityLabel(String(localized: "Device name"))
             LabeledContent("Device id") {
                 Text(gpodder.deviceId)
                     .font(.caption2)
@@ -1446,10 +1469,12 @@ struct SettingsView: View {
                     .lineLimit(2)
                     .textSelection(.enabled)
             }
+            .accessibilityElement(children: .combine)
             Button("Regenerate device id from name") {
                 gpodder.regenerateDeviceIdFromName()
             }
             .disabled(gpodder.isBusy || gpodder.deviceName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .accessibilityHint(String(localized: "Creates a new device id from the device name and forces a full subscription pull next sync."))
             if gpodder.isLoggedIn {
                 Button {
                     Task { await gpodder.syncNow(store: store) }
@@ -1461,10 +1486,12 @@ struct SettingsView: View {
                     }
                 }
                 .disabled(gpodder.isBusy)
+                .accessibilityHint(String(localized: "Syncs http(s) subscription feed URLs only. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders."))
                 Button("Logout", role: .destructive) {
                     gpodder.logout()
                 }
                 .disabled(gpodder.isBusy)
+                .accessibilityHint(String(localized: "Removes the Keychain password and clears sync cursors. Host and username stay for re-login."))
             } else {
                 Button {
                     Task { await gpodder.login() }
@@ -1476,29 +1503,59 @@ struct SettingsView: View {
                     }
                 }
                 .disabled(gpodder.isBusy)
+                .accessibilityHint(String(localized: "Logs in and stores the password in the Keychain. Sync remains subscriptions-only."))
             }
             if let last = gpodder.lastSyncAt {
                 LabeledContent("Last sync") {
                     Text(last, style: .relative)
                         .foregroundStyle(.secondary)
                 }
+                .accessibilityElement(children: .combine)
             } else {
                 LabeledContent("Last sync") {
                     Text("Never")
                         .foregroundStyle(.secondary)
                 }
+                .accessibilityElement(children: .combine)
             }
             Text(gpodder.lastSyncStatus)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .accessibilityLabel(String(localized: "Sync status"))
+                .accessibilityValue(gpodder.lastSyncStatus)
             if let err = gpodder.lastSyncError, !err.isEmpty {
                 Text(err)
                     .font(.caption)
                     .foregroundStyle(.red)
+                    .accessibilityLabel(String(localized: "Sync error"))
+                    .accessibilityValue(err)
             }
+
+            LabeledContent("Synced") {
+                Text(String(localized: "http(s) subscription feed URLs (additive pull/push)"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "Synced"))
+            .accessibilityValue(String(localized: "http(s) subscription feed URLs (additive pull/push)"))
+
+            LabeledContent("Local only") {
+                Text(String(localized: "Episode actions, queue, favorites, bookmarks, tags, downloads, local folders, playback, archive, inbox"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "Local only"))
+            .accessibilityValue(String(localized: "Episode actions, queue, favorites, bookmarks, tags, downloads, local folders, playback, archive, inbox"))
+
             Text(gpodderHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .accessibilityLabel(String(localized: "Sync coverage help"))
+                .accessibilityValue(gpodderHelpText)
         } header: {
             Text("Sync")
         }
@@ -1507,9 +1564,10 @@ struct SettingsView: View {
     private var gpodderHelpText: String {
         switch gpodder.provider {
         case .gpodderNet:
-            return String(localized: "Subscriptions only (beta MVP): Login stores the password in the Keychain; Sync pulls remote feed URLs and subscribes missing ones, then pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Episode actions (play/download) are not synced yet. Default host is https://gpodder.net (editable).")
+            return String(localized: "Subscriptions only (beta — not full sync): Synced = http(s) podcast feed URLs (pull missing + push local not on server). Merge is additive — remote removes do not unsubscribe local feeds. Password in Keychain (never plaintext Settings/backup). Not synced (local-only): episode actions (play/download/position), queue, favorites, bookmarks, tags, downloads, local folder feeds, playback progress, archive, inbox. Last sync status and errors stay visible here. Default host https://gpodder.net (editable).")
         case .nextcloud:
-            return String(localized: "Nextcloud Gpodder Sync (beta MVP): same subscription limits as gpodder.net — additive pull/push of feed URLs; remote removes do not unsubscribe local feeds; episode actions not synced. Enter your Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). Uses HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is kept for UI/state only (Nextcloud has no device API).")
+            return String(localized: "Nextcloud Gpodder Sync (beta — not full sync): same subscription limits as gpodder.net — additive http(s) feed URLs only; remote removes do not unsubscribe local feeds. Not synced: episode actions, queue, favorites, bookmarks, tags, downloads, local folder feeds, playback, archive, inbox. Enter Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is UI/state only (Nextcloud has no device API). Password in Keychain.")
         }
     }
+
 }

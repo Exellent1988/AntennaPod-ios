@@ -1,6 +1,10 @@
 import Foundation
 
-/// gpodder.net / Nextcloud Gpodder Sync prefs + orchestration (subscriptions MVP; episode actions stubbed).
+/// gpodder.net / Nextcloud Gpodder Sync prefs + orchestration.
+/// **Honest coverage (beta):** syncs **http(s) subscription feed URLs only** (additive pull/push).
+/// Does **not** sync episode actions, queue, favorites, bookmarks, tags, downloads,
+/// local folder feeds (`local-folder://`), playback progress, archive, or inbox.
+/// Password lives in Keychain only — never UserDefaults / backup JSON.
 @MainActor
 final class GpodderSyncService: ObservableObject {
     static let defaultHost = "https://gpodder.net"
@@ -195,7 +199,7 @@ final class GpodderSyncService: ObservableObject {
             isLoggedIn = true
             passwordDraft = ""
             lastSyncError = nil
-            lastSyncStatus = "Logged in"
+            lastSyncStatus = "Logged in — subscriptions only (not full sync)"
         } catch {
             isLoggedIn = false
             recordFailure(error: error.localizedDescription, status: "Login failed")
@@ -215,9 +219,10 @@ final class GpodderSyncService: ObservableObject {
 
     // MARK: - Sync
 
-    /// Pull remote subscription URLs → subscribe missing locally; push local URLs not on server.
+    /// Pull remote subscription URLs → subscribe missing locally; push local http(s) URLs not on server.
     /// Additive merge: remote `remove` does **not** unsubscribe local feeds (honest MVP).
-    /// Episode actions are not synced yet.
+    /// Local folder feeds, non-http URLs, episode actions, queue/favorites/bookmarks/tags/downloads
+    /// are **never** uploaded — status always reports partial subscriptions sync (never “full sync”).
     func syncNow(store: PodcastStore) async {
         guard !isBusy else { return }
         guard isLoggedIn else {
@@ -314,17 +319,22 @@ final class GpodderSyncService: ObservableObject {
             subscriptionTimestamp = uploadTimestamp
             lastSyncAt = Date()
 
-            var parts: [String] = []
-            parts.append("Pulled \(changes.add.count) remote add(s)")
+            let localFolderOmitted = store.feeds.filter { LocalFolderFeed.isLocalFolderFeed($0) }.count
+            // Always frame as partial subscriptions sync — never invent “full sync”.
+            var parts: [String] = ["Subscriptions sync (partial)"]
+            parts.append("pulled \(changes.add.count) remote add(s)")
             if subscribed > 0 { parts.append("subscribed \(subscribed) new") }
-            if !toUpload.isEmpty { parts.append("pushed \(toUpload.count) local") }
+            if !toUpload.isEmpty { parts.append("pushed \(toUpload.count) local http(s)") }
             if !ignoredRemoves.isEmpty {
                 parts.append("ignored \(ignoredRemoves.count) remote remove(s) (additive)")
+            }
+            if localFolderOmitted > 0 {
+                parts.append("omitted \(localFolderOmitted) local folder feed(s)")
             }
             if !subscribeFailures.isEmpty {
                 parts.append("\(subscribeFailures.count) subscribe error(s)")
             }
-            parts.append("episode actions: not synced yet")
+            parts.append("episode actions / queue / bookmarks / tags / downloads: local-only")
             lastSyncStatus = parts.joined(separator: " · ")
             if let first = subscribeFailures.first {
                 // Sync completed with subscribe errors — still surface + notify.

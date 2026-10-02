@@ -133,7 +133,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Notify on download / sync errors (local UserNotifications; Settings toggles default on; DL tap → Downloads; Sync tap → Settings Sync; no push)
 - Notify when sleep timer ends (local UserNotifications + foreground haptic; Settings toggle default on; one banner per fire; no push)
 - Parental controls (beta; Settings → Parental controls; 4–6 digit PIN in Keychain; lock Add/Discover; optional Network/Downloads lock + hide explicit charts; session unlock until background)
-- gpodder.net / Nextcloud Gpodder sync (subscriptions MVP: provider picker; Keychain; pull+push feed URLs; additive merge; episode actions later)
+- gpodder.net / Nextcloud Gpodder sync (beta honesty: subscriptions **partial** only — Synced http(s) feed URLs additive; Local only = episode actions / queue / favorites / bookmarks / tags / downloads / local folders / playback / archive / inbox; Keychain password; status+errors; never claims full sync)
 
 Root tabs (6): **Home**, Inbox (count badge when `inboxEpisodes.count` > 0), Subscriptions, Queue (count badge when `queue.count` > 0 — **full** queue, not filter chips), Downloads (count badge when `downloads.downloads.count` > 0 — **full** completed catalog, not chip/search/in-progress), Settings.
 
@@ -1023,15 +1023,16 @@ Add podcast sheet (**Subscriptions → +**) has four segments: **Apple**, **Inde
 
 ## Sync / gpodder.net / Nextcloud
 
-Settings → **Sync** (beta MVP — **subscriptions only**):
+Settings → **Sync** (beta — **subscriptions only**, never full library sync):
 
 - **Provider** picker: **gpodder.net** (default) vs **Nextcloud** (Gpodder Sync app).
 - **Host / base URL**
   - gpodder.net: defaults to `https://gpodder.net` (editable).
   - Nextcloud: custom base — server root (`https://cloud.example.com`) or full API root (`https://cloud.example.com/index.php/apps/gpoddersync/`). If the path does not already contain `gpoddersync`, the client appends `index.php/apps/gpoddersync/` (same root AntennaPod Android + [nextcloud-gpodder](https://github.com/thrillfall/nextcloud-gpodder) use).
-- **Username** / **password**: password in the **Keychain**; username + provider + host + device metadata in `UserDefaults`. Nextcloud: prefer an **app password**.
+- **Username** / **password**: password in the **Keychain** only (never plaintext UserDefaults / backup JSON); username + provider + host + device metadata in `UserDefaults`. Nextcloud: prefer an **app password**.
 - **Device name** + stable **device id** (gpodder.net API2; Nextcloud has no device API — fields kept for UI/state only; update is a no-op).
-- **Login** / **Logout** / **Sync now**; last sync time, status, error. Login/sync failures can post a **local** notification when Settings → Notify on sync errors is on (tap → Settings Sync).
+- **Login** / **Logout** / **Sync now**; **Last sync** time, status line, and error (red). Login/sync failures can post a **local** notification when Settings → Notify on sync errors is on (tap → Settings Sync).
+- **Coverage rows (honesty):** **Synced** = http(s) subscription feed URLs (additive pull/push). **Local only** = episode actions (play/download/position), queue, favorites, bookmarks, tags, downloads, local folder feeds, playback progress, archive, inbox.
 
 Client (`GpodderClient`, `URLSession`, HTTP Basic), reused for both providers:
 
@@ -1048,7 +1049,7 @@ Client (`GpodderClient`, `URLSession`, HTTP Basic), reused for both providers:
 - `GET …/subscriptions?since=`
 - `POST …/subscription_change/create` with `{ "add", "remove" }`
 
-**Sync behavior (both):** pull remote adds → `subscribeQuietly` for missing feeds; push local URLs not on the server. **Additive merge:** remote `remove` does **not** unsubscribe local podcasts. Episode actions are **not** synced yet (honest MVP; same limits for Nextcloud as gpodder.net).
+**Sync behavior (both):** pull remote adds → `subscribeQuietly` for missing feeds; push local **http(s)** URLs not on the server (`local-folder://` and non-http feeds omitted). **Additive merge:** remote `remove` does **not** unsubscribe local podcasts. Status is always framed as **Subscriptions sync (partial)** — episode actions / queue / bookmarks / tags / downloads stay **local-only**. Same limits for Nextcloud as gpodder.net.
 
 ## Data backup (iOS JSON)
 
