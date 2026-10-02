@@ -54,8 +54,17 @@ struct FeedSettings: Hashable, Codable, Equatable {
     /// Survives feed refresh; cleared with other FeedSettings on unsubscribe.
     var customTitle: String?
 
+    /// Optional local-only free-text private note for this subscription (not from RSS; not synced).
+    /// `nil` = none. Trimmed; empty clears to nil; capped at `privateNoteMaxLength`.
+    /// Stored in `feed-settings.json` only — not OPML / gpodder / HTML export (iOS JSON backup snapshots FeedSettings as-is).
+    /// Survives feed refresh; cleared with other FeedSettings on unsubscribe.
+    var privateNote: String?
+
     /// Max stored length for `customTitle` (trim first; empty → nil).
     static let customTitleMaxLength = 100
+
+    /// Max stored length for `privateNote` (trim first; empty → nil). ~1k grapheme chars.
+    static let privateNoteMaxLength = 1000
 
     static let `default` = FeedSettings(
         autoDownload: .useGlobal,
@@ -67,7 +76,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
         skipOutroSeconds: nil,
         playbackSpeed: nil,
         episodeSort: nil,
-        customTitle: nil
+        customTitle: nil,
+        privateNote: nil
     )
 
     init(
@@ -80,7 +90,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
         skipOutroSeconds: Int? = nil,
         playbackSpeed: Float? = nil,
         episodeSort: FeedEpisodeSort? = nil,
-        customTitle: String? = nil
+        customTitle: String? = nil,
+        privateNote: String? = nil
     ) {
         self.autoDownload = autoDownload
         self.keepUpdated = keepUpdated
@@ -92,6 +103,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         self.playbackSpeed = Self.normalizedSpeed(playbackSpeed)
         self.episodeSort = episodeSort
         self.customTitle = Self.normalizedCustomTitle(customTitle)
+        self.privateNote = Self.normalizedPrivateNote(privateNote)
     }
 
     init(from decoder: Decoder) throws {
@@ -113,6 +125,9 @@ struct FeedSettings: Hashable, Codable, Equatable {
         episodeSort = try c.decodeIfPresent(FeedEpisodeSort.self, forKey: .episodeSort)
         customTitle = Self.normalizedCustomTitle(
             try c.decodeIfPresent(String.self, forKey: .customTitle)
+        )
+        privateNote = Self.normalizedPrivateNote(
+            try c.decodeIfPresent(String.self, forKey: .privateNote)
         )
     }
 
@@ -207,7 +222,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case autoDownload, keepUpdated, notifyOnNewEpisodes, autoDeleteAfterPlaying, newEpisodeAction
-        case skipIntroSeconds, skipOutroSeconds, playbackSpeed, episodeSort, customTitle
+        case skipIntroSeconds, skipOutroSeconds, playbackSpeed, episodeSort, customTitle, privateNote
     }
 
     /// Trim, empty → nil, cap at `customTitleMaxLength` (grapheme-aware via String count).
@@ -219,6 +234,19 @@ struct FeedSettings: Hashable, Codable, Equatable {
             return trimmed
         }
         let end = trimmed.index(trimmed.startIndex, offsetBy: customTitleMaxLength)
+        let capped = String(trimmed[..<end]).trimmingCharacters(in: .whitespacesAndNewlines)
+        return capped.isEmpty ? nil : capped
+    }
+
+    /// Trim, empty → nil, cap at `privateNoteMaxLength` (grapheme-aware via String count).
+    static func normalizedPrivateNote(_ value: String?) -> String? {
+        guard let value else { return nil }
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        if trimmed.count <= privateNoteMaxLength {
+            return trimmed
+        }
+        let end = trimmed.index(trimmed.startIndex, offsetBy: privateNoteMaxLength)
         let capped = String(trimmed[..<end]).trimmingCharacters(in: .whitespacesAndNewlines)
         return capped.isEmpty ? nil : capped
     }

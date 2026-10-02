@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Per-subscription overrides (Auto-download / Auto-delete after play / Keep updated / New episodes / Notifications / Skip intro·outro / Speed / Episode sort) + HTTP Basic auth (Keychain) + tags.
+/// Per-subscription overrides (Display name / Private note / Auto-download / Auto-delete after play / Keep updated / New episodes / Notifications / Skip intro·outro / Speed / Episode sort) + HTTP Basic auth (Keychain) + tags.
 struct PerFeedSettingsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var appSettings: AppSettings
@@ -20,6 +20,7 @@ struct PerFeedSettingsView: View {
     @State private var authSaved = false
     @State private var authStatusMessage: String?
     @State private var authErrorMessage: String?
+    @State private var privateNoteDraft = ""
 
     private var liveFeed: PodcastFeed? {
         store.feeds.first { $0.id == feedId }
@@ -70,6 +71,49 @@ struct PerFeedSettingsView: View {
                 Text(String(localized: "Display name"))
             } footer: {
                 Text(String(localized: "Local only — does not rename the RSS title on this device’s feed object. Survives refresh; cleared when you unsubscribe."))
+            }
+
+            Section {
+                TextEditor(text: $privateNoteDraft)
+                    .frame(minHeight: 88)
+                    .accessibilityLabel(String(localized: "Private note"))
+                    .accessibilityHint(String(localized: "Optional local-only note for this podcast. Not synced and not from the feed. Maximum 1000 characters."))
+                    .accessibilityValue(
+                        privateNoteDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            ? String(localized: "Empty")
+                            : privateNoteDraft
+                    )
+                    .onChange(of: privateNoteDraft) { _, newValue in
+                        commitPrivateNoteDraft(newValue)
+                    }
+                if current.privateNote != nil || !privateNoteDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    Button(String(localized: "Clear private note")) {
+                        privateNoteDraft = ""
+                        store.updateFeedSettings(for: feedId) { $0.privateNote = nil }
+                    }
+                    .accessibilityLabel(String(localized: "Clear private note"))
+                    .accessibilityHint(String(localized: "Removes the local private note for this podcast."))
+                }
+                Text(
+                    String(
+                        format: String(localized: "%lld / %lld characters"),
+                        Int64(min(privateNoteDraft.count, FeedSettings.privateNoteMaxLength)),
+                        Int64(FeedSettings.privateNoteMaxLength)
+                    )
+                )
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+                .accessibilityLabel(
+                    String(
+                        format: String(localized: "%lld of %lld characters used"),
+                        Int64(min(privateNoteDraft.count, FeedSettings.privateNoteMaxLength)),
+                        Int64(FeedSettings.privateNoteMaxLength)
+                    )
+                )
+            } header: {
+                Text(String(localized: "Private note"))
+            } footer: {
+                Text(String(localized: "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML or HTML export. Included in iOS JSON backup with other feed settings. Survives refresh; cleared when you unsubscribe. Maximum 1000 characters."))
             }
 
             Section {
@@ -344,6 +388,7 @@ struct PerFeedSettingsView: View {
                 Section {
                     Button("Reset to global defaults", role: .destructive) {
                         store.setFeedSettings(.default, for: feedId)
+                        privateNoteDraft = ""
                     }
                 }
             }
@@ -400,7 +445,26 @@ struct PerFeedSettingsView: View {
             .environmentObject(playback)
             .environmentObject(appSettings)
         }
-        .onAppear(perform: loadHttpBasicAuthState)
+        .onAppear {
+            loadHttpBasicAuthState()
+            privateNoteDraft = current.privateNote ?? ""
+        }
+    }
+
+    /// Cap draft length while typing; persist trimmed note (empty → nil).
+    private func commitPrivateNoteDraft(_ newValue: String) {
+        var draft = newValue
+        if draft.count > FeedSettings.privateNoteMaxLength {
+            let end = draft.index(draft.startIndex, offsetBy: FeedSettings.privateNoteMaxLength)
+            draft = String(draft[..<end])
+            if draft != privateNoteDraft {
+                privateNoteDraft = draft
+            }
+        }
+        let normalized = FeedSettings.normalizedPrivateNote(draft)
+        if current.privateNote != normalized {
+            store.updateFeedSettings(for: feedId) { $0.privateNote = normalized }
+        }
     }
 
     private var displayNameBinding: Binding<String> {

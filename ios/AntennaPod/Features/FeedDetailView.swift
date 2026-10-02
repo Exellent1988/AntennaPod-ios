@@ -39,6 +39,11 @@ struct FeedDetailView: View {
         store.displayTitle(for: liveFeed)
     }
 
+    /// Local-only private note when set (FeedSettings); hide indicator when nil/empty.
+    private var feedPrivateNote: String? {
+        store.feedSettings(for: liveFeed.id).privateNote
+    }
+
     private var feedTags: [String] {
         store.tags(for: liveFeed.id)
     }
@@ -740,6 +745,31 @@ struct FeedDetailView: View {
             if !displayPublisherItems.isEmpty {
                 Section {
                     PodcastPublisherListView(items: displayPublisherItems)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+            // Local private note indicator — hide when empty; tap opens per-feed settings (uncrowded).
+            if let note = feedPrivateNote {
+                Section {
+                    Button {
+                        showPerFeedSettings = true
+                    } label: {
+                        Label {
+                            Text(note)
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        } icon: {
+                            Image(systemName: "note.text")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(String(localized: "Private note"))
+                    .accessibilityValue(note)
+                    .accessibilityHint(String(localized: "Opens podcast settings to edit the local private note"))
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
