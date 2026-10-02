@@ -1198,7 +1198,7 @@ struct PodcastImageVariant: Identifiable, Hashable, Codable {
 }
 
 /// Display helpers for `podcast:images` / `podcast:image` lists (channel or item).
-/// Feed-provided only; Open / Copy; prefer one higher-res http(s) URL for artwork — never download all eagerly.
+/// Feed-provided only; Open / Copy / Share; prefer one higher-res http(s) URL for artwork — never download all eagerly.
 enum PodcastImagesDisplay {
     /// Soft UI / storage cap — show first N after feed order; honesty footnote when more exist.
     static let displayCap = 10
@@ -1206,7 +1206,7 @@ enum PodcastImagesDisplay {
     /// Soft upper bound when picking a single artwork URL (avoid pathological huge assets when smaller widths exist).
     static let preferredMaxWidth = 3000
 
-    /// http(s) variants only, feed order. No invented URLs.
+    /// http(s) variants only, feed order. No invented URLs; non-http(s) values are not artwork candidates.
     static func valid(_ items: [PodcastImageVariant]) -> [PodcastImageVariant] {
         items.compactMap { item in
             guard let open = item.openURL else { return nil }
@@ -1903,7 +1903,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         PodcastLicenseDisplay.valid(licenses)
     }
 
-    /// Valid item-level `podcast:images` / `podcast:image` variants (hide when empty — never invent; Open/Copy; prefer one for artwork).
+    /// Valid item-level `podcast:images` / `podcast:image` variants (hide when empty — never invent; Open/Copy/Share; prefer one for artwork).
     var displayImages: [PodcastImageVariant] {
         PodcastImagesDisplay.valid(images)
     }
@@ -2372,7 +2372,7 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         PodcastLicenseDisplay.valid(licenses)
     }
 
-    /// Valid channel-level `podcast:images` / `podcast:image` variants (hide when empty — never invent; Open/Copy; prefer one for artwork).
+    /// Valid channel-level `podcast:images` / `podcast:image` variants (hide when empty — never invent; Open/Copy/Share; prefer one for artwork).
     var displayImages: [PodcastImageVariant] {
         PodcastImagesDisplay.valid(images)
     }

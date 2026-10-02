@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided `podcast:images` / `podcast:image` variants — URL + optional width.
-/// **Open** http(s) / **Copy**; cap + honesty footnote.
+/// **Open** http(s) / **Copy** / **Share**; cap + honesty footnote.
 /// Does **not** download all variants eagerly (artwork preference picks one URL elsewhere).
 /// **Hidden when none.**
 struct PodcastImagesListView: View {
@@ -34,14 +34,14 @@ struct PodcastImagesListView: View {
 
                 Text(
                     String(
-                        localized: "These image URLs come from the feed (podcast:images / podcast:image). Open or copy a link — the app does not download every size. Higher-resolution artwork is preferred for the player when available."
+                        localized: "These image URLs come from the feed (podcast:images / podcast:image). Open, copy, or share a link — the app does not download every size. Higher-resolution artwork is preferred for the player when available."
                     )
                 )
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(
                     String(
-                        localized: "These image URLs come from the feed (podcast:images / podcast:image). Open or copy a link — the app does not download every size. Higher-resolution artwork is preferred for the player when available."
+                        localized: "These image URLs come from the feed (podcast:images / podcast:image). Open, copy, or share a link — the app does not download every size. Higher-resolution artwork is preferred for the player when available."
                     )
                 )
 
@@ -72,6 +72,7 @@ struct PodcastImagesListView: View {
         let purpose = entry.displayPurpose
         let alt = entry.displayAlt
         let open = entry.openURL
+        let copyText = PodcastImagesDisplay.copyText(entry)
         let a11y: String = {
             var parts: [String] = [String(localized: "Image")]
             if let widthLabel {
@@ -138,6 +139,28 @@ struct PodcastImagesListView: View {
                 .accessibilityHint(
                     String(localized: "Copies the image URL from the feed to the pasteboard")
                 )
+
+                if !copyText.isEmpty {
+                    Group {
+                        if let open {
+                            ShareLink(item: open) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        } else {
+                            ShareLink(item: copyText) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
+                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the image URL when it is a parseable http(s) URL; otherwise shares the same image text as Copy"
+                        )
+                    )
+                }
 
                 if let open {
                     Button {

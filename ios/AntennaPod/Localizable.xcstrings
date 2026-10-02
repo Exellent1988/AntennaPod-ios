@@ -17996,20 +17996,20 @@
         }
       }
     },
-    "These image URLs come from the feed (podcast:images / podcast:image). Open or copy a link — the app does not download every size. Higher-resolution artwork is preferred for the player when available.": {
+    "These image URLs come from the feed (podcast:images / podcast:image). Open, copy, or share a link — the app does not download every size. Higher-resolution artwork is preferred for the player when available.": {
       "extractionState": "manual",
       "comment": "Honesty footnote under podcast:images / podcast:image list.",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "These image URLs come from the feed (podcast:images / podcast:image). Open or copy a link — the app does not download every size. Higher-resolution artwork is preferred for the player when available."
+            "value": "These image URLs come from the feed (podcast:images / podcast:image). Open, copy, or share a link — the app does not download every size. Higher-resolution artwork is preferred for the player when available."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Bild-URLs stammen aus dem Feed (podcast:images / podcast:image). Link öffnen oder kopieren — die App lädt nicht jede Größe herunter. Für den Player wird bei Verfügbarkeit bevorzugt eine höhere Auflösung genutzt."
+            "value": "Diese Bild-URLs stammen aus dem Feed (podcast:images / podcast:image). Link öffnen, kopieren oder teilen — die App lädt nicht jede Größe herunter. Für den Player wird bei Verfügbarkeit bevorzugt eine höhere Auflösung genutzt."
           }
         }
       }
@@ -18100,6 +18100,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert die Bild-URL aus dem Feed in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Shares the image URL when it is a parseable http(s) URL; otherwise shares the same image text as Copy": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share on a podcast image variant.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the image URL when it is a parseable http(s) URL; otherwise shares the same image text as Copy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die Bild-URL, wenn sie eine parsebare http(s)-URL ist; andernfalls wird derselbe Bildtext wie beim Kopieren geteilt"
           }
         }
       }
