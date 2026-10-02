@@ -15367,6 +15367,96 @@
       },
       "comment": "VoiceOver note when podcast:location geo parsed to lat,lon (Open in Maps available)."
     },
+    "Location copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ort in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy confirmation message for feed-provided podcast:location text."
+    },
+    "Copy location": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy location"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ort kopieren"
+          }
+        }
+      },
+      "comment": "VoiceOver label for copying feed-provided podcast:location name and optional attributes. Hidden when the composed text is empty."
+    },
+    "Share location": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share location"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ort teilen"
+          }
+        }
+      },
+      "comment": "VoiceOver label for sharing the same feed-provided podcast:location text used by Copy. Hidden when the composed text is empty."
+    },
+    "Copies the feed-provided location name and attributes to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided location name and attributes to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den vom Feed bereitgestellten Ortsnamen und die Attribute in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy location; feed-provided only, no invented coordinates or geocoding."
+    },
+    "Shares the same feed-provided location text as Copy; does not open Maps or geocode": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same feed-provided location text as Copy; does not open Maps or geocode"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt denselben vom Feed bereitgestellten Ortstext wie Kopieren; öffnet keine Karten und führt kein Geocoding durch"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share location; distinct from Open in Maps and never geocodes a name."
+    },
     "Discuss": {
       "extractionState": "manual",
       "localizations": {

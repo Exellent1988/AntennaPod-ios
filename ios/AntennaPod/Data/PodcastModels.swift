@@ -393,6 +393,23 @@ enum PodcastLocationDisplay {
         }
         return (Array(list.prefix(displayCap)), true)
     }
+
+    /// Pasteboard / ShareLink text: the feed-provided name plus optional raw attributes.
+    /// Keep this separate from the Maps URL: copying a location never invents coordinates or geocodes.
+    static func copyText(_ location: PodcastLocation) -> String {
+        guard let name = location.displayName else { return "" }
+        var lines = [name]
+        if let geo = location.geo?.trimmingCharacters(in: .whitespacesAndNewlines), !geo.isEmpty {
+            lines.append("geo: \(geo)")
+        }
+        if let osm = location.displayOsm {
+            lines.append("osm: \(osm)")
+        }
+        if let rel = location.displayRel {
+            lines.append("rel: \(rel)")
+        }
+        return lines.joined(separator: "\n")
+    }
 }
 
 
