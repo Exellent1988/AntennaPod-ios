@@ -1937,7 +1937,8 @@ final class PodcastStore: ObservableObject {
 
     // MARK: - Library search (local only)
 
-    /// Matching subscriptions by display title (customTitle ?? RSS), optional descriptionText, author, language, or categories (case-insensitive).
+    /// Matching subscriptions by display title (customTitle ?? RSS), optional descriptionText, author, language, categories, or local private note (case-insensitive).
+    /// Does **not** search bookmark notes / chapters / transcripts.
     func matchingFeeds(query: String) -> [PodcastFeed] {
         let q = Self.normalizedQuery(query)
         guard !q.isEmpty else { return [] }
@@ -1950,20 +1951,23 @@ final class PodcastStore: ObservableObject {
                 || Self.matches(feed.language, query: q)
                 || Self.matches(feed.displayLanguage, query: q)
                 || feed.displayCategories.contains(where: { Self.matches($0, query: q) })
+                || Self.matches(feedSettings(for: feed.id).privateNote, query: q)
         }
         .sorted {
             displayTitle(for: $0).localizedCaseInsensitiveCompare(displayTitle(for: $1)) == .orderedAscending
         }
     }
 
-    /// Matching episodes across subscriptions by episode title (feeds listed separately).
+    /// Matching episodes across subscriptions by episode title, optional descriptionText, or local private note (feeds listed separately).
+    /// Does **not** search bookmark notes / chapters / transcripts.
     func matchingEpisodes(query: String) -> [LibraryEpisodeHit] {
         let q = Self.normalizedQuery(query)
         guard !q.isEmpty else { return [] }
         var hits: [LibraryEpisodeHit] = []
         for feed in feeds {
             for episode in feed.episodes where Self.matches(episode.title, query: q)
-                || Self.matches(episode.descriptionText, query: q) {
+                || Self.matches(episode.descriptionText, query: q)
+                || Self.matches(episodePrivateNote(for: episode.id), query: q) {
                 hits.append(
                     LibraryEpisodeHit(
                         episode: episode,
