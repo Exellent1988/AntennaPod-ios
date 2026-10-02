@@ -24,7 +24,8 @@ struct CustomSleepTimerSheet: View {
                 Section {
                     TextField(String(localized: "Minutes"), text: $minutesText)
                         .keyboardType(.numberPad)
-                        .accessibilityLabel(String(localized: "Minutes"))
+                        .accessibilityLabel(String(localized: "Sleep timer minutes"))
+                        .accessibilityHint(String(localized: "Enter a whole number from 1 to 180 minutes"))
 
                     Stepper(value: Binding(
                         get: { parsedMinutes.map { min(max($0, range.lowerBound), range.upperBound) } ?? settings.lastCustomSleepTimerMinutes },
@@ -36,7 +37,9 @@ struct CustomSleepTimerSheet: View {
                             Text(String(localized: "Minutes"))
                         }
                     }
-                    .accessibilityLabel(String(localized: "Minutes"))
+                    .accessibilityLabel(String(localized: "Sleep timer duration"))
+                    .accessibilityValue(String(localized: "\(effectiveMinutesForAccessibility) minutes"))
+                    .accessibilityHint(String(localized: "Adjusts the clock sleep timer duration; the value is remembered for the next Custom sleep timer"))
                 } footer: {
                     Text(String(localized: "Choose between 1 and 180 minutes."))
                 }
@@ -50,10 +53,24 @@ struct CustomSleepTimerSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(String(localized: "Set")) { confirm() }
                         .disabled(!isValid)
+                        .accessibilityLabel(String(localized: "Set sleep timer"))
+                        .accessibilityHint(setAccessibilityHint)
                 }
             }
         }
         .presentationDetents([.medium])
+    }
+
+    private var effectiveMinutesForAccessibility: Int {
+        guard let parsedMinutes else { return settings.lastCustomSleepTimerMinutes }
+        return min(max(parsedMinutes, range.lowerBound), range.upperBound)
+    }
+
+    private var setAccessibilityHint: String {
+        guard let minutes = parsedMinutes, range.contains(minutes) else {
+            return String(localized: "Enter a whole number from 1 to 180 minutes before setting the timer")
+        }
+        return String(localized: "Starts a clock sleep timer for \(minutes) minutes and remembers this value for the next Custom sleep timer")
     }
 
     private var parsedMinutes: Int? {
