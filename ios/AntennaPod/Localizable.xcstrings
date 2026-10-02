@@ -3160,6 +3160,23 @@
         }
       }
     },
+    "No episode is currently loaded": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No episode is currently loaded"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Episode ist aktuell geladen"
+          }
+        }
+      }
+    },
     "No episodes match your filter.": {
       "extractionState": "manual",
       "localizations": {
@@ -3496,6 +3513,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Transkript-URL bei dieser Episode."
+          }
+        }
+      }
+    },
+    "Nothing playing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing playing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nichts wird abgespielt"
           }
         }
       }
@@ -5179,6 +5213,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Markiere Episoden in einem Feed oder im Vollbild-Player mit einem Stern. Favoriten behalten ihre Downloads, wenn Auto-Löschen nach dem Abspielen aktiv ist."
+          }
+        }
+      }
+    },
+    "Start an episode from Inbox, Queue, or a feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start an episode from Inbox, Queue, or a feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starte eine Episode aus Posteingang, Warteschlange oder einem Podcast."
+          }
+        }
+      }
+    },
+    "Start an episode from Inbox, Queue, or a feed to use the player controls.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start an episode from Inbox, Queue, or a feed to use the player controls."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starte eine Episode aus Posteingang, Warteschlange oder einem Podcast, um die Player-Steuerung zu verwenden."
           }
         }
       }

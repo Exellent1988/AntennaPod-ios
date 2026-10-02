@@ -185,9 +185,15 @@ struct FullPlayerView: View {
                     }
                 } else {
                     ContentUnavailableView(
-                        "Nothing playing",
+                        String(localized: "Nothing playing"),
                         systemImage: "play.slash",
-                        description: Text("Start an episode from Inbox, Queue, or a feed.")
+                        description: Text(String(localized: "Start an episode from Inbox, Queue, or a feed."))
+                    )
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "Nothing playing"))
+                    .accessibilityValue(String(localized: "No episode is currently loaded"))
+                    .accessibilityHint(
+                        String(localized: "Start an episode from Inbox, Queue, or a feed to use the player controls.")
                     )
                 }
             }

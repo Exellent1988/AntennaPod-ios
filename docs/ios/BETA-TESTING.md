@@ -49,7 +49,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 |----|----|
 | ☐ Stream starten (Episode tippen) | ☐ Start stream (tap episode) |
 | ☐ Download spielen (offline Datei) | ☐ Play downloaded file |
-| ☐ Mini-Player + Full Player (Artwork / Video) | ☐ Mini player + full player (artwork / video) |
+| ☐ Mini-Player + Full Player (Artwork / Video; bei keiner laufenden Episode lokalisierter leerer Player mit getrenntem VoiceOver-Label/Wert/Hinweis: nichts läuft / keine Episode geladen / Start aus Posteingang, Warteschlange oder Podcast) | ☐ Mini player + full player (artwork / video; when no episode is playing, localized empty player with distinct VoiceOver label/value/hint: nothing playing / no episode loaded / start from Inbox, Queue, or a feed) |
 | ☐ Full/Mini: Open podcast → Feed-Detail (fehlt → disabled / Hinweis) | ☐ Full/Mini: Open podcast → feed detail (missing → disabled / alert) |
 | ☐ Play/Pause, Rewind/FF (Settings-Intervalle; Presets + Custom… 5–60s) | ☐ Play/Pause, rewind/FF (Settings intervals; presets + Custom… 5–60s) |
 | ☐ Scrubber / Seek | ☐ Scrubber / seek |
