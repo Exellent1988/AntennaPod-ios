@@ -41884,6 +41884,74 @@
           }
         }
       }
+    },
+    "Skip silence": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip silence"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stille überspringen"
+          }
+        }
+      }
+    },
+    "On. The preference is saved, but silence is not skipped on stock AVPlayer in this beta. Turning this on does not change playback, speed, or downloads, and it is not Preserve pitch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On. The preference is saved, but silence is not skipped on stock AVPlayer in this beta. Turning this on does not change playback, speed, or downloads, and it is not Preserve pitch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An. Die Einstellung ist gespeichert, aber Stille wird in dieser Beta auf dem Standard-AVPlayer nicht übersprungen. Einschalten ändert weder Wiedergabe noch Tempo noch Downloads und ist nicht Tonhöhe beibehalten."
+          }
+        }
+      }
+    },
+    "Off. Silence is not skipped. This is the default. Turning this off does not change playback, and no skipped-silence time is invented.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. Silence is not skipped. This is the default. Turning this off does not change playback, and no skipped-silence time is invented."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. Stille wird nicht übersprungen. Das ist der Standard. Ausschalten ändert die Wiedergabe nicht, und es wird keine übersprungene Stille erfunden."
+          }
+        }
+      }
+    },
+    "Saved preference only. This beta does not skip silence on stock AVPlayer, because a custom audio engine would break the video surface, Now Playing, and playback rate. The switch does not start playback. Not Preserve pitch. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved preference only. This beta does not skip silence on stock AVPlayer, because a custom audio engine would break the video surface, Now Playing, and playback rate. The switch does not start playback. Not Preserve pitch. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur gespeicherte Einstellung. Diese Beta überspringt Stille auf dem Standard-AVPlayer nicht, weil eine eigene Audio-Engine die Videofläche, Now Playing und das Wiedergabetempo stören würde. Der Schalter startet keine Wiedergabe. Nicht Tonhöhe beibehalten. Standard aus."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
