@@ -25995,6 +25995,102 @@
           }
         }
       }
+    },
+    "End of queue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ende der Warteschlange"
+          }
+        }
+      }
+    },
+    "End of q.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of q."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WS-Ende"
+          }
+        }
+      }
+    },
+    "Sleep timer, end of queue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep timer, end of queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlaf-Timer, Ende der Warteschlange"
+          }
+        }
+      }
+    },
+    "End of queue — playback stopped.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End of queue — playback stopped."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ende der Warteschlange — Wiedergabe gestoppt."
+          }
+        }
+      }
+    },
+    "Stops after the last episode in the queue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stops after the last episode in the queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stoppt nach der letzten Episode in der Warteschlange"
+          }
+        }
+      }
+    },
+    "Queue is empty": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queue is empty"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange ist leer"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -4,13 +4,15 @@ import Foundation
 import MediaPlayer
 import UIKit
 
-/// Clock / end-of-episode / end-of-chapter sleep timer modes for beta (AntennaPod P0 basis).
+/// Clock / end-of-episode / end-of-chapter / end-of-queue sleep timer modes for beta (AntennaPod P0 basis).
 enum SleepTimerMode: Equatable {
     case clock(minutes: Int)
     case endOfEpisode
     /// Pause when playback reaches the end of the chapter active at activation
     /// (next chapter start, or episode end for the last chapter when duration is known).
     case endOfChapter
+    /// Advance through Queue via `nextQueueEpisode` until empty / play fails, then stop (no Same-podcast / Off fallback).
+    case endOfQueue
 }
 
 @MainActor
@@ -196,7 +198,7 @@ final class PlaybackService: ObservableObject {
             rate = Self.clampPlaybackSpeed(resolvedPlaybackSpeed(for: episode))
         }
 
-        // Keep an active sleep timer across episode changes (clock continues; EOE re-arms).
+        // Keep an active sleep timer across episode changes (clock continues; EOE/EOC/EOQ stay armed).
         tearDownPlayer(clearSleepTimer: false)
         currentEpisode = episode
         isPlayingFromLocalFile = playingLocal
@@ -516,6 +518,21 @@ final class PlaybackService: ObservableObject {
         refreshSleepTimerChapterEndTarget()
     }
 
+    /// Stop after the Queue drains (no clock countdown UI).
+    /// Clears clock dates / fade / chapter end marker like EOE; advances only via `nextQueueEpisode`
+    /// while active — ignores Continuous Same podcast / Off for the advance decision. No volume fade.
+    func setSleepTimerEndOfQueue() {
+        clearSleepTimerState(restoreVolume: true)
+        sleepTimerMode = .endOfQueue
+        isSleepTimerActive = true
+        sleepTimerRemainingSeconds = nil
+        sleepTimerEndDate = nil
+        sleepTimerPausedRemaining = nil
+        sleepTimerDidFade = false
+        sleepVolume = 1.0
+        player?.volume = 1.0
+    }
+
     /// Whether end-of-chapter is offered: current episode has ≥1 chapter with a start boundary.
     /// Prefers `currentEpisode.chapters`, else store copy (PSC / persisted Index / media).
     /// Full Player may still be lazy-loading — menus use loaded chapters only.
@@ -548,7 +565,7 @@ final class PlaybackService: ObservableObject {
                 sleepTimerPausedRemaining = next
             }
             sleepTimerRemainingSeconds = next
-        case .endOfEpisode, .endOfChapter, .none:
+        case .endOfEpisode, .endOfChapter, .endOfQueue, .none:
             setSleepTimer(minutes: minutes)
         }
     }
@@ -564,6 +581,8 @@ final class PlaybackService: ObservableObject {
             return String(localized: "End of ep.")
         case .endOfChapter:
             return String(localized: "End of ch.")
+        case .endOfQueue:
+            return String(localized: "End of q.")
         case .clock:
             if let remaining = sleepTimerRemainingSeconds {
                 return formatCountdown(remaining)
@@ -585,6 +604,8 @@ final class PlaybackService: ObservableObject {
             return String(localized: "Sleep timer, end of episode")
         case .endOfChapter:
             return String(localized: "Sleep timer, end of chapter")
+        case .endOfQueue:
+            return String(localized: "Sleep timer, end of queue")
         case .clock:
             guard let remaining = sleepTimerRemainingSeconds else {
                 return String(localized: "Sleep timer")
@@ -746,12 +767,41 @@ final class PlaybackService: ObservableObject {
     private func handlePlaybackEnded() {
         // Natural episode end — drop any pending soundbite window (queue advance is separate).
         clearSoundbiteEndMarker()
-        // End-of-episode / end-of-chapter (last chapter) sleep timer: mark finished, stop — do not auto-advance.
+        // End-of-episode / end-of-chapter (last chapter): mark finished, stop — do not auto-advance.
+        // End-of-queue: advance via `nextQueueEpisode` only (keep EOQ active while queue continues);
+        // when no next / play fails → same teardown as EOE (no Same-podcast / Off fallback).
         if isSleepTimerActive, let mode = sleepTimerMode {
             switch mode {
             case .endOfEpisode, .endOfChapter:
                 let finishedId = currentEpisode?.id
                 finishCurrentEpisode(ended: true)
+                expireSleepTimer()
+                tearDownPlayer(clearSleepTimer: false)
+                currentEpisode = nil
+                isPlayingFromLocalFile = false
+                positionSeconds = 0
+                durationSeconds = 0
+                clearNowPlayingInfo()
+                if let finishedId {
+                    store?.flushAutoDeleteAfterPlaying(for: finishedId)
+                }
+                applyIdleTimerPolicy()
+                return
+            case .endOfQueue:
+                let finishedId = currentEpisode?.id
+                // Snapshot next before markPlayed removes the finished item from the queue.
+                let next = finishedId.flatMap { store?.nextQueueEpisode(after: $0) }
+                finishCurrentEpisode(ended: true)
+                var startedNext = false
+                if let next {
+                    // play() keeps an active sleep timer across episode changes (clearSleepTimer: false).
+                    startedNext = play(episode: next)
+                }
+                if startedNext {
+                    // Keep EOQ active — do not expire while Queue still advances.
+                    applyIdleTimerPolicy()
+                    return
+                }
                 expireSleepTimer()
                 tearDownPlayer(clearSleepTimer: false)
                 currentEpisode = nil
@@ -997,6 +1047,8 @@ final class PlaybackService: ObservableObject {
             notificationKind = .endOfEpisode
         case .endOfChapter:
             notificationKind = .endOfChapter
+        case .endOfQueue:
+            notificationKind = .endOfQueue
         case .clock, .none:
             notificationKind = .clock
         }
@@ -1006,7 +1058,7 @@ final class PlaybackService: ObservableObject {
         }
         recordPausedAt()
         // AntennaPod rewinds slightly after fade so the listener does not lose content.
-        // Clock fade only — EOE / EOC do not fade.
+        // Clock fade only — EOE / EOC / EOQ do not fade.
         if sleepTimerDidFade {
             let rewind = Self.fadeThresholdSeconds / 2
             let target = max(0, positionSeconds - rewind)

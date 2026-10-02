@@ -18,6 +18,7 @@ enum SleepTimerEndNotificationCoordinator {
         case clock
         case endOfEpisode
         case endOfChapter
+        case endOfQueue
     }
 
     /// Register category alongside other local-notification categories (idempotent with caller).
@@ -59,6 +60,8 @@ enum SleepTimerEndNotificationCoordinator {
             content.body = String(localized: "End of episode — playback stopped.")
         case .endOfChapter:
             content.body = String(localized: "End of chapter — playback paused.")
+        case .endOfQueue:
+            content.body = String(localized: "End of queue — playback stopped.")
         case .clock:
             content.body = String(localized: "Playback paused.")
         }

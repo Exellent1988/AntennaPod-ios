@@ -1107,6 +1107,15 @@ struct FullPlayerView: View {
                     ? String(localized: "Pauses when the current chapter ends")
                     : String(localized: "No chapters available")
             )
+            Button(String(localized: "End of queue")) {
+                playback.setSleepTimerEndOfQueue()
+            }
+            .disabled(!canSleepTimerEndOfQueue)
+            .accessibilityHint(
+                canSleepTimerEndOfQueue
+                    ? String(localized: "Stops after the last episode in the queue")
+                    : String(localized: "Queue is empty")
+            )
             Button(String(localized: "Custom…")) {
                 showCustomSleepTimer = true
             }
@@ -1129,6 +1138,12 @@ struct FullPlayerView: View {
     /// Prefer Full Player merged chapters (feed / remote / media) so the item enables after lazy load.
     private var canSleepTimerEndOfChapter: Bool {
         !chapters.isEmpty
+    }
+
+    /// Queue non-empty — EOQ uses `nextQueueEpisode` (head when current not queued).
+    /// Disabled when empty even if something is playing (cannot drain a queue).
+    private var canSleepTimerEndOfQueue: Bool {
+        !store.queue.isEmpty
     }
 
     private func copyEpisodeLink(_ url: URL) {
