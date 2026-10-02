@@ -16428,6 +16428,168 @@
       },
       "comment": "VoiceOver hint for contentLink open button."
     },
+    "Live item URL copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live item URL copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-URL in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy feedback alert for a feed-provided podcast:liveItem URL."
+    },
+    "Copy live page link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy live page link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Seitenlink kopieren"
+          }
+        }
+      },
+      "comment": "VoiceOver label for copying a feed-provided podcast:liveItem <link> URL."
+    },
+    "Copies the feed-provided live page URL to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided live page URL to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vom Feed bereitgestellte Live-Seiten-URL in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy live page link."
+    },
+    "Share live page link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share live page link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Seitenlink teilen"
+          }
+        }
+      },
+      "comment": "VoiceOver label for sharing a feed-provided podcast:liveItem <link> URL."
+    },
+    "Shares the feed-provided live page URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the feed-provided live page URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die vom Feed bereitgestellte Live-Seiten-URL"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share live page link."
+    },
+    "Copy content link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy content link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Content-Link kopieren"
+          }
+        }
+      },
+      "comment": "VoiceOver label for copying a feed-provided podcast:contentLink URL."
+    },
+    "Copies the feed-provided content link URL to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided content link URL to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vom Feed bereitgestellte Content-Link-URL in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy content link."
+    },
+    "Share content link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share content link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Content-Link teilen"
+          }
+        }
+      },
+      "comment": "VoiceOver label for sharing a feed-provided podcast:contentLink URL."
+    },
+    "Shares the feed-provided content link URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the feed-provided content link URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die vom Feed bereitgestellte Content-Link-URL"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share content link."
+    },
     "This app shows live item schedule and links only. It does not play live streams, record, or open chat.": {
       "extractionState": "manual",
       "localizations": {

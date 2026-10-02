@@ -1,11 +1,15 @@
 import SwiftUI
+import UIKit
 
-/// Feed-provided `podcast:liveItem` list: status + title + start/end + Open link / contentLinks.
+/// Feed-provided `podcast:liveItem` list: status + title + start/end + Copy / Share / Open link / contentLinks.
 /// Caps at `PodcastLiveItemDisplay.displayCap` with an honesty footnote when truncated.
 /// **Display-only** — does **not** play live enclosures, open chat, record, or process payments.
-/// Open actions use system browser `openURL` for http(s) link / contentLink only.
+/// Copy / Share / Open actions use only feed-provided http(s) link / contentLink URLs.
 struct PodcastLiveItemsListView: View {
     @Environment(\.openURL) private var openURL
+
+    @State private var showCopiedAlert = false
+    @State private var copyFeedbackTick = 0
 
     let liveItems: [PodcastLiveItem]
     /// Section title (localized by caller).
@@ -42,6 +46,12 @@ struct PodcastLiveItemsListView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .contain)
+            .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(String(localized: "Live item URL copied to the pasteboard."))
+            }
+            .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
     }
 
@@ -103,27 +113,75 @@ struct PodcastLiveItemsListView: View {
             }
 
             if let url = linkURL {
-                Button {
-                    openURL(url)
-                } label: {
-                    Label("Open live page", systemImage: "safari")
-                        .font(.subheadline)
+                HStack(spacing: 12) {
+                    Button {
+                        UIPasteboard.general.string = url.absoluteString
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy live page link"))
+                    .accessibilityHint(
+                        String(localized: "Copies the feed-provided live page URL to the pasteboard")
+                    )
+
+                    ShareLink(item: url) {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share live page link"))
+                    .accessibilityHint(
+                        String(localized: "Shares the feed-provided live page URL")
+                    )
+
+                    Button {
+                        openURL(url)
+                    } label: {
+                        Label("Open live page", systemImage: "safari")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Open live page"))
+                    .accessibilityHint(String(localized: "Opens the live item page link from the feed in the system browser"))
                 }
-                .accessibilityLabel(String(localized: "Open live page"))
-                .accessibilityHint(String(localized: "Opens the live item page link from the feed in the system browser"))
             }
 
             ForEach(Array(contentLinks.enumerated()), id: \.offset) { _, contentLink in
                 if let url = contentLink.browserURL {
                     let label = contentLink.displayLabel ?? String(localized: "Open content link")
-                    Button {
-                        openURL(url)
-                    } label: {
-                        Label(label, systemImage: "link")
-                            .font(.subheadline)
+                    HStack(spacing: 12) {
+                        Button {
+                            UIPasteboard.general.string = url.absoluteString
+                            copyFeedbackTick += 1
+                            showCopiedAlert = true
+                        } label: {
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Copy content link"))
+                        .accessibilityHint(
+                            String(localized: "Copies the feed-provided content link URL to the pasteboard")
+                        )
+
+                        ShareLink(item: url) {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Share content link"))
+                        .accessibilityHint(
+                            String(localized: "Shares the feed-provided content link URL")
+                        )
+
+                        Button {
+                            openURL(url)
+                        } label: {
+                            Label(label, systemImage: "link")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(label)
+                        .accessibilityHint(String(localized: "Opens a content link from the feed in the system browser"))
                     }
-                    .accessibilityLabel(label)
-                    .accessibilityHint(String(localized: "Opens a content link from the feed in the system browser"))
                 }
             }
         }
