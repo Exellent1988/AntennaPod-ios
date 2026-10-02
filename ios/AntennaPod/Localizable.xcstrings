@@ -39524,7 +39524,41 @@
       }
     },
     "comment": "VoiceOver prefix for a Home Apple Charts preview rank."
-  }
+  },
+    "AntennaPod is free and open source. This iOS build is a community fork for beta exploration — not an official App Store release from the AntennaPod project.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod is free and open source. This iOS build is a community fork for beta exploration — not an official App Store release from the AntennaPod project."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod ist kostenlos und Open Source. Dieser iOS-Build ist ein Community-Fork zur Beta-Erprobung — keine offizielle App-Store-Veröffentlichung des AntennaPod-Projekts."
+          }
+        }
+      }
+    },
+    "Opens this link in Safari": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens this link in Safari"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet diesen Link in Safari"
+          }
+        }
+      }
+    }
   },
   "version": "1.0"
 }

@@ -22,13 +22,17 @@ struct AboutView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("AntennaPod iOS")
                         .font(.title2.weight(.semibold))
+                        .accessibilityAddTraits(.isHeader)
                     Text("Unofficial SwiftUI fork of the open-source AntennaPod podcast app. Local-first beta: subscribe, play, download, and manage your library on device.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(
+                            String(localized: "Unofficial SwiftUI fork of the open-source AntennaPod podcast app. Local-first beta: subscribe, play, download, and manage your library on device.")
+                        )
                 }
                 .padding(.vertical, 4)
-                .accessibilityElement(children: .combine)
             }
 
             Section("Version") {
@@ -79,6 +83,10 @@ struct AboutView: View {
                 Text("AntennaPod is free and open source. This iOS build is a community fork for beta exploration — not an official App Store release from the AntennaPod project.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(
+                        String(localized: "AntennaPod is free and open source. This iOS build is a community fork for beta exploration — not an official App Store release from the AntennaPod project.")
+                    )
             }
         }
         .navigationTitle("About")
@@ -98,5 +106,6 @@ struct AboutView: View {
                 Image(systemName: systemImage)
             }
         }
+        .accessibilityHint(String(localized: "Opens this link in Safari"))
     }
 }

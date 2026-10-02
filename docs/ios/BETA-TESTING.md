@@ -407,7 +407,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Siri / Shortcuts lite (App Intents Play/Pause/Skip + `antennapod://…`; öffnet App; Episode geladen; kein CarPlay-Template) | ☐ Siri / Shortcuts lite (App Intents Play/Pause/Skip + `antennapod://…`; opens app; episode loaded; not CarPlay templates) |
 | ☐ Homescreen widget Continue listening + Restzeit (kann stale sein; `~` wenn Dauer unbekannt) | ☐ Homescreen widget Continue listening + remaining time (may be stale; `~` when duration unknown) |
 | ☐ Apple Watch: Continue listening + Restzeit + Play on iPhone (kein eigenes Playback) | ☐ Apple Watch: Continue listening + remaining time + Play on iPhone (no independent playback) |
-| ☐ About / Version / Links | ☐ About / version / links |
+| ☐ About / Version / Links (VoiceOver: Identität als Überschrift, ehrlicher Beta-Hinweis, Links öffnen in Safari) | ☐ About / version / links (VoiceOver: identity heading, honest beta disclaimer, links announce Safari) |
 | ☐ Rating prompt (optional; iOS kann unterdrücken) | ☐ Rating prompt (optional; iOS may suppress) |
 
 ---
