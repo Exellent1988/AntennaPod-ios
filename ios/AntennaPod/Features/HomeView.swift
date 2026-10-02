@@ -486,6 +486,18 @@ struct HomeView: View {
         )
     }
 
+    /// VoiceOver context for Home welcome versus a search with no matching section previews.
+    /// Visible ContentUnavailableView copy stays concise; this value adds soft-cap / Discover honesty.
+    private var homeEmptyStateAccessibilityValue: String {
+        if isSearchFiltering {
+            return String(localized: "No episodes or podcasts in the visible Home section previews match your search. Clear or change the search. Discover is hidden while searching. Home shows soft-capped section previews — not the full Inbox, Queue, or Subscriptions tabs.")
+        }
+        if settings.isHomeSectionVisible(.discover) {
+            return String(localized: "Home has no library previews to show yet. Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Or use Discover for Apple Charts. Customize sections under Settings → Home layout or Configure Home.")
+        }
+        return String(localized: "Home has no library previews to show yet. Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Customize sections under Settings → Home layout or Configure Home.")
+    }
+
     /// Library content that would appear under visible non-Discover sections (respects search filter).
     private var hasVisibleLibraryContent: Bool {
         for id in settings.visibleHomeSections {
@@ -526,12 +538,20 @@ struct HomeView: View {
                         systemImage: "magnifyingglass",
                         description: Text("No episodes or podcasts on Home match your search.")
                     )
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "No matching home items"))
+                    .accessibilityValue(homeEmptyStateAccessibilityValue)
+                    .accessibilityHint(String(localized: "Clear or change the Home search to see section previews again."))
                 } else if !isSearchFiltering && !hasVisibleLibraryContent {
                     ContentUnavailableView(
                         "Welcome",
                         systemImage: "house",
                         description: Text(welcomeDescription)
                     )
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "Welcome"))
+                    .accessibilityValue(homeEmptyStateAccessibilityValue)
+                    .accessibilityHint(String(localized: "Use Configure Home or Settings → Home layout to show, hide, and reorder sections. Subscribe from Discover or Add podcast."))
                 }
             }
             .navigationTitle("Home")
