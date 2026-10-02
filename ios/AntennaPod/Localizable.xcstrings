@@ -20031,6 +20031,96 @@
         }
       }
     },
+    "Publisher feed GUID copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Alert message after copying the exact feed-provided podcast:publisher feedGuid.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher feed GUID copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Feed-GUID in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy publisher feed GUID": {
+      "extractionState": "manual",
+      "comment": "Copy action for the exact feed-provided podcast:publisher feedGuid; hidden when the GUID is missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy publisher feed GUID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Feed-GUID kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact feed-provided publisher feed GUID as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy publisher feed GUID on a podcast:publisher row; uses the displayed feed string exactly.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact feed-provided publisher feed GUID as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt vom Feed gelieferte Publisher-Feed-GUID als Klartext"
+          }
+        }
+      }
+    },
+    "Share publisher feed GUID": {
+      "extractionState": "manual",
+      "comment": "Share action for the exact feed-provided podcast:publisher feedGuid; hidden when the GUID is missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share publisher feed GUID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Feed-GUID teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact feed-provided publisher feed GUID as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share publisher feed GUID on a podcast:publisher row; uses the displayed feed string exactly.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact feed-provided publisher feed GUID as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt vom Feed gelieferte Publisher-Feed-GUID als Klartext"
+          }
+        }
+      }
+    },
     "Publisher copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Alert message after copying a podcast:publisher remoteItem.",

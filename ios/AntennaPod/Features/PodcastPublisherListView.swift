@@ -172,6 +172,31 @@ struct PodcastPublisherListView: View {
                     )
                 }
 
+                if let guid {
+                    Button {
+                        UIPasteboard.general.string = guid
+                        copiedAlertMessage = String(localized: "Publisher feed GUID copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy publisher feed GUID", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy publisher feed GUID"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided publisher feed GUID as plain text")
+                    )
+
+                    ShareLink(item: guid, subject: Text(label)) {
+                        Label("Share publisher feed GUID", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share publisher feed GUID"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided publisher feed GUID as plain text")
+                    )
+                }
+
                 Button {
                     UIPasteboard.general.string = PodcastPublisherDisplay.copyText(entry)
                     copiedAlertMessage = String(localized: "Publisher copied to the pasteboard.")
