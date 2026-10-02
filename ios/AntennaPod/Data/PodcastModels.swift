@@ -2698,6 +2698,8 @@ enum ChapterIndexing {
 /// Approximate listening time attributed to one episode from `playback.json`.
 /// Played → `durationSeconds` when known (position is cleared on mark-played);
 /// in-progress → `positionSeconds`. Not cumulative across rewinds / re-listens / speed.
+/// Wall-clock listening estimate from saved playback (not speed-adjusted).
+/// Played → `durationSeconds` when known (else 0); in-progress → `positionSeconds` when > 1.
 enum ListeningTimeEstimate {
     static func seconds(for state: EpisodePlaybackState) -> Double {
         if state.isPlayed {

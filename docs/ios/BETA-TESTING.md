@@ -219,7 +219,9 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ History: Sortierung (Neueste / Älteste; lastPlayedAt sonst updatedAt; persistiert) | ☐ History: sort (Newest / Oldest; lastPlayedAt else updatedAt; persisted) |
 | ☐ History: Größenlimit (Einstellungen → Bibliothek; 50/100/200/500/Unbegrenzt Standard; Trim älteste lastPlayedAt; Fußnote) | ☐ History: size limit (Settings → Library; 50/100/200/500/Unlimited default; trim oldest lastPlayedAt; footnote) |
 | ☐ History: Verbleibende Zeit (Info-Leiste; sortierte+gefilterte Liste; ~ bei unbekannten Dauern; played→0; nicht Clear-Katalog) | ☐ History: remaining time (info bar; visible sort+search list; ~ when unknowns; played→0; not Clear catalog) |
-| ☐ Statistics/Echo: Zeitraum Diese Woche / Dieser Monat / Dieses Jahr / Gesamte Zeit (persistiert; lastPlayedAt sonst updatedAt; grobe Episoden-Stempel) | ☐ Statistics/Echo: time range This week / This month / This year / All time (persisted; lastPlayedAt else updatedAt; coarse episode stamps) |
+| ☐ Statistics/Echo: Zeitraum Diese Woche / Dieser Monat / Dieses Jahr / Gesamte Zeit (persistiert; lastPlayedAt sonst updatedAt; grobe Episoden-Stempel; Wanduhr nicht Speed) | ☐ Statistics/Echo: time range This week / This month / This year / All time (persisted; lastPlayedAt else updatedAt; coarse episode stamps; wall-clock not speed) |
+| ☐ Statistics: Zurücksetzen (Bestätigung; Basislinie; löscht keinen Verlauf; Echo teilt Basislinie) | ☐ Statistics: Reset (confirm; baseline; does not clear History; Echo shares baseline) |
+| ☐ Statistics: Fußnoten (Wanduhr / seit wann / Streaming ohne Fortschritt / per-Feed Ehrlichkeit) + Leerzustände + VoiceOver | ☐ Statistics: footnotes (wall-clock / since when / streaming without progress / per-feed honesty) + empty states + VoiceOver |
 | ☐ Statistics: Teilen (ShareLink; reiner Text: Zeitraum, Counts, Näherungszeit, Top-Podcasts + Fußnote; keine Charts) | ☐ Statistics: Share (ShareLink; plain text: range, counts, approx time, top podcasts + footnote; no charts) |
 | ☐ Echo: Teilen (ShareLink; reiner Text; VoiceOver-Hinweis) | ☐ Echo: Share (ShareLink; plain text; VoiceOver hint) |
 | ☐ Favoriten (Stern; Full Player + EpisodeRow; VoiceOver Add/Remove) | ☐ Favorites (star; Full Player + EpisodeRow; VoiceOver Add/Remove) |
@@ -326,6 +328,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Skip silence: preference only — not applied on stock AVPlayer.
 - Volume adaptation: iOS session mode (`.spokenAudio`), nicht Android LoudnessEnhancer.  
   Volume adaptation: iOS session mode, not Android loudness gain.
+- Statistics honesty: Wanduhr (nicht Speed); aus `playback.json`; Reset = Basislinie (`statisticsResetAtEpochMs`), löscht keinen Verlauf; Streaming ohne gespeicherten Fortschritt zählt nicht; per-Feed gleiche Schätzung; EN/DE + VoiceOver.
+  Statistics honesty: wall-clock (not speed); from `playback.json`; Reset = baseline (`statisticsResetAtEpochMs`), does not clear History; streaming without saved progress not counted; per-feed same estimate; EN/DE + VoiceOver.
 - Stereo to mono: Best-Effort `setPreferredOutputNumberOfChannels(1)`; Route kann ignorieren; kein ExoPlayer-Remix; AVPlayer bleibt.  
   Stereo to mono: best-effort `setPreferredOutputNumberOfChannels(1)`; route may ignore; not ExoPlayer remix; AVPlayer kept.
 - Preserve pitch: Standard **an** → `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain`; aus → `.varispeed` (Chipmunk); kein Skip Silence / kein ExoPlayer Sonic.  

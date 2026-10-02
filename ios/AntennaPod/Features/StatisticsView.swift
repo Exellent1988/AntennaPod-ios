@@ -4,13 +4,23 @@ struct StatisticsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
 
+    @State private var showResetConfirm = false
+
     private var stats: ListeningStatistics {
         store.listeningStatistics(in: settings.statisticsTimeRange)
     }
 
-    /// Unfiltered total — distinguishes “no data ever” from “none in this range”.
+    /// Unfiltered total — distinguishes “no data ever” from “none in this range” / after reset.
     private var allTimeStats: ListeningStatistics {
         store.listeningStatistics(in: .allTime)
+    }
+
+    private var hasAnyPlaybackHistory: Bool {
+        store.playbackStates.values.contains { ListeningTimeEstimate.hasMeaningfulData($0) }
+    }
+
+    private var hasActiveReset: Bool {
+        settings.statisticsResetAtEpochMs > 0
     }
 
     var body: some View {
@@ -28,37 +38,51 @@ struct StatisticsView: View {
                 .accessibilityValue(settings.statisticsTimeRange.label)
                 .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             } footer: {
-                Text(Self.rangeFootnote(for: settings.statisticsTimeRange))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(Self.rangeFootnote(for: settings.statisticsTimeRange))
+                    if let since = Self.resetSinceFootnote(epochMs: settings.statisticsResetAtEpochMs) {
+                        Text(since)
+                    }
+                }
             }
 
             if stats.isEmpty {
                 ContentUnavailableView(
-                    allTimeStats.isEmpty
-                        ? String(localized: "No statistics yet")
-                        : String(localized: "No statistics in this range"),
+                    emptyTitle,
                     systemImage: "chart.bar",
-                    description: Text(
-                        allTimeStats.isEmpty
-                            ? String(localized: "Play episodes or mark them played. Totals are derived from saved playback progress.")
-                            : String(localized: "No played or in-progress episodes with a last-played timestamp in this range. Try All time or another period.")
-                    )
+                    description: Text(emptyDescription)
                 )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(emptyTitle)
+                .accessibilityValue(emptyDescription)
             } else {
                 Section {
                     LabeledContent("Played episodes") {
                         Text("\(stats.playedEpisodeCount)")
                             .foregroundStyle(.secondary)
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "Played episodes"))
+                    .accessibilityValue("\(stats.playedEpisodeCount)")
+
                     if stats.inProgressEpisodeCount > 0 {
                         LabeledContent("In progress") {
                             Text("\(stats.inProgressEpisodeCount)")
                                 .foregroundStyle(.secondary)
                         }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(String(localized: "In progress"))
+                        .accessibilityValue("\(stats.inProgressEpisodeCount)")
                     }
+
                     LabeledContent("Approx. listening time") {
                         Text(Self.formatDuration(stats.approximateListenedSeconds))
                             .foregroundStyle(.secondary)
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "Approx. listening time"))
+                    .accessibilityValue(Self.formatDuration(stats.approximateListenedSeconds))
+                    .accessibilityHint(String(localized: "Wall-clock estimate from saved duration or position, not speed-adjusted"))
                 } header: {
                     Text("Totals")
                 } footer: {
@@ -86,11 +110,16 @@ struct StatisticsView: View {
                                     .padding(.leading, 32)
                             }
                             .accessibilityElement(children: .combine)
+                            .accessibilityLabel(
+                                "\(index + 1). \(feed.feedTitle), \(Self.formatDuration(feed.approximateListenedSeconds))"
+                            )
+                            .accessibilityValue(Self.feedSubtitle(feed))
+                            .accessibilityHint(String(localized: "Per-feed rollup using the same wall-clock estimate as Totals"))
                         }
                     } header: {
                         Text("Top podcasts")
                     } footer: {
-                        Text("Sorted by approximate listening time, then play count.")
+                        Text(Self.topPodcastsFootnote)
                     }
                 }
             }
@@ -99,27 +128,83 @@ struct StatisticsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                if !stats.isEmpty {
-                    ShareLink(item: Self.shareText(for: stats, range: settings.statisticsTimeRange)) {
-                        Label("Share", systemImage: "square.and.arrow.up")
+                Menu {
+                    if !stats.isEmpty {
+                        ShareLink(item: Self.shareText(for: stats, range: settings.statisticsTimeRange)) {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                        }
                     }
-                    .accessibilityHint(String(localized: "Opens the system share sheet with a plain-text Statistics summary"))
+                    Button("Reset statistics", role: .destructive) {
+                        showResetConfirm = true
+                    }
+                    .accessibilityHint(String(localized: "Sets a baseline so Statistics and Echo count only listening after now. Does not clear History."))
+                } label: {
+                    Label("Statistics actions", systemImage: "ellipsis.circle")
                 }
+                .accessibilityLabel(String(localized: "Statistics actions"))
+                .accessibilityHint(String(localized: "Share summary or reset Statistics baseline"))
             }
+        }
+        .confirmationDialog(
+            "Reset statistics?",
+            isPresented: $showResetConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Reset statistics", role: .destructive) {
+                settings.resetStatisticsBaseline()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(Self.resetConfirmMessage)
         }
     }
 
+    private var emptyTitle: String {
+        if !hasAnyPlaybackHistory {
+            return String(localized: "No statistics yet")
+        }
+        if hasActiveReset && allTimeStats.isEmpty {
+            return String(localized: "No statistics since reset")
+        }
+        return String(localized: "No statistics in this range")
+    }
+
+    private var emptyDescription: String {
+        if !hasAnyPlaybackHistory {
+            return String(localized: "Play episodes or mark them played. Totals are derived from saved playback progress — wall-clock duration or position in playback.json, not a separate cumulative counter. Streaming with no saved progress is not counted.")
+        }
+        if hasActiveReset && allTimeStats.isEmpty {
+            return String(localized: "History still has older playback, but Statistics only counts stamps after the last Reset. Play again or choose a wider time range. Reset does not clear History.")
+        }
+        return String(localized: "No played or in-progress episodes with a last-played timestamp in this range (and after any Reset baseline). Try All time or another period.")
+    }
+
     private static var approximationFootnote: String {
-        String(localized: "Approximate: played episodes use saved duration (position is cleared when marked played); in-progress use saved position. Does not count rewinds, playback speed, or re-listens. Derived from playback.json — no separate cumulative counter. Time range uses lastPlayedAt (else updatedAt) — episode-level stamps, not per-session listen windows.")
+        String(localized: "Approximate wall-clock time: played episodes use saved duration (position cleared when marked played); in-progress use saved position. Not speed-adjusted — 1.5× does not shrink totals. Does not count rewinds, re-listens, or streaming with no saved progress. Played with unknown duration contribute 0. Derived from playback.json — no separate cumulative counter. Time range + optional Reset use lastPlayedAt (else updatedAt) — episode-level stamps, not per-session listen windows. History size limit may drop oldest entries and their stats.")
+    }
+
+    private static var topPodcastsFootnote: String {
+        String(localized: "Sorted by approximate listening time, then play count. Same wall-clock estimate as Totals per feed. Queue-only episodes without a known feed count in Totals but may omit a row here.")
+    }
+
+    private static var resetConfirmMessage: String {
+        String(localized: "Sets a baseline timestamp so Statistics and Echo count only episodes last touched after now. Does not clear History, progress, played flags, downloads, queue, or favorites. Unlike Android there is no separate played-duration counter — this filters playback.json stamps. Episodes last played before the reset reappear only when played again.")
     }
 
     private static func rangeFootnote(for range: StatisticsTimeRange) -> String {
         switch range {
         case .allTime:
-            return String(localized: "All saved playback progress. Calendar follows the device.")
+            return String(localized: "All saved playback progress still in playback.json (since first progress or last Reset). Calendar follows the device.")
         case .thisWeek, .thisMonth, .thisYear:
-            return String(localized: "Filtered by lastPlayedAt (else updatedAt) in the selected device-calendar period.")
+            return String(localized: "Filtered by lastPlayedAt (else updatedAt) in the selected device-calendar period, and after any Reset baseline.")
         }
+    }
+
+    private static func resetSinceFootnote(epochMs: Int64) -> String? {
+        guard epochMs > 0 else { return nil }
+        let date = Date(timeIntervalSince1970: Double(epochMs) / 1000.0)
+        let formatted = date.formatted(date: .abbreviated, time: .shortened)
+        return String(localized: "Counting since \(formatted) (after last Reset). History and progress stay.")
     }
 
     private static func feedSubtitle(_ feed: FeedListeningStats) -> String {
@@ -195,7 +280,7 @@ struct StatisticsView: View {
         lines.append("")
         lines.append(
             String(
-                localized: "(Approximate — played use saved duration; in-progress use position. No rewinds, speed, or re-listens. Coarse episode stamps — lastPlayedAt else updatedAt.)"
+                localized: "(Approximate wall-clock — played use saved duration; in-progress use position. Not speed-adjusted. No rewinds, re-listens, or streaming without saved progress. Coarse episode stamps — lastPlayedAt else updatedAt; optional Reset baseline.)"
             )
         )
         return lines.joined(separator: "\n")

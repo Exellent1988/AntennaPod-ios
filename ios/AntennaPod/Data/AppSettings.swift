@@ -857,7 +857,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -967,6 +967,8 @@ final class AppSettings: ObservableObject {
         static let queueFilter = "settings.queueFilter"
         static let queuePodcastFilter = "settings.queuePodcastFilter"
         static let statisticsTimeRange = "settings.statisticsTimeRange"
+        /// Epoch ms baseline after Reset statistics; 0 = count all (default).
+        static let statisticsResetAtEpochMs = "settings.statisticsResetAtEpochMs"
     }
 
     private enum Kind: String {
@@ -1498,6 +1500,21 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Statistics / Echo reset baseline (epoch ms). `0` = no baseline (count all saved progress).
+    /// **Honest:** does **not** clear History / progress / played flags — only filters aggregations
+    /// to stamps ≥ this value (coarse `lastPlayedAt` else `updatedAt`). Persisted + backup.
+    /// Unlike Android there is no separate `played_duration` counter; this is the iOS equivalent.
+    @Published var statisticsResetAtEpochMs: Int64 {
+        didSet {
+            UserDefaults.standard.set(Double(statisticsResetAtEpochMs), forKey: Keys.statisticsResetAtEpochMs)
+        }
+    }
+
+    /// Set Statistics / Echo baseline to `now` (Android reset-statistics spirit without wiping History).
+    func resetStatisticsBaseline(at date: Date = Date()) {
+        statisticsResetAtEpochMs = Int64(date.timeIntervalSince1970 * 1000)
+    }
+
     /// Visible sections in display order (hidden filtered out).
     var visibleHomeSections: [HomeSectionId] {
         homeSectionOrder.filter { !homeHiddenSections.contains($0) }
@@ -1769,6 +1786,11 @@ final class AppSettings: ObservableObject {
         let statsRangeRaw = UserDefaults.standard.string(forKey: Keys.statisticsTimeRange)
             ?? StatisticsTimeRange.allTime.rawValue
         statisticsTimeRange = StatisticsTimeRange(rawValue: statsRangeRaw) ?? .allTime
+        if UserDefaults.standard.object(forKey: Keys.statisticsResetAtEpochMs) != nil {
+            statisticsResetAtEpochMs = Int64(UserDefaults.standard.double(forKey: Keys.statisticsResetAtEpochMs))
+        } else {
+            statisticsResetAtEpochMs = 0
+        }
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh
@@ -2058,7 +2080,8 @@ final class AppSettings: ObservableObject {
             queueLocked: queueLocked,
             queueFilter: queueFilter.rawValue,
             queuePodcastFilter: queuePodcastFilter,
-            statisticsTimeRange: statisticsTimeRange.rawValue
+            statisticsTimeRange: statisticsTimeRange.rawValue,
+            statisticsResetAtEpochMs: statisticsResetAtEpochMs
         )
     }
 
@@ -2222,6 +2245,9 @@ final class AppSettings: ObservableObject {
         if let statsRangeRaw = snap.statisticsTimeRange {
             statisticsTimeRange = StatisticsTimeRange(rawValue: statsRangeRaw) ?? .allTime
         }
+        if let resetMs = snap.statisticsResetAtEpochMs {
+            statisticsResetAtEpochMs = resetMs
+        }
     }
 }
 
@@ -2332,4 +2358,6 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var queuePodcastFilter: String? = nil
     /// Absent in older backups → allTime (default).
     var statisticsTimeRange: String? = nil
+    /// Absent in older backups → 0 (no reset baseline).
+    var statisticsResetAtEpochMs: Int64? = nil
 }

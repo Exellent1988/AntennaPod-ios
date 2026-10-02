@@ -21568,6 +21568,380 @@
           }
         }
       }
+    },
+    "Approximate wall-clock time: played episodes use saved duration (position cleared when marked played); in-progress use saved position. Not speed-adjusted — 1.5× does not shrink totals. Does not count rewinds, re-listens, or streaming with no saved progress. Played with unknown duration contribute 0. Derived from playback.json — no separate cumulative counter. Time range + optional Reset use lastPlayedAt (else updatedAt) — episode-level stamps, not per-session listen windows. History size limit may drop oldest entries and their stats.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approximate wall-clock time: played episodes use saved duration (position cleared when marked played); in-progress use saved position. Not speed-adjusted — 1.5× does not shrink totals. Does not count rewinds, re-listens, or streaming with no saved progress. Played with unknown duration contribute 0. Derived from playback.json — no separate cumulative counter. Time range + optional Reset use lastPlayedAt (else updatedAt) — episode-level stamps, not per-session listen windows. History size limit may drop oldest entries and their stats."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungefähre Wanduhr-Zeit: gehörte Episoden nutzen die gespeicherte Dauer (Position wird beim Als gehört markieren gelöscht); begonnene nutzen die gespeicherte Position. Nicht geschwindigkeitsbereinigt — 1,5× verkürzt die Summe nicht. Zählt keine Rückspulungen, erneutes Hören oder Streaming ohne gespeicherten Fortschritt. Gehört ohne bekannte Dauer zählt 0. Abgeleitet aus playback.json — kein separater kumulativer Zähler. Zeitraum + optionales Zurücksetzen nutzen lastPlayedAt (sonst updatedAt) — Episoden-Stempel, keine Sitzungsfenster. Verlaufs-Größenlimit kann älteste Einträge und deren Statistik entfernen."
+          }
+        }
+      }
+    },
+    "Sorted by approximate listening time, then play count. Same wall-clock estimate as Totals per feed. Queue-only episodes without a known feed count in Totals but may omit a row here.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorted by approximate listening time, then play count. Same wall-clock estimate as Totals per feed. Queue-only episodes without a known feed count in Totals but may omit a row here."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert nach ungefährer Hörzeit, dann nach Abspielanzahl. Gleiche Wanduhr-Schätzung wie die Summen pro Feed. Nur-Warteschlangen-Episoden ohne bekannten Feed zählen in den Summen, erscheinen hier aber ggf. nicht."
+          }
+        }
+      }
+    },
+    "All saved playback progress still in playback.json (since first progress or last Reset). Calendar follows the device.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All saved playback progress still in playback.json (since first progress or last Reset). Calendar follows the device."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aller gespeicherter Wiedergabefortschritt in playback.json (seit erstem Fortschritt oder letztem Zurücksetzen). Kalender folgt dem Gerät."
+          }
+        }
+      }
+    },
+    "Filtered by lastPlayedAt (else updatedAt) in the selected device-calendar period, and after any Reset baseline.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtered by lastPlayedAt (else updatedAt) in the selected device-calendar period, and after any Reset baseline."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gefiltert nach lastPlayedAt (sonst updatedAt) im gewählten Gerätekalender-Zeitraum und nach einer Zurücksetzen-Basislinie."
+          }
+        }
+      }
+    },
+    "Counting since %@ (after last Reset). History and progress stay.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Counting since %@ (after last Reset). History and progress stay."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zählt seit %@ (nach letztem Zurücksetzen). Verlauf und Fortschritt bleiben."
+          }
+        }
+      }
+    },
+    "Reset statistics": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset statistics"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistik zurücksetzen"
+          }
+        }
+      }
+    },
+    "Reset statistics?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset statistics?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistik zurücksetzen?"
+          }
+        }
+      }
+    },
+    "Sets a baseline timestamp so Statistics and Echo count only episodes last touched after now. Does not clear History, progress, played flags, downloads, queue, or favorites. Unlike Android there is no separate played-duration counter — this filters playback.json stamps. Episodes last played before the reset reappear only when played again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets a baseline timestamp so Statistics and Echo count only episodes last touched after now. Does not clear History, progress, played flags, downloads, queue, or favorites. Unlike Android there is no separate played-duration counter — this filters playback.json stamps. Episodes last played before the reset reappear only when played again."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt eine Basislinie, sodass Statistik und Echo nur Episoden zählen, die danach zuletzt berührt wurden. Löscht weder Verlauf, Fortschritt, Gehört-Status, Downloads, Warteschlange noch Favoriten. Anders als Android gibt es keinen separaten played-duration-Zähler — es filtert playback.json-Stempel. Vor dem Zurücksetzen zuletzt gespielte Episoden erscheinen erst wieder nach erneutem Abspielen."
+          }
+        }
+      }
+    },
+    "Statistics actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistics actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistik-Aktionen"
+          }
+        }
+      }
+    },
+    "Share summary or reset Statistics baseline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share summary or reset Statistics baseline"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zusammenfassung teilen oder Statistik-Basislinie zurücksetzen"
+          }
+        }
+      }
+    },
+    "Sets a baseline so Statistics and Echo count only listening after now. Does not clear History.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets a baseline so Statistics and Echo count only listening after now. Does not clear History."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt eine Basislinie, sodass Statistik und Echo nur Hören danach zählen. Löscht den Verlauf nicht."
+          }
+        }
+      }
+    },
+    "No statistics since reset": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No statistics since reset"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Statistik seit dem Zurücksetzen"
+          }
+        }
+      }
+    },
+    "Play episodes or mark them played. Totals are derived from saved playback progress — wall-clock duration or position in playback.json, not a separate cumulative counter. Streaming with no saved progress is not counted.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play episodes or mark them played. Totals are derived from saved playback progress — wall-clock duration or position in playback.json, not a separate cumulative counter. Streaming with no saved progress is not counted."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden abspielen oder als gehört markieren. Summen stammen aus gespeichertem Wiedergabefortschritt — Wanduhr-Dauer oder Position in playback.json, kein separater kumulativer Zähler. Streaming ohne gespeicherten Fortschritt zählt nicht."
+          }
+        }
+      }
+    },
+    "History still has older playback, but Statistics only counts stamps after the last Reset. Play again or choose a wider time range. Reset does not clear History.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History still has older playback, but Statistics only counts stamps after the last Reset. Play again or choose a wider time range. Reset does not clear History."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Verlauf enthält noch ältere Wiedergaben, aber die Statistik zählt nur Stempel nach dem letzten Zurücksetzen. Erneut abspielen oder einen größeren Zeitraum wählen. Zurücksetzen löscht den Verlauf nicht."
+          }
+        }
+      }
+    },
+    "No played or in-progress episodes with a last-played timestamp in this range (and after any Reset baseline). Try All time or another period.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No played or in-progress episodes with a last-played timestamp in this range (and after any Reset baseline). Try All time or another period."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine gehörten oder begonnenen Episoden mit Zuletzt-gespielt-Stempel in diesem Zeitraum (und nach einer Zurücksetzen-Basislinie). Gesamte Zeit oder einen anderen Zeitraum versuchen."
+          }
+        }
+      }
+    },
+    "Wall-clock estimate from saved duration or position, not speed-adjusted": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wall-clock estimate from saved duration or position, not speed-adjusted"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wanduhr-Schätzung aus gespeicherter Dauer oder Position, nicht geschwindigkeitsbereinigt"
+          }
+        }
+      }
+    },
+    "Per-feed rollup using the same wall-clock estimate as Totals": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Per-feed rollup using the same wall-clock estimate as Totals"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro-Feed-Zusammenfassung mit derselben Wanduhr-Schätzung wie die Summen"
+          }
+        }
+      }
+    },
+    "(Approximate wall-clock — played use saved duration; in-progress use position. Not speed-adjusted. No rewinds, re-listens, or streaming without saved progress. Coarse episode stamps — lastPlayedAt else updatedAt; optional Reset baseline.)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(Approximate wall-clock — played use saved duration; in-progress use position. Not speed-adjusted. No rewinds, re-listens, or streaming without saved progress. Coarse episode stamps — lastPlayedAt else updatedAt; optional Reset baseline.)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(Ungefähre Wanduhr — gehört nutzt gespeicherte Dauer; in Bearbeitung die Position. Nicht geschwindigkeitsbereinigt. Keine Rückspulungen, erneutes Hören oder Streaming ohne Fortschritt. Grobe Episoden-Stempel — lastPlayedAt sonst updatedAt; optionale Zurücksetzen-Basislinie.)"
+          }
+        }
+      }
+    },
+    "Approximate wall-clock: played episodes use lastPlayedAt (else updatedAt) and saved duration from playback.json — same limits as Statistics (incl. Reset baseline). Not speed-adjusted. Does not count rewinds, re-listens, or streaming without saved progress. Time range follows the device calendar; stamps are episode-level, not per-session.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approximate wall-clock: played episodes use lastPlayedAt (else updatedAt) and saved duration from playback.json — same limits as Statistics (incl. Reset baseline). Not speed-adjusted. Does not count rewinds, re-listens, or streaming without saved progress. Time range follows the device calendar; stamps are episode-level, not per-session."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungefähre Wanduhr: gehörte Episoden nutzen lastPlayedAt (sonst updatedAt) und gespeicherte Dauer aus playback.json — gleiche Grenzen wie Statistik (inkl. Zurücksetzen-Basislinie). Nicht geschwindigkeitsbereinigt. Zählt keine Rückspulungen, erneutes Hören oder Streaming ohne Fortschritt. Zeitraum folgt dem Gerätekalender; Stempel sind episodenbezogen, keine Sitzungen."
+          }
+        }
+      }
+    },
+    "Filtered by lastPlayedAt (else updatedAt) / favoritedAt in the selected device-calendar period, and after any Statistics Reset baseline. Shared with Statistics.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtered by lastPlayedAt (else updatedAt) / favoritedAt in the selected device-calendar period, and after any Statistics Reset baseline. Shared with Statistics."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gefiltert nach lastPlayedAt (sonst updatedAt) / favoritedAt im gewählten Gerätekalender-Zeitraum und nach einer Statistik-Zurücksetzen-Basislinie. Gemeinsam mit Statistik."
+          }
+        }
+      }
+    },
+    "All saved played episodes and favorites still counted after any Statistics Reset. Calendar follows the device. Shared with Statistics.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All saved played episodes and favorites still counted after any Statistics Reset. Calendar follows the device. Shared with Statistics."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle gespeicherten gehörten Episoden und Favoriten, die nach einem Statistik-Zurücksetzen noch zählen. Kalender folgt dem Gerät. Gemeinsam mit Statistik."
+          }
+        }
+      }
+    },
+    "(Approximate wall-clock — same limits as AntennaPod Statistics, including Reset baseline.)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(Approximate wall-clock — same limits as AntennaPod Statistics, including Reset baseline.)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(Ungefähre Wanduhr — gleiche Grenzen wie AntennaPod-Statistik, inkl. Zurücksetzen-Basislinie.)"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

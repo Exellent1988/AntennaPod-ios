@@ -164,15 +164,15 @@ struct EchoView: View {
     }
 
     private static var approximationFootnote: String {
-        String(localized: "Approximate: played episodes use lastPlayedAt (else updatedAt) and saved duration from playback.json — same limits as Statistics. Does not count rewinds, playback speed, or re-listens. Time range follows the device calendar; stamps are episode-level, not per-session.")
+        String(localized: "Approximate wall-clock: played episodes use lastPlayedAt (else updatedAt) and saved duration from playback.json — same limits as Statistics (incl. Reset baseline). Not speed-adjusted. Does not count rewinds, re-listens, or streaming without saved progress. Time range follows the device calendar; stamps are episode-level, not per-session.")
     }
 
     private static func rangeFootnote(for range: StatisticsTimeRange) -> String {
         switch range {
         case .allTime:
-            return String(localized: "All saved played episodes and favorites. Calendar follows the device.")
+            return String(localized: "All saved played episodes and favorites still counted after any Statistics Reset. Calendar follows the device. Shared with Statistics.")
         case .thisWeek, .thisMonth, .thisYear:
-            return String(localized: "Filtered by lastPlayedAt (else updatedAt) / favoritedAt in the selected device-calendar period. Shared with Statistics.")
+            return String(localized: "Filtered by lastPlayedAt (else updatedAt) / favoritedAt in the selected device-calendar period, and after any Statistics Reset baseline. Shared with Statistics.")
         }
     }
 
@@ -226,7 +226,7 @@ struct EchoView: View {
             }
         }
         lines.append("")
-        lines.append(String(localized: "(Approximate — same limits as AntennaPod Statistics.)"))
+        lines.append(String(localized: "(Approximate wall-clock — same limits as AntennaPod Statistics, including Reset baseline.)"))
         return lines.joined(separator: "\n")
     }
 }

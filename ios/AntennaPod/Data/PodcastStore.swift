@@ -1299,7 +1299,10 @@ final class PodcastStore: ObservableObject {
 
     /// Totals + per-feed top list derived from saved playback state (honest approximation).
     /// Optional `range` filters by `lastPlayedAtEpochMs` else `updatedAtEpochMs` (device calendar).
+    /// Also respects `AppSettings.statisticsResetAtEpochMs` baseline when > 0 (Reset statistics).
     /// Coarse episode-level stamps — not per-session listen windows; older rows may only have `updatedAt`.
+    /// **Wall-clock** duration/position estimates — **not** speed-adjusted. Streaming with no saved
+    /// progress is excluded. Played with unknown duration contribute 0 time.
     func listeningStatistics(
         in range: StatisticsTimeRange = .allTime,
         calendar: Calendar = .current,
@@ -1309,10 +1312,12 @@ final class PodcastStore: ObservableObject {
         var inProgress = 0
         var totalSeconds: Double = 0
         var perFeed: [UUID: (title: String, played: Int, inProgress: Int, seconds: Double)] = [:]
+        let resetAt = settings?.statisticsResetAtEpochMs ?? 0
 
         func include(_ state: EpisodePlaybackState) -> Bool {
             guard ListeningTimeEstimate.hasMeaningfulData(state) else { return false }
             let stamp = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
+            if resetAt > 0, stamp < resetAt { return false }
             return range.contains(epochMs: stamp, calendar: calendar, now: now)
         }
 
@@ -1395,7 +1400,9 @@ final class PodcastStore: ObservableObject {
     /// Listening summary from `playback.json` + `favorites.json`, filtered by `StatisticsTimeRange`.
     /// Default `.thisYear` preserves prior Year-in-Review behavior (device calendar).
     /// Played episodes counted when `isPlayed` and `lastPlayedAt` (else `updatedAt`) falls in range.
-    /// Favorites “in range” use `favoritedAt` from `favorites.json`. Coarse stamps — not per-session.
+    /// Also respects `AppSettings.statisticsResetAtEpochMs` (shared with Statistics).
+    /// Favorites “in range” use `favoritedAt` from `favorites.json` (also gated by reset baseline).
+    /// Coarse stamps — not per-session. Wall-clock estimates — not speed-adjusted.
     func echoYearSummary(
         in range: StatisticsTimeRange = .thisYear,
         calendar: Calendar = .current,
@@ -1404,8 +1411,10 @@ final class PodcastStore: ObservableObject {
         let resolvedYear = calendar.component(.year, from: now)
         // Keep a year value for UI / Share when range is This year; otherwise still report current year label context.
         let bounds = range.epochRangeMs(calendar: calendar, now: now)
+        let resetAt = settings?.statisticsResetAtEpochMs ?? 0
 
         func inRange(_ epochMs: Int64) -> Bool {
+            if resetAt > 0, epochMs < resetAt { return false }
             guard let bounds else { return true }
             return epochMs >= bounds.startMs && epochMs < bounds.endMs
         }
