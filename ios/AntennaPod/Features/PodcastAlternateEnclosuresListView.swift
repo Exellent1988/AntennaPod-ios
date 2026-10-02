@@ -75,6 +75,7 @@ struct PodcastAlternateEnclosuresListView: View {
         let title = enclosure.displayTitle
         let bitrate = PodcastAlternateEnclosureDisplay.bitrateLabel(enclosure.bitrate)
         let lengthLabel = PodcastAlternateEnclosureDisplay.lengthLabel(enclosure.length)
+        let codecs = enclosure.displayCodecs
         let captionParts: [String] = {
             var parts: [String] = []
             if enclosure.displayTitle != nil, let mime = enclosure.displayType {
@@ -95,7 +96,7 @@ struct PodcastAlternateEnclosuresListView: View {
             if let rel = enclosure.displayRel {
                 parts.append(rel)
             }
-            if let codecs = enclosure.displayCodecs {
+            if let codecs {
                 parts.append(codecs)
             }
             return parts
@@ -220,6 +221,33 @@ struct PodcastAlternateEnclosuresListView: View {
                     .accessibilityLabel(String(localized: "Share length"))
                     .accessibilityHint(
                         String(localized: "Shares the exact displayed alternate enclosure length as plain text")
+                    )
+                }
+            }
+
+            if let codecs {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            codecs,
+                            confirmation: String(localized: "Codecs copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy codecs", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy codecs"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed alternate enclosure codecs to the pasteboard")
+                    )
+
+                    ShareLink(item: codecs) {
+                        Label("Share codecs", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share codecs"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed alternate enclosure codecs as plain text")
                     )
                 }
             }

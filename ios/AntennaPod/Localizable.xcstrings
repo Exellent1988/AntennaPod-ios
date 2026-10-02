@@ -17476,6 +17476,96 @@
         }
       }
     },
+    "Codecs copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for alternate enclosure codecs.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Codecs copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Codecs in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy codecs": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying alternate enclosure codecs.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy codecs"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Codecs kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed alternate enclosure codecs to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying alternate enclosure codecs.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed alternate enclosure codecs to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigten Codecs der alternativen Enclosure in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Share codecs": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing alternate enclosure codecs.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share codecs"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Codecs teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed alternate enclosure codecs as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing alternate enclosure codecs.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed alternate enclosure codecs as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigten Codecs der alternativen Enclosure als reinen Text"
+          }
+        }
+      }
+    },
     "Content type copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Copied alert message for alternate source content type.",
