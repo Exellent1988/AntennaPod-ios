@@ -26539,6 +26539,78 @@
           }
         }
       }
+    },
+    "Unpin all": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unpin all"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle nicht mehr oben halten"
+          }
+        }
+      },
+      "comment": "Subscriptions toolbar menu: clear Keep at top on every pinned podcast."
+    },
+    "Subscriptions actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abo-Aktionen"
+          }
+        }
+      },
+      "comment": "VoiceOver label for Subscriptions ellipsis toolbar menu (Unpin all)."
+    },
+    "Unpin %lld podcasts?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unpin %lld podcasts?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Podcasts nicht mehr oben halten?"
+          }
+        }
+      },
+      "comment": "Subscriptions Unpin all confirmationDialog title with pinned count."
+    },
+    "Clears Keep at top for every pinned podcast. Does not unsubscribe, change tags, or change sort preference.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clears Keep at top for every pinned podcast. Does not unsubscribe, change tags, or change sort preference."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hebt »Oben halten« für alle angepinnten Podcasts auf. Kündigt keine Abos, ändert keine Tags und keine Sortierung."
+          }
+        }
+      },
+      "comment": "Unpin all confirmation message + VoiceOver hint; honesty: no unsubscribe/tags/sort change."
     }
   },
   "version": "1.0"

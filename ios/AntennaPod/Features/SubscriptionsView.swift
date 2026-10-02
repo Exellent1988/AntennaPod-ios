@@ -21,6 +21,7 @@ struct SubscriptionsView: View {
     @State private var tagFilter: SubscriptionTagFilter = .all
     @State private var groupByTag = true
     @State private var feedPendingUnsubscribe: PodcastFeed?
+    @State private var showUnpinAllConfirm = false
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -244,6 +245,11 @@ struct SubscriptionsView: View {
     /// Any subscribed feed with Keep at top (`FeedSettings.isPinned`). Drives Pinned chip visibility.
     private var hasAnyPinnedSubscription: Bool {
         store.feeds.contains { store.isPinned(feedId: $0.id) }
+    }
+
+    /// Count of subscribed feeds with Keep at top — drives Unpin all enablement + confirm title.
+    private var pinnedSubscriptionCount: Int {
+        store.feeds.filter { store.isPinned(feedId: $0.id) }.count
     }
 
     private var filterChips: [SubscriptionTagFilter] {
@@ -563,6 +569,22 @@ struct SubscriptionsView: View {
                     .accessibilityLabel(String(localized: "Sort subscriptions"))
                 }
                 ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        Button {
+                            showUnpinAllConfirm = true
+                        } label: {
+                            Label("Unpin all", systemImage: "pin.slash")
+                        }
+                        .disabled(pinnedSubscriptionCount == 0)
+                        .accessibilityLabel(String(localized: "Unpin all"))
+                        .accessibilityHint(String(localized: "Clears Keep at top for every pinned podcast. Does not unsubscribe, change tags, or change sort preference."))
+                    } label: {
+                        Label("Subscriptions actions", systemImage: "ellipsis.circle")
+                    }
+                    .accessibilityLabel(String(localized: "Subscriptions actions"))
+                    .disabled(store.feeds.isEmpty)
+                }
+                ToolbarItem(placement: .topBarLeading) {
                     NavigationLink {
                         ManageTagsView()
                     } label: {
@@ -659,6 +681,18 @@ struct SubscriptionsView: View {
             }
             .onChange(of: notificationDeepLink.feedOpenToken) { _, _ in
                 consumePendingFeedOpenIfNeeded()
+            }
+            .confirmationDialog(
+                "Unpin \(pinnedSubscriptionCount) podcasts?",
+                isPresented: $showUnpinAllConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Unpin all") {
+                    store.unpinAll()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Clears Keep at top for every pinned podcast. Does not unsubscribe, change tags, or change sort preference.")
             }
             .confirmationDialog(
                 "Unsubscribe?",

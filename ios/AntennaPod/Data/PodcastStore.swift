@@ -206,6 +206,31 @@ final class PodcastStore: ObservableObject {
         setPinned(feedId: feedId, !isPinned(feedId: feedId))
     }
 
+    /// Clears Keep at top (`isPinned = false`) for every **subscribed** feed that is pinned.
+    /// Mutates `feedSettingsById` once (single `feed-settings.json` persist) — same batch spirit as
+    /// `renameTag`. Does **not** unsubscribe, change tags, or change sort preference.
+    /// Callers must confirm first (Subscriptions toolbar `confirmationDialog`).
+    /// Existing Pinned filter chip resets via `onChange(of: store.feedSettingsById)`.
+    /// - Returns: number of feeds that were unpinned (0 when none pinned).
+    @discardableResult
+    func unpinAll() -> Int {
+        let pinnedIds = feeds.filter { isPinned(feedId: $0.id) }.map(\.id)
+        guard !pinnedIds.isEmpty else { return 0 }
+        var next = feedSettingsById
+        for feedId in pinnedIds {
+            var settings = next[feedId] ?? .default
+            guard settings.isPinned else { continue }
+            settings.isPinned = false
+            if settings.isDefault {
+                next.removeValue(forKey: feedId)
+            } else {
+                next[feedId] = settings
+            }
+        }
+        feedSettingsById = next
+        return pinnedIds.count
+    }
+
     /// User-facing podcast name for lists / nav / player / search (customTitle ?? RSS title).
     func displayTitle(for feed: PodcastFeed) -> String {
         feed.displayTitle(settings: feedSettings(for: feed.id))
