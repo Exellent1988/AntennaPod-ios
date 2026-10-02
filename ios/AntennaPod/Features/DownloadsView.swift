@@ -23,6 +23,11 @@ struct DownloadsView: View {
     /// current download set only (never invent). Sort by `AppSettings.downloadsSort`
     /// (date: prefer `downloadedAtEpochMs`, else `pubDateEpochMs`; size: `knownByteSize`;
     /// title: `localizedCaseInsensitiveCompare`, empty last; id tiebreak).
+    /// Search matches title / descriptionText / episode private note / any bookmark note via
+    /// `PodcastStore.episodeMatchesLibraryQuery` (same fields as library / Feed detail / Queue / Favorites / History / Archived), plus
+    /// feed display title (`displayTitle(containingEpisodeId:)`). View-only —
+    /// Does not mutate `DownloadService.downloads` (tab badge / Play random / Add all / Delete played / Clear all stay full-catalog).
+    /// Play random / Add all to queue / Delete played / Clear all / Cancel all stay full-catalog scoped.
     private var filteredDownloads: [DownloadedEpisode] {
         var base = downloads.downloads
         switch settings.downloadsFilter {
@@ -45,7 +50,7 @@ struct DownloadsView: View {
             filtered = base
         } else {
             filtered = base.filter { item in
-                if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+                if store.episodeMatchesLibraryQuery(item.episode, query: q) { return true }
                 let feedTitle = store.displayTitle(containingEpisodeId: item.episode.id)
                 return feedTitle.localizedCaseInsensitiveContains(q)
             }
