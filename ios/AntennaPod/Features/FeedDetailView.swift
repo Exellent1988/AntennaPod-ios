@@ -633,7 +633,7 @@ struct FeedDetailView: View {
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
-            // Channel podcast:guid when present — display/copy only; never invent; distinct from episode guid.
+            // Channel podcast:guid when present — display/copy/share only; never invent; distinct from episode guid.
             if let guid = displayPodcastGuid {
                 Section {
                     VStack(alignment: .leading, spacing: 6) {
@@ -644,14 +644,29 @@ struct FeedDetailView: View {
                             .font(.footnote.monospaced())
                             .foregroundStyle(.secondary)
                             .textSelection(.enabled)
-                        Button {
-                            copyPodcastGuid()
-                        } label: {
-                            Label("Copy podcast GUID", systemImage: "doc.on.doc")
-                                .font(.subheadline)
+                        HStack(spacing: 12) {
+                            Button {
+                                copyPodcastGuid()
+                            } label: {
+                                Label("Copy podcast GUID", systemImage: "doc.on.doc")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Copy podcast GUID"))
+                            .accessibilityHint(String(localized: "Copies the podcast GUID from the feed to the pasteboard"))
+
+                            ShareLink(
+                                item: guid,
+                                subject: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))"),
+                                message: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))")
+                            ) {
+                                Label("Share podcast GUID", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Share podcast GUID"))
+                            .accessibilityHint(
+                                String(localized: "Shares the feed-provided podcast GUID as plain text; distinct from the podcast, feed URL, website, funding, and discussion shares")
+                            )
                         }
-                        .accessibilityLabel(String(localized: "Copy podcast GUID"))
-                        .accessibilityHint(String(localized: "Copies the podcast GUID from the feed to the pasteboard"))
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityElement(children: .contain)
@@ -1110,7 +1125,7 @@ struct FeedDetailView: View {
                             )
                         }
 
-                        if displayPodcastGuid != nil {
+                        if let guid = displayPodcastGuid {
                             Button {
                                 copyPodcastGuid()
                             } label: {
@@ -1118,6 +1133,18 @@ struct FeedDetailView: View {
                             }
                             .accessibilityLabel(String(localized: "Copy podcast GUID"))
                             .accessibilityHint(String(localized: "Copies the podcast GUID from the feed to the pasteboard"))
+
+                            ShareLink(
+                                item: guid,
+                                subject: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))"),
+                                message: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))")
+                            ) {
+                                Label("Share podcast GUID", systemImage: "square.and.arrow.up")
+                            }
+                            .accessibilityLabel(String(localized: "Share podcast GUID"))
+                            .accessibilityHint(
+                                String(localized: "Shares the feed-provided podcast GUID as plain text; distinct from the podcast, feed URL, website, funding, and discussion shares")
+                            )
                         }
 
                         Button {

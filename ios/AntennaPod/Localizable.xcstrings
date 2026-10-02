@@ -14689,6 +14689,42 @@
       },
       "comment": "Feed detail ⋯ / metadata: copy feed-provided podcast:guid to pasteboard. Hidden when missing."
     },
+    "Share podcast GUID": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share podcast GUID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-GUID teilen"
+          }
+        }
+      },
+      "comment": "Feed detail metadata row / ⋯: share the feed-provided podcast:guid as plain text. Hidden when missing; distinct from podcast, feed URL, website, funding, and discussion shares."
+    },
+    "Shares the feed-provided podcast GUID as plain text; distinct from the podcast, feed URL, website, funding, and discussion shares": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the feed-provided podcast GUID as plain text; distinct from the podcast, feed URL, website, funding, and discussion shares"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die feedseitige Podcast-GUID als reinen Text; unterscheidet sich vom Teilen des Podcasts, der Feed-URL, Website, Unterstützung und Diskussion"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share podcast GUID."
+    },
     "Copies the podcast GUID from the feed to the pasteboard": {
       "extractionState": "manual",
       "localizations": {
