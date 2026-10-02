@@ -18016,6 +18016,186 @@
       },
       "comment": "Copy feedback alert for the exact feed-provided podcast:liveItem title."
     },
+    "Copy live item start": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying the exact displayed podcast:liveItem Starts caption (not combined details).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy live item start"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Beginn kopieren"
+          }
+        }
+      }
+    },
+    "Share live item start": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing the exact displayed podcast:liveItem Starts caption (not combined details).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share live item start"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Beginn teilen"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed Starts caption as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy live item start.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed Starts caption as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigte Beginn-Beschriftung als Klartext"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed Starts caption as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share live item start.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed Starts caption as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigte Beginn-Beschriftung als Klartext"
+          }
+        }
+      }
+    },
+    "Live item start copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the exact displayed podcast:liveItem Starts caption (distinct from details/status/title/end).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live item start copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Beginn in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy live item end": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying the exact displayed podcast:liveItem Ends caption when end is present (not combined details); hidden when end missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy live item end"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Ende kopieren"
+          }
+        }
+      }
+    },
+    "Share live item end": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing the exact displayed podcast:liveItem Ends caption when end is present (not combined details); hidden when end missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share live item end"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Ende teilen"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed Ends caption as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy live item end.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed Ends caption as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigte Ende-Beschriftung als Klartext"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed Ends caption as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share live item end.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed Ends caption as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigte Ende-Beschriftung als Klartext"
+          }
+        }
+      }
+    },
+    "Live item end copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the exact displayed podcast:liveItem Ends caption (distinct from details/status/title/start); only when end present.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live item end copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Ende in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
     "Copy live item title": {
       "extractionState": "manual",
       "localizations": {

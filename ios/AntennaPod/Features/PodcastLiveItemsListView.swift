@@ -6,6 +6,7 @@ import UIKit
 /// **Display-only** — does **not** play live enclosures, open chat, record, or process payments.
 /// Copy / Share metadata and Open / Copy / Share link actions use only displayed or feed-provided values.
 /// When the status capsule is shown, distinct **Copy / Share live item status** use the exact displayed status string.
+/// When Starts / Ends captions are shown, distinct **Copy / Share live item start** (always) and **end** (when end present) use those exact caption strings — never invent an end.
 struct PodcastLiveItemsListView: View {
     @Environment(\.openURL) private var openURL
 
@@ -66,10 +67,13 @@ struct PodcastLiveItemsListView: View {
             guard let end = item.end else { return nil }
             return PodcastLiveItemDisplay.formatTimestamp(raw: end, epochMs: item.endEpochMs)
         }()
+        // Exact displayed captions — Copy/Share must match these strings; never invent an end.
+        let startCaption = String(localized: "Starts \(startText)")
+        let endCaption: String? = endText.map { String(localized: "Ends \($0)") }
         var detailLines = [statusText]
         if let titleText { detailLines.append(titleText) }
-        detailLines.append(String(localized: "Starts \(startText)"))
-        if let endText { detailLines.append(String(localized: "Ends \(endText)")) }
+        detailLines.append(startCaption)
+        if let endCaption { detailLines.append(endCaption) }
         let detailsText = detailLines.joined(separator: "\n")
         let linkURL = item.linkURL
         let contentLinks = item.openableContentLinks
@@ -77,8 +81,8 @@ struct PodcastLiveItemsListView: View {
         let a11yLabel: String = {
             var parts = [statusText]
             if let titleText { parts.append(titleText) }
-            parts.append(String(localized: "Starts \(startText)"))
-            if let endText { parts.append(String(localized: "Ends \(endText)")) }
+            parts.append(startCaption)
+            if let endCaption { parts.append(endCaption) }
             if linkURL != nil { parts.append(String(localized: "Has live page link from the feed")) }
             if !contentLinks.isEmpty {
                 parts.append(String(localized: "Has \(contentLinks.count) content links from the feed"))
@@ -107,12 +111,12 @@ struct PodcastLiveItemsListView: View {
             .accessibilityLabel(a11yLabel)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(String(localized: "Starts \(startText)"))
+                Text(startCaption)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .accessibilityHidden(true)
-                if let endText {
-                    Text(String(localized: "Ends \(endText)"))
+                if let endCaption {
+                    Text(endCaption)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .accessibilityHidden(true)
@@ -167,6 +171,60 @@ struct PodcastLiveItemsListView: View {
                     .accessibilityLabel(String(localized: "Share live item title"))
                     .accessibilityHint(
                         String(localized: "Shares the exact feed-provided live item title as plain text")
+                    )
+                }
+            }
+
+            // Exact displayed Starts caption — always shown; distinct from details/status/title.
+            HStack(spacing: 12) {
+                Button {
+                    UIPasteboard.general.string = startCaption
+                    copiedAlertMessage = String(localized: "Live item start copied to the pasteboard.")
+                    copyFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Label("Copy live item start", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy live item start"))
+                .accessibilityHint(
+                    String(localized: "Copies the exact displayed Starts caption as plain text")
+                )
+
+                ShareLink(item: startCaption) {
+                    Label("Share live item start", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share live item start"))
+                .accessibilityHint(
+                    String(localized: "Shares the exact displayed Starts caption as plain text")
+                )
+            }
+
+            // Exact displayed Ends caption — only when endCaption is non-nil; never invent an end.
+            if let endCaption {
+                HStack(spacing: 12) {
+                    Button {
+                        UIPasteboard.general.string = endCaption
+                        copiedAlertMessage = String(localized: "Live item end copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy live item end", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy live item end"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed Ends caption as plain text")
+                    )
+
+                    ShareLink(item: endCaption) {
+                        Label("Share live item end", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share live item end"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed Ends caption as plain text")
                     )
                 }
             }
