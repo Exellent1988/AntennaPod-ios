@@ -642,7 +642,7 @@ enum DownloadsSort: String, CaseIterable, Identifiable {
 /// Newest / Oldest by last-played / history timestamp; Shortest / Longest by known duration
 /// (feed when known, else saved playback — same path as Queue / Inbox / Favorites / Archived;
 /// unknown last; id tiebreak); Title A–Z / Z–A by `localizedCaseInsensitiveCompare`
-/// (empty titles last; id tiebreak). Home Continue preview stays newest-first.
+/// (empty titles last; id tiebreak). Home Continue / Home History previews stay newest-first.
 enum HistorySort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
@@ -1079,6 +1079,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     case recentlyUpdated
     case favorites
     case downloads
+    case history
 
     var id: String { rawValue }
 
@@ -1091,6 +1092,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
         case .recentlyUpdated: return String(localized: "Recently updated")
         case .favorites: return String(localized: "Favorites")
         case .downloads: return String(localized: "Downloads")
+        case .history: return String(localized: "History")
         }
     }
 
@@ -1103,16 +1105,18 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
         case .recentlyUpdated: return "dot.radiowaves.left.and.right"
         case .favorites: return "star"
         case .downloads: return "arrow.down.circle"
+        case .history: return "clock.arrow.circlepath"
         }
     }
 
     /// Default order matches the previous fixed Home layout (Discover first).
+    /// History sits near Continue (newest last-played preview) but stays opt-in via `defaultHidden`.
     static let defaultOrder: [HomeSectionId] = [
-        .discover, .continueListening, .inbox, .queue, .recentlyUpdated, .favorites, .downloads
+        .discover, .continueListening, .history, .inbox, .queue, .recentlyUpdated, .favorites, .downloads
     ]
 
-    /// Favorites and Downloads start hidden so enabling them is opt-in (optional Home previews).
-    static let defaultHidden: Set<HomeSectionId> = [.favorites, .downloads]
+    /// History, Favorites, and Downloads start hidden so enabling them is opt-in (optional Home previews).
+    static let defaultHidden: Set<HomeSectionId> = [.history, .favorites, .downloads]
 }
 
 
@@ -1933,7 +1937,7 @@ final class AppSettings: ObservableObject {
     /// History list order by `HistoryEpisode.lastPlayedAtEpochMs`: newest first (default) or oldest first.
     /// That field is `playbackStates.lastPlayedAtEpochMs`, else `updatedAtEpochMs` (same as store History catalog).
     /// Stable tiebreaker is episode `id`. Client-side re-sort in HistoryView only — `PodcastStore.historyEpisodes`
-    /// stays newest-first for Home Continue / Clear history counts. Applies to podcast-chip + search-filtered results too.
+    /// stays newest-first for Home Continue / Home History preview / Clear history counts. Applies to podcast-chip + search-filtered results too.
     @Published var historySort: HistorySort {
         didSet {
             UserDefaults.standard.set(historySort.rawValue, forKey: Keys.historySort)
@@ -1945,7 +1949,7 @@ final class AppSettings: ObservableObject {
     /// `.searchable`; `historySort` still orders the filtered list. Chips list only feeds
     /// present in the current History catalog (never invent). Orphan history items without a
     /// matching library feed match All only. **View-only** — Clear history / Add all to queue
-    /// stay full History catalog. Home Continue listening does not follow this chip.
+    /// stay full History catalog. Home Continue listening / Home History preview do not follow this chip.
     @Published var historyPodcastFilter: String {
         didSet {
             UserDefaults.standard.set(historyPodcastFilter, forKey: Keys.historyPodcastFilter)

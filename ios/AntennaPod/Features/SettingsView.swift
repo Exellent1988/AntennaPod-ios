@@ -539,7 +539,7 @@ struct SettingsView: View {
             "Configure Home",
             "reorder",
             "Downloads",
-            "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. Favorites and Downloads are off by default. Same editor as Home toolbar Configure Home."
+            "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home."
         )
     }
 
@@ -770,13 +770,13 @@ struct SettingsView: View {
                 Label("Home layout", systemImage: "rectangle.grid.1x2")
             }
             .accessibilityHint(
-                String(localized: "Show, hide, and drag-reorder Home tab sections. Same editor as Home toolbar Configure Home. Persisted in AppSettings / backup. Optional Downloads preview is off by default.")
+                String(localized: "Show, hide, and drag-reorder Home tab sections. Same editor as Home toolbar Configure Home. Persisted in AppSettings / backup. Optional History, Favorites, and Downloads previews are off by default.")
             )
-            Text(String(localized: "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. Favorites and Downloads are off by default. Same editor as Home toolbar Configure Home."))
+            Text(String(localized: "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home."))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(String(localized: "Home layout help"))
-                .accessibilityValue(String(localized: "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. Favorites and Downloads are off by default. Same editor as Home toolbar Configure Home."))
+                .accessibilityValue(String(localized: "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home."))
         }
     }
 

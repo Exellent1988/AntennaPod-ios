@@ -3,7 +3,7 @@ import SwiftUI
 /// Landing tab: honest previews driven by Settings → Home layout (order + visibility).
 /// Toolbar **Configure Home** opens the same layout editor (Android `configure_home` parity).
 /// `.searchable` filters visible section episode/podcast previews (title + feed); empty sections hide while filtering.
-/// Optional **Downloads** preview (newest completed first; off by default) soft-caps like Favorites.
+/// Optional **History** / **Favorites** / **Downloads** previews (off by default) soft-cap like Continue.
 struct HomeView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
@@ -65,6 +65,13 @@ struct HomeView: View {
 
     private var favoriteItems: [FavoriteEpisode] {
         Array(filterEpisodes(store.favoriteEpisodes).prefix(previewLimit))
+    }
+
+    /// History Home preview: newest last-played first (`historyEpisodes`). Does **not** follow
+    /// History `historySort` / `historyPodcastFilter` — Home stays newest-lastPlayed-first.
+    /// Distinct from Continue (in-progress-only): includes played + in-progress.
+    private var historyItems: [HistoryEpisode] {
+        Array(filterEpisodes(store.historyEpisodes).prefix(previewLimit))
     }
 
     /// Downloads Home preview catalog: newest completed first (`downloadedAtEpochMs`, else
@@ -298,6 +305,57 @@ struct HomeView: View {
         )
     }
 
+    /// AntennaPod-like info bar: episode count + remaining over the **visible History preview**
+    /// rows only (`historyItems` = filter then soft-cap `previewLimit`). Remaining per episode =
+    /// `max(0, duration − position)` when duration known; unplayed with duration contributes full
+    /// duration; **played** (not current) → 0; **unknown duration skipped** (tilde when any
+    /// skipped). Currently playing uses live `PlaybackService` position/duration. Wall-clock only
+    /// (no playback-speed divide by default; optional Remaining time respects speed).
+    /// **Preview soft-cap honesty:** never claims remaining beyond the visible preview rows
+    /// (first `previewLimit` after search filter) — not the full `historyEpisodes` catalog /
+    /// History screen podcast+sort+search filter / Clear history count.
+    /// Preview stays newest-lastPlayed-first (does **not** follow History `historySort`).
+    private var historyRemainingInfoLabel: String? {
+        guard !historyItems.isEmpty else { return nil }
+        return EpisodeRemainingTime.episodesInfoBarLabel(for: historyRemainingSummary)
+    }
+
+    private var historyRemainingAccessibilityLabel: String {
+        guard let label = historyRemainingInfoLabel else { return "" }
+        var parts = [String(localized: "Home History remaining time \(label)")]
+        let unknown = historyRemainingSummary.unknownCount
+        if unknown > 0 {
+            parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
+        }
+        // Soft-cap: filtered history catalog longer than visible preview rows.
+        let filteredCatalogCount = filterEpisodes(store.historyEpisodes).count
+        if filteredCatalogCount > historyItems.count {
+            parts.append(
+                String(
+                    localized: "Home History remaining time covers the preview only (first \(previewLimit)), not the full History list"
+                )
+            )
+        }
+        return parts.joined(separator: ". ")
+    }
+
+    private var historyRemainingSummary: EpisodeRemainingTime.Summary {
+        EpisodeRemainingTime.summarize(
+            episodes: historyItems.map(\.episode),
+            currentEpisodeId: playback.currentEpisode?.id,
+            liveDurationSeconds: playback.durationSeconds,
+            livePositionSeconds: playback.positionSeconds,
+            isPlayed: { store.isPlayed($0) },
+            savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
+        )
+    }
+
     /// AntennaPod-like info bar: episode count + remaining over the **visible Downloads preview**
     /// rows only (`downloadItems` = newest-completed + title/feed filter then soft-cap
     /// `previewLimit`). Remaining per episode = `max(0, duration − position)` when duration known;
@@ -365,6 +423,8 @@ struct HomeView: View {
                 if !favoriteItems.isEmpty { return true }
             case .downloads:
                 if !downloadItems.isEmpty { return true }
+            case .history:
+                if !historyItems.isEmpty { return true }
             case .discover:
                 continue
             }
@@ -403,7 +463,7 @@ struct HomeView: View {
                     }
                     .accessibilityLabel(String(localized: "Configure Home"))
                     .accessibilityHint(
-                        String(localized: "Opens Home layout to show, hide, and reorder Home sections. Same editor as Settings → Home layout. Optional Downloads preview is off by default.")
+                        String(localized: "Opens Home layout to show, hide, and reorder Home sections. Same editor as Settings → Home layout. Optional History, Favorites, and Downloads previews are off by default.")
                     )
                 }
             }
@@ -497,6 +557,10 @@ struct HomeView: View {
         case .downloads:
             if !downloadItems.isEmpty {
                 downloadsSection
+            }
+        case .history:
+            if !historyItems.isEmpty {
+                historySection
             }
         }
     }
@@ -669,6 +733,41 @@ struct HomeView: View {
     }
 
     @ViewBuilder
+    private var historySection: some View {
+        Section {
+            // AntennaPod-like History preview info bar (visible preview rows remaining time).
+            // Soft-cap honesty: first `previewLimit` after search filter — not full History / Clear count.
+            if let remainingLabel = historyRemainingInfoLabel {
+                Text(remainingLabel)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(historyRemainingAccessibilityLabel)
+                    .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            }
+            ForEach(historyItems) { item in
+                EpisodeRow(
+                    episode: item.episode,
+                    feedTitle: item.feedTitle,
+                    dateOverride: Date(timeIntervalSince1970: Double(item.lastPlayedAtEpochMs) / 1000),
+                    dateAccessibilityLabel: "Last played"
+                )
+            }
+        } header: {
+            sectionHeader("History", systemImage: "clock.arrow.circlepath")
+        } footer: {
+            NavigationLink {
+                HistoryView()
+            } label: {
+                Text(store.historyEpisodes.count > previewLimit ? "See all in History" : "Open History")
+                    .font(.footnote)
+            }
+        }
+    }
+
+    @ViewBuilder
     private var favoritesSection: some View {
         Section {
             // AntennaPod-like Favorites preview info bar (visible preview rows remaining time).
@@ -773,7 +872,7 @@ struct HomeView: View {
         }
     }
 
-    /// Episode-like items with `episode.title` + `feedTitle` (Continue / Inbox / Favorites).
+    /// Episode-like items with `episode.title` + `feedTitle` (Continue / Inbox / History / Favorites).
     private func filterEpisodes<T>(_ items: [T]) -> [T] where T: HomeSearchableEpisode {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !q.isEmpty else { return items }
@@ -798,7 +897,7 @@ struct HomeView: View {
     }
 }
 
-/// Shared title/feed fields for Home section episode previews (Continue / Inbox / Favorites).
+/// Shared title/feed fields for Home section episode previews (Continue / Inbox / History / Favorites).
 private protocol HomeSearchableEpisode {
     var episode: PodcastEpisode { get }
     var feedTitle: String { get }
