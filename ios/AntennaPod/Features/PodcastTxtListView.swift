@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided `podcast:txt` list — optional purpose label (raw feed string) + text body.
-/// **Copy** always; **Share** when copyable (prefers an http(s) URL); **Open** when the text looks like http(s). Cap + honesty footnote.
+/// Distinct **Copy / Share text purpose**, **Copy / Share text content**, and full-entry **Copy / Share text entry** actions; full-entry Share prefers an http(s) URL. **Open** when the text looks like http(s). Cap + honesty footnote.
 /// **Display-only** — no Social / Matrix / special clients. Hidden when none.
 struct PodcastTxtListView: View {
     @Environment(\.openURL) private var openURL
@@ -12,7 +12,7 @@ struct PodcastTxtListView: View {
     var title: String = String(localized: "Text")
 
     @State private var showCopiedAlert = false
-    @State private var copiedAlertMessage = String(localized: "Text copied to the pasteboard.")
+    @State private var copiedAlertMessage = String(localized: "Text entry copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     private var capped: (shown: [PodcastTxt], truncated: Bool) {
@@ -154,16 +154,16 @@ struct PodcastTxtListView: View {
 
                 Button {
                     UIPasteboard.general.string = PodcastTxtDisplay.copyText(entry)
-                    copiedAlertMessage = String(localized: "Text copied to the pasteboard.")
+                    copiedAlertMessage = String(localized: "Text entry copied to the pasteboard.")
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {
-                    Label("Copy", systemImage: "doc.on.doc")
+                    Label("Copy text entry", systemImage: "doc.on.doc")
                         .font(.subheadline)
                 }
-                .accessibilityLabel(String(localized: "Copy"))
+                .accessibilityLabel(String(localized: "Copy text entry"))
                 .accessibilityHint(
-                    String(localized: "Copies the feed text entry to the pasteboard")
+                    String(localized: "Copies the exact displayed feed text entry, including its purpose when present, to the pasteboard")
                 )
 
                 let copyText = PodcastTxtDisplay.copyText(entry)
@@ -171,20 +171,20 @@ struct PodcastTxtListView: View {
                     Group {
                         if let url {
                             ShareLink(item: url) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Share text entry", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         } else {
                             ShareLink(item: copyText) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Share text entry", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         }
                     }
-                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityLabel(String(localized: "Share text entry"))
                     .accessibilityHint(
                         String(
-                            localized: "Shares the text URL when it is a parseable http(s) URL; otherwise shares the same feed text as Copy"
+                            localized: "Shares the exact displayed feed text entry as plain text, preferring its parseable http(s) URL when available"
                         )
                     )
                 }

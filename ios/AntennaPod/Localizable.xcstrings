@@ -19996,6 +19996,96 @@
         }
       }
     },
+    "Text entry copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Alert message after copying the exact displayed podcast:txt full entry.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text entry copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texteintrag in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy text entry": {
+      "extractionState": "manual",
+      "comment": "Copy action for the exact displayed podcast:txt full entry, including purpose when present.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy text entry"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texteintrag kopieren"
+          }
+        }
+      }
+    },
+    "Share text entry": {
+      "extractionState": "manual",
+      "comment": "Share action for the exact displayed podcast:txt full entry, preferring a parseable http(s) body URL when available.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share text entry"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texteintrag teilen"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed feed text entry, including its purpose when present, to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy text entry on a podcast:txt row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed feed text entry, including its purpose when present, to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den exakt angezeigten Feed-Texteintrag einschließlich des Zwecks, sofern vorhanden, in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed feed text entry as plain text, preferring its parseable http(s) URL when available": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share text entry on a podcast:txt row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed feed text entry as plain text, preferring its parseable http(s) URL when available"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den exakt angezeigten Feed-Texteintrag als Klartext und bevorzugt dabei die parsebare http(s)-URL, sofern vorhanden"
+          }
+        }
+      }
+    },
     "Copy text content": {
       "extractionState": "manual",
       "comment": "Copy action for the exact displayed podcast:txt text body; always present for a visible entry.",
