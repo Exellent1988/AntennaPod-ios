@@ -39434,6 +39434,96 @@
       }
     },
     "comment": "VoiceOver hint for sharing the displayed alternate media source URI with URL preference."
+  },
+  "Explains the chart source and where to change the country": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Explains the chart source and where to change the country"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Erklärt die Quelle der Charts und wo das Land geändert wird"
+        }
+      }
+    },
+    "comment": "VoiceOver hint for the Apple Charts source and country setting."
+  },
+  "Chart loading error": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Chart loading error"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Fehler beim Laden der Charts"
+        }
+      }
+    },
+    "comment": "VoiceOver prefix for an Apple Charts load error."
+  },
+  "Loads the podcast charts again": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Loads the podcast charts again"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Lädt die Podcast-Charts erneut"
+        }
+      }
+    },
+    "comment": "VoiceOver hint for retrying an Apple Charts request."
+  },
+  "Loading podcast charts": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Loading podcast charts"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Podcast-Charts werden geladen"
+        }
+      }
+    },
+    "comment": "VoiceOver label for the full-screen Apple Charts loading indicator."
+  },
+  "Chart position": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Chart position"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Chart-Position"
+        }
+      }
+    },
+    "comment": "VoiceOver prefix for a Home Apple Charts preview rank."
   }
   },
   "version": "1.0"

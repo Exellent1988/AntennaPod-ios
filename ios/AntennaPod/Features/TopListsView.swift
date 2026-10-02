@@ -37,6 +37,11 @@ struct TopListsView: View {
                 Text(chartsHelpText)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(chartsHelpText)
+                    .accessibilityHint(
+                        String(localized: "Explains the chart source and where to change the country")
+                    )
             }
 
             if let loadError {
@@ -44,9 +49,14 @@ struct TopListsView: View {
                     Text(loadError)
                         .foregroundStyle(.red)
                         .font(.subheadline)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(
+                            String(localized: "Chart loading error") + ", " + loadError
+                        )
                     Button("Retry") {
                         Task { await loadCharts() }
                     }
+                    .accessibilityHint(String(localized: "Loads the podcast charts again"))
                 }
             }
 
@@ -57,6 +67,7 @@ struct TopListsView: View {
                         systemImage: "chart.bar",
                         description: Text("iTunes returned no podcasts for this country, or feed URLs could not be resolved. Try another country in Settings.")
                     )
+                    .accessibilityElement(children: .combine)
                     .listRowBackground(Color.clear)
                 }
             }
@@ -92,6 +103,9 @@ struct TopListsView: View {
         .overlay {
             if isLoading && results.isEmpty {
                 ProgressView("Loading charts…")
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "Loading podcast charts"))
+                    .accessibilityAddTraits(.updatesFrequently)
                     .padding()
                     .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
             }
@@ -201,6 +215,14 @@ struct HomeTopListsPreview: View {
                         }
                     }
                     .padding(.vertical, 2)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(
+                        previewAccessibilityLabel(
+                            index: index,
+                            item: item,
+                            isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl }
+                        )
+                    )
                 }
             }
         }
@@ -219,6 +241,21 @@ struct HomeTopListsPreview: View {
         .onChange(of: parental.isEnabled) { _, _ in
             Task { await loadPreview() }
         }
+    }
+
+    private func previewAccessibilityLabel(
+        index: Int,
+        item: ItunesPodcastResult,
+        isSubscribed: Bool
+    ) -> String {
+        var parts = [String(localized: "Chart position") + " \(index + 1)", item.title]
+        if !item.author.isEmpty {
+            parts.append(item.author)
+        }
+        if isSubscribed {
+            parts.append(String(localized: "Subscribed"))
+        }
+        return parts.joined(separator: ", ")
     }
 
     @MainActor
