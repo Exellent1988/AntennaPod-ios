@@ -1434,6 +1434,27 @@ final class PodcastStore: ObservableObject {
         bookmarksByEpisodeId = map
     }
 
+    /// Total bookmark entries across all episodes (sum of array lengths; 0 when the map is empty).
+    /// Used by Settings → Library Clear all bookmarks (footnote / disabled / confirm count).
+    var bookmarksCount: Int {
+        bookmarksByEpisodeId.values.reduce(0) { $0 + $1.count }
+    }
+
+    /// Number of episodes that currently have at least one bookmark (map key count).
+    /// Optional companion to `bookmarksCount` for “across N episodes” copy.
+    var bookmarkedEpisodesCount: Int {
+        bookmarksByEpisodeId.count
+    }
+
+    /// Remove every bookmark from `bookmarks.json` (same as emptying the whole map).
+    /// Clears `bookmarksByEpisodeId` to `[:]`; persists via didSet.
+    /// Does **not** touch chapters, Share with position, episode/feed private notes, favorites, archive, queue, downloads, or playback.
+    /// Callers must confirm first (Settings → Library `confirmationDialog`).
+    func clearAllBookmarks() {
+        guard !bookmarksByEpisodeId.isEmpty else { return }
+        bookmarksByEpisodeId = [:]
+    }
+
     // MARK: - Episode private notes (local-only)
 
     /// Local-only private note for an episode, or `nil` when unset.

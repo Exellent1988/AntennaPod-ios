@@ -27702,6 +27702,150 @@
         }
       },
       "comment": "Settings searchable keyword / honesty for Clear all feed private notes."
+    },
+    "Clear all bookmarks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear all bookmarks"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Lesezeichen löschen"
+          }
+        }
+      },
+      "comment": "Settings → Library destructive button + confirmation action; clears whole bookmarks.json map."
+    },
+    "Clear all bookmarks?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear all bookmarks?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Lesezeichen löschen?"
+          }
+        }
+      },
+      "comment": "Settings → Library confirmationDialog title for clear-all bookmarks."
+    },
+    "%lld bookmarks across %lld episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld bookmarks across %lld episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Lesezeichen in %lld Episoden"
+          }
+        }
+      },
+      "comment": "VoiceOver accessibilityValue with bookmark count and episode count for Settings Clear all bookmarks."
+    },
+    "Removes every local bookmark after confirmation. Does not clear chapters, Share with position, private notes, favorites, downloads, queue, or history.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes every local bookmark after confirmation. Does not clear chapters, Share with position, private notes, favorites, downloads, queue, or history."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt nach Bestätigung jedes lokale Lesezeichen. Löscht keine Kapitel, Mit Position teilen, privaten Notizen, Favoriten, Downloads, Warteschlange oder Verlauf."
+          }
+        }
+      },
+      "comment": "VoiceOver accessibilityHint for Settings Clear all bookmarks."
+    },
+    "Removes %lld local bookmarks across %lld episodes from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld local bookmarks across %lld episodes from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld lokale Lesezeichen in %lld Episoden aus bookmarks.json. Löscht keine Kapitel, Mit Position teilen, privaten Episoden- oder Feed-Notizen, Favoriten, Archiv, Downloads, Warteschlange oder Verlauf. Nur lokal — nicht RSS / gpodder / OPML."
+          }
+        }
+      },
+      "comment": "Clear-all bookmarks confirmationDialog message with counts + honesty."
+    },
+    "No bookmarks saved. Removes every local bookmark from bookmarks.json when any exist. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No bookmarks saved. Removes every local bookmark from bookmarks.json when any exist. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Lesezeichen gespeichert. Entfernt bei Vorhandensein jedes lokale Lesezeichen aus bookmarks.json. Löscht keine Kapitel, Mit Position teilen, privaten Episoden- oder Feed-Notizen, Favoriten, Archiv, Downloads, Warteschlange oder Verlauf. Nur lokal — nicht RSS / gpodder / OPML."
+          }
+        }
+      },
+      "comment": "Settings Library footnote when zero bookmarks."
+    },
+    "%lld bookmarks across %lld episodes. Removes every local bookmark from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld bookmarks across %lld episodes. Removes every local bookmark from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Lesezeichen in %lld Episoden. Entfernt jedes lokale Lesezeichen aus bookmarks.json. Löscht keine Kapitel, Mit Position teilen, privaten Episoden- oder Feed-Notizen, Favoriten, Archiv, Downloads, Warteschlange oder Verlauf. Nur lokal — nicht RSS / gpodder / OPML."
+          }
+        }
+      },
+      "comment": "Settings Library footnote with counts when bookmarks exist."
+    },
+    "Removes every local bookmark from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes every local bookmark from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt jedes lokale Lesezeichen aus bookmarks.json. Löscht keine Kapitel, Mit Position teilen, privaten Episoden- oder Feed-Notizen, Favoriten, Archiv, Downloads, Warteschlange oder Verlauf. Nur lokal — nicht RSS / gpodder / OPML."
+          }
+        }
+      },
+      "comment": "Settings searchable keyword / honesty for Clear all bookmarks."
     }
   },
   "version": "1.0"

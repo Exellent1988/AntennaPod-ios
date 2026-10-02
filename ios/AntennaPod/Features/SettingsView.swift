@@ -55,6 +55,7 @@ struct SettingsView: View {
     @State private var showClearConfirmation = false
     @State private var showClearEpisodeNotesConfirmation = false
     @State private var showClearFeedNotesConfirmation = false
+    @State private var showClearAllBookmarksConfirmation = false
     @State private var showCustomDefaultSpeed = false
     @State private var customSkipIntervalMode: CustomSkipIntervalSheet.Mode?
     @State private var showCustomSmartMark = false
@@ -479,6 +480,20 @@ struct SettingsView: View {
                     "Removes \(store.feedPrivateNotesCount) local feed private notes from feed-settings.json. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
                 )
             }
+            .confirmationDialog(
+                "Clear all bookmarks?",
+                isPresented: $showClearAllBookmarksConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Clear all bookmarks", role: .destructive) {
+                    store.clearAllBookmarks()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Removes \(store.bookmarksCount) local bookmarks across \(store.bookmarkedEpisodesCount) episodes from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+                )
+            }
             .sheet(isPresented: $showCustomDefaultSpeed) {
                 CustomPlaybackSpeedSheet(mode: .defaultSpeed, initialSpeed: settings.defaultPlaybackSpeed)
                     .environmentObject(playback)
@@ -609,6 +624,7 @@ struct SettingsView: View {
             "Caps History-listed episodes in playback.json (played / in-progress). Oldest by lastPlayedAt (else updatedAt) are removed first — same as Remove from history (progress and played flags gone). Unlimited keeps the full list. Does not touch favorites, archive, downloads, or queue. Statistics and Continue listening may lose trimmed episodes. Default Unlimited.",
             "Clear all episode private notes",
             "Clear all feed private notes",
+            "Clear all bookmarks",
             "Clear",
             "clear",
             "notes",
@@ -617,8 +633,11 @@ struct SettingsView: View {
             "episode private notes",
             "feed notes",
             "feed private notes",
+            "bookmarks",
+            "bookmarks.json",
             "Removes every local episode private note from episode-notes.json. Does not clear feed private notes, bookmarks, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.",
-            "Removes every local feed private note from feed-settings.json. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+            "Removes every local feed private note from feed-settings.json. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.",
+            "Removes every local bookmark from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
         )
     }
 
@@ -1004,6 +1023,45 @@ struct SettingsView: View {
                         )
                         : String(
                             localized: "\(store.feedPrivateNotesCount) feed private notes saved. Removes every local feed private note from feed-settings.json. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+                        )
+                )
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+            if matchesSearch(
+                "Library",
+                "Clear all bookmarks",
+                "Clear",
+                "clear",
+                "bookmarks",
+                "bookmarks.json",
+                "Lesezeichen",
+                "Removes every local bookmark from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+            ) {
+                Button("Clear all bookmarks", role: .destructive) {
+                    showClearAllBookmarksConfirmation = true
+                }
+                .disabled(store.bookmarksCount == 0)
+                .accessibilityLabel(String(localized: "Clear all bookmarks"))
+                .accessibilityValue(
+                    store.bookmarksCount == 0
+                        ? String(localized: "No bookmarks")
+                        : String(
+                            localized: "\(store.bookmarksCount) bookmarks across \(store.bookmarkedEpisodesCount) episodes"
+                        )
+                )
+                .accessibilityHint(
+                    String(
+                        localized: "Removes every local bookmark after confirmation. Does not clear chapters, Share with position, private notes, favorites, downloads, queue, or history."
+                    )
+                )
+                Text(
+                    store.bookmarksCount == 0
+                        ? String(
+                            localized: "No bookmarks saved. Removes every local bookmark from bookmarks.json when any exist. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+                        )
+                        : String(
+                            localized: "\(store.bookmarksCount) bookmarks across \(store.bookmarkedEpisodesCount) episodes. Removes every local bookmark from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
                         )
                 )
                 .font(.caption)
