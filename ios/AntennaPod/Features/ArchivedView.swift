@@ -225,6 +225,18 @@ struct ArchivedView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver hint for the Archived remaining bar. The visible label stays the
+    /// count and time. This says whether that time is wall-clock or divided by
+    /// podcast/default speed, and that the bar is the podcast+search+sort list.
+    /// Archive does not mean played. Distinct from Restore all / Add all to queue /
+    /// Play random / Copy archived / Share archived (full catalog) and the Home Archived preview.
+    private var archivedRemainingAccessibilityHint: String {
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. The Archived bar is the visible list after the podcast filter, search, and sort. Sort changes order only. Archive does not mean played. Played episodes that are not currently playing count as zero. It is not the full Archived catalog behind Restore all, Add all to queue, Play random, Copy archived, or Share archived, and not the Home Archived preview. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Downloads remaining bar, the History remaining bar, the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, the Feed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+        }
+        return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The Archived bar is the visible list after the podcast filter, search, and sort. Sort changes order only. Archive does not mean played. Played episodes that are not currently playing count as zero. It is not the full Archived catalog behind Restore all, Add all to queue, Play random, Copy archived, or Share archived, and not the Home Archived preview. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Downloads remaining bar, the History remaining bar, the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, the Feed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+    }
+
     /// VoiceOver context for the catalog-empty state versus a podcast/search mismatch.
     /// The visible ContentUnavailableView text stays concise; this value explains the
     /// next useful action without changing Archived filtering or catalog semantics.
@@ -312,6 +324,7 @@ struct ArchivedView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(archivedRemainingAccessibilityLabel)
+                        .accessibilityHint(archivedRemainingAccessibilityHint)
                 }
                 .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
             }
