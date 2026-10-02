@@ -24649,36 +24649,36 @@
         }
       }
     },
-    "When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining uses the live session rate (fallback feed/default, ≥ 0.5). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue and chapter remaining stay wall-clock.": {
+    "When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining and chapter list current remaining use the live session rate (fallback feed/default, 0.5…3.0). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue stay wall-clock.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining uses the live session rate (fallback feed/default, ≥ 0.5). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue and chapter remaining stay wall-clock."
+            "value": "When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining and chapter list current remaining use the live session rate (fallback feed/default, 0.5…3.0). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue stay wall-clock."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wenn aktiv, teilen Listen- und Home-Restzeit-Infoleisten die verbleibende Zeit jeder Episode durch die effektive Abspielgeschwindigkeit des Podcasts (Feed-Override oder Standardtempo, mindestens 0,5). Nur Schätzung — kein Live-ETA. Verwendet nicht die aktuelle Player-Session-Rate für Listen-Summen. Mini-/Vollbild-Player −Restzeit nutzt die Live-Session-Rate (Fallback Feed/Standard, ≥ 0,5). Lautstärke-Boost ist kein Tempo. Standard aus (Wanduhr). Widget / Watch Weiterhören und Kapitel-Restzeit bleiben Wanduhr."
+            "value": "Wenn aktiv, teilen Listen- und Home-Restzeit-Infoleisten die verbleibende Zeit jeder Episode durch die effektive Abspielgeschwindigkeit des Podcasts (Feed-Override oder Standardtempo, mindestens 0,5). Nur Schätzung — kein Live-ETA. Verwendet nicht die aktuelle Player-Session-Rate für Listen-Summen. Mini-/Vollbild-Player −Restzeit und Kapitel-Listen-Restzeit nutzen die Live-Session-Rate (Fallback Feed/Standard, 0,5…3,0). Lautstärke-Boost ist kein Tempo. Standard aus (Wanduhr). Widget / Watch Weiterhören bleiben Wanduhr."
           }
         }
       }
     },
-    "When on, list remaining-time bars use each podcast’s playback speed; mini/full −remaining uses the live session rate. Default off.": {
+    "When on, list remaining-time bars use each podcast’s playback speed; mini/full −remaining and chapter remaining use the live session rate. Default off.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "When on, list remaining-time bars use each podcast’s playback speed; mini/full −remaining uses the live session rate. Default off."
+            "value": "When on, list remaining-time bars use each podcast’s playback speed; mini/full −remaining and chapter remaining use the live session rate. Default off."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wenn aktiv, nutzen Listen-Restzeit-Leisten die Abspielgeschwindigkeit jedes Podcasts; Mini-/Vollbild −Restzeit die Live-Session-Rate. Standard aus."
+            "value": "Wenn aktiv, nutzen Listen-Restzeit-Leisten die Abspielgeschwindigkeit jedes Podcasts; Mini-/Vollbild −Restzeit und Kapitel-Restzeit die Live-Session-Rate. Standard aus."
           }
         }
       }

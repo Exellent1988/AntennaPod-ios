@@ -598,16 +598,18 @@ struct FullPlayerView: View {
 
     /// Trailing time for a chapter row: current → live remaining (−m:ss) when end known;
     /// otherwise chapter duration when known. Hidden when times cannot be derived honestly.
+    /// Current remaining follows Settings → Remaining time respects speed (same as mini/full
+    /// −remaining); chapter **duration** stays wall-clock.
     private func chapterTrailingTimeLabel(index: Int) -> String? {
         let episodeDuration = chapterEpisodeDurationSeconds
         if index == currentChapterIndex,
-           let remaining = ChapterIndexing.remainingSeconds(
+           let wall = ChapterIndexing.remainingSeconds(
                in: chapters,
                atIndex: index,
                positionSeconds: displayPosition,
                episodeDurationSeconds: episodeDuration
            ) {
-            return formatRemaining(remaining)
+            return formatRemaining(displayChapterRemainingSeconds(wall))
         }
         if let duration = ChapterIndexing.durationSeconds(
             in: chapters,
@@ -623,13 +625,14 @@ struct FullPlayerView: View {
         var parts = [String(localized: "Chapter \(chapter.title), \(format(chapter.startTimeSeconds))")]
         let episodeDuration = chapterEpisodeDurationSeconds
         if index == currentChapterIndex,
-           let remaining = ChapterIndexing.remainingSeconds(
+           let wall = ChapterIndexing.remainingSeconds(
                in: chapters,
                atIndex: index,
                positionSeconds: displayPosition,
                episodeDurationSeconds: episodeDuration
            ) {
-            parts.append(String(localized: "\(format(remaining)) remaining"))
+            let display = displayChapterRemainingSeconds(wall)
+            parts.append(String(localized: "\(format(display)) remaining"))
         } else if let duration = ChapterIndexing.durationSeconds(
             in: chapters,
             atIndex: index,
@@ -638,6 +641,27 @@ struct FullPlayerView: View {
             parts.append(String(localized: "Duration \(format(duration))"))
         }
         return parts.joined(separator: ", ")
+    }
+
+    /// Current-chapter remaining for list chrome. Wall-clock unless Remaining time respects
+    /// speed — then ÷ live session rate (fallback feed/default, 0.5…3.0). Same helper as
+    /// mini/full −remaining. Not used for Lock Screen / Now Playing / Widget / Watch.
+    private func displayChapterRemainingSeconds(_ wallClockSeconds: Double) -> Double {
+        let fallback: Float
+        if let episode = resolvedEpisode ?? playback.currentEpisode {
+            fallback = store.resolvedPlaybackSpeedForRemaining(for: episode)
+        } else {
+            fallback = max(
+                EpisodeRemainingTime.minimumPlaybackSpeedDivisor,
+                settings.defaultPlaybackSpeed
+            )
+        }
+        return EpisodeRemainingTime.playerChromeRemainingSeconds(
+            wallClockSeconds: wallClockSeconds,
+            respectsSpeed: settings.remainingTimeRespectsSpeed,
+            sessionRate: playback.rate,
+            fallbackSpeed: fallback
+        )
     }
 
     @ViewBuilder
@@ -867,7 +891,7 @@ struct FullPlayerView: View {
 
     /// Right scrubber label: total duration, or −remaining when Show remaining time is on.
     /// When Remaining time respects speed is on, −remaining ÷ live session rate
-    /// (fallback feed/default, ≥ 0.5); otherwise wall-clock.
+    /// (fallback feed/default, 0.5…3.0); otherwise wall-clock.
     private var rightTimeLabel: String {
         if settings.showRemainingTime {
             let wall = playback.durationSeconds - displayPosition

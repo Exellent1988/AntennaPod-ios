@@ -2,7 +2,8 @@ import SwiftUI
 import UIKit
 
 /// Chapters list sheet mirroring Full player list UX: searchable titles, tap → seek,
-/// current highlight, duration / current remaining when end known, optional per-chapter
+/// current highlight, duration / current remaining when end known (remaining follows
+/// Remaining time respects speed like mini/full −remaining), optional per-chapter
 /// Open link (http(s) href), optional chapters URL.
 /// Toolbar **Copy chapters** + **Share chapters** export a plain-text TOC from the **full**
 /// already-known chapter array (ignores search filter) — same honesty as transcript Copy/Share.
@@ -12,6 +13,7 @@ import UIKit
 struct EpisodeChaptersSheet: View {
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var settings: AppSettings
     @Environment(\.dismiss) private var dismiss
 
     /// Chapters already known on the episode / player (PSC / persisted remote / media).
@@ -182,16 +184,18 @@ struct EpisodeChaptersSheet: View {
 
     /// Trailing time for a chapter row: current → live remaining (−m:ss) when end known;
     /// otherwise chapter duration when known. Hidden when times cannot be derived honestly.
+    /// Current remaining follows Settings → Remaining time respects speed (same as mini/full
+    /// −remaining); chapter **duration** stays wall-clock.
     private func chapterTrailingTimeLabel(index: Int) -> String? {
         let episodeDuration = chapterEpisodeDurationSeconds
         if index == currentChapterIndex,
-           let remaining = ChapterIndexing.remainingSeconds(
+           let wall = ChapterIndexing.remainingSeconds(
                in: chapters,
                atIndex: index,
                positionSeconds: displayPosition,
                episodeDurationSeconds: episodeDuration
            ) {
-            return formatRemaining(remaining)
+            return formatRemaining(displayChapterRemainingSeconds(wall))
         }
         if let duration = ChapterIndexing.durationSeconds(
             in: chapters,
@@ -207,13 +211,14 @@ struct EpisodeChaptersSheet: View {
         var parts = [String(localized: "Chapter \(chapter.title), \(format(chapter.startTimeSeconds))")]
         let episodeDuration = chapterEpisodeDurationSeconds
         if index == currentChapterIndex,
-           let remaining = ChapterIndexing.remainingSeconds(
+           let wall = ChapterIndexing.remainingSeconds(
                in: chapters,
                atIndex: index,
                positionSeconds: displayPosition,
                episodeDurationSeconds: episodeDuration
            ) {
-            parts.append(String(localized: "\(format(remaining)) remaining"))
+            let display = displayChapterRemainingSeconds(wall)
+            parts.append(String(localized: "\(format(display)) remaining"))
         } else if let duration = ChapterIndexing.durationSeconds(
             in: chapters,
             atIndex: index,
@@ -222,6 +227,35 @@ struct EpisodeChaptersSheet: View {
             parts.append(String(localized: "Duration \(format(duration))"))
         }
         return parts.joined(separator: ", ")
+    }
+
+    /// Current-chapter remaining for list chrome. Wall-clock unless Remaining time respects
+    /// speed — then ÷ live session rate when this episode is current (else feed/default),
+    /// clamped 0.5…3.0. Same helper as mini/full −remaining. Not Lock Screen / Widget / Watch.
+    private func displayChapterRemainingSeconds(_ wallClockSeconds: Double) -> Double {
+        let episodeForSpeed = episode ?? playback.currentEpisode
+        let fallback: Float
+        if let episodeForSpeed {
+            fallback = store.resolvedPlaybackSpeedForRemaining(for: episodeForSpeed)
+        } else {
+            fallback = max(
+                EpisodeRemainingTime.minimumPlaybackSpeedDivisor,
+                settings.defaultPlaybackSpeed
+            )
+        }
+        // Prefer live session rate only while this sheet’s episode is the current player item.
+        let sessionRate: Float
+        if let episodeForSpeed, playback.currentEpisode?.id == episodeForSpeed.id {
+            sessionRate = playback.rate
+        } else {
+            sessionRate = 0 // force fallback via playerChromeSpeedDivisor
+        }
+        return EpisodeRemainingTime.playerChromeRemainingSeconds(
+            wallClockSeconds: wallClockSeconds,
+            respectsSpeed: settings.remainingTimeRespectsSpeed,
+            sessionRate: sessionRate,
+            fallbackSpeed: fallback
+        )
     }
 
     private func scheduleChapterFilter(for term: String) {

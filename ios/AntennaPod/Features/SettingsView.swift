@@ -699,7 +699,7 @@ struct SettingsView: View {
             "Show remaining time",
             "When on, the mini and full player show remaining time (−m:ss) on the right instead of total duration. Left stays current position. Tap the full-player duration/remaining label to toggle. Default off.",
             "Remaining time respects speed",
-            "When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining uses the live session rate (fallback feed/default, ≥ 0.5). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue and chapter remaining stay wall-clock."
+            "When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining and chapter list current remaining use the live session rate (fallback feed/default, 0.5…3.0). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue stay wall-clock."
         )
     }
 
@@ -1003,8 +1003,8 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Toggle("Remaining time respects speed", isOn: $settings.remainingTimeRespectsSpeed)
-                    .accessibilityHint(String(localized: "When on, list remaining-time bars use each podcast’s playback speed; mini/full −remaining uses the live session rate. Default off."))
-                Text("When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining uses the live session rate (fallback feed/default, ≥ 0.5). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue and chapter remaining stay wall-clock.")
+                    .accessibilityHint(String(localized: "When on, list remaining-time bars use each podcast’s playback speed; mini/full −remaining and chapter remaining use the live session rate. Default off."))
+                Text("When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining and chapter list current remaining use the live session rate (fallback feed/default, 0.5…3.0). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue stay wall-clock.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

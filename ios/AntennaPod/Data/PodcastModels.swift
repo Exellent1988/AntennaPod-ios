@@ -2732,7 +2732,8 @@ enum ChapterIndexing {
 
     /// Remaining wall-clock time in the chapter at `index`: `max(0, end − position)`.
     /// `nil` when end is unknown. Does not require the chapter to be current — callers decide
-    /// when to show remaining (typically only for the active chapter).
+    /// when to show remaining (typically only for the active chapter). Pure media-timeline
+    /// math — UI may speed-adjust via `EpisodeRemainingTime.playerChromeRemainingSeconds`.
     static func remainingSeconds(
         in chapters: [PodcastChapter],
         atIndex index: Int,

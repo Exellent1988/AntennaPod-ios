@@ -15,10 +15,11 @@ import Foundation
 /// remaining is divided by `max(0.5, speed)` (feed override ?? global default — estimate;
 /// session rate / volume boost are not applied here for list/Home totals).
 ///
-/// Distinct from `WidgetRemainingTime` (single Continue snapshot labels) and from
-/// `ChapterIndexing.remainingSeconds` (chapter end − position). Player chrome −remaining
-/// (mini/full) uses `playerChromeRemainingSeconds` when Settings respects speed — live
-/// session rate preferred over feed/default.
+/// Distinct from `WidgetRemainingTime` (single Continue snapshot labels). Chapter list
+/// current remaining starts as `ChapterIndexing.remainingSeconds` (wall-clock end − position);
+/// display may speed-adjust via `playerChromeRemainingSeconds` when Settings respects speed.
+/// Player chrome −remaining (mini/full) and chapter-list current remaining use the same
+/// helper — live session rate preferred over feed/default (clamped 0.5…3.0).
 enum EpisodeRemainingTime {
     /// Aggregate over one caller-chosen episode list.
     struct Summary: Equatable {
@@ -84,6 +85,8 @@ enum EpisodeRemainingTime {
     /// Sum remaining over `episodes` (caller-owned set). Same edge cases as former per-view loops.
     /// Minimum divisor when speed-adjusting (matches custom playback speed lower bound).
     static let minimumPlaybackSpeedDivisor: Float = 0.5
+    /// Maximum divisor when speed-adjusting player/chapter chrome (matches Custom… upper bound).
+    static let maximumPlaybackSpeedDivisor: Float = 3.0
 
     /// Wall-clock remaining divided by effective speed (clamped to ≥ `minimumPlaybackSpeedDivisor`).
     static func speedAdjustedRemainingSeconds(wallClockSeconds: Double, playbackSpeed: Float) -> Double {
@@ -92,9 +95,9 @@ enum EpisodeRemainingTime {
         return max(0, wallClockSeconds) / divisor
     }
 
-    /// Divisor for mini/full player −remaining when Settings → Remaining time respects speed is on.
-    /// Prefer live `PlaybackService.rate`; if non-finite / ≤ 0, use `fallbackSpeed` (feed override
-    /// ?? default). Always clamped to ≥ `minimumPlaybackSpeedDivisor`.
+    /// Divisor for mini/full −remaining and chapter-list current remaining when Settings →
+    /// Remaining time respects speed is on. Prefer live `PlaybackService.rate`; if non-finite /
+    /// ≤ 0, use `fallbackSpeed` (feed override ?? default). Clamped to 0.5…3.0.
     static func playerChromeSpeedDivisor(sessionRate: Float, fallbackSpeed: Float) -> Float {
         let preferred: Float
         if sessionRate.isFinite, sessionRate > 0 {
@@ -104,11 +107,16 @@ enum EpisodeRemainingTime {
         } else {
             preferred = 1.0
         }
-        return max(minimumPlaybackSpeedDivisor, preferred)
+        return min(
+            maximumPlaybackSpeedDivisor,
+            max(minimumPlaybackSpeedDivisor, preferred)
+        )
     }
 
-    /// Mini/full scrubber −remaining seconds. When `respectsSpeed` is false, wall-clock.
-    /// When true, divide by live session rate (fallback feed/default), clamp ≥ 0.5.
+    /// Mini/full scrubber −remaining **and** chapter-list current remaining (duration-from-now).
+    /// When `respectsSpeed` is false, wall-clock. When true, divide by live session rate
+    /// (fallback feed/default), clamped 0.5…3.0. Chapter **duration** labels stay wall-clock.
+    /// Lock Screen / Now Playing / Widget / Watch are not wired through this helper.
     static func playerChromeRemainingSeconds(
         wallClockSeconds: Double,
         respectsSpeed: Bool,

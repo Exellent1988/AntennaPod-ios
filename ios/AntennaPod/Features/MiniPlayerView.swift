@@ -403,6 +403,7 @@ struct MiniPlayerView: View {
                 )
                 .environmentObject(playback)
                 .environmentObject(store)
+                .environmentObject(settings)
             }
             .alert(
                 String(localized: "Bookmark limit reached"),
@@ -612,7 +613,7 @@ struct MiniPlayerView: View {
 
     /// Duration, or −remaining when Settings → Show remaining time is on.
     /// When Remaining time respects speed is on, −remaining ÷ live session rate
-    /// (fallback feed/default, ≥ 0.5); otherwise wall-clock.
+    /// (fallback feed/default, 0.5…3.0); otherwise wall-clock.
     private var rightTimeLabel: String {
         if settings.showRemainingTime {
             let wall = playback.durationSeconds - playback.positionSeconds
