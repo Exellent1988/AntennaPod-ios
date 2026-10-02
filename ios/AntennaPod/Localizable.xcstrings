@@ -28597,6 +28597,57 @@
           }
         }
       }
+    },
+    "Marks played episodes, including archived episodes, in the full Favorites catalog as unplayed; ignores podcast, search, and sort filters and does not delete files": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks played episodes, including archived episodes, in the full Favorites catalog as unplayed; ignores podcast, search, and sort filters and does not delete files"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert gehörte Episoden einschließlich archivierter Episoden im vollständigen Favoriten-Katalog als ungehört; ignoriert Podcast-, Such- und Sortierfilter und löscht keine Dateien"
+          }
+        }
+      }
+    },
+    "Copy favorites, share favorites, play random, add all to queue, mark all as played, mark all as unplayed, or clear favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy favorites, share favorites, play random, add all to queue, mark all as played, mark all as unplayed, or clear favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten kopieren, Favoriten teilen, Zufällig abspielen, Alle zur Warteschlange, Alle als gehört markieren, Alle als ungehört markieren oder Favoriten leeren"
+          }
+        }
+      }
+    },
+    "Marks %lld played favorite episode(s), including archived episodes, as unplayed. Uses the full Favorites catalog (newest favorited first), not the podcast, search, or sort filter. Does not delete download files, clear the queue, stop playback, or unarchive episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld played favorite episode(s), including archived episodes, as unplayed. Uses the full Favorites catalog (newest favorited first), not the podcast, search, or sort filter. Does not delete download files, clear the queue, stop playback, or unarchive episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld gehörte Favoriten-Episode(n) einschließlich archivierter Episoden als ungehört. Nutzt den vollständigen Favoriten-Katalog (zuletzt favorisiert zuerst), nicht Podcast-, Such- oder Sortierfilter. Löscht keine Downloads, leert nicht die Warteschlange, stoppt die Wiedergabe nicht und hebt die Archivierung nicht auf."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

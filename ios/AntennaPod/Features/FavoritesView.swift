@@ -13,6 +13,7 @@ struct FavoritesView: View {
     @State private var showClearFavoritesConfirm = false
     @State private var showEnqueueAllConfirm = false
     @State private var showMarkAllPlayedConfirm = false
+    @State private var showMarkAllUnplayedConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyFeedbackTick = 0
@@ -33,6 +34,10 @@ struct FavoritesView: View {
 
     private var markAllFavoritesPlayedCandidatesCount: Int {
         store.markAllFavoritesPlayedCandidateCount()
+    }
+
+    private var markAllFavoritesUnplayedCandidatesCount: Int {
+        store.markAllFavoritesUnplayedCandidateCount()
     }
 
     /// Favorited episodes with playable media via shared `EpisodePlayRandom` (local file via
@@ -444,6 +449,16 @@ struct FavoritesView: View {
                         String(localized: "Marks unplayed, non-archived episodes in the full Favorites catalog as played; ignores podcast, search, and sort filters")
                     )
 
+                    Button {
+                        showMarkAllUnplayedConfirm = true
+                    } label: {
+                        Label("Mark all as unplayed", systemImage: "circle")
+                    }
+                    .disabled(markAllFavoritesUnplayedCandidatesCount == 0)
+                    .accessibilityHint(
+                        String(localized: "Marks played episodes, including archived episodes, in the full Favorites catalog as unplayed; ignores podcast, search, and sort filters and does not delete files")
+                    )
+
                     Button(role: .destructive) {
                         showClearFavoritesConfirm = true
                     } label: {
@@ -458,7 +473,7 @@ struct FavoritesView: View {
                 .disabled(items.isEmpty)
                 .accessibilityLabel(String(localized: "Favorites actions"))
                 .accessibilityHint(
-                    String(localized: "Copy favorites, share favorites, play random, add all to queue, mark all as played, or clear favorites")
+                    String(localized: "Copy favorites, share favorites, play random, add all to queue, mark all as played, mark all as unplayed, or clear favorites")
                 )
             }
         }
@@ -494,6 +509,18 @@ struct FavoritesView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Marks \(markAllFavoritesPlayedCandidatesCount) unplayed, non-archived favorite episode(s) as played. Uses the full Favorites catalog (newest favorited first), not the podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not clear Favorites, unfavorite episodes, or delete downloads itself.")
+        }
+        .confirmationDialog(
+            "Mark all as unplayed?",
+            isPresented: $showMarkAllUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as unplayed") {
+                store.markAllFavoritesUnplayed()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Marks \(markAllFavoritesUnplayedCandidatesCount) played favorite episode(s), including archived episodes, as unplayed. Uses the full Favorites catalog (newest favorited first), not the podcast, search, or sort filter. Does not delete download files, clear the queue, stop playback, or unarchive episodes.")
         }
         .confirmationDialog(
             "Clear favorites?",

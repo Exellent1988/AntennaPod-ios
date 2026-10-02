@@ -1113,6 +1113,30 @@ final class PodcastStore: ObservableObject {
             .map(\.id)
     }
 
+    /// Mark every played episode in the full Favorites catalog as unplayed, including archived
+    /// episodes. This deliberately ignores podcast, search, and sort filters. IDs are snapshotted
+    /// before calling `markUnplayed`; the per-episode path does not delete downloads, remove queue
+    /// items, stop playback, or unarchive episodes. Callers must confirm first.
+    func markAllFavoritesUnplayed() {
+        let ids = markAllFavoritesUnplayedCandidateIds
+        for id in ids {
+            markUnplayed(id)
+        }
+    }
+
+    /// Number of played episodes in the full Favorites catalog, including archived episodes.
+    /// This intentionally ignores all Favorites view filters.
+    func markAllFavoritesUnplayedCandidateCount() -> Int {
+        markAllFavoritesUnplayedCandidateIds.count
+    }
+
+    private var markAllFavoritesUnplayedCandidateIds: [String] {
+        favoriteEpisodes
+            .map(\.episode)
+            .filter { isPlayed($0.id) }
+            .map(\.id)
+    }
+
     /// Mark every eligible completed download as played.
     ///
     /// Uses the full `DownloadService.downloads` catalog, not the Downloads view's chip,
