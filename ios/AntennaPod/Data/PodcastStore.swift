@@ -1069,6 +1069,36 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Mark every eligible completed download as played.
+    ///
+    /// Uses the full `DownloadService.downloads` catalog, not the Downloads view's chip,
+    /// podcast, search, or sort filters. Unplayed archived episodes are skipped, matching
+    /// All Episodes / feed Mark all as played. IDs are snapshotted before calling `markPlayed`
+    /// so auto-delete-after-playing, queue removal, and other per-episode side effects still
+    /// apply even when marking played removes the local file from the download catalog.
+    /// This method does not delete files itself; `markPlayed` may trigger the configured
+    /// auto-delete-after-playing behavior. Callers must confirm first.
+    func markAllDownloadsPlayed() {
+        let ids = markAllDownloadsPlayedCandidateIds
+        for id in ids {
+            markPlayed(id)
+        }
+    }
+
+    /// Number of unplayed, non-archived episodes in the full completed Downloads catalog.
+    /// This intentionally ignores all Downloads view filters.
+    func markAllDownloadsPlayedCandidateCount() -> Int {
+        markAllDownloadsPlayedCandidateIds.count
+    }
+
+    private var markAllDownloadsPlayedCandidateIds: [String] {
+        guard let downloads else { return [] }
+        return downloads.downloads
+            .map(\.episode)
+            .filter { !isPlayed($0.id) && !isArchived($0.id) }
+            .map(\.id)
+    }
+
     /// Mark every played episode in the soft-capped All Episodes catalog as unplayed.
     /// The catalog is the newest 500 episodes by publish date, matching `allEpisodes` and the
     /// Add all / Play random / Copy / Share catalog. This deliberately ignores UI status, podcast,

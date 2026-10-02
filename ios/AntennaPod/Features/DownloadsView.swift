@@ -14,6 +14,7 @@ struct DownloadsView: View {
     @State private var showClearAllConfirm = false
     @State private var showCancelAllConfirm = false
     @State private var showEnqueueAllConfirm = false
+    @State private var showMarkAllPlayedConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyFeedbackTick = 0
@@ -31,7 +32,7 @@ struct DownloadsView: View {
     /// `PodcastStore.episodeMatchesLibraryQuery` (same fields as library / Feed detail / Queue / Favorites / History / Archived), plus
     /// feed display title (`displayTitle(containingEpisodeId:)`). View-only —
     /// Does not mutate `DownloadService.downloads` (tab badge / Play random / Add all / Delete played / Clear all / Copy / Share stay full-catalog).
-    /// Play random / Add all to queue / Delete played / Clear all / Cancel all / Copy downloads / Share downloads stay full-catalog scoped.
+    /// Play random / Add all to queue / Mark all as played / Delete played / Clear all / Cancel all / Copy downloads / Share downloads stay full-catalog scoped.
     private var filteredDownloads: [DownloadedEpisode] {
         var base = downloads.downloads
         switch settings.downloadsFilter {
@@ -194,6 +195,12 @@ struct DownloadsView: View {
     /// Confirm count and `enqueueAllDownloads()` share this eligibility.
     private var enqueueAllDownloadsCandidatesCount: Int {
         downloads.downloads.filter { !store.isInQueue($0.episode.id) }.count
+    }
+
+    /// Unplayed, non-archived episodes in the **full completed Downloads catalog** — not chip,
+    /// podcast, search, or sort filtered. Same archive policy as All Episodes / feed Mark all as played.
+    private var markAllDownloadsPlayedCandidatesCount: Int {
+        store.markAllDownloadsPlayedCandidateCount()
     }
 
     /// Completed Downloads catalog rows with a local playable file on disk via shared
@@ -553,6 +560,16 @@ struct DownloadsView: View {
                         .accessibilityHint(String(localized: "Appends downloaded episodes not already queued"))
 
                         Button {
+                            showMarkAllPlayedConfirm = true
+                        } label: {
+                            Label("Mark all as played", systemImage: "checkmark.circle")
+                        }
+                        .disabled(markAllDownloadsPlayedCandidatesCount == 0)
+                        .accessibilityHint(
+                            String(localized: "Marks unplayed, non-archived episodes in the full Downloads catalog as played; ignores chip, podcast, search, and sort filters")
+                        )
+
+                        Button {
                             showCancelAllConfirm = true
                         } label: {
                             Label("Cancel all downloads", systemImage: "xmark.circle")
@@ -579,12 +596,12 @@ struct DownloadsView: View {
                     }
                     // Menu available when completed catalog is non-empty **or** anything is in-flight /
                     // waiting (Cancel all). Copy / Share / Play random / Add all / Cancel all / Delete
-                    // played / Clear all each disable independently — same honesty as Favorites /
+                    // played / Mark all as played / Clear all each disable independently — same honesty as Favorites /
                     // History / Archived Copy / Share.
                     .disabled(downloads.downloads.isEmpty && downloads.cancelAllInFlightCount == 0)
                     .accessibilityLabel(String(localized: "Downloads actions"))
                     .accessibilityHint(
-                        String(localized: "Copy downloads, share downloads, play random, add all to queue, cancel all downloads, delete played downloads, or clear all downloads")
+                        String(localized: "Copy downloads, share downloads, play random, add all to queue, mark all as played, cancel all downloads, delete played downloads, or clear all downloads")
                     )
                 }
             }
@@ -608,6 +625,20 @@ struct DownloadsView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Appends \(enqueueAllDownloadsCandidatesCount) downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue.")
+            }
+            .confirmationDialog(
+                "Mark all as played?",
+                isPresented: $showMarkAllPlayedConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Mark all as played") {
+                    store.markAllDownloadsPlayed()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Marks \(markAllDownloadsPlayedCandidatesCount) unplayed, non-archived downloaded episode(s) as played. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not itself clear downloads."
+                )
             }
             .confirmationDialog(
                 "Cancel all downloads?",
