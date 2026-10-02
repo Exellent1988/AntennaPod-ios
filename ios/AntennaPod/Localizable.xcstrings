@@ -27138,6 +27138,108 @@
           }
         }
       }
+    },
+    "Copy inbox": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy inbox"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posteingang kopieren"
+          }
+        }
+      }
+    },
+    "Share inbox": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share inbox"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posteingang teilen"
+          }
+        }
+      }
+    },
+    "Inbox copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inbox copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posteingang in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the full inbox list to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full inbox list to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die gesamte Posteingangsliste in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the full inbox list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the full inbox list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit der gesamten Posteingangsliste"
+          }
+        }
+      }
+    },
+    "Copy inbox, share inbox, play random, add all to queue, mark all as played, or archive all": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy inbox, share inbox, play random, add all to queue, mark all as played, or archive all"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posteingang kopieren, Posteingang teilen, Zufällig abspielen, Alle zur Warteschlange, Alle als gehört markieren, oder Alle archivieren"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

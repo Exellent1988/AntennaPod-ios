@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct InboxView: View {
     @EnvironmentObject private var store: PodcastStore
@@ -11,6 +12,9 @@ struct InboxView: View {
     @State private var debounceTask: Task<Void, Never>?
     @State private var showMarkAllPlayedConfirm = false
     @State private var showEnqueueAllConfirm = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -143,7 +147,7 @@ struct InboxView: View {
 
     /// Visible Inbox rows: `inboxSort` → podcast chip → itunes:episodeType chip.
     /// Library `.searchable` replaces this list entirely (`LibrarySearchResultsView`).
-    /// View-only — Mark all / Add all to queue / Archive all / Play random stay full-catalog scoped.
+    /// View-only — Mark all / Add all to queue / Archive all / Play random / Copy inbox / Share inbox stay full-catalog scoped.
     private var filteredItems: [InboxEpisode] {
         var base: [InboxEpisode]
         switch podcastFilter {
@@ -222,7 +226,7 @@ struct InboxView: View {
     /// Remaining per episode = `max(0, duration − position)` when duration known; unplayed with
     /// duration contributes full duration; **played** (not current) → 0; **unknown duration skipped**
     /// (tilde when any skipped). Currently playing uses live `PlaybackService` position/duration.
-    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge / Mark all / Add all / Archive all / Play random (full catalog).
+    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge / Mark all / Add all / Archive all / Play random / Copy inbox / Share inbox (full catalog).
     private var inboxRemainingInfoLabel: String? {
         guard !visibleInboxForRemaining.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: inboxRemainingSummary)
@@ -253,6 +257,33 @@ struct InboxView: View {
                 return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
             }()
         )
+    }
+
+
+    /// Full Inbox catalog episodes in **store** newest-first order (`PodcastStore.inboxEpisodes`).
+    /// **Not** podcast-chip / episode-type / UI `inboxSort` / library-search filtered.
+    /// Same honesty as Mark all / Archive all / Add all / Play random / tab badge.
+    private var inboxCatalogEpisodes: [PodcastEpisode] {
+        store.inboxEpisodes.map(\.episode)
+    }
+
+    /// Plain-text list of the **full** Inbox catalog — not chip/type/sort/search filtered.
+    private var inboxPlainText: String {
+        InboxExport.plainText(episodes: inboxCatalogEpisodes) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
+    }
+
+    /// Enabled when the full Inbox catalog is non-empty (read-only export).
+    private var canExportInbox: Bool {
+        !store.inboxEpisodes.isEmpty
+    }
+
+    /// “Inbox” header + body for system share sheet (same body as Copy).
+    private var inboxShareText: String {
+        InboxExport.shareText(episodes: inboxCatalogEpisodes) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
     }
 
     var body: some View {
@@ -396,6 +427,31 @@ struct InboxView: View {
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button {
+                            copyInbox()
+                        } label: {
+                            Label("Copy inbox", systemImage: "doc.plaintext")
+                        }
+                        // Full Inbox catalog (not podcast/type/UI sort/library search).
+                        .disabled(!canExportInbox)
+                        .accessibilityLabel(String(localized: "Copy inbox"))
+                        .accessibilityHint(
+                            String(localized: "Copies the full inbox list to the pasteboard")
+                        )
+
+                        ShareLink(
+                            item: inboxShareText,
+                            subject: Text(String(localized: "Inbox"))
+                        ) {
+                            Label("Share inbox", systemImage: "square.and.arrow.up")
+                        }
+                        // Same gates as Copy inbox — full catalog.
+                        .disabled(!canExportInbox)
+                        .accessibilityLabel(String(localized: "Share inbox"))
+                        .accessibilityHint(
+                            String(localized: "Opens the system share sheet with the full inbox list")
+                        )
+
+                        Button {
                             playRandomEpisode()
                         } label: {
                             Label("Play random", systemImage: "shuffle")
@@ -431,9 +487,23 @@ struct InboxView: View {
                         Label("Inbox actions", systemImage: "ellipsis.circle")
                     }
                     // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
+                    // Disabled while library search replaces Inbox rows (full-catalog actions only).
                     .disabled(sortedItems.isEmpty || isSearching)
+                    .accessibilityLabel(String(localized: "Inbox actions"))
+                    .accessibilityHint(
+                        String(localized: "Copy inbox, share inbox, play random, add all to queue, mark all as played, or archive all")
+                    )
                 }
             }
+            .alert(
+                String(localized: "Copied"),
+                isPresented: $showCopiedAlert
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(copiedAlertMessage)
+            }
+            .sensoryFeedback(.success, trigger: copyFeedbackTick)
             .confirmationDialog(
                 "Add all to queue?",
                 isPresented: $showEnqueueAllConfirm,
@@ -490,6 +560,17 @@ struct InboxView: View {
                 }
             }
         }
+    }
+
+    /// Pasteboard copy of the **full** Inbox catalog (not podcast/type/UI sort/library search). Read-only.
+    /// Newest-first store order — same catalog as Mark all / Archive all / tab badge.
+    private func copyInbox() {
+        let text = inboxPlainText
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Inbox copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     /// Uniform pick via shared `EpisodePlayRandom.pick` among eligible (prefer unplayed);
