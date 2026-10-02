@@ -16,6 +16,9 @@ Download errors (iOS): The error screen exports the full persisted ring buffer i
 Podcast chapters URL (iOS): Open / Copy / Share acts on the feed-provided remote URL; ShareLink uses an openable http(s) URL when available and otherwise the raw string. This is not the in-app chapter TOC export.
 Podcast chapters URL (iOS): Open / Copy / Share nutzt nur die entfernte, vom Feed gelieferte URL; ShareLink verwendet eine öffnende http(s)-URL, sonst den Rohstring. Das ist nicht der In-App-Kapitel-TOC-Export.
 
+Podroll recommendations (iOS): Feed detail and description rows offer Share beside Copy when feed-provided text exists; ShareLink prefers a parseable http(s) feed URL and otherwise shares the same raw Copy text. No recommendations or Podcast Index GUIDs are invented or resolved.
+Podroll-Empfehlungen (iOS): In Feed-Detail und Beschreibung steht Teilen neben Kopieren, wenn vom Feed gelieferter Text vorhanden ist; ShareLink bevorzugt eine parsebare http(s)-Feed-URL und teilt sonst denselben Rohtext wie Kopieren. Es werden keine Empfehlungen oder Podcast-Index-GUIDs erfunden oder aufgelöst.
+
 Episode media URL (iOS): Episode detail/shownotes, Feed episode overflow, Full Player, and Mini Player pair Copy media URL with a distinct Share media URL. Only feed-provided http(s) enclosures are shown; ShareLink prefers a URL value and falls back to the raw string when parsing fails. The share subject/message identifies the episode and Media URL.
 Episoden-Medien-URL (iOS): Episodendetails/Shownotes, Episoden-Overflow im Feed, Vollplayer und Mini-Player stellen „Medien-URL kopieren“ und „Medien-URL teilen“ gemeinsam bereit. Nur vom Feed gelieferte http(s)-Enclosures werden angezeigt; ShareLink bevorzugt einen URL-Wert und nutzt bei Parsing-Fehlern den Rohstring. Betreff/Text nennen Episode und Medien-URL.
 

@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided channel `podcast:podroll` / nested `podcast:remoteItem` list.
-/// Title + url/guid when present; **Open** http(s) feed URL; **Copy**; **Subscribe** via existing
+/// Title + url/guid when present; **Open** http(s) feed URL; **Copy** / **Share**; **Subscribe** via existing
 /// `FeedPreviewRequest` preview when feedUrl is http(s). Cap + honesty footnote.
 /// **Display-only** — never invent recommendations; no Podcast Index GUID resolution.
 /// Hidden when none.
@@ -78,6 +78,7 @@ struct PodcastPodrollListView: View {
     private func podrollRow(_ entry: PodcastRemoteItem) -> some View {
         let label = entry.primaryLabel ?? ""
         let url = entry.openURL
+        let copyText = PodcastPodrollDisplay.copyText(entry)
         let guid = entry.displayFeedGuid
         let a11y: String = {
             var parts: [String] = [String(localized: "Recommended podcast")]
@@ -157,6 +158,28 @@ struct PodcastPodrollListView: View {
                 .accessibilityHint(
                     String(localized: "Copies the recommended podcast title, feed URL, and GUID to the pasteboard")
                 )
+
+                if !copyText.isEmpty {
+                    Group {
+                        if let url {
+                            ShareLink(item: url) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        } else {
+                            ShareLink(item: copyText) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
+                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the recommended feed URL when it is a parseable http(s) URL; otherwise shares the same feed-provided text as Copy"
+                        )
+                    )
+                }
 
                 if let url {
                     Button {
