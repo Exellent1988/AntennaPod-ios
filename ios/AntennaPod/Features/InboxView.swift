@@ -11,6 +11,7 @@ struct InboxView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
     @State private var showMarkAllPlayedConfirm = false
+    @State private var showMarkAllUnplayedConfirm = false
     @State private var showEnqueueAllConfirm = false
     @State private var showArchiveAllConfirm = false
     @State private var showCopiedAlert = false
@@ -26,7 +27,7 @@ struct InboxView: View {
     /// Title modes: `localizedCaseInsensitiveCompare` (empty titles last).
     /// Stable tiebreaker is episode `id` (no `dateAdded` on `PodcastEpisode`).
     /// Does not mutate `PodcastStore.inboxEpisodes` (Home New preview stays newest-first).
-    /// Used for bulk Mark all / Archive all counts.
+    /// Used for current-Inbox bulk Mark all as played / Archive all counts.
     private var sortedItems: [InboxEpisode] {
         store.inboxEpisodes.sorted { lhs, rhs in
             switch settings.inboxSort {
@@ -148,7 +149,7 @@ struct InboxView: View {
 
     /// Visible Inbox rows: `inboxSort` → podcast chip → itunes:episodeType chip.
     /// Library `.searchable` replaces this list entirely (`LibrarySearchResultsView`).
-    /// View-only — Mark all / Add all to queue / Archive all / Play random / Copy inbox / Share inbox stay full-catalog scoped.
+    /// View-only — Mark all / Mark all as unplayed / Add all to queue / Archive all / Play random / Copy inbox / Share inbox stay full-catalog scoped.
     private var filteredItems: [InboxEpisode] {
         var base: [InboxEpisode]
         switch podcastFilter {
@@ -201,10 +202,16 @@ struct InboxView: View {
         store.inboxEpisodes.filter { !store.isArchived($0.episode.id) }.count
     }
 
+    /// Played episodes in the full stored feed catalog behind Inbox, including archived episodes.
+    /// Inbox itself is unplayed-only, so this reverse action must not use `sortedItems`.
+    private var markAllInboxUnplayedCandidatesCount: Int {
+        store.markAllInboxUnplayedCandidateCount()
+    }
+
     /// Inbox episodes with playable media via shared `EpisodePlayRandom` (local file via
     /// `DownloadService.localURL` — downloads + local-folder `file://` — or streamable http(s)
     /// `downloadUrl`). Full Inbox catalog — **not** podcast-chip, episode-type, or library-search filtered.
-    /// Distinct from Mark all / Add all to queue / Archive all / remaining-time visible counts.
+    /// Distinct from Mark all / Mark all as unplayed / Add all to queue / Archive all / remaining-time visible counts.
     private var playRandomEligibleEpisodes: [PodcastEpisode] {
         EpisodePlayRandom.eligible(
             from: store.inboxEpisodes.map(\.episode),
@@ -234,7 +241,7 @@ struct InboxView: View {
     /// Remaining per episode = `max(0, duration − position)` when duration known; unplayed with
     /// duration contributes full duration; **played** (not current) → 0; **unknown duration skipped**
     /// (tilde when any skipped). Currently playing uses live `PlaybackService` position/duration.
-    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge / Mark all / Add all / Archive all / Play random / Copy inbox / Share inbox (full catalog).
+    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge / Mark all / Mark all as unplayed / Add all / Archive all / Play random / Copy inbox / Share inbox (full catalog).
     private var inboxRemainingInfoLabel: String? {
         guard !visibleInboxForRemaining.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: inboxRemainingSummary)
@@ -270,7 +277,7 @@ struct InboxView: View {
 
     /// Full Inbox catalog episodes in **store** newest-first order (`PodcastStore.inboxEpisodes`).
     /// **Not** podcast-chip / episode-type / UI `inboxSort` / library-search filtered.
-    /// Same honesty as Mark all / Archive all / Add all / Play random / tab badge.
+    /// Same honesty as Mark all / Mark all as unplayed / Archive all / Add all / Play random / tab badge.
     private var inboxCatalogEpisodes: [PodcastEpisode] {
         store.inboxEpisodes.map(\.episode)
     }
@@ -485,6 +492,17 @@ struct InboxView: View {
                         .disabled(sortedItems.isEmpty)
 
                         Button {
+                            showMarkAllUnplayedConfirm = true
+                        } label: {
+                            Label("Mark all as unplayed", systemImage: "circle")
+                        }
+                        // Played episodes are no longer in `inboxEpisodes`; use the full catalog count.
+                        .disabled(markAllInboxUnplayedCandidatesCount == 0)
+                        .accessibilityHint(
+                            String(localized: "Marks played episodes in the full Inbox catalog, including archived episodes")
+                        )
+
+                        Button {
                             showArchiveAllConfirm = true
                         } label: {
                             Label("Archive all", systemImage: "archivebox")
@@ -500,10 +518,10 @@ struct InboxView: View {
                     }
                     // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
                     // Disabled while library search replaces Inbox rows (full-catalog actions only).
-                    .disabled(sortedItems.isEmpty || isSearching)
+                    .disabled((sortedItems.isEmpty && markAllInboxUnplayedCandidatesCount == 0) || isSearching)
                     .accessibilityLabel(String(localized: "Inbox actions"))
                     .accessibilityHint(
-                        String(localized: "Copy inbox, share inbox, play random, add all to queue, mark all as played, or archive all")
+                        String(localized: "Copy inbox, share inbox, play random, add all to queue, mark all as played, mark all as unplayed, or archive all")
                     )
                 }
             }
@@ -526,7 +544,7 @@ struct InboxView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Appends \(enqueueAllInboxCandidatesCount) Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full Inbox catalog (same as Mark all / Archive all), not library search or the podcast filter. Queue lock does not block enqueue.")
+                Text("Appends \(enqueueAllInboxCandidatesCount) Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full current-Inbox catalog (same as Mark all as played / Archive all), not library search or the podcast filter. Queue lock does not block enqueue.")
             }
             .confirmationDialog(
                 "Mark all as played?",
@@ -539,6 +557,18 @@ struct InboxView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Marks \(sortedItems.count) Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog (not only the current podcast filter).")
+            }
+            .confirmationDialog(
+                "Mark all as unplayed?",
+                isPresented: $showMarkAllUnplayedConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Mark all as unplayed") {
+                    store.markAllInboxUnplayed()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Marks \(markAllInboxUnplayedCandidatesCount) played episodes from the full stored feed catalog behind Inbox as unplayed, including archived episodes. Uses the catalog scope, not the podcast, episode type, search, or sort filter. Does not delete downloads, clear the queue, stop playback, or unarchive episodes.")
             }
             .confirmationDialog(
                 "Archive all?",
@@ -587,7 +617,7 @@ struct InboxView: View {
     }
 
     /// Pasteboard copy of the **full** Inbox catalog (not podcast/type/UI sort/library search). Read-only.
-    /// Newest-first store order — same catalog as Mark all / Archive all / tab badge.
+    /// Newest-first store order — same catalog as Mark all as played / Archive all / tab badge; Mark all as unplayed uses its played full-feed scope.
     private func copyInbox() {
         let text = inboxPlainText
         guard !text.isEmpty else { return }

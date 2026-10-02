@@ -1425,6 +1425,31 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Mark every played episode from the full stored feed catalog behind Inbox as unplayed.
+    ///
+    /// `inboxEpisodes` is intentionally unplayed-only, so a reverse bulk action cannot use that
+    /// derived list: once an episode is played it leaves Inbox. The full subscribed-feed catalog
+    /// is the stable catalog scope for this action; archived played episodes are included. IDs are
+    /// snapshotted before calling `markUnplayed`; this does not delete downloads, remove queue
+    /// items, stop playback, or unarchive episodes. Callers must confirm first.
+    func markAllInboxUnplayed() {
+        let ids = feeds
+            .flatMap(\.episodes)
+            .filter { isPlayed($0.id) }
+            .map(\.id)
+        for id in ids {
+            markUnplayed(id)
+        }
+    }
+
+    /// Number of played episodes in the full stored feed catalog behind Inbox, including archived.
+    func markAllInboxUnplayedCandidateCount() -> Int {
+        feeds
+            .flatMap(\.episodes)
+            .filter { isPlayed($0.id) }
+            .count
+    }
+
     /// Append every Inbox episode that is not already queued (bulk).
     /// Uses store `inboxEpisodes` order (**newest-first** by `pubDateEpochMs` — same catalog as
     /// `archiveAllInbox` / `markAllInboxPlayed`). Does **not** follow UI `inboxSort`.

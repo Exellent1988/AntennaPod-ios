@@ -29095,6 +29095,63 @@
           }
         }
       }
+    },
+
+    "Marks played episodes in the full Inbox catalog, including archived episodes": {
+      "extractionState": "manual",
+      "comment": "Inbox Mark all as unplayed accessibility hint — full catalog including archived played episodes.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks played episodes in the full Inbox catalog, including archived episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert gehörte Episoden im vollständigen Posteingangs-Katalog, einschließlich archivierter Episoden"
+          }
+        }
+      }
+    },
+
+    "Copy inbox, share inbox, play random, add all to queue, mark all as played, mark all as unplayed, or archive all": {
+      "extractionState": "manual",
+      "comment": "Inbox actions accessibility hint including Mark all as unplayed.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy inbox, share inbox, play random, add all to queue, mark all as played, mark all as unplayed, or archive all"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posteingang kopieren, teilen, zufällig abspielen, alles einreihen, alles als gehört markieren, alles als ungehört markieren oder alles archivieren"
+          }
+        }
+      }
+    },
+
+    "Marks %lld played episodes from the full stored feed catalog behind Inbox as unplayed, including archived episodes. Uses the catalog scope, not the podcast, episode type, search, or sort filter. Does not delete downloads, clear the queue, stop playback, or unarchive episodes.": {
+      "extractionState": "manual",
+      "comment": "Inbox Mark all as unplayed confirmation — full stored feed catalog including archived played episodes.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld played episodes from the full stored feed catalog behind Inbox as unplayed, including archived episodes. Uses the catalog scope, not the podcast, episode type, search, or sort filter. Does not delete downloads, clear the queue, stop playback, or unarchive episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld gehörte Episoden aus dem vollständigen gespeicherten Feed-Katalog hinter dem Posteingang als ungehört, einschließlich archivierter Episoden. Nutzt den Katalogumfang, nicht den Podcast-, Episodentyp-, Such- oder Sortierfilter. Löscht keine Downloads, leert nicht die Warteschlange, stoppt nicht die Wiedergabe und hebt die Archivierung nicht auf."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
