@@ -13,6 +13,7 @@ struct MiniPlayerView: View {
     @State private var showBookmarks = false
     @State private var showJumpToPosition = false
     @State private var showDescription = false
+    @State private var showTranscript = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyURLFeedbackTick = 0
@@ -127,6 +128,17 @@ struct MiniPlayerView: View {
                                 ? String(localized: "Opens the episode description from the feed")
                                 : String(localized: "No description available for this episode")
                         )
+                        // Transcript — same hasTranscriptURL gate as Full; prefer store episode.
+                        // Hidden when feed provides no podcast:transcript URL (no Whisper/STT).
+                        if (store.episode(id: episode.id) ?? episode).hasTranscriptURL {
+                            Button {
+                                showTranscript = true
+                            } label: {
+                                Label("Transcript", systemImage: "text.bubble")
+                            }
+                            .accessibilityLabel(String(localized: "Show transcript"))
+                            .accessibilityHint(String(localized: "Opens the feed-provided transcript"))
+                        }
                         Button {
                             playback.playFromBeginning()
                         } label: {
@@ -340,6 +352,11 @@ struct MiniPlayerView: View {
                     episode: store.episode(id: episode.id) ?? episode,
                     feedTitle: feedForCurrentEpisode?.title
                 )
+            }
+            .sheet(isPresented: $showTranscript) {
+                // Prefer store episode (post-refresh) — same gate/path as Full TranscriptSheetView.
+                TranscriptSheetView(episode: store.episode(id: episode.id) ?? episode)
+                    .environmentObject(playback)
             }
         }
     }

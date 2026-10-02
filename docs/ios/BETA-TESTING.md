@@ -63,7 +63,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Kapitel-Suche (Titel; Groß/Klein egal; Debounce; leer bei keinen Treffern; nur geladene Kapitel) | ☐ Chapter search (title; case-insensitive; debounce; empty when no matches; already-loaded chapters only) |
 | ☐ Aktueller Kapitel-Titel (Mini unter Episode; Full unter Podcast; leer/ohne Kapitel ausgeblendet; folgt Position) | ☐ Current chapter title (mini under episode; full under podcast; hidden when none/empty; follows position) |
 | ☐ Kapitel-Liste: Dauer (next−start; letztes = Episodendauer−start wenn bekannt) / aktuelles Remaining live; ohne Ende ausgeblendet; Wanduhr | ☐ Chapter list: duration (next−start; last = episode duration−start when known) / current remaining live; hide when end unknown; wall-clock |
-| ☐ Transcript sheet (nur Feed-URL) | ☐ Transcript sheet (feed URL only) |
+| ☐ Transcript sheet (Full Player + Mini ⋯; nur Feed-URL `hasTranscriptURL`; gleiches `TranscriptSheetView`; kein Whisper/STT) | ☐ Transcript sheet (Full Player + Mini ⋯; feed URL `hasTranscriptURL` only; same `TranscriptSheetView`; no Whisper/STT) |
 | ☐ Transkript-Suche (Cue-Text; Groß/Klein egal; Debounce; leer bei keinen Treffern; nur geladene Cues) | ☐ Transcript search (cue text; case-insensitive; debounce; empty when no matches; already-loaded cues only) |
 | ☐ Shownotes / Beschreibung (Full Player + Mini ⋯ + Episode-Kontext; leer wenn keine; HTML → Plain Text) | ☐ Shownotes / description (full player + Mini ⋯ + episode context; empty when none; HTML → plain text) |
 | ☐ Shownotes-Suche (Absätze/Zeilen; Groß/Klein egal; Debounce; leer bei keinen Treffern; nur geladener Text) | ☐ Shownotes search (paragraphs/lines; case-insensitive; debounce; empty when no matches; already-loaded text only) |
