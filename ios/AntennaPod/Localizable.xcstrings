@@ -40332,6 +40332,60 @@
           }
         }
       }
+    },
+    "Active": {
+      "extractionState": "manual",
+      "comment": "VoiceOver value for the full-player Picture in Picture placeholder.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiv"
+          }
+        }
+      }
+    },
+    "Unavailable until Picture in Picture is ready": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for a disabled Picture in Picture toolbar button.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unavailable until Picture in Picture is ready"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht verfügbar, bis Bild-in-Bild bereit ist"
+          }
+        }
+      }
+    },
+    "Video is currently shown in Picture in Picture.": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for the full-player Picture in Picture placeholder.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Video is currently shown in Picture in Picture."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Video wird derzeit in Bild-in-Bild angezeigt."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

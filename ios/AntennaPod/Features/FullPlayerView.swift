@@ -230,11 +230,19 @@ struct FullPlayerView: View {
                         }
                         .disabled(!playback.pictureInPicture.isPossible && !playback.pictureInPicture.isActive)
                         .accessibilityLabel(String(localized: "Picture in Picture"))
+                        .accessibilityValue(
+                            playback.pictureInPicture.isActive
+                                ? String(localized: "On")
+                                : String(localized: "Off")
+                        )
                         .accessibilityHint(
                             playback.pictureInPicture.isActive
                                 ? String(localized: "Stops Picture in Picture")
-                                : String(localized: "Starts Picture in Picture")
+                                : playback.pictureInPicture.isPossible
+                                    ? String(localized: "Starts Picture in Picture")
+                                    : String(localized: "Unavailable until Picture in Picture is ready")
                         )
+                        .accessibilityAddTraits(playback.pictureInPicture.isActive ? .isSelected : [])
                     }
                 }
             }
@@ -1066,6 +1074,8 @@ struct FullPlayerView: View {
             }
             .shadow(color: .black.opacity(0.18), radius: 12, y: 6)
             .accessibilityLabel(String(localized: "Picture in Picture"))
+            .accessibilityValue(String(localized: "Active"))
+            .accessibilityHint(String(localized: "Video is currently shown in Picture in Picture."))
     }
 
     private var scrubber: some View {
