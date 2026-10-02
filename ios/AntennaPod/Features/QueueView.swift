@@ -15,6 +15,7 @@ struct QueueView: View {
     @State private var showRemovePlayedConfirm = false
     @State private var showMarkAllQueuePlayedConfirm = false
     @State private var showMarkAllQueueUnplayedConfirm = false
+    @State private var showArchiveAllQueueConfirm = false
     @State private var showShuffleQueueConfirm = false
     @State private var showShuffleKeepPlayingFirstConfirm = false
     @State private var showReverseQueueConfirm = false
@@ -121,6 +122,11 @@ struct QueueView: View {
     /// Mark all as unplayed uses the same full-catalog policy as sibling bulk actions.
     private var markAllQueueUnplayedCandidatesCount: Int {
         store.markAllQueueUnplayedCandidateCount()
+    }
+
+    /// Count of non-archived episodes in the full persisted queue — not chip, podcast, or search filtered.
+    private var archiveAllQueueCandidatesCount: Int {
+        store.archiveAllQueueCandidateCount()
     }
 
     /// Queued episodes with playable media via shared `EpisodePlayRandom` (local file via
@@ -673,6 +679,20 @@ struct QueueView: View {
                             String(localized: "Marks played episodes in the full queue, including archived episodes")
                         )
 
+                        Button {
+                            // Always confirm before archiveAllQueue() — never bulk-archive from the menu alone.
+                            showArchiveAllQueueConfirm = true
+                        } label: {
+                            Label("Archive all", systemImage: "archivebox")
+                        }
+                        // Archive targets the full queue (not the played/podcast/search filtered subset).
+                        // Queue lock does not block this archive-state action.
+                        .disabled(archiveAllQueueCandidatesCount == 0)
+                        .accessibilityLabel(String(localized: "Archive all"))
+                        .accessibilityHint(
+                            String(localized: "Archives non-archived episodes in the full queue; ignores filters")
+                        )
+
                         Button(role: .destructive) {
                             // Always confirm before removePlayedFromQueue() — never remove from the menu alone.
                             showRemovePlayedConfirm = true
@@ -704,7 +724,7 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, mark all as played, mark all as unplayed, remove played, or clear the entire queue")
+                        String(localized: "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, mark all as played, mark all as unplayed, archive all, remove played, or clear the entire queue")
                     )
                 }
             }
@@ -743,6 +763,20 @@ struct QueueView: View {
             } message: {
                 Text(
                     "Marks \(markAllQueueUnplayedCandidatesCount) played episodes in the full queue as unplayed, including archived episodes. This does not delete downloads, remove episodes from the queue, stop playback, or unarchive episodes. It ignores the Queue played/podcast/search filters."
+                )
+            }
+            .confirmationDialog(
+                "Archive all?",
+                isPresented: $showArchiveAllQueueConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Archive all") {
+                    store.archiveAllQueue()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Archives \(archiveAllQueueCandidatesCount) non-archived episode(s) in the full queue (not only the current played/podcast/search filters). Archived does not mean played. Does not remove episodes from the queue, mark played, delete downloads, or stop playback."
                 )
             }
             .confirmationDialog(

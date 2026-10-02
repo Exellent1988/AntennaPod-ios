@@ -523,6 +523,35 @@ final class PodcastStore: ObservableObject {
             .map(\.id)
     }
 
+    /// Archive every non-archived episode in the **full** persisted queue.
+    ///
+    /// This deliberately ignores the Queue played/podcast/search filters. Archiving matches the
+    /// existing single-item `archive` path: it only writes archive state, so queue entries,
+    /// played state, playback, and downloads remain unchanged. Existing archive timestamps are
+    /// preserved and all new timestamps are persisted in one `archivedAtById` write. Callers must
+    /// confirm first (Queue toolbar `confirmationDialog`).
+    func archiveAllQueue() {
+        let ids = queue
+            .map(\.id)
+            .filter { !isArchived($0) }
+        guard !ids.isEmpty else { return }
+
+        let now = Int64(Date().timeIntervalSince1970 * 1000)
+        var map = archivedAtById
+        for id in ids {
+            if map[id] == nil {
+                map[id] = now
+            }
+        }
+        archivedAtById = map
+    }
+
+    /// Number of non-archived episodes in the full persisted queue.
+    /// This deliberately ignores the Queue played/podcast/search filters.
+    func archiveAllQueueCandidateCount() -> Int {
+        queue.filter { !isArchived($0.id) }.count
+    }
+
     /// Randomly reorder the **full** persisted queue (Fisher–Yates via `Array.shuffle()`).
     /// Persists via `queue` `didSet` (same path as `moveQueue`). No-op when fewer than 2 items.
     /// Does **not** change `PlaybackService.currentEpisode` identity, seek, or stop playback —
