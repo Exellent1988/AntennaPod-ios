@@ -17656,6 +17656,96 @@
         }
       }
     },
+    "Alternate enclosure relation copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for an alternate enclosure's displayed relation.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relation copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relation in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy relation": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying an alternate enclosure relation.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy relation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relation kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed alternate enclosure relation to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying an alternate enclosure relation.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed alternate enclosure relation to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigte Relation der alternativen Enclosure in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Share relation": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing an alternate enclosure relation.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share relation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relation teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed alternate enclosure relation as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing an alternate enclosure relation.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed alternate enclosure relation as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigte Relation der alternativen Enclosure als reinen Text"
+          }
+        }
+      }
+    },
     "Alternate enclosure language copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Copied alert message for an alternate enclosure's displayed language.",

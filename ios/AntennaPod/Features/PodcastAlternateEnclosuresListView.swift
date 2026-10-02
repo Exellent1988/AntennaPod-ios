@@ -254,6 +254,33 @@ struct PodcastAlternateEnclosuresListView: View {
                 }
             }
 
+            if let relation = enclosure.displayRel {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            relation,
+                            confirmation: String(localized: "Alternate enclosure relation copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy relation", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy relation"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed alternate enclosure relation to the pasteboard")
+                    )
+
+                    ShareLink(item: relation) {
+                        Label("Share relation", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share relation"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed alternate enclosure relation as plain text")
+                    )
+                }
+            }
+
             if let codecs {
                 HStack(spacing: 12) {
                     Button {
