@@ -18294,19 +18294,19 @@
         }
       }
     },
-    "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — Open / Copy / Share only opens, copies, or shares this URL.": {
+    "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — URL actions only open, copy, or share this URL; when present, the separate type actions copy or share the exact feed-provided caption.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — Open / Copy / Share only opens, copies, or shares this URL."
+            "value": "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — URL actions only open, copy, or share this URL; when present, the separate type actions copy or share the exact feed-provided caption."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remote-Kapitel-URL aus dem Feed. Die In-App-Kapitelliste nutzt weiterhin Podlove Simple Chapters, verzögert geladenes Podcast-Index-JSON beim Öffnen des Vollplayers oder lokale Mediendatei-Tags — Öffnen / Kopieren / Teilen öffnet, kopiert oder teilt nur diese URL."
+            "value": "Remote-Kapitel-URL aus dem Feed. Die In-App-Kapitelliste nutzt weiterhin Podlove Simple Chapters, verzögert geladenes Podcast-Index-JSON beim Öffnen des Vollplayers oder lokale Mediendatei-Tags — URL-Aktionen öffnen, kopieren oder teilen nur diese URL; wenn vorhanden, kopieren oder teilen die separaten Typ-Aktionen den exakt vom Feed gelieferten Caption-String."
           }
         }
       }
@@ -32726,7 +32726,92 @@
           }
         }
       }
+    },
+  "Copy chapters type": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy chapters type"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kapiteltyp kopieren"
+        }
+      }
     }
+  },
+  "Copies the feed chapters type to the pasteboard": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the feed chapters type to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert den Kapiteltyp aus dem Feed in die Zwischenablage"
+        }
+      }
+    }
+  },
+  "Share chapters type": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share chapters type"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kapiteltyp teilen"
+        }
+      }
+    }
+  },
+  "Shares the feed chapters type, not the in-app table of contents export": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the feed chapters type, not the in-app table of contents export"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt den Kapiteltyp aus dem Feed, nicht den TOC-Export der In-App-Kapitelliste"
+        }
+      }
+    }
+  },
+  "Chapters type copied to the pasteboard.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Chapters type copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kapiteltyp in die Zwischenablage kopiert."
+        }
+      }
+    }
+  }
   },
   "version": "1.0"
 }

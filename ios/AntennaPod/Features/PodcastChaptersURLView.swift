@@ -1,10 +1,11 @@
 import SwiftUI
 import UIKit
 
-/// Feed-provided `podcast:chapters` remote URL — **Open** http(s) / **Copy** / **Share**.
+/// Feed-provided `podcast:chapters` remote URL — **Open** http(s) / **Copy** / **Share** —
+/// plus optional type-caption **Copy** / **Share**.
 /// Shown when the episode has a chapters URL. Does **not** replace the in-app chapter list
 /// (PSC inline / lazy Podcast Index JSON via `PodcastIndexChapterParser` / media-file tags).
-/// Cap honesty: display-only URL actions; existing feeds need refresh to pick up `type`.
+/// Cap honesty: display-only URL/type actions; existing feeds need refresh to pick up `type`.
 struct PodcastChaptersURLView: View {
     @Environment(\.openURL) private var openURL
 
@@ -13,6 +14,7 @@ struct PodcastChaptersURLView: View {
     var showsSectionTitle: Bool = true
 
     @State private var showCopiedAlert = false
+    @State private var copiedMessage = String(localized: "Chapters URL copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     private var openableURL: URL? {
@@ -70,13 +72,37 @@ struct PodcastChaptersURLView: View {
                     }
 
                     Button {
-                        copyURL(raw)
+                        copyToPasteboard(raw, confirmation: String(localized: "Chapters URL copied to the pasteboard."))
                     } label: {
                         Image(systemName: "doc.on.doc")
                     }
                     .buttonStyle(.borderless)
                     .accessibilityLabel(String(localized: "Copy chapters URL"))
                     .accessibilityHint(String(localized: "Copies the feed chapters URL to the pasteboard"))
+
+                    if let typeCaption {
+                        Button {
+                            copyToPasteboard(
+                                typeCaption,
+                                confirmation: String(localized: "Chapters type copied to the pasteboard.")
+                            )
+                        } label: {
+                            Image(systemName: "doc.on.doc")
+                        }
+                        .buttonStyle(.borderless)
+                        .accessibilityLabel(String(localized: "Copy chapters type"))
+                        .accessibilityHint(
+                            String(localized: "Copies the feed chapters type to the pasteboard")
+                        )
+
+                        ShareLink(item: typeCaption) {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share chapters type"))
+                        .accessibilityHint(
+                            String(localized: "Shares the feed chapters type, not the in-app table of contents export")
+                        )
+                    }
 
                     if let url = openableURL {
                         ShareLink(
@@ -107,7 +133,7 @@ struct PodcastChaptersURLView: View {
 
                 Text(
                     String(
-                        localized: "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — Open / Copy / Share only opens, copies, or shares this URL."
+                        localized: "Remote chapters URL from the feed. The in-app chapter list still uses Podlove Simple Chapters, lazily fetched Podcast Index JSON when the Full Player opens, or local media-file tags — URL actions only open, copy, or share this URL; when present, the separate type actions copy or share the exact feed-provided caption."
                     )
                 )
                 .font(.footnote)
@@ -118,7 +144,7 @@ struct PodcastChaptersURLView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Chapters URL copied to the pasteboard."))
+                Text(copiedMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -132,8 +158,9 @@ struct PodcastChaptersURLView: View {
         return parts.joined(separator: ", ")
     }
 
-    private func copyURL(_ string: String) {
+    private func copyToPasteboard(_ string: String, confirmation: String) {
         UIPasteboard.general.string = string
+        copiedMessage = confirmation
         copyFeedbackTick &+= 1
         showCopiedAlert = true
     }
