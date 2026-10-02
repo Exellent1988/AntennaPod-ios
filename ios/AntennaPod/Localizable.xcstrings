@@ -19707,6 +19707,96 @@
         }
       }
     },
+    "Recommendation feed GUID copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert after copying the exact feed-provided podcast:podroll feedGuid.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommendation feed GUID copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlungs-Feed-GUID in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy recommendation feed GUID": {
+      "extractionState": "manual",
+      "comment": "Copy action for the exact feed-provided podcast:podroll feedGuid; hidden when the GUID is missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy recommendation feed GUID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlungs-Feed-GUID kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact feed-provided recommendation feed GUID as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying a podcast:podroll feedGuid; uses the displayed feed string exactly.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact feed-provided recommendation feed GUID as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt vom Feed gelieferte Feed-GUID der Empfehlung als Klartext"
+          }
+        }
+      }
+    },
+    "Share recommendation feed GUID": {
+      "extractionState": "manual",
+      "comment": "Share action for the exact feed-provided podcast:podroll feedGuid; hidden when the GUID is missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share recommendation feed GUID"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlungs-Feed-GUID teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact feed-provided recommendation feed GUID as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing a podcast:podroll feedGuid; uses the displayed feed string exactly.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact feed-provided recommendation feed GUID as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt vom Feed gelieferte Feed-GUID der Empfehlung als Klartext"
+          }
+        }
+      }
+    },
     "Recommendation copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Alert message after copying a podcast:podroll remoteItem.",

@@ -172,6 +172,31 @@ struct PodcastPodrollListView: View {
                     )
                 }
 
+                if let guid {
+                    Button {
+                        UIPasteboard.general.string = guid
+                        copiedAlertMessage = String(localized: "Recommendation feed GUID copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy recommendation feed GUID", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy recommendation feed GUID"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided recommendation feed GUID as plain text")
+                    )
+
+                    ShareLink(item: guid, subject: Text(label)) {
+                        Label("Share recommendation feed GUID", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share recommendation feed GUID"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided recommendation feed GUID as plain text")
+                    )
+                }
+
                 Button {
                     UIPasteboard.general.string = PodcastPodrollDisplay.copyText(entry)
                     copiedAlertMessage = String(localized: "Recommendation copied to the pasteboard.")
