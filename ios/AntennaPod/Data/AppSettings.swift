@@ -1123,10 +1123,10 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
 }
 
 
-/// Soft cap for how many episode rows each Home section preview shows (after search filter).
-/// Applies to Continue / Inbox / Queue / Favorites / History / Archived / Downloads episode
-/// previews only — **not** Discover charts or Recently updated feed cards (`feedsLimit`).
-/// Always capped — no Unlimited. Default **5** (same as the prior hard soft-cap).
+/// Shared soft-cap presets (3/5/8/10; default **5**; always capped — no Unlimited) for Home.
+/// Used by `AppSettings.homePreviewLimit` (episode-list section previews) and
+/// `AppSettings.homeFeedsPreviewLimit` (Recently updated feed cards). Discover charts /
+/// Top lists use their own chart limit — not this enum.
 enum HomePreviewLimit: Int, CaseIterable, Identifiable {
     case three = 3
     case five = 5
@@ -1339,6 +1339,7 @@ final class AppSettings: ObservableObject {
         static let homeSectionOrder = "settings.home.sectionOrder"
         static let homeHiddenSections = "settings.home.hiddenSections"
         static let homePreviewLimit = "settings.home.previewLimit"
+        static let homeFeedsPreviewLimit = "settings.home.feedsPreviewLimit"
         static let subscriptionsSort = "settings.subscriptionsSort"
         static let subscriptionsCategoryFilter = "settings.subscriptionsCategoryFilter"
         static let subscriptionsLanguageFilter = "settings.subscriptionsLanguageFilter"
@@ -1848,10 +1849,19 @@ final class AppSettings: ObservableObject {
 
     /// Soft cap for Home episode-list section previews (3/5/8/10 rows; default 5). Always capped.
     /// Continue / Inbox / Queue / Favorites / History / Archived / Downloads only — not Discover /
-    /// Recently updated feed cards.
+    /// Recently updated feed cards (`homeFeedsPreviewLimit`).
     @Published var homePreviewLimit: HomePreviewLimit {
         didSet {
             UserDefaults.standard.set(homePreviewLimit.rawValue, forKey: Keys.homePreviewLimit)
+        }
+    }
+
+    /// Soft cap for Home **Recently updated** feed cards (3/5/8/10; default 5). Always capped.
+    /// Reuses `HomePreviewLimit` presets. Does **not** change Discover charts / Top lists or
+    /// episode-list `homePreviewLimit`.
+    @Published var homeFeedsPreviewLimit: HomePreviewLimit {
+        didSet {
+            UserDefaults.standard.set(homeFeedsPreviewLimit.rawValue, forKey: Keys.homeFeedsPreviewLimit)
         }
     }
 
@@ -2439,6 +2449,9 @@ final class AppSettings: ObservableObject {
         let homePreviewRaw = UserDefaults.standard.object(forKey: Keys.homePreviewLimit) as? Int
             ?? HomePreviewLimit.five.rawValue
         homePreviewLimit = HomePreviewLimit(rawValue: homePreviewRaw) ?? .five
+        let homeFeedsPreviewRaw = UserDefaults.standard.object(forKey: Keys.homeFeedsPreviewLimit) as? Int
+            ?? HomePreviewLimit.five.rawValue
+        homeFeedsPreviewLimit = HomePreviewLimit(rawValue: homeFeedsPreviewRaw) ?? .five
         let sortRaw = UserDefaults.standard.string(forKey: Keys.subscriptionsSort)
             ?? SubscriptionsSort.recentlyUpdated.rawValue
         subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
@@ -2806,6 +2819,7 @@ final class AppSettings: ObservableObject {
             homeSectionOrder: homeSectionOrder.map(\.rawValue),
             homeHiddenSections: homeHiddenSections.map(\.rawValue).sorted(),
             homePreviewLimit: homePreviewLimit.rawValue,
+            homeFeedsPreviewLimit: homeFeedsPreviewLimit.rawValue,
             subscriptionsSort: subscriptionsSort.rawValue,
             subscriptionsCategoryFilter: subscriptionsCategoryFilter,
             subscriptionsLanguageFilter: subscriptionsLanguageFilter,
@@ -2963,6 +2977,10 @@ final class AppSettings: ObservableObject {
         homePreviewLimit =
             HomePreviewLimit(
                 rawValue: snap.homePreviewLimit ?? HomePreviewLimit.five.rawValue
+            ) ?? .five
+        homeFeedsPreviewLimit =
+            HomePreviewLimit(
+                rawValue: snap.homeFeedsPreviewLimit ?? HomePreviewLimit.five.rawValue
             ) ?? .five
         if let sortRaw = snap.subscriptionsSort {
             subscriptionsSort = SubscriptionsSort(rawValue: sortRaw) ?? .recentlyUpdated
@@ -3136,6 +3154,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var homeHiddenSections: [String]? = nil
     /// Absent in older backups → 5 (prior hard soft-cap). Raw `HomePreviewLimit` value.
     var homePreviewLimit: Int? = 5
+    /// Absent in older backups → 5 (prior hard `feedsLimit`). Raw `HomePreviewLimit` value.
+    var homeFeedsPreviewLimit: Int? = 5
     /// Absent in older backups → recentlyUpdated (default).
     var subscriptionsSort: String? = nil
     /// Absent in older backups → All (empty). Feed category text or empty for All.

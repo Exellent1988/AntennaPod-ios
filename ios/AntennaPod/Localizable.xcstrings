@@ -26416,6 +26416,42 @@
         }
       },
       "comment": "Help caption / VoiceOver hint under Home preview rows picker."
+    },
+    "Home feed cards": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home feed cards"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home-Feed-Karten"
+          }
+        }
+      },
+      "comment": "Settings → Home picker for Recently updated feed-card soft-cap."
+    },
+    "How many Recently updated feed cards Home shows. Soft-cap after search filter — preview is not the full Subscriptions list. Does not change Discover charts / Top lists or episode-list Home preview rows. Default 5. Always capped — no unlimited.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How many Recently updated feed cards Home shows. Soft-cap after search filter — preview is not the full Subscriptions list. Does not change Discover charts / Top lists or episode-list Home preview rows. Default 5. Always capped — no unlimited."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wie viele kürzlich aktualisierte Feed-Karten Home zeigt. Soft-Cap nach Suchfilter — Vorschau ist nicht die volle Abonnement-Liste. Ändert weder Discover-Charts / Top-Listen noch die Episoden-Home-Vorschaizeilen. Standard 5. Immer begrenzt — kein Unlimited."
+          }
+        }
+      },
+      "comment": "Help caption / VoiceOver hint under Home feed cards picker."
     }
   },
   "version": "1.0"
