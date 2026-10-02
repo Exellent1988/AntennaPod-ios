@@ -2733,6 +2733,26 @@ struct EpisodeRow: View {
                 .accessibilityLabel(String(localized: "Share episode title"))
                 .accessibilityHint(String(localized: "Shares the trimmed episode title as plain text; hidden when the title is empty; no title invented"))
             }
+            if let titleAndPodcast = EpisodeCopyLinks.trimmedTitleAndPodcast(
+                episode: episode,
+                feedTitle: feedTitle
+            ) {
+                Button {
+                    copiedAlertMessage = EpisodeCopyLinks.copyTitleAndPodcast(titleAndPodcast)
+                    copyURLFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Label("Copy title and podcast", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy title and podcast"))
+                .accessibilityHint(String(localized: "Copies the trimmed episode title and podcast display title as `title — podcast`; hidden unless both are present; no title invented"))
+
+                ShareLink(item: titleAndPodcast, subject: Text(titleAndPodcast)) {
+                    Label("Share title and podcast", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share title and podcast"))
+                .accessibilityHint(String(localized: "Shares the trimmed episode title and podcast display title as `title — podcast` plain text; hidden unless both are present; no title invented"))
+            }
             if let url = episodeShareURL {
                 ShareLink(
                     item: url,

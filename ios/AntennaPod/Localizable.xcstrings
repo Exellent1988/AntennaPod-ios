@@ -32565,6 +32565,96 @@
         }
       }
     },
+    "Copy title and podcast": {
+      "extractionState": "manual",
+      "comment": "Copy the combined trimmed episode title and podcast display title as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy title and podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel und Podcast kopieren"
+          }
+        }
+      }
+    },
+    "Share title and podcast": {
+      "extractionState": "manual",
+      "comment": "Share the combined trimmed episode title and podcast display title as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share title and podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel und Podcast teilen"
+          }
+        }
+      }
+    },
+    "Copies the trimmed episode title and podcast display title as `title — podcast`; hidden unless both are present; no title invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the combined title and podcast line.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the trimmed episode title and podcast display title as `title — podcast`; hidden unless both are present; no title invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den gekürzten Episodentitel und Podcast-Anzeigetitel als `Titel — Podcast`; ausgeblendet, wenn einer fehlt; kein Titel erfunden"
+          }
+        }
+      }
+    },
+    "Shares the trimmed episode title and podcast display title as `title — podcast` plain text; hidden unless both are present; no title invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the combined title and podcast line.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the trimmed episode title and podcast display title as `title — podcast` plain text; hidden unless both are present; no title invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den gekürzten Episodentitel und Podcast-Anzeigetitel als `Titel — Podcast` im Klartext; ausgeblendet, wenn einer fehlt; kein Titel erfunden"
+          }
+        }
+      }
+    },
+    "Title and podcast copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the combined title and podcast line.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title and podcast copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel und Podcast in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
     "Podcast title": {
       "extractionState": "manual",
       "comment": "Accessibility label for a displayed podcast title.",

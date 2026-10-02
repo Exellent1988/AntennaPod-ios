@@ -83,6 +83,20 @@ enum EpisodeCopyLinks {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// Combined plain-text line used by title/podcast copy and share actions.
+    /// Hidden unless both feed-provided values are non-empty; never invents a podcast name.
+    static func trimmedTitleAndPodcast(episode: PodcastEpisode, feedTitle: String?) -> String? {
+        guard let title = trimmedTitle(for: episode),
+              let podcast = trimmedFeedTitle(feedTitle) else { return nil }
+        return "\(title) — \(podcast)"
+    }
+
+    /// Copies the combined `title — podcast` line; returns the localized Copied alert body.
+    static func copyTitleAndPodcast(_ text: String) -> String {
+        UIPasteboard.general.string = text
+        return String(localized: "Title and podcast copied to the pasteboard.")
+    }
+
     /// Copies the trimmed podcast display title; returns the localized Copied alert body.
     static func copyPodcastTitle(_ title: String) -> String {
         UIPasteboard.general.string = title

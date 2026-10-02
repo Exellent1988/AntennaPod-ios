@@ -537,6 +537,19 @@ struct FullPlayerView: View {
                                 copiedMessage: String(localized: "Episode title copied to the pasteboard.")
                             )
                         }
+                        if let titleAndPodcast = EpisodeCopyLinks.trimmedTitleAndPodcast(
+                            episode: episode,
+                            feedTitle: feedDisplayTitle
+                        ) {
+                            episodeMetadataActions(
+                                text: titleAndPodcast,
+                                copyLabel: String(localized: "Copy title and podcast"),
+                                shareLabel: String(localized: "Share title and podcast"),
+                                copyHint: String(localized: "Copies the trimmed episode title and podcast display title as `title — podcast`; hidden unless both are present; no title invented"),
+                                shareHint: String(localized: "Shares the trimmed episode title and podcast display title as `title — podcast` plain text; hidden unless both are present; no title invented"),
+                                copiedMessage: String(localized: "Title and podcast copied to the pasteboard.")
+                            )
+                        }
                         if let chapterTitle = currentChapterTitle {
                             Text(chapterTitle)
                                 .font(.subheadline.weight(.medium))
