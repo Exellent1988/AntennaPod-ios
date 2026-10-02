@@ -5,6 +5,7 @@ struct MiniPlayerView: View {
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var downloads: DownloadService
+    @Environment(\.openURL) private var openURL
     @State private var showFullPlayer = false
     @State private var showFeedUnavailable = false
     @State private var showCustomSleepTimer = false
@@ -221,6 +222,12 @@ struct MiniPlayerView: View {
                             episode: store.episode(id: episode.id) ?? episode,
                             downloads: downloads,
                             onRequestDeleteDownload: { episodePendingDeleteDownload = $0 }
+                        )
+                        // Open episode website — same websiteURL gate as Full (http(s) link only).
+                        // Prefer store episode (post-refresh) over a possibly stale player copy.
+                        EpisodeOpenWebsite.button(
+                            episode: store.episode(id: episode.id) ?? episode,
+                            openURL: openURL
                         )
                         // Copy episode link / Copy media URL — same websiteURL / mediaURL gates as Full.
                         // Prefer store episode (post-refresh) over a possibly stale player copy.

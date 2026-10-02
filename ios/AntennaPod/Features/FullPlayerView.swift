@@ -1060,15 +1060,10 @@ struct FullPlayerView: View {
                 onRequestDeleteDownload: { episodePendingDeleteDownload = $0 }
             )
 
-            if let url = episode.websiteURL {
-                Button {
-                    openURL(url)
-                } label: {
-                    Label("Open episode website", systemImage: "safari")
-                }
-                .accessibilityLabel(String(localized: "Open episode website"))
-                .accessibilityHint(String(localized: "Opens the episode webpage in the system browser"))
+            // Shared with mini ⋯ via EpisodeOpenWebsite (http(s) link only).
+            EpisodeOpenWebsite.button(episode: episode, openURL: openURL)
 
+            if let url = episode.websiteURL {
                 Button {
                     copyEpisodeLink(url)
                 } label: {
