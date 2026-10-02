@@ -2,8 +2,8 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided `podcast:alternateEnclosure` / `podcast:source` list.
-/// http(s) sources: **Play** (same episode via `PlaybackService.preferredMediaURL`) + **Open URL**.
-/// ipfs / magnet / other schemes: **Copy** URI only — no invented playback.
+/// http(s) sources: **Play** (same episode via `PlaybackService.preferredMediaURL`) + **Open URL** + **Copy / Share**.
+/// ipfs / magnet / other schemes: **Copy / Share** URI only — no invented playback.
 /// Cap + honesty footnote (progress on episode id; downloads primary-URL keyed; no Lightning).
 struct PodcastAlternateEnclosuresListView: View {
     @Environment(\.openURL) private var openURL
@@ -145,35 +145,10 @@ struct PodcastAlternateEnclosuresListView: View {
 
     @ViewBuilder
     private func sourceRow(_ source: PodcastAlternateSource) -> some View {
-        if let url = source.playableMediaURL {
-            HStack(spacing: 12) {
-                Button {
-                    // Same episode id; chosen http(s) URL for AVPlayer. RootTabView surfaces lastError
-                    // (e.g. Wi‑Fi-only stream block). Resume / smart-mark stay on episode id.
-                    _ = playback.play(episode: episode, preferredMediaURL: url)
-                } label: {
-                    Label("Play", systemImage: "play.fill")
-                        .font(.subheadline)
-                }
-                .accessibilityLabel(String(localized: "Play"))
-                .accessibilityHint(
-                    String(
-                        localized: "Plays this episode using the alternate http(s) media URL from the feed"
-                    )
-                )
+        let copyText = source.displayURI
+        let playableURL = source.playableMediaURL
 
-                Button {
-                    openURL(url)
-                } label: {
-                    Label("Open URL", systemImage: "safari")
-                        .font(.subheadline)
-                }
-                .accessibilityLabel(String(localized: "Open URL"))
-                .accessibilityHint(
-                    String(localized: "Opens this alternate media URL from the feed in the system browser")
-                )
-            }
-        } else if let uri = source.displayURI {
+        if let uri = copyText {
             Text(uri)
                 .font(.caption.monospaced())
                 .foregroundStyle(.secondary)
@@ -187,21 +162,73 @@ struct PodcastAlternateEnclosuresListView: View {
                     .foregroundStyle(.tertiary)
                     .accessibilityLabel(String(localized: "Content type \(ct)"))
             }
+        }
 
-            Button {
-                UIPasteboard.general.string = uri
-                copyFeedbackTick += 1
-                showCopiedAlert = true
-            } label: {
-                Label("Copy", systemImage: "doc.on.doc")
-                    .font(.subheadline)
-            }
-            .accessibilityLabel(String(localized: "Copy"))
-            .accessibilityHint(
-                String(
-                    localized: "Copies the alternate media URI to the pasteboard. Only http(s) sources can play in the app."
+        HStack(spacing: 12) {
+            if let playableURL {
+                Button {
+                    // Same episode id; chosen http(s) URL for AVPlayer. RootTabView surfaces lastError
+                    // (e.g. Wi‑Fi-only stream block). Resume / smart-mark stay on episode id.
+                    _ = playback.play(episode: episode, preferredMediaURL: playableURL)
+                } label: {
+                    Label("Play", systemImage: "play.fill")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Play"))
+                .accessibilityHint(
+                    String(
+                        localized: "Plays this episode using the alternate http(s) media URL from the feed"
+                    )
                 )
-            )
+
+                Button {
+                    openURL(playableURL)
+                } label: {
+                    Label("Open URL", systemImage: "safari")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Open URL"))
+                .accessibilityHint(
+                    String(localized: "Opens this alternate media URL from the feed in the system browser")
+                )
+            }
+
+            if let copyText, !copyText.isEmpty {
+                Button {
+                    UIPasteboard.general.string = copyText
+                    copyFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Label("Copy", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy"))
+                .accessibilityHint(
+                    String(
+                        localized: "Copies the alternate media URI to the pasteboard. Only http(s) sources can play in the app."
+                    )
+                )
+
+                Group {
+                    if let playableURL {
+                        ShareLink(item: playableURL) {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .font(.subheadline)
+                        }
+                    } else {
+                        ShareLink(item: copyText) {
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .font(.subheadline)
+                        }
+                    }
+                }
+                .accessibilityLabel(String(localized: "Share"))
+                .accessibilityHint(
+                    String(
+                        localized: "Shares the alternate enclosure URL when it is a parseable http(s) URL; otherwise shares the same raw feed URI as Copy"
+                    )
+                )
+            }
         }
     }
 }

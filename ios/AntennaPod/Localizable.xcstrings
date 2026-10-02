@@ -16932,6 +16932,24 @@
         }
       }
     },
+    "Shares the alternate enclosure URL when it is a parseable http(s) URL; otherwise shares the same raw feed URI as Copy": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share on a podcast:alternateEnclosure source row; prefers the parseable http(s) URL and otherwise shares the same raw feed URI as Copy.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the alternate enclosure URL when it is a parseable http(s) URL; otherwise shares the same raw feed URI as Copy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die URL der alternativen Medienquelle, wenn sie als http(s)-URL lesbar ist; andernfalls denselben rohen Feed-URI wie beim Kopieren"
+          }
+        }
+      }
+    },
     "Shares the text URL when it is a parseable http(s) URL; otherwise shares the same feed text as Copy": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Share on a podcast:txt row; prefers the parseable http(s) URL and otherwise shares the same text as Copy.",

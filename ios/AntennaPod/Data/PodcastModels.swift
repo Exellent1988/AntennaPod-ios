@@ -689,7 +689,7 @@ struct PodcastAlternateSource: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
-    /// http(s) openable URL from feed `uri` only. Nil for ipfs / magnet / other schemes — Copy instead.
+    /// http(s) openable URL from feed `uri` only. Nil for ipfs / magnet / other schemes — Copy / Share instead.
     /// Never invent URLs — openURL only when the URI itself is http(s).
     var browserURL: URL? {
         guard let trimmed = displayURI, let url = URL(string: trimmed) else { return nil }
@@ -699,14 +699,14 @@ struct PodcastAlternateSource: Identifiable, Hashable, Codable {
     }
 
     /// http(s) URI suitable for in-app `PlaybackService` / AVPlayer. Same as `browserURL`.
-    /// Nil for ipfs / magnet / other schemes — those stay Copy / Open outside the player.
+    /// Nil for ipfs / magnet / other schemes — those stay Copy / Share outside the player.
     var playableMediaURL: URL? { browserURL }
 }
 
 /// Podcast Index `podcast:alternateEnclosure` — alternate / companion media for an item.
 /// Required `type` + ≥1 `podcast:source`. Optional length/bitrate/height/lang/title/rel/codecs/default.
 /// http(s) sources can **Play** the same episode via `PlaybackService` (`preferredMediaURL`);
-/// ipfs / magnet stay Copy / Open. Feed-provided only — never invent enclosures.
+/// ipfs / magnet stay Copy / Share. Feed-provided only — never invent enclosures.
 struct PodcastAlternateEnclosure: Identifiable, Hashable, Codable {
     /// Stable list identity from feed fields + sources.
     var id: String {
@@ -807,7 +807,7 @@ struct PodcastAlternateEnclosure: Identifiable, Hashable, Codable {
 }
 
 /// Display helpers for item `podcast:alternateEnclosure` lists. Feed-provided only.
-/// http(s) → Play (same episode) + Open URL; other schemes → Copy.
+/// http(s) → Play (same episode) + Open URL + Copy / Share; other schemes → Copy / Share.
 enum PodcastAlternateEnclosureDisplay {
     /// Soft UI cap — show first N after feed order; honesty footnote when more exist.
     static let displayCap = 20
@@ -1883,7 +1883,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         PodcastValueDisplay.valid(values)
     }
 
-    /// Valid item-level `podcast:alternateEnclosure` entries (hide when empty — never invent; http(s) Play + Open / else Copy).
+    /// Valid item-level `podcast:alternateEnclosure` entries (hide when empty — never invent; http(s) Play + Open + Copy / Share).
     var displayAlternateEnclosures: [PodcastAlternateEnclosure] {
         PodcastAlternateEnclosureDisplay.valid(alternateEnclosures)
     }
