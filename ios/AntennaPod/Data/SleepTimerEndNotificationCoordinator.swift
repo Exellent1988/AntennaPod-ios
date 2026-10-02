@@ -13,6 +13,13 @@ enum SleepTimerEndNotificationCoordinator {
     /// Stable id so a later fire replaces the prior banner (no spam stack).
     static let notificationId = "sleep-timer.end"
 
+    /// Which sleep-timer mode fired — drives notification body copy (EN/DE catalog).
+    enum Kind {
+        case clock
+        case endOfEpisode
+        case endOfChapter
+    }
+
     /// Register category alongside other local-notification categories (idempotent with caller).
     static func registerCategory() {
         let category = UNNotificationCategory(
@@ -30,8 +37,7 @@ enum SleepTimerEndNotificationCoordinator {
     }
 
     /// When Settings toggle is on: foreground haptic; local banner if system permission allows.
-    /// - Parameter endOfEpisode: `true` when the timer was end-of-episode mode (stopped at natural end).
-    static func notifyIfNeeded(endOfEpisode: Bool, settings: AppSettings?) async {
+    static func notifyIfNeeded(kind: Kind, settings: AppSettings?) async {
         guard let settings, settings.notifyOnSleepTimerEnd else { return }
 
         if UIApplication.shared.applicationState == .active {
@@ -48,9 +54,14 @@ enum SleepTimerEndNotificationCoordinator {
 
         let content = UNMutableNotificationContent()
         content.title = String(localized: "Sleep timer ended")
-        content.body = endOfEpisode
-            ? String(localized: "End of episode — playback stopped.")
-            : String(localized: "Playback paused.")
+        switch kind {
+        case .endOfEpisode:
+            content.body = String(localized: "End of episode — playback stopped.")
+        case .endOfChapter:
+            content.body = String(localized: "End of chapter — playback paused.")
+        case .clock:
+            content.body = String(localized: "Playback paused.")
+        }
         content.sound = .default
         content.categoryIdentifier = categoryId
 

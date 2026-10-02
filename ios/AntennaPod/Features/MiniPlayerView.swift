@@ -411,6 +411,15 @@ struct MiniPlayerView: View {
             Button("End of episode") {
                 playback.setSleepTimerEndOfEpisode()
             }
+            Button(String(localized: "End of chapter")) {
+                playback.setSleepTimerEndOfChapter()
+            }
+            .disabled(!canSleepTimerEndOfChapter)
+            .accessibilityHint(
+                canSleepTimerEndOfChapter
+                    ? String(localized: "Pauses when the current chapter ends")
+                    : String(localized: "No chapters available")
+            )
             Button(String(localized: "Custom…")) {
                 showCustomSleepTimer = true
             }
@@ -426,6 +435,12 @@ struct MiniPlayerView: View {
         }
         .accessibilityLabel(playback.sleepTimerAccessibilityLabel)
         .accessibilityHint(String(localized: "Sets or turns off the sleep timer"))
+    }
+
+    /// Chapters already on the store/player episode — same source as mini chapter title.
+    /// Disabled until ≥1 chapter is known (Full Player may lazy-load and persist later).
+    private var canSleepTimerEndOfChapter: Bool {
+        !chapters.isEmpty
     }
 
     private var sourceIndicator: some View {

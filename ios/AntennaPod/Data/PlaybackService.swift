@@ -4,10 +4,13 @@ import Foundation
 import MediaPlayer
 import UIKit
 
-/// Clock / end-of-episode sleep timer modes for beta (AntennaPod P0 basis).
+/// Clock / end-of-episode / end-of-chapter sleep timer modes for beta (AntennaPod P0 basis).
 enum SleepTimerMode: Equatable {
     case clock(minutes: Int)
     case endOfEpisode
+    /// Pause when playback reaches the end of the chapter active at activation
+    /// (next chapter start, or episode end for the last chapter when duration is known).
+    case endOfChapter
 }
 
 @MainActor
@@ -108,6 +111,9 @@ final class PlaybackService: ObservableObject {
     private var sleepTimerPausedRemaining: Double?
     private var sleepTimerDidFade = false
     private var sleepVolume: Float = 1.0
+    /// Wall-clock chapter end (seconds) snapped when end-of-chapter mode can resolve a boundary.
+    /// `nil` until chapters (and last-chapter duration if needed) are known — then locked.
+    private var sleepTimerChapterEndSeconds: Double?
 
     private var remoteCommandsConfigured = false
     private var audioSessionObserversConfigured = false
@@ -385,6 +391,40 @@ final class PlaybackService: ObservableObject {
         player?.volume = 1.0
     }
 
+    /// Pause when the current chapter ends (no clock countdown UI).
+    /// Uses chapters already on `currentEpisode` (PSC / persisted Podcast Index / media).
+    /// If chapters are not loaded yet, mode stays active and resolves the boundary once they appear
+    /// (Full Player lazy-load updates `currentEpisode.chapters`). No invented chapter ends.
+    func setSleepTimerEndOfChapter() {
+        clearSleepTimerState(restoreVolume: true)
+        sleepTimerMode = .endOfChapter
+        isSleepTimerActive = true
+        sleepTimerRemainingSeconds = nil
+        sleepTimerEndDate = nil
+        sleepTimerPausedRemaining = nil
+        sleepTimerDidFade = false
+        sleepVolume = 1.0
+        player?.volume = 1.0
+        refreshSleepTimerChapterEndTarget()
+    }
+
+    /// Whether end-of-chapter is offered: current episode has ≥1 chapter with a start boundary.
+    /// Prefers `currentEpisode.chapters`, else store copy (PSC / persisted Index / media).
+    /// Full Player may still be lazy-loading — menus use loaded chapters only.
+    var canSetSleepTimerEndOfChapter: Bool {
+        !resolvedSleepTimerChapters.isEmpty
+    }
+
+    /// Chapters for sleep-timer end-of-chapter: player episode, else subscribed/queued store copy.
+    private var resolvedSleepTimerChapters: [PodcastChapter] {
+        guard let episode = currentEpisode else { return [] }
+        if !episode.chapters.isEmpty { return episode.chapters }
+        if let stored = store?.episode(id: episode.id), !stored.chapters.isEmpty {
+            return stored.chapters
+        }
+        return []
+    }
+
     func extendSleepTimer(byMinutes minutes: Int) {
         guard minutes > 0, isSleepTimerActive else { return }
         switch sleepTimerMode {
@@ -402,7 +442,7 @@ final class PlaybackService: ObservableObject {
                 sleepTimerPausedRemaining = next
             }
             sleepTimerRemainingSeconds = next
-        case .endOfEpisode, .none:
+        case .endOfEpisode, .endOfChapter, .none:
             setSleepTimer(minutes: minutes)
         }
     }
@@ -416,6 +456,8 @@ final class PlaybackService: ObservableObject {
         switch sleepTimerMode {
         case .endOfEpisode:
             return String(localized: "End of ep.")
+        case .endOfChapter:
+            return String(localized: "End of ch.")
         case .clock:
             if let remaining = sleepTimerRemainingSeconds {
                 return formatCountdown(remaining)
@@ -435,6 +477,8 @@ final class PlaybackService: ObservableObject {
         switch sleepTimerMode {
         case .endOfEpisode:
             return String(localized: "Sleep timer, end of episode")
+        case .endOfChapter:
+            return String(localized: "Sleep timer, end of chapter")
         case .clock:
             guard let remaining = sleepTimerRemainingSeconds else {
                 return String(localized: "Sleep timer")
@@ -535,6 +579,7 @@ final class PlaybackService: ObservableObject {
                 }
                 self.persistProgress(force: false)
                 self.tickSleepTimer()
+                self.checkEndOfChapterSleepTimer()
                 self.checkSkipOutro()
                 self.updateNowPlayingInfo(force: false)
             }
@@ -566,22 +611,27 @@ final class PlaybackService: ObservableObject {
     }
 
     private func handlePlaybackEnded() {
-        // End-of-episode sleep timer: mark finished, stop — do not auto-advance queue.
-        if case .endOfEpisode = sleepTimerMode, isSleepTimerActive {
-            let finishedId = currentEpisode?.id
-            finishCurrentEpisode(ended: true)
-            expireSleepTimer()
-            tearDownPlayer(clearSleepTimer: false)
-            currentEpisode = nil
-            isPlayingFromLocalFile = false
-            positionSeconds = 0
-            durationSeconds = 0
-            clearNowPlayingInfo()
-            if let finishedId {
-                store?.flushAutoDeleteAfterPlaying(for: finishedId)
+        // End-of-episode / end-of-chapter (last chapter) sleep timer: mark finished, stop — do not auto-advance.
+        if isSleepTimerActive, let mode = sleepTimerMode {
+            switch mode {
+            case .endOfEpisode, .endOfChapter:
+                let finishedId = currentEpisode?.id
+                finishCurrentEpisode(ended: true)
+                expireSleepTimer()
+                tearDownPlayer(clearSleepTimer: false)
+                currentEpisode = nil
+                isPlayingFromLocalFile = false
+                positionSeconds = 0
+                durationSeconds = 0
+                clearNowPlayingInfo()
+                if let finishedId {
+                    store?.flushAutoDeleteAfterPlaying(for: finishedId)
+                }
+                applyIdleTimerPolicy()
+                return
+            case .clock:
+                break
             }
-            applyIdleTimerPolicy()
-            return
         }
 
         let finishedId = currentEpisode?.id
@@ -703,12 +753,50 @@ final class PlaybackService: ObservableObject {
         sleepTimerDidFade = true
     }
 
+    /// End-of-chapter: resolve boundary when chapters/duration become known; expire at chapter end.
+    /// No clock fade — same pause + notify path as end-of-episode mid-play (via `expireSleepTimer`).
+    private func checkEndOfChapterSleepTimer() {
+        guard isSleepTimerActive, case .endOfChapter = sleepTimerMode else { return }
+        guard isPlaying else { return }
+        refreshSleepTimerChapterEndTarget()
+        guard let end = sleepTimerChapterEndSeconds, end.isFinite else { return }
+        // Small epsilon so 0.5s observer cadence does not need an exact hit.
+        if positionSeconds + 0.05 >= end {
+            expireSleepTimer()
+        }
+    }
+
+    /// Snap chapter-end target once: chapter at activation position (or first chapter if before first).
+    /// Retries while `nil` when chapters load later or last-chapter duration becomes known.
+    private func refreshSleepTimerChapterEndTarget() {
+        guard isSleepTimerActive, case .endOfChapter = sleepTimerMode else { return }
+        guard sleepTimerChapterEndSeconds == nil else { return }
+        let chapters = resolvedSleepTimerChapters
+        guard !chapters.isEmpty else { return }
+        // Keep player episode in sync when store already has chapters (Mini enable path).
+        if var current = currentEpisode, current.chapters.isEmpty {
+            current.chapters = chapters
+            currentEpisode = current
+        }
+        let duration: Double? =
+            (durationSeconds.isFinite && durationSeconds > 0) ? durationSeconds : nil
+        let index = ChapterIndexing.currentIndex(in: chapters, at: positionSeconds) ?? 0
+        sleepTimerChapterEndSeconds = ChapterIndexing.endSeconds(
+            in: chapters,
+            atIndex: index,
+            episodeDurationSeconds: duration
+        )
+    }
+
     private func expireSleepTimer() {
-        let wasEndOfEpisode: Bool
-        if case .endOfEpisode = sleepTimerMode {
-            wasEndOfEpisode = true
-        } else {
-            wasEndOfEpisode = false
+        let notificationKind: SleepTimerEndNotificationCoordinator.Kind
+        switch sleepTimerMode {
+        case .endOfEpisode:
+            notificationKind = .endOfEpisode
+        case .endOfChapter:
+            notificationKind = .endOfChapter
+        case .clock, .none:
+            notificationKind = .clock
         }
         if let player, isPlaying {
             player.pause()
@@ -716,6 +804,7 @@ final class PlaybackService: ObservableObject {
         }
         recordPausedAt()
         // AntennaPod rewinds slightly after fade so the listener does not lose content.
+        // Clock fade only — EOE / EOC do not fade.
         if sleepTimerDidFade {
             let rewind = Self.fadeThresholdSeconds / 2
             let target = max(0, positionSeconds - rewind)
@@ -730,7 +819,7 @@ final class PlaybackService: ObservableObject {
         // Local banner (+ foreground haptic) once per fire; Settings toggle default on.
         Task {
             await SleepTimerEndNotificationCoordinator.notifyIfNeeded(
-                endOfEpisode: wasEndOfEpisode,
+                kind: notificationKind,
                 settings: settings
             )
         }
@@ -764,6 +853,7 @@ final class PlaybackService: ObservableObject {
         sleepTimerEndDate = nil
         sleepTimerPausedRemaining = nil
         sleepTimerDidFade = false
+        sleepTimerChapterEndSeconds = nil
         if restoreVolume {
             sleepVolume = 1.0
             player?.volume = 1.0

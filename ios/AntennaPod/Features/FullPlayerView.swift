@@ -917,6 +917,15 @@ struct FullPlayerView: View {
             Button("End of episode") {
                 playback.setSleepTimerEndOfEpisode()
             }
+            Button(String(localized: "End of chapter")) {
+                playback.setSleepTimerEndOfChapter()
+            }
+            .disabled(!canSleepTimerEndOfChapter)
+            .accessibilityHint(
+                canSleepTimerEndOfChapter
+                    ? String(localized: "Pauses when the current chapter ends")
+                    : String(localized: "No chapters available")
+            )
             Button(String(localized: "Custom…")) {
                 showCustomSleepTimer = true
             }
@@ -934,6 +943,11 @@ struct FullPlayerView: View {
         }
         .accessibilityLabel(playback.sleepTimerAccessibilityLabel)
         .accessibilityHint(String(localized: "Sets or turns off the sleep timer"))
+    }
+
+    /// Prefer Full Player merged chapters (feed / remote / media) so the item enables after lazy load.
+    private var canSleepTimerEndOfChapter: Bool {
+        !chapters.isEmpty
     }
 
     private func copyEpisodeLink(_ url: URL) {
