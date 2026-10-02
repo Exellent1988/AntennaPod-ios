@@ -112,8 +112,11 @@ struct ArchivedView: View {
     /// (feed when known, else saved playback — same path as Queue / Inbox / Favorites / History;
     /// never invent; unknown last). Stable tiebreaker episode `id`.
     /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
+    /// Search matches title / descriptionText / episode private note / any bookmark note via
+    /// `PodcastStore.episodeMatchesLibraryQuery` (same fields as library / Feed detail / Queue / Favorites / History), plus
+    /// feed title (`ArchivedEpisode.feedTitle` = display title). View-only —
     /// Does not mutate `PodcastStore.archivedEpisodes` (Restore all counts stay on newest-first catalog).
-    /// View-only — Restore all / Add all to queue / Play random stay full-catalog scoped.
+    /// Restore all / Add all to queue / Play random stay full-catalog scoped.
     private var filteredItems: [ArchivedEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let afterPodcast: [ArchivedEpisode]
@@ -128,7 +131,7 @@ struct ArchivedView: View {
             filtered = afterPodcast
         } else {
             filtered = afterPodcast.filter { item in
-                if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+                if store.episodeMatchesLibraryQuery(item.episode, query: q) { return true }
                 return item.feedTitle.localizedCaseInsensitiveContains(q)
             }
         }
