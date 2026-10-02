@@ -17206,6 +17206,96 @@
         }
       }
     },
+    "Title copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for an alternate enclosure title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Title copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy title": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying an alternate enclosure title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed alternate enclosure title to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying an alternate enclosure title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed alternate enclosure title to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den exakt angezeigten Titel der alternativen Enclosure in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Share title": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing an alternate enclosure title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titel teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed alternate enclosure title as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing an alternate enclosure title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed alternate enclosure title as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den exakt angezeigten Titel der alternativen Enclosure als reinen Text"
+          }
+        }
+      }
+    },
     "Length copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Copied alert message for an alternate enclosure length.",

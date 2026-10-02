@@ -72,6 +72,7 @@ struct PodcastAlternateEnclosuresListView: View {
     @ViewBuilder
     private func enclosureRow(_ enclosure: PodcastAlternateEnclosure) -> some View {
         let headline = enclosure.displayTitle ?? enclosure.displayType ?? enclosure.type
+        let title = enclosure.displayTitle
         let bitrate = PodcastAlternateEnclosureDisplay.bitrateLabel(enclosure.bitrate)
         let lengthLabel = PodcastAlternateEnclosureDisplay.lengthLabel(enclosure.length)
         let captionParts: [String] = {
@@ -140,6 +141,33 @@ struct PodcastAlternateEnclosuresListView: View {
 
             ForEach(Array(enclosure.validSources.enumerated()), id: \.offset) { _, source in
                 sourceRow(source)
+            }
+
+            if let title {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            title,
+                            confirmation: String(localized: "Title copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy title", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy title"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed alternate enclosure title to the pasteboard")
+                    )
+
+                    ShareLink(item: title) {
+                        Label("Share title", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share title"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed alternate enclosure title as plain text")
+                    )
+                }
             }
 
             if let bitrate {
