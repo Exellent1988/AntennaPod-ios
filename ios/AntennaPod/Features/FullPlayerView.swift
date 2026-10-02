@@ -521,6 +521,16 @@ struct FullPlayerView: View {
                                 copiedMessage: String(localized: "Episode file size copied to the pasteboard.")
                             )
                         }
+                        if let title = EpisodeCopyLinks.trimmedTitle(for: episode) {
+                            episodeMetadataActions(
+                                text: title,
+                                copyLabel: String(localized: "Copy episode title"),
+                                shareLabel: String(localized: "Share episode title"),
+                                copyHint: String(localized: "Copies the trimmed episode title to the pasteboard; hidden when the title is empty; no title invented"),
+                                shareHint: String(localized: "Shares the trimmed episode title as plain text; hidden when the title is empty; no title invented"),
+                                copiedMessage: String(localized: "Episode title copied to the pasteboard.")
+                            )
+                        }
                         if let chapterTitle = currentChapterTitle {
                             Text(chapterTitle)
                                 .font(.subheadline.weight(.medium))

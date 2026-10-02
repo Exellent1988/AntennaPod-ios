@@ -2665,6 +2665,23 @@ struct EpisodeRow: View {
                 .accessibilityLabel(String(localized: "Share episode file size"))
                 .accessibilityHint(String(localized: "Shares the same file-size caption shown in this episode row as plain text; on-disk or feed enclosure metadata only; no size invented"))
             }
+            if let title = EpisodeCopyLinks.trimmedTitle(for: episode) {
+                Button {
+                    copiedAlertMessage = EpisodeCopyLinks.copyEpisodeTitle(title)
+                    copyURLFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Label("Copy episode title", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy episode title"))
+                .accessibilityHint(String(localized: "Copies the trimmed episode title to the pasteboard; hidden when the title is empty; no title invented"))
+
+                ShareLink(item: title, subject: Text(title)) {
+                    Label("Share episode title", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share episode title"))
+                .accessibilityHint(String(localized: "Shares the trimmed episode title as plain text; hidden when the title is empty; no title invented"))
+            }
             if let url = episodeShareURL {
                 ShareLink(
                     item: url,

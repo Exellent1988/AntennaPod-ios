@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Label-style **Copy episode link** + **Share episode link** + **Copy media URL** for an episode.
+/// Label-style episode copy/share actions for feed-provided text and URLs.
 ///
 /// Reuses `PodcastEpisode.websiteURL` / `mediaURLString` (feed-provided http(s) only;
 /// never invents; `file://` / `local-folder` omitted). Emits nothing when neither URL is usable.
@@ -70,6 +70,18 @@ enum EpisodeCopyLinks {
         guard let bytes = knownByteSize(for: episode, downloads: downloads) else { return nil }
         return DownloadStorageUsage.formatBytes(bytes)
     }
+    /// Feed-provided episode title trimmed for plain-text copy/share; hide when empty.
+    static func trimmedTitle(for episode: PodcastEpisode) -> String? {
+        let title = episode.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return title.isEmpty ? nil : title
+    }
+
+    /// Copies the trimmed episode title; returns the localized Copied alert body.
+    static func copyEpisodeTitle(_ title: String) -> String {
+        UIPasteboard.general.string = title
+        return String(localized: "Episode title copied to the pasteboard.")
+    }
+
     /// Copies the episode webpage URL string; returns the localized Copied alert body.
     static func copyEpisodeLink(_ url: URL) -> String {
         UIPasteboard.general.string = url.absoluteString

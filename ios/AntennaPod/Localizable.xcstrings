@@ -32432,6 +32432,101 @@
           }
         }
       }
+    },
+
+    "Copy episode title": {
+      "extractionState": "manual",
+      "comment": "Copy the trimmed feed-provided episode title as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy episode title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodentitel kopieren"
+          }
+        }
+      }
+    },
+
+    "Share episode title": {
+      "extractionState": "manual",
+      "comment": "Share the trimmed feed-provided episode title as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share episode title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodentitel teilen"
+          }
+        }
+      }
+    },
+
+    "Copies the trimmed episode title to the pasteboard; hidden when the title is empty; no title invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the episode title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the trimmed episode title to the pasteboard; hidden when the title is empty; no title invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den gekürzten Episodentitel in die Zwischenablage; bei leerem Titel ausgeblendet; kein Titel erfunden"
+          }
+        }
+      }
+    },
+
+    "Shares the trimmed episode title as plain text; hidden when the title is empty; no title invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the episode title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the trimmed episode title as plain text; hidden when the title is empty; no title invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den gekürzten Episodentitel als Klartext; bei leerem Titel ausgeblendet; kein Titel erfunden"
+          }
+        }
+      }
+    },
+
+    "Episode title copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the episode title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode title copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodentitel in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

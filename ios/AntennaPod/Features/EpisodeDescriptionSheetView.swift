@@ -174,6 +174,7 @@ struct EpisodeDescriptionSheetView: View {
             || formattedPublishDate != nil
             || formattedKnownDuration != nil
             || formattedKnownByteSize != nil
+            || EpisodeCopyLinks.trimmedTitle(for: episode) != nil
     }
 
     /// Paragraphs (blank-line split) or non-empty lines when the text is a single block.
@@ -632,6 +633,16 @@ struct EpisodeDescriptionSheetView: View {
                         copyHint: String(localized: "Copies the same file-size caption shown above to the pasteboard; on-disk or feed enclosure metadata only; no size invented"),
                         shareHint: String(localized: "Shares the same file-size caption shown above as plain text; on-disk or feed enclosure metadata only; no size invented"),
                         copiedMessage: String(localized: "Episode file size copied to the pasteboard.")
+                    )
+                }
+                if let title = EpisodeCopyLinks.trimmedTitle(for: episode) {
+                    episodeMetadataActions(
+                        text: title,
+                        copyLabel: String(localized: "Copy episode title"),
+                        shareLabel: String(localized: "Share episode title"),
+                        copyHint: String(localized: "Copies the trimmed episode title to the pasteboard; hidden when the title is empty; no title invented"),
+                        shareHint: String(localized: "Shares the trimmed episode title as plain text; hidden when the title is empty; no title invented"),
+                        copiedMessage: String(localized: "Episode title copied to the pasteboard.")
                     )
                 }
             }
