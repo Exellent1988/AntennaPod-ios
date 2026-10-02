@@ -35998,6 +35998,96 @@
     },
     "comment": "VoiceOver hint for Share value fee; honesty: no payments."
   },
+  "Copy value address": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy value address"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Adresse kopieren"
+        }
+      }
+    },
+    "comment": "Distinct Copy action for the exact displayed podcast:valueRecipient address (not name, type/method, split, fee, or details); always pastes the raw displayed address; hidden when address missing."
+  },
+  "Share value address": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share value address"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Adresse teilen"
+        }
+      }
+    },
+    "comment": "Distinct Share action for the podcast:valueRecipient address; prefers parseable http(s) URL when available, otherwise the same raw displayed address as Copy; hidden when address missing."
+  },
+  "Value address copied to the pasteboard.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Value address copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Adresse in die Zwischenablage kopiert."
+        }
+      }
+    },
+    "comment": "Alert message after copying the exact displayed podcast:valueRecipient address."
+  },
+  "Copies the exact displayed value recipient address as plain text; this app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed value recipient address as plain text; this app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt angezeigte Wert-Empfängeradresse als Klartext; diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Copy value address; honesty: no payments."
+  },
+  "Shares the feed-provided http(s) value address URL when available; otherwise shares the same raw value address as Copy. This app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the feed-provided http(s) value address URL when available; otherwise shares the same raw value address as Copy. This app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die vom Feed gelieferte http(s)-Wert-Adresse-URL, wenn verfügbar; sonst dieselbe Rohadresse wie Kopieren. Diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Share value address; prefers http(s) URL else raw address; honesty: no payments."
+  },
   "Copy text purpose": {
     "extractionState": "manual",
     "comment": "Copy action for the exact feed-provided podcast:txt purpose; hidden when purpose is missing.",

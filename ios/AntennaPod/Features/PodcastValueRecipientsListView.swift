@@ -8,7 +8,10 @@ import UIKit
 /// distinct Copy / Share value split uses that exact displayed string (separate from name, type/method, fee, details,
 /// address). When the Fee capsule is shown (`isFee`), distinct Copy / Share value fee uses that exact displayed Fee
 /// label (separate from name, type/method, split, details, address; hide when not a fee — never invent Fee).
-/// http(s) address → Share / Open in browser; otherwise Copy / Share address.
+/// When a feed address is shown, distinct Copy / Share value address uses that exact displayed
+/// address (Copy always pastes the raw displayed string; Share prefers parseable http(s) URL when
+/// available, otherwise the same raw address; Open in browser for http(s) unchanged; hide when
+/// missing — never invent).
 /// **Does not send Lightning / wallet payments** — informational display only. Cap + honesty footnote.
 struct PodcastValueRecipientsListView: View {
     @Environment(\.openURL) private var openURL
@@ -286,39 +289,39 @@ struct PodcastValueRecipientsListView: View {
                     .accessibilityLabel(String(localized: "Address \(address)"))
 
                 HStack(spacing: 12) {
-                    if row.browserURL == nil {
-                        Button {
-                            copyToPasteboard(
-                                address,
-                                confirmation: String(localized: "Address copied to the pasteboard.")
-                            )
-                        } label: {
-                            Label("Copy", systemImage: "doc.on.doc")
-                                .font(.subheadline)
-                        }
-                        .accessibilityLabel(String(localized: "Copy"))
-                        .accessibilityHint(
-                            String(localized: "Copies the recipient address to the pasteboard. This app does not send payments.")
+                    Button {
+                        copyToPasteboard(
+                            address,
+                            confirmation: String(localized: "Value address copied to the pasteboard.")
                         )
+                    } label: {
+                        Label("Copy value address", systemImage: "doc.on.doc")
+                            .font(.subheadline)
                     }
+                    .accessibilityLabel(String(localized: "Copy value address"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Copies the exact displayed value recipient address as plain text; this app does not send payments."
+                        )
+                    )
 
                     Group {
                         if let url = row.browserURL {
                             ShareLink(item: url) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Share value address", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         } else {
                             ShareLink(item: address) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Share value address", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         }
                     }
-                    .accessibilityLabel(String(localized: "Share recipient address"))
+                    .accessibilityLabel(String(localized: "Share value address"))
                     .accessibilityHint(
                         String(
-                            localized: "Shares the feed-provided http(s) recipient URL when available; otherwise shares the same raw recipient address as Copy. This app does not send payments."
+                            localized: "Shares the feed-provided http(s) value address URL when available; otherwise shares the same raw value address as Copy. This app does not send payments."
                         )
                     )
 
