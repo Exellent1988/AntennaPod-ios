@@ -15803,6 +15803,96 @@
       },
       "comment": "VoiceOver hint for sharing a podcast:person href. ShareLink prefers an http(s) URL and falls back to the raw feed string."
     },
+    "Copy person name": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying the exact displayed feed-provided podcast:person name; distinct from person details, role, group, and link.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy person name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personennamen kopieren"
+          }
+        }
+      }
+    },
+    "Share person name": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing the exact displayed feed-provided podcast:person name; distinct from person details, role, group, and link.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share person name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personennamen teilen"
+          }
+        }
+      }
+    },
+    "Person name copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the exact displayed feed-provided podcast:person name.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person name copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personenname in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the exact displayed feed-provided person name as plain text; does not invent a name or default host": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy person name; honesty: does not invent a name or default host.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed feed-provided person name as plain text; does not invent a name or default host"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den exakt angezeigten, vom Feed gelieferten Personennamen als Klartext; erfindet keinen Namen und keinen Default-Host"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed feed-provided person name as plain text; does not invent a name or default host": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share person name; honesty: does not invent a name or default host.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed feed-provided person name as plain text; does not invent a name or default host"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den exakt angezeigten, vom Feed gelieferten Personennamen als Klartext; erfindet keinen Namen und keinen Default-Host"
+          }
+        }
+      }
+    },
     "Copy person details": {
       "extractionState": "manual",
       "localizations": {

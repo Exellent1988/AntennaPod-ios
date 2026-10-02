@@ -2,6 +2,7 @@ import SwiftUI
 import UIKit
 
 /// Simple feed-provided `podcast:person` list: name + role/group when set; http(s) href → Open, and any non-blank href → Copy / Share.
+/// When a non-empty name is displayed, distinct Copy / Share person name uses that exact text (separate from name+role details, role, group, and link).
 /// When `role` is displayed, distinct Copy / Share person role uses that exact text (separate from name+role details and person group).
 /// When `group` is displayed, distinct Copy / Share person group uses that exact text (separate from name+role details).
 /// Caps at `PodcastPeopleDisplay.displayCap` with an honesty footnote when truncated.
@@ -89,6 +90,37 @@ struct PodcastPeopleListView: View {
                 personLabel(name: name, role: role, group: groupText, showsOpenIcon: false)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(label)
+            }
+
+            if let displayedName = person.displayName {
+                HStack(spacing: 12) {
+                    Button {
+                        UIPasteboard.general.string = displayedName
+                        copiedMessage = String(localized: "Person name copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy person name", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy person name"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Copies the exact displayed feed-provided person name as plain text; does not invent a name or default host"
+                        )
+                    )
+
+                    ShareLink(item: displayedName) {
+                        Label("Share person name", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share person name"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the exact displayed feed-provided person name as plain text; does not invent a name or default host"
+                        )
+                    )
+                }
             }
 
             HStack(spacing: 12) {
