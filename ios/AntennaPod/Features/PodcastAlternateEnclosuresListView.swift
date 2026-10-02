@@ -173,6 +173,33 @@ struct PodcastAlternateEnclosuresListView: View {
                 }
             }
 
+            if let mediaType = enclosure.displayType {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            mediaType,
+                            confirmation: String(localized: "Alternate media type copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy alternate media type", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy alternate media type"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed alternate enclosure media type to the pasteboard")
+                    )
+
+                    ShareLink(item: mediaType) {
+                        Label("Share alternate media type", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share alternate media type"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed alternate enclosure media type as plain text")
+                    )
+                }
+            }
+
             if let bitrate {
                 HStack(spacing: 12) {
                     Button {
