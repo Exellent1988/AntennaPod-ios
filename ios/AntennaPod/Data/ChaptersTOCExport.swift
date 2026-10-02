@@ -8,7 +8,7 @@ enum ChaptersTOCExport {
     /// TOC body only (no episode title). Empty when `chapters` is empty.
     static func plainText(from chapters: [PodcastChapter]) -> String {
         guard !chapters.isEmpty else { return "" }
-        return chapters.map { line(for: $0) }.joined(separator: "\n")
+        return chapters.map { plainLine(for: $0) }.joined(separator: "\n")
     }
 
     /// System share payload: optional episode title + blank line + TOC body (same body as `plainText`).
@@ -20,7 +20,8 @@ enum ChaptersTOCExport {
         return "\(title)\n\n\(body)"
     }
 
-    private static func line(for chapter: PodcastChapter) -> String {
+    /// One TOC line for a single chapter — same format as each row of `plainText`.
+    static func plainLine(for chapter: PodcastChapter) -> String {
         let time = formatStart(chapter.startTimeSeconds)
         var title = chapter.title.trimmingCharacters(in: .whitespacesAndNewlines)
         if title.isEmpty {
@@ -31,6 +32,18 @@ enum ChaptersTOCExport {
             result += " \(href)"
         }
         return result
+    }
+
+    /// One-line pasteboard text for the chapter active at `positionSeconds`.
+    /// Uses `ChapterIndexing.currentIndex` (same as title highlight / artwork).
+    /// Reads from the **full** array — ignores any UI search filter. Nil when no current chapter.
+    static func currentChapterPlainText(
+        from chapters: [PodcastChapter],
+        at positionSeconds: Double
+    ) -> String? {
+        guard let index = ChapterIndexing.currentIndex(in: chapters, at: positionSeconds),
+              chapters.indices.contains(index) else { return nil }
+        return plainLine(for: chapters[index])
     }
 
     /// Start time `m:ss` / `h:mm:ss` — same as chapter list / scrubber formatters.

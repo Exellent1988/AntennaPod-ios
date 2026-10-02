@@ -474,6 +474,17 @@ struct FullPlayerView: View {
                     .accessibilityLabel(String(localized: "Copy chapters"))
                     .accessibilityHint(String(localized: "Copies the chapter table of contents to the pasteboard"))
 
+                    Button {
+                        copyCurrentChapter()
+                    } label: {
+                        Image(systemName: "text.quote")
+                    }
+                    .disabled(!canCopyCurrentChapter)
+                    .accessibilityLabel(String(localized: "Copy current chapter"))
+                    .accessibilityHint(
+                        String(localized: "Copies the current chapter to the pasteboard")
+                    )
+
                     ShareLink(
                         item: chaptersTOCShareText,
                         subject: Text(chaptersEpisode?.title ?? String(localized: "Chapters"))
@@ -571,11 +582,30 @@ struct FullPlayerView: View {
         )
     }
 
+    /// One-line pasteboard text for the chapter active at playback position (full loaded array).
+    /// Same TOC line format as Copy chapters; uses `ChapterIndexing.currentIndex`.
+    private var currentChapterPlainForCopy: String? {
+        ChaptersTOCExport.currentChapterPlainText(from: chapters, at: displayPosition)
+    }
+
+    /// Enabled when `ChapterIndexing` reports a current chapter (nil when empty / before first).
+    private var canCopyCurrentChapter: Bool {
+        currentChapterPlainForCopy != nil
+    }
+
     private func copyChaptersTOC() {
         let text = chaptersTOCPlain
         guard !text.isEmpty else { return }
         UIPasteboard.general.string = text
         copiedAlertMessage = String(localized: "Chapters copied to the pasteboard.")
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    private func copyCurrentChapter() {
+        guard let text = currentChapterPlainForCopy, !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Current chapter copied to the pasteboard.")
         copyURLFeedbackTick += 1
         showCopiedAlert = true
     }

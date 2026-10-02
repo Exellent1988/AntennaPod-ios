@@ -5,8 +5,9 @@ import UIKit
 /// current highlight, duration / current remaining when end known (remaining follows
 /// Remaining time respects speed like mini/full −remaining), optional per-chapter
 /// Open link (http(s) href), optional chapters URL.
-/// Toolbar **Copy chapters** + **Share chapters** export a plain-text TOC from the **full**
-/// already-known chapter array (ignores search filter) — same honesty as transcript Copy/Share.
+/// Toolbar **Copy chapters** + **Copy current chapter** + **Share chapters** export a plain-text
+/// TOC / current chapter line from the **full** already-known chapter array (ignores search
+/// filter) — same honesty as transcript Copy/Share / Copy current cue.
 ///
 /// Already-loaded chapters only — does **not** fetch remote Podcast Index JSON or
 /// media-file tags (same honesty as mini Previous/Next). Full Player still lazy-loads.
@@ -83,6 +84,17 @@ struct EpisodeChaptersSheet: View {
         ChaptersTOCExport.shareText(from: chapters, episodeTitle: episode?.title)
     }
 
+    /// One-line pasteboard text for the chapter active at playback position (full loaded array).
+    /// Same TOC line format as Copy chapters; uses `ChapterIndexing.currentIndex`.
+    private var currentChapterPlainForCopy: String? {
+        ChaptersTOCExport.currentChapterPlainText(from: chapters, at: displayPosition)
+    }
+
+    /// Enabled when `ChapterIndexing` reports a current chapter (nil when empty / before first).
+    private var canCopyCurrentChapter: Bool {
+        currentChapterPlainForCopy != nil
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -131,6 +143,17 @@ struct EpisodeChaptersSheet: View {
                     .disabled(!canExportChaptersTOC)
                     .accessibilityLabel(String(localized: "Copy chapters"))
                     .accessibilityHint(String(localized: "Copies the chapter table of contents to the pasteboard"))
+
+                    Button {
+                        copyCurrentChapter()
+                    } label: {
+                        Image(systemName: "text.quote")
+                    }
+                    .disabled(!canCopyCurrentChapter)
+                    .accessibilityLabel(String(localized: "Copy current chapter"))
+                    .accessibilityHint(
+                        String(localized: "Copies the current chapter to the pasteboard")
+                    )
 
                     ShareLink(
                         item: chaptersTOCShareText,
@@ -277,6 +300,14 @@ struct EpisodeChaptersSheet: View {
         guard !text.isEmpty else { return }
         UIPasteboard.general.string = text
         copiedAlertMessage = String(localized: "Chapters copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    private func copyCurrentChapter() {
+        guard let text = currentChapterPlainForCopy, !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Current chapter copied to the pasteboard.")
         copyFeedbackTick += 1
         showCopiedAlert = true
     }
