@@ -1219,6 +1219,12 @@ struct PodcastImageVariant: Identifiable, Hashable, Codable {
         guard let width, width > 0 else { return nil }
         return "\(width)w"
     }
+
+    /// Height label for UI when known (e.g. "720p"). Nil when height absent — never invent.
+    var displayHeightLabel: String? {
+        guard let height, height > 0 else { return nil }
+        return "\(height)p"
+    }
 }
 
 /// Display helpers for `podcast:images` / `podcast:image` lists (channel or item).
@@ -1270,11 +1276,14 @@ enum PodcastImagesDisplay {
         return list.first?.url
     }
 
-    /// Pasteboard line: optional width + URL (+ optional purpose/alt).
+    /// Pasteboard line: optional width/height + URL (+ optional purpose/alt).
     static func copyText(_ item: PodcastImageVariant) -> String {
         var parts: [String] = []
         if let w = item.displayWidthLabel {
             parts.append(w)
+        }
+        if let h = item.displayHeightLabel {
+            parts.append(h)
         }
         if let purpose = item.displayPurpose {
             parts.append(purpose)

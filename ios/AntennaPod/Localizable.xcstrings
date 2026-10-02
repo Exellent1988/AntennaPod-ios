@@ -35872,6 +35872,114 @@
         }
       }
     }
+  },
+  "Height %@": {
+    "extractionState": "manual",
+    "comment": "VoiceOver height label for a podcast image variant (e.g. Height 720p).",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Height %@"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Höhe %@"
+        }
+      }
+    }
+  },
+  "Copy image height": {
+    "extractionState": "manual",
+    "comment": "Copy action for the exact displayed feed-provided podcast:image height.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy image height"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Bildhöhe kopieren"
+        }
+      }
+    }
+  },
+  "Share image height": {
+    "extractionState": "manual",
+    "comment": "Share action for the exact displayed feed-provided podcast:image height.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share image height"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Bildhöhe teilen"
+        }
+      }
+    }
+  },
+  "Image height copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Copied alert after copying the exact displayed feed-provided podcast:image height.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Image height copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Bildhöhe in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Copies the exact feed-provided image height to the pasteboard": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for copying the exact displayed feed-provided podcast:image height.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact feed-provided image height to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt vom Feed gelieferte Bildhöhe in die Zwischenablage"
+        }
+      }
+    }
+  },
+  "Shares the exact feed-provided image height as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for sharing the exact displayed feed-provided podcast:image height.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact feed-provided image height as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die exakt vom Feed gelieferte Bildhöhe als Klartext"
+        }
+      }
+    }
   }
 
   },

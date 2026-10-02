@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Feed-provided `podcast:images` / `podcast:image` variants — URL + optional width.
+/// Feed-provided `podcast:images` / `podcast:image` variants — URL + optional width/height.
 /// **Open** http(s) / **Copy** / **Share**; cap + honesty footnote.
 /// Does **not** download all variants eagerly (artwork preference picks one URL elsewhere).
 /// **Hidden when none.**
@@ -70,6 +70,7 @@ struct PodcastImagesListView: View {
     private func imageRow(_ entry: PodcastImageVariant) -> some View {
         let urlString = entry.displayURLString ?? entry.url
         let widthLabel = entry.displayWidthLabel
+        let heightLabel = entry.displayHeightLabel
         let purpose = entry.displayPurpose
         let alt = entry.displayAlt
         let open = entry.openURL
@@ -78,6 +79,9 @@ struct PodcastImagesListView: View {
             var parts: [String] = [String(localized: "Image")]
             if let widthLabel {
                 parts.append(String(localized: "Width \(widthLabel)"))
+            }
+            if let heightLabel {
+                parts.append(String(localized: "Height \(heightLabel)"))
             }
             if let purpose {
                 parts.append(String(localized: "Purpose \(purpose)"))
@@ -97,6 +101,12 @@ struct PodcastImagesListView: View {
                     .accessibilityHidden(true)
                 if let widthLabel {
                     Text(widthLabel)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                }
+                if let heightLabel {
+                    Text(heightLabel)
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.primary)
                         .lineLimit(1)
@@ -175,6 +185,31 @@ struct PodcastImagesListView: View {
                     .accessibilityLabel(String(localized: "Share image width"))
                     .accessibilityHint(
                         String(localized: "Shares the exact feed-provided image width as plain text")
+                    )
+                }
+
+                if let heightLabel {
+                    Button {
+                        UIPasteboard.general.string = heightLabel
+                        copiedAlertMessage = String(localized: "Image height copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy image height", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy image height"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided image height to the pasteboard")
+                    )
+
+                    ShareLink(item: heightLabel) {
+                        Label("Share image height", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share image height"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided image height as plain text")
                     )
                 }
 
