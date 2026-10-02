@@ -1983,8 +1983,8 @@ final class PodcastStore: ObservableObject {
         }
     }
 
-    /// Matching episodes across subscriptions by episode title, optional descriptionText, or local private note (feeds listed separately).
-    /// Does **not** search bookmark notes / chapters / transcripts.
+    /// Matching episodes across subscriptions by episode title, optional descriptionText, local private note, or any bookmark note (feeds listed separately).
+    /// Does **not** search chapters / transcripts. Empty bookmark notes are ignored. Episode appears once if any field matches.
     func matchingEpisodes(query: String) -> [LibraryEpisodeHit] {
         let q = Self.normalizedQuery(query)
         guard !q.isEmpty else { return [] }
@@ -1992,7 +1992,8 @@ final class PodcastStore: ObservableObject {
         for feed in feeds {
             for episode in feed.episodes where Self.matches(episode.title, query: q)
                 || Self.matches(episode.descriptionText, query: q)
-                || Self.matches(episodePrivateNote(for: episode.id), query: q) {
+                || Self.matches(episodePrivateNote(for: episode.id), query: q)
+                || bookmarks(for: episode.id).contains(where: { Self.matches($0.note, query: q) }) {
                 hits.append(
                     LibraryEpisodeHit(
                         episode: episode,
