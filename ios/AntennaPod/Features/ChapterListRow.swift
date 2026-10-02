@@ -20,7 +20,13 @@ struct ChapterListRow: View {
 
     @State private var imageLoaded = false
     @State private var showCopiedAlert = false
+    @State private var copiedMessage = String(localized: "Chapter link copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
+
+    /// A chapter title is feed/media metadata; hide title actions when it is missing.
+    private var hasCopyableTitle: Bool {
+        !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 
     private var accessibilityLabelText: String {
         if imageURL != nil, imageLoaded {
@@ -56,7 +62,7 @@ struct ChapterListRow: View {
                 }
                 .padding(.vertical, 8)
                 .padding(.leading, 10)
-                .padding(.trailing, linkURL == nil ? 10 : 4)
+                .padding(.trailing, linkURL == nil && !hasCopyableTitle ? 10 : 4)
                 .background {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
                         .fill(isCurrent ? Color.accentColor.opacity(0.12) : Color.clear)
@@ -67,9 +73,36 @@ struct ChapterListRow: View {
             .accessibilityHint(String(localized: "Seeks playback to this chapter"))
             .accessibilityAddTraits(isCurrent ? .isSelected : [])
 
+            if hasCopyableTitle {
+                Button {
+                    UIPasteboard.general.string = title
+                    copiedMessage = String(localized: "Chapter title copied to the pasteboard.")
+                    copyFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Image(systemName: "doc.on.doc")
+                        .font(.body)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel(String(localized: "Copy chapter title"))
+                .accessibilityHint(String(localized: "Copies the displayed chapter title to the pasteboard"))
+
+                ShareLink(item: title) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.body)
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .accessibilityLabel(String(localized: "Share chapter title"))
+                .accessibilityHint(String(localized: "Shares the displayed chapter title as plain text"))
+            }
+
             if let linkURL {
                 Button {
                     UIPasteboard.general.string = linkURL.absoluteString
+                    copiedMessage = String(localized: "Chapter link copied to the pasteboard.")
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {
@@ -108,7 +141,7 @@ struct ChapterListRow: View {
         .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
             Button("OK", role: .cancel) {}
         } message: {
-            Text(String(localized: "Chapter link copied to the pasteboard."))
+            Text(copiedMessage)
         }
         .sensoryFeedback(.success, trigger: copyFeedbackTick)
     }

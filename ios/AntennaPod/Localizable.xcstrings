@@ -26485,6 +26485,96 @@
         }
       }
     },
+    "Copy chapter title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy chapter title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapiteltitel kopieren"
+          }
+        }
+      },
+      "comment": "Secondary control on a chapter row when the displayed chapter title is non-empty."
+    },
+    "Copies the displayed chapter title to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the displayed chapter title to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den angezeigten Kapiteltitel in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for the chapter title copy action."
+    },
+    "Chapter title copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter title copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapiteltitel in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy confirmation for a displayed chapter title."
+    },
+    "Share chapter title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share chapter title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapiteltitel teilen"
+          }
+        }
+      },
+      "comment": "Secondary control on a chapter row when the displayed chapter title is non-empty."
+    },
+    "Shares the displayed chapter title as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the displayed chapter title as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den angezeigten Kapiteltitel als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for the chapter title share action."
+    },
     "Copy chapter link": {
       "extractionState": "manual",
       "localizations": {
