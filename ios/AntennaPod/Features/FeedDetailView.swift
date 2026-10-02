@@ -26,6 +26,7 @@ struct FeedDetailView: View {
     @State private var showLockedOwnerCopied = false
     @State private var showAuthorCopied = false
     @State private var showLanguageCopied = false
+    @State private var showCategoriesCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
@@ -38,6 +39,7 @@ struct FeedDetailView: View {
     @State private var copyLockedOwnerFeedbackTick = 0
     @State private var copyAuthorFeedbackTick = 0
     @State private var copyLanguageFeedbackTick = 0
+    @State private var copyCategoriesFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -103,6 +105,11 @@ struct FeedDetailView: View {
     /// itunes:category texts when the feed provided them — empty → hide (never invent taxonomy).
     private var displayCategories: [String] {
         liveFeed.displayCategories
+    }
+
+    /// Same feed-provided category list used by Copy, Share, and the combined VoiceOver label.
+    private var displayCategoriesShareText: String {
+        displayCategories.joined(separator: " · ")
     }
 
     /// Channel podcast:person when the feed provided them — empty → hide (never invent people).
@@ -780,12 +787,41 @@ struct FeedDetailView: View {
             // Feed itunes:category chips (parent + nested text attrs); hide when none — never invent.
             if !displayCategories.isEmpty {
                 Section {
-                    FeedCategoryChips(categories: displayCategories)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(
-                            String(localized: "Categories \(displayCategories.joined(separator: ", "))")
-                        )
+                    VStack(alignment: .leading, spacing: 8) {
+                        FeedCategoryChips(categories: displayCategories)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel(
+                                String(localized: "Categories \(displayCategoriesShareText)")
+                            )
+
+                        HStack(spacing: 12) {
+                            Button {
+                                copyCategories()
+                            } label: {
+                                Label("Copy categories", systemImage: "doc.on.doc")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Copy categories"))
+                            .accessibilityHint(
+                                String(localized: "Copies the same feed-provided category list shown above to the pasteboard; display-only; no App Store taxonomy invented")
+                            )
+
+                            ShareLink(
+                                item: displayCategoriesShareText,
+                                subject: Text(feedDisplayTitle)
+                            ) {
+                                Label("Share categories", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Share categories"))
+                            .accessibilityHint(
+                                String(localized: "Shares the same feed-provided category list shown above as plain text; display-only; no App Store taxonomy invented")
+                            )
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityElement(children: .contain)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -1562,6 +1598,14 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Podcast language copied to the pasteboard."))
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCategoriesCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Podcast categories copied to the pasteboard."))
+        }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
@@ -1571,6 +1615,7 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyLockedOwnerFeedbackTick)
         .sensoryFeedback(.success, trigger: copyAuthorFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLanguageFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyCategoriesFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle)
@@ -1675,6 +1720,13 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = language
         copyLanguageFeedbackTick += 1
         showLanguageCopied = true
+    }
+
+    private func copyCategories() {
+        guard !displayCategories.isEmpty else { return }
+        UIPasteboard.general.string = displayCategoriesShareText
+        copyCategoriesFeedbackTick += 1
+        showCategoriesCopied = true
     }
 
     private func copyLockedOwner(_ owner: String) {
