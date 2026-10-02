@@ -2,6 +2,7 @@ import SwiftUI
 import UIKit
 
 /// Simple feed-provided `podcast:person` list: name + role/group when set; http(s) href → Open, and any non-blank href → Copy / Share.
+/// When `role` is displayed, distinct Copy / Share person role uses that exact text (separate from name+role details and person group).
 /// When `group` is displayed, distinct Copy / Share person group uses that exact text (separate from name+role details).
 /// Caps at `PodcastPeopleDisplay.displayCap` with an honesty footnote when truncated.
 /// No remote avatar fetch in v1 (img URL stored but not loaded).
@@ -117,6 +118,33 @@ struct PodcastPeopleListView: View {
                         localized: "Shares the displayed person name and role as plain text; role is included only when provided by the feed"
                     )
                 )
+            }
+
+            if let role {
+                HStack(spacing: 12) {
+                    Button {
+                        UIPasteboard.general.string = role
+                        copiedMessage = String(localized: "Person role copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy person role", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy person role"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed feed-provided person role as plain text")
+                    )
+
+                    ShareLink(item: role) {
+                        Label("Share person role", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share person role"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed feed-provided person role as plain text")
+                    )
+                }
             }
 
             if let groupText {

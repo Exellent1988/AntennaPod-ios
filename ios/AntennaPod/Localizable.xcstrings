@@ -15911,6 +15911,96 @@
       },
       "comment": "VoiceOver hint for Share person group."
     },
+    "Copy person role": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy person role"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personenrolle kopieren"
+          }
+        }
+      },
+      "comment": "VoiceOver label for copying the exact displayed feed-provided podcast:person role (not person details or group)."
+    },
+    "Share person role": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share person role"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personenrolle teilen"
+          }
+        }
+      },
+      "comment": "VoiceOver label for sharing the exact displayed feed-provided podcast:person role (not person details or group)."
+    },
+    "Person role copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person role copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personenrolle in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Alert message after copying the exact displayed person role."
+    },
+    "Copies the exact displayed feed-provided person role as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed feed-provided person role as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigte, vom Feed gelieferte Personenrolle als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy person role."
+    },
+    "Shares the exact displayed feed-provided person role as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed feed-provided person role as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigte, vom Feed gelieferte Personenrolle als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share person role."
+    },
     "Copies the displayed person name and role as plain text; role is included only when provided by the feed": {
       "extractionState": "manual",
       "localizations": {
