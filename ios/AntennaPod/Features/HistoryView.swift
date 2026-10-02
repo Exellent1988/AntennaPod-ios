@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct HistoryView: View {
     @EnvironmentObject private var store: PodcastStore
@@ -12,6 +13,9 @@ struct HistoryView: View {
     @State private var showClearHistoryConfirm = false
     @State private var showEnqueueAllConfirm = false
     @State private var showMarkAllUnplayedConfirm = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -247,6 +251,27 @@ struct HistoryView: View {
     }
 
 
+    /// Plain-text list of the **full** History catalog — not podcast-chip / search / UI sort filtered.
+    /// Same honesty as Clear history / Add all to queue / Play random (`store.historyEpisodes`, newest last-played first).
+    private var historyPlainText: String {
+        HistoryExport.plainText(episodes: items.map(\.episode)) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
+    }
+
+    /// Enabled when the full History catalog is non-empty (read-only export).
+    private var canExportHistory: Bool {
+        !items.isEmpty
+    }
+
+    /// “History” header + body for system share sheet (same body as Copy).
+    private var historyShareText: String {
+        HistoryExport.shareText(episodes: items.map(\.episode)) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
+    }
+
+
     var body: some View {
         List {
             if !items.isEmpty, !historyPodcastFeeds.isEmpty || isPodcastFiltering {
@@ -384,6 +409,31 @@ struct HistoryView: View {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {
+                        copyHistory()
+                    } label: {
+                        Label("Copy history", systemImage: "doc.plaintext")
+                    }
+                    // Full History catalog (not podcast/search/UI sort).
+                    .disabled(!canExportHistory)
+                    .accessibilityLabel(String(localized: "Copy history"))
+                    .accessibilityHint(
+                        String(localized: "Copies the full history list to the pasteboard")
+                    )
+
+                    ShareLink(
+                        item: historyShareText,
+                        subject: Text(String(localized: "History"))
+                    ) {
+                        Label("Share history", systemImage: "square.and.arrow.up")
+                    }
+                    // Same gates as Copy history — full catalog.
+                    .disabled(!canExportHistory)
+                    .accessibilityLabel(String(localized: "Share history"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the full history list")
+                    )
+
+                    Button {
                         playRandomEpisode()
                     } label: {
                         Label("Play random", systemImage: "shuffle")
@@ -420,8 +470,21 @@ struct HistoryView: View {
                 }
                 // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
                 .disabled(items.isEmpty)
+                .accessibilityLabel(String(localized: "History actions"))
+                .accessibilityHint(
+                    String(localized: "Copy history, share history, play random, add all to queue, mark all as unplayed, or clear history")
+                )
             }
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
         .confirmationDialog(
             "Add all to queue?",
             isPresented: $showEnqueueAllConfirm,
@@ -458,6 +521,16 @@ struct HistoryView: View {
         } message: {
             Text("Removes \(items.count) episodes from history. Does not unsubscribe, delete downloads, or clear the queue.")
         }
+    }
+
+    /// Pasteboard copy of the **full** History catalog (not podcast/search/UI sort). Read-only.
+    private func copyHistory() {
+        let text = historyPlainText
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "History copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     /// Uniform pick via shared `EpisodePlayRandom.pick` among eligible (prefer unplayed);

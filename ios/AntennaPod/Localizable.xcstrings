@@ -26832,6 +26832,108 @@
           }
         }
       }
+    },
+    "Copy history": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy history"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf kopieren"
+          }
+        }
+      }
+    },
+    "Share history": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share history"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf teilen"
+          }
+        }
+      }
+    },
+    "History copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the full history list to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full history list to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die gesamte Verlaufsliste in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the full history list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the full history list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit der gesamten Verlaufsliste"
+          }
+        }
+      }
+    },
+    "Copy history, share history, play random, add all to queue, mark all as unplayed, or clear history": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy history, share history, play random, add all to queue, mark all as unplayed, or clear history"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf kopieren, Verlauf teilen, Zufällig abspielen, Alle zur Warteschlange, Alle als ungehört markieren, oder Verlauf leeren"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
