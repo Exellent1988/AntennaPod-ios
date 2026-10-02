@@ -37962,6 +37962,96 @@
         }
       }
     },
+    "Copy location name": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying the exact displayed feed-provided location name; distinct from combined location, relation, OSM, geo, and Open in Maps.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy location name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ortsnamen kopieren"
+          }
+        }
+      }
+    },
+    "Share location name": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing the exact displayed feed-provided location name; distinct from combined location, relation, OSM, geo, and Open in Maps.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share location name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ortsnamen teilen"
+          }
+        }
+      }
+    },
+    "Location name copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the exact displayed feed-provided location name.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location name copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ortsname in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the exact displayed feed-provided location name to the pasteboard; does not geocode or invent a name": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy location name; honesty: does not geocode / does not invent a name.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed feed-provided location name to the pasteboard; does not geocode or invent a name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den exakt angezeigten, vom Feed gelieferten Ortsnamen in die Zwischenablage; kein Geocoding und kein erfundener Name"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed feed-provided location name as plain text; does not geocode or invent a name": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share location name; honesty: does not geocode / does not invent a name.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed feed-provided location name as plain text; does not geocode or invent a name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den exakt angezeigten, vom Feed gelieferten Ortsnamen als Klartext; kein Geocoding und kein erfundener Name"
+          }
+        }
+      }
+    },
     "Geo %@": {
       "extractionState": "manual",
       "comment": "VoiceOver / accessibility label for the exact displayed feed-provided location geo string.",

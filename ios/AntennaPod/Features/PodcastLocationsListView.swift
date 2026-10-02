@@ -2,9 +2,9 @@ import SwiftUI
 import UIKit
 
 /// Simple feed-provided `podcast:location` list: name + optional geo/rel/osm; Copy / Share the same text,
-/// distinct Copy / Share for displayed relation, OSM, and geo when present, and Open in Maps when geo lat,lon parses.
+/// distinct Copy / Share for displayed name, relation, OSM, and geo when present, and Open in Maps when geo lat,lon parses.
 /// Caps at `PodcastLocationDisplay.displayCap` with an honesty footnote when truncated.
-/// **Never geocodes** names — geo caption/Copy/Share use the exact feed `geo` string; Maps only when it parses to lat,lon.
+/// **Never geocodes** names — name/geo caption/Copy/Share use the exact feed strings; Maps only when geo parses to lat,lon.
 struct PodcastLocationsListView: View {
     @Environment(\.openURL) private var openURL
 
@@ -53,7 +53,8 @@ struct PodcastLocationsListView: View {
 
     @ViewBuilder
     private func locationRow(_ location: PodcastLocation) -> some View {
-        let name = location.displayName ?? location.name
+        let displayedName = location.displayName
+        let name = displayedName ?? location.name
         let rel = location.displayRel
         let osm = location.displayOsm
         let osmCaption: String? = osm.map { String(localized: "OSM \($0)") }
@@ -100,6 +101,37 @@ struct PodcastLocationsListView: View {
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
                     .accessibilityLabel(String(localized: "OpenStreetMap \(osm)"))
+            }
+
+            if let displayedName {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            displayedName,
+                            confirmation: String(localized: "Location name copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy location name", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy location name"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Copies the exact displayed feed-provided location name to the pasteboard; does not geocode or invent a name"
+                        )
+                    )
+
+                    ShareLink(item: displayedName) {
+                        Label("Share location name", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share location name"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the exact displayed feed-provided location name as plain text; does not geocode or invent a name"
+                        )
+                    )
+                }
             }
 
             if !copyText.isEmpty {
