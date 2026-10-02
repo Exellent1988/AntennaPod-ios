@@ -36413,7 +36413,6 @@
         }
       }
     }
-  }
   },
   "Alternate media type copied to the pasteboard.": {
     "extractionState": "manual",
@@ -37008,6 +37007,97 @@
         }
       }
     }
+  },
+  "Copy soundbite title": {
+    "extractionState": "manual",
+    "comment": "VoiceOver label for copying the exact displayed feed-provided podcast:soundbite title (not the combined details).",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy soundbite title"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite-Titel kopieren"
+        }
+      }
+    }
+  },
+  "Share soundbite title": {
+    "extractionState": "manual",
+    "comment": "VoiceOver label for sharing the exact displayed feed-provided podcast:soundbite title (not the combined details).",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share soundbite title"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite-Titel teilen"
+        }
+      }
+    }
+  },
+  "Copies the exact displayed feed-provided soundbite title to the pasteboard": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for Copy soundbite title. Exact displayed feed title only; hide when missing — never invent from time caption.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed feed-provided soundbite title to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert den exakt angezeigten, vom Feed gelieferten Soundbite-Titel in die Zwischenablage"
+        }
+      }
+    }
+  },
+  "Shares the exact displayed feed-provided soundbite title as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for Share soundbite title. Exact displayed feed title only; hide when missing — never invent from time caption.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact displayed feed-provided soundbite title as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt den exakt angezeigten, vom Feed gelieferten Soundbite-Titel als Klartext"
+        }
+      }
+    }
+  },
+  "Soundbite title copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Copied alert for the exact displayed feed-provided podcast:soundbite title (distinct from soundbite details).",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite title copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite-Titel in die Zwischenablage kopiert."
+        }
+      }
+    }
+  }
   },
   "version": "1.0"
 }

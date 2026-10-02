@@ -5,6 +5,7 @@ import UIKit
 /// **Play soundbite** seeks to `startTime` and auto-pauses at `startTime + duration` via
 /// `PlaybackService.playSoundbite` (same episode player — **not** a separate clip player).
 /// Works for the current episode or starts playback when media is available; otherwise **Copy / Share soundbite details**.
+/// When a feed title is displayed, distinct **Copy / Share soundbite title** (exact title only — never invent from time caption).
 /// Cap + honesty footnote.
 struct PodcastSoundbitesListView: View {
     @EnvironmentObject private var playback: PlaybackService
@@ -16,6 +17,7 @@ struct PodcastSoundbitesListView: View {
     var title: String = String(localized: "Soundbites")
 
     @State private var showCopiedAlert = false
+    @State private var copiedMessage = String(localized: "Soundbite details copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     private var capped: (shown: [PodcastSoundbite], truncated: Bool) {
@@ -73,7 +75,7 @@ struct PodcastSoundbitesListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Soundbite details copied to the pasteboard."))
+                Text(copiedMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -118,6 +120,8 @@ struct PodcastSoundbitesListView: View {
             }
 
             let detailsText = PodcastSoundbiteDisplay.copyText(bite)
+            // Feed-provided title only — never invent from the time caption.
+            let feedTitle = bite.displayTitle
 
             HStack(spacing: 12) {
                 if canPlaySoundbite {
@@ -141,9 +145,10 @@ struct PodcastSoundbitesListView: View {
                 }
 
                 Button {
-                    UIPasteboard.general.string = detailsText
-                    copyFeedbackTick += 1
-                    showCopiedAlert = true
+                    copyToPasteboard(
+                        detailsText,
+                        confirmation: String(localized: "Soundbite details copied to the pasteboard.")
+                    )
                 } label: {
                     Label("Copy soundbite details", systemImage: "doc.on.doc")
                         .font(.subheadline)
@@ -168,8 +173,46 @@ struct PodcastSoundbitesListView: View {
                     )
                 }
             }
+
+            if let feedTitle {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            feedTitle,
+                            confirmation: String(localized: "Soundbite title copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy soundbite title", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy soundbite title"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Copies the exact displayed feed-provided soundbite title to the pasteboard"
+                        )
+                    )
+
+                    ShareLink(item: feedTitle) {
+                        Label("Share soundbite title", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share soundbite title"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the exact displayed feed-provided soundbite title as plain text"
+                        )
+                    )
+                }
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 2)
+    }
+
+    private func copyToPasteboard(_ string: String, confirmation: String) {
+        UIPasteboard.general.string = string
+        copiedMessage = confirmation
+        copyFeedbackTick &+= 1
+        showCopiedAlert = true
     }
 }
