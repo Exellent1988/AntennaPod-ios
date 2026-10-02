@@ -146,6 +146,30 @@ struct MiniPlayerView: View {
                         }
                         .accessibilityLabel(String(localized: "Play from beginning"))
                         .accessibilityHint(String(localized: "Seeks to the start of this episode and plays"))
+                        // Previous / Next chapter — same ChapterIndexing + seek as Full transport.
+                        // Only when chapters already on store/player episode (no mini lazy fetch).
+                        if canSkipChapters {
+                            Button {
+                                if let target = previousChapterTarget {
+                                    playback.seek(toSeconds: target)
+                                }
+                            } label: {
+                                Label("Previous chapter", systemImage: "backward.end.fill")
+                            }
+                            .disabled(previousChapterTarget == nil)
+                            .accessibilityLabel(String(localized: "Previous chapter"))
+                            .accessibilityHint(String(localized: "Seeks to the previous chapter, or restarts the current chapter if more than 2 seconds in"))
+                            Button {
+                                if let target = nextChapterTarget {
+                                    playback.seek(toSeconds: target)
+                                }
+                            } label: {
+                                Label("Next chapter", systemImage: "forward.end.fill")
+                            }
+                            .disabled(nextChapterTarget == nil)
+                            .accessibilityLabel(String(localized: "Next chapter"))
+                            .accessibilityHint(String(localized: "Seeks to the next chapter"))
+                        }
                         Button {
                             showBookmarks = true
                         } label: {
@@ -374,6 +398,19 @@ struct MiniPlayerView: View {
         guard let episode = playback.currentEpisode else { return [] }
         let resolved = store.episode(id: episode.id) ?? episode
         return resolved.chapters
+    }
+
+    /// Same gate as Full `chapterSkipControls`: hide Previous/Next when no chapters known on mini.
+    private var canSkipChapters: Bool { !chapters.isEmpty }
+
+    /// AntennaPod-like Previous target via `ChapterIndexing.previousSeekSeconds` (restart if >2s in).
+    private var previousChapterTarget: Double? {
+        ChapterIndexing.previousSeekSeconds(in: chapters, at: playback.positionSeconds)
+    }
+
+    /// Next chapter start via `ChapterIndexing.nextSeekSeconds`, or `nil` on the last chapter.
+    private var nextChapterTarget: Double? {
+        ChapterIndexing.nextSeekSeconds(in: chapters, at: playback.positionSeconds)
     }
 
     /// Title of the chapter at `positionSeconds`, or `nil` when none / empty title.
