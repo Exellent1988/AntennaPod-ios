@@ -1,0 +1,128 @@
+import SwiftUI
+
+/// Shared **Queue** menu for Full player secondary + mini player ⋯ submenu.
+///
+/// Mirrors Full Player semantics exactly via existing `PodcastStore` APIs only:
+/// - **Add to queue** → `enqueue` (immediate)
+/// - **Remove from queue** → caller shows `confirmationDialog`, then `removeFromQueue`
+/// - **Play Next** → `playNext` when not already next (hidden when already next)
+/// - **Move playing to top** → `moveQueueItemToTop` when queued, not index 0, unlocked
+///
+/// Nested `Menu` keeps the mini ⋯ root from overcrowding (same labels/symbols/a11y as Full).
+enum EpisodeQueueActions {
+    /// True when Play Next would leave queue order unchanged (already in the play-next slot).
+    static func isAlreadyNextInQueue(
+        _ episode: PodcastEpisode,
+        store: PodcastStore,
+        currentlyPlayingId: String?
+    ) -> Bool {
+        guard store.isInQueue(episode.id) else { return false }
+        var simulated = store.queue
+        simulated.removeAll { $0.id == episode.id }
+        let insertIndex: Int
+        if let playingId = currentlyPlayingId,
+           let index = simulated.firstIndex(where: { $0.id == playingId }) {
+            insertIndex = index + 1
+        } else {
+            insertIndex = 0
+        }
+        simulated.insert(episode, at: min(insertIndex, simulated.count))
+        return simulated.map(\.id) == store.queue.map(\.id)
+    }
+
+    /// True when **Move playing to top** can be offered: in queue, not already at
+    /// index 0, and Queue lock is off (reorder-only). Does not seek/stop.
+    static func canMovePlayingEpisodeToTop(
+        _ episode: PodcastEpisode,
+        store: PodcastStore,
+        queueLocked: Bool
+    ) -> Bool {
+        guard !queueLocked,
+              let index = store.queue.firstIndex(where: { $0.id == episode.id }) else {
+            return false
+        }
+        return index > 0
+    }
+
+    /// Full Menu control (outer label Queue / In queue). Use as a secondary HStack
+    /// button (Full) or nest inside another `Menu` for a mini ⋯ submenu.
+    @ViewBuilder
+    static func menu(
+        episode: PodcastEpisode,
+        store: PodcastStore,
+        currentlyPlayingId: String?,
+        queueLocked: Bool,
+        onRequestRemoveFromQueue: @escaping (PodcastEpisode) -> Void
+    ) -> some View {
+        let inQueue = store.isInQueue(episode.id)
+        let canMovePlayingToTop = canMovePlayingEpisodeToTop(
+            episode,
+            store: store,
+            queueLocked: queueLocked
+        )
+        Menu {
+            Button {
+                if inQueue {
+                    // Same path as Queue tab swipe Remove — confirm first.
+                    onRequestRemoveFromQueue(episode)
+                } else {
+                    store.enqueue(episode)
+                }
+            } label: {
+                Label(
+                    inQueue ? "Remove from queue" : "Add to queue",
+                    systemImage: inQueue ? "minus.circle" : "text.append"
+                )
+            }
+            .accessibilityLabel(
+                inQueue
+                    ? String(localized: "Remove from queue")
+                    : String(localized: "Add to queue")
+            )
+            .accessibilityHint(
+                inQueue
+                    ? String(localized: "Asks for confirmation, then removes this episode from the queue")
+                    : String(localized: "Adds this episode to the queue")
+            )
+
+            if !isAlreadyNextInQueue(
+                episode,
+                store: store,
+                currentlyPlayingId: currentlyPlayingId
+            ) {
+                Button {
+                    store.playNext(episode, currentlyPlayingId: currentlyPlayingId)
+                } label: {
+                    Label("Play Next", systemImage: "text.insert")
+                }
+                .accessibilityLabel(String(localized: "Play Next"))
+                .accessibilityHint(String(localized: "Places this episode to play next in the queue"))
+            }
+
+            // Hidden when not queued / already first / locked — same reorder-only gate as EpisodeRow.
+            if canMovePlayingToTop {
+                Button {
+                    store.moveQueueItemToTop(episode)
+                } label: {
+                    Label("Move playing to top", systemImage: "arrow.up.to.line")
+                }
+                .accessibilityLabel(String(localized: "Move playing to top"))
+                .accessibilityHint(
+                    String(localized: "Moves the currently playing episode to the start of the queue")
+                )
+            }
+        } label: {
+            Label(
+                inQueue ? "In queue" : "Queue",
+                systemImage: inQueue ? "text.badge.checkmark" : "text.append"
+            )
+        }
+        .accessibilityLabel(String(localized: "Queue actions"))
+        .accessibilityValue(
+            inQueue
+                ? String(localized: "In queue")
+                : String(localized: "Not in queue")
+        )
+        .accessibilityHint(String(localized: "Opens add, remove, Play Next, and Move playing to top queue actions"))
+    }
+}

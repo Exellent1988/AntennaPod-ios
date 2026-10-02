@@ -14,6 +14,8 @@ struct MiniPlayerView: View {
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyURLFeedbackTick = 0
+    /// Single episode pending mini ⋯ Remove-from-queue confirmation (nil = dialog dismissed).
+    @State private var episodePendingRemoveFromQueue: PodcastEpisode?
 
     var body: some View {
         if let episode = playback.currentEpisode {
@@ -201,6 +203,14 @@ struct MiniPlayerView: View {
                                 ? String(localized: "Restores this episode from the archive")
                                 : String(localized: "Hides this episode from Inbox without marking it played")
                         )
+                        // Queue submenu — same EpisodeQueueActions as Full secondary (nested to avoid overcrowding).
+                        EpisodeQueueActions.menu(
+                            episode: store.episode(id: episode.id) ?? episode,
+                            store: store,
+                            currentlyPlayingId: playback.currentEpisode?.id,
+                            queueLocked: settings.queueLocked,
+                            onRequestRemoveFromQueue: { episodePendingRemoveFromQueue = $0 }
+                        )
                         // Copy episode link / Copy media URL — same websiteURL / mediaURL gates as Full.
                         // Prefer store episode (post-refresh) over a possibly stale player copy.
                         EpisodeCopyLinks.labelStyle(
@@ -243,6 +253,27 @@ struct MiniPlayerView: View {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(copiedAlertMessage)
+            }
+            .confirmationDialog(
+                "Remove from queue?",
+                isPresented: Binding(
+                    get: { episodePendingRemoveFromQueue != nil },
+                    set: { if !$0 { episodePendingRemoveFromQueue = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: episodePendingRemoveFromQueue
+            ) { episode in
+                Button("Remove from queue", role: .destructive) {
+                    store.removeFromQueue(episode)
+                    episodePendingRemoveFromQueue = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    episodePendingRemoveFromQueue = nil
+                }
+            } message: { episode in
+                Text(
+                    "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
+                )
             }
             .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
             .sheet(isPresented: $showCustomSleepTimer) {

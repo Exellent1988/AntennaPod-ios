@@ -1055,8 +1055,14 @@ struct FullPlayerView: View {
                     : String(localized: "Hides this episode from Inbox without marking it played")
             )
 
-            // Queue menu: crowded HStack → group Add/Remove + Play Next (existing APIs only).
-            queueActionsMenu(episode: episode)
+            // Queue menu: crowded HStack → shared EpisodeQueueActions (same as mini ⋯ submenu).
+            EpisodeQueueActions.menu(
+                episode: episode,
+                store: store,
+                currentlyPlayingId: playback.currentEpisode?.id,
+                queueLocked: settings.queueLocked,
+                onRequestRemoveFromQueue: { episodePendingRemoveFromQueue = $0 }
+            )
 
             // Remote-media only: skip local-folder `file://` (already on disk).
             if canManageDownload(for: episode) {
@@ -1138,101 +1144,6 @@ struct FullPlayerView: View {
         .buttonStyle(.bordered)
         .labelStyle(.titleAndIcon)
         .controlSize(.small)
-    }
-
-    /// Full-player Queue menu: Add/Remove toggle + optional Play Next (hidden when already next)
-    /// + optional **Move playing to top** (when queued, not already first, queue unlocked).
-    @ViewBuilder
-    private func queueActionsMenu(episode: PodcastEpisode) -> some View {
-        let inQueue = store.isInQueue(episode.id)
-        let canMovePlayingToTop = canMovePlayingEpisodeToTop(episode)
-        Menu {
-            Button {
-                if inQueue {
-                    // Same path as Queue tab swipe Remove — confirm first.
-                    episodePendingRemoveFromQueue = episode
-                } else {
-                    store.enqueue(episode)
-                }
-            } label: {
-                Label(
-                    inQueue ? "Remove from queue" : "Add to queue",
-                    systemImage: inQueue ? "minus.circle" : "text.append"
-                )
-            }
-            .accessibilityLabel(
-                inQueue
-                    ? String(localized: "Remove from queue")
-                    : String(localized: "Add to queue")
-            )
-            .accessibilityHint(
-                inQueue
-                    ? String(localized: "Asks for confirmation, then removes this episode from the queue")
-                    : String(localized: "Adds this episode to the queue")
-            )
-
-            if !isAlreadyNextInQueue(episode) {
-                Button {
-                    store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
-                } label: {
-                    Label("Play Next", systemImage: "text.insert")
-                }
-                .accessibilityLabel(String(localized: "Play Next"))
-                .accessibilityHint(String(localized: "Places this episode to play next in the queue"))
-            }
-
-            // Toolbar/player shortcut for the *current* playing item (reuses moveQueueItemToTop).
-            // Hidden when not queued / already first / locked — same reorder-only gate as EpisodeRow.
-            if canMovePlayingToTop {
-                Button {
-                    store.moveQueueItemToTop(episode)
-                } label: {
-                    Label("Move playing to top", systemImage: "arrow.up.to.line")
-                }
-                .accessibilityLabel(String(localized: "Move playing to top"))
-                .accessibilityHint(
-                    String(localized: "Moves the currently playing episode to the start of the queue")
-                )
-            }
-        } label: {
-            Label(
-                inQueue ? "In queue" : "Queue",
-                systemImage: inQueue ? "text.badge.checkmark" : "text.append"
-            )
-        }
-        .accessibilityLabel(String(localized: "Queue actions"))
-        .accessibilityValue(
-            inQueue
-                ? String(localized: "In queue")
-                : String(localized: "Not in queue")
-        )
-        .accessibilityHint(String(localized: "Opens add, remove, Play Next, and Move playing to top queue actions"))
-    }
-
-    /// True when Full Player can offer **Move playing to top**: episode is in the queue,
-    /// not already at index 0, and Queue lock is off (reorder-only). Does not seek/stop.
-    private func canMovePlayingEpisodeToTop(_ episode: PodcastEpisode) -> Bool {
-        guard !settings.queueLocked,
-              let index = store.queue.firstIndex(where: { $0.id == episode.id }) else {
-            return false
-        }
-        return index > 0
-    }
-
-    /// True when Play Next would leave queue order unchanged (already in the play-next slot).
-    private func isAlreadyNextInQueue(_ episode: PodcastEpisode) -> Bool {
-        guard store.isInQueue(episode.id) else { return false }
-        var simulated = store.queue
-        simulated.removeAll { $0.id == episode.id }
-        let insertIndex: Int
-        if let playingId = playback.currentEpisode?.id,
-           let index = simulated.firstIndex(where: { $0.id == playingId }) {
-            insertIndex = index + 1
-        } else {
-            insertIndex = 0
-        }
-        simulated.insert(episode, at: min(insertIndex, simulated.count))
-        return simulated.map(\.id) == store.queue.map(\.id)
     }
 
     @MainActor
