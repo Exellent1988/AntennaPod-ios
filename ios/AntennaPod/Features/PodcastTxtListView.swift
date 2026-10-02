@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided `podcast:txt` list — optional purpose label (raw feed string) + text body.
-/// **Copy** always; **Open** when the text looks like http(s). Cap + honesty footnote.
+/// **Copy** always; **Share** when copyable (prefers an http(s) URL); **Open** when the text looks like http(s). Cap + honesty footnote.
 /// **Display-only** — no Social / Matrix / special clients. Hidden when none.
 struct PodcastTxtListView: View {
     @Environment(\.openURL) private var openURL
@@ -33,14 +33,14 @@ struct PodcastTxtListView: View {
 
                 Text(
                     String(
-                        localized: "These text entries come from the feed. Copy or open a URL in the system browser — there is no Social or Matrix client."
+                        localized: "These text entries come from the feed. Copy, share, or open a URL in the system browser — there is no Social or Matrix client."
                     )
                 )
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(
                     String(
-                        localized: "These text entries come from the feed. Copy or open a URL in the system browser — there is no Social or Matrix client."
+                        localized: "These text entries come from the feed. Copy, share, or open a URL in the system browser — there is no Social or Matrix client."
                     )
                 )
 
@@ -115,6 +115,29 @@ struct PodcastTxtListView: View {
                 .accessibilityHint(
                     String(localized: "Copies the feed text entry to the pasteboard")
                 )
+
+                let copyText = PodcastTxtDisplay.copyText(entry)
+                if !copyText.isEmpty {
+                    Group {
+                        if let url {
+                            ShareLink(item: url) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        } else {
+                            ShareLink(item: copyText) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
+                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the text URL when it is a parseable http(s) URL; otherwise shares the same feed text as Copy"
+                        )
+                    )
+                }
 
                 if let url {
                     Button {

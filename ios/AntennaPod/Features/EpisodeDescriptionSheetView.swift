@@ -103,7 +103,7 @@ struct EpisodeDescriptionSheetView: View {
         !episode.displaySoundbites.isEmpty
     }
 
-    /// Item podcast:txt when the feed provided entries — empty → hide (display-only Copy / Open).
+    /// Item podcast:txt when the feed provided entries — empty → hide (display-only Copy / Share / Open).
     private var displayTexts: [PodcastTxt] {
         episode.texts
     }

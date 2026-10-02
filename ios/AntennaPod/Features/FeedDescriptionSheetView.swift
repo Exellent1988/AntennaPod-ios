@@ -123,7 +123,7 @@ struct FeedDescriptionSheetView: View {
         !displayLiveItems.isEmpty
     }
 
-    /// Channel podcast:txt when the feed provided them — empty → hide (display-only Copy / Open).
+    /// Channel podcast:txt when the feed provided them — empty → hide (display-only Copy / Share / Open).
     private var displayTexts: [PodcastTxt] {
         feed.displayTexts
     }

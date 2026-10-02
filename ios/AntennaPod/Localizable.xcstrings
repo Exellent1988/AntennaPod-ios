@@ -16842,20 +16842,20 @@
         }
       }
     },
-    "These text entries come from the feed. Copy or open a URL in the system browser — there is no Social or Matrix client.": {
+    "These text entries come from the feed. Copy, share, or open a URL in the system browser — there is no Social or Matrix client.": {
       "extractionState": "manual",
       "comment": "Honesty footnote for podcast:txt display-only list.",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "These text entries come from the feed. Copy or open a URL in the system browser — there is no Social or Matrix client."
+            "value": "These text entries come from the feed. Copy, share, or open a URL in the system browser — there is no Social or Matrix client."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Texteinträge stammen aus dem Feed. Kopieren oder URL im Systembrowser öffnen — kein Social- oder Matrix-Client."
+            "value": "Diese Texteinträge stammen aus dem Feed. Kopieren, teilen oder URL im Systembrowser öffnen — kein Social- oder Matrix-Client."
           }
         }
       }
@@ -16928,6 +16928,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet die URL aus dem Feed-Texteintrag im Systembrowser"
+          }
+        }
+      }
+    },
+    "Shares the text URL when it is a parseable http(s) URL; otherwise shares the same feed text as Copy": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share on a podcast:txt row; prefers the parseable http(s) URL and otherwise shares the same text as Copy.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the text URL when it is a parseable http(s) URL; otherwise shares the same feed text as Copy"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die Text-URL, wenn sie als http(s)-URL lesbar ist; andernfalls denselben Feed-Text wie Kopieren"
           }
         }
       }

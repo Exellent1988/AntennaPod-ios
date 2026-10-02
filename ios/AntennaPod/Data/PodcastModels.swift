@@ -981,7 +981,7 @@ enum PodcastSoundbiteDisplay {
 
 /// Podcast Index `podcast:txt` — free-form text for a podcast or episode.
 /// Optional `purpose` attribute (e.g. transcript, peertube, verify, twitter) + element text.
-/// **Display-only:** Copy text; Open when value looks like http(s). No Social / Matrix / special clients.
+/// **Display-only:** Copy text; Share when copyable (prefers http(s)); Open when value looks like http(s). No Social / Matrix / special clients.
 /// Feed-provided only — never invent purposes or text. Purpose shown as the raw feed string when set.
 struct PodcastTxt: Identifiable, Hashable, Codable {
     /// Stable list identity from feed fields.
@@ -1019,7 +1019,7 @@ struct PodcastTxt: Identifiable, Hashable, Codable {
     }
 }
 
-/// Display helpers for `podcast:txt` lists (channel or item). Feed-provided only; Copy + optional Open.
+/// Display helpers for `podcast:txt` lists (channel or item). Feed-provided only; Copy + Share + optional Open.
 enum PodcastTxtDisplay {
     /// Soft UI cap — show first N after feed order; honesty footnote when more exist.
     static let displayCap = 20

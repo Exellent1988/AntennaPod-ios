@@ -134,7 +134,7 @@ struct FeedDetailView: View {
         liveFeed.displayLiveItems
     }
 
-    /// Channel podcast:txt when the feed provided them — empty → hide (display-only Copy / Open; no special clients).
+    /// Channel podcast:txt when the feed provided them — empty → hide (display-only Copy / Share / Open; no special clients).
     private var displayTexts: [PodcastTxt] {
         liveFeed.displayTexts
     }
@@ -739,7 +739,7 @@ struct FeedDetailView: View {
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
-            // Channel podcast:txt — purpose (raw feed string) + text; Copy / Open http(s); hide when none.
+            // Channel podcast:txt — purpose (raw feed string) + text; Copy / Share / Open http(s); hide when none.
             // Display-only — no Social / Matrix / special clients. Never invent purposes or text.
             if !displayTexts.isEmpty {
                 Section {
