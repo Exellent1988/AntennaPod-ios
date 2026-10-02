@@ -607,13 +607,13 @@ struct PerFeedSettingsView: View {
         if let override = current.playbackSpeed {
             let label = PlaybackService.formatPlaybackSpeed(override)
             return String(
-                format: String(localized: "This podcast starts at %@ instead of Settings → Default speed (currently %@). Applied on a fresh episode start for this feed."),
+                format: String(localized: "This podcast starts at %@ instead of Settings → Default speed (currently %@). Applied on a fresh episode start and when you change this setting while an episode from this podcast is playing. Player speed controls stay session-only."),
                 label,
                 global
             )
         }
         return String(
-            format: String(localized: "Follows Settings → Default speed (currently %@). Applied when starting a fresh episode for this podcast."),
+            format: String(localized: "Follows Settings → Default speed (currently %@). Applied on a fresh episode start and when you change this setting while an episode from this podcast is playing. Player speed controls stay session-only."),
             global
         )
     }

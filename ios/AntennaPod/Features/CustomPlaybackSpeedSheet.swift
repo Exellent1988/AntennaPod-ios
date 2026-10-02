@@ -10,7 +10,7 @@ struct CustomPlaybackSpeedSheet: View {
         case session
         /// Persist Settings default only — does **not** change the rate already playing.
         case defaultSpeed
-        /// Persist per-feed override only — does **not** change the rate already playing.
+        /// Persist per-feed override; also reapplies if an episode from that feed is playing.
         case feedOverride
     }
 
@@ -102,7 +102,7 @@ struct CustomPlaybackSpeedSheet: View {
         case .defaultSpeed:
             return String(localized: "New episodes start at this speed (0.50×–3.00×, 0.05 steps). Does not change the rate of what’s already playing. Stock AVPlayer — quality may degrade above ~2×.")
         case .feedOverride:
-            return String(localized: "This podcast’s episodes start at this speed (0.50×–3.00×, 0.05 steps). Applied on a fresh episode start for this feed (same as existing per-feed speed). Does not change the rate of what’s already playing. Stock AVPlayer — quality may degrade above ~2×.")
+            return String(localized: "This podcast’s episodes use this speed (0.50×–3.00×, 0.05 steps). Applied on a fresh episode start and immediately if an episode from this podcast is already playing. Does not rewrite the player’s session rate from every tap — only this Feed setting (and Custom…) persists per feed. Stock AVPlayer — quality may degrade above ~2×.")
         }
     }
 

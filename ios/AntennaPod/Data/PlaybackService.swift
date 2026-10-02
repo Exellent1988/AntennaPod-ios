@@ -188,7 +188,10 @@ final class PlaybackService: ObservableObject {
             finishCurrentEpisode(ended: false)
         }
 
-        // Fresh episode (or first play): feed override speed, else Settings default.
+        // Fresh episode (or first play): effective speed = feed override ?? Settings default.
+        // Session rate from player tap/Custom… is intentionally replaced on episode change
+        // (same spirit as Android temporary speed scoped to the playing item). Feed settings
+        // own the persistent override; player controls never write FeedSettings.playbackSpeed.
         if isFreshEpisode {
             rate = Self.clampPlaybackSpeed(resolvedPlaybackSpeed(for: episode))
         }
@@ -317,6 +320,17 @@ final class PlaybackService: ObservableObject {
             player?.rate = clamped
         }
         updateNowPlayingInfo(force: true)
+    }
+
+    /// Android `SpeedPresetChangedEvent`: when per-feed playback speed changes for the feed of
+    /// the current episode, apply effective speed (feed override ?? global default).
+    /// Player tap/long-press still only call `setRate` (session) — they do **not** rewrite feed speed.
+    func applyEffectivePlaybackSpeedIfCurrent(feedId: UUID) {
+        guard let episode = currentEpisode,
+              let store,
+              let feed = store.feed(containingEpisodeId: episode.id),
+              feed.id == feedId else { return }
+        setRate(resolvedPlaybackSpeed(for: episode))
     }
 
     /// AntennaPod-style: advance session rate to the next `AppSettings.speedPresets` value (wraps).

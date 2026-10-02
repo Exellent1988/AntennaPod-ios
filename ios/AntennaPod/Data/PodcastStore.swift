@@ -138,10 +138,16 @@ final class PodcastStore: ObservableObject {
     }
 
     func setFeedSettings(_ settings: FeedSettings, for feedId: UUID) {
+        let previousSpeed = feedSettings(for: feedId).playbackSpeed
         if settings.isDefault {
             feedSettingsById.removeValue(forKey: feedId)
         } else {
             feedSettingsById[feedId] = settings
+        }
+        // Mirror Android SpeedPresetChangedEvent: only when playbackSpeed actually changes.
+        // Other feed prefs must not clobber a temporary player session rate.
+        if previousSpeed != settings.playbackSpeed {
+            playback?.applyEffectivePlaybackSpeedIfCurrent(feedId: feedId)
         }
     }
 

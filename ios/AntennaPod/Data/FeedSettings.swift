@@ -31,6 +31,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
     /// Skip outro seconds override; `nil` = Use global. Explicit `0` = Off for this feed.
     var skipOutroSeconds: Int?
     /// Playback speed override; `nil` = Use global. Presets or Custom… (0.50–3.00× @ 0.05).
+    /// Applied on fresh episode start and when this value changes while an episode from the
+    /// feed is playing. Player session rate (`setRate`) does not write this field.
     var playbackSpeed: Float?
     /// Feed detail episode list sort override; `nil` = Use global (`AppSettings.feedEpisodeSort`).
     /// Newest / Oldest by pubDate; Shortest / Longest by known duration (unknown last). itunes:type does **not** change this.

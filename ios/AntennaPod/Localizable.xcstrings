@@ -13505,23 +13505,6 @@
         }
       }
     },
-    "This podcast’s episodes start at this speed (0.50×–3.00×, 0.05 steps). Applied on a fresh episode start for this feed (same as existing per-feed speed). Does not change the rate of what’s already playing. Stock AVPlayer — quality may degrade above ~2×.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This podcast’s episodes start at this speed (0.50×–3.00×, 0.05 steps). Applied on a fresh episode start for this feed (same as existing per-feed speed). Does not change the rate of what’s already playing. Stock AVPlayer — quality may degrade above ~2×."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Episoden dieses Podcasts starten mit dieser Geschwindigkeit (0,50×–3,00×, Schritte 0,05). Wird bei frischem Episodenstart für diesen Feed angewendet (wie die bestehende Per-Feed-Geschwindigkeit). Ändert nicht die Rate der bereits laufenden Wiedergabe. Stock-AVPlayer — Qualität kann über ~2× nachlassen."
-          }
-        }
-      }
-    },
     "Set a custom playback speed for this podcast between 0.50× and 3.00×.": {
       "extractionState": "manual",
       "localizations": {
@@ -13552,40 +13535,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Global, ein Preset oder Benutzerdefiniert… für diesen Podcast"
-          }
-        }
-      }
-    },
-    "This podcast starts at %@ instead of Settings → Default speed (currently %@). Applied on a fresh episode start for this feed.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This podcast starts at %@ instead of Settings → Default speed (currently %@). Applied on a fresh episode start for this feed."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dieser Podcast startet mit %@ statt Einstellungen → Standardgeschwindigkeit (aktuell %@). Wird bei frischem Episodenstart für diesen Feed angewendet."
-          }
-        }
-      }
-    },
-    "Follows Settings → Default speed (currently %@). Applied when starting a fresh episode for this podcast.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Follows Settings → Default speed (currently %@). Applied when starting a fresh episode for this podcast."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Folgt Einstellungen → Standardgeschwindigkeit (aktuell %@). Wird beim Start einer neuen Episode dieses Podcasts angewendet."
           }
         }
       }
@@ -23456,6 +23405,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Soundbites stammen aus dem Feed. Abspielen springt zum Start und pausiert am Ende des Clips im Episoden-Player; es gibt keinen eigenen Clip-Player."
+          }
+        }
+      }
+    },
+    "This podcast starts at %@ instead of Settings → Default speed (currently %@). Applied on a fresh episode start and when you change this setting while an episode from this podcast is playing. Player speed controls stay session-only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast starts at %@ instead of Settings → Default speed (currently %@). Applied on a fresh episode start and when you change this setting while an episode from this podcast is playing. Player speed controls stay session-only."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Podcast startet mit %@ statt Einstellungen → Standardgeschwindigkeit (aktuell %@). Wird bei frischem Episodenstart und wenn du diese Einstellung änderst, während eine Episode dieses Podcasts spielt, angewendet. Player-Geschwindigkeit bleibt nur Sitzung."
+          }
+        }
+      }
+    },
+    "Follows Settings → Default speed (currently %@). Applied on a fresh episode start and when you change this setting while an episode from this podcast is playing. Player speed controls stay session-only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follows Settings → Default speed (currently %@). Applied on a fresh episode start and when you change this setting while an episode from this podcast is playing. Player speed controls stay session-only."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folgt Einstellungen → Standardgeschwindigkeit (aktuell %@). Wird bei frischem Episodenstart und wenn du diese Einstellung änderst, während eine Episode dieses Podcasts spielt, angewendet. Player-Geschwindigkeit bleibt nur Sitzung."
+          }
+        }
+      }
+    },
+    "This podcast’s episodes use this speed (0.50×–3.00×, 0.05 steps). Applied on a fresh episode start and immediately if an episode from this podcast is already playing. Does not rewrite the player’s session rate from every tap — only this Feed setting (and Custom…) persists per feed. Stock AVPlayer — quality may degrade above ~2×.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast’s episodes use this speed (0.50×–3.00×, 0.05 steps). Applied on a fresh episode start and immediately if an episode from this podcast is already playing. Does not rewrite the player’s session rate from every tap — only this Feed setting (and Custom…) persists per feed. Stock AVPlayer — quality may degrade above ~2×."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden dieses Podcasts nutzen diese Geschwindigkeit (0,50×–3,00×, Schritte 0,05). Wird bei frischem Episodenstart und sofort angewendet, wenn bereits eine Episode dieses Podcasts spielt. Tippen im Player schreibt die Per-Feed-Geschwindigkeit nicht um — nur diese Feed-Einstellung (und Custom…) speichert pro Feed. Stock-AVPlayer — Qualität kann über ~2× nachlassen."
           }
         }
       }
