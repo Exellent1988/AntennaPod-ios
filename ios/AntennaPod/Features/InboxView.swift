@@ -3,6 +3,7 @@ import SwiftUI
 struct InboxView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var settings: AppSettings
 
     @State private var searchText = ""
@@ -142,7 +143,7 @@ struct InboxView: View {
 
     /// Visible Inbox rows: `inboxSort` → podcast chip → itunes:episodeType chip.
     /// Library `.searchable` replaces this list entirely (`LibrarySearchResultsView`).
-    /// View-only — Mark all / Add all to queue / Archive all stay full-catalog scoped.
+    /// View-only — Mark all / Add all to queue / Archive all / Play random stay full-catalog scoped.
     private var filteredItems: [InboxEpisode] {
         var base: [InboxEpisode]
         switch podcastFilter {
@@ -188,6 +189,23 @@ struct InboxView: View {
         store.inboxEpisodes.filter { !store.isInQueue($0.episode.id) }.count
     }
 
+    /// Inbox episodes with playable media (local file via `DownloadService.localURL` —
+    /// downloads + local-folder `file://` — or streamable http(s) `downloadUrl`).
+    /// Full Inbox catalog — **not** podcast-chip, episode-type, or library-search filtered.
+    /// Distinct from Mark all / Add all to queue / Archive all / remaining-time visible counts.
+    private var playRandomEligibleEpisodes: [PodcastEpisode] {
+        store.inboxEpisodes.map(\.episode).filter { episodeHasPlayableMedia($0) }
+    }
+
+    /// Prefer unplayed among `playRandomEligibleEpisodes` when any remain; otherwise all eligible.
+    /// Inbox is already unplayed-only (`!isPlayed` && not archived), so prefer-unplayed is a no-op
+    /// in practice — same helper pattern as History / Favorites / Feed / Queue / Downloads.
+    private var playRandomCandidates: [PodcastEpisode] {
+        let eligible = playRandomEligibleEpisodes
+        let unplayed = eligible.filter { !store.isPlayed($0.id) }
+        return unplayed.isEmpty ? eligible : unplayed
+    }
+
     /// Visible Inbox rows for remaining-time: podcast+type-filtered sorted list when **not** in
     /// library-search mode. While `.searchable` shows `LibrarySearchResultsView` (full library),
     /// the info bar is hidden — do not report full-Inbox / tab-badge totals over a different surface.
@@ -199,7 +217,7 @@ struct InboxView: View {
     /// Remaining per episode = `max(0, duration − position)` when duration known; unplayed with
     /// duration contributes full duration; **played** (not current) → 0; **unknown duration skipped**
     /// (tilde when any skipped). Currently playing uses live `PlaybackService` position/duration.
-    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge (full Inbox count).
+    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge / Mark all / Add all / Archive all / Play random (full catalog).
     private var inboxRemainingInfoLabel: String? {
         guard !visibleInboxForRemaining.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: inboxRemainingSummary)
@@ -373,6 +391,15 @@ struct InboxView: View {
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button {
+                            playRandomEpisode()
+                        } label: {
+                            Label("Play random", systemImage: "shuffle")
+                        }
+                        .disabled(playRandomCandidates.isEmpty)
+                        .accessibilityLabel(String(localized: "Play random"))
+                        .accessibilityHint(String(localized: "Plays a random Inbox episode with playable media. Prefers unplayed when any remain."))
+
+                        Button {
                             showEnqueueAllConfirm = true
                         } label: {
                             Label("Add all to queue", systemImage: "text.append")
@@ -398,6 +425,7 @@ struct InboxView: View {
                     } label: {
                         Label("Inbox actions", systemImage: "ellipsis.circle")
                     }
+                    // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
                     .disabled(sortedItems.isEmpty || isSearching)
                 }
             }
@@ -457,6 +485,24 @@ struct InboxView: View {
                 }
             }
         }
+    }
+
+    /// Local download / local-folder file, or streamable http(s) enclosure — same honesty as
+    /// History / Favorites / Feed detail Play random / `PlaybackService.resolvePlaybackURL` inputs (Wi‑Fi stream gate still applies at play time).
+    private func episodeHasPlayableMedia(_ episode: PodcastEpisode) -> Bool {
+        if downloads.localURL(for: episode) != nil { return true }
+        guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty,
+              let url = URL(string: raw) else { return false }
+        let scheme = url.scheme?.lowercased()
+        return scheme == "http" || scheme == "https"
+    }
+
+    /// Uniform pick among `playRandomCandidates`; starts via `PlaybackService.play` (resume rules unchanged).
+    /// No confirm; does not reorder Inbox or invent queue mutations beyond what `play` already does.
+    private func playRandomEpisode() {
+        guard let episode = playRandomCandidates.randomElement() else { return }
+        _ = playback.play(episode: episode)
     }
 
     private func scheduleFilter(for term: String) {
