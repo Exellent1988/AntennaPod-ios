@@ -27,6 +27,8 @@ struct FeedDetailView: View {
     @State private var showAuthorCopied = false
     @State private var showLanguageCopied = false
     @State private var showCategoriesCopied = false
+    @State private var showMediumCopied = false
+    @State private var showItunesTypeCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
@@ -40,6 +42,8 @@ struct FeedDetailView: View {
     @State private var copyAuthorFeedbackTick = 0
     @State private var copyLanguageFeedbackTick = 0
     @State private var copyCategoriesFeedbackTick = 0
+    @State private var copyMediumFeedbackTick = 0
+    @State private var copyItunesTypeFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -590,13 +594,16 @@ struct FeedDetailView: View {
             // Channel podcast:medium when present — raw feed string; hide when missing (never invent/remap; display-only).
             if let medium = displayMedium {
                 Section {
-                    Text(medium)
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.2), in: Capsule())
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityLabel(String(localized: "Medium \(medium)"))
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(medium)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .accessibilityLabel(String(localized: "Medium \(medium)"))
+                        mediumActions(medium)
+                    }
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -604,13 +611,14 @@ struct FeedDetailView: View {
             // Capsule is display-only; Serial may one-shot set per-feed Oldest first when episodeSort is still nil.
             if let itunesType = displayItunesType {
                 Section {
-                    VStack(alignment: .leading, spacing: 6) {
+                    VStack(alignment: .leading, spacing: 8) {
                         Text(itunesType)
                             .font(.caption.weight(.semibold))
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(Color.secondary.opacity(0.2), in: Capsule())
                             .accessibilityLabel(liveFeed.itunesTypeAccessibilityLabel ?? itunesType)
+                        itunesTypeActions(itunesType)
                         if liveFeed.isItunesTypeSerial {
                             Text(String(localized: "Serial podcasts may use Oldest first once for narrative order when per-feed sort is unset. You can still pick any sort. The itunes:type capsule stays display-only."))
                                 .font(.footnote)
@@ -1606,6 +1614,22 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Podcast categories copied to the pasteboard."))
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showMediumCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Podcast medium copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showItunesTypeCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Podcast type copied to the pasteboard."))
+        }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
@@ -1616,6 +1640,8 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyAuthorFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLanguageFeedbackTick)
         .sensoryFeedback(.success, trigger: copyCategoriesFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyMediumFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyItunesTypeFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle)
@@ -1727,6 +1753,74 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = displayCategoriesShareText
         copyCategoriesFeedbackTick += 1
         showCategoriesCopied = true
+    }
+
+    @ViewBuilder
+    private func mediumActions(_ medium: String) -> some View {
+        HStack(spacing: 12) {
+            Button {
+                copyMedium(medium)
+            } label: {
+                Label("Copy medium", systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Copy medium"))
+            .accessibilityHint(
+                String(localized: "Copies the same feed-provided medium string shown above to the pasteboard; display-only; no playback change or remapping")
+            )
+
+            ShareLink(
+                item: medium,
+                subject: Text(feedDisplayTitle)
+            ) {
+                Label("Share medium", systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Share medium"))
+            .accessibilityHint(
+                String(localized: "Shares the same feed-provided medium string shown above as plain text; display-only; no playback change or remapping")
+            )
+        }
+    }
+
+    private func copyMedium(_ medium: String) {
+        UIPasteboard.general.string = medium
+        copyMediumFeedbackTick += 1
+        showMediumCopied = true
+    }
+
+    @ViewBuilder
+    private func itunesTypeActions(_ itunesType: String) -> some View {
+        HStack(spacing: 12) {
+            Button {
+                copyItunesType(itunesType)
+            } label: {
+                Label("Copy podcast type", systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Copy podcast type"))
+            .accessibilityHint(
+                String(localized: "Copies the same displayed Episodic, Serial, or feed-provided type string to the pasteboard; display-only; does not change sorting")
+            )
+
+            ShareLink(
+                item: itunesType,
+                subject: Text(feedDisplayTitle)
+            ) {
+                Label("Share podcast type", systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(String(localized: "Share podcast type"))
+            .accessibilityHint(
+                String(localized: "Shares the same displayed Episodic, Serial, or feed-provided type string as plain text; display-only; does not change sorting")
+            )
+        }
+    }
+
+    private func copyItunesType(_ itunesType: String) {
+        UIPasteboard.general.string = itunesType
+        copyItunesTypeFeedbackTick += 1
+        showItunesTypeCopied = true
     }
 
     private func copyLockedOwner(_ owner: String) {

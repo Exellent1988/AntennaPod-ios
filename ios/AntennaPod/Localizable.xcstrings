@@ -30989,6 +30989,186 @@
           }
         }
       }
+    },
+    "Copy medium": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: copy the feed-provided podcast:medium string exactly as displayed; hidden when missing; no playback change or remapping.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy medium"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medium kopieren"
+          }
+        }
+      }
+    },
+    "Share medium": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: share the feed-provided podcast:medium string exactly as displayed; hidden when missing; no playback change or remapping.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share medium"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medium teilen"
+          }
+        }
+      }
+    },
+    "Copy podcast type": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: copy the displayed localized or raw itunes:type string; hidden when missing; display-only and does not change sorting.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy podcast type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Typ kopieren"
+          }
+        }
+      }
+    },
+    "Share podcast type": {
+      "extractionState": "manual",
+      "comment": "Feed detail and description sheet: share the displayed localized or raw itunes:type string; hidden when missing; display-only and does not change sorting.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share podcast type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Typ teilen"
+          }
+        }
+      }
+    },
+    "Copies the same feed-provided medium string shown above to the pasteboard; display-only; no playback change or remapping": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the displayed feed-provided podcast:medium string.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same feed-provided medium string shown above to the pasteboard; display-only; no playback change or remapping"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert denselben vom Feed bereitgestellten Medium-String wie oben in die Zwischenablage; nur Anzeige; keine Wiedergabeänderung oder Umwandlung"
+          }
+        }
+      }
+    },
+    "Shares the same feed-provided medium string shown above as plain text; display-only; no playback change or remapping": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the displayed feed-provided podcast:medium string.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same feed-provided medium string shown above as plain text; display-only; no playback change or remapping"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt denselben vom Feed bereitgestellten Medium-String wie oben als Klartext; nur Anzeige; keine Wiedergabeänderung oder Umwandlung"
+          }
+        }
+      }
+    },
+    "Copies the same displayed Episodic, Serial, or feed-provided type string to the pasteboard; display-only; does not change sorting": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the displayed localized or raw itunes:type string.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same displayed Episodic, Serial, or feed-provided type string to the pasteboard; display-only; does not change sorting"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert denselben angezeigten lokalisierten oder rohen itunes:type-String in die Zwischenablage; nur Anzeige; ändert die Sortierung nicht"
+          }
+        }
+      }
+    },
+    "Shares the same displayed Episodic, Serial, or feed-provided type string as plain text; display-only; does not change sorting": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the displayed localized or raw itunes:type string.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same displayed Episodic, Serial, or feed-provided type string as plain text; display-only; does not change sorting"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt denselben angezeigten lokalisierten oder rohen itunes:type-String als Klartext; nur Anzeige; ändert die Sortierung nicht"
+          }
+        }
+      }
+    },
+    "Podcast medium copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the feed-provided podcast:medium string.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast medium copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Medium in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Podcast type copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the displayed itunes:type string.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast type copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Typ in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
