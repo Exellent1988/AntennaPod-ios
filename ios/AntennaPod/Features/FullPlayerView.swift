@@ -936,32 +936,6 @@ struct FullPlayerView: View {
         .accessibilityHint(String(localized: "Sets or turns off the sleep timer"))
     }
 
-    /// True when the episode has a remote enclosure (not a local-folder `file://`).
-    private func canManageDownload(for episode: PodcastEpisode) -> Bool {
-        guard let raw = episode.downloadUrl, !raw.isEmpty else { return false }
-        return !LocalFolderFeed.isLocalFileDownloadURL(raw)
-    }
-
-    private func downloadActionAccessibilityLabel(for episode: PodcastEpisode) -> String {
-        if downloads.inProgress.contains(episode.id) {
-            return String(localized: "Cancel download")
-        }
-        if downloads.isDownloaded(episode) {
-            return String(localized: "Delete download")
-        }
-        return String(localized: "Download")
-    }
-
-    private func downloadActionAccessibilityHint(for episode: PodcastEpisode) -> String {
-        if downloads.inProgress.contains(episode.id) {
-            return String(localized: "Cancels the in-progress download")
-        }
-        if downloads.isDownloaded(episode) {
-            return String(localized: "Asks for confirmation, then deletes the offline file for this episode")
-        }
-        return String(localized: "Downloads this episode for offline playback")
-    }
-
     private func copyEpisodeLink(_ url: URL) {
         copiedAlertMessage = EpisodeCopyLinks.copyEpisodeLink(url)
         copyURLFeedbackTick += 1
@@ -1065,33 +1039,12 @@ struct FullPlayerView: View {
             )
 
             // Remote-media only: skip local-folder `file://` (already on disk).
-            if canManageDownload(for: episode) {
-                Button {
-                    if downloads.inProgress.contains(episode.id) {
-                        downloads.cancelDownload(episode)
-                    } else if downloads.isDownloaded(episode) {
-                        // Same path as Downloads tab swipe Delete — confirm first.
-                        episodePendingDeleteDownload = episode
-                    } else {
-                        Task { await downloads.download(episode) }
-                    }
-                } label: {
-                    if downloads.inProgress.contains(episode.id) {
-                        Label("Cancel download", systemImage: "xmark.circle")
-                    } else if downloads.isDownloaded(episode) {
-                        Label("Delete download", systemImage: "trash")
-                    } else {
-                        Label("Download", systemImage: "arrow.down.circle")
-                    }
-                }
-                .tint(
-                    downloads.isDownloaded(episode) && !downloads.inProgress.contains(episode.id)
-                        ? .red
-                        : nil
-                )
-                .accessibilityLabel(downloadActionAccessibilityLabel(for: episode))
-                .accessibilityHint(downloadActionAccessibilityHint(for: episode))
-            }
+            // Shared with mini ⋯ via EpisodeDownloadActions.
+            EpisodeDownloadActions.button(
+                episode: episode,
+                downloads: downloads,
+                onRequestDeleteDownload: { episodePendingDeleteDownload = $0 }
+            )
 
             if let url = episode.websiteURL {
                 Button {

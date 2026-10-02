@@ -4,6 +4,7 @@ struct MiniPlayerView: View {
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var downloads: DownloadService
     @State private var showFullPlayer = false
     @State private var showFeedUnavailable = false
     @State private var showCustomSleepTimer = false
@@ -16,6 +17,8 @@ struct MiniPlayerView: View {
     @State private var copyURLFeedbackTick = 0
     /// Single episode pending mini ⋯ Remove-from-queue confirmation (nil = dialog dismissed).
     @State private var episodePendingRemoveFromQueue: PodcastEpisode?
+    /// Single episode pending mini ⋯ Delete-download confirmation (nil = dialog dismissed).
+    @State private var episodePendingDeleteDownload: PodcastEpisode?
 
     var body: some View {
         if let episode = playback.currentEpisode {
@@ -211,6 +214,14 @@ struct MiniPlayerView: View {
                             queueLocked: settings.queueLocked,
                             onRequestRemoveFromQueue: { episodePendingRemoveFromQueue = $0 }
                         )
+                        // Download / Cancel / Delete — same DownloadService APIs as Full secondary.
+                        // Prefer store episode (post-refresh) over a possibly stale player copy.
+                        // Hidden for local-folder / file:// via EpisodeDownloadActions.canManageDownload.
+                        EpisodeDownloadActions.button(
+                            episode: store.episode(id: episode.id) ?? episode,
+                            downloads: downloads,
+                            onRequestDeleteDownload: { episodePendingDeleteDownload = $0 }
+                        )
                         // Copy episode link / Copy media URL — same websiteURL / mediaURL gates as Full.
                         // Prefer store episode (post-refresh) over a possibly stale player copy.
                         EpisodeCopyLinks.labelStyle(
@@ -273,6 +284,27 @@ struct MiniPlayerView: View {
             } message: { episode in
                 Text(
                     "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
+                )
+            }
+            .confirmationDialog(
+                "Delete download?",
+                isPresented: Binding(
+                    get: { episodePendingDeleteDownload != nil },
+                    set: { if !$0 { episodePendingDeleteDownload = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: episodePendingDeleteDownload
+            ) { episode in
+                Button("Delete download", role: .destructive) {
+                    downloads.delete(episode)
+                    episodePendingDeleteDownload = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    episodePendingDeleteDownload = nil
+                }
+            } message: { episode in
+                Text(
+                    "Delete download for \"\(episode.title)\"? Removes the local offline file only. Keeps played status, queue, and favorites."
                 )
             }
             .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
