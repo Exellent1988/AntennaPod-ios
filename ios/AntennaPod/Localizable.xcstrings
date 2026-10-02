@@ -25672,6 +25672,57 @@
           }
         }
       }
+    },
+    "Copy current cue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy current cue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktuelle Textstelle kopieren"
+          }
+        }
+      }
+    },
+    "Copies the current transcript cue to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the current transcript cue to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die aktuelle Transkript-Textstelle in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Current cue copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current cue copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktuelle Textstelle in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

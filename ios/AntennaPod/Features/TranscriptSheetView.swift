@@ -5,6 +5,9 @@ import UIKit
 /// Cue list supports `.searchable` filter over already-loaded cue text (case-insensitive,
 /// ~250 ms debounce). Toolbar **Copy transcript** joins already-loaded cues (or plain-text
 /// fallback) to the pasteboard — full loaded text, not the search-filtered subset.
+/// Toolbar **Copy current cue** copies the cue at `playback.positionSeconds` (same
+/// `TranscriptCueIndexing` as highlight / auto-scroll) as one line `m:ss`/`h:mm:ss` +
+/// optional `Speaker: ` + text — from the **full** loaded array (ignores search filter).
 /// Toolbar **Share transcript** offers the same full loaded plain text (episode title + body)
 /// via the system share sheet (`ShareLink`) — no fake social / no extra fetch.
 /// Does not fetch or generate transcripts; feed URL only — no STT.
@@ -61,6 +64,25 @@ struct TranscriptSheetView: View {
         let title = episode.title.trimmingCharacters(in: .whitespacesAndNewlines)
         if title.isEmpty { return body }
         return "\(title)\n\n\(body)"
+    }
+
+    /// One-line pasteboard text for the cue active at playback position (full loaded array).
+    /// Format: `m:ss` / `h:mm:ss` start + optional `Speaker: ` + cue text (same speaker join as full Copy).
+    private var currentCuePlainForCopy: String? {
+        guard let index = currentCueIndex, cues.indices.contains(index) else { return nil }
+        let cue = cues[index]
+        let text = cue.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let time = format(cue.startTimeSeconds)
+        if let speaker = cue.speaker?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !speaker.isEmpty {
+            return "\(time) \(speaker): \(text)"
+        }
+        return "\(time) \(text)"
+    }
+
+    /// Enabled when `TranscriptCueIndexing` reports a current cue (nil before first / empty).
+    private var canCopyCurrentCue: Bool {
+        currentCuePlainForCopy != nil
     }
 
     /// Visible cues after light-debounced case-insensitive filter on cue text (+ speaker when set).
@@ -120,6 +142,17 @@ struct TranscriptSheetView: View {
                     .disabled(!canCopyTranscript)
                     .accessibilityLabel(String(localized: "Copy transcript"))
                     .accessibilityHint(String(localized: "Copies the transcript to the pasteboard"))
+
+                    Button {
+                        copyCurrentCue()
+                    } label: {
+                        Image(systemName: "text.quote")
+                    }
+                    .disabled(!canCopyCurrentCue)
+                    .accessibilityLabel(String(localized: "Copy current cue"))
+                    .accessibilityHint(
+                        String(localized: "Copies the current transcript cue to the pasteboard")
+                    )
 
                     ShareLink(
                         item: transcriptShareText,
@@ -293,6 +326,14 @@ struct TranscriptSheetView: View {
         guard !text.isEmpty else { return }
         UIPasteboard.general.string = text
         copiedAlertMessage = String(localized: "Transcript copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    private func copyCurrentCue() {
+        guard let text = currentCuePlainForCopy, !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Current cue copied to the pasteboard.")
         copyFeedbackTick += 1
         showCopiedAlert = true
     }
