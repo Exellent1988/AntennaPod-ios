@@ -20,6 +20,7 @@ struct FeedDetailView: View {
     @State private var showFundingURLCopied = false
     @State private var showPodcastWebsiteURLCopied = false
     @State private var showPodcastGuidCopied = false
+    @State private var showDiscussURLCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
@@ -27,6 +28,7 @@ struct FeedDetailView: View {
     @State private var copyFundingURLFeedbackTick = 0
     @State private var copyPodcastWebsiteURLFeedbackTick = 0
     @State private var copyPodcastGuidFeedbackTick = 0
+    @State private var copyDiscussURLFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -1048,6 +1050,28 @@ struct FeedDetailView: View {
                             }
                             .accessibilityLabel(String(localized: "Discuss"))
                             .accessibilityHint(String(localized: "Opens the discussion link from the feed in the system browser"))
+
+                            Button {
+                                copyDiscussURL(url)
+                            } label: {
+                                Label("Copy discuss URL", systemImage: "doc.on.doc")
+                            }
+                            .accessibilityLabel(String(localized: "Copy discuss URL"))
+                            .accessibilityHint(
+                                String(localized: "Copies the feed-provided discussion URL to the pasteboard; does not post as you")
+                            )
+
+                            ShareLink(
+                                item: url,
+                                subject: Text(feedDisplayTitle),
+                                message: Text("\(feedDisplayTitle) — Discuss")
+                            ) {
+                                Label("Share discuss URL", systemImage: "square.and.arrow.up")
+                            }
+                            .accessibilityLabel(String(localized: "Share discuss URL"))
+                            .accessibilityHint(
+                                String(localized: "Shares the feed-provided discussion URL; opens only and does not post as you")
+                            )
                         }
 
                         Button {
@@ -1316,10 +1340,19 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Podcast GUID copied to the pasteboard."))
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showDiscussURLCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Discuss URL copied to the pasteboard."))
+        }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastGuidFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyDiscussURLFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle)
@@ -1381,6 +1414,12 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = url.absoluteString
         copyPodcastWebsiteURLFeedbackTick += 1
         showPodcastWebsiteURLCopied = true
+    }
+
+    private func copyDiscussURL(_ url: URL) {
+        UIPasteboard.general.string = url.absoluteString
+        copyDiscussURLFeedbackTick += 1
+        showDiscussURLCopied = true
     }
 
     /// Feed-provided Podcast Index `podcast:guid` only — never invent / never derive from feed URL.
