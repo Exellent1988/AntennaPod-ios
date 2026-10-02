@@ -72,6 +72,8 @@ struct OpmlImportExportSection: View {
                 Label("Export subscriptions as HTML", systemImage: "doc.richtext")
             }
             .disabled(!canExport)
+            .accessibilityLabel(String(localized: "Export subscriptions as HTML"))
+            .accessibilityHint(String(localized: "Shares a self-contained HTML subscription list via the system share sheet. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed."))
 
             Button {
                 showImporter = true
@@ -152,7 +154,7 @@ struct OpmlImportExportSection: View {
     private var opmlHonestyFooter: String {
         let n = store.exportableSubscriptionCount
         let local = store.feeds.count - n
-        var text = String(localized: "Import picks an .opml or .xml from Files (document picker). Already subscribed feed URLs are skipped; each new feed is fetched over the network. Export writes AntennaPod-compatible OPML 2.0 — Share sheet or Save to Files. Local folder podcasts are omitted from OPML and HTML. No cloud sync.")
+        var text = String(localized: "Import picks an .opml or .xml from Files (document picker). Already subscribed feed URLs are skipped; each new feed is fetched over the network. Export writes AntennaPod-compatible OPML 2.0 — Share sheet or Save to Files. Local folder podcasts are omitted from OPML and HTML. HTML lists title, feed URL, and episode count; author, language, categories, and funding only when the feed provides them. No cloud sync.")
         if local > 0 {
             text += " " + String(localized: "\(n) of \(store.feeds.count) subscriptions are exportable.")
         }

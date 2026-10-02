@@ -2,21 +2,36 @@ import Foundation
 
 /// AntennaPod-style HTML export lite for subscriptions (self-contained list).
 /// Distinct from OPML and the iOS JSON ZIP backup.
+/// Metadata (author, language, categories, funding) is included only when the feed provides it — never invented.
+/// Local folder podcasts are omitted (same as OPML).
 enum HtmlExportWriter {
     private static let documentTitle = "AntennaPod Subscriptions"
+    /// Fallback document `lang` when feeds disagree or lack a shared language code.
+    private static let fallbackDocumentLang = "en"
 
-    /// Build a simple self-contained HTML document: title, feed URL links, optional episode count.
+    /// Build a simple self-contained HTML document: title, feed URL links, optional episode count,
+    /// plus author / language / categories / funding when the feed provides them.
     static func writeDocument(feeds: [PodcastFeed], includeEpisodeCount: Bool = true) -> String {
         let sorted = feeds.sorted {
             $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
         }
+        let exportable = sorted.filter { feed in
+            !feed.feedUrl.isEmpty && !LocalFolderFeed.isLocalFolderFeed(feed)
+        }
+        // Prefer first feed’s language when every exportable feed shares that code; else keep `en`.
+        let docLang = sharedDocumentLanguage(of: exportable) ?? fallbackDocumentLang
+
         var body = ""
         body += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         body += "<!DOCTYPE html>\n"
-        body += "<html lang=\"en\">\n"
+        // Comment: document lang is shared feed language when unanimous; otherwise en (mixed / missing).
+        body += "<!-- lang: shared feed language when all exportable feeds agree; else en -->\n"
+        body += "<html lang=\"\(escapeAttr(docLang))\">\n"
         body += "<head>\n"
         body += "  <meta charset=\"UTF-8\" />\n"
         body += "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n"
+        body += "  <meta name=\"generator\" content=\"AntennaPod iOS\" />\n"
+        body += "  <meta name=\"description\" content=\"Subscription list exported from AntennaPod iOS. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed.\" />\n"
         body += "  <title>\(escape(documentTitle))</title>\n"
         body += "  <style>\n"
         body += css
@@ -25,18 +40,17 @@ enum HtmlExportWriter {
         body += "<body>\n"
         body += "  <header>\n"
         body += "    <h1>\(escape(documentTitle))</h1>\n"
-        body += "    <p class=\"meta\">\(sorted.count) subscription\(sorted.count == 1 ? "" : "s")"
+        body += "    <p class=\"meta\">\(exportable.count) subscription\(exportable.count == 1 ? "" : "s")"
         body += " · exported \(escape(displayDate(Date())))</p>\n"
         body += "  </header>\n"
         body += "  <ul class=\"feeds\">\n"
-        for feed in sorted {
-            guard !feed.feedUrl.isEmpty else { continue }
-            guard !LocalFolderFeed.isLocalFolderFeed(feed) else { continue }
+        for feed in exportable {
             body += feedItemHTML(feed: feed, includeEpisodeCount: includeEpisodeCount)
         }
         body += "  </ul>\n"
         body += "  <footer>\n"
-        body += "    <p>Exported from AntennaPod iOS · "
+        body += "    <p>Exported from AntennaPod iOS · local folder podcasts omitted · "
+        body += "metadata only when provided by each feed · "
         body += "<a href=\"https://antennapod.org\">antennapod.org</a></p>\n"
         body += "  </footer>\n"
         body += "</body>\n"
@@ -57,9 +71,27 @@ enum HtmlExportWriter {
         return url
     }
 
+    /// Shared language code when every exportable feed has the same non-empty code (case-insensitive).
+    /// Uses the first feed’s original casing for `html lang`. Nil when empty list, any missing, or mixed.
+    private static func sharedDocumentLanguage(of feeds: [PodcastFeed]) -> String? {
+        guard let firstCode = feeds.first?.languageCode else { return nil }
+        let shared = firstCode
+        for feed in feeds {
+            guard let code = feed.languageCode else { return nil }
+            if code.caseInsensitiveCompare(shared) != .orderedSame {
+                return nil
+            }
+        }
+        return shared
+    }
+
     private static func feedItemHTML(feed: PodcastFeed, includeEpisodeCount: Bool) -> String {
+        // Title links to site when feed provides a usable http(s) siteLink (existing behavior).
         let titleHTML: String
-        if let site = feed.siteLink, !site.isEmpty {
+        if let siteURL = feed.websiteURL {
+            titleHTML = "<a class=\"title\" href=\"\(escapeAttr(siteURL.absoluteString))\">\(escape(feed.title))</a>"
+        } else if let site = feed.siteLink?.trimmingCharacters(in: .whitespacesAndNewlines), !site.isEmpty {
+            // Preserve prior attr escape for non-http(s) site strings when present (rare).
             titleHTML = "<a class=\"title\" href=\"\(escapeAttr(site))\">\(escape(feed.title))</a>"
         } else {
             titleHTML = "<span class=\"title\">\(escape(feed.title))</span>"
@@ -69,9 +101,24 @@ enum HtmlExportWriter {
         metaParts.append(
             "<a class=\"feed-url\" href=\"\(escapeAttr(feed.feedUrl))\">\(escape(feed.feedUrl))</a>"
         )
+        if let author = feed.displayAuthor {
+            metaParts.append(escape(author))
+        }
+        if let language = feed.displayLanguage {
+            metaParts.append(escape(language))
+        }
+        if let cats = feed.categoriesCaption {
+            metaParts.append(escape(cats))
+        }
         if includeEpisodeCount {
             let n = feed.episodes.count
             metaParts.append("\(n) episode\(n == 1 ? "" : "s")")
+        }
+        if let funding = feed.fundingURL {
+            let label = feed.displayFundingLabel ?? "Support"
+            metaParts.append(
+                "<a class=\"funding\" href=\"\(escapeAttr(funding.absoluteString))\">\(escape(label))</a>"
+            )
         }
 
         var item = "    <li>\n"
@@ -108,8 +155,8 @@ enum HtmlExportWriter {
             .title { font-size: 1.05rem; font-weight: 500; color: #111; text-decoration: none; }
             a.title:hover { text-decoration: underline; }
             .meta { margin-top: 8px; font-size: 0.85rem; color: #555; word-break: break-all; }
-            a.feed-url { color: #3498db; text-decoration: none; }
-            a.feed-url:hover { text-decoration: underline; }
+            a.feed-url, a.funding { color: #3498db; text-decoration: none; }
+            a.feed-url:hover, a.funding:hover { text-decoration: underline; }
             footer { margin-top: 20px; }
             footer a { color: #fff; }
 

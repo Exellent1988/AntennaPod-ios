@@ -18769,23 +18769,6 @@
         }
       }
     },
-    "Import picks an .opml or .xml from Files (document picker). Already subscribed feed URLs are skipped; each new feed is fetched over the network. Export writes AntennaPod-compatible OPML 2.0 — Share sheet or Save to Files. Local folder podcasts are omitted from OPML and HTML. No cloud sync.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import picks an .opml or .xml from Files (document picker). Already subscribed feed URLs are skipped; each new feed is fetched over the network. Export writes AntennaPod-compatible OPML 2.0 — Share sheet or Save to Files. Local folder podcasts are omitted from OPML and HTML. No cloud sync."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import wählt eine .opml- oder .xml-Datei aus Dateien (Dokumentenauswahl). Bereits abonnierte Feed-URLs werden übersprungen; jeder neue Feed wird über das Netzwerk geladen. Export schreibt AntennaPod-kompatibles OPML 2.0 — Share-Sheet oder In Dateien speichern. Lokale Ordner-Podcasts fehlen in OPML und HTML. Kein Cloud-Sync."
-          }
-        }
-      }
-    },
     "Added feeds were fetched over the network. Already subscribed URLs were skipped. Failed rows list per-feed errors — the batch did not stop early.": {
       "extractionState": "manual",
       "localizations": {
@@ -22741,6 +22724,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Optionaler HTTP(S)-Proxy für URLSession-Clients (Feeds, Downloads, Suche, …). AVPlayer-Streaming kann den App-Proxy umgehen. Keine VPN-Erkennung; kein Certificate Pinning; kein SOCKS."
+          }
+        }
+      }
+    },
+    "Import picks an .opml or .xml from Files (document picker). Already subscribed feed URLs are skipped; each new feed is fetched over the network. Export writes AntennaPod-compatible OPML 2.0 — Share sheet or Save to Files. Local folder podcasts are omitted from OPML and HTML. HTML lists title, feed URL, and episode count; author, language, categories, and funding only when the feed provides them. No cloud sync.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import picks an .opml or .xml from Files (document picker). Already subscribed feed URLs are skipped; each new feed is fetched over the network. Export writes AntennaPod-compatible OPML 2.0 — Share sheet or Save to Files. Local folder podcasts are omitted from OPML and HTML. HTML lists title, feed URL, and episode count; author, language, categories, and funding only when the feed provides them. No cloud sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import wählt eine .opml- oder .xml-Datei aus Dateien (Dokumentenauswahl). Bereits abonnierte Feed-URLs werden übersprungen; jeder neue Feed wird über das Netzwerk geladen. Export schreibt AntennaPod-kompatibles OPML 2.0 — Share-Sheet oder In Dateien speichern. Lokale Ordner-Podcasts fehlen in OPML und HTML. HTML listet Titel, Feed-URL und Episodenanzahl; Autor, Sprache, Kategorien und Funding nur wenn der Feed sie liefert. Kein Cloud-Sync."
+          }
+        }
+      }
+    },
+    "Shares a self-contained HTML subscription list via the system share sheet. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares a self-contained HTML subscription list via the system share sheet. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt eine eigenständige HTML-Abonnementliste über das System-Share-Sheet. Lokale Ordner-Podcasts fehlen. Autor, Sprache, Kategorien und Funding erscheinen nur, wenn der Feed sie liefert."
           }
         }
       }

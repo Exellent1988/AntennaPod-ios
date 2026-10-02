@@ -346,7 +346,10 @@ struct SettingsView: View {
                     "Import OPML",
                     "Export subscriptions as HTML",
                     "Import from Files",
-                    "Choose OPML file…"
+                    "Choose OPML file…",
+                    "HTML lists title, feed URL, and episode count",
+                    "author, language, categories, and funding",
+                    "Local folder podcasts are omitted from OPML and HTML"
                 ) {
                     OpmlImportExportSection()
                 }
@@ -503,7 +506,7 @@ struct SettingsView: View {
             || matchesSearch("CarPlay")
             || matchesSearch("About")
             || matchesSearch("Backup", "Export data backup", "Import data backup")
-            || matchesSearch("Import / Export", "Export OPML", "Save OPML to Files…", "Import OPML", "Export subscriptions as HTML", "Import from Files", "Choose OPML file…")
+            || matchesSearch("Import / Export", "Export OPML", "Save OPML to Files…", "Import OPML", "Export subscriptions as HTML", "Import from Files", "Choose OPML file…", "HTML lists title, feed URL, and episode count", "author, language, categories, and funding", "Local folder podcasts are omitted from OPML and HTML")
     }
 
     private var matchesAppearanceSection: Bool {
