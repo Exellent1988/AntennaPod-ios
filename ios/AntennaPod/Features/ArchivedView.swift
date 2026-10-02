@@ -3,6 +3,7 @@ import SwiftUI
 struct ArchivedView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var settings: AppSettings
 
     @State private var searchText = ""
@@ -24,6 +25,22 @@ struct ArchivedView: View {
     /// Does **not** restore / unarchive.
     private var enqueueAllArchivedCandidatesCount: Int {
         items.filter { !store.isInQueue($0.episode.id) }.count
+    }
+
+    /// Archived episodes with playable media (local file via `DownloadService.localURL` —
+    /// downloads + local-folder `file://` — or streamable http(s) `downloadUrl`).
+    /// Full Archived catalog — **not** podcast-chip or searchable filtered.
+    /// Distinct from Restore all / Add all to queue / remaining-time visible counts.
+    private var playRandomEligibleEpisodes: [PodcastEpisode] {
+        items.map(\.episode).filter { episodeHasPlayableMedia($0) }
+    }
+
+    /// Prefer unplayed among `playRandomEligibleEpisodes` when any remain; otherwise all eligible
+    /// (played allowed when every eligible archived episode is played, or none unplayed eligible).
+    private var playRandomCandidates: [PodcastEpisode] {
+        let eligible = playRandomEligibleEpisodes
+        let unplayed = eligible.filter { !store.isPlayed($0.id) }
+        return unplayed.isEmpty ? eligible : unplayed
     }
 
     /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
@@ -91,7 +108,7 @@ struct ArchivedView: View {
     /// never invent; unknown last). Stable tiebreaker episode `id`.
     /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
     /// Does not mutate `PodcastStore.archivedEpisodes` (Restore all counts stay on newest-first catalog).
-    /// View-only — Restore all / Add all to queue stay full-catalog scoped.
+    /// View-only — Restore all / Add all to queue / Play random stay full-catalog scoped.
     private var filteredItems: [ArchivedEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let afterPodcast: [ArchivedEpisode]
@@ -180,7 +197,7 @@ struct ArchivedView: View {
     /// `max(0, duration − position)` when duration known; unplayed with duration contributes
     /// full duration; **played** (not current) → 0; **unknown duration skipped** (tilde when
     /// any skipped). Currently playing uses live `PlaybackService` position/duration.
-    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from Restore all count (always full catalog).
+    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from Restore all / Add all to queue / Play random eligibility (always full catalog).
     private var archivedRemainingInfoLabel: String? {
         guard !filteredItems.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: archivedRemainingSummary)
@@ -318,6 +335,15 @@ struct ArchivedView: View {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {
+                        playRandomEpisode()
+                    } label: {
+                        Label("Play random", systemImage: "shuffle")
+                    }
+                    .disabled(playRandomCandidates.isEmpty)
+                    .accessibilityLabel(String(localized: "Play random"))
+                    .accessibilityHint(String(localized: "Plays a random archived episode with playable media. Prefers unplayed when any remain."))
+
+                    Button {
                         showEnqueueAllConfirm = true
                     } label: {
                         Label("Add all to queue", systemImage: "text.append")
@@ -335,6 +361,7 @@ struct ArchivedView: View {
                 } label: {
                     Label("Archived actions", systemImage: "ellipsis.circle")
                 }
+                // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
                 .disabled(items.isEmpty)
             }
         }
@@ -362,6 +389,24 @@ struct ArchivedView: View {
         } message: {
             Text("Restores \(items.count) archived episodes. Does not mark unplayed or delete downloads.")
         }
+    }
+
+    /// Local download / local-folder file, or streamable http(s) enclosure — same honesty as
+    /// History / Favorites / Feed detail Play random / `PlaybackService.resolvePlaybackURL` inputs (Wi‑Fi stream gate still applies at play time).
+    private func episodeHasPlayableMedia(_ episode: PodcastEpisode) -> Bool {
+        if downloads.localURL(for: episode) != nil { return true }
+        guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty,
+              let url = URL(string: raw) else { return false }
+        let scheme = url.scheme?.lowercased()
+        return scheme == "http" || scheme == "https"
+    }
+
+    /// Uniform pick among `playRandomCandidates`; starts via `PlaybackService.play` (resume rules unchanged).
+    /// No confirm; does **not** unarchive / restore or reorder Archived; no invented queue mutations beyond what `play` already does.
+    private func playRandomEpisode() {
+        guard let episode = playRandomCandidates.randomElement() else { return }
+        _ = playback.play(episode: episode)
     }
 
     private func scheduleFilter(for term: String) {

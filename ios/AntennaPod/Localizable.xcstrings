@@ -24526,7 +24526,7 @@
     },
     "Play random": {
       "extractionState": "manual",
-      "comment": "Feed detail / Favorites / Downloads / Queue / History / Inbox ⋯: play a uniformly random playable episode. Feed: non-archived on this podcast. Favorites: full favorites catalog. Downloads: completed offline with local file. Queue: full queue with playable media. History: full history catalog. Inbox: full Inbox catalog (unplayed-only; prefer-unplayed no-op). Prefers unplayed when any remain; no confirm. Distinct from Queue Shuffle (reorder).",
+      "comment": "Feed detail / Favorites / Downloads / Queue / History / Inbox / Archived ⋯: play a uniformly random playable episode. Feed: non-archived on this podcast. Favorites: full favorites catalog. Downloads: completed offline with local file. Queue: full queue with playable media. History: full history catalog. Inbox: full Inbox catalog (unplayed-only; prefer-unplayed no-op). Archived: full archived catalog (does not unarchive). Prefers unplayed when any remain; no confirm. Distinct from Queue Shuffle (reorder).",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -25051,6 +25051,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spielt eine zufällige Posteingangs-Episode mit abspielbarem Medium. Bevorzugt ungehörte, wenn vorhanden."
+          }
+        }
+      }
+    },
+    "Plays a random archived episode with playable media. Prefers unplayed when any remain.": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Archived toolbar Play random. Does not restore/unarchive.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random archived episode with playable media. Prefers unplayed when any remain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine zufällige archivierte Episode mit abspielbarem Medium. Bevorzugt ungehörte, wenn vorhanden."
           }
         }
       }
