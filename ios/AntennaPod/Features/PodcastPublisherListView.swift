@@ -15,7 +15,7 @@ struct PodcastPublisherListView: View {
     var title: String = String(localized: "Publisher")
 
     @State private var showCopiedAlert = false
-    @State private var copiedAlertMessage = String(localized: "Publisher copied to the pasteboard.")
+    @State private var copiedAlertMessage = String(localized: "Publisher details copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
     @State private var previewRequest: FeedPreviewRequest?
 
@@ -250,36 +250,36 @@ struct PodcastPublisherListView: View {
 
                 Button {
                     UIPasteboard.general.string = PodcastPublisherDisplay.copyText(entry)
-                    copiedAlertMessage = String(localized: "Publisher copied to the pasteboard.")
+                    copiedAlertMessage = String(localized: "Publisher details copied to the pasteboard.")
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {
-                    Label("Copy", systemImage: "doc.on.doc")
+                    Label("Copy publisher details", systemImage: "doc.on.doc")
                         .font(.subheadline)
                 }
-                .accessibilityLabel(String(localized: "Copy"))
+                .accessibilityLabel(String(localized: "Copy publisher details"))
                 .accessibilityHint(
-                    String(localized: "Copies the publisher title, feed URL, feed GUID, and item GUID to the pasteboard")
+                    String(localized: "Copies the displayed publisher title, feed URL, feed GUID, and item GUID to the pasteboard")
                 )
 
                 if !copyText.isEmpty {
                     Group {
                         if let url {
                             ShareLink(item: url) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Share publisher details", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         } else {
                             ShareLink(item: copyText) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Share publisher details", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         }
                     }
-                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityLabel(String(localized: "Share publisher details"))
                     .accessibilityHint(
                         String(
-                            localized: "Shares the publisher feed URL when it is a parseable http(s) URL; otherwise shares the same feed-provided text as Copy"
+                            localized: "Shares the displayed publisher feed URL when it is a parseable http(s) URL; otherwise shares the same feed-provided text as Copy publisher details"
                         )
                     )
                 }

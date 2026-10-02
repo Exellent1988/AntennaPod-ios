@@ -20946,6 +20946,96 @@
         }
       }
     },
+    "Publisher details copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert after the combined podcast:publisher details action.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher details copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Details in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy publisher details": {
+      "extractionState": "manual",
+      "comment": "Copy action for the combined displayed podcast:publisher metadata text; distinct from per-field title/GUID actions.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy publisher details"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Details kopieren"
+          }
+        }
+      }
+    },
+    "Share publisher details": {
+      "extractionState": "manual",
+      "comment": "Share action for the combined displayed podcast:publisher metadata text; distinct from per-field title/GUID actions.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share publisher details"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publisher-Details teilen"
+          }
+        }
+      }
+    },
+    "Copies the displayed publisher title, feed URL, feed GUID, and item GUID to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy publisher details; includes only displayed feed-provided podcast:publisher values.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the displayed publisher title, feed URL, feed GUID, and item GUID to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den angezeigten Publisher-Titel, die Feed-URL, die Feed-GUID und die Item-GUID in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Shares the displayed publisher feed URL when it is a parseable http(s) URL; otherwise shares the same feed-provided text as Copy publisher details": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share publisher details; prefers the displayed parseable feed URL and otherwise shares the same feed-provided text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the displayed publisher feed URL when it is a parseable http(s) URL; otherwise shares the same feed-provided text as Copy publisher details"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die angezeigte Publisher-Feed-URL, wenn sie als http(s)-URL lesbar ist; andernfalls denselben vom Feed gelieferten Text wie Publisher-Details kopieren"
+          }
+        }
+      }
+    },
     "Copies the publisher title, feed URL, and GUID to the pasteboard": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Copy on podcast:publisher row.",
