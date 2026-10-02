@@ -246,6 +246,19 @@ struct FavoritesView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver context for the two different empty states. Keep the catalog-empty
+    /// message distinct from a podcast/search mismatch so the user knows whether to
+    /// add a favorite or change the current filter.
+    private var favoritesEmptyStateAccessibilityValue: String {
+        if items.isEmpty {
+            return String(localized: "There are no favorited episodes. Star an episode from a feed or the full player to add it to Favorites.")
+        }
+        if isPodcastFiltering && !isSearching {
+            return String(localized: "The selected podcast has no favorited episodes. Choose All or another podcast filter.")
+        }
+        return String(localized: "No favorited episodes match your search. Clear or change the search to see Favorites.")
+    }
+
     private var favoritesRemainingSummary: EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
             episodes: filteredItems.map(\.episode),
@@ -330,6 +343,9 @@ struct FavoritesView: View {
                     systemImage: "star",
                     description: Text("Star episodes from a feed or the full player. Favorites keep their downloads when auto-delete after playing is on.")
                 )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No favorites yet"))
+                .accessibilityValue(favoritesEmptyStateAccessibilityValue)
             } else if filteredItems.isEmpty {
                 ContentUnavailableView(
                     "No matching favorites",
@@ -340,6 +356,9 @@ struct FavoritesView: View {
                             : String(localized: "No favorites match your search.")
                     )
                 )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No matching favorites"))
+                .accessibilityValue(favoritesEmptyStateAccessibilityValue)
             } else {
                 ForEach(filteredItems) { item in
                     EpisodeRow(
