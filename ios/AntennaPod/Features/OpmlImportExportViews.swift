@@ -9,6 +9,26 @@ extension UTType {
     }
 }
 
+/// FileDocument wrapper so SwiftUI `fileExporter` can Save OPML into Files.
+struct OpmlExportDocument: FileDocument {
+    static var readableContentTypes: [UTType] { [.opml, .xml] }
+    static var writableContentTypes: [UTType] { [.opml, .xml] }
+
+    var data: Data
+
+    init(data: Data) {
+        self.data = data
+    }
+
+    init(configuration: ReadConfiguration) throws {
+        self.data = configuration.file.regularFileContents ?? Data()
+    }
+
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        FileWrapper(regularFileWithContents: data)
+    }
+}
+
 /// Shared Import / Export controls used from Settings and Subscriptions.
 /// OPML import/export plus AntennaPod-style HTML export lite (subscriptions).
 struct OpmlImportExportSection: View {
@@ -18,22 +38,40 @@ struct OpmlImportExportSection: View {
     @State private var showShare = false
     @State private var showImportResult = false
     @State private var exportError: String?
+    @State private var exportDocument = OpmlExportDocument(data: Data())
+    @State private var showFileExporter = false
+    @State private var exportDefaultName = "AntennaPod-subscriptions"
+
+    private var canExport: Bool {
+        store.exportableSubscriptionCount > 0
+    }
 
     var body: some View {
-        Section("Import / Export") {
+        Section {
             Button {
-                exportOpml()
+                exportOpmlShare()
             } label: {
                 Label("Export OPML", systemImage: "square.and.arrow.up")
             }
-            .disabled(store.feeds.isEmpty)
+            .disabled(!canExport)
+            .accessibilityLabel(String(localized: "Export OPML"))
+            .accessibilityHint(String(localized: "Shares an OPML file via the system share sheet. You can Save to Files from there."))
+
+            Button {
+                prepareSaveOpmlToFiles()
+            } label: {
+                Label("Save OPML to Files…", systemImage: "folder")
+            }
+            .disabled(!canExport)
+            .accessibilityLabel(String(localized: "Save OPML to Files…"))
+            .accessibilityHint(String(localized: "Opens the Files save picker and writes AntennaPod-compatible OPML. Local folder podcasts are omitted."))
 
             Button {
                 exportHtml()
             } label: {
                 Label("Export subscriptions as HTML", systemImage: "doc.richtext")
             }
-            .disabled(store.feeds.isEmpty)
+            .disabled(!canExport)
 
             Button {
                 showImporter = true
@@ -41,6 +79,8 @@ struct OpmlImportExportSection: View {
                 Label("Import OPML", systemImage: "square.and.arrow.down")
             }
             .disabled(store.opmlImport.isImporting)
+            .accessibilityLabel(String(localized: "Import OPML"))
+            .accessibilityHint(String(localized: "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network."))
 
             if store.opmlImport.isImporting {
                 VStack(alignment: .leading, spacing: 6) {
@@ -49,6 +89,8 @@ struct OpmlImportExportSection: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(progressLabel)
             } else if store.opmlImport.total > 0 {
                 Button {
                     showImportResult = true
@@ -57,6 +99,8 @@ struct OpmlImportExportSection: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+                .accessibilityLabel(store.opmlImport.summary)
+                .accessibilityHint(String(localized: "Shows added, already subscribed, and failed counts from the last OPML import."))
             }
 
             if let exportError {
@@ -69,6 +113,11 @@ struct OpmlImportExportSection: View {
                     .font(.caption)
                     .foregroundStyle(.red)
             }
+        } header: {
+            Text("Import / Export")
+        } footer: {
+            Text(opmlHonestyFooter)
+                .accessibilityLabel(opmlHonestyFooter)
         }
         .fileImporter(
             isPresented: $showImporter,
@@ -76,6 +125,14 @@ struct OpmlImportExportSection: View {
             allowsMultipleSelection: false
         ) { result in
             handleImport(result)
+        }
+        .fileExporter(
+            isPresented: $showFileExporter,
+            document: $exportDocument,
+            contentType: .opml,
+            defaultFilename: exportDefaultName
+        ) { result in
+            handleFileExport(result)
         }
         .sheet(isPresented: $showShare) {
             if let shareURL {
@@ -92,6 +149,16 @@ struct OpmlImportExportSection: View {
         }
     }
 
+    private var opmlHonestyFooter: String {
+        let n = store.exportableSubscriptionCount
+        let local = store.feeds.count - n
+        var text = String(localized: "Import picks an .opml or .xml from Files (document picker). Already subscribed feed URLs are skipped; each new feed is fetched over the network. Export writes AntennaPod-compatible OPML 2.0 — Share sheet or Save to Files. Local folder podcasts are omitted from OPML and HTML. No cloud sync.")
+        if local > 0 {
+            text += " " + String(localized: "\(n) of \(store.feeds.count) subscriptions are exportable.")
+        }
+        return text
+    }
+
     private var progressLabel: String {
         let s = store.opmlImport
         let base = "\(s.completed)/\(s.total)"
@@ -101,13 +168,44 @@ struct OpmlImportExportSection: View {
         return base
     }
 
-    private func exportOpml() {
+    private func exportOpmlShare() {
         exportError = nil
         do {
             let url = try store.exportOpmlTemporaryFile()
             shareURL = url
             showShare = true
         } catch {
+            exportError = error.localizedDescription
+        }
+    }
+
+    private func prepareSaveOpmlToFiles() {
+        exportError = nil
+        do {
+            let data = try store.exportOpmlData()
+            exportDocument = OpmlExportDocument(data: data)
+            let f = DateFormatter()
+            f.locale = Locale(identifier: "en_US_POSIX")
+            f.dateFormat = "yyyyMMdd-HHmmss"
+            exportDefaultName = "AntennaPod-subscriptions-\(f.string(from: Date()))"
+            showFileExporter = true
+        } catch {
+            exportError = error.localizedDescription
+        }
+    }
+
+    private func handleFileExport(_ result: Result<URL, Error>) {
+        switch result {
+        case .success:
+            exportError = nil
+        case .failure(let error):
+            if (error as? CocoaError)?.code == .userCancelled {
+                return
+            }
+            let ns = error as NSError
+            if ns.domain == NSCocoaErrorDomain, ns.code == NSUserCancelledError {
+                return
+            }
             exportError = error.localizedDescription
         }
     }
@@ -136,7 +234,7 @@ struct OpmlImportExportSection: View {
                 }
                 do {
                     let data = try Data(contentsOf: url)
-                    await store.importOpml(data: data)
+                    await store.importOpml(data: data, sourceFileName: url.lastPathComponent)
                 } catch {
                     store.lastError = error.localizedDescription
                 }
@@ -152,10 +250,17 @@ struct OpmlImportResultView: View {
     var body: some View {
         NavigationStack {
             List {
+                if let name = store.opmlImport.sourceFileName, !name.isEmpty {
+                    Section {
+                        LabeledContent("File", value: name)
+                    }
+                }
                 Section {
                     LabeledContent("Added", value: "\(store.opmlImport.succeeded)")
                     LabeledContent("Already subscribed", value: "\(store.opmlImport.skipped)")
                     LabeledContent("Failed", value: "\(store.opmlImport.failures.count)")
+                } footer: {
+                    Text("Added feeds were fetched over the network. Already subscribed URLs were skipped. Failed rows list per-feed errors — the batch did not stop early.")
                 }
                 if !store.opmlImport.failures.isEmpty {
                     Section("Errors") {
@@ -170,6 +275,7 @@ struct OpmlImportResultView: View {
                                     .font(.caption)
                                     .foregroundStyle(.red)
                             }
+                            .accessibilityElement(children: .combine)
                         }
                     }
                 }

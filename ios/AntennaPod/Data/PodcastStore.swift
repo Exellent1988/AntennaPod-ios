@@ -1732,6 +1732,19 @@ final class PodcastStore: ObservableObject {
         try OpmlWriter.writeTemporaryFile(feeds: feeds)
     }
 
+    /// Feeds written to OPML / HTML export (excludes empty URLs and local folder feeds).
+    var exportableSubscriptionCount: Int {
+        feeds.filter { !$0.feedUrl.isEmpty && !LocalFolderFeed.isLocalFolderFeed($0) }.count
+    }
+
+    func exportOpmlData() throws -> Data {
+        let xml = OpmlWriter.writeDocument(feeds: feeds)
+        guard let data = xml.data(using: .utf8) else {
+            throw CocoaError(.fileWriteInapplicableStringEncoding)
+        }
+        return data
+    }
+
     // MARK: - HTML export (subscriptions)
 
     func exportSubscriptionsHTML(includeEpisodeCount: Bool = true) -> String {
@@ -1744,9 +1757,9 @@ final class PodcastStore: ObservableObject {
 
     /// Parse OPML and subscribe each feed URL via the existing fetch/parse pipeline.
     /// Skips URLs already in `feeds`. Records per-URL errors without aborting the batch.
-    func importOpml(data: Data) async {
+    func importOpml(data: Data, sourceFileName: String? = nil) async {
         lastError = nil
-        var state = OpmlImportState(isImporting: true)
+        var state = OpmlImportState(isImporting: true, sourceFileName: sourceFileName)
         opmlImport = state
         do {
             let outlines = try OpmlReader.parse(data: data)

@@ -47,6 +47,11 @@ struct AddFeedView: View {
     @State private var folderStatus: String?
     @State private var isAddingFolder = false
 
+    // OPML from Files
+    @State private var showOpmlImporter = false
+    @State private var showOpmlImportResult = false
+    @State private var opmlPickError: String?
+
     private let itunesSearcher = ItunesSearchService()
     private let podcastIndexSearcher = PodcastIndexSearchService()
     private let fyydSearcher = FyydSearchService()
@@ -58,6 +63,7 @@ struct AddFeedView: View {
         case fyyd
         case url
         case folder
+        case opml
         var id: String { rawValue }
 
         var title: LocalizedStringKey {
@@ -67,6 +73,7 @@ struct AddFeedView: View {
             case .fyyd: "fyyd"
             case .url: "URL"
             case .folder: "Folder"
+            case .opml: "OPML"
             }
         }
     }
@@ -94,6 +101,8 @@ struct AddFeedView: View {
                     urlContent
                 case .folder:
                     folderContent
+                case .opml:
+                    opmlContent
                 }
             }
             .navigationTitle("Add podcast")
@@ -446,6 +455,106 @@ struct AddFeedView: View {
                 dismiss()
             } catch {
                 folderError = error.localizedDescription
+            }
+        }
+    }
+
+    // MARK: - OPML from Files
+
+    private var opmlContent: some View {
+        List {
+            Section {
+                Button {
+                    opmlPickError = nil
+                    showOpmlImporter = true
+                } label: {
+                    Label("Choose OPML file…", systemImage: "doc.badge.arrow.up")
+                }
+                .disabled(store.opmlImport.isImporting)
+                .accessibilityLabel(String(localized: "Choose OPML file…"))
+                .accessibilityHint(String(localized: "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network."))
+
+                if store.opmlImport.isImporting {
+                    VStack(alignment: .leading, spacing: 6) {
+                        ProgressView(value: store.opmlImport.fraction)
+                        Text(opmlProgressLabel)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(opmlProgressLabel)
+                } else if store.opmlImport.total > 0 {
+                    Button {
+                        showOpmlImportResult = true
+                    } label: {
+                        Text(store.opmlImport.summary)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .accessibilityLabel(store.opmlImport.summary)
+                }
+
+                if let opmlPickError {
+                    Text(opmlPickError)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+                if let err = store.lastError, !store.opmlImport.isImporting {
+                    Text(err)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+            } header: {
+                Text("Import from Files")
+            } footer: {
+                Text("Beta: pick an .opml or .xml subscription list from Files. Already subscribed feed URLs are skipped. Each new feed is fetched over the network. Same import path as Settings → Import / Export. No cloud sync.")
+            }
+        }
+        .listStyle(.insetGrouped)
+        .fileImporter(
+            isPresented: $showOpmlImporter,
+            allowedContentTypes: [.opml, .xml, .data],
+            allowsMultipleSelection: false
+        ) { result in
+            handleOpmlPick(result)
+        }
+        .sheet(isPresented: $showOpmlImportResult) {
+            OpmlImportResultView()
+        }
+        .onChange(of: store.opmlImport.isImporting) { _, importing in
+            if !importing, store.opmlImport.total > 0, mode == .opml {
+                showOpmlImportResult = true
+            }
+        }
+    }
+
+    private var opmlProgressLabel: String {
+        let s = store.opmlImport
+        let base = "\(s.completed)/\(s.total)"
+        if let title = s.currentTitle {
+            return "\(base) — \(title)"
+        }
+        return base
+    }
+
+    private func handleOpmlPick(_ result: Result<[URL], Error>) {
+        switch result {
+        case .failure(let error):
+            opmlPickError = error.localizedDescription
+        case .success(let urls):
+            guard let url = urls.first else { return }
+            opmlPickError = nil
+            Task {
+                let accessed = url.startAccessingSecurityScopedResource()
+                defer {
+                    if accessed { url.stopAccessingSecurityScopedResource() }
+                }
+                do {
+                    let data = try Data(contentsOf: url)
+                    await store.importOpml(data: data, sourceFileName: url.lastPathComponent)
+                } catch {
+                    opmlPickError = error.localizedDescription
+                }
             }
         }
     }

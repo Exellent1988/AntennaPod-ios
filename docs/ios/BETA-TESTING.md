@@ -30,7 +30,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Discovery: fyyd | ☐ Discovery: fyyd |
 | ☐ Top lists / Charts (Land in Settings) | ☐ Top lists / charts (country in Settings) |
 | ☐ Local folder feed (Datei-Ordner) | ☐ Local folder feed |
-| ☐ OPML import (mehrere Feeds) | ☐ OPML import (batch) |
+| ☐ OPML import aus Dateien (Settings / Subscriptions / Add → OPML; Added/Skipped/Failed) | ☐ OPML import from Files (Settings / Subscriptions / Add → OPML; Added/Skipped/Failed) |
 | ☐ Bereits abonniert → Open feed | ☐ Already subscribed → Open feed |
 | ☐ Abo beenden: Swipe auf Subscriptions (Bestätigung + Titel; optional Downloads dieses Feeds löschen mit Count+Größe; sonst Downloads bleiben) | ☐ Unsubscribe: Subscriptions swipe (confirm + title; optional delete this feed’s downloads with count+size; else downloads kept) |
 | ☐ Abo beenden: Feed-Detail ⋯ (Bestätigung; optional Downloads löschen; pop nach Confirm) | ☐ Unsubscribe: Feed detail ⋯ (confirm; optional delete downloads; pop after confirm) |
@@ -279,7 +279,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Backup export ZIP (ohne Keychain-Secrets; default ohne Media) | ☐ Backup export ZIP (no Keychain secrets; default no media) |
 | ☐ Backup: Include downloaded episode files (Warnung Größe/Zeit) | ☐ Backup: Include downloaded episode files (size/time warning) |
 | ☐ Backup import (Warnung + Reload; Media-Merge wenn vorhanden) | ☐ Backup import (warn + reload; media merge when present) |
-| ☐ OPML / HTML export | ☐ OPML / HTML export |
+| ☐ OPML export (Share + Save to Files…; lokale Ordner ausgelassen) / HTML export | ☐ OPML export (Share + Save to Files…; local folders omitted) / HTML export |
 
 ---
 
@@ -386,6 +386,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Archived remaining time: info bar — sum `max(0, duration − position)` over **visible** sort+search list (**not** full archived catalog / Restore all count); **archived ≠ played** — normal duration−position rules; **played** (not current) → 0; unknown durations omitted (`~`); live position for current episode; wall-clock (no speed); EN/DE a11y.
 - Add from Clipboard: nur wenn Zwischenablage eine getrimmte http(s)-URL mit Host hält (erste Zeile); Toolbar + URL-Tab in Add podcast; öffnet bestehende Preview → Confirm Subscribe; **kein** Auto-Abo beim Start; **kein** OPML aus Zwischenablage.
   Add from Clipboard: only when the clipboard holds a trimmed http(s) URL with a host (first line); toolbar + URL tab in Add podcast; opens existing preview → Confirm Subscribe; **no** auto-subscribe on launch; **no** OPML from clipboard.
+- OPML Files: Import über System-`fileImporter` (`.opml`/`.xml`) in Settings → Import / Export, Subscriptions-Toolbar-Sheet und **Add podcast → OPML**; Ergebnis zeigt Added / Already subscribed / Failed (+ Dateiname); Duplikate übersprungen; neue Feeds per Netzwerk; **kein** Cloud-Sync. Export: Share-Sheet **oder** **Save OPML to Files…** (`fileExporter`); lokale Ordner-Feeds aus OPML/HTML ausgelassen.
+  OPML Files: import via system `fileImporter` (`.opml`/`.xml`) in Settings → Import / Export, Subscriptions toolbar sheet, and **Add podcast → OPML**; result shows Added / Already subscribed / Failed (+ file name); duplicates skipped; new feeds fetched over the network; **no** cloud sync. Export: share sheet **or** **Save OPML to Files…** (`fileExporter`); local folder feeds omitted from OPML/HTML.
 - Queue lock: Toolbar Lock/Unlock (`lock.fill` / `lock.open`) + Settings → Queue Toggle; persistiert `AppSettings.queueLocked` (Default aus). Gesperrt = kein Edit/Ziehen-Reorder, **kein Mischen (Shuffle)**, **kein Mischen (aktuell spielende zuerst)**, **kein Umkehren (Reverse order)**, **kein Nach Datum sortieren (Newest/Oldest first)**, **kein Nach Dauer sortieren (Shortest/Longest first)**, **kein Aktuelle Wiedergabe an den Anfang (Move playing to top)** und kein Move to top/bottom; **Einreihen / Play Next / Remove / Archive-Swipe / Clear queue bleiben** (nur Reihenfolge-Sperre, wie Android `prefQueueLocked`).
   Queue lock: toolbar Lock/Unlock (`lock.fill` / `lock.open`) + Settings → Queue toggle; persists `AppSettings.queueLocked` (default off). Locked = no Edit/drag reorder, **no Shuffle**, **no Shuffle (keep playing first)**, **no Reverse order**, **no Sort by date (Newest/Oldest first)**, **no Sort by duration (Shortest/Longest first)**, **no Move playing to top**, and no Move to top/bottom; **enqueue / Play Next / Remove / Archive swipe / Clear queue still work** (reorder lock only, mirrors Android `prefQueueLocked`).
 - Queue Shuffle: Toolbar ⋯ → **Mischen** öffnet **immer** `confirmationDialog`; `shuffleQueue` mischt die **volle** `queue` (Fisher–Yates; nicht Chip/Suche); persistiert wie `moveQueue` (`queue` didSet). **Sperre blockiert Shuffle** (Reorder-only, wie Edit/`onMove`); deaktiviert bei `queue.count` < 2. Stoppt Wiedergabe nicht / ändert Fortschritt/Played/Downloads nicht. Aktuell spielende Episode behält **dieselbe Episode-id** und **wandert mit neuer Listenposition** (nicht am gleichen Index fixiert); Continuous-Next weiter über `nextQueueEpisode(after:)` per id. EN/DE a11y.

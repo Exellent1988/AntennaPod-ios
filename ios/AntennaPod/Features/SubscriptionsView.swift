@@ -414,7 +414,7 @@ struct SubscriptionsView: View {
                     ContentUnavailableView(
                         "No subscriptions",
                         systemImage: "dot.radiowaves.left.and.right",
-                        description: Text("Search Apple Podcasts, open Discover for charts, add by feed URL, pick a local Folder, or import an OPML file.")
+                        description: Text("Search Apple Podcasts, open Discover for charts, add by feed URL, pick a local Folder, or import an OPML file from Files (Add podcast → OPML).")
                     )
                 } else if tagFilteredFeeds.isEmpty {
                     ContentUnavailableView(

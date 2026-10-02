@@ -7,9 +7,9 @@ enum OpmlReaderError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .empty: return "OPML file is empty"
+        case .empty: return String(localized: "OPML file is empty")
         case .parseFailed(let m): return m
-        case .notOpml: return "Not a valid OPML document"
+        case .notOpml: return String(localized: "Not a valid OPML document")
         }
     }
 }

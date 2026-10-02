@@ -310,8 +310,11 @@ struct SettingsView: View {
                 if matchesSearch(
                     "Import / Export",
                     "Export OPML",
+                    "Save OPML to Files…",
                     "Import OPML",
-                    "Export subscriptions as HTML"
+                    "Export subscriptions as HTML",
+                    "Import from Files",
+                    "Choose OPML file…"
                 ) {
                     OpmlImportExportSection()
                 }
@@ -458,7 +461,7 @@ struct SettingsView: View {
             || matchesSearch("CarPlay")
             || matchesSearch("About")
             || matchesSearch("Backup", "Export data backup", "Import data backup")
-            || matchesSearch("Import / Export", "Export OPML", "Import OPML", "Export subscriptions as HTML")
+            || matchesSearch("Import / Export", "Export OPML", "Save OPML to Files…", "Import OPML", "Export subscriptions as HTML", "Import from Files", "Choose OPML file…")
     }
 
     private var matchesAppearanceSection: Bool {

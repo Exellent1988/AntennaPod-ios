@@ -4662,23 +4662,6 @@
         }
       }
     },
-    "Search Apple Podcasts, open Discover for charts, add by feed URL, pick a local Folder, or import an OPML file.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Search Apple Podcasts, open Discover for charts, add by feed URL, pick a local Folder, or import an OPML file."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Durchsuche Apple Podcasts, öffne Entdecken für Charts, füge per Feed-URL hinzu, wähle einen lokalen Ordner oder importiere eine OPML-Datei."
-          }
-        }
-      }
-    },
     "Search downloads": {
       "extractionState": "manual",
       "localizations": {
@@ -18612,6 +18595,380 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiv, startet nach Ende einer Episode automatisch den nächsten Eintrag aus der Warteschlange (nicht die nächste Episode desselben Podcasts). Wenn aus, wird die Episode weiterhin als gehört markiert / Fortschritt gespeichert, aber nicht weitergeschaltet. Der Sleep-Timer „Ende der Episode“ stoppt weiterhin ohne Weiterleitung. Standard an."
+          }
+        }
+      }
+    },
+    "Save OPML to Files…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save OPML to Files…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPML in Dateien speichern…"
+          }
+        }
+      }
+    },
+    "Choose OPML file…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose OPML file…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPML-Datei wählen…"
+          }
+        }
+      }
+    },
+    "Import from Files": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import from Files"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus Dateien importieren"
+          }
+        }
+      }
+    },
+    "File": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datei"
+          }
+        }
+      }
+    },
+    "Added": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hinzugefügt"
+          }
+        }
+      }
+    },
+    "Already subscribed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Already subscribed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bereits abonniert"
+          }
+        }
+      }
+    },
+    "Failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "No feeds found": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No feeds found"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Feeds gefunden"
+          }
+        }
+      }
+    },
+    "%lld added": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld added"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld hinzugefügt"
+          }
+        }
+      }
+    },
+    "%lld already subscribed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld already subscribed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld bereits abonniert"
+          }
+        }
+      }
+    },
+    "%lld failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "%lld of %lld subscriptions are exportable.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of %lld subscriptions are exportable."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld von %lld Abonnements sind exportierbar."
+          }
+        }
+      }
+    },
+    "Shares an OPML file via the system share sheet. You can Save to Files from there.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares an OPML file via the system share sheet. You can Save to Files from there."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt eine OPML-Datei über das System-Share-Sheet. Von dort kannst du in Dateien speichern."
+          }
+        }
+      }
+    },
+    "Opens the Files save picker and writes AntennaPod-compatible OPML. Local folder podcasts are omitted.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the Files save picker and writes AntennaPod-compatible OPML. Local folder podcasts are omitted."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den Dateien-Speicherpicker und schreibt AntennaPod-kompatibles OPML. Lokale Ordner-Podcasts werden ausgelassen."
+          }
+        }
+      }
+    },
+    "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet Dateien zur Auswahl einer .opml- oder .xml-Abonnementliste. Bereits abonnierte Feeds werden übersprungen; jeder neue Feed wird über das Netzwerk geladen."
+          }
+        }
+      }
+    },
+    "Shows added, already subscribed, and failed counts from the last OPML import.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shows added, already subscribed, and failed counts from the last OPML import."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeigt die Anzahl hinzugefügter, bereits abonnierter und fehlgeschlagener Feeds vom letzten OPML-Import."
+          }
+        }
+      }
+    },
+    "Import picks an .opml or .xml from Files (document picker). Already subscribed feed URLs are skipped; each new feed is fetched over the network. Export writes AntennaPod-compatible OPML 2.0 — Share sheet or Save to Files. Local folder podcasts are omitted from OPML and HTML. No cloud sync.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import picks an .opml or .xml from Files (document picker). Already subscribed feed URLs are skipped; each new feed is fetched over the network. Export writes AntennaPod-compatible OPML 2.0 — Share sheet or Save to Files. Local folder podcasts are omitted from OPML and HTML. No cloud sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import wählt eine .opml- oder .xml-Datei aus Dateien (Dokumentenauswahl). Bereits abonnierte Feed-URLs werden übersprungen; jeder neue Feed wird über das Netzwerk geladen. Export schreibt AntennaPod-kompatibles OPML 2.0 — Share-Sheet oder In Dateien speichern. Lokale Ordner-Podcasts fehlen in OPML und HTML. Kein Cloud-Sync."
+          }
+        }
+      }
+    },
+    "Added feeds were fetched over the network. Already subscribed URLs were skipped. Failed rows list per-feed errors — the batch did not stop early.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added feeds were fetched over the network. Already subscribed URLs were skipped. Failed rows list per-feed errors — the batch did not stop early."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hinzugefügte Feeds wurden über das Netzwerk geladen. Bereits abonnierte URLs wurden übersprungen. Fehlzeilen listen Fehler pro Feed — der Batch stoppte nicht vorzeitig."
+          }
+        }
+      }
+    },
+    "Beta: pick an .opml or .xml subscription list from Files. Already subscribed feed URLs are skipped. Each new feed is fetched over the network. Same import path as Settings → Import / Export. No cloud sync.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beta: pick an .opml or .xml subscription list from Files. Already subscribed feed URLs are skipped. Each new feed is fetched over the network. Same import path as Settings → Import / Export. No cloud sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beta: wähle eine .opml- oder .xml-Abonnementliste aus Dateien. Bereits abonnierte Feed-URLs werden übersprungen. Jeder neue Feed wird über das Netzwerk geladen. Gleicher Importweg wie Einstellungen → Import / Export. Kein Cloud-Sync."
+          }
+        }
+      }
+    },
+    "OPML file is empty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPML file is empty"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPML-Datei ist leer"
+          }
+        }
+      }
+    },
+    "Not a valid OPML document": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not a valid OPML document"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein gültiges OPML-Dokument"
+          }
+        }
+      }
+    },
+    "Search Apple Podcasts, open Discover for charts, add by feed URL, pick a local Folder, or import an OPML file from Files (Add podcast → OPML).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search Apple Podcasts, open Discover for charts, add by feed URL, pick a local Folder, or import an OPML file from Files (Add podcast → OPML)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durchsuche Apple Podcasts, öffne Entdecken für Charts, füge per Feed-URL hinzu, wähle einen lokalen Ordner oder importiere eine OPML-Datei aus Dateien (Podcast hinzufügen → OPML)."
           }
         }
       }
