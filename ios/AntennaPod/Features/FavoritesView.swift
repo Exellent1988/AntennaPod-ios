@@ -84,7 +84,10 @@ struct FavoritesView: View {
     }
 
     /// Visible favorites: podcast chip → search → `favoritesSort`.
-    /// Sort key: `FavoriteEpisode.favoritedAtEpochMs` (`favoriteAtById` / `favorites.json`).
+    /// Date modes: `FavoriteEpisode.favoritedAtEpochMs` (`favoriteAtById` / `favorites.json`).
+    /// Duration modes: known duration via `EpisodeRemainingTime.knownDurationSeconds`
+    /// (feed when known, else saved playback — same path as Queue / Inbox / History / Archived;
+    /// never invent; unknown last). Stable tiebreaker episode `id`.
     /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
     /// Does not mutate `PodcastStore.favoriteEpisodes` (Home Favorites preview / Clear favorites stay newest-first catalog).
     /// View-only — Clear favorites / Add all to queue stay full-catalog scoped.
@@ -118,8 +121,34 @@ struct FavoritesView: View {
                     return lhs.favoritedAtEpochMs < rhs.favoritedAtEpochMs
                 }
                 return lhs.episode.id < rhs.episode.id
+            case .shortestFirst, .longestFirst:
+                let shortestFirst = settings.favoritesSort == .shortestFirst
+                switch (
+                    knownDurationSecondsForFavoritesSort(lhs.episode),
+                    knownDurationSecondsForFavoritesSort(rhs.episode)
+                ) {
+                case let (l?, r?):
+                    if l != r {
+                        return shortestFirst ? (l < r) : (l > r)
+                    }
+                    return lhs.episode.id < rhs.episode.id
+                case (_?, nil):
+                    return true // known before unknown
+                case (nil, _?):
+                    return false
+                case (nil, nil):
+                    return lhs.episode.id < rhs.episode.id
+                }
             }
         }
+    }
+
+    /// Feed duration when known; else saved playback duration. Never invents a length.
+    private func knownDurationSecondsForFavoritesSort(_ episode: PodcastEpisode) -> Double? {
+        EpisodeRemainingTime.knownDurationSeconds(
+            for: episode,
+            savedDurationSeconds: store.playbackState(for: episode.id).durationSeconds
+        )
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** Favorites list
@@ -277,6 +306,7 @@ struct FavoritesView: View {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
                 .accessibilityLabel(String(localized: "Sort favorites"))
+                .accessibilityHint(String(localized: "Orders the Favorites list. Shortest and Longest use known duration; unknown last. Home Favorites preview stays newest-first."))
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {

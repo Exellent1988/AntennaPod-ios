@@ -22901,6 +22901,57 @@
           }
         }
       }
+    },
+    "Orders the Favorites list. Shortest and Longest use known duration; unknown last. Home Favorites preview stays newest-first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the Favorites list. Shortest and Longest use known duration; unknown last. Home Favorites preview stays newest-first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Favoriten-Liste. Kürzeste und Längste nutzen bekannte Dauer; unbekannte zuletzt. Home-Favoriten-Vorschau bleibt neueste zuerst."
+          }
+        }
+      }
+    },
+    "Orders the History list. Shortest and Longest use known duration; unknown last. Home Continue preview stays newest-first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the History list. Shortest and Longest use known duration; unknown last. Home Continue preview stays newest-first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Verlaufs-Liste. Kürzeste und Längste nutzen bekannte Dauer; unbekannte zuletzt. Home-Weiterhören-Vorschau bleibt neueste zuerst."
+          }
+        }
+      }
+    },
+    "Orders the Archived list. Shortest and Longest use known duration; unknown last. Restore all stays full catalog.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the Archived list. Shortest and Longest use known duration; unknown last. Restore all stays full catalog."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Archiviert-Liste. Kürzeste und Längste nutzen bekannte Dauer; unbekannte zuletzt. Alle wiederherstellen bleibt voller Katalog."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

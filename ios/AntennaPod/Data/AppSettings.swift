@@ -489,10 +489,17 @@ enum DownloadsSort: String, CaseIterable, Identifiable {
     }
 }
 
-/// How the History list orders episodes (client-side; by last-played / history timestamp).
+/// How the History list orders episodes (client-side).
+/// Newest / Oldest by last-played / history timestamp; Shortest / Longest by known duration
+/// (feed when known, else saved playback — same path as Queue / Inbox / Favorites / Archived;
+/// unknown last; id tiebreak). Home Continue preview stays newest-first.
 enum HistorySort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
+    /// Ascending known duration; unknown last; id tiebreak.
+    case shortestFirst
+    /// Descending known duration; unknown last; id tiebreak.
+    case longestFirst
 
     var id: String { rawValue }
 
@@ -500,6 +507,8 @@ enum HistorySort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return String(localized: "Newest first")
         case .oldestFirst: return String(localized: "Oldest first")
+        case .shortestFirst: return String(localized: "Shortest first")
+        case .longestFirst: return String(localized: "Longest first")
         }
     }
 
@@ -507,6 +516,8 @@ enum HistorySort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return "arrow.down"
         case .oldestFirst: return "arrow.up"
+        case .shortestFirst: return "timer"
+        case .longestFirst: return "timer"
         }
     }
 }
@@ -570,10 +581,17 @@ enum HistorySizeLimit: Int, CaseIterable, Identifiable {
     }
 }
 
-/// How the Favorites list orders episodes (client-side; by favorited-at timestamp).
+/// How the Favorites list orders episodes (client-side).
+/// Newest / Oldest by favorited-at timestamp; Shortest / Longest by known duration
+/// (feed when known, else saved playback — same path as Queue / Inbox / History / Archived;
+/// unknown last; id tiebreak). Home Favorites preview stays newest-first.
 enum FavoritesSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
+    /// Ascending known duration; unknown last; id tiebreak.
+    case shortestFirst
+    /// Descending known duration; unknown last; id tiebreak.
+    case longestFirst
 
     var id: String { rawValue }
 
@@ -581,6 +599,8 @@ enum FavoritesSort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return String(localized: "Newest first")
         case .oldestFirst: return String(localized: "Oldest first")
+        case .shortestFirst: return String(localized: "Shortest first")
+        case .longestFirst: return String(localized: "Longest first")
         }
     }
 
@@ -588,6 +608,8 @@ enum FavoritesSort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return "arrow.down"
         case .oldestFirst: return "arrow.up"
+        case .shortestFirst: return "timer"
+        case .longestFirst: return "timer"
         }
     }
 }
@@ -623,10 +645,17 @@ enum FavoritesPodcastFilter: Hashable, Identifiable {
     }
 }
 
-/// How the Archived list orders episodes (client-side; by archived-at timestamp).
+/// How the Archived list orders episodes (client-side).
+/// Newest / Oldest by archived-at timestamp; Shortest / Longest by known duration
+/// (feed when known, else saved playback — same path as Queue / Inbox / Favorites / History;
+/// unknown last; id tiebreak). Restore all / Add all stay full newest-first catalog.
 enum ArchivedSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
+    /// Ascending known duration; unknown last; id tiebreak.
+    case shortestFirst
+    /// Descending known duration; unknown last; id tiebreak.
+    case longestFirst
 
     var id: String { rawValue }
 
@@ -634,6 +663,8 @@ enum ArchivedSort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return String(localized: "Newest first")
         case .oldestFirst: return String(localized: "Oldest first")
+        case .shortestFirst: return String(localized: "Shortest first")
+        case .longestFirst: return String(localized: "Longest first")
         }
     }
 
@@ -641,6 +672,8 @@ enum ArchivedSort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return "arrow.down"
         case .oldestFirst: return "arrow.up"
+        case .shortestFirst: return "timer"
+        case .longestFirst: return "timer"
         }
     }
 }

@@ -85,7 +85,10 @@ struct ArchivedView: View {
     }
 
     /// Visible archived: podcast chip → search → `archivedSort`.
-    /// Sort key: `ArchivedEpisode.archivedAtEpochMs` (`archivedAtById` / `archived.json`).
+    /// Date modes: `ArchivedEpisode.archivedAtEpochMs` (`archivedAtById` / `archived.json`).
+    /// Duration modes: known duration via `EpisodeRemainingTime.knownDurationSeconds`
+    /// (feed when known, else saved playback — same path as Queue / Inbox / Favorites / History;
+    /// never invent; unknown last). Stable tiebreaker episode `id`.
     /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
     /// Does not mutate `PodcastStore.archivedEpisodes` (Restore all counts stay on newest-first catalog).
     /// View-only — Restore all / Add all to queue stay full-catalog scoped.
@@ -119,8 +122,34 @@ struct ArchivedView: View {
                     return lhs.archivedAtEpochMs < rhs.archivedAtEpochMs
                 }
                 return lhs.episode.id < rhs.episode.id
+            case .shortestFirst, .longestFirst:
+                let shortestFirst = settings.archivedSort == .shortestFirst
+                switch (
+                    knownDurationSecondsForArchivedSort(lhs.episode),
+                    knownDurationSecondsForArchivedSort(rhs.episode)
+                ) {
+                case let (l?, r?):
+                    if l != r {
+                        return shortestFirst ? (l < r) : (l > r)
+                    }
+                    return lhs.episode.id < rhs.episode.id
+                case (_?, nil):
+                    return true // known before unknown
+                case (nil, _?):
+                    return false
+                case (nil, nil):
+                    return lhs.episode.id < rhs.episode.id
+                }
             }
         }
+    }
+
+    /// Feed duration when known; else saved playback duration. Never invents a length.
+    private func knownDurationSecondsForArchivedSort(_ episode: PodcastEpisode) -> Double? {
+        EpisodeRemainingTime.knownDurationSeconds(
+            for: episode,
+            savedDurationSeconds: store.playbackState(for: episode.id).durationSeconds
+        )
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** Archived list
@@ -257,6 +286,7 @@ struct ArchivedView: View {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
                 .accessibilityLabel(String(localized: "Sort archived"))
+                .accessibilityHint(String(localized: "Orders the Archived list. Shortest and Longest use known duration; unknown last. Restore all stays full catalog."))
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {

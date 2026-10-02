@@ -84,7 +84,10 @@ struct HistoryView: View {
     }
 
     /// Visible history: podcast chip → search → `historySort`.
-    /// Sort key: `HistoryEpisode.lastPlayedAtEpochMs` (`lastPlayedAt`, else `updatedAt` from playback state).
+    /// Date modes: `HistoryEpisode.lastPlayedAtEpochMs` (`lastPlayedAt`, else `updatedAt` from playback state).
+    /// Duration modes: known duration via `EpisodeRemainingTime.knownDurationSeconds`
+    /// (feed when known, else saved playback — same path as Queue / Inbox / Favorites / Archived;
+    /// never invent; unknown last). Stable tiebreaker episode `id`.
     /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
     /// Does not mutate `PodcastStore.historyEpisodes` (Home Continue / Clear history stay newest-first catalog).
     /// View-only — Clear history / Add all to queue stay full-catalog scoped.
@@ -119,8 +122,34 @@ struct HistoryView: View {
                     return lhs.lastPlayedAtEpochMs < rhs.lastPlayedAtEpochMs
                 }
                 return lhs.episode.id < rhs.episode.id
+            case .shortestFirst, .longestFirst:
+                let shortestFirst = settings.historySort == .shortestFirst
+                switch (
+                    knownDurationSecondsForHistorySort(lhs.episode),
+                    knownDurationSecondsForHistorySort(rhs.episode)
+                ) {
+                case let (l?, r?):
+                    if l != r {
+                        return shortestFirst ? (l < r) : (l > r)
+                    }
+                    return lhs.episode.id < rhs.episode.id
+                case (_?, nil):
+                    return true // known before unknown
+                case (nil, _?):
+                    return false
+                case (nil, nil):
+                    return lhs.episode.id < rhs.episode.id
+                }
             }
         }
+    }
+
+    /// Feed duration when known; else saved playback duration. Never invents a length.
+    private func knownDurationSecondsForHistorySort(_ episode: PodcastEpisode) -> Double? {
+        EpisodeRemainingTime.knownDurationSeconds(
+            for: episode,
+            savedDurationSeconds: store.playbackState(for: episode.id).durationSeconds
+        )
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** History list
@@ -291,6 +320,7 @@ struct HistoryView: View {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
                 .accessibilityLabel(String(localized: "Sort history"))
+                .accessibilityHint(String(localized: "Orders the History list. Shortest and Longest use known duration; unknown last. Home Continue preview stays newest-first."))
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
