@@ -24,6 +24,7 @@ struct FeedDetailView: View {
     @State private var showPodcastTitleCopied = false
     @State private var showDiscussURLCopied = false
     @State private var showTrailerURLCopied = false
+    @State private var showTrailerTitleCopied = false
     @State private var showLockedOwnerCopied = false
     @State private var showAuthorCopied = false
     @State private var showLanguageCopied = false
@@ -45,6 +46,7 @@ struct FeedDetailView: View {
     @State private var copyPodcastTitleFeedbackTick = 0
     @State private var copyDiscussURLFeedbackTick = 0
     @State private var copyTrailerURLFeedbackTick = 0
+    @State private var copyTrailerTitleFeedbackTick = 0
     @State private var copyLockedOwnerFeedbackTick = 0
     @State private var copyAuthorFeedbackTick = 0
     @State private var copyLanguageFeedbackTick = 0
@@ -1669,6 +1671,14 @@ struct FeedDetailView: View {
         }
         .alert(
             String(localized: "Copied"),
+            isPresented: $showTrailerTitleCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Trailer title copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
             isPresented: $showLockedOwnerCopied
         ) {
             Button("OK", role: .cancel) {}
@@ -1762,6 +1772,7 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyPodcastTitleFeedbackTick)
         .sensoryFeedback(.success, trigger: copyDiscussURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerURLFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyTrailerTitleFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLockedOwnerFeedbackTick)
         .sensoryFeedback(.success, trigger: copyAuthorFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLanguageFeedbackTick)
@@ -2119,6 +2130,13 @@ struct FeedDetailView: View {
         showPodcastTitleCopied = true
     }
 
+    private func copyTrailerTitle(_ title: String) {
+        guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        UIPasteboard.general.string = title
+        copyTrailerTitleFeedbackTick += 1
+        showTrailerTitleCopied = true
+    }
+
     /// Channel podcast:trailer row — title (+ optional season); Play via PlaybackService when enclosure-like, else openURL.
     @ViewBuilder
     private func feedTrailerRow(_ trailer: PodcastTrailer) -> some View {
@@ -2133,6 +2151,28 @@ struct FeedDetailView: View {
                 .font(.subheadline)
                 .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 12) {
+                Button {
+                    copyTrailerTitle(title)
+                } label: {
+                    Label("Copy trailer title", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy trailer title"))
+                .accessibilityHint(
+                    String(localized: "Copies the displayed feed-provided trailer title to the pasteboard")
+                )
+
+                ShareLink(item: title) {
+                    Label("Share trailer title", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share trailer title"))
+                .accessibilityHint(
+                    String(localized: "Shares the displayed feed-provided trailer title as plain text")
+                )
+            }
 
             if let season = trailer.season {
                 Text(String(localized: "Season \(season)"))

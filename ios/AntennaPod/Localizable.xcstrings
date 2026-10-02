@@ -15515,6 +15515,96 @@
       },
       "comment": "Feed detail button: open non-enclosure-like podcast:trailer http(s) URL in system browser."
     },
+    "Copy trailer title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy trailer title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailertitel kopieren"
+          }
+        }
+      },
+      "comment": "Feed detail button: copy the displayed feed-provided podcast:trailer title as plain text."
+    },
+    "Share trailer title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share trailer title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailertitel teilen"
+          }
+        }
+      },
+      "comment": "Feed detail button: share the displayed feed-provided podcast:trailer title as plain text."
+    },
+    "Trailer title copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer title copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailertitel in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy confirmation for the displayed feed-provided podcast:trailer title."
+    },
+    "Copies the displayed feed-provided trailer title to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the displayed feed-provided trailer title to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den angezeigten, vom Feed gelieferten Trailertitel in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy trailer title on Feed detail."
+    },
+    "Shares the displayed feed-provided trailer title as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the displayed feed-provided trailer title as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den angezeigten, vom Feed gelieferten Trailertitel als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share trailer title on Feed detail."
+    },
     "Copy trailer URL": {
       "extractionState": "manual",
       "localizations": {
