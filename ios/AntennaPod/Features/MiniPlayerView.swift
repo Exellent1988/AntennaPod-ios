@@ -130,6 +130,12 @@ struct MiniPlayerView: View {
                                 ? String(localized: "Enter a time to seek")
                                 : String(localized: "Duration unknown — jump unavailable.")
                         )
+                        // Current episode only (mini always shows current). Hidden when nothing shareable.
+                        EpisodeShareLinks.labelStyle(
+                            episode: episode,
+                            feed: feedForCurrentEpisode,
+                            positionSeconds: playback.positionSeconds
+                        )
                     } label: {
                         Image(systemName: "ellipsis.circle")
                     }

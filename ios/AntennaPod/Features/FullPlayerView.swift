@@ -1129,37 +1129,12 @@ struct FullPlayerView: View {
                 .accessibilityHint(String(localized: "Copies the episode media / enclosure URL to the pasteboard"))
             }
 
-            if let url = episode.shareURL(feed: feed) {
-                ShareLink(
-                    item: url,
-                    subject: Text(episode.title),
-                    message: Text(episode.shareMessage(feedTitle: feed?.title))
-                ) {
-                    Label("Share", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share episode"))
-                .accessibilityHint(String(localized: "Opens the system share sheet with the episode title and link"))
-
-                // Full player always shows the current item — offer position when known.
-                if PodcastEpisode.canShareWithPosition(playback.positionSeconds) {
-                    ShareLink(
-                        item: url,
-                        subject: Text(episode.title),
-                        message: Text(
-                            episode.shareMessage(
-                                feedTitle: feed?.title,
-                                positionSeconds: playback.positionSeconds
-                            )
-                        )
-                    ) {
-                        Label("Share with position", systemImage: "square.and.arrow.up.on.square")
-                    }
-                    .accessibilityLabel(String(localized: "Share with position"))
-                    .accessibilityHint(
-                        String(localized: "Opens the system share sheet with the episode title, link, and current playback position")
-                    )
-                }
-            }
+            // Share + Share with position (shared helper — same URL / text-timestamp rules as mini ⋯).
+            EpisodeShareLinks.labelStyle(
+                episode: episode,
+                feed: feed,
+                positionSeconds: playback.positionSeconds
+            )
         }
         .buttonStyle(.bordered)
         .labelStyle(.titleAndIcon)
