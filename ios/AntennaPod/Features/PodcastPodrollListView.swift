@@ -15,6 +15,7 @@ struct PodcastPodrollListView: View {
     var title: String = String(localized: "Recommended podcasts")
 
     @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = String(localized: "Recommendation copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
     @State private var previewRequest: FeedPreviewRequest?
 
@@ -62,7 +63,7 @@ struct PodcastPodrollListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Recommendation copied to the pasteboard."))
+                Text(copiedAlertMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
             .sheet(item: $previewRequest) { request in
@@ -146,8 +147,34 @@ struct PodcastPodrollListView: View {
             }
 
             HStack(spacing: 12) {
+                if let title = entry.displayTitle {
+                    Button {
+                        UIPasteboard.general.string = title
+                        copiedAlertMessage = String(localized: "Recommendation title copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy recommendation title", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy recommendation title"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided recommended podcast title as plain text")
+                    )
+
+                    ShareLink(item: title) {
+                        Label("Share recommendation title", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share recommendation title"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided recommended podcast title as plain text")
+                    )
+                }
+
                 Button {
                     UIPasteboard.general.string = PodcastPodrollDisplay.copyText(entry)
+                    copiedAlertMessage = String(localized: "Recommendation copied to the pasteboard.")
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {

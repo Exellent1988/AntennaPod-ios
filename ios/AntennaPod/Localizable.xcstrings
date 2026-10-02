@@ -19311,6 +19311,96 @@
         }
       }
     },
+    "Copy recommendation title": {
+      "extractionState": "manual",
+      "comment": "Copy action for the exact feed-provided podcast:podroll title; hidden when the title is missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy recommendation title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlungstitel kopieren"
+          }
+        }
+      }
+    },
+    "Share recommendation title": {
+      "extractionState": "manual",
+      "comment": "Share action for the exact feed-provided podcast:podroll title; hidden when the title is missing.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share recommendation title"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlungstitel teilen"
+          }
+        }
+      }
+    },
+    "Recommendation title copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert after copying the exact feed-provided podcast:podroll title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recommendation title copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfehlungstitel in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the exact feed-provided recommended podcast title as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying a podcast:podroll title; uses the displayed feed string exactly.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact feed-provided recommended podcast title as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den exakt vom Feed gelieferten Titel des empfohlenen Podcasts als Klartext"
+          }
+        }
+      }
+    },
+    "Shares the exact feed-provided recommended podcast title as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing a podcast:podroll title; uses the displayed feed string exactly.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact feed-provided recommended podcast title as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den exakt vom Feed gelieferten Titel des empfohlenen Podcasts als Klartext"
+          }
+        }
+      }
+    },
     "Recommendation copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Alert message after copying a podcast:podroll remoteItem.",
