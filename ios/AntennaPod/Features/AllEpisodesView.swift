@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct AllEpisodesView: View {
     @EnvironmentObject private var store: PodcastStore
@@ -7,11 +8,42 @@ struct AllEpisodesView: View {
     @EnvironmentObject private var downloads: DownloadService
     @State private var searchText = ""
     @State private var showEnqueueAllConfirm = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     /// Soft-capped catalog (`store.allEpisodes`, newest-500) — Add all to queue always uses this,
     /// **not** the chip/podcast/search filtered visible list (`items`).
     private var catalogItems: [InboxEpisode] {
         store.allEpisodes
+    }
+
+    /// Soft-capped All Episodes catalog episodes in **store** newest-first order
+    /// (`PodcastStore.allEpisodes`, newest 500 by `pubDateEpochMs`).
+    /// **Not** status/podcast/type/search / UI `allEpisodesSort` filtered.
+    /// Same honesty as Add all / Play random / soft-cap.
+    private var allEpisodesCatalogEpisodes: [PodcastEpisode] {
+        catalogItems.map(\.episode)
+    }
+
+    /// Plain-text list of the **soft-capped** All Episodes catalog — not chip/type/sort/search filtered;
+    /// never beyond newest-500.
+    private var allEpisodesPlainText: String {
+        AllEpisodesExport.plainText(episodes: allEpisodesCatalogEpisodes) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
+    }
+
+    /// Enabled when the soft-capped All Episodes catalog is non-empty (read-only export).
+    private var canExportAllEpisodes: Bool {
+        !catalogItems.isEmpty
+    }
+
+    /// “Episodes” header + body for system share sheet (same body as Copy). Matches nav title.
+    private var allEpisodesShareText: String {
+        AllEpisodesExport.shareText(episodes: allEpisodesCatalogEpisodes) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
     }
 
     /// Episodes from the **soft-capped All Episodes catalog** (`store.allEpisodes`, newest 500 by
@@ -423,6 +455,31 @@ struct AllEpisodesView: View {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {
+                        copyAllEpisodes()
+                    } label: {
+                        Label("Copy all episodes", systemImage: "doc.plaintext")
+                    }
+                    // Soft-capped All Episodes catalog (not status/podcast/type/UI sort/search).
+                    .disabled(!canExportAllEpisodes)
+                    .accessibilityLabel(String(localized: "Copy all episodes"))
+                    .accessibilityHint(
+                        String(localized: "Copies the newest-500 All Episodes catalog to the pasteboard")
+                    )
+
+                    ShareLink(
+                        item: allEpisodesShareText,
+                        subject: Text(String(localized: "Episodes"))
+                    ) {
+                        Label("Share all episodes", systemImage: "square.and.arrow.up")
+                    }
+                    // Same gates as Copy all episodes — soft-capped catalog.
+                    .disabled(!canExportAllEpisodes)
+                    .accessibilityLabel(String(localized: "Share all episodes"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the newest-500 All Episodes catalog")
+                    )
+
+                    Button {
                         playRandomEpisode()
                     } label: {
                         Label("Play random", systemImage: "shuffle")
@@ -441,11 +498,24 @@ struct AllEpisodesView: View {
                 } label: {
                     Label("Episodes actions", systemImage: "ellipsis.circle")
                 }
-                // Menu stays available when soft-capped catalog non-empty so Play random / Add all can disable per eligibility.
+                // Menu stays available when soft-capped catalog non-empty so Copy / Share / Play random / Add all can disable per eligibility.
                 .disabled(catalogItems.isEmpty)
+                .accessibilityLabel(String(localized: "Episodes actions"))
+                .accessibilityHint(
+                    String(localized: "Copy all episodes, share all episodes, play random, or add all to queue")
+                )
             }
         }
         .searchable(text: $searchText, prompt: "Search all episodes")
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
         .confirmationDialog(
             "Add all to queue?",
             isPresented: $showEnqueueAllConfirm,
@@ -458,6 +528,18 @@ struct AllEpisodesView: View {
         } message: {
             Text("Appends \(enqueueAllEpisodesCandidatesCount) episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the status, podcast, type, or search filter. Queue lock does not block enqueue.")
         }
+    }
+
+    /// Pasteboard copy of the **soft-capped** All Episodes catalog (not status/podcast/type/UI sort/search).
+    /// Newest-first store order within newest-500 — same catalog as Add all / Play random. Read-only.
+    /// **Soft-cap honesty:** never exports beyond `PodcastStore.allEpisodes`.
+    private func copyAllEpisodes() {
+        let text = allEpisodesPlainText
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Episodes copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     /// Uniform pick via shared `EpisodePlayRandom.pick` among eligible (prefer unplayed);

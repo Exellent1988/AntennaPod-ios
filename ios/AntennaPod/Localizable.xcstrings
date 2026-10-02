@@ -27240,6 +27240,108 @@
           }
         }
       }
+    },
+    "Copy all episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy all episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Episoden kopieren"
+          }
+        }
+      }
+    },
+    "Share all episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share all episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Episoden teilen"
+          }
+        }
+      }
+    },
+    "Episodes copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodes copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the newest-500 All Episodes catalog to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the newest-500 All Episodes catalog to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den Soft-Cap-Katalog (neueste 500) aller Episoden in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the newest-500 All Episodes catalog": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the newest-500 All Episodes catalog"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit dem Soft-Cap-Katalog (neueste 500) aller Episoden"
+          }
+        }
+      }
+    },
+    "Copy all episodes, share all episodes, play random, or add all to queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy all episodes, share all episodes, play random, or add all to queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Episoden kopieren, Alle Episoden teilen, Zufällig abspielen, oder Alle zur Warteschlange"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
