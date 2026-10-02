@@ -35,7 +35,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
     /// feed is playing. Player session rate (`setRate`) does not write this field.
     var playbackSpeed: Float?
     /// Feed detail episode list sort override; `nil` = Use global (`AppSettings.feedEpisodeSort`).
-    /// Newest / Oldest by pubDate; Shortest / Longest by known duration (unknown last). itunes:type does **not** change this.
+    /// Newest / Oldest by pubDate; Shortest / Longest by known duration (unknown last).
+    /// Capsule itunes:type is display-only; a separate one-shot may set this to `.oldestFirst` when type is serial and this is still nil (never override a user-chosen value; never touch global).
     var episodeSort: FeedEpisodeSort?
 
     static let `default` = FeedSettings(

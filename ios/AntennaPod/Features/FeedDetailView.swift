@@ -445,16 +445,25 @@ struct FeedDetailView: View {
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
-            // Channel itunes:type when present — Episodic/Serial (localized) or raw; hide when missing (never invent; display-only — no sort change).
+            // Channel itunes:type when present — Episodic/Serial (localized) or raw; hide when missing (never invent).
+            // Capsule is display-only; Serial may one-shot set per-feed Oldest first when episodeSort is still nil.
             if let itunesType = displayItunesType {
                 Section {
-                    Text(itunesType)
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.2), in: Capsule())
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityLabel(liveFeed.itunesTypeAccessibilityLabel ?? itunesType)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(itunesType)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.2), in: Capsule())
+                            .accessibilityLabel(liveFeed.itunesTypeAccessibilityLabel ?? itunesType)
+                        if liveFeed.isItunesTypeSerial {
+                            Text(String(localized: "Serial podcasts may use Oldest first once for narrative order when per-feed sort is unset. You can still pick any sort. The itunes:type capsule stays display-only."))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .accessibilityLabel(String(localized: "Serial podcasts may use Oldest first once for narrative order when per-feed sort is unset. You can still pick any sort. The itunes:type capsule stays display-only."))
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -833,7 +842,7 @@ struct FeedDetailView: View {
                 }
                 .accessibilityLabel(String(localized: "Sort episodes"))
                 .accessibilityValue(resolvedEpisodeSort.label)
-                .accessibilityHint(String(localized: "Orders this podcast’s episode list. Saved per podcast; does not follow itunes:type."))
+                .accessibilityHint(String(localized: "Orders this podcast’s episode list. Saved per podcast. Serial may auto-set Oldest first once when unset; capsule stays display-only."))
             }
             ToolbarItem(placement: .primaryAction) {
                 HStack(spacing: 12) {

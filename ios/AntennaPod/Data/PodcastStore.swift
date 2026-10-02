@@ -157,6 +157,20 @@ final class PodcastStore: ObservableObject {
         setFeedSettings(current, for: feedId)
     }
 
+    /// Serial narrative default (one-shot / nil-only): when channel `itunes:type` canonicalizes to
+    /// `serial` and per-feed `episodeSort` is still `nil`, set **Oldest first** once.
+    /// - Never invents type (parsed channel only via `ItunesTypeParsing.canonical`).
+    /// - Does **not** override a user-chosen per-feed sort (any non-nil value).
+    /// - Does **not** change global `AppSettings.feedEpisodeSort`.
+    /// - If type later leaves serial, does **not** auto-clear (leave settings as-is).
+    /// Capsule UI remains display-only; this only writes `FeedSettings.episodeSort` under the nil rule.
+    func applySerialOldestFirstHeuristicIfNeeded(for feed: PodcastFeed) {
+        guard feed.isItunesTypeSerial else { return }
+        let current = feedSettings(for: feed.id)
+        guard current.episodeSort == nil else { return }
+        updateFeedSettings(for: feed.id) { $0.episodeSort = .oldestFirst }
+    }
+
     // MARK: - Tags / folders
 
     /// Tags assigned to a feed (sorted, unique).
@@ -1919,6 +1933,8 @@ final class PodcastStore: ObservableObject {
                 for: feed.id
             )
         }
+        // Serial → Oldest first once when per-feed episodeSort still nil (subscribe + refresh).
+        applySerialOldestFirstHeuristicIfNeeded(for: feed)
     }
 
 }

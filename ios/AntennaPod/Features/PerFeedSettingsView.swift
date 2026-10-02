@@ -172,12 +172,18 @@ struct PerFeedSettingsView: View {
                     }
                 }
                 .accessibilityLabel(String(localized: "Episode sort"))
-                .accessibilityHint(String(localized: "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list. Does not follow itunes:type."))
+                .accessibilityHint(String(localized: "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list. Serial may auto-set Oldest first once when unset; capsule stays display-only."))
                 .accessibilityValue(episodeSortAccessibilityValue)
                 Text(episodeSortHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .accessibilityLabel(episodeSortHelp)
+                if liveFeed?.isItunesTypeSerial == true {
+                    Text(String(localized: "Serial podcasts may use Oldest first once for narrative order when per-feed sort is unset. You can still pick any sort. The itunes:type capsule stays display-only."))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .accessibilityLabel(String(localized: "Serial podcasts may use Oldest first once for narrative order when per-feed sort is unset. You can still pick any sort. The itunes:type capsule stays display-only."))
+                }
             } header: {
                 Text("Episodes")
             }
@@ -573,7 +579,7 @@ struct PerFeedSettingsView: View {
     private var episodeSortHelp: String {
         if let sort = current.episodeSort {
             return String(
-                format: String(localized: "This podcast: %@. Feed detail Sort menu saves per podcast. itunes:type does not change sort."),
+                format: String(localized: "This podcast: %@. Feed detail Sort menu saves per podcast. Serial may auto-set Oldest first once when unset; capsule stays display-only."),
                 sort.label
             )
         }

@@ -16560,7 +16560,7 @@
     },
     "Episodic": {
       "extractionState": "manual",
-      "comment": "Capsule when channel itunes:type is episodic (Apple Podcasts). Hidden when missing — never invent. Display-only; does not change episode sort.",
+      "comment": "Capsule when channel itunes:type is episodic (Apple Podcasts). Hidden when missing — never invent. Capsule display-only (Serial has a separate nil-only Oldest-first heuristic).",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -16578,7 +16578,7 @@
     },
     "Serial": {
       "extractionState": "manual",
-      "comment": "Capsule when channel itunes:type is serial (Apple Podcasts). Hidden when missing — never invent. Display-only; does not change episode sort.",
+      "comment": "Capsule when channel itunes:type is serial (Apple Podcasts). Hidden when missing — never invent. Capsule display-only; separate nil-only heuristic may set per-feed Oldest first.",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -23836,6 +23836,78 @@
           }
         }
       }
+    },
+    "Serial podcasts may use Oldest first once for narrative order when per-feed sort is unset. You can still pick any sort. The itunes:type capsule stays display-only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serial podcasts may use Oldest first once for narrative order when per-feed sort is unset. You can still pick any sort. The itunes:type capsule stays display-only."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serielle Podcasts können einmal „Älteste zuerst“ für die Erzählreihenfolge setzen, wenn die Pro-Feed-Sortierung noch nicht gesetzt ist. Du kannst weiterhin jede Sortierung wählen. Die itunes:type-Kapsel bleibt nur Anzeige."
+          }
+        }
+      },
+      "comment": "Honesty footnote under Serial itunes:type capsule (Feed detail) and Per-feed Episode sort. Capsule display-only; nil-only Oldest first heuristic."
+    },
+    "Orders this podcast’s episode list. Saved per podcast. Serial may auto-set Oldest first once when unset; capsule stays display-only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders this podcast’s episode list. Saved per podcast. Serial may auto-set Oldest first once when unset; capsule stays display-only."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordnet die Episodenliste dieses Podcasts. Pro Podcast gespeichert. Bei Seriell kann einmal „Älteste zuerst“ gesetzt werden, wenn noch ungesetzt; Kapsel bleibt nur Anzeige."
+          }
+        }
+      },
+      "comment": "Feed detail Sort menu accessibilityHint — Serial nil-only heuristic honesty."
+    },
+    "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list. Serial may auto-set Oldest first once when unset; capsule stays display-only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list. Serial may auto-set Oldest first once when unset; capsule stays display-only."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global verwenden, Neueste zuerst, Älteste zuerst, Kürzeste zuerst, Längste zuerst, Titel A–Z oder Titel Z–A für die Episodenliste dieses Podcasts. Bei Seriell kann einmal „Älteste zuerst“ gesetzt werden, wenn noch ungesetzt; Kapsel bleibt nur Anzeige."
+          }
+        }
+      },
+      "comment": "Per-feed Episode sort accessibilityHint — Serial nil-only heuristic honesty."
+    },
+    "This podcast: %@. Feed detail Sort menu saves per podcast. Serial may auto-set Oldest first once when unset; capsule stays display-only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast: %@. Feed detail Sort menu saves per podcast. Serial may auto-set Oldest first once when unset; capsule stays display-only."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Podcast: %@. Das Sortieren-Menü im Feed-Detail speichert pro Podcast. Bei Seriell kann einmal „Älteste zuerst“ gesetzt werden, wenn noch ungesetzt; Kapsel bleibt nur Anzeige."
+          }
+        }
+      },
+      "comment": "Per-feed Episode sort help when override set — Serial heuristic honesty."
     }
   },
   "version": "1.0"

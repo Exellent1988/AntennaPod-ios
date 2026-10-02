@@ -2076,7 +2076,8 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     var medium: String?
     /// Channel `itunes:type` raw string when the feed provides it (Apple Podcasts: `episodic` / `serial`).
     /// Nil when absent — never invent; UI hides unless present. Unknown values kept as raw for display.
-    /// Display-only — does **not** change default episode sort.
+    /// Capsule is display-only. Separate one-shot heuristic may set per-feed `episodeSort` to Oldest first
+    /// when canonical type is `serial` and `episodeSort` is still nil (never invent type; never override user sort).
     var itunesType: String?
     /// Channel Podcast Index `podcast:updateFrequency` when the feed provides it (text + optional rrule/dtstart/complete).
     /// Nil when absent — never invent schedule; UI hides unless present. Display-only — does **not** change Keep updated / refresh.
@@ -2187,8 +2188,14 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// `true` only when the feed’s parsed channel `itunes:type` canonicalizes to `serial` (never invent).
+    var isItunesTypeSerial: Bool {
+        guard let itunesType else { return false }
+        return ItunesTypeParsing.canonical(from: itunesType) == "serial"
+    }
+
     /// Capsule / row label for `itunes:type`: localized Episodic/Serial when known; else raw feed string.
-    /// `nil` when missing — never invent. Display-only (does not change episode sort).
+    /// `nil` when missing — never invent. Capsule is display-only (sort uses a separate nil-only Serial heuristic).
     var displayItunesType: String? {
         guard let code = itunesTypeCode else { return nil }
         switch code.lowercased() {

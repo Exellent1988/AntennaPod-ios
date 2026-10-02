@@ -28,7 +28,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var xmlLang: String?
     /// Channel podcast:medium — raw feed string (podcast/music/video/…); nil when absent. Display-only; never invent/remap.
     private var channelMedium: String?
-    /// Channel itunes:type — raw feed string (episodic/serial/…); nil when absent. Display-only; never invent; does not change sort.
+    /// Channel itunes:type — raw feed string (episodic/serial/…); nil when absent. Never invent. Capsule display-only; Serial nil-only Oldest-first heuristic is separate.
     private var channelItunesType: String?
     /// Channel podcast:updateFrequency — structured text + optional rrule/dtstart/complete; nil when absent. Display-only; never invent; does not change Keep updated/refresh.
     private var channelUpdateFrequency: PodcastUpdateFrequency?
@@ -1014,7 +1014,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     channelMedium = text
                 }
             case "type":
-                // itunes:type — episodic | serial (Apple Podcasts). Channel only; store raw trimmed; never invent.
+                // itunes:type — episodic | serial (Apple Podcasts). Channel only; store raw trimmed; never invent. Capsule display-only; Serial→Oldest-first is nil-only FeedSettings heuristic.
                 // Distinct from enclosure@type / media type / podcast:value@type attributes (those are attributes, not elements).
                 // Does not change default episode sort (display-only).
                 if inPodroll || inPublisher || inLiveItem { break }
@@ -1788,6 +1788,7 @@ enum PodcastUpdateFrequencyParsing {
 
 /// Channel `itunes:type` from feed text nodes (Apple Podcasts: episodic / serial).
 /// Stores non-empty raw trimmed text; never invents. Display localizes known values; unknown → show raw or hide.
+/// Capsule is display-only; Serial → Oldest first is a separate nil-only FeedSettings heuristic.
 enum ItunesTypeParsing {
     /// Non-empty trimmed raw `itunes:type` text, or `nil` when blank.
     static func nonEmptyRaw(_ raw: String) -> String? {

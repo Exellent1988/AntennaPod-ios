@@ -755,7 +755,7 @@ struct SubscriptionsView: View {
                                 .background(Color.secondary.opacity(0.2), in: Capsule())
                                 .accessibilityHidden(true)
                         }
-                        // Channel itunes:type when set — Episodic/Serial or raw; hide when missing (never invent; display-only).
+                        // Channel itunes:type when set — Episodic/Serial or raw; hide when missing (never invent; capsule display-only; Serial nil-only Oldest-first is in PodcastStore).
                         if let itunesType = feed.displayItunesType {
                             Text(itunesType)
                                 .font(.caption2.weight(.semibold))
