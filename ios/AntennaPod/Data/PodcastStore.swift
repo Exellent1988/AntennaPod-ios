@@ -1468,6 +1468,40 @@ final class PodcastStore: ObservableObject {
         episodePrivateNotesById = [:]
     }
 
+    /// Number of `feedSettingsById` entries that currently have a non-nil `privateNote`.
+    /// Used by Settings → Library Clear all feed private notes (footnote / disabled / confirm count).
+    var feedPrivateNotesCount: Int {
+        feedSettingsById.values.reduce(into: 0) { count, settings in
+            if settings.privateNote != nil { count += 1 }
+        }
+    }
+
+    /// Clears `FeedSettings.privateNote` for every map entry that has one.
+    /// Mutates `feedSettingsById` once (single `feed-settings.json` persist) — same batch spirit as `unpinAll()`.
+    /// When settings become `.isDefault` after clearing the note, removes the map entry (same as unpinAll).
+    /// Does **not** touch episode private notes, bookmarks, pin, tags, favorites, archive, queue, downloads, or playback.
+    /// Callers must confirm first (Settings → Library `confirmationDialog`).
+    /// - Returns: number of feed notes cleared (entries that had a non-nil `privateNote`).
+    @discardableResult
+    func clearAllFeedPrivateNotes() -> Int {
+        let noteIds = feedSettingsById.compactMap { feedId, settings -> UUID? in
+            settings.privateNote != nil ? feedId : nil
+        }
+        guard !noteIds.isEmpty else { return 0 }
+        var next = feedSettingsById
+        for feedId in noteIds {
+            guard var settings = next[feedId], settings.privateNote != nil else { continue }
+            settings.privateNote = nil
+            if settings.isDefault {
+                next.removeValue(forKey: feedId)
+            } else {
+                next[feedId] = settings
+            }
+        }
+        feedSettingsById = next
+        return noteIds.count
+    }
+
     func isFavorite(_ episodeId: String) -> Bool {
         favoriteAtById[episodeId] != nil
     }

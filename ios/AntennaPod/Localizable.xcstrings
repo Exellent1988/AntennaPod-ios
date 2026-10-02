@@ -27504,6 +27504,168 @@
         }
       },
       "comment": "Settings searchable keyword / honesty for Clear all episode private notes."
+    },
+    "Clear all feed private notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear all feed private notes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle privaten Feed-Notizen löschen"
+          }
+        }
+      },
+      "comment": "Settings → Library destructive button + confirmation action; clears FeedSettings.privateNote in feed-settings.json."
+    },
+    "Clear all feed private notes?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear all feed private notes?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle privaten Feed-Notizen löschen?"
+          }
+        }
+      },
+      "comment": "Settings → Library confirmationDialog title for clear-all feed private notes."
+    },
+    "No feed private notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No feed private notes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine privaten Feed-Notizen"
+          }
+        }
+      },
+      "comment": "VoiceOver accessibilityValue when Settings Clear all feed private notes is disabled (count 0)."
+    },
+    "%lld feed private notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld feed private notes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld private Feed-Notizen"
+          }
+        }
+      },
+      "comment": "VoiceOver accessibilityValue with count for Settings Clear all feed private notes."
+    },
+    "Removes every local feed private note after confirmation. Does not clear episode notes, bookmarks, pin, tags, favorites, downloads, queue, or history.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes every local feed private note after confirmation. Does not clear episode notes, bookmarks, pin, tags, favorites, downloads, queue, or history."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt nach Bestätigung jede lokale private Feed-Notiz. Löscht keine Episoden-Notizen, Lesezeichen, Pins, Tags, Favoriten, Downloads, Warteschlange oder Verlauf."
+          }
+        }
+      },
+      "comment": "VoiceOver accessibilityHint for Settings Clear all feed private notes."
+    },
+    "Removes %lld local feed private notes from feed-settings.json. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld local feed private notes from feed-settings.json. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld lokale private Feed-Notizen aus feed-settings.json. Löscht keine privaten Episoden-Notizen, Lesezeichen, Pins, Tags, Favoriten, Archiv, Downloads, Warteschlange oder Verlauf. Nur lokal — nicht RSS / gpodder / OPML."
+          }
+        }
+      },
+      "comment": "Clear-all feed private notes confirmationDialog message with count + honesty."
+    },
+    "No feed private notes saved. Removes every local feed private note from feed-settings.json when any exist. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No feed private notes saved. Removes every local feed private note from feed-settings.json when any exist. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine privaten Feed-Notizen gespeichert. Entfernt bei Vorhandensein jede lokale private Feed-Notiz aus feed-settings.json. Löscht keine privaten Episoden-Notizen, Lesezeichen, Pins, Tags, Favoriten, Archiv, Downloads, Warteschlange oder Verlauf. Nur lokal — nicht RSS / gpodder / OPML."
+          }
+        }
+      },
+      "comment": "Settings Library footnote when zero feed private notes."
+    },
+    "%lld feed private notes saved. Removes every local feed private note from feed-settings.json. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld feed private notes saved. Removes every local feed private note from feed-settings.json. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld private Feed-Notizen gespeichert. Entfernt jede lokale private Feed-Notiz aus feed-settings.json. Löscht keine privaten Episoden-Notizen, Lesezeichen, Pins, Tags, Favoriten, Archiv, Downloads, Warteschlange oder Verlauf. Nur lokal — nicht RSS / gpodder / OPML."
+          }
+        }
+      },
+      "comment": "Settings Library footnote with count when feed private notes exist."
+    },
+    "Removes every local feed private note from feed-settings.json. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes every local feed private note from feed-settings.json. Does not clear episode private notes, bookmarks, pin, tags, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt jede lokale private Feed-Notiz aus feed-settings.json. Löscht keine privaten Episoden-Notizen, Lesezeichen, Pins, Tags, Favoriten, Archiv, Downloads, Warteschlange oder Verlauf. Nur lokal — nicht RSS / gpodder / OPML."
+          }
+        }
+      },
+      "comment": "Settings searchable keyword / honesty for Clear all feed private notes."
     }
   },
   "version": "1.0"
