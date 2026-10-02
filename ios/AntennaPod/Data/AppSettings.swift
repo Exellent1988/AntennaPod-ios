@@ -237,6 +237,31 @@ enum DownloadEpisodeCacheLimit: Int, CaseIterable, Identifiable {
 }
 
 
+
+/// End-of-episode continuous advance mode (Settings → Playback → Continuous playback).
+/// - **Off**: stop at end (mark played / smart-mark / progress still apply).
+/// - **Queue** (default): auto-next via `nextQueueEpisode` — Queue order only.
+/// - **Same podcast**: auto-next via `nextSamePodcastEpisode` — next unplayed, non-archived
+///   episode of the same feed in effective feed episode sort order (per-feed override or
+///   global `feedEpisodeSort`); does **not** jump the Queue. Sleep-timer end-of-episode
+///   always stops without advancing regardless of mode.
+enum ContinuousPlaybackMode: String, CaseIterable, Identifiable {
+    case off
+    case queue
+    case samePodcast
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .off: return String(localized: "Off")
+        case .queue: return String(localized: "Queue")
+        case .samePodcast: return String(localized: "Same podcast")
+        }
+    }
+}
+
+
 /// Preferred media source when starting playback (P0 Prefer stream vs download).
 enum PlaybackSourcePreference: String, CaseIterable, Identifiable {
     /// Use local file when present; otherwise stream.
@@ -1242,7 +1267,9 @@ final class AppSettings: ObservableObject {
         static let httpProxyPort = "settings.httpProxy.port"
         static let httpProxyUsername = "settings.httpProxy.username"
         static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
+        /// Legacy Bool key (true→queue, false→off). Migrated to `continuousPlaybackMode` on load.
         static let continuousPlaybackEnabled = "settings.continuousPlaybackEnabled"
+        static let continuousPlaybackMode = "settings.continuousPlaybackMode"
         static let resetPositionWhenMarkedPlayed = "settings.resetPositionWhenMarkedPlayed"
         static let showRemainingTime = "settings.showRemainingTime"
         static let rewindAfterPauseSeconds = "settings.rewindAfterPauseSeconds"
@@ -1676,12 +1703,13 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// When true, finishing an episode auto-advances to `nextQueueEpisode` (**Queue only** — not the next episode of the same feed). Default on.
-    /// When off, episode end still saves progress / marks played (same as today) but does not start the next queue item.
-    /// End-of-episode sleep timer always stops without advancing (unchanged).
-    @Published var continuousPlaybackEnabled: Bool {
+    /// End-of-episode advance: Off / Queue (default) / Same podcast. Persisted as raw string;
+    /// migrates legacy Bool `continuousPlaybackEnabled` (true→queue, false→off).
+    /// Queue mode uses `nextQueueEpisode` only; Same podcast uses `nextSamePodcastEpisode` only
+    /// (does not auto-jump Queue). End-of-episode sleep timer always stops without advancing.
+    @Published var continuousPlaybackMode: ContinuousPlaybackMode {
         didSet {
-            UserDefaults.standard.set(continuousPlaybackEnabled, forKey: Keys.continuousPlaybackEnabled)
+            UserDefaults.standard.set(continuousPlaybackMode.rawValue, forKey: Keys.continuousPlaybackMode)
         }
     }
 
@@ -2069,6 +2097,36 @@ final class AppSettings: ObservableObject {
         }
     }
 
+
+    /// Load Continuous playback mode: prefer string key; migrate legacy Bool; default Queue.
+    private static func loadContinuousPlaybackMode() -> ContinuousPlaybackMode {
+        if let raw = UserDefaults.standard.string(forKey: Keys.continuousPlaybackMode),
+           let mode = ContinuousPlaybackMode(rawValue: raw) {
+            return mode
+        }
+        if UserDefaults.standard.object(forKey: Keys.continuousPlaybackEnabled) != nil {
+            let legacy = UserDefaults.standard.bool(forKey: Keys.continuousPlaybackEnabled)
+            let migrated: ContinuousPlaybackMode = legacy ? .queue : .off
+            UserDefaults.standard.set(migrated.rawValue, forKey: Keys.continuousPlaybackMode)
+            return migrated
+        }
+        return .queue
+    }
+
+    /// Restore Continuous playback from backup string and/or legacy Bool.
+    private static func resolveContinuousPlaybackMode(
+        fromBackupMode modeRaw: String?,
+        legacyEnabled: Bool?
+    ) -> ContinuousPlaybackMode {
+        if let modeRaw, let mode = ContinuousPlaybackMode(rawValue: modeRaw) {
+            return mode
+        }
+        if let legacyEnabled {
+            return legacyEnabled ? .queue : .off
+        }
+        return .queue
+    }
+
     init() {
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
@@ -2257,12 +2315,7 @@ final class AppSettings: ObservableObject {
             // Default off: allow normal idle lock (battery-friendly).
             keepScreenOnWhilePlaying = false
         }
-        if UserDefaults.standard.object(forKey: Keys.continuousPlaybackEnabled) != nil {
-            continuousPlaybackEnabled = UserDefaults.standard.bool(forKey: Keys.continuousPlaybackEnabled)
-        } else {
-            // Default on: auto-advance to next queue episode on end (AntennaPod continuous playback).
-            continuousPlaybackEnabled = true
-        }
+        continuousPlaybackMode = Self.loadContinuousPlaybackMode()
         if UserDefaults.standard.object(forKey: Keys.resetPositionWhenMarkedPlayed) != nil {
             resetPositionWhenMarkedPlayed = UserDefaults.standard.bool(forKey: Keys.resetPositionWhenMarkedPlayed)
         } else {
@@ -2637,7 +2690,7 @@ final class AppSettings: ObservableObject {
             httpProxyPort: httpProxyPort,
             httpProxyUsername: httpProxyUsername,
             keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
-            continuousPlaybackEnabled: continuousPlaybackEnabled,
+            continuousPlaybackMode: continuousPlaybackMode.rawValue,
             resetPositionWhenMarkedPlayed: resetPositionWhenMarkedPlayed,
             showRemainingTime: showRemainingTime,
             rewindAfterPauseSeconds: rewindAfterPauseSeconds,
@@ -2754,7 +2807,10 @@ final class AppSettings: ObservableObject {
         httpProxyUsername = AppHTTPProxy.sanitizeUsername(snap.httpProxyUsername ?? "")
         // Password never in backup JSON — Keychain only (unchanged on restore).
         keepScreenOnWhilePlaying = snap.keepScreenOnWhilePlaying ?? false
-        continuousPlaybackEnabled = snap.continuousPlaybackEnabled ?? true
+        continuousPlaybackMode = Self.resolveContinuousPlaybackMode(
+            fromBackupMode: snap.continuousPlaybackMode,
+            legacyEnabled: snap.continuousPlaybackEnabled
+        )
         resetPositionWhenMarkedPlayed = snap.resetPositionWhenMarkedPlayed ?? true
         showRemainingTime = snap.showRemainingTime ?? false
         let rewindAfter = snap.rewindAfterPauseSeconds ?? Self.defaultRewindAfterPauseSeconds
@@ -2940,8 +2996,10 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var httpProxyUsername: String? = nil
     /// Absent in older backups → treated as off (allow idle lock).
     var keepScreenOnWhilePlaying: Bool? = false
-    /// Absent in older backups → treated as on (auto-next from queue).
-    var continuousPlaybackEnabled: Bool? = true
+    /// Absent in older backups → fall back to legacy Bool below, else Queue (default).
+    var continuousPlaybackMode: String? = nil
+    /// Legacy Bool from older backups (true→queue, false→off). Ignored when `continuousPlaybackMode` is set.
+    var continuousPlaybackEnabled: Bool? = nil
     /// Absent in older backups → treated as on (reset position on mark-played).
     var resetPositionWhenMarkedPlayed: Bool? = true
     /// Absent in older backups → treated as off (show total duration).

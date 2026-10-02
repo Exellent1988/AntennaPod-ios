@@ -78,7 +78,7 @@ final class PlaybackService: ObservableObject {
     static let streamCellularBlockedMessage =
         "Streaming is Wi‑Fi only. Connect to Wi‑Fi or Ethernet, play a downloaded episode, or turn off Stream Wi‑Fi only in Settings → Network / Downloads."
 
-    /// Bound from the app for progress / played / continuous queue.
+    /// Bound from the app for progress / played / continuous advance (Queue or Same podcast).
     weak var store: PodcastStore?
     /// Bound so continuous playback prefers offline files when present.
     weak var downloads: DownloadService?
@@ -770,11 +770,20 @@ final class PlaybackService: ObservableObject {
         }
 
         let finishedId = currentEpisode?.id
-        // Snapshot next before markPlayed removes the finished item from the queue.
-        // Continuous = Queue follow only (`nextQueueEpisode`) — never next episode of the same feed.
-        // When continuous playback is off, finish without auto-advancing (same stop path as no-next).
-        let continuous = settings?.continuousPlaybackEnabled ?? true
-        let next = continuous ? finishedId.flatMap { store?.nextQueueEpisode(after: $0) } : nil
+        // Snapshot next before markPlayed removes the finished item from the queue (Queue mode)
+        // and before the finished id is marked played (Same podcast still finds it by id).
+        // Mode: Off → no advance; Queue → `nextQueueEpisode` only; Same podcast →
+        // `nextSamePodcastEpisode` only (never auto-jumps Queue when Same podcast is selected).
+        let mode = settings?.continuousPlaybackMode ?? .queue
+        let next: PodcastEpisode?
+        switch mode {
+        case .off:
+            next = nil
+        case .queue:
+            next = finishedId.flatMap { store?.nextQueueEpisode(after: $0) }
+        case .samePodcast:
+            next = finishedId.flatMap { store?.nextSamePodcastEpisode(after: $0) }
+        }
         finishCurrentEpisode(ended: true)
         var startedNext = false
         if let next {
@@ -828,7 +837,7 @@ final class PlaybackService: ObservableObject {
     }
 
     /// Feed soundbite play-until-end: pause at wall-clock `soundbiteEndSeconds` like user pause.
-    /// Does **not** call `handlePlaybackEnded` — no continuous queue advance / mark-played-from-end.
+    /// Does **not** call `handlePlaybackEnded` — no continuous advance / mark-played-from-end.
     private func checkSoundbiteEnd() {
         guard let end = soundbiteEndSeconds, end.isFinite else { return }
         guard isPlaying else { return }

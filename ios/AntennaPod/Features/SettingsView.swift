@@ -676,7 +676,10 @@ struct SettingsView: View {
     private var matchesPlaybackContinuous: Bool {
         matchesSearch(
             "Continuous playback",
-            "When on, finishing an episode auto-plays the next item from the Queue only (not the next episode of the same podcast). When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on."
+            "Off",
+            "Queue",
+            "Same podcast",
+            "Off: stop at episode end (mark played / progress still apply). Queue (default): auto-play the next Queue item only. Same podcast: auto-play the next unplayed, non-archived episode of the same feed in that podcast’s episode sort order (per-feed or global) — does not jump the Queue. End-of-episode sleep timer always stops without advancing."
         )
     }
 
@@ -970,9 +973,13 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             }
             if matchesPlaybackContinuous {
-                Toggle("Continuous playback", isOn: $settings.continuousPlaybackEnabled)
-                    .accessibilityHint(String(localized: "When on, finishing an episode auto-plays the next Queue item only — not the next episode of the same podcast. Default on."))
-                Text("When on, finishing an episode auto-plays the next item from the Queue only (not the next episode of the same podcast). When off, episode end still marks played / saves progress but does not advance. End-of-episode sleep timer always stops without advancing. Default on.")
+                Picker("Continuous playback", selection: $settings.continuousPlaybackMode) {
+                    ForEach(ContinuousPlaybackMode.allCases) { mode in
+                        Text(mode.label).tag(mode)
+                    }
+                }
+                .accessibilityHint(String(localized: "Off stops at episode end. Queue (default) plays the next Queue item. Same podcast plays the next unplayed episode of this feed by episode sort — not the Queue."))
+                Text("Off: stop at episode end (mark played / progress still apply). Queue (default): auto-play the next Queue item only. Same podcast: auto-play the next unplayed, non-archived episode of the same feed in that podcast’s episode sort order (per-feed or global) — does not jump the Queue. End-of-episode sleep timer always stops without advancing.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

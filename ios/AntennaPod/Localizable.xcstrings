@@ -24027,6 +24027,57 @@
           }
         }
       }
+    },
+    "Same podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Same podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gleicher Podcast"
+          }
+        }
+      }
+    },
+    "Off stops at episode end. Queue (default) plays the next Queue item. Same podcast plays the next unplayed episode of this feed by episode sort — not the Queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off stops at episode end. Queue (default) plays the next Queue item. Same podcast plays the next unplayed episode of this feed by episode sort — not the Queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus stoppt am Episodenende. Warteschlange (Standard) spielt den nächsten Queue-Eintrag. Gleicher Podcast spielt die nächste ungehörte Episode dieses Feeds nach Episodensortierung — nicht die Warteschlange."
+          }
+        }
+      }
+    },
+    "Off: stop at episode end (mark played / progress still apply). Queue (default): auto-play the next Queue item only. Same podcast: auto-play the next unplayed, non-archived episode of the same feed in that podcast’s episode sort order (per-feed or global) — does not jump the Queue. End-of-episode sleep timer always stops without advancing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off: stop at episode end (mark played / progress still apply). Queue (default): auto-play the next Queue item only. Same podcast: auto-play the next unplayed, non-archived episode of the same feed in that podcast’s episode sort order (per-feed or global) — does not jump the Queue. End-of-episode sleep timer always stops without advancing."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus: Stopp am Episodenende (Markiert gehört / Fortschritt bleiben). Warteschlange (Standard): spielt nur den nächsten Queue-Eintrag. Gleicher Podcast: spielt die nächste ungehörte, nicht archivierte Episode desselben Feeds in der Episodensortierung dieses Podcasts (pro Feed oder global) — springt nicht in die Warteschlange. Der Sleep-Timer „Ende der Episode“ stoppt weiterhin ohne Weiterleitung."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

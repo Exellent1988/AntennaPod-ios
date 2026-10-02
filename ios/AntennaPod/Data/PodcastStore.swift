@@ -613,10 +613,10 @@ final class PodcastStore: ObservableObject {
         trimHistoryToSizeLimitIfNeeded()
     }
 
-    /// Next Queue item after `episodeId` for continuous playback (**Queue order only**).
+    /// Next Queue item after `episodeId` for continuous playback **Queue** mode (**Queue order only**).
     /// If `episodeId` is in the queue, returns the following entry (or `nil` at the tail).
     /// If not queued, returns the head of the queue (same honesty as Play Next when current is not queued).
-    /// Does **not** walk the feed/podcast episode list — never invents “next episode of this show.”
+    /// Does **not** walk the feed/podcast episode list — Same podcast mode uses `nextSamePodcastEpisode(after:)`.
     func nextQueueEpisode(after episodeId: String) -> PodcastEpisode? {
         if let index = queue.firstIndex(where: { $0.id == episodeId }) {
             let next = index + 1
@@ -626,6 +626,103 @@ final class PodcastStore: ObservableObject {
             return nil
         }
         return queue.first
+    }
+
+    /// Next eligible episode of the **same podcast/feed** for continuous playback **Same podcast** mode.
+    ///
+    /// Order: effective feed episode sort (`FeedSettings.episodeSort` ?? global `AppSettings.feedEpisodeSort`
+    /// — Newest / Oldest / Shortest / Longest / Title A–Z / Z–A; same rules as Feed detail).
+    /// Walks **forward** from the finished episode’s index in that list (no wrap). Skips **archived**
+    /// and **already played** episodes. Returns `nil` when the episode has no owning feed, is missing
+    /// from the feed list, or no eligible next remains.
+    /// Does **not** consult or jump the Queue (Queue mode stays `nextQueueEpisode`).
+    /// Callers snapshot before `markPlayed` so the finished id is still findable; the finished
+    /// episode itself is never returned (walk starts at index + 1).
+    func nextSamePodcastEpisode(after episodeId: String) -> PodcastEpisode? {
+        guard let feed = feed(containingEpisodeId: episodeId) else { return nil }
+        // Synthetic channel trailer ids are not in `feed.episodes` — no same-podcast next.
+        guard feed.episodes.contains(where: { $0.id == episodeId }) else { return nil }
+        let global = settings?.feedEpisodeSort ?? .newestFirst
+        let sort = feedSettings(for: feed.id).resolvedEpisodeSort(global: global)
+        let ordered = Self.episodesSortedForContinuous(feed.episodes, sort: sort) { episode in
+            EpisodeRemainingTime.knownDurationSeconds(
+                for: episode,
+                savedDurationSeconds: playbackState(for: episode.id).durationSeconds
+            )
+        }
+        guard let index = ordered.firstIndex(where: { $0.id == episodeId }) else { return nil }
+        let after = ordered.index(after: index)
+        guard after < ordered.endIndex else { return nil }
+        for candidate in ordered[after...] {
+            if isArchived(candidate.id) { continue }
+            if isPlayed(candidate.id) { continue }
+            return candidate
+        }
+        return nil
+    }
+
+    /// Sort feed episodes for continuous Same-podcast advance (mirrors Feed detail sort honesty).
+    private static func episodesSortedForContinuous(
+        _ episodes: [PodcastEpisode],
+        sort: FeedEpisodeSort,
+        knownDuration: (PodcastEpisode) -> Double?
+    ) -> [PodcastEpisode] {
+        episodes.sorted { lhs, rhs in
+            switch sort {
+            case .newestFirst:
+                let l = lhs.pubDateEpochMs ?? Int64.min
+                let r = rhs.pubDateEpochMs ?? Int64.min
+                if l != r { return l > r }
+                return continuousTitleTiebreak(lhs, rhs)
+            case .oldestFirst:
+                let l = lhs.pubDateEpochMs ?? Int64.max
+                let r = rhs.pubDateEpochMs ?? Int64.max
+                if l != r { return l < r }
+                return continuousTitleTiebreak(lhs, rhs)
+            case .shortestFirst, .longestFirst:
+                let shortestFirst = sort == .shortestFirst
+                switch (knownDuration(lhs), knownDuration(rhs)) {
+                case let (l?, r?):
+                    if l != r {
+                        return shortestFirst ? (l < r) : (l > r)
+                    }
+                    return continuousTitleTiebreak(lhs, rhs)
+                case (_?, nil):
+                    return true
+                case (nil, _?):
+                    return false
+                case (nil, nil):
+                    return continuousTitleTiebreak(lhs, rhs)
+                }
+            case .titleAscending, .titleDescending:
+                return continuousTitleSort(lhs, rhs, ascending: sort == .titleAscending)
+            }
+        }
+    }
+
+    private static func continuousTitleTiebreak(_ lhs: PodcastEpisode, _ rhs: PodcastEpisode) -> Bool {
+        let cmp = lhs.title.localizedCaseInsensitiveCompare(rhs.title)
+        if cmp != .orderedSame { return cmp == .orderedAscending }
+        return lhs.id < rhs.id
+    }
+
+    private static func continuousTitleSort(_ lhs: PodcastEpisode, _ rhs: PodcastEpisode, ascending: Bool) -> Bool {
+        let lt = lhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let rt = rhs.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        switch (lt.isEmpty, rt.isEmpty) {
+        case (false, true):
+            return true
+        case (true, false):
+            return false
+        case (true, true):
+            return lhs.id < rhs.id
+        case (false, false):
+            let cmp = lt.localizedCaseInsensitiveCompare(rt)
+            if cmp != .orderedSame {
+                return ascending ? (cmp == .orderedAscending) : (cmp == .orderedDescending)
+            }
+            return lhs.id < rhs.id
+        }
     }
 
     /// Feed that owns the episode (for Now Playing artist / artwork).
