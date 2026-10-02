@@ -257,6 +257,16 @@ struct QueueView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver hint for the Queue remaining bar. The visible label stays the
+    /// count and time. This says whether that time is wall-clock or divided by
+    /// podcast/default speed, and what the bar is not.
+    private var queueRemainingAccessibilityHint: String {
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. The Queue bar is the visible list after the played-status chip, podcast filter, and search. Reorder and sort change order only. Played episodes that are not currently playing count as zero. It is not the full queue behind Clear queue, Remove played, Shuffle, Play random, Mark all as played, Mark all as unplayed, Archive all, Copy queue, or Share queue, and not the Home Queue preview or the All Episodes newest-500 cap. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. Queue lock does not change this total. This is not the mini player or Lock Screen. It does not play, download, or mark episodes played.")
+        }
+        return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The Queue bar is the visible list after the played-status chip, podcast filter, and search. Reorder and sort change order only. Played episodes that are not currently playing count as zero. It is not the full queue behind Clear queue, Remove played, Shuffle, Play random, Mark all as played, Mark all as unplayed, Archive all, Copy queue, or Share queue, and not the Home Queue preview or the All Episodes newest-500 cap. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. Queue lock does not change this total. This is not the mini player or Lock Screen. It does not play, download, or mark episodes played.")
+    }
+
     /// VoiceOver value for the two queue empty states. Keep the full-catalog empty
     /// state distinct from a view-only chip/search mismatch, including Queue lock guidance.
     private var queueEmptyStateAccessibilityValue: String {
@@ -360,6 +370,7 @@ struct QueueView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .accessibilityElement(children: .ignore)
                             .accessibilityLabel(queueRemainingAccessibilityLabel)
+                            .accessibilityHint(queueRemainingAccessibilityHint)
                     }
                     .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
                 }
