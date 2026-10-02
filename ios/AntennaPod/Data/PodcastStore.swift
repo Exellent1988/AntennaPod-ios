@@ -1086,6 +1086,29 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Archive every non-archived episode in the soft-capped All Episodes catalog.
+    /// The catalog is the newest 500 episodes by publish date, matching `allEpisodes` and the
+    /// Add all / Mark all / Play random / Copy / Share catalog. This deliberately ignores UI
+    /// status, podcast, type, sort, and search filters; older episodes beyond the soft cap are
+    /// not included. Archiving is independent from played state and does not mark played, delete
+    /// downloads, clear the queue, or apply any other per-episode side effects.
+    /// Callers must confirm first (All Episodes toolbar `confirmationDialog`).
+    func archiveAllEpisodes() {
+        let ids = allEpisodes
+            .map(\.episode.id)
+            .filter { !isArchived($0) }
+        guard !ids.isEmpty else { return }
+
+        let now = Int64(Date().timeIntervalSince1970 * 1000)
+        var map = archivedAtById
+        for id in ids {
+            if map[id] == nil {
+                map[id] = now
+            }
+        }
+        archivedAtById = map
+    }
+
     // MARK: - Home sections
 
     /// In-progress (not played) episodes with meaningful progress, newest `lastPlayedAt` first.

@@ -10,6 +10,7 @@ struct AllEpisodesView: View {
     @State private var showEnqueueAllConfirm = false
     @State private var showMarkAllPlayedConfirm = false
     @State private var showMarkAllUnplayedConfirm = false
+    @State private var showArchiveAllConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyFeedbackTick = 0
@@ -69,6 +70,12 @@ struct AllEpisodesView: View {
     /// or search filtered. Includes archived played episodes, matching feed Mark all as unplayed.
     private var markAllEpisodesUnplayedCandidatesCount: Int {
         catalogItems.filter { store.isPlayed($0.episode.id) }.count
+    }
+
+    /// Non-archived episodes in the soft-capped All Episodes catalog — not status, podcast, type,
+    /// sort, or search filtered. Same catalog and eligibility as `archiveAllEpisodes()`.
+    private var archiveAllEpisodesCandidatesCount: Int {
+        catalogItems.filter { !store.isArchived($0.episode.id) }.count
     }
 
     /// Soft-capped All Episodes catalog episodes with playable media via shared
@@ -531,6 +538,16 @@ struct AllEpisodesView: View {
                     .accessibilityHint(
                         String(localized: "Marks played episodes in the newest-500 All Episodes catalog as unplayed, including archived episodes")
                     )
+
+                    Button {
+                        showArchiveAllConfirm = true
+                    } label: {
+                        Label("Archive all", systemImage: "archivebox")
+                    }
+                    .disabled(archiveAllEpisodesCandidatesCount == 0)
+                    .accessibilityHint(
+                        String(localized: "Archives non-archived episodes in the newest-500 All Episodes catalog; archived does not mean played")
+                    )
                 } label: {
                     Label("Episodes actions", systemImage: "ellipsis.circle")
                 }
@@ -538,7 +555,7 @@ struct AllEpisodesView: View {
                 .disabled(catalogItems.isEmpty)
                 .accessibilityLabel(String(localized: "Episodes actions"))
                 .accessibilityHint(
-                    String(localized: "Copy all episodes, share all episodes, play random, add all to queue, mark all as played, or mark all as unplayed")
+                    String(localized: "Copy all episodes, share all episodes, play random, add all to queue, mark all as played, mark all as unplayed, or archive all")
                 )
             }
         }
@@ -587,6 +604,18 @@ struct AllEpisodesView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Marks \(markAllEpisodesUnplayedCandidatesCount) played episodes as unplayed, including archived episodes. Uses the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Does not delete downloads, remove episodes from the queue, stop playback, or unarchive.")
+        }
+        .confirmationDialog(
+            "Archive all?",
+            isPresented: $showArchiveAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Archive all") {
+                store.archiveAllEpisodes()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Archives \(archiveAllEpisodesCandidatesCount) non-archived episodes in the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
         }
     }
 
