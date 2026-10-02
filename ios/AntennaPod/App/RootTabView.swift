@@ -92,6 +92,9 @@ struct RootTabView: View {
         .onChange(of: settings.preservePitchEnabled) { _, _ in
             playback.applyTimePitchAlgorithm()
         }
+        .onChange(of: settings.volumeBoostPercent) { _, _ in
+            playback.applyVolumeBoost()
+        }
         .onChange(of: settings.playVideoAsAudioOnly) { _, _ in
             playback.applyAudioSessionConfiguration()
         }

@@ -109,6 +109,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Show remaining time (Settings; Mini/Full rechts −Rest; Tippen Full-Label) | ☐ Show remaining time (Settings; mini/full right −remaining; tap full label) |
 | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; auch Routenwechsel; Route kann ignorieren) | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; also on route change; route may ignore) |
 | ☐ Preserve pitch (Settings; Standard an → `.timeDomain`; aus → `.varispeed` Chipmunk; kein Skip Silence) | ☐ Preserve pitch (Settings; default on → `.timeDomain`; off → `.varispeed` chipmunks; not Skip Silence) |
+| ☐ Volume boost (Settings Playback; 100–300%, Standard 100; AVAudioMix; >100% kann clippen; kein ReplayGain/LoudnessEnhancer; HLS ggf. ohne Effekt) | ☐ Volume boost (Settings Playback; 100–300%, default 100; AVAudioMix; >100% may clip; not ReplayGain/LoudnessEnhancer; HLS may ignore) |
 | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; Pause ≥1s → Seek zurück; kein Cold-Play) | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; pause ≥1s → seek back; not on cold play) |
 | ☐ Progress speichern / Resume | ☐ Progress save / resume |
 | ☐ Mark played / unplayed (EpisodeRow, Feed/Queue/Downloads/Favorites/History/Alle-Episoden-Swipe, Full Player; Inbox nur Mark played; VoiceOver Hints; Smart mark Off/15/30/60/120/300/600 + Custom… 1–600s, default 30; nur Restsekunden) | ☐ Mark played / unplayed (EpisodeRow, Feed/Queue/Downloads/Favorites/History/All Episodes swipe, Full Player; Inbox Mark played only; VoiceOver hints; Smart mark Off/15/30/60/120/300/600 + Custom… 1–600s, default 30; seconds remaining only) |
@@ -329,6 +330,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Skip silence: preference only — not applied on stock AVPlayer.
 - Volume adaptation: iOS session mode (`.spokenAudio`), nicht Android LoudnessEnhancer.  
   Volume adaptation: iOS session mode, not Android loudness gain.
+- Volume boost: Settings 100–300% (Standard **100**); soft gain über `AVMutableAudioMix`; **>100% kann clippen/verzerren**; kein ReplayGain / Lautheitsnormalisierung / Android-LoudnessEnhancer; Sleep-Fade weiter über `AVPlayer.volume`; HLS/`audioMix`-unsupported Streams ggf. ohne Effekt; kein AVAudioEngine.  
+  Volume boost: Settings 100–300% (default **100**); soft gain via `AVMutableAudioMix`; **>100% may clip/distort**; not ReplayGain / loudness normalization / Android LoudnessEnhancer; sleep fade still on `AVPlayer.volume`; HLS/`audioMix`-unsupported streams may ignore; no AVAudioEngine.
 - Statistics honesty: Wanduhr (nicht Speed); aus `playback.json`; Reset = Basislinie (`statisticsResetAtEpochMs`), löscht keinen Verlauf; Streaming ohne gespeicherten Fortschritt zählt nicht; per-Feed gleiche Schätzung; EN/DE + VoiceOver.
   Statistics honesty: wall-clock (not speed); from `playback.json`; Reset = baseline (`statisticsResetAtEpochMs`), does not clear History; streaming without saved progress not counted; per-feed same estimate; EN/DE + VoiceOver.
 - Stereo to mono: Best-Effort `setPreferredOutputNumberOfChannels(1)`; auch bei Routenwechsel; Route kann ignorieren; kein `AVMutableAudioMix`-Remix / kein ExoPlayer; AVPlayer bleibt.  

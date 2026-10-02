@@ -18,6 +18,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Video player (beta lite; MIME video/* or mp4/m4v/mov/webm → AVPlayerLayer in full player; PiP beta lite)
 - Video → audio only (Settings + full-player toggle; default off; Lockscreen stays audio)
 - Volume adaptation (Settings; default off; iOS AVAudioSession spokenAudio / speech optimize — not Android loudness gain)
+- Volume boost (Settings; 100–300%, default 100%; soft `AVMutableAudioMix` gain — may clip above 100%; not ReplayGain / LoudnessEnhancer; HLS may ignore; sleep fade still on player.volume)
 - Skip silence (Settings toggle only; not applied on stock AVPlayer — needs custom audio graph)
 - Stereo to mono (Settings; default off; best-effort `AVAudioSession` preferred output channels = 1 — route-dependent; reapplied on route change; not AVMutableAudioMix / not ExoPlayer remix)
 - Preserve pitch (Settings; default **on**; `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain` when on, `.varispeed` when off — chipmunks; not Skip Silence / not ExoPlayer Sonic)
@@ -476,6 +477,14 @@ Settings → **Playback → Volume adaptation** (Optimize for speech). Default *
 When **on**, `PlaybackService` configures `AVAudioSession` category `.playback` with mode **`.spokenAudio`** (falls back to **`.voiceChat`** if that mode is rejected). When **off**, mode is **`.moviePlayback`** for video episodes with the surface shown, otherwise **`.default`**. Changes reapply live via `applyAudioSessionConfiguration()` (also when **Play video as audio only** flips).
 
 **Honest:** This is an **iOS audio session mode** (system speech routing / processing hints). It is **not** AntennaPod Android's `LoudnessEnhancer` volume-boost gain curve.
+
+## Volume boost (beta polish)
+
+Settings → **Playback → Volume boost**. Presets **100 / 125 / 150 / 175 / 200 / 250 / 300%**. Default **100%** (unity / no soft gain). Persisted in `AppSettings` / UserDefaults (`volumeBoostPercent`) and included in iOS JSON backup.
+
+When above **100%**, `PlaybackService` applies an `AVMutableAudioMix` on the current `AVPlayerItem` audio tracks with `setVolume(percent/100, at: .zero)`. At **100%** the mix is cleared. Sleep-timer fade still uses `AVPlayer.volume` (0…1) and multiplies with the mix. Applied on item create and live via `applyVolumeBoost()` (`RootTabView` Settings onChange). Keeps stock `AVPlayer` — video surface, Picture in Picture, and Now Playing stay intact.
+
+**Honest:** Soft **software gain** only. Values above 100% **may clip or distort**. This is **not** ReplayGain, loudness normalization, or Android `LoudnessEnhancer`. Apple documents mix volume in 0…1; this beta uses factors up to 3.0 intentionally for modest boost. Some streams (notably **HLS**) may ignore `audioMix` — boost then has no effect for that item. A true DSP loudness pipeline would need `AVAudioEngine` / `MTAudioProcessingTap` and would break the shared video / Now Playing path — this beta does **not** fake that.
 
 ## Skip silence (partial / not on AVPlayer)
 

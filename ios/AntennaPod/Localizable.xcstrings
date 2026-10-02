@@ -22333,6 +22333,57 @@
           }
         }
       }
+    },
+    "Volume boost": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volume boost"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lautstärke-Verstärkung"
+          }
+        }
+      }
+    },
+    "Soft gain via AVAudioMix. Above 100% may clip or distort. Not ReplayGain or LoudnessEnhancer. Default 100%.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soft gain via AVAudioMix. Above 100% may clip or distort. Not ReplayGain or LoudnessEnhancer. Default 100%."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sanfte Verstärkung über AVAudioMix. Über 100% kann clippen oder verzerren. Kein ReplayGain oder LoudnessEnhancer. Standard 100%."
+          }
+        }
+      }
+    },
+    "Soft gain via `AVMutableAudioMix` track volume (100% = unity, up to 300%). Above 100% may clip or distort. Not ReplayGain / loudness normalization / Android LoudnessEnhancer. Keeps stock AVPlayer (video / PiP / Now Playing). Some streams (e.g. HLS) may ignore audioMix. Sleep-timer fade still uses player volume. Default 100%.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soft gain via `AVMutableAudioMix` track volume (100% = unity, up to 300%). Above 100% may clip or distort. Not ReplayGain / loudness normalization / Android LoudnessEnhancer. Keeps stock AVPlayer (video / PiP / Now Playing). Some streams (e.g. HLS) may ignore audioMix. Sleep-timer fade still uses player volume. Default 100%."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sanfte Verstärkung über `AVMutableAudioMix`-Spurlautstärke (100% = unverändert, bis 300%). Über 100% kann clippen oder verzerren. Kein ReplayGain / Lautheitsnormalisierung / Android-LoudnessEnhancer. Bleibt bei stock AVPlayer (Video / PiP / Now Playing). Manche Streams (z. B. HLS) ignorieren audioMix ggf. Sleep-Timer-Fade nutzt weiter die Player-Lautstärke. Standard 100%."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

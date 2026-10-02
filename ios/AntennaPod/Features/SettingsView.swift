@@ -547,6 +547,7 @@ struct SettingsView: View {
             || matchesPlaybackSource
             || matchesPlaybackVideoAudio
             || matchesPlaybackVolume
+            || matchesPlaybackVolumeBoost
             || matchesPlaybackSkipSilence
             || matchesPlaybackStereo
             || matchesPlaybackPreservePitch
@@ -601,6 +602,13 @@ struct SettingsView: View {
         matchesSearch(
             "Volume adaptation",
             "Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off."
+        )
+    }
+
+    private var matchesPlaybackVolumeBoost: Bool {
+        matchesSearch(
+            "Volume boost",
+            "Soft gain via `AVMutableAudioMix` track volume (100% = unity, up to 300%). Above 100% may clip or distort. Not ReplayGain / loudness normalization / Android LoudnessEnhancer. Keeps stock AVPlayer (video / PiP / Now Playing). Some streams (e.g. HLS) may ignore audioMix. Sleep-timer fade still uses player volume. Default 100%."
         )
     }
 
@@ -879,6 +887,17 @@ struct SettingsView: View {
                 Toggle("Volume adaptation", isOn: $settings.volumeAdaptationEnabled)
                     .accessibilityHint(String(localized: "Optimizes the audio session for speech. Not Android loudness gain."))
                 Text("Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackVolumeBoost {
+                Picker("Volume boost", selection: $settings.volumeBoostPercent) {
+                    ForEach(AppSettings.volumeBoostPresets, id: \.self) { percent in
+                        Text(AppSettings.volumeBoostLabel(percent)).tag(percent)
+                    }
+                }
+                .accessibilityHint(String(localized: "Soft gain via AVAudioMix. Above 100% may clip or distort. Not ReplayGain or LoudnessEnhancer. Default 100%."))
+                Text("Soft gain via `AVMutableAudioMix` track volume (100% = unity, up to 300%). Above 100% may clip or distort. Not ReplayGain / loudness normalization / Android LoudnessEnhancer. Keeps stock AVPlayer (video / PiP / Now Playing). Some streams (e.g. HLS) may ignore audioMix. Sleep-timer fade still uses player volume. Default 100%.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

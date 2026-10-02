@@ -175,8 +175,10 @@ final class PlaybackService: ObservableObject {
         applyTimePitchAlgorithm(to: item)
         let newPlayer = AVPlayer(playerItem: item)
         newPlayer.rate = rate
+        // Sleep-timer fade uses player.volume (0…1). Soft boost (>100%) uses AVAudioMix on the item.
         newPlayer.volume = sleepVolume
         player = newPlayer
+        applyVolumeBoost(to: item)
         observe(player: newPlayer, item: item)
 
         // New play session for this episode item — reset intro/outro once-guards.
@@ -803,6 +805,13 @@ final class PlaybackService: ObservableObject {
         applyTimePitchAlgorithm(to: item)
     }
 
+    /// Re-apply soft **Volume boost** (`AVMutableAudioMix` track volume) after Settings changes
+    /// while a player item is loaded. No-op when nothing is loaded.
+    func applyVolumeBoost() {
+        guard let item = player?.currentItem else { return }
+        applyVolumeBoost(to: item)
+    }
+
     /// Map Settings **Preserve pitch** to stock `AVPlayerItem.audioTimePitchAlgorithm`.
     /// On (default) → `.timeDomain` (speech-oriented pitch correction when rate ≠ 1×).
     /// Off → `.varispeed` (pitch scales with rate — chipmunk / slow voice). Keeps stock AVPlayer.
@@ -810,6 +819,59 @@ final class PlaybackService: ObservableObject {
         // Default on when settings unbound (matches AppSettings default / speech-friendly iOS default).
         let preserve = settings?.preservePitchEnabled ?? true
         item.audioTimePitchAlgorithm = preserve ? .timeDomain : .varispeed
+    }
+
+    /// Soft volume boost via `AVMutableAudioMix` track volume (Settings **Volume boost** percent / 100).
+    ///
+    /// - **100%** → clear mix (unity / no soft gain).
+    /// - **>100%** (up to 300%) → `setVolume(factor, at: .zero)` on each audio track. Apple documents
+    ///   mix volume in 0…1; values above 1.0 are used here as **software gain** and **may clip / distort**.
+    /// - Sleep-timer fade remains on `AVPlayer.volume` (0…1) and multiplies with the mix.
+    /// - Keeps stock `AVPlayer` (video / PiP / Now Playing). **Not** ReplayGain / loudness normalization /
+    ///   Android `LoudnessEnhancer`. **Not** `AVAudioEngine` (would break those surfaces).
+    /// - Some streams (notably HLS) may ignore `audioMix` — boost then has no effect for that item.
+    private func applyVolumeBoost(to item: AVPlayerItem) {
+        let percent = AppSettings.clampVolumeBoostPercent(settings?.volumeBoostPercent ?? 100)
+        let factor = Float(percent) / 100.0
+        if factor <= 1.001 {
+            item.audioMix = nil
+            player?.volume = sleepVolume
+            return
+        }
+        Task { @MainActor [weak self] in
+            guard let self, self.player?.currentItem === item else { return }
+            let livePercent = AppSettings.clampVolumeBoostPercent(self.settings?.volumeBoostPercent ?? 100)
+            let liveFactor = Float(livePercent) / 100.0
+            if liveFactor <= 1.001 {
+                item.audioMix = nil
+                self.player?.volume = self.sleepVolume
+                return
+            }
+            do {
+                let tracks = try await item.asset.loadTracks(withMediaType: .audio)
+                guard self.player?.currentItem === item else { return }
+                guard !tracks.isEmpty else {
+                    // No audio tracks yet / unsupported for mix — leave unity (no fake boost).
+                    item.audioMix = nil
+                    self.player?.volume = self.sleepVolume
+                    return
+                }
+                var params: [AVAudioMixInputParameters] = []
+                for track in tracks {
+                    let p = AVMutableAudioMixInputParameters(track: track)
+                    p.setVolume(liveFactor, at: .zero)
+                    params.append(p)
+                }
+                let mix = AVMutableAudioMix()
+                mix.inputParameters = params
+                item.audioMix = mix
+                // Sleep fade stays on player.volume; boost is on the mix.
+                self.player?.volume = self.sleepVolume
+            } catch {
+                item.audioMix = nil
+                self.player?.volume = self.sleepVolume
+            }
+        }
     }
 
     /// Keep screen awake only while Settings **Keep screen on** is enabled and playback is actively playing.

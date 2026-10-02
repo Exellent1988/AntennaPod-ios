@@ -857,10 +857,27 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
+/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, volume boost (100–300%), skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
+
+    /// Volume boost percents (100 = unity / no boost). Soft gain via AVAudioMix; may clip above 100%.
+    static let volumeBoostPresets: [Int] = [100, 125, 150, 175, 200, 250, 300]
+    static let defaultVolumeBoostPercent: Int = 100
+    static let volumeBoostPercentRange: ClosedRange<Int> = 100...300
+
+    static func clampVolumeBoostPercent(_ value: Int) -> Int {
+        let stepped = volumeBoostPresets.min(by: { abs($0 - value) < abs($1 - value) }) ?? defaultVolumeBoostPercent
+        // Prefer exact preset match; otherwise clamp into range onto nearest preset.
+        if volumeBoostPresets.contains(value) { return value }
+        return min(max(stepped, volumeBoostPercentRange.lowerBound), volumeBoostPercentRange.upperBound)
+    }
+
+    static func volumeBoostLabel(_ percent: Int) -> String {
+        "\(clampVolumeBoostPercent(percent))%"
+    }
+
     /// Common AntennaPod-style skip presets (Settings pickers + player buttons).
     static let skipIntervalPresets: [Int] = [5, 10, 15, 20, 30, 60]
     /// Skip intro / outro presets (0 = off). Matches common AntennaPod values.
@@ -934,6 +951,7 @@ final class AppSettings: ObservableObject {
         static let askForAppStoreRating = "settings.askForAppStoreRating"
         static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
         static let volumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
+        static let volumeBoostPercent = "settings.volumeBoostPercent"
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
         static let stereoToMonoEnabled = "settings.stereoToMonoEnabled"
         static let preservePitchEnabled = "settings.preservePitchEnabled"
@@ -1189,6 +1207,22 @@ final class AppSettings: ObservableObject {
     @Published var volumeAdaptationEnabled: Bool {
         didSet {
             UserDefaults.standard.set(volumeAdaptationEnabled, forKey: Keys.volumeAdaptationEnabled)
+        }
+    }
+
+    /// Soft volume boost percent for `PlaybackService` via `AVMutableAudioMix` track volume (100 = unity, up to 300).
+    /// Default **100** (no boost). Values above 100 amplify and **may clip / distort**.
+    /// Stock `AVPlayer` only — **not** Android `LoudnessEnhancer`, **not** ReplayGain / loudness normalization,
+    /// **not** `AVAudioEngine` (would break video / PiP / Now Playing). Some streams (e.g. HLS) may ignore `audioMix`.
+    /// Sleep-timer fade still uses `AVPlayer.volume` (0…1) on top. Persisted + iOS JSON backup.
+    @Published var volumeBoostPercent: Int {
+        didSet {
+            let clamped = Self.clampVolumeBoostPercent(volumeBoostPercent)
+            if clamped != volumeBoostPercent {
+                volumeBoostPercent = clamped
+                return
+            }
+            UserDefaults.standard.set(volumeBoostPercent, forKey: Keys.volumeBoostPercent)
         }
     }
 
@@ -1699,6 +1733,14 @@ final class AppSettings: ObservableObject {
             // Default off: use .default / .moviePlayback session mode (not spokenAudio).
             volumeAdaptationEnabled = false
         }
+        if UserDefaults.standard.object(forKey: Keys.volumeBoostPercent) != nil {
+            volumeBoostPercent = Self.clampVolumeBoostPercent(
+                UserDefaults.standard.integer(forKey: Keys.volumeBoostPercent)
+            )
+        } else {
+            // Default 100%: no soft gain / unity mix.
+            volumeBoostPercent = Self.defaultVolumeBoostPercent
+        }
         if UserDefaults.standard.object(forKey: Keys.skipSilenceEnabled) != nil {
             skipSilenceEnabled = UserDefaults.standard.bool(forKey: Keys.skipSilenceEnabled)
         } else {
@@ -2073,6 +2115,7 @@ final class AppSettings: ObservableObject {
             askForAppStoreRating: askForAppStoreRating,
             playVideoAsAudioOnly: playVideoAsAudioOnly,
             volumeAdaptationEnabled: volumeAdaptationEnabled,
+            volumeBoostPercent: volumeBoostPercent,
             skipSilenceEnabled: skipSilenceEnabled,
             stereoToMonoEnabled: stereoToMonoEnabled,
             preservePitchEnabled: preservePitchEnabled,
@@ -2173,6 +2216,9 @@ final class AppSettings: ObservableObject {
         askForAppStoreRating = snap.askForAppStoreRating ?? true
         playVideoAsAudioOnly = snap.playVideoAsAudioOnly ?? false
         volumeAdaptationEnabled = snap.volumeAdaptationEnabled ?? false
+        volumeBoostPercent = Self.clampVolumeBoostPercent(
+            snap.volumeBoostPercent ?? Self.defaultVolumeBoostPercent
+        )
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
         stereoToMonoEnabled = snap.stereoToMonoEnabled ?? false
         preservePitchEnabled = snap.preservePitchEnabled ?? true
@@ -2319,6 +2365,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var playVideoAsAudioOnly: Bool? = false
     /// Absent in older backups → treated as off (default / moviePlayback session mode).
     var volumeAdaptationEnabled: Bool? = false
+    /// Absent in older backups → treated as 100 (unity / no soft boost).
+    var volumeBoostPercent: Int? = 100
     /// Absent in older backups → treated as off (preference only; no AVPlayer skip).
     var skipSilenceEnabled: Bool? = false
     /// Absent in older backups → treated as off (stereo / system default channel count).
