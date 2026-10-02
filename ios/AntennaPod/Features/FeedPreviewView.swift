@@ -22,6 +22,7 @@ struct FeedPreviewRequest: Identifiable, Hashable {
 }
 
 /// Online feed preview: fetch+parse via `FeedRepository`, show metadata + first episodes, then Confirm Subscribe / Open / Cancel.
+/// Reused by discovery rows and Add → URL (including clipboard). Honest timeout / network / not-a-feed errors.
 struct FeedPreviewView: View {
     @EnvironmentObject private var store: PodcastStore
     @Environment(\.dismiss) private var dismiss
@@ -40,7 +41,7 @@ struct FeedPreviewView: View {
     private let previewEpisodeLimit = 10
 
     private var subscribedFeed: PodcastFeed? {
-        store.feeds.first { $0.feedUrl == request.feedUrl }
+        FeedURLNormalization.subscribedFeed(matching: request.feedUrl, in: store.feeds)
     }
 
     private var isAlreadySubscribed: Bool {
@@ -92,9 +93,13 @@ struct FeedPreviewView: View {
                     Text(loadError)
                         .foregroundStyle(.red)
                         .font(.subheadline)
+                        .accessibilityLabel(loadError)
                     Button("Retry") {
                         Task { await loadPreview() }
                     }
+                    .accessibilityHint(String(localized: "Fetches the feed URL again"))
+                } footer: {
+                    Text("Preview could not load this URL. Check the address, network, or try again — this is not a subscribe yet.")
                 }
             }
 
@@ -158,6 +163,7 @@ struct FeedPreviewView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(subscribedFeed == nil)
+                    .accessibilityHint(String(localized: "Opens the existing subscription instead of subscribing again"))
                 } else {
                     Button {
                         Task { await confirmSubscribe() }
@@ -165,6 +171,7 @@ struct FeedPreviewView: View {
                         if isSubscribing || store.isLoading {
                             ProgressView()
                                 .frame(maxWidth: .infinity)
+                                .accessibilityLabel(String(localized: "Subscribing"))
                         } else {
                             Text("Confirm Subscribe")
                                 .frame(maxWidth: .infinity)
@@ -172,6 +179,7 @@ struct FeedPreviewView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(isSubscribing || store.isLoading || parsed == nil || request.feedUrl.isEmpty)
+                    .accessibilityHint(String(localized: "Adds this podcast to your library after preview"))
                 }
 
                 Button("Cancel", role: .cancel) {
@@ -269,6 +277,7 @@ struct FeedPreviewView: View {
                     Text("Already subscribed")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .accessibilityLabel(String(localized: "Already subscribed"))
                 }
             }
             Spacer(minLength: 0)
@@ -314,16 +323,19 @@ struct FeedPreviewView: View {
 
     @MainActor
     private func loadPreview() async {
-        guard !request.feedUrl.isEmpty else {
-            loadError = "Invalid feed URL"
+        let resolved: String
+        switch FeedURLNormalization.normalize(request.feedUrl) {
+        case .ok(let url):
+            resolved = url
+        case .empty, .invalid:
+            loadError = String(localized: "Enter a valid http(s) feed URL")
             return
         }
         isLoading = true
         loadError = nil
         defer { isLoading = false }
         do {
-            var feed = try await repository.fetchAndParse(feedUrl: request.feedUrl)
-            feed.feedUrl = request.feedUrl
+            let feed = try await repository.fetchAndParse(feedUrl: resolved)
             parsed = feed
         } catch is CancellationError {
             // ignore
@@ -336,9 +348,20 @@ struct FeedPreviewView: View {
     @MainActor
     private func confirmSubscribe() async {
         guard !isAlreadySubscribed else { return }
+        let resolved: String
+        switch FeedURLNormalization.normalize(request.feedUrl) {
+        case .ok(let url):
+            resolved = url
+        case .empty, .invalid:
+            return
+        }
+        // Extra guard: library may match via canonical key even if raw strings differ.
+        if FeedURLNormalization.subscribedFeed(matching: resolved, in: store.feeds) != nil {
+            return
+        }
         isSubscribing = true
         defer { isSubscribing = false }
-        await store.subscribe(feedUrl: request.feedUrl)
+        await store.subscribe(feedUrl: resolved)
         if store.lastError == nil {
             onSubscribed?()
             dismiss()

@@ -3,12 +3,14 @@ import UIKit
 import UniformTypeIdentifiers
 
 /// Add podcast: Apple Podcasts / Podcast Index / fyyd search + preview-by-URL (confirm subscribe) + Add from Clipboard.
+/// URL tab: trim/normalize (https default when scheme missing), validation errors, paste, already-subscribed before Preview.
 struct AddFeedView: View {
     @EnvironmentObject private var store: PodcastStore
     @Environment(\.dismiss) private var dismiss
 
     @State private var mode: AddMode = .apple
     @State private var urlText = "https://"
+    @State private var urlValidationError: String?
     @FocusState private var urlFocused: Bool
 
     // Apple Podcasts search
@@ -137,7 +139,8 @@ struct AddFeedView: View {
                         Button("Preview") {
                             openURLPreview()
                         }
-                        .disabled(urlText.trimmingCharacters(in: .whitespacesAndNewlines).count < 8)
+                        .disabled(!canPreviewURL)
+                        .accessibilityHint(String(localized: "Fetches and previews the feed before subscribe. Does not subscribe until you confirm."))
                     }
                 }
             }
@@ -378,19 +381,75 @@ struct AddFeedView: View {
 
     private var urlContent: some View {
         Form {
-            Section("Feed URL") {
+            Section {
                 TextField("https://example.com/feed.xml", text: $urlText)
                     .textInputAutocapitalization(.never)
                     .keyboardType(.URL)
                     .autocorrectionDisabled()
                     .focused($urlFocused)
+                    .submitLabel(.go)
+                    .onSubmit { openURLPreview() }
+                    .accessibilityLabel(String(localized: "Feed URL"))
+                    .accessibilityHint(String(localized: "Paste an RSS or Atom podcast feed URL. Missing https is added when the host looks valid."))
+                    .onChange(of: urlText) { _, _ in
+                        urlValidationError = nil
+                    }
+                if let urlValidationError {
+                    Text(urlValidationError)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .accessibilityLabel(urlValidationError)
+                }
+            } header: {
+                Text("Feed URL")
+            } footer: {
+                Text("Paste an RSS/Atom podcast feed URL. Spaces are trimmed; https:// is added when the scheme is missing and the host looks valid. Preview fetches the feed before you confirm subscribe — same path as discovery.")
             }
-            if let clipboardFeedURL {
+
+            if let match = alreadySubscribedMatch(for: urlText) {
                 Section {
+                    Label {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Already subscribed")
+                                .font(.subheadline.weight(.semibold))
+                            Text(match.title)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                        }
+                    } icon: {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "Already subscribed") + ", " + match.title)
+
+                    Button {
+                        openAlreadySubscribedPreview(match)
+                    } label: {
+                        Label("Open feed", systemImage: "arrow.right.circle")
+                    }
+                    .accessibilityHint(String(localized: "Opens the existing subscription instead of subscribing again"))
+                } footer: {
+                    Text("This URL matches a podcast already in your library. Open it instead of creating a duplicate.")
+                }
+            }
+
+            Section {
+                Button {
+                    pasteURLFromClipboard()
+                } label: {
+                    Label("Paste", systemImage: "doc.on.clipboard")
+                }
+                .disabled(UIPasteboard.general.string == nil)
+                .accessibilityLabel(String(localized: "Paste"))
+                .accessibilityHint(String(localized: "Pastes the pasteboard text into the Feed URL field. Does not subscribe."))
+
+                if let clipboardFeedURL {
                     Button {
                         addFromClipboard(clipboardFeedURL)
                     } label: {
-                        Label("Add from Clipboard", systemImage: "doc.on.clipboard")
+                        Label("Add from Clipboard", systemImage: "doc.on.clipboard.fill")
                     }
                     .accessibilityHint(String(localized: "Opens a preview for the feed URL on the pasteboard"))
                     Text(clipboardFeedURL)
@@ -398,20 +457,17 @@ struct AddFeedView: View {
                         .foregroundStyle(.secondary)
                         .textSelection(.enabled)
                         .accessibilityLabel(String(localized: "Clipboard feed URL"))
-                } footer: {
-                    Text("Uses the http(s) URL currently on the pasteboard. Opens Preview — does not subscribe until you confirm.")
                 }
+            } footer: {
+                Text("Paste fills the field only. Add from Clipboard opens Preview when the pasteboard holds a usable http(s) feed URL — does not subscribe until you confirm.")
             }
+
             Section {
                 Button("Preview feed") {
                     openURLPreview()
                 }
-                .disabled(urlText.trimmingCharacters(in: .whitespacesAndNewlines).count < 8)
-            }
-            Section {
-                Text("Paste an RSS/Atom podcast feed URL, or use Apple / Index / fyyd search. Preview fetches the feed before you confirm subscribe. When the pasteboard holds an http(s) URL, use Add from Clipboard.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                .disabled(!canPreviewURL)
+                .accessibilityHint(String(localized: "Fetches and previews the feed before subscribe. Does not subscribe until you confirm."))
             }
         }
         .onAppear {
@@ -821,49 +877,99 @@ struct AddFeedView: View {
 
     // MARK: - Clipboard
 
-    /// Refresh pasteboard detection. Only http/https with a host; trimmed; first line only.
+    /// Refresh pasteboard detection. Only http/https with a host after normalization; first line only.
     /// Does **not** auto-subscribe — the action stays user-initiated.
     private func refreshClipboardFeedURL() {
         clipboardFeedURL = Self.plausibleFeedURL(from: UIPasteboard.general.string)
     }
 
     /// True when the string looks like a network feed URL the existing Preview path can try.
+    /// Accepts scheme-less host/path (normalizes to https://) the same way as the URL field.
     static func plausibleFeedURL(from pasteboardString: String?) -> String? {
         guard let raw = pasteboardString else { return nil }
-        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return nil }
-        let firstLine = trimmed
-            .split(whereSeparator: \.isNewline)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .first(where: { !$0.isEmpty }) ?? trimmed
-        guard let url = URL(string: firstLine),
-              let scheme = url.scheme?.lowercased(),
-              scheme == "http" || scheme == "https",
-              let host = url.host,
-              !host.isEmpty
-        else {
-            return nil
+        if case .ok(let url) = FeedURLNormalization.normalize(raw) {
+            return url
         }
-        return firstLine
+        return nil
+    }
+
+    /// Paste pasteboard text into the URL field only (no Preview / no subscribe).
+    private func pasteURLFromClipboard() {
+        guard let raw = UIPasteboard.general.string else {
+            urlValidationError = String(localized: "Clipboard is empty")
+            return
+        }
+        mode = .url
+        switch FeedURLNormalization.normalize(raw) {
+        case .ok(let url):
+            urlText = url
+            urlValidationError = nil
+            refreshClipboardFeedURL()
+        case .empty:
+            urlValidationError = String(localized: "Clipboard is empty")
+        case .invalid:
+            // Still paste raw trimmed first line so the user can edit; show validation.
+            let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+            let first = trimmed.split(whereSeparator: \.isNewline)
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .first(where: { !$0.isEmpty }) ?? trimmed
+            urlText = first
+            urlValidationError = String(localized: "Enter a valid http(s) feed URL")
+            refreshClipboardFeedURL()
+        }
     }
 
     /// Fill the URL field and open the same Preview → Confirm Subscribe path as manual URL entry.
     private func addFromClipboard(_ feedURL: String) {
-        let trimmed = feedURL.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard Self.plausibleFeedURL(from: trimmed) != nil else {
+        switch FeedURLNormalization.normalize(feedURL) {
+        case .ok(let url):
+            mode = .url
+            urlText = url
+            urlValidationError = nil
+            previewRequest = FeedPreviewRequest(feedUrl: url)
+        case .empty, .invalid:
             refreshClipboardFeedURL()
-            return
+            urlValidationError = String(localized: "Enter a valid http(s) feed URL")
         }
-        mode = .url
-        urlText = trimmed
-        previewRequest = FeedPreviewRequest(feedUrl: trimmed)
     }
 
     // MARK: - Preview
 
-    private func openURLPreview() {
+    private var canPreviewURL: Bool {
         let trimmed = urlText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard trimmed.count >= 8 else { return }
-        previewRequest = FeedPreviewRequest(feedUrl: trimmed)
+        return trimmed.count >= 3 && trimmed != "https://" && trimmed != "http://"
+    }
+
+    private func alreadySubscribedMatch(for raw: String) -> PodcastFeed? {
+        switch FeedURLNormalization.normalize(raw) {
+        case .ok(let url):
+            return FeedURLNormalization.subscribedFeed(matching: url, in: store.feeds)
+        case .empty, .invalid:
+            return nil
+        }
+    }
+
+    private func openAlreadySubscribedPreview(_ feed: PodcastFeed) {
+        urlValidationError = nil
+        previewRequest = FeedPreviewRequest(
+            feedUrl: feed.feedUrl,
+            hintTitle: feed.title,
+            hintAuthor: feed.displayAuthor,
+            hintArtworkURL: feed.preferredDisplayArtworkURL.flatMap { URL(string: $0) }
+                ?? feed.imageUrl.flatMap { URL(string: $0) }
+        )
+    }
+
+    private func openURLPreview() {
+        urlValidationError = nil
+        switch FeedURLNormalization.normalize(urlText) {
+        case .ok(let url):
+            urlText = url
+            previewRequest = FeedPreviewRequest(feedUrl: url)
+        case .empty:
+            urlValidationError = String(localized: "Enter a valid http(s) feed URL")
+        case .invalid:
+            urlValidationError = String(localized: "Enter a valid http(s) feed URL")
+        }
     }
 }

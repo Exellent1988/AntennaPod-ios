@@ -19465,6 +19465,330 @@
           }
         }
       }
+    },
+    "Enter a valid http(s) feed URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a valid http(s) feed URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine gültige http(s)-Feed-URL ein"
+          }
+        }
+      },
+      "comment": "URL field / FeedRepository invalid URL"
+    },
+    "Feed request timed out. Check the URL or try again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed request timed out. Check the URL or try again."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-Anfrage abgelaufen. Prüfe die URL oder versuche es erneut."
+          }
+        }
+      },
+      "comment": "FeedRepository timeout"
+    },
+    "Could not reach the feed: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not reach the feed: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed nicht erreichbar: %@"
+          }
+        }
+      },
+      "comment": "FeedRepository network error"
+    },
+    "Feed server returned HTTP %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed server returned HTTP %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-Server antwortete mit HTTP %lld"
+          }
+        }
+      },
+      "comment": "FeedRepository HTTP status"
+    },
+    "This URL does not look like an RSS or Atom podcast feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This URL does not look like an RSS or Atom podcast feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese URL sieht nicht nach einem RSS- oder Atom-Podcast-Feed aus."
+          }
+        }
+      },
+      "comment": "FeedRepository not-a-feed / parse failure"
+    },
+    "Paste an RSS or Atom podcast feed URL. Missing https is added when the host looks valid.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste an RSS or Atom podcast feed URL. Missing https is added when the host looks valid."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge eine RSS- oder Atom-Podcast-Feed-URL ein. Fehlendes https wird ergänzt, wenn der Host gültig wirkt."
+          }
+        }
+      },
+      "comment": "URL field VoiceOver hint"
+    },
+    "Paste an RSS/Atom podcast feed URL. Spaces are trimmed; https:// is added when the scheme is missing and the host looks valid. Preview fetches the feed before you confirm subscribe — same path as discovery.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste an RSS/Atom podcast feed URL. Spaces are trimmed; https:// is added when the scheme is missing and the host looks valid. Preview fetches the feed before you confirm subscribe — same path as discovery."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge eine RSS-/Atom-Podcast-Feed-URL ein. Leerzeichen werden entfernt; https:// wird ergänzt, wenn das Schema fehlt und der Host gültig wirkt. Vorschau lädt den Feed, bevor du das Abo bestätigst — gleicher Weg wie Discovery."
+          }
+        }
+      },
+      "comment": "URL tab section footer"
+    },
+    "Opens the existing subscription instead of subscribing again": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the existing subscription instead of subscribing again"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das bestehende Abo statt erneut zu abonnieren"
+          }
+        }
+      },
+      "comment": "Already subscribed Open feed VoiceOver hint"
+    },
+    "This URL matches a podcast already in your library. Open it instead of creating a duplicate.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This URL matches a podcast already in your library. Open it instead of creating a duplicate."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese URL entspricht einem Podcast bereits in deiner Bibliothek. Öffne ihn statt ein Duplikat zu erstellen."
+          }
+        }
+      },
+      "comment": "URL tab already-subscribed footer"
+    },
+    "Paste": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einfügen"
+          }
+        }
+      },
+      "comment": "URL tab paste into field only"
+    },
+    "Pastes the pasteboard text into the Feed URL field. Does not subscribe.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pastes the pasteboard text into the Feed URL field. Does not subscribe."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fügt den Zwischenablage-Text in das Feed-URL-Feld ein. Abonniert nicht."
+          }
+        }
+      },
+      "comment": "Paste button VoiceOver hint"
+    },
+    "Paste fills the field only. Add from Clipboard opens Preview when the pasteboard holds a usable http(s) feed URL — does not subscribe until you confirm.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste fills the field only. Add from Clipboard opens Preview when the pasteboard holds a usable http(s) feed URL — does not subscribe until you confirm."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einfügen füllt nur das Feld. Aus Zwischenablage hinzufügen öffnet die Vorschau, wenn die Zwischenablage eine nutzbare http(s)-Feed-URL hält — abonniert erst nach Bestätigung."
+          }
+        }
+      },
+      "comment": "URL paste section footer"
+    },
+    "Fetches and previews the feed before subscribe. Does not subscribe until you confirm.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fetches and previews the feed before subscribe. Does not subscribe until you confirm."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt den Feed zur Vorschau vor dem Abo. Abonniert erst nach Bestätigung."
+          }
+        }
+      },
+      "comment": "Preview feed VoiceOver hint"
+    },
+    "Clipboard is empty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clipboard is empty"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zwischenablage ist leer"
+          }
+        }
+      },
+      "comment": "Paste with empty pasteboard"
+    },
+    "Fetches the feed URL again": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fetches the feed URL again"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt die Feed-URL erneut"
+          }
+        }
+      },
+      "comment": "Preview Retry VoiceOver hint"
+    },
+    "Preview could not load this URL. Check the address, network, or try again — this is not a subscribe yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview could not load this URL. Check the address, network, or try again — this is not a subscribe yet."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorschau konnte diese URL nicht laden. Prüfe Adresse und Netzwerk oder versuche es erneut — das ist noch kein Abo."
+          }
+        }
+      },
+      "comment": "Preview load error footer"
+    },
+    "Subscribing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscribing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird abonniert"
+          }
+        }
+      },
+      "comment": "Confirm Subscribe in-progress VoiceOver"
+    },
+    "Adds this podcast to your library after preview": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds this podcast to your library after preview"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fügt diesen Podcast nach der Vorschau zur Bibliothek hinzu"
+          }
+        }
+      },
+      "comment": "Confirm Subscribe VoiceOver hint"
     }
   },
   "version": "1.0"
