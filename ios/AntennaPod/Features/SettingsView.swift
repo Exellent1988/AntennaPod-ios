@@ -1317,7 +1317,9 @@ struct SettingsView: View {
                         Text(mode.label).tag(mode)
                     }
                 }
-                .accessibilityHint(String(localized: "Off stops at episode end. Queue (default) plays the next Queue item. Same podcast plays the next unplayed episode of this feed by episode sort — not the Queue."))
+                .accessibilityLabel(String(localized: "Continuous playback"))
+                .accessibilityValue(continuousPlaybackAccessibilityValue)
+                .accessibilityHint(continuousPlaybackAccessibilityHint)
                 Text("Off: stop at episode end (mark played / progress still apply). Queue (default): auto-play the next Queue item only. Same podcast: auto-play the next unplayed, non-archived episode of the same feed in that podcast’s episode sort order (per-feed or global) — does not jump the Queue. End-of-episode sleep timer always stops without advancing.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -1442,6 +1444,23 @@ struct SettingsView: View {
 
     private var preservePitchAccessibilityHint: String {
         String(localized: "On keeps natural pitch when speed is not 1×. Off lets pitch follow speed. The switch does not start playback, skip silence, or download anything. Default on.")
+    }
+
+    /// VoiceOver for Settings → Continuous playback. Each value names the saved mode
+    /// and what episode end actually does. None of them invent a next episode.
+    private var continuousPlaybackAccessibilityValue: String {
+        switch settings.continuousPlaybackMode {
+        case .off:
+            return String(localized: "Off. When an episode ends, playback stops. Mark played and saved progress still apply. Nothing is added to the Queue or downloaded, and no next episode is invented. This is not the default. An end-of-episode or last-chapter sleep timer also stops. End of queue still continues through the Queue only. Changing this does not start playback.")
+        case .queue:
+            return String(localized: "Queue. This is the default. When an episode ends, only the next Queue item starts, if one exists and playback can start. The feed list is not walked. If there is no next Queue item, or it cannot start, playback stops and no episode is invented. An end-of-episode or last-chapter sleep timer still stops without advancing. Changing this does not start playback.")
+        case .samePodcast:
+            return String(localized: "Same podcast. When an episode ends, the next unplayed, non-archived episode of the same podcast starts, if one exists and playback can start, using that podcast’s episode sort, forward only, with no wrap. The Queue is not jumped. If none exists, or it cannot start, playback stops and no episode is invented. This is not the default. An end-of-episode or last-chapter sleep timer still stops without advancing. End of queue still continues through the Queue only. Changing this does not start playback.")
+        }
+    }
+
+    private var continuousPlaybackAccessibilityHint: String {
+        String(localized: "Off stops at episode end. Queue, the default, plays the next Queue item only. Same podcast plays the next unplayed, non-archived episode of this feed by episode sort, forward only, no wrap, and does not jump the Queue. Mark played and progress still apply in every mode. An end-of-episode or last-chapter sleep timer still stops without advancing. End of queue still advances through the Queue only, even when this is Off or Same podcast. Changing this does not start playback, seek, or download, and it does not invent a next episode.")
     }
 
     private var refreshHelpText: String {
