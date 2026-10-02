@@ -151,12 +151,18 @@ struct TranscriptSheetView: View {
                 if isLoading && transcript == nil {
                     ProgressView("Loading transcript…")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(String(localized: "Loading transcript…"))
+                        .accessibilityAddTraits(.updatesFrequently)
                 } else if let errorMessage, transcript == nil {
                     ContentUnavailableView(
                         "Transcript unavailable",
                         systemImage: "text.bubble",
                         description: Text(errorMessage)
                     )
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "Transcript unavailable"))
+                    .accessibilityValue(errorMessage)
                 } else if let transcript, !transcript.isEmpty {
                     content(transcript)
                 } else {
@@ -165,6 +171,9 @@ struct TranscriptSheetView: View {
                         systemImage: "text.bubble",
                         description: Text("The feed URL returned empty or unreadable content.")
                     )
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "No transcript text"))
+                    .accessibilityValue(String(localized: "The feed URL returned empty or unreadable content."))
                 }
             }
             .navigationTitle("Transcript")
@@ -324,12 +333,18 @@ struct TranscriptSheetView: View {
                 systemImage: "text.bubble",
                 description: Text("The feed URL returned empty or unreadable content.")
             )
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(String(localized: "No transcript text"))
+            .accessibilityValue(String(localized: "The feed URL returned empty or unreadable content."))
         } else if filteredCues.isEmpty {
             ContentUnavailableView(
                 "No matching cues",
                 systemImage: "magnifyingglass",
                 description: Text("No cues match your search.")
             )
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(String(localized: "No matching cues"))
+            .accessibilityValue(String(localized: "No cues match your search."))
         } else {
             ScrollViewReader { proxy in
                 ScrollView {
