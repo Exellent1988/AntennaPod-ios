@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct DownloadsView: View {
     @EnvironmentObject private var downloads: DownloadService
@@ -13,6 +14,9 @@ struct DownloadsView: View {
     @State private var showClearAllConfirm = false
     @State private var showCancelAllConfirm = false
     @State private var showEnqueueAllConfirm = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
     /// Single download pending swipe-delete confirmation (nil = dialog dismissed).
     @State private var episodePendingDelete: PodcastEpisode?
 
@@ -26,8 +30,8 @@ struct DownloadsView: View {
     /// Search matches title / descriptionText / episode private note / any bookmark note via
     /// `PodcastStore.episodeMatchesLibraryQuery` (same fields as library / Feed detail / Queue / Favorites / History / Archived), plus
     /// feed display title (`displayTitle(containingEpisodeId:)`). View-only —
-    /// Does not mutate `DownloadService.downloads` (tab badge / Play random / Add all / Delete played / Clear all stay full-catalog).
-    /// Play random / Add all to queue / Delete played / Clear all / Cancel all stay full-catalog scoped.
+    /// Does not mutate `DownloadService.downloads` (tab badge / Play random / Add all / Delete played / Clear all / Copy / Share stay full-catalog).
+    /// Play random / Add all to queue / Delete played / Clear all / Cancel all / Copy downloads / Share downloads stay full-catalog scoped.
     private var filteredDownloads: [DownloadedEpisode] {
         var base = downloads.downloads
         switch settings.downloadsFilter {
@@ -212,6 +216,39 @@ struct DownloadsView: View {
             preferUnplayed: true,
             isPlayed: { store.isPlayed($0) }
         )
+    }
+
+    /// Full completed Downloads catalog newest-completed-first (`downloadsSortEpochMs` desc, id
+    /// tiebreak) — same spirit as Home `downloadsCatalogNewestFirst` / Clear all catalog.
+    /// **Not** chip (`downloadsFilter` / podcast) / searchable / UI `downloadsSort`.
+    /// Does **not** include in-flight or waiting rows.
+    private var downloadsCatalogNewestFirst: [PodcastEpisode] {
+        downloads.downloads.sorted { lhs, rhs in
+            let l = lhs.downloadsSortEpochMs ?? Int64.min
+            let r = rhs.downloadsSortEpochMs ?? Int64.min
+            if l != r { return l > r }
+            return lhs.episode.id < rhs.episode.id
+        }.map(\.episode)
+    }
+
+    /// Plain-text list of the **full** completed Downloads catalog — not chip/search/UI sort filtered.
+    /// Same honesty as Clear all / Add all / Play random / tab badge.
+    private var downloadsPlainText: String {
+        DownloadsExport.plainText(episodes: downloadsCatalogNewestFirst) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
+    }
+
+    /// Enabled when the full completed Downloads catalog is non-empty (read-only export).
+    private var canExportDownloads: Bool {
+        !downloads.downloads.isEmpty
+    }
+
+    /// “Downloads” header + body for system share sheet (same body as Copy).
+    private var downloadsShareText: String {
+        DownloadsExport.shareText(episodes: downloadsCatalogNewestFirst) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** filtered list.
@@ -474,6 +511,31 @@ struct DownloadsView: View {
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button {
+                            copyDownloads()
+                        } label: {
+                            Label("Copy downloads", systemImage: "doc.plaintext")
+                        }
+                        // Full completed Downloads catalog (not chip/search/UI sort).
+                        .disabled(!canExportDownloads)
+                        .accessibilityLabel(String(localized: "Copy downloads"))
+                        .accessibilityHint(
+                            String(localized: "Copies the full downloads list to the pasteboard")
+                        )
+
+                        ShareLink(
+                            item: downloadsShareText,
+                            subject: Text(String(localized: "Downloads"))
+                        ) {
+                            Label("Share downloads", systemImage: "square.and.arrow.up")
+                        }
+                        // Same gates as Copy downloads — full catalog.
+                        .disabled(!canExportDownloads)
+                        .accessibilityLabel(String(localized: "Share downloads"))
+                        .accessibilityHint(
+                            String(localized: "Opens the system share sheet with the full downloads list")
+                        )
+
+                        Button {
                             playRandomEpisode()
                         } label: {
                             Label("Play random", systemImage: "shuffle")
@@ -516,11 +578,25 @@ struct DownloadsView: View {
                         Label("Downloads actions", systemImage: "ellipsis.circle")
                     }
                     // Menu available when completed catalog is non-empty **or** anything is in-flight /
-                    // waiting (Cancel all). Play random / Add all / Cancel all / Delete played / Clear all
-                    // each disable independently — same honesty as Favorites Play random / Add all + Clear.
+                    // waiting (Cancel all). Copy / Share / Play random / Add all / Cancel all / Delete
+                    // played / Clear all each disable independently — same honesty as Favorites /
+                    // History / Archived Copy / Share.
                     .disabled(downloads.downloads.isEmpty && downloads.cancelAllInFlightCount == 0)
+                    .accessibilityLabel(String(localized: "Downloads actions"))
+                    .accessibilityHint(
+                        String(localized: "Copy downloads, share downloads, play random, add all to queue, cancel all downloads, delete played downloads, or clear all downloads")
+                    )
                 }
             }
+            .alert(
+                String(localized: "Copied"),
+                isPresented: $showCopiedAlert
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(copiedAlertMessage)
+            }
+            .sensoryFeedback(.success, trigger: copyFeedbackTick)
             .confirmationDialog(
                 "Add all to queue?",
                 isPresented: $showEnqueueAllConfirm,
@@ -607,6 +683,17 @@ struct DownloadsView: View {
         }
         parts.append(item.localFileURL.lastPathComponent)
         return parts.joined(separator: ", ")
+    }
+
+    /// Pasteboard copy of the **full** completed Downloads catalog (not chip/search/UI sort). Read-only.
+    /// Newest completed first — does **not** include in-flight/waiting rows.
+    private func copyDownloads() {
+        let text = downloadsPlainText
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Downloads copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     /// Uniform pick via shared `EpisodePlayRandom.pick` among eligible (prefer unplayed);

@@ -27036,6 +27036,108 @@
           }
         }
       }
+    },
+    "Copy downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy downloads"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads kopieren"
+          }
+        }
+      }
+    },
+    "Share downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share downloads"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads teilen"
+          }
+        }
+      }
+    },
+    "Downloads copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the full downloads list to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full downloads list to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die gesamte Downloads-Liste in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the full downloads list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the full downloads list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit der gesamten Downloads-Liste"
+          }
+        }
+      }
+    },
+    "Copy downloads, share downloads, play random, add all to queue, cancel all downloads, delete played downloads, or clear all downloads": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy downloads, share downloads, play random, add all to queue, cancel all downloads, delete played downloads, or clear all downloads"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads kopieren, Downloads teilen, Zufällig abspielen, Alle zur Warteschlange, Alle Downloads abbrechen, Gehörte Downloads löschen, oder Alle Downloads löschen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
