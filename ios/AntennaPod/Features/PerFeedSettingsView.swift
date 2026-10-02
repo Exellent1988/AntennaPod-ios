@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Per-subscription overrides (Auto-download / Auto-delete after play / Keep updated / New episodes / Notifications / Skip intro·outro / Speed / Episode sort) + tags.
+/// Per-subscription overrides (Auto-download / Auto-delete after play / Keep updated / New episodes / Notifications / Skip intro·outro / Speed / Episode sort) + HTTP Basic auth (Keychain) + tags.
 struct PerFeedSettingsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var appSettings: AppSettings
@@ -15,6 +15,20 @@ struct PerFeedSettingsView: View {
     @State private var showRenameAlert = false
     @State private var tagPendingDelete: String?
     @State private var showCustomFeedSpeed = false
+    @State private var authUsername = ""
+    @State private var authPasswordDraft = ""
+    @State private var authSaved = false
+    @State private var authStatusMessage: String?
+    @State private var authErrorMessage: String?
+
+    private var liveFeed: PodcastFeed? {
+        store.feeds.first { $0.id == feedId }
+    }
+
+    private var isLocalFolderFeed: Bool {
+        guard let feed = liveFeed else { return false }
+        return LocalFolderFeed.isLocalFolderFeed(feed)
+    }
 
     private var current: FeedSettings {
         store.feedSettings(for: feedId)
@@ -168,6 +182,65 @@ struct PerFeedSettingsView: View {
                 Text("Episodes")
             }
 
+            if !isLocalFolderFeed {
+                Section {
+                    TextField("Username", text: $authUsername)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .textContentType(.username)
+                        .accessibilityLabel(String(localized: "Username"))
+                        .accessibilityHint(String(localized: "HTTP Basic username for this private podcast feed"))
+
+                    if authSaved && authPasswordDraft.isEmpty {
+                        LabeledContent("Password") {
+                            Text("Stored in Keychain")
+                                .foregroundStyle(.secondary)
+                        }
+                        .accessibilityLabel(String(localized: "Password"))
+                        .accessibilityValue(String(localized: "Stored in Keychain"))
+                        SecureField("Replace password", text: $authPasswordDraft)
+                            .textContentType(.password)
+                            .accessibilityLabel(String(localized: "Replace password"))
+                            .accessibilityHint(String(localized: "Leave blank to keep the Keychain password; enter a new password to replace it on Save"))
+                    } else {
+                        SecureField("Password", text: $authPasswordDraft)
+                            .textContentType(.password)
+                            .accessibilityLabel(String(localized: "Password"))
+                            .accessibilityHint(String(localized: "Stored in the Keychain on Save — never in feed-settings.json or backup"))
+                    }
+
+                    if let authStatusMessage {
+                        Text(authStatusMessage)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .accessibilityLabel(authStatusMessage)
+                    }
+                    if let authErrorMessage {
+                        Text(authErrorMessage)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                            .accessibilityLabel(authErrorMessage)
+                    }
+
+                    Button("Save authentication") {
+                        saveHttpBasicAuth()
+                    }
+                    .disabled(authUsername.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .accessibilityHint(String(localized: "Stores username and password in the Keychain for this podcast only"))
+
+                    if authSaved {
+                        Button("Clear authentication", role: .destructive) {
+                            clearHttpBasicAuth()
+                        }
+                        .accessibilityHint(String(localized: "Removes HTTP Basic credentials for this podcast from the Keychain"))
+                    }
+                } header: {
+                    Text("Authentication")
+                } footer: {
+                    Text(authFooter)
+                }
+            }
+
             Section {
                 if assignedTags.isEmpty {
                     Text("No tags yet")
@@ -290,6 +363,59 @@ struct PerFeedSettingsView: View {
             .environmentObject(playback)
             .environmentObject(appSettings)
         }
+        .onAppear(perform: loadHttpBasicAuthState)
+    }
+
+    private var authFooter: String {
+        String(localized: "HTTP Basic for private feeds. Credentials are stored only in the Keychain on this device — never in feed-settings.json, OPML, or iOS JSON backup. Applied on feed refresh and on media downloads when the media host matches the feed host. Not used for local folder podcasts. Streaming without download may still fail if the player cannot send Authorization. Passwords are never logged.")
+    }
+
+    private func loadHttpBasicAuthState() {
+        authErrorMessage = nil
+        authStatusMessage = nil
+        authPasswordDraft = ""
+        if let creds = FeedHttpBasicAuthKeychain.load(for: feedId), creds.isUsable {
+            authUsername = creds.trimmedUsername
+            authSaved = true
+        } else {
+            authUsername = ""
+            authSaved = false
+        }
+    }
+
+    private func saveHttpBasicAuth() {
+        authErrorMessage = nil
+        authStatusMessage = nil
+        let user = authUsername.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !user.isEmpty else {
+            authErrorMessage = String(localized: "Username is required for HTTP authentication")
+            return
+        }
+        // Keep existing password when Replace field left blank and credentials already saved.
+        let password: String
+        if authPasswordDraft.isEmpty, authSaved,
+           let existing = FeedHttpBasicAuthKeychain.load(for: feedId) {
+            password = existing.password
+        } else {
+            password = authPasswordDraft
+        }
+        do {
+            try FeedHttpBasicAuthKeychain.save(username: user, password: password, for: feedId)
+            authSaved = true
+            authPasswordDraft = ""
+            authStatusMessage = String(localized: "Authentication saved in Keychain")
+        } catch {
+            authErrorMessage = error.localizedDescription
+        }
+    }
+
+    private func clearHttpBasicAuth() {
+        FeedHttpBasicAuthKeychain.delete(for: feedId)
+        authUsername = ""
+        authPasswordDraft = ""
+        authSaved = false
+        authErrorMessage = nil
+        authStatusMessage = String(localized: "Authentication cleared from Keychain")
     }
 
     private func addDraftTag() {

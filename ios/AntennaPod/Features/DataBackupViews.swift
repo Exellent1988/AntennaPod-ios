@@ -137,7 +137,7 @@ struct DataBackupSection: View {
     }
 
     private var helpText: String {
-        String(localized: "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Optional offline media via the toggle (ZIP folder downloads/ ↔ Documents/downloads). gpodder password and Podcast Index keys stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML.")
+        String(localized: "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Optional offline media via the toggle (ZIP folder downloads/ ↔ Documents/downloads). gpodder password, Podcast Index keys, and per-feed HTTP Basic passwords stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML.")
     }
 
     private func requestExport() {
@@ -215,7 +215,7 @@ struct DataBackupSection: View {
                 gpodder: gpodder
             )
             try? FileManager.default.removeItem(at: temp)
-            statusMessage = "Import finished. Media restored when present under downloads/ in the ZIP; otherwise re-download offline files. Re-enter gpodder / Podcast Index secrets if Keychain empty."
+            statusMessage = "Import finished. Media restored when present under downloads/ in the ZIP; otherwise re-download offline files. Re-enter gpodder / Podcast Index / per-feed HTTP Basic secrets if Keychain empty."
         } catch {
             errorMessage = error.localizedDescription
         }

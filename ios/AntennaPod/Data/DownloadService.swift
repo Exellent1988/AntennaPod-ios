@@ -66,10 +66,46 @@ struct DownloadedEpisode: Identifiable, Hashable, Codable {
 }
 
 /// Persisted in-flight background task ↔ episode mapping.
+/// `feedId` (optional) helps HTTP Basic auth challenges look up Keychain credentials —
+/// never stores username/password (those stay in Keychain only).
 struct PendingDownloadMapping: Codable, Hashable {
     var taskIdentifier: Int
     var episode: PodcastEpisode
     var fileName: String
+    /// Owning subscription id when known (for Keychain HTTP Basic on challenge). Not a secret.
+    var feedId: UUID?
+
+    init(
+        taskIdentifier: Int,
+        episode: PodcastEpisode,
+        fileName: String,
+        feedId: UUID? = nil
+    ) {
+        self.taskIdentifier = taskIdentifier
+        self.episode = episode
+        self.fileName = fileName
+        self.feedId = feedId
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case taskIdentifier, episode, fileName, feedId
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        taskIdentifier = try c.decode(Int.self, forKey: .taskIdentifier)
+        episode = try c.decode(PodcastEpisode.self, forKey: .episode)
+        fileName = try c.decode(String.self, forKey: .fileName)
+        feedId = try c.decodeIfPresent(UUID.self, forKey: .feedId)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(taskIdentifier, forKey: .taskIdentifier)
+        try c.encode(episode, forKey: .episode)
+        try c.encode(fileName, forKey: .fileName)
+        try c.encodeIfPresent(feedId, forKey: .feedId)
+    }
 }
 
 /// One failed download attempt (ring-buffered in Application Support).
@@ -344,6 +380,9 @@ final class DownloadService: ObservableObject {
     }
 
     /// Hands one episode to the background `URLSession` (caller already reserved an `inProgress` slot).
+    /// When the owning feed has HTTP Basic credentials in Keychain **and** the media URL host
+    /// matches the feed URL host, attaches `Authorization` (never logged). Other CDN hosts are
+    /// left unauthenticated (honest). Local-folder `file://` never uses HTTP auth.
     private func startActiveDownload(episode: PodcastEpisode) {
         guard let remote = episode.downloadUrl, let url = URL(string: remote), !url.isFileURL else {
             inProgress.remove(episode.id)
@@ -356,16 +395,40 @@ final class DownloadService: ObservableObject {
             .addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? UUID().uuidString
         let fileName = "\(safeName).\(ext)"
 
-        let task = session.downloadTask(with: url)
+        var request = URLRequest(url: url)
+        request.setValue("AntennaPod-iOS/0.1", forHTTPHeaderField: "User-Agent")
+        if let creds = httpBasicCredentialsForDownload(episode: episode, mediaURL: url) {
+            FeedHttpBasicAuth.apply(creds, to: &request)
+        }
+
+        let owningFeedId = store?.feed(containingEpisodeId: episode.id)?.id
+        let task = session.downloadTask(with: request)
         let mapping = PendingDownloadMapping(
             taskIdentifier: task.taskIdentifier,
             episode: episode,
-            fileName: fileName
+            fileName: fileName,
+            feedId: owningFeedId
         )
         pendingByTaskId[task.taskIdentifier] = mapping
         sessionDelegate.setPending(mapping, for: task.taskIdentifier)
         persistPending()
         task.resume()
+    }
+
+    /// Keychain credentials when media host matches the owning feed host.
+    func httpBasicCredentialsForDownload(
+        episode: PodcastEpisode,
+        mediaURL: URL
+    ) -> FeedHttpBasicCredentials? {
+        guard let feed = store?.feed(containingEpisodeId: episode.id) else { return nil }
+        guard !LocalFolderFeed.isLocalFolderFeed(feed) else { return nil }
+        guard let creds = FeedHttpBasicAuthKeychain.load(for: feed.id), creds.isUsable else {
+            return nil
+        }
+        guard FeedHttpBasicAuth.hostMatches(requestURL: mediaURL, feedURLString: feed.feedUrl) else {
+            return nil
+        }
+        return creds
     }
 
     func delete(_ episode: PodcastEpisode) {
@@ -902,8 +965,14 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
         }
         if let http = downloadTask.response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
             Task { @MainActor in
+                let message: String
+                if http.statusCode == 401 {
+                    message = FeedHttpBasicAuth.unauthorizedDownloadMessage
+                } else {
+                    message = "Download failed (HTTP \(http.statusCode))"
+                }
                 self.owner?.reportError(
-                    "Download failed (HTTP \(http.statusCode))",
+                    message,
                     episode: mapping.episode
                 )
             }
@@ -934,6 +1003,61 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
         Task { @MainActor in
             self.owner?.handleTaskCompleted(taskIdentifier: taskId, error: error)
         }
+    }
+
+    /// HTTP Basic challenge: use Keychain credentials for the pending episode’s feed when the
+    /// challenge host matches the feed host. Never logs the password. Cancel on failure / mismatch.
+    func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
+        let method = challenge.protectionSpace.authenticationMethod
+        guard method == NSURLAuthenticationMethodHTTPBasic
+            || method == NSURLAuthenticationMethodDefault
+        else {
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
+        // Avoid retry loops after a failed Basic attempt.
+        if challenge.previousFailureCount > 0 {
+            completionHandler(.cancelAuthenticationChallenge, nil)
+            return
+        }
+        guard let mapping = pending(for: task.taskIdentifier) else {
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
+        let challengeHost = challenge.protectionSpace.host.lowercased()
+        // Keychain is thread-safe; feedId on the mapping is not a secret (password never persisted here).
+        let feedId = mapping.feedId
+            ?? owner?.store?.feed(containingEpisodeId: mapping.episode.id)?.id
+        let creds: FeedHttpBasicCredentials? = {
+            guard let feedId,
+                  let c = FeedHttpBasicAuthKeychain.load(for: feedId),
+                  c.isUsable
+            else {
+                return nil
+            }
+            // Prefer matching challenge host to the media URL host (same-host policy).
+            if let media = mapping.episode.downloadUrl, let mediaURL = URL(string: media),
+               let mediaHost = mediaURL.host?.lowercased(),
+               mediaHost != challengeHost {
+                return nil
+            }
+            return c
+        }()
+        guard let creds else {
+            completionHandler(.cancelAuthenticationChallenge, nil)
+            return
+        }
+        let credential = URLCredential(
+            user: creds.trimmedUsername,
+            password: creds.password,
+            persistence: .forSession
+        )
+        completionHandler(.useCredential, credential)
     }
 
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {

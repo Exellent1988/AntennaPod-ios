@@ -301,7 +301,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Notify new episodes (default aus; lokal; ein Banner; kein Push) | ☐ Notify new episodes (default off; local; one banner; no push) |
 | ☐ Notifications-Settings: Permission-Status EN/DE; Open iOS Settings bei Denied; Notifies / Does not notify (kein Push, kein Download-fertig) | ☐ Notifications Settings: Permission status EN/DE; Open iOS Settings when Denied; Notifies / Does not notify (no push, no download-complete) |
 | ☐ Notify download errors / sync errors / sleep timer end (lokal; gleiche OS-Permission; kein Download-complete) | ☐ Notify download errors / sync errors / sleep timer end (local; same OS permission; no download-complete) |
-| ☐ Per-feed settings (auto-DL / keep / notify / tags; Speed Use global·Presets + Custom… 0,50–3,00×) | ☐ Per-feed settings (auto-DL / keep / notify / tags; Speed Use global·presets + Custom… 0.50–3.00×) |
+| ☐ Per-feed settings (auto-DL / keep / notify / tags / **HTTP Basic Auth Keychain**; Speed Use global·Presets + Custom… 0,50–3,00×) | ☐ Per-feed settings (auto-DL / keep / notify / tags / **HTTP Basic Auth Keychain**; Speed Use global·presets + Custom… 0.50–3.00×) |
 | ☐ Per-feed Keep updated → Never: Refresh all überspringt; Einzel-Refresh OK | ☐ Per-feed Keep updated → Never: Refresh all skips; single-feed refresh OK |
 | ☐ Feed refresh interval / Keep updated | ☐ Feed refresh interval / Keep updated |
 | ☐ New-episode action (Inbox / Queue) | ☐ New-episode action (Inbox / Queue) |
@@ -332,6 +332,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   Statistics honesty: wall-clock (not speed); from `playback.json`; Reset = baseline (`statisticsResetAtEpochMs`), does not clear History; streaming without saved progress not counted; per-feed same estimate; EN/DE + VoiceOver.
 - Stereo to mono: Best-Effort `setPreferredOutputNumberOfChannels(1)`; auch bei Routenwechsel; Route kann ignorieren; kein `AVMutableAudioMix`-Remix / kein ExoPlayer; AVPlayer bleibt.  
   Stereo to mono: best-effort `setPreferredOutputNumberOfChannels(1)`; also on route change; route may ignore; not `AVMutableAudioMix` remix / not ExoPlayer; AVPlayer kept.
+- HTTP Basic (private feeds): Podcast settings → Authentication; Keychain only (nie in feed-settings.json); Refresh + Download gleicher Host; 401 ehrlich; Preview-401 → Credentials → Subscribe speichert Keychain; Local-Folder N/A; Streaming ohne Download ggf. ohne Authorization.  
+  HTTP Basic (private feeds): Podcast settings → Authentication; Keychain only (never in feed-settings.json); refresh + same-host download; honest 401; Preview 401 → credentials → Subscribe saves Keychain; local-folder N/A; streaming without download may lack Authorization.
 - Preserve pitch: Standard **an** → `AVPlayerItem.audioTimePitchAlgorithm` `.timeDomain`; aus → `.varispeed` (Chipmunk); kein Skip Silence / kein ExoPlayer Sonic.  
   Preserve pitch: default **on** → `.timeDomain`; off → `.varispeed` (chipmunks); not Skip Silence / not ExoPlayer Sonic.
 - Keep screen on: nur Idle-Timer (`isIdleTimerDisabled`); kein Low-Power-Override / keine Helligkeit; PiP/Hintergrund-Audio unverändert.  

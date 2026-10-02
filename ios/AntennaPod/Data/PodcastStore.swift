@@ -90,19 +90,16 @@ final class PodcastStore: ObservableObject {
         publishWidgetSnapshot()
     }
 
-    func subscribe(feedUrl: String) async {
+    func subscribe(feedUrl: String, credentials: FeedHttpBasicCredentials? = nil) async {
         lastError = nil
         isLoading = true
         defer { isLoading = false }
         do {
-            var feed = try await repository.fetchAndParse(feedUrl: feedUrl)
-            feed.feedUrl = feedUrl
-            if let index = feeds.firstIndex(where: { $0.feedUrl == feedUrl }) {
-                feed.id = feeds[index].id // keep stable identity across refresh
-                feeds[index] = feed
-            } else {
-                feeds.append(feed)
-            }
+            try await subscribeQuietly(
+                feedUrl: feedUrl,
+                credentials: credentials,
+                persistCredentials: credentials?.isUsable == true
+            )
         } catch {
             lastError = error.localizedDescription
         }
@@ -111,6 +108,7 @@ final class PodcastStore: ObservableObject {
     /// Remove a subscription.
     /// Clears the feed from the list, per-feed settings, tags, queue items from this feed,
     /// and favorites / archive / bookmarks / playback-history entries for its episodes.
+    /// Also deletes per-feed HTTP Basic credentials from the Keychain (never in JSON).
     /// Local-folder feeds also release the security-scoped bookmark.
     /// Does **not** delete downloaded episode files by itself — UI may call
     /// `DownloadService.deleteDownloads(forFeed:)` **before** this when the user chooses
@@ -119,6 +117,7 @@ final class PodcastStore: ObservableObject {
         if LocalFolderFeed.isLocalFolderFeed(feed) {
             LocalFolderBookmarkStore.release(feedId: feed.id)
         }
+        FeedHttpBasicAuthKeychain.delete(for: feed.id)
         feeds.removeAll { $0.id == feed.id }
         feedSettingsById.removeValue(forKey: feed.id)
         tagsByFeedId.removeValue(forKey: feed.id)
@@ -591,6 +590,21 @@ final class PodcastStore: ObservableObject {
             }
         }
         return queue.first { $0.id == episodeId }
+    }
+
+    /// Owning subscription for an episode id (first match in `feeds`).
+    func feed(containingEpisodeId episodeId: String) -> PodcastFeed? {
+        feeds.first { feed in
+            feed.episodes.contains { $0.id == episodeId }
+        }
+    }
+
+    /// HTTP Basic credentials from Keychain for an already-subscribed feed URL (if any).
+    func httpBasicCredentials(forFeedUrl feedUrl: String) -> FeedHttpBasicCredentials? {
+        guard let feed = FeedURLNormalization.subscribedFeed(matching: feedUrl, in: feeds) else {
+            return nil
+        }
+        return FeedHttpBasicAuthKeychain.load(for: feed.id)
     }
 
     /// Persist chapters onto the subscribed / queued episode after a remote Podcast Index fetch.
@@ -1826,14 +1840,29 @@ final class PodcastStore: ObservableObject {
     }
 
     /// Subscribe without flipping the global `isLoading` overlay (used by OPML batch / refresh).
-    func subscribeQuietly(feedUrl: String) async throws {
-        var feed = try await repository.fetchAndParse(feedUrl: feedUrl)
+    /// Loads Keychain credentials for an existing subscription when `credentials` is nil.
+    /// When `persistCredentials` is true and credentials are usable, saves them under the feed id
+    /// (never into `feed-settings.json`). Passwords are never logged.
+    func subscribeQuietly(
+        feedUrl: String,
+        credentials: FeedHttpBasicCredentials? = nil,
+        persistCredentials: Bool = false
+    ) async throws {
+        let resolvedCreds = credentials ?? httpBasicCredentials(forFeedUrl: feedUrl)
+        var feed = try await repository.fetchAndParse(feedUrl: feedUrl, credentials: resolvedCreds)
         feed.feedUrl = feedUrl
         if let index = feeds.firstIndex(where: { $0.feedUrl == feedUrl }) {
             feed.id = feeds[index].id // keep stable identity across refresh
             feeds[index] = feed
         } else {
             feeds.append(feed)
+        }
+        if persistCredentials, let credentials, credentials.isUsable {
+            try? FeedHttpBasicAuthKeychain.save(
+                username: credentials.trimmedUsername,
+                password: credentials.password,
+                for: feed.id
+            )
         }
     }
 

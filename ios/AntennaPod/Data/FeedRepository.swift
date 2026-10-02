@@ -2,6 +2,7 @@ import Foundation
 
 /// Network fetch + parse for RSS/Atom podcast feeds (Preview + Subscribe).
 /// Errors are localized and distinguish invalid URL / timeout / network / HTTP / not-a-feed.
+/// Optional per-feed HTTP Basic credentials (Keychain) attach `Authorization` when set.
 struct FeedRepository {
     private static let timeoutSeconds: TimeInterval = 25
 
@@ -10,6 +11,7 @@ struct FeedRepository {
         case timeout
         case network(String)
         case httpStatus(Int)
+        case unauthorized
         case emptyResponse
         case notAFeed
         case message(String)
@@ -22,6 +24,8 @@ struct FeedRepository {
                 return String(localized: "Feed request timed out. Check the URL or try again.")
             case .network(let detail):
                 return String(localized: "Could not reach the feed: \(detail)")
+            case .unauthorized:
+                return FeedHttpBasicAuth.unauthorizedFeedMessage
             case .httpStatus(let code):
                 return String(localized: "Feed server returned HTTP \(code)")
             case .emptyResponse:
@@ -34,7 +38,13 @@ struct FeedRepository {
         }
     }
 
-    func fetchAndParse(feedUrl: String) async throws -> PodcastFeed {
+    /// Fetches and parses a feed URL.
+    /// - Parameter credentials: Optional HTTP Basic credentials (never logged). When set,
+    ///   sends `Authorization` on the feed request. Used for private feeds.
+    func fetchAndParse(
+        feedUrl: String,
+        credentials: FeedHttpBasicCredentials? = nil
+    ) async throws -> PodcastFeed {
         let resolved: String
         switch FeedURLNormalization.normalize(feedUrl) {
         case .ok(let url):
@@ -49,8 +59,12 @@ struct FeedRepository {
 
         var request = URLRequest(url: url)
         request.setValue("AntennaPod-iOS/0.1", forHTTPHeaderField: "User-Agent")
-        request.setValue("application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8", forHTTPHeaderField: "Accept")
+        request.setValue(
+            "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8",
+            forHTTPHeaderField: "Accept"
+        )
         request.timeoutInterval = Self.timeoutSeconds
+        FeedHttpBasicAuth.apply(credentials, to: &request)
 
         let data: Data
         let response: URLResponse
@@ -66,6 +80,9 @@ struct FeedRepository {
         }
 
         if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+            if http.statusCode == 401 {
+                throw FetchError.unauthorized
+            }
             throw FetchError.httpStatus(http.statusCode)
         }
 

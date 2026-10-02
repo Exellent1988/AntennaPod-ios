@@ -511,23 +511,6 @@
         }
       }
     },
-    "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Optional offline media via the toggle (ZIP folder downloads/ ↔ Documents/downloads). gpodder password and Podcast Index keys stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Optional offline media via the toggle (ZIP folder downloads/ ↔ Documents/downloads). gpodder password and Podcast Index keys stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Beta-iOS-JSON-Backup (Application-Support-Maps + Einstellungen + gpodder-Prefs). Keine AntennaPod-Android-DB. Optionale Offline-Medien per Schalter (ZIP-Ordner downloads/ ↔ Documents/downloads). gpodder-Passwort und Podcast-Index-Schlüssel bleiben im Keychain und fehlen in der ZIP. Für eine druckbare Aboliste: Import / Export → Abonnements als HTML exportieren."
-          }
-        }
-      }
-    },
     "Cancel": {
       "extractionState": "manual",
       "localizations": {
@@ -21939,6 +21922,346 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiv, fordert Mono-Ausgabe über `AVAudioSession.setPreferredOutputNumberOfChannels(1)` an (aus: bis zu 2 Kanäle). Wird bei Wiedergabe, Settings-Änderung und Audio-Routenwechsel erneut angewendet. **Best Effort** — das System kann je nach Route (eingebauter Lautsprecher, Bluetooth, CarPlay usw.) ignorieren. `AVMutableAudioMix` skaliert nur Track-Lautstärke (kein L+R→Mono); echter Remix braucht `MTAudioProcessingTap` (nur dateibasiert, kein HLS) oder `AVAudioEngine` (würde Video / PiP / Now Playing brechen). Behält den Standard-`AVPlayer`. Kein Android-ExoPlayer-Stereo→Mono-Remix. Standard aus."
+          }
+        }
+      }
+    },
+    "Authentication": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authentication"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authentifizierung"
+          }
+        }
+      }
+    },
+    "Save authentication": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save authentication"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authentifizierung speichern"
+          }
+        }
+      }
+    },
+    "Clear authentication": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear authentication"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authentifizierung löschen"
+          }
+        }
+      }
+    },
+    "Replace password": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replace password"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwort ersetzen"
+          }
+        }
+      }
+    },
+    "Authentication saved in Keychain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authentication saved in Keychain"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authentifizierung im Schlüsselbund gespeichert"
+          }
+        }
+      }
+    },
+    "Authentication cleared from Keychain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authentication cleared from Keychain"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authentifizierung aus dem Schlüsselbund entfernt"
+          }
+        }
+      }
+    },
+    "Username is required for HTTP authentication": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username is required for HTTP authentication"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für die HTTP-Authentifizierung ist ein Benutzername erforderlich"
+          }
+        }
+      }
+    },
+    "HTTP Basic username for this private podcast feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP Basic username for this private podcast feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP-Basic-Benutzername für diesen privaten Podcast-Feed"
+          }
+        }
+      }
+    },
+    "HTTP Basic username for this private feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP Basic username for this private feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP-Basic-Benutzername für diesen privaten Feed"
+          }
+        }
+      }
+    },
+    "Leave blank to keep the Keychain password; enter a new password to replace it on Save": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave blank to keep the Keychain password; enter a new password to replace it on Save"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leer lassen, um das Schlüsselbund-Passwort zu behalten; neues Passwort eingeben, um es beim Speichern zu ersetzen"
+          }
+        }
+      }
+    },
+    "Stored in the Keychain on Save — never in feed-settings.json or backup": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stored in the Keychain on Save — never in feed-settings.json or backup"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beim Speichern im Schlüsselbund — nie in feed-settings.json oder Backup"
+          }
+        }
+      }
+    },
+    "Stores username and password in the Keychain for this podcast only": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stores username and password in the Keychain for this podcast only"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert Benutzername und Passwort nur für diesen Podcast im Schlüsselbund"
+          }
+        }
+      }
+    },
+    "Removes HTTP Basic credentials for this podcast from the Keychain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes HTTP Basic credentials for this podcast from the Keychain"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt HTTP-Basic-Zugangsdaten für diesen Podcast aus dem Schlüsselbund"
+          }
+        }
+      }
+    },
+    "HTTP Basic for private feeds. Credentials are stored only in the Keychain on this device — never in feed-settings.json, OPML, or iOS JSON backup. Applied on feed refresh and on media downloads when the media host matches the feed host. Not used for local folder podcasts. Streaming without download may still fail if the player cannot send Authorization. Passwords are never logged.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP Basic for private feeds. Credentials are stored only in the Keychain on this device — never in feed-settings.json, OPML, or iOS JSON backup. Applied on feed refresh and on media downloads when the media host matches the feed host. Not used for local folder podcasts. Streaming without download may still fail if the player cannot send Authorization. Passwords are never logged."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP Basic für private Feeds. Zugangsdaten nur im Schlüsselbund auf diesem Gerät — nie in feed-settings.json, OPML oder iOS-JSON-Backup. Bei Feed-Aktualisierung und Mediendownloads, wenn der Medien-Host dem Feed-Host entspricht. Nicht für lokale Ordner-Podcasts. Streaming ohne Download kann scheitern, wenn der Player kein Authorization senden kann. Passwörter werden nie protokolliert."
+          }
+        }
+      }
+    },
+    "Feed server returned HTTP 401 Unauthorized. Enter username and password under Podcast settings → Authentication (stored in Keychain), then refresh. Local folder feeds do not use HTTP auth.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed server returned HTTP 401 Unauthorized. Enter username and password under Podcast settings → Authentication (stored in Keychain), then refresh. Local folder feeds do not use HTTP auth."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-Server meldete HTTP 401 Unauthorized. Benutzername und Passwort unter Podcast-Einstellungen → Authentifizierung eintragen (Schlüsselbund), dann aktualisieren. Lokale Ordner-Feeds nutzen keine HTTP-Auth."
+          }
+        }
+      }
+    },
+    "Download failed (HTTP 401 Unauthorized). Check Podcast settings → Authentication for this podcast (Keychain). Auth applies to the feed host only — not other CDN hosts. Streaming without download may still fail.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download failed (HTTP 401 Unauthorized). Check Podcast settings → Authentication for this podcast (Keychain). Auth applies to the feed host only — not other CDN hosts. Streaming without download may still fail."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download fehlgeschlagen (HTTP 401 Unauthorized). Authentifizierung unter Podcast-Einstellungen prüfen (Schlüsselbund). Auth gilt nur für den Feed-Host — nicht für andere CDN-Hosts. Streaming ohne Download kann weiterhin scheitern."
+          }
+        }
+      }
+    },
+    "HTTP 401 Unauthorized — enter username and password for this private feed, then Retry. After Confirm Subscribe, credentials are stored in the Keychain (not in feed-settings.json).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP 401 Unauthorized — enter username and password for this private feed, then Retry. After Confirm Subscribe, credentials are stored in the Keychain (not in feed-settings.json)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP 401 Unauthorized — Benutzername und Passwort für diesen privaten Feed eingeben, dann Erneut versuchen. Nach Bestätigen Abonnieren werden Zugangsdaten im Schlüsselbund gespeichert (nicht in feed-settings.json)."
+          }
+        }
+      }
+    },
+    "Stored in the Keychain after Confirm Subscribe — never logged": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stored in the Keychain after Confirm Subscribe — never logged"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach Bestätigen Abonnieren im Schlüsselbund — nie protokolliert"
+          }
+        }
+      }
+    },
+    "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Optional offline media via the toggle (ZIP folder downloads/ ↔ Documents/downloads). gpodder password, Podcast Index keys, and per-feed HTTP Basic passwords stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beta iOS JSON backup (Application Support maps + Settings + gpodder prefs). Not AntennaPod Android DB. Optional offline media via the toggle (ZIP folder downloads/ ↔ Documents/downloads). gpodder password, Podcast Index keys, and per-feed HTTP Basic passwords stay in Keychain and are omitted from the ZIP. For a printable subscription list, use Import / Export → Export subscriptions as HTML."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beta-iOS-JSON-Backup (Application-Support-Maps + Einstellungen + gpodder-Prefs). Nicht die AntennaPod-Android-DB. Optionale Offline-Medien über den Schalter (ZIP-Ordner downloads/ ↔ Documents/downloads). gpodder-Passwort, Podcast-Index-Keys und HTTP-Basic-Passwörter pro Feed bleiben im Schlüsselbund und fehlen im ZIP. Für eine druckbare Abo-Liste: Import / Export → Abonnements als HTML exportieren."
+          }
+        }
+      }
+    },
+    "Import finished. Media restored when present under downloads/ in the ZIP; otherwise re-download offline files. Re-enter gpodder / Podcast Index / per-feed HTTP Basic secrets if Keychain empty.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import finished. Media restored when present under downloads/ in the ZIP; otherwise re-download offline files. Re-enter gpodder / Podcast Index / per-feed HTTP Basic secrets if Keychain empty."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import fertig. Medien wiederhergestellt, wenn unter downloads/ im ZIP vorhanden; sonst Offline-Dateien erneut laden. gpodder- / Podcast-Index- / HTTP-Basic-Geheimnisse pro Feed erneut eingeben, wenn der Schlüsselbund leer ist."
           }
         }
       }

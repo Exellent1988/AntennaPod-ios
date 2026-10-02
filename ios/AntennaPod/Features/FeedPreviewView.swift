@@ -36,6 +36,10 @@ struct FeedPreviewView: View {
     @State private var loadError: String?
     @State private var isSubscribing = false
     @State private var openFeed: PodcastFeed?
+    /// Shown after HTTP 401 so a private feed can be previewed before subscribe.
+    @State private var needsHttpAuth = false
+    @State private var authUsername = ""
+    @State private var authPassword = ""
 
     private let repository = FeedRepository()
     private let previewEpisodeLimit = 10
@@ -94,12 +98,29 @@ struct FeedPreviewView: View {
                         .foregroundStyle(.red)
                         .font(.subheadline)
                         .accessibilityLabel(loadError)
+                    if needsHttpAuth {
+                        TextField("Username", text: $authUsername)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .textContentType(.username)
+                            .accessibilityLabel(String(localized: "Username"))
+                            .accessibilityHint(String(localized: "HTTP Basic username for this private feed"))
+                        SecureField("Password", text: $authPassword)
+                            .textContentType(.password)
+                            .accessibilityLabel(String(localized: "Password"))
+                            .accessibilityHint(String(localized: "Stored in the Keychain after Confirm Subscribe — never logged"))
+                    }
                     Button("Retry") {
                         Task { await loadPreview() }
                     }
                     .accessibilityHint(String(localized: "Fetches the feed URL again"))
                 } footer: {
-                    Text("Preview could not load this URL. Check the address, network, or try again — this is not a subscribe yet.")
+                    if needsHttpAuth {
+                        Text("HTTP 401 Unauthorized — enter username and password for this private feed, then Retry. After Confirm Subscribe, credentials are stored in the Keychain (not in feed-settings.json).")
+                    } else {
+                        Text("Preview could not load this URL. Check the address, network, or try again — this is not a subscribe yet.")
+                    }
+
                 }
             }
 
@@ -321,6 +342,15 @@ struct FeedPreviewView: View {
             }
     }
 
+    private var previewCredentials: FeedHttpBasicCredentials? {
+        let user = authUsername.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !user.isEmpty else {
+            // Fall back to Keychain when already subscribed (Open feed / re-preview).
+            return store.httpBasicCredentials(forFeedUrl: request.feedUrl)
+        }
+        return FeedHttpBasicCredentials(username: user, password: authPassword)
+    }
+
     @MainActor
     private func loadPreview() async {
         let resolved: String
@@ -335,10 +365,20 @@ struct FeedPreviewView: View {
         loadError = nil
         defer { isLoading = false }
         do {
-            let feed = try await repository.fetchAndParse(feedUrl: resolved)
+            let feed = try await repository.fetchAndParse(
+                feedUrl: resolved,
+                credentials: previewCredentials
+            )
             parsed = feed
+            needsHttpAuth = false
         } catch is CancellationError {
             // ignore
+        } catch let error as FeedRepository.FetchError {
+            parsed = nil
+            if case .unauthorized = error {
+                needsHttpAuth = true
+            }
+            loadError = error.localizedDescription
         } catch {
             parsed = nil
             loadError = error.localizedDescription
@@ -361,10 +401,14 @@ struct FeedPreviewView: View {
         }
         isSubscribing = true
         defer { isSubscribing = false }
-        await store.subscribe(feedUrl: resolved)
+        let creds = previewCredentials
+        await store.subscribe(feedUrl: resolved, credentials: creds)
         if store.lastError == nil {
             onSubscribed?()
             dismiss()
+        } else if store.lastError?.contains("401") == true {
+            needsHttpAuth = true
+            loadError = store.lastError
         }
     }
 
