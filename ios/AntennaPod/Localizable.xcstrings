@@ -2299,6 +2299,101 @@
         }
       }
     },
+    "Copy last refreshed timestamp": {
+      "extractionState": "manual",
+      "comment": "Copy the stable absolute feed refresh timestamp shown in Feed detail.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy last refreshed timestamp"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeitstempel der letzten Aktualisierung kopieren"
+          }
+        }
+      }
+    },
+
+    "Share last refreshed timestamp": {
+      "extractionState": "manual",
+      "comment": "Share the stable absolute feed refresh timestamp shown in Feed detail as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share last refreshed timestamp"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeitstempel der letzten Aktualisierung teilen"
+          }
+        }
+      }
+    },
+
+    "Copies the stable absolute Last refreshed timestamp shown above to the pasteboard; does not refresh the feed": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the stable absolute Feed detail refresh timestamp.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the stable absolute Last refreshed timestamp shown above to the pasteboard; does not refresh the feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den oben angezeigten stabilen absoluten Zeitstempel der letzten Aktualisierung in die Zwischenablage; aktualisiert den Feed nicht"
+          }
+        }
+      }
+    },
+
+    "Shares the same stable absolute Last refreshed timestamp shown above as plain text; does not refresh the feed": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the stable absolute Feed detail refresh timestamp.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same stable absolute Last refreshed timestamp shown above as plain text; does not refresh the feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt denselben stabilen absoluten Zeitstempel der letzten Aktualisierung oben als Klartext; aktualisiert den Feed nicht"
+          }
+        }
+      }
+    },
+
+    "Last refreshed timestamp copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the stable absolute Feed detail refresh timestamp.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last refreshed timestamp copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeitstempel der letzten Aktualisierung in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+
     "Last refreshed": {
       "extractionState": "manual",
       "localizations": {

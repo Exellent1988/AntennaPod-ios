@@ -33,6 +33,7 @@ struct FeedDetailView: View {
     @State private var showItunesCompleteCopied = false
     @State private var showExplicitCopied = false
     @State private var showBlockedCopied = false
+    @State private var showLastRefreshedCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
@@ -52,6 +53,7 @@ struct FeedDetailView: View {
     @State private var copyItunesCompleteFeedbackTick = 0
     @State private var copyExplicitFeedbackTick = 0
     @State private var copyBlockedFeedbackTick = 0
+    @State private var copyLastRefreshedFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -102,6 +104,13 @@ struct FeedDetailView: View {
     private var lastRefreshedAt: Date? {
         guard !LocalFolderFeed.isLocalFolderFeed(liveFeed) else { return nil }
         return liveFeed.lastRefreshedAt
+    }
+
+    /// Stable absolute text for copy/share; the visible relative caption is intentionally not copied alone.
+    private var lastRefreshedShareText: String? {
+        guard let lastRefreshedAt else { return nil }
+        let absolute = lastRefreshedAt.formatted(date: .abbreviated, time: .shortened)
+        return String(localized: "Last refreshed \(absolute)")
     }
 
     /// Channel podcast:medium raw string when the feed provided it — hidden when missing (never invent/remap).
@@ -596,18 +605,36 @@ struct FeedDetailView: View {
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
             // Last successful network refresh — hide when nil / local-folder (Rescan is not a network refresh).
-            if let lastRefreshedAt {
+            if let lastRefreshedAt, let lastRefreshedShareText {
                 Section {
                     LabeledContent(String(localized: "Last refreshed")) {
                         Text(lastRefreshedAt, style: .relative)
                             .foregroundStyle(.secondary)
                     }
                     .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(
-                        String(
-                            localized: "Last refreshed \(lastRefreshedAt.formatted(date: .abbreviated, time: .shortened))"
+                    .accessibilityLabel(lastRefreshedShareText)
+
+                    HStack(spacing: 12) {
+                        Button {
+                            copyLastRefreshed(lastRefreshedShareText)
+                        } label: {
+                            Label("Copy last refreshed timestamp", systemImage: "doc.on.doc")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Copy last refreshed timestamp"))
+                        .accessibilityHint(
+                            String(localized: "Copies the stable absolute Last refreshed timestamp shown above to the pasteboard; does not refresh the feed")
                         )
-                    )
+
+                        ShareLink(item: lastRefreshedShareText, subject: Text(feedDisplayTitle)) {
+                            Label("Share last refreshed timestamp", systemImage: "square.and.arrow.up")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Share last refreshed timestamp"))
+                        .accessibilityHint(
+                            String(localized: "Shares the same stable absolute Last refreshed timestamp shown above as plain text; does not refresh the feed")
+                        )
+                    }
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
@@ -1694,6 +1721,14 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Blocked claim copied to the pasteboard."))
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showLastRefreshedCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Last refreshed timestamp copied to the pasteboard."))
+        }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
@@ -1710,6 +1745,7 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyItunesCompleteFeedbackTick)
         .sensoryFeedback(.success, trigger: copyExplicitFeedbackTick)
         .sensoryFeedback(.success, trigger: copyBlockedFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyLastRefreshedFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
                 PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle)
@@ -1959,6 +1995,12 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = displayBlockedShareText
         copyBlockedFeedbackTick += 1
         showBlockedCopied = true
+    }
+
+    private func copyLastRefreshed(_ text: String) {
+        UIPasteboard.general.string = text
+        copyLastRefreshedFeedbackTick += 1
+        showLastRefreshedCopied = true
     }
 
     @ViewBuilder
