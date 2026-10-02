@@ -2496,6 +2496,42 @@ struct EpisodeRow: View {
 
                 EpisodeShareLinks.mediaURLLabelStyle(episode: episode)
             }
+            if let seasonEpisodeCaption = episode.seasonEpisodeCaption {
+                Button {
+                    copyEpisodeMetadata(
+                        seasonEpisodeCaption,
+                        message: String(localized: "Season and episode copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy season and episode", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy season and episode"))
+                .accessibilityHint(String(localized: "Copies the same season and episode caption shown above to the pasteboard; item metadata only; no numbers invented"))
+
+                ShareLink(item: seasonEpisodeCaption, subject: Text(episode.title)) {
+                    Label("Share season and episode", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share season and episode"))
+                .accessibilityHint(String(localized: "Shares the same season and episode caption shown above as plain text; item metadata only; no numbers invented"))
+            }
+            if let episodeType = episode.displayEpisodeType {
+                Button {
+                    copyEpisodeMetadata(
+                        episodeType,
+                        message: String(localized: "Episode type copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy episode type", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy episode type"))
+                .accessibilityHint(String(localized: "Copies the same item itunes:episodeType label shown above to the pasteboard; distinct from channel podcast:trailer"))
+
+                ShareLink(item: episodeType, subject: Text(episode.title)) {
+                    Label("Share episode type", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share episode type"))
+                .accessibilityHint(String(localized: "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"))
+            }
             if let url = episodeShareURL {
                 ShareLink(
                     item: url,
@@ -2608,6 +2644,13 @@ struct EpisodeRow: View {
 
     private func copyMediaURL(_ rawURL: String) {
         copiedAlertMessage = EpisodeCopyLinks.copyMediaURL(rawURL)
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    private func copyEpisodeMetadata(_ text: String, message: String) {
+        UIPasteboard.general.string = text
+        copiedAlertMessage = message
         copyURLFeedbackTick += 1
         showCopiedAlert = true
     }

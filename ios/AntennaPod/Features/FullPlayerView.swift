@@ -383,7 +383,24 @@ struct FullPlayerView: View {
                                 ? String(localized: "Podcast unavailable")
                                 : String(localized: "Opens this episode's podcast in Subscriptions")
                         )
-                        // itunes:episodeType capsule when set — Full/Trailer/Bonus or raw; hide when missing (≠ channel podcast:trailer).
+                        // Item season/episode and itunes:episodeType metadata; hide when missing, never invent.
+                        if let seasonEpisodeCaption = episode.seasonEpisodeCaption {
+                            Text(seasonEpisodeCaption)
+                                .font(.caption.weight(.semibold))
+                                .monospacedDigit()
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 3)
+                                .background(Color.secondary.opacity(0.15), in: Capsule())
+                                .accessibilityLabel(episode.seasonEpisodeAccessibilityLabel ?? seasonEpisodeCaption)
+                            episodeMetadataActions(
+                                text: seasonEpisodeCaption,
+                                copyLabel: String(localized: "Copy season and episode"),
+                                shareLabel: String(localized: "Share season and episode"),
+                                copyHint: String(localized: "Copies the same season and episode caption shown above to the pasteboard; item metadata only; no numbers invented"),
+                                shareHint: String(localized: "Shares the same season and episode caption shown above as plain text; item metadata only; no numbers invented"),
+                                copiedMessage: String(localized: "Season and episode copied to the pasteboard.")
+                            )
+                        }
                         if let episodeType = episode.displayEpisodeType {
                             Text(episodeType)
                                 .font(.caption.weight(.semibold))
@@ -391,6 +408,14 @@ struct FullPlayerView: View {
                                 .padding(.vertical, 3)
                                 .background(Color.secondary.opacity(0.15), in: Capsule())
                                 .accessibilityLabel(episode.episodeTypeAccessibilityLabel ?? episodeType)
+                            episodeMetadataActions(
+                                text: episodeType,
+                                copyLabel: String(localized: "Copy episode type"),
+                                shareLabel: String(localized: "Share episode type"),
+                                copyHint: String(localized: "Copies the same item itunes:episodeType label shown above to the pasteboard; distinct from channel podcast:trailer"),
+                                shareHint: String(localized: "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"),
+                                copiedMessage: String(localized: "Episode type copied to the pasteboard.")
+                            )
                         }
                         if let chapterTitle = currentChapterTitle {
                             Text(chapterTitle)
@@ -1174,6 +1199,44 @@ struct FullPlayerView: View {
 
     private func copyMediaURL(_ rawURL: String) {
         copiedAlertMessage = EpisodeCopyLinks.copyMediaURL(rawURL)
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    @ViewBuilder
+    private func episodeMetadataActions(
+        text: String,
+        copyLabel: String,
+        shareLabel: String,
+        copyHint: String,
+        shareHint: String,
+        copiedMessage: String
+    ) -> some View {
+        HStack(spacing: 12) {
+            Button {
+                copyEpisodeMetadata(text, message: copiedMessage)
+            } label: {
+                Label(copyLabel, systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(copyLabel)
+            .accessibilityHint(copyHint)
+
+            ShareLink(
+                item: text,
+                subject: Text(episode?.title ?? "")
+            ) {
+                Label(shareLabel, systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(shareLabel)
+            .accessibilityHint(shareHint)
+        }
+    }
+
+    private func copyEpisodeMetadata(_ text: String, message: String) {
+        UIPasteboard.general.string = text
+        copiedAlertMessage = message
         copyURLFeedbackTick += 1
         showCopiedAlert = true
     }

@@ -477,42 +477,96 @@ struct EpisodeDescriptionSheetView: View {
     @ViewBuilder
     private var episodeMetaCapsules: some View {
         if hasEpisodeMeta {
-            HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    if let seasonEpisodeCaption {
+                        Text(seasonEpisodeCaption)
+                            .font(.caption.weight(.semibold))
+                            .monospacedDigit()
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.15), in: Capsule())
+                            .accessibilityLabel(episode.seasonEpisodeAccessibilityLabel ?? seasonEpisodeCaption)
+                    }
+                    if episode.isExplicit {
+                        Text(String(localized: "Explicit"))
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.15), in: Capsule())
+                            .accessibilityLabel(String(localized: "Explicit"))
+                    }
+                    if let medium = episode.displayMedium {
+                        Text(medium)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.15), in: Capsule())
+                            .accessibilityLabel(String(localized: "Medium \(medium)"))
+                    }
+                    if let episodeType = displayEpisodeType {
+                        Text(episodeType)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.15), in: Capsule())
+                            .accessibilityLabel(episode.episodeTypeAccessibilityLabel ?? episodeType)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
                 if let seasonEpisodeCaption {
-                    Text(seasonEpisodeCaption)
-                        .font(.caption.weight(.semibold))
-                        .monospacedDigit()
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.15), in: Capsule())
-                        .accessibilityLabel(episode.seasonEpisodeAccessibilityLabel ?? seasonEpisodeCaption)
-                }
-                if episode.isExplicit {
-                    Text(String(localized: "Explicit"))
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.15), in: Capsule())
-                        .accessibilityLabel(String(localized: "Explicit"))
-                }
-                if let medium = episode.displayMedium {
-                    Text(medium)
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.15), in: Capsule())
-                        .accessibilityLabel(String(localized: "Medium \(medium)"))
+                    episodeMetadataActions(
+                        text: seasonEpisodeCaption,
+                        copyLabel: String(localized: "Copy season and episode"),
+                        shareLabel: String(localized: "Share season and episode"),
+                        copyHint: String(localized: "Copies the same season and episode caption shown above to the pasteboard; item metadata only; no numbers invented"),
+                        shareHint: String(localized: "Shares the same season and episode caption shown above as plain text; item metadata only; no numbers invented"),
+                        copiedMessage: String(localized: "Season and episode copied to the pasteboard.")
+                    )
                 }
                 if let episodeType = displayEpisodeType {
-                    Text(episodeType)
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.15), in: Capsule())
-                        .accessibilityLabel(episode.episodeTypeAccessibilityLabel ?? episodeType)
+                    episodeMetadataActions(
+                        text: episodeType,
+                        copyLabel: String(localized: "Copy episode type"),
+                        shareLabel: String(localized: "Share episode type"),
+                        copyHint: String(localized: "Copies the same item itunes:episodeType label shown above to the pasteboard; distinct from channel podcast:trailer"),
+                        shareHint: String(localized: "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"),
+                        copiedMessage: String(localized: "Episode type copied to the pasteboard.")
+                    )
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    @ViewBuilder
+    private func episodeMetadataActions(
+        text: String,
+        copyLabel: String,
+        shareLabel: String,
+        copyHint: String,
+        shareHint: String,
+        copiedMessage: String
+    ) -> some View {
+        HStack(spacing: 12) {
+            Button {
+                copyEpisodeMetadata(text, message: copiedMessage)
+            } label: {
+                Label(copyLabel, systemImage: "doc.on.doc")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(copyLabel)
+            .accessibilityHint(copyHint)
+
+            ShareLink(
+                item: text,
+                subject: Text(episode.title)
+            ) {
+                Label(shareLabel, systemImage: "square.and.arrow.up")
+                    .font(.subheadline)
+            }
+            .accessibilityLabel(shareLabel)
+            .accessibilityHint(shareHint)
         }
     }
 
@@ -547,6 +601,13 @@ struct EpisodeDescriptionSheetView: View {
 
     private func copyMediaURL(_ rawURL: String) {
         copiedAlertMessage = EpisodeCopyLinks.copyMediaURL(rawURL)
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
+    private func copyEpisodeMetadata(_ text: String, message: String) {
+        UIPasteboard.general.string = text
+        copiedAlertMessage = message
         copyURLFeedbackTick += 1
         showCopiedAlert = true
     }

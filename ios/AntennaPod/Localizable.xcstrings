@@ -31539,6 +31539,196 @@
           }
         }
       }
+    },
+
+    "Copy season and episode": {
+      "extractionState": "manual",
+      "comment": "Copy the item season/episode caption shown in the episode metadata.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy season and episode"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staffel und Episode kopieren"
+          }
+        }
+      }
+    },
+
+    "Share season and episode": {
+      "extractionState": "manual",
+      "comment": "Share the item season/episode caption as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share season and episode"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staffel und Episode teilen"
+          }
+        }
+      }
+    },
+
+    "Copy episode type": {
+      "extractionState": "manual",
+      "comment": "Copy the item itunes:episodeType display label.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy episode type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodentyp kopieren"
+          }
+        }
+      }
+    },
+
+    "Share episode type": {
+      "extractionState": "manual",
+      "comment": "Share the item itunes:episodeType display label as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share episode type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodentyp teilen"
+          }
+        }
+      }
+    },
+
+    "Copies the same season and episode caption shown above to the pasteboard; item metadata only; no numbers invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying item season/episode metadata.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same season and episode caption shown above to the pasteboard; item metadata only; no numbers invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe oben angezeigte Staffel-/Episodenkapsel als reine Episoden-Metadaten in die Zwischenablage; keine Nummern erfunden"
+          }
+        }
+      }
+    },
+
+    "Shares the same season and episode caption shown above as plain text; item metadata only; no numbers invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing item season/episode metadata.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same season and episode caption shown above as plain text; item metadata only; no numbers invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe oben angezeigte Staffel-/Episodenkapsel als Klartext; nur Episoden-Metadaten; keine Nummern erfunden"
+          }
+        }
+      }
+    },
+
+    "Copies the same item itunes:episodeType label shown above to the pasteboard; distinct from channel podcast:trailer": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying item itunes:episodeType.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same item itunes:episodeType label shown above to the pasteboard; distinct from channel podcast:trailer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dasselbe oben angezeigte itunes:episodeType-Label des Items in die Zwischenablage; unterscheidet sich von podcast:trailer des Kanals"
+          }
+        }
+      }
+    },
+
+    "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing item itunes:episodeType.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dasselbe oben angezeigte itunes:episodeType-Label des Items als Klartext; unterscheidet sich von podcast:trailer des Kanals"
+          }
+        }
+      }
+    },
+
+    "Season and episode copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for item season/episode metadata.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Season and episode copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staffel und Episode in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+
+    "Episode type copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for item itunes:episodeType metadata.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode type copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodentyp in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
