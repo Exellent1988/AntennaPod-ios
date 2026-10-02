@@ -270,7 +270,9 @@ struct FeedDetailView: View {
     /// Status via `AppSettings.feedEpisodeFilter` (`isPlayed`; Unplayed also excludes archived,
     /// same spirit as All Episodes Unplayed). Type via `feedEpisodeTypeFilter` (parsed
     /// `itunes:episodeType` only — never invent; missing matches All only). Empty query shows
-    /// the chip-filtered sorted list. Matches title and optional episode descriptionText.
+    /// the chip-filtered sorted list. Matches title, optional descriptionText, episode private
+    /// note, or any bookmark note via `PodcastStore.episodeMatchesLibraryQuery` (same fields as
+    /// library search; **not** chapters / transcripts).
     private var filteredEpisodes: [PodcastEpisode] {
         var base = sortedEpisodes
         switch settings.feedEpisodeFilter {
@@ -287,10 +289,7 @@ struct FeedDetailView: View {
         }
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         if q.isEmpty { return base }
-        return base.filter {
-            $0.title.localizedCaseInsensitiveContains(q)
-                || ($0.descriptionText?.localizedCaseInsensitiveContains(q) ?? false)
-        }
+        return base.filter { store.episodeMatchesLibraryQuery($0, query: q) }
     }
 
     /// Type chips for this feed’s episode catalog (before status/type/search). Hide zero-match.
