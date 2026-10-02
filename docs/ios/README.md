@@ -19,6 +19,9 @@ Podcast chapters URL (iOS): Open / Copy / Share nutzt nur die entfernte, vom Fee
 Podroll recommendations (iOS): Feed detail and description rows offer Share beside Copy when feed-provided text exists; ShareLink prefers a parseable http(s) feed URL and otherwise shares the same raw Copy text. No recommendations or Podcast Index GUIDs are invented or resolved.
 Podroll-Empfehlungen (iOS): In Feed-Detail und Beschreibung steht Teilen neben Kopieren, wenn vom Feed gelieferter Text vorhanden ist; ShareLink bevorzugt eine parsebare http(s)-Feed-URL und teilt sonst denselben Rohtext wie Kopieren. Es werden keine Empfehlungen oder Podcast-Index-GUIDs erfunden oder aufgelöst.
 
+Publisher-Teilen (iOS): In Feed-Detail und Beschreibung steht Teilen neben Kopieren, wenn vom Feed gelieferter Publisher-Text vorhanden ist; ShareLink bevorzugt eine parsebare http(s)-Feed-URL und teilt sonst denselben Rohtext wie Kopieren. Es werden keine Publisher oder Podcast-Index-GUIDs erfunden oder aufgelöst.
+Publisher sharing (iOS): Feed detail and description rows offer Share beside Copy when feed-provided publisher text exists; ShareLink prefers a parseable http(s) feed URL and otherwise shares the same raw Copy text. No publishers or Podcast Index GUIDs are invented or resolved.
+
 License sharing (iOS): Feed detail, description, and shownotes rows offer Share beside Copy when license content is copyable; ShareLink prefers a parseable http(s) license URL and otherwise shares the same raw Copy text. Display-only; no DRM or license enforcement.
 Lizenz-Teilen (iOS): In Feed-Detail, Beschreibung und Shownotes steht Teilen neben Kopieren, wenn Lizenzinhalt kopierbar ist; ShareLink bevorzugt eine parsebare http(s)-Lizenz-URL und teilt sonst denselben Rohtext wie Kopieren. Nur Anzeige; kein DRM und keine Durchsetzung von Lizenzbedingungen.
 

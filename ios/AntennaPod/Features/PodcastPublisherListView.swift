@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided channel `podcast:publisher` / nested `podcast:remoteItem` list.
-/// Publisher name (title) + url/guid when present; **Open** http(s) feed URL; **Copy**; **Subscribe** via
+/// Publisher name (title) + url/guid when present; **Open** http(s) feed URL; **Copy** / **Share**; **Subscribe** via
 /// existing `FeedPreviewRequest` preview when feedUrl is http(s). Cap 1 + honesty footnote.
 /// **Display-only** — never invent publishers; no Podcast Index GUID resolution.
 /// GUID-only → Copy (no Open / Subscribe). Hidden when none.
@@ -78,6 +78,7 @@ struct PodcastPublisherListView: View {
     private func publisherRow(_ entry: PodcastRemoteItem) -> some View {
         let label = entry.primaryLabel ?? ""
         let url = entry.openURL
+        let copyText = PodcastPublisherDisplay.copyText(entry)
         let guid = entry.displayFeedGuid
         let a11y: String = {
             var parts: [String] = [String(localized: "Publisher")]
@@ -157,6 +158,28 @@ struct PodcastPublisherListView: View {
                 .accessibilityHint(
                     String(localized: "Copies the publisher title, feed URL, and GUID to the pasteboard")
                 )
+
+                if !copyText.isEmpty {
+                    Group {
+                        if let url {
+                            ShareLink(item: url) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        } else {
+                            ShareLink(item: copyText) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
+                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the publisher feed URL when it is a parseable http(s) URL; otherwise shares the same feed-provided text as Copy"
+                        )
+                    )
+                }
 
                 if let url {
                     Button {
