@@ -19186,6 +19186,96 @@
         }
       }
     },
+    "License text copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Alert message after copying only the feed-provided podcast:license text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "License text copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lizenztext in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy license text": {
+      "extractionState": "manual",
+      "comment": "Distinct plain-text Copy action for the feed-provided podcast:license text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy license text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lizenztext kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact feed-provided license text shown above as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for the distinct plain-text Copy license text action.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact feed-provided license text shown above as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den exakt vom Feed gelieferten oben angezeigten Lizenztext als Klartext"
+          }
+        }
+      }
+    },
+    "Share license text": {
+      "extractionState": "manual",
+      "comment": "Distinct plain-text Share action for the feed-provided podcast:license text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share license text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lizenztext teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact feed-provided license text shown above as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for the distinct plain-text Share license text action.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact feed-provided license text shown above as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den exakt vom Feed gelieferten oben angezeigten Lizenztext als Klartext"
+          }
+        }
+      }
+    },
     "License copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Alert message after copying a podcast:license entry.",

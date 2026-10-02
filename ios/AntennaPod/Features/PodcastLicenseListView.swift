@@ -12,6 +12,7 @@ struct PodcastLicenseListView: View {
     var title: String = String(localized: "License")
 
     @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = String(localized: "License copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     private var capped: (shown: [PodcastLicense], truncated: Bool) {
@@ -58,7 +59,7 @@ struct PodcastLicenseListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "License copied to the pasteboard."))
+                Text(copiedAlertMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -111,9 +112,37 @@ struct PodcastLicenseListView: View {
                     .accessibilityHidden(true)
             }
 
+            if let body {
+                HStack(spacing: 12) {
+                    Button {
+                        UIPasteboard.general.string = body
+                        copiedAlertMessage = String(localized: "License text copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy license text", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy license text"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided license text shown above as plain text")
+                    )
+
+                    ShareLink(item: body) {
+                        Label("Share license text", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share license text"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided license text shown above as plain text")
+                    )
+                }
+            }
+
             HStack(spacing: 12) {
                 Button {
                     UIPasteboard.general.string = PodcastLicenseDisplay.copyText(entry)
+                    copiedAlertMessage = String(localized: "License copied to the pasteboard.")
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {
