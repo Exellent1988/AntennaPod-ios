@@ -338,6 +338,16 @@ struct SubscriptionsView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver hint for the Subscriptions unplayed remaining bar. The visible
+    /// label stays the count and time. This says whether that time is wall-clock
+    /// or divided by podcast/default speed, and what the bar is not.
+    private var subscriptionsRemainingAccessibilityHint: String {
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. Unplayed means not played and not archived, over each visible podcast’s stored episodes, not the All Episodes newest-500 cap. Group by tag counts each podcast once. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Inbox remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+        }
+        return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. Unplayed means not played and not archived, over each visible podcast’s stored episodes, not the All Episodes newest-500 cap. Group by tag counts each podcast once. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Inbox remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+    }
+
     private var subscriptionsRemainingSummary: EpisodeRemainingTime.Summary {
         var episodeCount = 0
         var remaining = 0.0
@@ -372,6 +382,7 @@ struct SubscriptionsView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .accessibilityElement(children: .ignore)
                             .accessibilityLabel(subscriptionsRemainingAccessibilityLabel)
+                            .accessibilityHint(subscriptionsRemainingAccessibilityHint)
                     }
                     .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
                 }

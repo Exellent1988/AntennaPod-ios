@@ -21934,6 +21934,40 @@
       },
       "comment": "VoiceOver honesty when Subscriptions search, tag, category, or language filter narrows visible podcasts for the remaining-time sum."
     },
+    "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. Unplayed means not played and not archived, over each visible podcast’s stored episodes, not the All Episodes newest-500 cap. Group by tag counts each podcast once. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Inbox remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. Unplayed means not played and not archived, over each visible podcast’s stored episodes, not the All Episodes newest-500 cap. Group by tag counts each podcast once. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Inbox remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schätzung. Verbleibende Zeit berücksichtigt Tempo ist an, daher wird jede Episode durch die Wiedergabegeschwindigkeit dieses Podcasts geteilt, oder durch die Standardgeschwindigkeit, nie unter 0,5. Das ist nicht die Live-Sitzungsrate und nicht die Lautstärke-Verstärkung. Ungehört heißt nicht gehört und nicht archiviert, über die gespeicherten Episoden jedes sichtbaren Podcasts, nicht den Soft-Cap der neuesten 500 von Alle Episoden. Nach Tag gruppieren zählt jeden Podcast einmal. Unbekannte Dauern bleiben außen vor und es wird keine Zeit erfunden. Die gerade spielende Episode nutzt die Live-Position, der Teiler bleibt aber die Podcast- oder Standardgeschwindigkeit. Das ist nicht die Restzeit des Posteingangs, des Mini-Players oder des Sperrbildschirms. Die Leiste spielt nicht ab, lädt nicht herunter und markiert nichts als gehört."
+          }
+        }
+      }
+    },
+    "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. Unplayed means not played and not archived, over each visible podcast’s stored episodes, not the All Episodes newest-500 cap. Group by tag counts each podcast once. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Inbox remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. Unplayed means not played and not archived, over each visible podcast’s stored episodes, not the All Episodes newest-500 cap. Group by tag counts each podcast once. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Inbox remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wanduhr-Restzeit. Verbleibende Zeit berücksichtigt Tempo ist aus, daher ändert die Wiedergabegeschwindigkeit diese Summe nicht. Ungehört heißt nicht gehört und nicht archiviert, über die gespeicherten Episoden jedes sichtbaren Podcasts, nicht den Soft-Cap der neuesten 500 von Alle Episoden. Nach Tag gruppieren zählt jeden Podcast einmal. Unbekannte Dauern bleiben außen vor und es wird keine Zeit erfunden. Die gerade spielende Episode nutzt die Live-Position. Das ist nicht die Restzeit des Posteingangs, des Mini-Players oder des Sperrbildschirms. Die Leiste spielt nicht ab, lädt nicht herunter und markiert nichts als gehört."
+          }
+        }
+      }
+    },
     "Languages": {
       "extractionState": "manual",
       "localizations": {
