@@ -580,6 +580,43 @@ final class DownloadService: ObservableObject {
         return victims.count
     }
 
+    /// Completed downloads for this feed that are **not** favorited / starred.
+    /// Matches auto-delete-after-playing and Downloads **Delete played** favorite protection
+    /// (`PodcastStore.isFavorite`). Favorited offline files for this feed are never included.
+    /// Full feed catalog membership via `downloads(forFeed:)` — not chip/search filtered.
+    func downloadsEligibleForDelete(forFeed feed: PodcastFeed, store: PodcastStore? = nil) -> [DownloadedEpisode] {
+        let s = store ?? self.store
+        return downloads(forFeed: feed).filter { item in
+            // Same as auto-delete-after-playing / Delete played: keep favorited offline files.
+            s?.isFavorite(item.id) != true
+        }
+    }
+
+    /// Approximate total byte size of files that `deleteEligibleDownloads(forFeed:)` would remove.
+    /// Uses on-disk `fileSize` when readable; missing files contribute 0 (same honesty as Clear all).
+    func downloadsEligibleByteSize(forFeed feed: PodcastFeed, store: PodcastStore? = nil) -> Int64 {
+        var total: Int64 = 0
+        for item in downloadsEligibleForDelete(forFeed: feed, store: store) {
+            let values = try? item.localFileURL.resourceValues(forKeys: [.fileSizeKey])
+            total += Int64(values?.fileSize ?? 0)
+        }
+        return total
+    }
+
+    /// Deletes offline files for this feed’s completed downloads **except favorites**, via the
+    /// single-delete path (`delete(_:)`). Skips favorited / starred episodes like auto-delete /
+    /// Delete played downloads. Does **not** unsubscribe, clear queue / favorites / history /
+    /// archive, mark played/unplayed, or touch other feeds’ downloads. Confirmation is UI
+    /// responsibility. Returns how many completed catalog files were deleted.
+    @discardableResult
+    func deleteEligibleDownloads(forFeed feed: PodcastFeed, store: PodcastStore? = nil) -> Int {
+        let victims = downloadsEligibleForDelete(forFeed: feed, store: store)
+        for item in victims {
+            delete(item.episode)
+        }
+        return victims.count
+    }
+
     /// Recompute folder usage from disk + apply configured limit for the Settings display.
     @discardableResult
     func refreshStorageUsage() -> DownloadStorageUsage {

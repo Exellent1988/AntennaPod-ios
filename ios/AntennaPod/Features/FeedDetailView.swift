@@ -13,6 +13,7 @@ struct FeedDetailView: View {
     @State private var showMarkAllPlayedConfirm = false
     @State private var showMarkAllUnplayedConfirm = false
     @State private var showEnqueueAllConfirm = false
+    @State private var showDeleteDownloadsConfirm = false
     @State private var showUnsubscribeConfirm = false
     @State private var showFeedURLCopied = false
     @State private var showPodcastGuidCopied = false
@@ -301,7 +302,7 @@ struct FeedDetailView: View {
     /// duration known; unplayed with duration contributes full duration; **played** (not current)
     /// → 0; **unknown duration skipped** (tilde when any skipped). Currently playing uses live
     /// `PlaybackService` position/duration. Wall-clock only (no playback-speed divide).
-    /// Distinct from **Download all** / **Mark all as played** / **Mark all as unplayed** / **Add all to queue** full-feed eligibility counts.
+    /// Distinct from **Download all** / **Mark all as played** / **Mark all as unplayed** / **Add all to queue** / **Delete downloads** full-feed eligibility counts.
     private var feedRemainingInfoLabel: String? {
         guard !filteredEpisodes.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: feedRemainingSummary)
@@ -365,6 +366,25 @@ struct FeedDetailView: View {
 
     private var unsubscribeFeedDownloadsSizeLabel: String {
         DownloadStorageUsage.formatBytes(downloads.downloadsByteSize(forFeed: liveFeed))
+    }
+
+    /// Non-favorited completed Downloads for this feed (Feed detail **Delete downloads**).
+    /// Skips favorites like auto-delete-after-playing / Downloads Delete played.
+    /// Full-feed catalog via `downloadsEligibleForDelete(forFeed:)` — not chip/search filtered.
+    private var deleteFeedDownloadsEligible: [DownloadedEpisode] {
+        downloads.downloadsEligibleForDelete(forFeed: liveFeed, store: store)
+    }
+
+    private var deleteFeedDownloadsSizeLabel: String {
+        DownloadStorageUsage.formatBytes(
+            downloads.downloadsEligibleByteSize(forFeed: liveFeed, store: store)
+        )
+    }
+
+    /// Favorited completed downloads for this feed that Delete downloads will **keep**.
+    /// Shown in confirm for honesty when some favorites remain after eligible delete.
+    private var deleteFeedDownloadsSkippedFavoritesCount: Int {
+        max(0, downloads.downloads(forFeed: liveFeed).count - deleteFeedDownloadsEligible.count)
     }
 
     var body: some View {
@@ -728,7 +748,7 @@ struct FeedDetailView: View {
             }
 
             // AntennaPod-like Feed detail info bar (visible sort→status→type→search list remaining time).
-            // Distinct from Download all / Mark all as played / Mark all as unplayed / Add all to queue full-feed eligibility counts.
+            // Distinct from Download all / Mark all as played / Mark all as unplayed / Add all to queue / Delete downloads full-feed eligibility counts.
             if let remainingLabel = feedRemainingInfoLabel {
                 Section {
                     Text(remainingLabel)
@@ -954,6 +974,14 @@ struct FeedDetailView: View {
                         .accessibilityHint(String(localized: "Appends feed episodes not already queued"))
 
                         Button(role: .destructive) {
+                            showDeleteDownloadsConfirm = true
+                        } label: {
+                            Label("Delete downloads", systemImage: "externaldrive.badge.minus")
+                        }
+                        .disabled(deleteFeedDownloadsEligible.isEmpty)
+                        .accessibilityHint(String(localized: "Deletes this podcast’s offline files except favorites; keeps played status, queue, and archive"))
+
+                        Button(role: .destructive) {
                             showUnsubscribeConfirm = true
                         } label: {
                             Label("Unsubscribe", systemImage: "trash")
@@ -1029,6 +1057,26 @@ struct FeedDetailView: View {
             Text(
                 "Appends \(enqueueAllFromFeedCandidatesCount) episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue."
             )
+        }
+        .confirmationDialog(
+            "Delete downloads?",
+            isPresented: $showDeleteDownloadsConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Delete downloads", role: .destructive) {
+                downloads.deleteEligibleDownloads(forFeed: liveFeed, store: store)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            if deleteFeedDownloadsSkippedFavoritesCount > 0 {
+                Text(
+                    "Deletes \(deleteFeedDownloadsEligible.count) offline file(s) for this podcast (\(deleteFeedDownloadsSizeLabel)). Skips \(deleteFeedDownloadsSkippedFavoritesCount) favorited download(s). Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Clear all downloads."
+                )
+            } else {
+                Text(
+                    "Deletes \(deleteFeedDownloadsEligible.count) offline file(s) for this podcast (\(deleteFeedDownloadsSizeLabel)). Skips favorited downloads. Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Clear all downloads."
+                )
+            }
         }
         .confirmationDialog(
             "Unsubscribe?",
