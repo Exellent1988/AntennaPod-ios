@@ -25808,6 +25808,40 @@
           }
         }
       }
+    },
+    "Share current chapter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share current chapter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktuelles Kapitel teilen"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the episode title and current chapter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title and current chapter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit Episodentitel und aktuellem Kapitel"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -46,6 +46,20 @@ enum ChaptersTOCExport {
         return plainLine(for: chapters[index])
     }
 
+    /// System share payload: optional episode title + blank line + current chapter line
+    /// (same body as `currentChapterPlainText`). Empty when no current chapter.
+    static func currentChapterShareText(
+        from chapters: [PodcastChapter],
+        at positionSeconds: Double,
+        episodeTitle: String?
+    ) -> String {
+        guard let body = currentChapterPlainText(from: chapters, at: positionSeconds),
+              !body.isEmpty else { return "" }
+        let title = episodeTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if title.isEmpty { return body }
+        return "\(title)\n\n\(body)"
+    }
+
     /// Start time `m:ss` / `h:mm:ss` — same as chapter list / scrubber formatters.
     private static func formatStart(_ seconds: Double) -> String {
         guard seconds.isFinite, seconds >= 0 else { return "--:--" }

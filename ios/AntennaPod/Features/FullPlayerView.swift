@@ -486,6 +486,18 @@ struct FullPlayerView: View {
                     )
 
                     ShareLink(
+                        item: currentChapterShareText,
+                        subject: Text(chaptersEpisode?.title ?? String(localized: "Chapters"))
+                    ) {
+                        Image(systemName: "quote.bubble")
+                    }
+                    .disabled(!canShareCurrentChapter)
+                    .accessibilityLabel(String(localized: "Share current chapter"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the episode title and current chapter")
+                    )
+
+                    ShareLink(
                         item: chaptersTOCShareText,
                         subject: Text(chaptersEpisode?.title ?? String(localized: "Chapters"))
                     ) {
@@ -591,6 +603,18 @@ struct FullPlayerView: View {
     /// Enabled when `ChapterIndexing` reports a current chapter (nil when empty / before first).
     private var canCopyCurrentChapter: Bool {
         currentChapterPlainForCopy != nil
+    }
+
+    /// Same gate as Copy current chapter — Share only when a current chapter exists.
+    private var canShareCurrentChapter: Bool { canCopyCurrentChapter }
+
+    /// Episode title + one-line current chapter for system share sheet (same body as Copy).
+    private var currentChapterShareText: String {
+        ChaptersTOCExport.currentChapterShareText(
+            from: chapters,
+            at: displayPosition,
+            episodeTitle: (resolvedEpisode ?? episode)?.title
+        )
     }
 
     private func copyChaptersTOC() {

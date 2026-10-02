@@ -5,9 +5,10 @@ import UIKit
 /// current highlight, duration / current remaining when end known (remaining follows
 /// Remaining time respects speed like mini/full −remaining), optional per-chapter
 /// Open link (http(s) href), optional chapters URL.
-/// Toolbar **Copy chapters** + **Copy current chapter** + **Share chapters** export a plain-text
-/// TOC / current chapter line from the **full** already-known chapter array (ignores search
-/// filter) — same honesty as transcript Copy/Share / Copy current cue.
+/// Toolbar **Copy chapters** + **Copy current chapter** + **Share current chapter** +
+/// **Share chapters** export a plain-text TOC / current chapter line from the **full**
+/// already-known chapter array (ignores search filter) — same honesty as transcript
+/// Copy/Share / Copy current cue / Share current cue.
 ///
 /// Already-loaded chapters only — does **not** fetch remote Podcast Index JSON or
 /// media-file tags (same honesty as mini Previous/Next). Full Player still lazy-loads.
@@ -95,6 +96,18 @@ struct EpisodeChaptersSheet: View {
         currentChapterPlainForCopy != nil
     }
 
+    /// Same gate as Copy current chapter — Share only when a current chapter exists.
+    private var canShareCurrentChapter: Bool { canCopyCurrentChapter }
+
+    /// Episode title + one-line current chapter for system share sheet (same body as Copy).
+    private var currentChapterShareText: String {
+        ChaptersTOCExport.currentChapterShareText(
+            from: chapters,
+            at: displayPosition,
+            episodeTitle: episode?.title
+        )
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -153,6 +166,18 @@ struct EpisodeChaptersSheet: View {
                     .accessibilityLabel(String(localized: "Copy current chapter"))
                     .accessibilityHint(
                         String(localized: "Copies the current chapter to the pasteboard")
+                    )
+
+                    ShareLink(
+                        item: currentChapterShareText,
+                        subject: Text(episode?.title ?? String(localized: "Chapters"))
+                    ) {
+                        Image(systemName: "quote.bubble")
+                    }
+                    .disabled(!canShareCurrentChapter)
+                    .accessibilityLabel(String(localized: "Share current chapter"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the episode title and current chapter")
                     )
 
                     ShareLink(
