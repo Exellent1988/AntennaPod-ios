@@ -1082,6 +1082,34 @@ struct FeedDetailView: View {
                         .disabled(!canCopyFeedURL)
                         .accessibilityLabel(String(localized: "Copy feed URL"))
 
+                        if let url = feedURLShareURL {
+                            ShareLink(
+                                item: url,
+                                subject: Text("\(feedDisplayTitle) — Feed URL"),
+                                message: Text("\(feedDisplayTitle) — Feed URL")
+                            ) {
+                                Label("Share feed URL", systemImage: "square.and.arrow.up")
+                            }
+                            .disabled(!canCopyFeedURL)
+                            .accessibilityLabel(String(localized: "Share feed URL"))
+                            .accessibilityHint(
+                                String(localized: "Shares the feed RSS or Atom URL; distinct from the podcast website, funding, and discussion links")
+                            )
+                        } else {
+                            ShareLink(
+                                item: feedURLShareString,
+                                subject: Text("\(feedDisplayTitle) — Feed URL"),
+                                message: Text("\(feedDisplayTitle) — Feed URL")
+                            ) {
+                                Label("Share feed URL", systemImage: "square.and.arrow.up")
+                            }
+                            .disabled(!canCopyFeedURL)
+                            .accessibilityLabel(String(localized: "Share feed URL"))
+                            .accessibilityHint(
+                                String(localized: "Shares the raw feed URL; distinct from the podcast website, funding, and discussion links")
+                            )
+                        }
+
                         if displayPodcastGuid != nil {
                             Button {
                                 copyPodcastGuid()
@@ -1394,6 +1422,18 @@ struct FeedDetailView: View {
         let trimmed = liveFeed.feedUrl.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return false }
         return !LocalFolderFeed.isLocalFolderFeed(liveFeed)
+    }
+
+    private var feedURLShareString: String {
+        liveFeed.feedUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// Share as a URL only for parseable HTTP(S); preserve other feed strings as raw text.
+    private var feedURLShareURL: URL? {
+        guard canCopyFeedURL, let url = URL(string: feedURLShareString) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "http" || scheme == "https" else { return nil }
+        return url
     }
 
     private func copyFeedURL() {

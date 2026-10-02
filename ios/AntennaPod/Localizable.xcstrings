@@ -7485,6 +7485,60 @@
         }
       }
     },
+    "Share feed URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share feed URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-URL teilen"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯: share the trimmed feed RSS/Atom URL. Disabled for local-folder feeds."
+    },
+    "Shares the feed RSS or Atom URL; distinct from the podcast website, funding, and discussion links": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the feed RSS or Atom URL; distinct from the podcast website, funding, and discussion links"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die RSS- oder Atom-URL des Feeds; unterscheidet sich von Podcast-Website, Funding- und Diskussionslinks"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share feed URL when the trimmed feedUrl parses as http(s)."
+    },
+    "Shares the raw feed URL; distinct from the podcast website, funding, and discussion links": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the raw feed URL; distinct from the podcast website, funding, and discussion links"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die rohe Feed-URL; unterscheidet sich von Podcast-Website, Funding- und Diskussionslinks"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share feed URL when the trimmed feedUrl is not an http(s) URL."
+    },
     "Copied": {
       "extractionState": "manual",
       "localizations": {
