@@ -157,7 +157,7 @@ struct PodcastSocialInteractListView: View {
                             copyFeedbackTick += 1
                             showCopiedAlert = true
                         } label: {
-                            Label("Copy", systemImage: "doc.on.doc")
+                            Label("Copy discuss URL", systemImage: "doc.on.doc")
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Copy discuss URL"))
@@ -166,7 +166,7 @@ struct PodcastSocialInteractListView: View {
                         )
 
                         ShareLink(item: url) {
-                            Label("Share", systemImage: "square.and.arrow.up")
+                            Label("Share discuss URL", systemImage: "square.and.arrow.up")
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Share discuss URL"))
