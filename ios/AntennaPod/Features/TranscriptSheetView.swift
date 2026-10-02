@@ -8,6 +8,8 @@ import UIKit
 /// Toolbar **Copy current cue** copies the cue at `playback.positionSeconds` (same
 /// `TranscriptCueIndexing` as highlight / auto-scroll) as one line `m:ss`/`h:mm:ss` +
 /// optional `Speaker: ` + text — from the **full** loaded array (ignores search filter).
+/// Toolbar **Share current cue** shares that same one-line cue via the system share sheet
+/// (`ShareLink`; episode title + cue line when title available) — same disable gate as Copy.
 /// Toolbar **Share transcript** offers the same full loaded plain text (episode title + body)
 /// via the system share sheet (`ShareLink`) — no fake social / no extra fetch.
 /// Does not fetch or generate transcripts; feed URL only — no STT.
@@ -85,6 +87,18 @@ struct TranscriptSheetView: View {
         currentCuePlainForCopy != nil
     }
 
+    /// Same gate as Copy current cue — Share only when a current timed cue exists.
+    private var canShareCurrentCue: Bool { canCopyCurrentCue }
+
+    /// System share sheet payload: episode title + one-line current cue (same format as Copy),
+    /// or the cue line alone when the episode title is empty.
+    private var currentCueShareText: String {
+        guard let line = currentCuePlainForCopy, !line.isEmpty else { return "" }
+        let title = episode.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        if title.isEmpty { return line }
+        return "\(title)\n\n\(line)"
+    }
+
     /// Visible cues after light-debounced case-insensitive filter on cue text (+ speaker when set).
     private var filteredCues: [TranscriptCue] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -152,6 +166,18 @@ struct TranscriptSheetView: View {
                     .accessibilityLabel(String(localized: "Copy current cue"))
                     .accessibilityHint(
                         String(localized: "Copies the current transcript cue to the pasteboard")
+                    )
+
+                    ShareLink(
+                        item: currentCueShareText,
+                        subject: Text(episode.title)
+                    ) {
+                        Image(systemName: "quote.bubble")
+                    }
+                    .disabled(!canShareCurrentCue)
+                    .accessibilityLabel(String(localized: "Share current cue"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the episode title and current transcript cue")
                     )
 
                     ShareLink(

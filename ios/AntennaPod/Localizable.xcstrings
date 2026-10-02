@@ -25723,6 +25723,40 @@
           }
         }
       }
+    },
+    "Share current cue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share current cue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktuelle Textstelle teilen"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the episode title and current transcript cue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title and current transcript cue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit Episodentitel und aktueller Transkript-Textstelle"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
