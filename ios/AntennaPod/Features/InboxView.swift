@@ -13,10 +13,13 @@ struct InboxView: View {
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
-    /// Full Inbox catalog ordered by `AppSettings.inboxSort` (`pubDateEpochMs`).
-    /// Missing dates sort last in both modes; stable tiebreaker is episode `id`
-    /// (no `dateAdded` on `PodcastEpisode`). Does not mutate `PodcastStore.inboxEpisodes`
-    /// (Home New preview stays newest-first). Used for bulk Mark all / Archive all counts.
+    /// Full Inbox catalog ordered by `AppSettings.inboxSort`.
+    /// Date modes: `pubDateEpochMs` (missing last). Duration modes: known duration via
+    /// `EpisodeRemainingTime.knownDurationSeconds` (feed when known, else saved playback —
+    /// same path as Queue / Feed / All Episodes; never invent; unknown last).
+    /// Stable tiebreaker is episode `id` (no `dateAdded` on `PodcastEpisode`).
+    /// Does not mutate `PodcastStore.inboxEpisodes` (Home New preview stays newest-first).
+    /// Used for bulk Mark all / Archive all counts.
     private var sortedItems: [InboxEpisode] {
         store.inboxEpisodes.sorted { lhs, rhs in
             switch settings.inboxSort {
@@ -30,8 +33,34 @@ struct InboxView: View {
                 let r = rhs.episode.pubDateEpochMs ?? Int64.max
                 if l != r { return l < r }
                 return lhs.episode.id < rhs.episode.id
+            case .shortestFirst, .longestFirst:
+                let shortestFirst = settings.inboxSort == .shortestFirst
+                switch (
+                    knownDurationSecondsForInboxSort(lhs.episode),
+                    knownDurationSecondsForInboxSort(rhs.episode)
+                ) {
+                case let (l?, r?):
+                    if l != r {
+                        return shortestFirst ? (l < r) : (l > r)
+                    }
+                    return lhs.episode.id < rhs.episode.id
+                case (_?, nil):
+                    return true // known before unknown
+                case (nil, _?):
+                    return false
+                case (nil, nil):
+                    return lhs.episode.id < rhs.episode.id
+                }
             }
         }
+    }
+
+    /// Feed duration when known; else saved playback duration. Never invents a length.
+    private func knownDurationSecondsForInboxSort(_ episode: PodcastEpisode) -> Double? {
+        EpisodeRemainingTime.knownDurationSeconds(
+            for: episode,
+            savedDurationSeconds: store.playbackState(for: episode.id).durationSeconds
+        )
     }
 
     /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
@@ -266,6 +295,7 @@ struct InboxView: View {
                         Label("Sort", systemImage: "arrow.up.arrow.down")
                     }
                     .accessibilityLabel(String(localized: "Sort inbox"))
+                    .accessibilityHint(String(localized: "Orders the Inbox list. Shortest and Longest use known duration; unknown last. Home New preview stays newest-first."))
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Menu {

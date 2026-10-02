@@ -399,9 +399,15 @@ enum FeedEpisodeFilter: String, CaseIterable, Identifiable {
 }
 
 /// How the Inbox tab orders episodes (client-side; Home New preview stays newest-first).
+/// Newest / Oldest by `pubDateEpochMs`; Shortest / Longest by known duration (feed when known,
+/// else saved playback — same path as Queue / Feed / All Episodes; unknown last; id tiebreak).
 enum InboxSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
+    /// Ascending known duration; unknown last; id tiebreak.
+    case shortestFirst
+    /// Descending known duration; unknown last; id tiebreak.
+    case longestFirst
 
     var id: String { rawValue }
 
@@ -409,6 +415,8 @@ enum InboxSort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return String(localized: "Newest first")
         case .oldestFirst: return String(localized: "Oldest first")
+        case .shortestFirst: return String(localized: "Shortest first")
+        case .longestFirst: return String(localized: "Longest first")
         }
     }
 
@@ -416,6 +424,8 @@ enum InboxSort: String, CaseIterable, Identifiable {
         switch self {
         case .newestFirst: return "arrow.down"
         case .oldestFirst: return "arrow.up"
+        case .shortestFirst: return "timer"
+        case .longestFirst: return "timer"
         }
     }
 }
@@ -1576,9 +1586,11 @@ final class AppSettings: ObservableObject {
     }
 
 
-    /// Inbox tab episode list order by `pubDateEpochMs`: newest first (default) or oldest first.
-    /// Missing dates sort last; stable tiebreaker is episode `id` (no `dateAdded` on the model).
-    /// Does not change Home New preview (always newest-first from `PodcastStore.inboxEpisodes`); All Episodes uses `allEpisodesSort`.
+    /// Inbox tab episode list order: newest/oldest by `pubDateEpochMs` (default newest), or
+    /// shortest/longest by known duration (feed when known, else saved playback — same path as Queue;
+    /// unknown last; never invent). Missing dates / unknown durations sort last; stable tiebreaker
+    /// episode `id` (no `dateAdded` on the model). Does not change Home New preview (always
+    /// newest-first from `PodcastStore.inboxEpisodes`); All Episodes uses `allEpisodesSort`.
     @Published var inboxSort: InboxSort {
         didSet {
             UserDefaults.standard.set(inboxSort.rawValue, forKey: Keys.inboxSort)

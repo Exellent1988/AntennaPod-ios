@@ -22884,6 +22884,23 @@
           }
         }
       }
+    },
+    "Orders the Inbox list. Shortest and Longest use known duration; unknown last. Home New preview stays newest-first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the Inbox list. Shortest and Longest use known duration; unknown last. Home New preview stays newest-first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Posteingangs-Liste. Kürzeste und Längste nutzen bekannte Dauer; unbekannte zuletzt. Home-Neu-Vorschau bleibt neueste zuerst."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
