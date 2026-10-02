@@ -214,7 +214,7 @@ struct PodcastPeopleListView: View {
                         copyFeedbackTick += 1
                         showCopiedAlert = true
                     } label: {
-                        Label("Copy", systemImage: "doc.on.doc")
+                        Label("Copy person link", systemImage: "doc.on.doc")
                             .font(.subheadline)
                     }
                     .accessibilityLabel(String(localized: "Copy person link"))
@@ -225,12 +225,12 @@ struct PodcastPeopleListView: View {
                     Group {
                         if let url {
                             ShareLink(item: url) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Share person link", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         } else {
                             ShareLink(item: copyText) {
-                                Label("Share", systemImage: "square.and.arrow.up")
+                                Label("Share person link", systemImage: "square.and.arrow.up")
                                     .font(.subheadline)
                             }
                         }
