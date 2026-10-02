@@ -27,6 +27,62 @@ enum AppTheme: String, CaseIterable, Identifiable {
     }
 }
 
+/// Optional accent tint — system named SwiftUI colors only (no custom assets / Android themes).
+enum AppAccentColor: String, CaseIterable, Identifiable {
+    case system
+    case blue
+    case purple
+    case pink
+    case red
+    case orange
+    case yellow
+    case green
+    case mint
+    case teal
+    case cyan
+    case indigo
+    case brown
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .system: return String(localized: "System")
+        case .blue: return String(localized: "Blue")
+        case .purple: return String(localized: "Purple")
+        case .pink: return String(localized: "Pink")
+        case .red: return String(localized: "Red")
+        case .orange: return String(localized: "Orange")
+        case .yellow: return String(localized: "Yellow")
+        case .green: return String(localized: "Green")
+        case .mint: return String(localized: "Mint")
+        case .teal: return String(localized: "Teal")
+        case .cyan: return String(localized: "Cyan")
+        case .indigo: return String(localized: "Indigo")
+        case .brown: return String(localized: "Brown")
+        }
+    }
+
+    /// `nil` keeps the default app / iOS accent (no override).
+    var tintColor: Color? {
+        switch self {
+        case .system: return nil
+        case .blue: return .blue
+        case .purple: return .purple
+        case .pink: return .pink
+        case .red: return .red
+        case .orange: return .orange
+        case .yellow: return .yellow
+        case .green: return .green
+        case .mint: return .mint
+        case .teal: return .teal
+        case .cyan: return .cyan
+        case .indigo: return .indigo
+        case .brown: return .brown
+        }
+    }
+}
+
 /// Max size of Documents/downloads (P0 Speicherverwaltung).
 /// Byte budget (MB/GB). Episode *count* cache is `DownloadEpisodeCacheLimit` (Android-like).
 enum DownloadStorageLimit: Equatable, Hashable, Identifiable {
@@ -799,7 +855,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -847,6 +903,7 @@ final class AppSettings: ObservableObject {
 
     private enum Keys {
         static let theme = "settings.theme"
+        static let accentColor = "settings.accentColor"
         static let defaultPlaybackSpeed = "settings.defaultPlaybackSpeed"
         static let storageLimitKind = "settings.storageLimit.kind"
         static let storageLimitValue = "settings.storageLimit.value"
@@ -918,6 +975,13 @@ final class AppSettings: ObservableObject {
     @Published var theme: AppTheme {
         didSet {
             UserDefaults.standard.set(theme.rawValue, forKey: Keys.theme)
+        }
+    }
+
+    /// Optional accent tint (system named colors). Default `.system` = no override.
+    @Published var accentColor: AppAccentColor {
+        didSet {
+            UserDefaults.standard.set(accentColor.rawValue, forKey: Keys.accentColor)
         }
     }
 
@@ -1465,6 +1529,8 @@ final class AppSettings: ObservableObject {
     init() {
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
+        let accentRaw = UserDefaults.standard.string(forKey: Keys.accentColor) ?? AppAccentColor.system.rawValue
+        accentColor = AppAccentColor(rawValue: accentRaw) ?? .system
         if UserDefaults.standard.object(forKey: Keys.defaultPlaybackSpeed) != nil {
             let stored = UserDefaults.standard.float(forKey: Keys.defaultPlaybackSpeed)
             // Presets or Custom… (0.5–3.0); out-of-range → 1.0.
@@ -1912,6 +1978,7 @@ final class AppSettings: ObservableObject {
         }
         return AppSettingsBackupSnapshot(
             theme: theme.rawValue,
+            accentColor: accentColor.rawValue,
             defaultPlaybackSpeed: defaultPlaybackSpeed,
             storageLimitKind: storageKind,
             storageLimitValue: storageValue,
@@ -1978,6 +2045,9 @@ final class AppSettings: ObservableObject {
     /// Apply prefs from an iOS JSON backup (writes through didSet → UserDefaults).
     func applyBackupSnapshot(_ snap: AppSettingsBackupSnapshot) {
         theme = AppTheme(rawValue: snap.theme) ?? .system
+        if let accentRaw = snap.accentColor {
+            accentColor = AppAccentColor(rawValue: accentRaw) ?? .system
+        }
         let snapSpeed = snap.defaultPlaybackSpeed
         if AppSettings.speedPresets.contains(snapSpeed) {
             defaultPlaybackSpeed = snapSpeed
@@ -2137,6 +2207,8 @@ final class AppSettings: ObservableObject {
 /// Codable prefs blob inside `app-settings.json` backup entry.
 struct AppSettingsBackupSnapshot: Codable, Equatable {
     var theme: String
+    /// Absent in older backups → System (no tint override).
+    var accentColor: String? = nil
     var defaultPlaybackSpeed: Float
     var storageLimitKind: String
     var storageLimitValue: Int?

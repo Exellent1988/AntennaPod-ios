@@ -290,7 +290,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 |----|----|
 | ☐ Parental PIN setzen / Unlock / Disable | ☐ Parental PIN set / unlock / disable |
 | ☐ Lock Add/Discover (+ optional Network) | ☐ Lock Add/Discover (+ optional Network) |
-| ☐ Appearance Theme System/Hell/Dunkel (`preferredColorScheme`; Backup) | ☐ Appearance Theme System/Light/Dark (`preferredColorScheme`; backup) |
+| ☐ Appearance Theme System/Hell/Dunkel + optional Akzent (Systemfarben; `preferredColorScheme` + `.tint`; Backup) | ☐ Appearance Theme System/Light/Dark + optional Accent (system named colors; `preferredColorScheme` + `.tint`; backup) |
 | ☐ Settings: Suche (Titel / Fußnoten; leere Abschnitte aus; NavigationLinks bleiben) | ☐ Settings: search (titles / footnotes; empty sections hide; NavigationLinks stay) |
 | ☐ Home-Layout: Suche (Abschnitts-Label; Debounce; leer bei keinen Treffern; nur vorhandene Labels; Toggle bleibt; kein Drag-Reorder während Filter; Reset = volles Layout) | ☐ Home layout search (section label; debounce; empty when no matches; existing labels only; toggle stays; no drag reorder while filtering; Reset = full layout) |
 | ☐ Notify new episodes (default aus; lokal; ein Banner; kein Push) | ☐ Notify new episodes (default off; local; one banner; no push) |
@@ -307,6 +307,9 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 ---
 
 ## Nicht erwartet / Not expected (honest)
+
+- Appearance Accent (beta polish): optional `.tint` from **system named** SwiftUI colors only (Blue/Purple/…); System = no override (app accent). **No** custom assets, color pickers, or Android theme packs. Theme System/Light/Dark unchanged via `preferredColorScheme`. EN/DE + VoiceOver.
+  Appearance Accent (beta polish): optional `.tint` from **system named** SwiftUI colors only (Blue/Purple/…); System = no override (app accent). **No** custom assets, color pickers, or Android theme packs. Theme System/Light/Dark unchanged via `preferredColorScheme`. EN/DE + VoiceOver.
 
 - **Kein** eigenes CarPlay-UI (`CPTemplate`) ohne Apple-Entitlement.  
   **No** custom CarPlay templates without Apple entitlement.

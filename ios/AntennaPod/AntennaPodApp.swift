@@ -58,6 +58,7 @@ struct AntennaPodApp: App {
                 .environmentObject(gpodder)
                 .environmentObject(parental)
                 .preferredColorScheme(settings.theme.colorScheme)
+                .modifier(OptionalAccentTint(tint: settings.accentColor.tintColor))
                 .onOpenURL { url in
                     _ = PlaybackDeepLinkRouter.shared.handle(url: url)
                 }
@@ -65,6 +66,20 @@ struct AntennaPodApp: App {
                     // Re-attach in case a cold-start intent queued before init finished wiring.
                     PlaybackDeepLinkRouter.shared.attach(playback: playback)
                 }
+        }
+    }
+}
+
+
+/// Applies `.tint` only when Settings chose a named accent (System = no override).
+private struct OptionalAccentTint: ViewModifier {
+    let tint: Color?
+
+    func body(content: Content) -> some View {
+        if let tint {
+            content.tint(tint)
+        } else {
+            content
         }
     }
 }

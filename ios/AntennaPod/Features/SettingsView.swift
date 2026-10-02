@@ -478,7 +478,9 @@ struct SettingsView: View {
         matchesSearch(
             "Appearance",
             "Theme",
-            "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."
+            "Accent",
+            "System follows the iOS appearance. Light and Dark force light or dark mode.",
+            "Optional tint for buttons and highlights. System named SwiftUI colors only — no custom assets or Android themes. Default follows the app accent."
         )
     }
 
@@ -643,7 +645,7 @@ struct SettingsView: View {
             if matchesSearch(
                 "Appearance",
                 "Theme",
-                "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."
+                "System follows the iOS appearance. Light and Dark force light or dark mode."
             ) {
                 Picker(String(localized: "Theme"), selection: $settings.theme) {
                     ForEach(AppTheme.allCases) { theme in
@@ -652,11 +654,29 @@ struct SettingsView: View {
                 }
                 .accessibilityLabel(String(localized: "Theme"))
                 .accessibilityValue(settings.theme.label)
-                .accessibilityHint(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
-                Text(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
+                .accessibilityHint(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode."))
+                Text(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                    .accessibilityLabel(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. No custom accent colors."))
+                    .accessibilityLabel(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode."))
+            }
+            if matchesSearch(
+                "Appearance",
+                "Accent",
+                "Optional tint for buttons and highlights. System named SwiftUI colors only — no custom assets or Android themes. Default follows the app accent."
+            ) {
+                Picker(String(localized: "Accent"), selection: $settings.accentColor) {
+                    ForEach(AppAccentColor.allCases) { accent in
+                        Text(accent.label).tag(accent)
+                    }
+                }
+                .accessibilityLabel(String(localized: "Accent"))
+                .accessibilityValue(settings.accentColor.label)
+                .accessibilityHint(String(localized: "Optional tint for buttons and highlights. System named SwiftUI colors only — no custom assets or Android themes. Default follows the app accent."))
+                Text(String(localized: "Optional tint for buttons and highlights. System named SwiftUI colors only — no custom assets or Android themes. Default follows the app accent."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel(String(localized: "Optional tint for buttons and highlights. System named SwiftUI colors only — no custom assets or Android themes. Default follows the app accent."))
             }
         }
     }
