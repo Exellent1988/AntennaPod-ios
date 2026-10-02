@@ -19,6 +19,7 @@ struct FeedDetailView: View {
     @State private var showUnsubscribeConfirm = false
     @State private var showFeedURLCopied = false
     @State private var showFundingURLCopied = false
+    @State private var showFundingLabelCopied = false
     @State private var showPodcastWebsiteURLCopied = false
     @State private var showPodcastGuidCopied = false
     @State private var showPodcastTitleCopied = false
@@ -44,6 +45,7 @@ struct FeedDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var copyFeedURLFeedbackTick = 0
     @State private var copyFundingURLFeedbackTick = 0
+    @State private var copyFundingLabelFeedbackTick = 0
     @State private var copyPodcastWebsiteURLFeedbackTick = 0
     @State private var copyPodcastGuidFeedbackTick = 0
     @State private var copyPodcastTitleFeedbackTick = 0
@@ -1271,6 +1273,29 @@ struct FeedDetailView: View {
                             .accessibilityHint(
                                 String(localized: "Shares the feed-provided funding/support page URL; does not process payments")
                             )
+
+                            if let label = liveFeed.displayFundingLabel {
+                                Button {
+                                    copyFundingLabel(label)
+                                } label: {
+                                    Label("Copy funding label", systemImage: "doc.on.doc")
+                                }
+                                .accessibilityLabel(String(localized: "Copy funding label"))
+                                .accessibilityHint(
+                                    String(localized: "Copies the exact feed-provided funding label shown in the Support action to the pasteboard; does not process payments")
+                                )
+
+                                ShareLink(
+                                    item: label,
+                                    subject: Text(feedDisplayTitle)
+                                ) {
+                                    Label("Share funding label", systemImage: "square.and.arrow.up")
+                                }
+                                .accessibilityLabel(String(localized: "Share funding label"))
+                                .accessibilityHint(
+                                    String(localized: "Shares the exact feed-provided funding label shown in the Support action as plain text; does not process payments")
+                                )
+                            }
                         }
 
                         if let interact = liveFeed.preferredSocialInteract,
@@ -1681,6 +1706,14 @@ struct FeedDetailView: View {
         }
         .alert(
             String(localized: "Copied"),
+            isPresented: $showFundingLabelCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Funding label copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
             isPresented: $showPodcastWebsiteURLCopied
         ) {
             Button("OK", role: .cancel) {}
@@ -1841,6 +1874,7 @@ struct FeedDetailView: View {
         }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyFundingLabelFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastGuidFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastTitleFeedbackTick)
@@ -1928,6 +1962,14 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = url.absoluteString
         copyFundingURLFeedbackTick += 1
         showFundingURLCopied = true
+    }
+
+    private func copyFundingLabel(_ label: String) {
+        let trimmed = label.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        UIPasteboard.general.string = trimmed
+        copyFundingLabelFeedbackTick += 1
+        showFundingLabelCopied = true
     }
 
     private func copyPodcastWebsiteURL(_ url: URL) {

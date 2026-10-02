@@ -15083,6 +15083,96 @@
       },
       "comment": "Alert message after copying the feed-provided funding URL."
     },
+    "Copy funding label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy funding label"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finanzierungslabel kopieren"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯: copy the exact non-empty feed-provided funding label shown in the Support action. Hidden when the feed provides no label."
+    },
+    "Share funding label": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share funding label"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finanzierungslabel teilen"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯: share the exact non-empty feed-provided funding label as plain text. Hidden when the feed provides no label."
+    },
+    "Copies the exact feed-provided funding label shown in the Support action to the pasteboard; does not process payments": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact feed-provided funding label shown in the Support action to the pasteboard; does not process payments"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert das exakte vom Feed bereitgestellte Finanzierungslabel aus der Support-Aktion in die Zwischenablage; verarbeitet keine Zahlungen"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy funding label. Display/copy only; no payment processing."
+    },
+    "Shares the exact feed-provided funding label shown in the Support action as plain text; does not process payments": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact feed-provided funding label shown in the Support action as plain text; does not process payments"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt das exakte vom Feed bereitgestellte Finanzierungslabel aus der Support-Aktion als reinen Text; verarbeitet keine Zahlungen"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share funding label. Display/share only; no payment processing."
+    },
+    "Funding label copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funding label copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finanzierungslabel in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Alert message after copying the exact feed-provided funding label."
+    },
     "Category %@": {
       "extractionState": "manual",
       "comment": "VoiceOver for a single itunes:category text attribute from the feed. Feed text only — never invent taxonomy.",
