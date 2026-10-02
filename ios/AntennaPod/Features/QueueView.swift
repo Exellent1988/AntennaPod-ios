@@ -93,21 +93,26 @@ struct QueueView: View {
         playedInFullQueueCount > 0
     }
 
-    /// Queued episodes with playable media (local file via `DownloadService.localURL` —
-    /// downloads + local-folder `file://` — or streamable http(s) `downloadUrl`).
-    /// Full persisted queue — **not** played-chip / podcast-chip / searchable filtered.
+    /// Queued episodes with playable media via shared `EpisodePlayRandom` (local file via
+    /// `DownloadService.localURL` — downloads + local-folder `file://` — or streamable http(s)
+    /// `downloadUrl`). Full persisted queue — **not** played-chip / podcast-chip / searchable filtered.
     /// Distinct from Shuffle (reorder) / Clear / Remove played / remaining-time visible counts.
     /// Queue lock does **not** gate Play random (not a reorder).
     private var playRandomEligibleEpisodes: [PodcastEpisode] {
-        store.queue.filter { episodeHasPlayableMedia($0) }
+        EpisodePlayRandom.eligible(
+            from: store.queue,
+            localURL: { downloads.localURL(for: $0) }
+        )
     }
 
     /// Prefer unplayed among `playRandomEligibleEpisodes` when any remain; otherwise all eligible
     /// (played allowed when every eligible queued episode is played, or none unplayed eligible).
     private var playRandomCandidates: [PodcastEpisode] {
-        let eligible = playRandomEligibleEpisodes
-        let unplayed = eligible.filter { !store.isPlayed($0.id) }
-        return unplayed.isEmpty ? eligible : unplayed
+        EpisodePlayRandom.candidates(
+            from: playRandomEligibleEpisodes,
+            preferUnplayed: true,
+            isPlayed: { store.isPlayed($0) }
+        )
     }
 
     /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
@@ -761,22 +766,16 @@ struct QueueView: View {
         }
     }
 
-    /// Local download / local-folder file, or streamable http(s) enclosure — same honesty as
-    /// Feed detail / Favorites Play random / `PlaybackService.resolvePlaybackURL` inputs (Wi‑Fi stream gate still applies at play time).
-    private func episodeHasPlayableMedia(_ episode: PodcastEpisode) -> Bool {
-        if downloads.localURL(for: episode) != nil { return true }
-        guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !raw.isEmpty,
-              let url = URL(string: raw) else { return false }
-        let scheme = url.scheme?.lowercased()
-        return scheme == "http" || scheme == "https"
-    }
-
-    /// Uniform pick among `playRandomCandidates`; starts via `PlaybackService.play` (resume rules unchanged).
+    /// Uniform pick via shared `EpisodePlayRandom.pick` among eligible (prefer unplayed);
+    /// starts via `PlaybackService.play` (resume rules unchanged).
     /// No confirm; does not reshuffle or otherwise mutate queue order beyond what `play` already does.
     /// Distinct from toolbar Shuffle / Shuffle (keep playing first).
     private func playRandomEpisode() {
-        guard let episode = playRandomCandidates.randomElement() else { return }
+        guard let episode = EpisodePlayRandom.pick(
+            from: playRandomEligibleEpisodes,
+            preferUnplayed: true,
+            isPlayed: { store.isPlayed($0) }
+        ) else { return }
         _ = playback.play(episode: episode)
     }
 

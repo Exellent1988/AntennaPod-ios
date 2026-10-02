@@ -189,21 +189,26 @@ struct InboxView: View {
         store.inboxEpisodes.filter { !store.isInQueue($0.episode.id) }.count
     }
 
-    /// Inbox episodes with playable media (local file via `DownloadService.localURL` —
-    /// downloads + local-folder `file://` — or streamable http(s) `downloadUrl`).
-    /// Full Inbox catalog — **not** podcast-chip, episode-type, or library-search filtered.
+    /// Inbox episodes with playable media via shared `EpisodePlayRandom` (local file via
+    /// `DownloadService.localURL` — downloads + local-folder `file://` — or streamable http(s)
+    /// `downloadUrl`). Full Inbox catalog — **not** podcast-chip, episode-type, or library-search filtered.
     /// Distinct from Mark all / Add all to queue / Archive all / remaining-time visible counts.
     private var playRandomEligibleEpisodes: [PodcastEpisode] {
-        store.inboxEpisodes.map(\.episode).filter { episodeHasPlayableMedia($0) }
+        EpisodePlayRandom.eligible(
+            from: store.inboxEpisodes.map(\.episode),
+            localURL: { downloads.localURL(for: $0) }
+        )
     }
 
     /// Prefer unplayed among `playRandomEligibleEpisodes` when any remain; otherwise all eligible.
     /// Inbox is already unplayed-only (`!isPlayed` && not archived), so prefer-unplayed is a no-op
-    /// in practice — same helper pattern as History / Favorites / Feed / Queue / Downloads.
+    /// in practice — same shared `EpisodePlayRandom` as History / Favorites / Feed / Queue / Downloads.
     private var playRandomCandidates: [PodcastEpisode] {
-        let eligible = playRandomEligibleEpisodes
-        let unplayed = eligible.filter { !store.isPlayed($0.id) }
-        return unplayed.isEmpty ? eligible : unplayed
+        EpisodePlayRandom.candidates(
+            from: playRandomEligibleEpisodes,
+            preferUnplayed: true,
+            isPlayed: { store.isPlayed($0) }
+        )
     }
 
     /// Visible Inbox rows for remaining-time: podcast+type-filtered sorted list when **not** in
@@ -487,21 +492,15 @@ struct InboxView: View {
         }
     }
 
-    /// Local download / local-folder file, or streamable http(s) enclosure — same honesty as
-    /// History / Favorites / Feed detail Play random / `PlaybackService.resolvePlaybackURL` inputs (Wi‑Fi stream gate still applies at play time).
-    private func episodeHasPlayableMedia(_ episode: PodcastEpisode) -> Bool {
-        if downloads.localURL(for: episode) != nil { return true }
-        guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !raw.isEmpty,
-              let url = URL(string: raw) else { return false }
-        let scheme = url.scheme?.lowercased()
-        return scheme == "http" || scheme == "https"
-    }
-
-    /// Uniform pick among `playRandomCandidates`; starts via `PlaybackService.play` (resume rules unchanged).
+    /// Uniform pick via shared `EpisodePlayRandom.pick` among eligible (prefer unplayed);
+    /// starts via `PlaybackService.play` (resume rules unchanged).
     /// No confirm; does not reorder Inbox or invent queue mutations beyond what `play` already does.
     private func playRandomEpisode() {
-        guard let episode = playRandomCandidates.randomElement() else { return }
+        guard let episode = EpisodePlayRandom.pick(
+            from: playRandomEligibleEpisodes,
+            preferUnplayed: true,
+            isPlayed: { store.isPlayed($0) }
+        ) else { return }
         _ = playback.play(episode: episode)
     }
 

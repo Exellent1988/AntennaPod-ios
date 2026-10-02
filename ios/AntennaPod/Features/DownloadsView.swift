@@ -187,23 +187,26 @@ struct DownloadsView: View {
         downloads.downloads.filter { !store.isInQueue($0.episode.id) }.count
     }
 
-    /// Completed Downloads catalog rows with a local playable file on disk
-    /// (`DownloadService.localURL` — completed offline file under Documents/downloads).
+    /// Completed Downloads catalog rows with a local playable file on disk via shared
+    /// `EpisodePlayRandom` (`.localFileOnly` — `DownloadService.localURL` under Documents/downloads).
     /// Full catalog — **not** played-chip / podcast-chip / searchable filtered.
     /// Distinct from Add all to queue / Delete played / Clear all / remaining-time visible counts.
     private var playRandomEligibleEpisodes: [PodcastEpisode] {
-        downloads.downloads.compactMap { item in
-            guard downloads.localURL(for: item.episode) != nil else { return nil }
-            return item.episode
-        }
+        EpisodePlayRandom.eligible(
+            from: downloads.downloads.map(\.episode),
+            localURL: { downloads.localURL(for: $0) },
+            requirement: .localFileOnly
+        )
     }
 
     /// Prefer unplayed among `playRandomEligibleEpisodes` when any remain; otherwise all eligible
     /// (played allowed when every eligible completed download is played, or none unplayed eligible).
     private var playRandomCandidates: [PodcastEpisode] {
-        let eligible = playRandomEligibleEpisodes
-        let unplayed = eligible.filter { !store.isPlayed($0.id) }
-        return unplayed.isEmpty ? eligible : unplayed
+        EpisodePlayRandom.candidates(
+            from: playRandomEligibleEpisodes,
+            preferUnplayed: true,
+            isPlayed: { store.isPlayed($0) }
+        )
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** filtered list.
@@ -601,11 +604,16 @@ struct DownloadsView: View {
         return parts.joined(separator: ", ")
     }
 
-    /// Uniform pick among `playRandomCandidates`; starts via `PlaybackService.play` with local
-    /// file path preferred (`fileURL` from `DownloadService.localURL`). Resume rules unchanged.
+    /// Uniform pick via shared `EpisodePlayRandom.pick` among eligible (prefer unplayed);
+    /// starts via `PlaybackService.play` with local file path preferred (`fileURL` from
+    /// `DownloadService.localURL`). Resume rules unchanged.
     /// No confirm; does not invent queue mutations beyond what `play` already does.
     private func playRandomEpisode() {
-        guard let episode = playRandomCandidates.randomElement() else { return }
+        guard let episode = EpisodePlayRandom.pick(
+            from: playRandomEligibleEpisodes,
+            preferUnplayed: true,
+            isPlayed: { store.isPlayed($0) }
+        ) else { return }
         let fileURL = downloads.localURL(for: episode)
         _ = playback.play(episode: episode, fileURL: fileURL)
     }

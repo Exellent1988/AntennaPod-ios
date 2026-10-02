@@ -23,21 +23,27 @@ struct AllEpisodesView: View {
         catalogItems.filter { !store.isInQueue($0.episode.id) }.count
     }
 
-    /// Soft-capped All Episodes catalog episodes with playable media (local file via
-    /// `DownloadService.localURL` — downloads + local-folder `file://` — or streamable http(s)
-    /// `downloadUrl`). Same newest-500 set as Add all (`store.allEpisodes`) — **not**
-    /// status/podcast/type/search filtered. **Soft-cap honesty:** never invents eligibility
-    /// beyond the capped catalog. Distinct from Add all / remaining-time visible counts.
+    /// Soft-capped All Episodes catalog episodes with playable media via shared
+    /// `EpisodePlayRandom` (local file via `DownloadService.localURL` — downloads + local-folder
+    /// `file://` — or streamable http(s) `downloadUrl`). Same newest-500 set as Add all
+    /// (`store.allEpisodes`) — **not** status/podcast/type/search filtered. **Soft-cap honesty:**
+    /// never invents eligibility beyond the capped catalog. Distinct from Add all / remaining-time
+    /// visible counts.
     private var playRandomEligibleEpisodes: [PodcastEpisode] {
-        catalogItems.map(\.episode).filter { episodeHasPlayableMedia($0) }
+        EpisodePlayRandom.eligible(
+            from: catalogItems.map(\.episode),
+            localURL: { downloads.localURL(for: $0) }
+        )
     }
 
     /// Prefer unplayed among `playRandomEligibleEpisodes` when any remain; otherwise all eligible
     /// (played allowed when every eligible capped episode is played, or none unplayed eligible).
     private var playRandomCandidates: [PodcastEpisode] {
-        let eligible = playRandomEligibleEpisodes
-        let unplayed = eligible.filter { !store.isPlayed($0.id) }
-        return unplayed.isEmpty ? eligible : unplayed
+        EpisodePlayRandom.candidates(
+            from: playRandomEligibleEpisodes,
+            preferUnplayed: true,
+            isPlayed: { store.isPlayed($0) }
+        )
     }
 
     /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
@@ -449,22 +455,16 @@ struct AllEpisodesView: View {
         }
     }
 
-    /// Local download / local-folder file, or streamable http(s) enclosure — same honesty as
-    /// Archived / History / Favorites / Feed detail Play random / `PlaybackService.resolvePlaybackURL` inputs (Wi‑Fi stream gate still applies at play time).
-    private func episodeHasPlayableMedia(_ episode: PodcastEpisode) -> Bool {
-        if downloads.localURL(for: episode) != nil { return true }
-        guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
-              !raw.isEmpty,
-              let url = URL(string: raw) else { return false }
-        let scheme = url.scheme?.lowercased()
-        return scheme == "http" || scheme == "https"
-    }
-
-    /// Uniform pick among `playRandomCandidates`; starts via `PlaybackService.play` (resume rules unchanged).
+    /// Uniform pick via shared `EpisodePlayRandom.pick` among eligible (prefer unplayed);
+    /// starts via `PlaybackService.play` (resume rules unchanged).
     /// No confirm; soft-capped newest-500 catalog only — does **not** invent episodes beyond the cap;
     /// no invented queue mutations beyond what `play` already does.
     private func playRandomEpisode() {
-        guard let episode = playRandomCandidates.randomElement() else { return }
+        guard let episode = EpisodePlayRandom.pick(
+            from: playRandomEligibleEpisodes,
+            preferUnplayed: true,
+            isPlayed: { store.isPlayed($0) }
+        ) else { return }
         _ = playback.play(episode: episode)
     }
 }
