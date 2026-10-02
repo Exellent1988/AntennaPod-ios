@@ -12,6 +12,7 @@ struct PodcastTxtListView: View {
     var title: String = String(localized: "Text")
 
     @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = String(localized: "Text copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     private var capped: (shown: [PodcastTxt], truncated: Bool) {
@@ -58,7 +59,7 @@ struct PodcastTxtListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Text copied to the pasteboard."))
+                Text(copiedAlertMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -103,8 +104,34 @@ struct PodcastTxtListView: View {
                 .accessibilityHidden(true)
 
             HStack(spacing: 12) {
+                if let purpose {
+                    Button {
+                        UIPasteboard.general.string = purpose
+                        copiedAlertMessage = String(localized: "Text purpose copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy text purpose", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy text purpose"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided text purpose to the pasteboard")
+                    )
+
+                    ShareLink(item: purpose) {
+                        Label("Share text purpose", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share text purpose"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided text purpose as plain text")
+                    )
+                }
+
                 Button {
                     UIPasteboard.general.string = PodcastTxtDisplay.copyText(entry)
+                    copiedAlertMessage = String(localized: "Text copied to the pasteboard.")
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {

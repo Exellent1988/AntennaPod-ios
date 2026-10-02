@@ -34881,7 +34881,98 @@
       }
     },
     "comment": "Alert message after copying displayed podcast:value recipient metadata."
+  },
+  "Copy text purpose": {
+    "extractionState": "manual",
+    "comment": "Copy action for the exact feed-provided podcast:txt purpose; hidden when purpose is missing.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy text purpose"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Textzweck kopieren"
+        }
+      }
+    }
+  },
+  "Share text purpose": {
+    "extractionState": "manual",
+    "comment": "Share action for the exact feed-provided podcast:txt purpose; hidden when purpose is missing.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share text purpose"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Textzweck teilen"
+        }
+      }
+    }
+  },
+  "Text purpose copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Alert message after copying the exact displayed podcast:txt purpose.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Text purpose copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Textzweck in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Copies the exact feed-provided text purpose to the pasteboard": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for Copy text purpose on a podcast:txt row.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact feed-provided text purpose to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert den vom Feed bereitgestellten Textzweck in die Zwischenablage"
+        }
+      }
+    }
+  },
+  "Shares the exact feed-provided text purpose as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for Share text purpose on a podcast:txt row.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact feed-provided text purpose as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt den vom Feed bereitgestellten Textzweck als Klartext"
+        }
+      }
+    }
   }
+
   },
   "version": "1.0"
 }
