@@ -7631,6 +7631,125 @@
         }
       }
     },
+    "Enter time as mm:ss or minutes and seconds. The Jump button stays unavailable until duration is known and the value can be parsed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter time as mm:ss or minutes and seconds. The Jump button stays unavailable until duration is known and the value can be parsed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib die Zeit als mm:ss oder Minuten und Sekunden ein. Springen bleibt deaktiviert, bis die Dauer bekannt ist und der Wert gelesen werden kann."
+          }
+        }
+      }
+    },
+    "Adjusts the jump minutes. Seconds stay separate; the position is clamped to the episode duration.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjusts the jump minutes. Seconds stay separate; the position is clamped to the episode duration."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passt die Sprung-Minuten an. Sekunden bleiben getrennt; die Position wird auf die Episodendauer begrenzt."
+          }
+        }
+      }
+    },
+    "Adjusts the jump seconds from 0 to 59. Combined with minutes, the position is clamped to the episode duration.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjusts the jump seconds from 0 to 59. Combined with minutes, the position is clamped to the episode duration."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passt die Sprung-Sekunden von 0 bis 59 an. Zusammen mit Minuten wird die Position auf die Episodendauer begrenzt."
+          }
+        }
+      }
+    },
+    "Invalid — enter mm:ss or minutes and seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid — enter mm:ss or minutes and seconds"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungültig — mm:ss oder Minuten und Sekunden eingeben"
+          }
+        }
+      }
+    },
+    "Jump stays unavailable until the episode duration is known.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jump stays unavailable until the episode duration is known."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springen bleibt deaktiviert, bis die Episodendauer bekannt ist."
+          }
+        }
+      }
+    },
+    "Enter a valid time as mm:ss or use the minutes and seconds steppers.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a valid time as mm:ss or use the minutes and seconds steppers."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine gültige Zeit als mm:ss ein oder nutze die Minuten- und Sekunden-Stepper."
+          }
+        }
+      }
+    },
+    "Seeks to the entered position, clamped to the episode duration.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks to the entered position, clamped to the episode duration."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt zur eingegebenen Position, begrenzt auf die Episodendauer."
+          }
+        }
+      }
+    },
     "Enter a time to seek": {
       "extractionState": "manual",
       "localizations": {

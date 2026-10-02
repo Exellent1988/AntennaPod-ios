@@ -30,7 +30,8 @@ struct JumpToPositionSheet: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .accessibilityLabel(String(localized: "Position"))
-                        .accessibilityHint(String(localized: "Enter time as mm:ss or minutes and seconds"))
+                        .accessibilityValue(positionFieldAccessibilityValue)
+                        .accessibilityHint(String(localized: "Enter time as mm:ss or minutes and seconds. The Jump button stays unavailable until duration is known and the value can be parsed."))
                         .onChange(of: timeText) { _, newValue in
                             guard !isSyncing else { return }
                             if let parsed = Self.parseTime(newValue) {
@@ -46,6 +47,8 @@ struct JumpToPositionSheet: View {
                         Text(String(localized: "\(minutes) min"))
                     }
                     .accessibilityLabel(String(localized: "Minutes"))
+                    .accessibilityValue(minutesAccessibilityValue)
+                    .accessibilityHint(String(localized: "Adjusts the jump minutes. Seconds stay separate; the position is clamped to the episode duration."))
                     .onChange(of: minutes) { _, _ in
                         syncTextFromSteppers()
                     }
@@ -54,6 +57,8 @@ struct JumpToPositionSheet: View {
                         Text(String(localized: "\(seconds) sec"))
                     }
                     .accessibilityLabel(String(localized: "Seconds"))
+                    .accessibilityValue(secondsAccessibilityValue)
+                    .accessibilityHint(String(localized: "Adjusts the jump seconds from 0 to 59. Combined with minutes, the position is clamped to the episode duration."))
                     .onChange(of: seconds) { _, _ in
                         syncTextFromSteppers()
                     }
@@ -70,6 +75,8 @@ struct JumpToPositionSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(String(localized: "Jump")) { confirm() }
                         .disabled(!isValid)
+                        .accessibilityLabel(String(localized: "Jump to position"))
+                        .accessibilityHint(jumpAccessibilityHint)
                 }
             }
         }
@@ -108,6 +115,39 @@ struct JumpToPositionSheet: View {
             seconds: Int(maxDurationSeconds) % 60
         )
         return String(localized: "Clamped to 0…\(end) (episode duration).")
+    }
+
+    private var positionFieldAccessibilityValue: String {
+        guard maxDurationSeconds > 0 else {
+            return String(localized: "Duration unknown — jump unavailable.")
+        }
+        if let fromText = Self.parseTime(timeText) {
+            let capped = min(max(0, fromText), Int(maxDurationSeconds.rounded(.down)))
+            return Self.formatTime(minutes: capped / 60, seconds: capped % 60)
+        }
+        let trimmed = timeText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            return Self.formatTime(minutes: minutes, seconds: seconds)
+        }
+        return String(localized: "Invalid — enter mm:ss or minutes and seconds")
+    }
+
+    private var minutesAccessibilityValue: String {
+        String(localized: "\(minutes) min")
+    }
+
+    private var secondsAccessibilityValue: String {
+        String(localized: "\(seconds) sec")
+    }
+
+    private var jumpAccessibilityHint: String {
+        guard maxDurationSeconds > 0 else {
+            return String(localized: "Jump stays unavailable until the episode duration is known.")
+        }
+        guard isValid else {
+            return String(localized: "Enter a valid time as mm:ss or use the minutes and seconds steppers.")
+        }
+        return String(localized: "Seeks to the entered position, clamped to the episode duration.")
     }
 
     private func syncTextFromSteppers() {
