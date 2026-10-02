@@ -15821,6 +15821,96 @@
       },
       "comment": "Distinct Copy action for the displayed podcast:person name and optional role."
     },
+    "Copy person group": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy person group"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personengruppe kopieren"
+          }
+        }
+      },
+      "comment": "VoiceOver label for copying the exact displayed feed-provided podcast:person group (not person details)."
+    },
+    "Share person group": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share person group"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personengruppe teilen"
+          }
+        }
+      },
+      "comment": "VoiceOver label for sharing the exact displayed feed-provided podcast:person group (not person details)."
+    },
+    "Person group copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person group copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personengruppe in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copied alert for the exact displayed feed-provided podcast:person group."
+    },
+    "Copies the exact displayed feed-provided person group as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed feed-provided person group as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigte, vom Feed gelieferte Personengruppe als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy person group."
+    },
+    "Shares the exact displayed feed-provided person group as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed feed-provided person group as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigte, vom Feed gelieferte Personengruppe als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share person group."
+    },
     "Copies the displayed person name and role as plain text; role is included only when provided by the feed": {
       "extractionState": "manual",
       "localizations": {
@@ -15928,6 +16018,42 @@
         }
       },
       "comment": "VoiceOver label for a podcast:person with name and role. Unused if Swift stores interpolated key."
+    },
+    "Person %@, group %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person %@, group %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person %@, Gruppe %@"
+          }
+        }
+      },
+      "comment": "VoiceOver label for a person row with feed-provided group and no role."
+    },
+    "Person %@, role %@, group %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person %@, role %@, group %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person %@, Rolle %@, Gruppe %@"
+          }
+        }
+      },
+      "comment": "VoiceOver label for a person row with feed-provided role and group."
     },
     "Play trailer": {
       "extractionState": "manual",

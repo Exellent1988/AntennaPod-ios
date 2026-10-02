@@ -247,6 +247,13 @@ struct PodcastPerson: Identifiable, Hashable, Codable {
         return trimmed.isEmpty ? nil : trimmed
     }
 
+    /// Trimmed non-empty group when the feed set `group`. Hidden when missing — never invent "cast".
+    var displayGroup: String? {
+        guard let group else { return nil }
+        let trimmed = group.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     /// http(s) profile URL from feed `href` only. Nil when missing / non-http(s).
     var profileURL: URL? {
         guard let href else { return nil }
@@ -270,10 +277,7 @@ enum PodcastPeopleDisplay {
             return PodcastPerson(
                 name: name,
                 role: person.displayRole,
-                group: person.group.flatMap { g in
-                    let t = g.trimmingCharacters(in: .whitespacesAndNewlines)
-                    return t.isEmpty ? nil : t
-                },
+                group: person.displayGroup,
                 href: person.href,
                 img: person.img
             )

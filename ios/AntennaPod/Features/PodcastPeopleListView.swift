@@ -1,7 +1,8 @@
 import SwiftUI
 import UIKit
 
-/// Simple feed-provided `podcast:person` list: name + role when set; http(s) href → Open, and any non-blank href → Copy / Share.
+/// Simple feed-provided `podcast:person` list: name + role/group when set; http(s) href → Open, and any non-blank href → Copy / Share.
+/// When `group` is displayed, distinct Copy / Share person group uses that exact text (separate from name+role details).
 /// Caps at `PodcastPeopleDisplay.displayCap` with an honesty footnote when truncated.
 /// No remote avatar fetch in v1 (img URL stored but not loaded).
 struct PodcastPeopleListView: View {
@@ -54,11 +55,18 @@ struct PodcastPeopleListView: View {
     private func personRow(_ person: PodcastPerson) -> some View {
         let name = person.displayName ?? person.name
         let role = person.displayRole
+        let groupText = person.displayGroup
         let label: String = {
-            if let role {
+            switch (role, groupText) {
+            case let (role?, group?):
+                return String(localized: "Person \(name), role \(role), group \(group)")
+            case let (role?, nil):
                 return String(localized: "Person \(name), role \(role)")
+            case let (nil, group?):
+                return String(localized: "Person \(name), group \(group)")
+            case (nil, nil):
+                return name
             }
-            return name
         }()
 
         let url = person.profileURL
@@ -71,13 +79,13 @@ struct PodcastPeopleListView: View {
                 Button {
                     openURL(url)
                 } label: {
-                    personLabel(name: name, role: role, showsOpenIcon: true)
+                    personLabel(name: name, role: role, group: groupText, showsOpenIcon: true)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(label)
                 .accessibilityHint(String(localized: "Opens this person’s link in the system browser"))
             } else {
-                personLabel(name: name, role: role, showsOpenIcon: false)
+                personLabel(name: name, role: role, group: groupText, showsOpenIcon: false)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(label)
             }
@@ -109,6 +117,33 @@ struct PodcastPeopleListView: View {
                         localized: "Shares the displayed person name and role as plain text; role is included only when provided by the feed"
                     )
                 )
+            }
+
+            if let groupText {
+                HStack(spacing: 12) {
+                    Button {
+                        UIPasteboard.general.string = groupText
+                        copiedMessage = String(localized: "Person group copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy person group", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy person group"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed feed-provided person group as plain text")
+                    )
+
+                    ShareLink(item: groupText) {
+                        Label("Share person group", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share person group"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed feed-provided person group as plain text")
+                    )
+                }
             }
 
             if let copyText {
@@ -151,13 +186,18 @@ struct PodcastPeopleListView: View {
         }
     }
 
-    private func personLabel(name: String, role: String?, showsOpenIcon: Bool) -> some View {
+    private func personLabel(name: String, role: String?, group: String?, showsOpenIcon: Bool) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 6) {
             Text(name)
                 .font(.subheadline)
                 .foregroundStyle(.primary)
             if let role {
                 Text(role)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if let group {
+                Text(group)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
