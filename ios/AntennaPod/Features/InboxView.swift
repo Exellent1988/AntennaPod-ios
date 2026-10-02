@@ -12,6 +12,7 @@ struct InboxView: View {
     @State private var debounceTask: Task<Void, Never>?
     @State private var showMarkAllPlayedConfirm = false
     @State private var showEnqueueAllConfirm = false
+    @State private var showArchiveAllConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyFeedbackTick = 0
@@ -191,6 +192,13 @@ struct InboxView: View {
     /// Confirm count and `enqueueAllInbox()` share this eligibility. Menu disabled while searching.
     private var enqueueAllInboxCandidatesCount: Int {
         store.inboxEpisodes.filter { !store.isInQueue($0.episode.id) }.count
+    }
+
+    /// Full Inbox catalog episodes that are still non-archived. The Inbox normally excludes
+    /// archived episodes, but keep eligibility explicit so the bulk action cannot archive
+    /// anything outside its catalog scope.
+    private var archiveAllInboxCandidatesCount: Int {
+        store.inboxEpisodes.filter { !store.isArchived($0.episode.id) }.count
     }
 
     /// Inbox episodes with playable media via shared `EpisodePlayRandom` (local file via
@@ -477,12 +485,16 @@ struct InboxView: View {
                         .disabled(sortedItems.isEmpty)
 
                         Button {
-                            store.archiveAllInbox()
+                            showArchiveAllConfirm = true
                         } label: {
                             Label("Archive all", systemImage: "archivebox")
                         }
-                        // Full Inbox catalog — not the podcast-chip filtered subset.
-                        .disabled(sortedItems.isEmpty)
+                        // Full Inbox catalog — not the podcast/type-chip filtered subset.
+                        .disabled(archiveAllInboxCandidatesCount == 0)
+                        .accessibilityLabel(String(localized: "Archive all"))
+                        .accessibilityHint(
+                            String(localized: "Archives non-archived episodes in the full Inbox catalog; ignores podcast, episode type, search, and sort filters")
+                        )
                     } label: {
                         Label("Inbox actions", systemImage: "ellipsis.circle")
                     }
@@ -527,6 +539,18 @@ struct InboxView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Marks \(sortedItems.count) Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog (not only the current podcast filter).")
+            }
+            .confirmationDialog(
+                "Archive all?",
+                isPresented: $showArchiveAllConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Archive all") {
+                    store.archiveAllInbox()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Archives \(archiveAllInboxCandidatesCount) non-archived Inbox episode(s) in the full Inbox catalog (newest first), not the podcast, episode type, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
             }
             .navigationDestination(for: PodcastFeed.self) { feed in
                 FeedDetailView(feed: feed)
