@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Global tag vocabulary manager: list tags with podcast counts, rename, and delete
 /// (removes the label from feeds; does not unsubscribe). Uses `feed-tags.json` via `PodcastStore`.
@@ -16,12 +17,27 @@ struct ManageTagsView: View {
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
     /// Full in-use tag vocabulary — rename/delete always target a specific name from this set.
     private var allTags: [String] {
         store.allTags
+    }
+
+    private var tagsPlainText: String {
+        TagsExport.plainText(tags: allTags) { store.feeds(withTag: $0).count }
+    }
+
+    private var tagsShareText: String {
+        TagsExport.shareText(tags: allTags) { store.feeds(withTag: $0).count }
+    }
+
+    private var canExportTags: Bool {
+        !allTags.isEmpty
     }
 
     /// Visible tags; empty query shows the full list. Filters tag **names** only (client-side).
@@ -58,6 +74,35 @@ struct ManageTagsView: View {
         }
         .navigationTitle("Manage tags")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button {
+                        copyTags()
+                    } label: {
+                        Label("Copy tags", systemImage: "doc.plaintext")
+                    }
+                    .disabled(!canExportTags)
+                    .accessibilityLabel(String(localized: "Copy tags"))
+                    .accessibilityHint(String(localized: "Copies the full tag vocabulary, not the search-filtered list, as plain text. Does not rename or delete tags. Does not export OPML folder structure."))
+
+                    ShareLink(
+                        item: tagsShareText,
+                        subject: Text(String(localized: "Tags"))
+                    ) {
+                        Label("Share tags", systemImage: "square.and.arrow.up")
+                    }
+                    .disabled(!canExportTags)
+                    .accessibilityLabel(String(localized: "Share tags"))
+                    .accessibilityHint(String(localized: "Opens the system share sheet with the full tag vocabulary, not the search-filtered list, as plain text. Does not rename or delete tags. Does not export OPML folder structure."))
+                } label: {
+                    Label("Tags actions", systemImage: "ellipsis.circle")
+                }
+                .accessibilityLabel(String(localized: "Tags actions"))
+                .accessibilityHint(String(localized: "Copy or share the full tag vocabulary as plain text. Does not rename or delete tags. Does not export OPML folder structure."))
+                .disabled(!canExportTags)
+            }
+        }
         .searchable(text: $searchText, prompt: "Search tags")
         .onChange(of: searchText) { _, newValue in
             scheduleFilter(for: newValue)
@@ -65,6 +110,15 @@ struct ManageTagsView: View {
         .onDisappear {
             debounceTask?.cancel()
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
         .alert("Rename tag", isPresented: $showRenameAlert) {
             TextField("Tag name", text: $renameDraft)
                 .accessibilityLabel(String(localized: "Tag name"))
@@ -154,6 +208,15 @@ struct ManageTagsView: View {
                 Label("Delete tag", systemImage: "trash")
             }
         }
+    }
+
+    private func copyTags() {
+        let text = tagsPlainText
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Tags copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private func beginRename(_ tag: String) {

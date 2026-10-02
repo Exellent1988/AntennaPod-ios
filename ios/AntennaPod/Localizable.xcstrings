@@ -28062,6 +28062,132 @@
         }
       },
       "comment": "Help caption / VoiceOver hint under Discover charts count picker."
+    },
+    "Copy tags": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy tags"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags kopieren"
+          }
+        }
+      },
+      "comment": "Manage tags toolbar: copy full tag vocabulary as plain text to pasteboard."
+    },
+    "Share tags": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share tags"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags teilen"
+          }
+        }
+      },
+      "comment": "Manage tags toolbar: share full tag vocabulary as plain text via system share sheet."
+    },
+    "Tags copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Alert message after Copy tags succeeds."
+    },
+    "Tags actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag-Aktionen"
+          }
+        }
+      },
+      "comment": "Manage tags toolbar menu label for copy/share actions."
+    },
+    "Copies the full tag vocabulary, not the search-filtered list, as plain text. Does not rename or delete tags. Does not export OPML folder structure.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full tag vocabulary, not the search-filtered list, as plain text. Does not rename or delete tags. Does not export OPML folder structure."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den vollständigen Tag-Wortschatz, nicht die suchgefilterte Liste, als Klartext. Benennt Tags weder um noch löscht sie. Exportiert keine OPML-Ordnerstruktur."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy tags."
+    },
+    "Opens the system share sheet with the full tag vocabulary, not the search-filtered list, as plain text. Does not rename or delete tags. Does not export OPML folder structure.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the full tag vocabulary, not the search-filtered list, as plain text. Does not rename or delete tags. Does not export OPML folder structure."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit dem vollständigen Tag-Wortschatz, nicht der suchgefilterten Liste, als Klartext. Benennt Tags weder um noch löscht sie. Exportiert keine OPML-Ordnerstruktur."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share tags."
+    },
+    "Copy or share the full tag vocabulary as plain text. Does not rename or delete tags. Does not export OPML folder structure.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy or share the full tag vocabulary as plain text. Does not rename or delete tags. Does not export OPML folder structure."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert oder teilt den vollständigen Tag-Wortschatz als Klartext. Benennt Tags weder um noch löscht sie. Exportiert keine OPML-Ordnerstruktur."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Manage tags actions menu."
     }
   },
   "version": "1.0"
