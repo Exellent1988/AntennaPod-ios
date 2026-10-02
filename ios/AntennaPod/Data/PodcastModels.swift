@@ -1936,7 +1936,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     }
 
     /// Capsule / row label for `itunes:episodeType`: localized Full / Trailer / Bonus when known; else raw feed string.
-    /// `nil` when missing — never invent. Display-only (does not filter episode lists).
+    /// `nil` when missing — never invent. List chips (`EpisodeTypeFilter`) may filter on the same parsed field.
     /// Distinct from channel `podcast:trailer` (Feed detail teaser).
     var displayEpisodeType: String? {
         guard let code = episodeTypeCode else { return nil }

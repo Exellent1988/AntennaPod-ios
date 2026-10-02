@@ -14238,7 +14238,7 @@
     },
     "Full": {
       "extractionState": "manual",
-      "comment": "Capsule when item itunes:episodeType is full (Apple Podcasts). Hidden when missing — never invent. Display-only; does not filter lists.",
+      "comment": "Capsule when item itunes:episodeType is full (Apple Podcasts). Hidden when missing — never invent. Also used by list filter chips when that type is present in scope.",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -23273,6 +23273,78 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert die Alternativ-Medien-URI in die Zwischenablage. Nur http(s)-Quellen können in der App abgespielt werden."
+          }
+        }
+      }
+    },
+    "Other": {
+      "extractionState": "manual",
+      "comment": "itunes:episodeType list filter chip for non-empty unknown raw types present in scope. Never invent types.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonstige"
+          }
+        }
+      }
+    },
+    "Filters the Feed episodes list by episode type": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Feed detail itunes:episodeType filter chips.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Feed episodes list by episode type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Feed-Episodenliste nach Episodentyp"
+          }
+        }
+      }
+    },
+    "Filters the All Episodes list by episode type": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for All Episodes itunes:episodeType filter chips.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the All Episodes list by episode type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Alle-Episoden-Liste nach Episodentyp"
+          }
+        }
+      }
+    },
+    "Filters the Inbox list by episode type": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Inbox itunes:episodeType filter chips.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Inbox list by episode type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Inbox-Liste nach Episodentyp"
           }
         }
       }

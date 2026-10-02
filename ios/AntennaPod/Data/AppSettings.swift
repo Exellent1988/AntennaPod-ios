@@ -407,6 +407,75 @@ enum FeedEpisodeFilter: String, CaseIterable, Identifiable {
     }
 }
 
+
+/// Filter chips for item `itunes:episodeType` on Feed detail / All Episodes / Inbox lists.
+/// Known **full** / **trailer** / **bonus** only; optional **Other** for non-empty unknown raw types
+/// present in the current catalog scope. Missing/empty `episodeType` matches **All** only —
+/// **never invent** types. Distinct from channel `podcast:trailer`.
+enum EpisodeTypeFilter: String, CaseIterable, Identifiable {
+    case all
+    case full
+    case trailer
+    case bonus
+    case other
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .all: return String(localized: "All")
+        case .full: return String(localized: "Full")
+        case .trailer: return String(localized: "Trailer")
+        case .bonus: return String(localized: "Bonus")
+        case .other: return String(localized: "Other")
+        }
+    }
+
+    /// Bucket for a parsed non-empty `itunes:episodeType`, or `nil` when missing/empty (All only).
+    static func bucket(for episode: PodcastEpisode) -> EpisodeTypeFilter? {
+        guard let code = episode.episodeTypeCode else { return nil }
+        switch code.lowercased() {
+        case "full": return .full
+        case "trailer": return .trailer
+        case "bonus": return .bonus
+        default: return .other
+        }
+    }
+
+    func matches(_ episode: PodcastEpisode) -> Bool {
+        switch self {
+        case .all:
+            return true
+        case .full, .trailer, .bonus, .other:
+            return Self.bucket(for: episode) == self
+        }
+    }
+
+    /// Visible chips for a catalog scope: always **All**; Full/Trailer/Bonus/Other only when at
+    /// least one episode in `episodes` has that bucket (parsed feed strings only). Keep `selected`
+    /// visible even if currently empty so the user can tap All. Prefer **hide** zero-match chips.
+    static func chips(presentIn episodes: [PodcastEpisode], selected: EpisodeTypeFilter) -> [EpisodeTypeFilter] {
+        var present = Set<EpisodeTypeFilter>()
+        for episode in episodes {
+            if let bucket = bucket(for: episode) {
+                present.insert(bucket)
+            }
+        }
+        var chips: [EpisodeTypeFilter] = [.all]
+        for kind in [EpisodeTypeFilter.full, .trailer, .bonus, .other] {
+            if present.contains(kind) || selected == kind {
+                chips.append(kind)
+            }
+        }
+        return chips
+    }
+
+    /// Show the type chip row when more than All would appear (or a non-All selection is sticky).
+    static func shouldShowChipRow(presentIn episodes: [PodcastEpisode], selected: EpisodeTypeFilter) -> Bool {
+        chips(presentIn: episodes, selected: selected).count > 1
+    }
+}
+
 /// How the Inbox tab orders episodes (client-side; Home New preview stays newest-first).
 /// Newest / Oldest by `pubDateEpochMs`; Shortest / Longest by known duration (feed when known,
 /// else saved playback — same path as Queue / Feed / All Episodes; unknown last; id tiebreak);
@@ -1064,7 +1133,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, volume boost (100–300%), skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes podcast filter, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
+/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, volume boost (100–300%), skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes podcast filter, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Feed/All Episodes/Inbox itunes:episodeType filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -1180,8 +1249,10 @@ final class AppSettings: ObservableObject {
         static let subscriptionsLanguageFilter = "settings.subscriptionsLanguageFilter"
         static let feedEpisodeSort = "settings.feedEpisodeSort"
         static let feedEpisodeFilter = "settings.feedEpisodeFilter"
+        static let feedEpisodeTypeFilter = "settings.feedEpisodeTypeFilter"
         static let inboxSort = "settings.inboxSort"
         static let inboxPodcastFilter = "settings.inboxPodcastFilter"
+        static let inboxEpisodeTypeFilter = "settings.inboxEpisodeTypeFilter"
         static let downloadsSort = "settings.downloadsSort"
         static let downloadsFilter = "settings.downloadsFilter"
         static let downloadsPodcastFilter = "settings.downloadsPodcastFilter"
@@ -1194,6 +1265,7 @@ final class AppSettings: ObservableObject {
         static let archivedPodcastFilter = "settings.archivedPodcastFilter"
         static let allEpisodesFilter = "settings.allEpisodesFilter"
         static let allEpisodesPodcastFilter = "settings.allEpisodesPodcastFilter"
+        static let allEpisodesEpisodeTypeFilter = "settings.allEpisodesEpisodeTypeFilter"
         static let allEpisodesSort = "settings.allEpisodesSort"
         static let queueLocked = "settings.queueLocked"
         static let queueFilter = "settings.queueFilter"
@@ -1685,6 +1757,18 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Feed detail `itunes:episodeType` chip filter (All / Full / Trailer / Bonus / Other).
+    /// Default All. Persisted globally (not per-feed — same as `feedEpisodeFilter`; `FeedSettings`
+    /// only overrides sort via `episodeSort`). Applied after status chip, before `.searchable`.
+    /// Chips hide when zero matches in the current feed catalog; Other only when unknown raw
+    /// types exist in scope. Missing episodeType matches All only — never invent.
+    /// Bulk Download all / Mark all played / Add all to queue stay full-feed.
+    @Published var feedEpisodeTypeFilter: EpisodeTypeFilter {
+        didSet {
+            UserDefaults.standard.set(feedEpisodeTypeFilter.rawValue, forKey: Keys.feedEpisodeTypeFilter)
+        }
+    }
+
 
     /// Inbox tab episode list order: newest/oldest by `pubDateEpochMs` (default newest), or
     /// shortest/longest by known duration (feed when known, else saved playback — same path as Queue;
@@ -1706,6 +1790,17 @@ final class AppSettings: ObservableObject {
     @Published var inboxPodcastFilter: String {
         didSet {
             UserDefaults.standard.set(inboxPodcastFilter, forKey: Keys.inboxPodcastFilter)
+        }
+    }
+
+    /// Inbox `itunes:episodeType` chip filter (All / Full / Trailer / Bonus / Other). Default All.
+    /// Persisted (+ backup). Applied after `inboxSort` → podcast chip; library `.searchable`
+    /// still replaces the list. Chips hide when zero matches in the Inbox catalog; Other only
+    /// when unknown raw types exist. Missing episodeType matches All only — never invent.
+    /// **View-only** — Mark all / Add all to queue / Archive all / tab badge stay full Inbox.
+    @Published var inboxEpisodeTypeFilter: EpisodeTypeFilter {
+        didSet {
+            UserDefaults.standard.set(inboxEpisodeTypeFilter.rawValue, forKey: Keys.inboxEpisodeTypeFilter)
         }
     }
 
@@ -1832,10 +1927,22 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Library → Episodes `itunes:episodeType` chip filter (All / Full / Trailer / Bonus / Other).
+    /// Default All. Persisted (+ backup). Applied after soft cap → sort → status → podcast,
+    /// before `.searchable`. **Soft-cap honesty:** filters within newest-500 only. Chips hide
+    /// when zero matches in the capped catalog; Other only when unknown raw types exist.
+    /// Missing episodeType matches All only — never invent. **View-only** — Add all to queue
+    /// stays full soft-capped eligible catalog.
+    @Published var allEpisodesEpisodeTypeFilter: EpisodeTypeFilter {
+        didSet {
+            UserDefaults.standard.set(allEpisodesEpisodeTypeFilter.rawValue, forKey: Keys.allEpisodesEpisodeTypeFilter)
+        }
+    }
+
     /// Library → Episodes list order: Newest / Oldest by `pubDateEpochMs`, or Shortest / Longest by known duration.
     /// **Soft-cap honesty:** `PodcastStore.allEpisodes` is already the newest-500; Oldest / Shortest / Longest only
     /// reorder within that capped set (do not surface older episodes beyond the limit).
-    /// Missing dates / unknown durations sort last; stable tiebreaker episode `id`. Pipeline: soft cap → sort → chip → podcast → search.
+    /// Missing dates / unknown durations sort last; stable tiebreaker episode `id`. Pipeline: soft cap → sort → status → podcast → type → search.
     /// Client-side re-sort in AllEpisodesView only — store catalog stays newest-first.
     @Published var allEpisodesSort: AllEpisodesSort {
         didSet {
@@ -2152,11 +2259,17 @@ final class AppSettings: ObservableObject {
         let feedEpFilterRaw = UserDefaults.standard.string(forKey: Keys.feedEpisodeFilter)
             ?? FeedEpisodeFilter.all.rawValue
         feedEpisodeFilter = FeedEpisodeFilter(rawValue: feedEpFilterRaw) ?? .all
+        let feedEpTypeFilterRaw = UserDefaults.standard.string(forKey: Keys.feedEpisodeTypeFilter)
+            ?? EpisodeTypeFilter.all.rawValue
+        feedEpisodeTypeFilter = EpisodeTypeFilter(rawValue: feedEpTypeFilterRaw) ?? .all
         let inboxSortRaw = UserDefaults.standard.string(forKey: Keys.inboxSort)
             ?? InboxSort.newestFirst.rawValue
         inboxSort = InboxSort(rawValue: inboxSortRaw) ?? .newestFirst
         let inboxPodcastFilterRaw = UserDefaults.standard.string(forKey: Keys.inboxPodcastFilter) ?? ""
         inboxPodcastFilter = InboxPodcastFilter.fromStorage(inboxPodcastFilterRaw).storageValue
+        let inboxEpTypeFilterRaw = UserDefaults.standard.string(forKey: Keys.inboxEpisodeTypeFilter)
+            ?? EpisodeTypeFilter.all.rawValue
+        inboxEpisodeTypeFilter = EpisodeTypeFilter(rawValue: inboxEpTypeFilterRaw) ?? .all
         let downloadsSortRaw = UserDefaults.standard.string(forKey: Keys.downloadsSort)
             ?? DownloadsSort.newestFirst.rawValue
         downloadsSort = DownloadsSort(rawValue: downloadsSortRaw) ?? .newestFirst
@@ -2188,6 +2301,9 @@ final class AppSettings: ObservableObject {
         allEpisodesFilter = AllEpisodesFilter(rawValue: episodesFilterRaw) ?? .all
         let allEpisodesPodcastFilterRaw = UserDefaults.standard.string(forKey: Keys.allEpisodesPodcastFilter) ?? ""
         allEpisodesPodcastFilter = AllEpisodesPodcastFilter.fromStorage(allEpisodesPodcastFilterRaw).storageValue
+        let allEpisodesEpTypeFilterRaw = UserDefaults.standard.string(forKey: Keys.allEpisodesEpisodeTypeFilter)
+            ?? EpisodeTypeFilter.all.rawValue
+        allEpisodesEpisodeTypeFilter = EpisodeTypeFilter(rawValue: allEpisodesEpTypeFilterRaw) ?? .all
         let episodesSortRaw = UserDefaults.standard.string(forKey: Keys.allEpisodesSort)
             ?? AllEpisodesSort.newestFirst.rawValue
         allEpisodesSort = AllEpisodesSort(rawValue: episodesSortRaw) ?? .newestFirst
@@ -2489,8 +2605,10 @@ final class AppSettings: ObservableObject {
             subscriptionsLanguageFilter: subscriptionsLanguageFilter,
             feedEpisodeSort: feedEpisodeSort.rawValue,
             feedEpisodeFilter: feedEpisodeFilter.rawValue,
+            feedEpisodeTypeFilter: feedEpisodeTypeFilter.rawValue,
             inboxSort: inboxSort.rawValue,
             inboxPodcastFilter: inboxPodcastFilter,
+            inboxEpisodeTypeFilter: inboxEpisodeTypeFilter.rawValue,
             downloadsSort: downloadsSort.rawValue,
             downloadsFilter: downloadsFilter.rawValue,
             downloadsPodcastFilter: downloadsPodcastFilter,
@@ -2503,6 +2621,7 @@ final class AppSettings: ObservableObject {
             archivedPodcastFilter: archivedPodcastFilter,
             allEpisodesFilter: allEpisodesFilter.rawValue,
             allEpisodesPodcastFilter: allEpisodesPodcastFilter,
+            allEpisodesEpisodeTypeFilter: allEpisodesEpisodeTypeFilter.rawValue,
             allEpisodesSort: allEpisodesSort.rawValue,
             queueLocked: queueLocked,
             queueFilter: queueFilter.rawValue,
@@ -2634,11 +2753,17 @@ final class AppSettings: ObservableObject {
         if let feedEpFilterRaw = snap.feedEpisodeFilter {
             feedEpisodeFilter = FeedEpisodeFilter(rawValue: feedEpFilterRaw) ?? .all
         }
+        if let feedEpTypeFilterRaw = snap.feedEpisodeTypeFilter {
+            feedEpisodeTypeFilter = EpisodeTypeFilter(rawValue: feedEpTypeFilterRaw) ?? .all
+        }
         if let inboxSortRaw = snap.inboxSort {
             inboxSort = InboxSort(rawValue: inboxSortRaw) ?? .newestFirst
         }
         if let inboxPodcastFilterRaw = snap.inboxPodcastFilter {
             inboxPodcastFilter = InboxPodcastFilter.fromStorage(inboxPodcastFilterRaw).storageValue
+        }
+        if let inboxEpTypeFilterRaw = snap.inboxEpisodeTypeFilter {
+            inboxEpisodeTypeFilter = EpisodeTypeFilter(rawValue: inboxEpTypeFilterRaw) ?? .all
         }
         if let downloadsSortRaw = snap.downloadsSort {
             downloadsSort = DownloadsSort(rawValue: downloadsSortRaw) ?? .newestFirst
@@ -2675,6 +2800,9 @@ final class AppSettings: ObservableObject {
         }
         if let allEpisodesPodcastFilterRaw = snap.allEpisodesPodcastFilter {
             allEpisodesPodcastFilter = AllEpisodesPodcastFilter.fromStorage(allEpisodesPodcastFilterRaw).storageValue
+        }
+        if let allEpisodesEpTypeFilterRaw = snap.allEpisodesEpisodeTypeFilter {
+            allEpisodesEpisodeTypeFilter = EpisodeTypeFilter(rawValue: allEpisodesEpTypeFilterRaw) ?? .all
         }
         if let sortRaw = snap.allEpisodesSort {
             allEpisodesSort = AllEpisodesSort(rawValue: sortRaw) ?? .newestFirst
@@ -2780,10 +2908,14 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var feedEpisodeSort: String? = nil
     /// Absent in older backups → all (default).
     var feedEpisodeFilter: String? = nil
+    /// Absent in older backups → all (default). itunes:episodeType chip.
+    var feedEpisodeTypeFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var inboxSort: String? = nil
     /// Absent in older backups → All (empty). Feed UUID string or empty for All.
     var inboxPodcastFilter: String? = nil
+    /// Absent in older backups → all (default). itunes:episodeType chip.
+    var inboxEpisodeTypeFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var downloadsSort: String? = nil
     /// Absent in older backups → all (default).
@@ -2808,6 +2940,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var allEpisodesFilter: String? = nil
     /// Absent in older backups → All (empty). Feed UUID string or empty for All.
     var allEpisodesPodcastFilter: String? = nil
+    /// Absent in older backups → all (default). itunes:episodeType chip.
+    var allEpisodesEpisodeTypeFilter: String? = nil
     /// Absent in older backups → newestFirst (default).
     var allEpisodesSort: String? = nil
     /// Absent in older backups → unlocked (false).

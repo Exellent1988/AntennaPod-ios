@@ -77,7 +77,7 @@ struct AllEpisodesView: View {
         }
     }
 
-    /// Soft cap first (newest 500 via `store.allEpisodes`), then sort → status chip → podcast → search.
+    /// Soft cap first (newest 500 via `store.allEpisodes`), then sort → status → podcast → type → search.
     /// **Honesty:** `store.allEpisodes` is already the newest-500 by `pubDateEpochMs`.
     /// Oldest / Shortest / Longest / Title A–Z / Title Z–A only reorder within that capped set — they do
     /// **not** pull older episodes from beyond the soft limit. Missing dates / unknown durations /
@@ -136,6 +136,9 @@ struct AllEpisodesView: View {
         case .feed(let feedId):
             base = base.filter { store.feed(containingEpisodeId: $0.episode.id)?.id == feedId }
         }
+        if settings.allEpisodesEpisodeTypeFilter != .all {
+            base = base.filter { settings.allEpisodesEpisodeTypeFilter.matches($0.episode) }
+        }
         let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         if q.isEmpty { return base }
         return base.filter { item in
@@ -144,14 +147,30 @@ struct AllEpisodesView: View {
         }
     }
 
+    /// Type chips for the soft-capped All Episodes catalog (before status/podcast/type/search).
+    private var episodeTypeFilterChips: [EpisodeTypeFilter] {
+        EpisodeTypeFilter.chips(
+            presentIn: catalogItems.map(\.episode),
+            selected: settings.allEpisodesEpisodeTypeFilter
+        )
+    }
+
+    private var showEpisodeTypeFilterChips: Bool {
+        EpisodeTypeFilter.shouldShowChipRow(
+            presentIn: catalogItems.map(\.episode),
+            selected: settings.allEpisodesEpisodeTypeFilter
+        )
+    }
+
     private var isFiltering: Bool {
         settings.allEpisodesFilter != .all
             || isPodcastFiltering
+            || settings.allEpisodesEpisodeTypeFilter != .all
             || !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** All Episodes list
-    /// (soft cap newest-500 → sort → status chip → podcast → search). Remaining per episode =
+    /// (soft cap newest-500 → sort → status → podcast → type → search). Remaining per episode =
     /// `max(0, duration − position)` when duration known; unplayed with duration contributes
     /// full duration; **played** (not current) → 0; **unknown duration skipped** (tilde when
     /// any skipped). Currently playing uses live `PlaybackService` position/duration.
@@ -256,8 +275,29 @@ struct AllEpisodesView: View {
                 }
             }
 
+            // itunes:episodeType chips — within soft-capped catalog; hide when no types present.
+            if !catalogItems.isEmpty, showEpisodeTypeFilterChips {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(episodeTypeFilterChips) { chip in
+                                AllEpisodesFilterChip(
+                                    title: chip.label,
+                                    selected: settings.allEpisodesEpisodeTypeFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the All Episodes list by episode type")
+                                ) {
+                                    settings.allEpisodesEpisodeTypeFilter = chip
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                }
+            }
+
             // AntennaPod-like All Episodes info bar (visible soft-capped+filtered list remaining time).
-            // Soft-cap honesty: sums only the newest-500 → sort → status → podcast → search set — never beyond.
+            // Soft-cap honesty: sums only the newest-500 → sort → status → podcast → type → search set — never beyond.
             if let remainingLabel = allEpisodesRemainingInfoLabel {
                 Section {
                     Text(remainingLabel)
@@ -370,7 +410,7 @@ struct AllEpisodesView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Appends \(enqueueAllEpisodesCandidatesCount) episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the chip, podcast, or search filter. Queue lock does not block enqueue.")
+            Text("Appends \(enqueueAllEpisodesCandidatesCount) episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the status, podcast, type, or search filter. Queue lock does not block enqueue.")
         }
     }
 }

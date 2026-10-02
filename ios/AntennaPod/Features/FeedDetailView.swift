@@ -253,10 +253,11 @@ struct FeedDetailView: View {
         )
     }
 
-    /// Visible episodes: sort → chip filter → search.
-    /// Chip via `AppSettings.feedEpisodeFilter` (`isPlayed`; Unplayed also excludes archived,
-    /// same spirit as All Episodes Unplayed). Empty query shows the chip-filtered sorted list.
-    /// Matches title and optional episode descriptionText (raw feed text / HTML).
+    /// Visible episodes: sort → status chip → itunes:episodeType chip → search.
+    /// Status via `AppSettings.feedEpisodeFilter` (`isPlayed`; Unplayed also excludes archived,
+    /// same spirit as All Episodes Unplayed). Type via `feedEpisodeTypeFilter` (parsed
+    /// `itunes:episodeType` only — never invent; missing matches All only). Empty query shows
+    /// the chip-filtered sorted list. Matches title and optional episode descriptionText.
     private var filteredEpisodes: [PodcastEpisode] {
         var base = sortedEpisodes
         switch settings.feedEpisodeFilter {
@@ -268,6 +269,9 @@ struct FeedDetailView: View {
         case .played:
             base = base.filter { store.isPlayed($0.id) }
         }
+        if settings.feedEpisodeTypeFilter != .all {
+            base = base.filter { settings.feedEpisodeTypeFilter.matches($0) }
+        }
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         if q.isEmpty { return base }
         return base.filter {
@@ -276,13 +280,23 @@ struct FeedDetailView: View {
         }
     }
 
+    /// Type chips for this feed’s episode catalog (before status/type/search). Hide zero-match.
+    private var feedEpisodeTypeFilterChips: [EpisodeTypeFilter] {
+        EpisodeTypeFilter.chips(presentIn: feed.episodes, selected: settings.feedEpisodeTypeFilter)
+    }
+
+    private var showFeedEpisodeTypeFilterChips: Bool {
+        EpisodeTypeFilter.shouldShowChipRow(presentIn: feed.episodes, selected: settings.feedEpisodeTypeFilter)
+    }
+
     private var isFiltering: Bool {
         settings.feedEpisodeFilter != .all
+            || settings.feedEpisodeTypeFilter != .all
             || !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** Feed detail list
-    /// (sort → chip → searchable). Remaining per episode = `max(0, duration − position)` when
+    /// (sort → status → type → searchable). Remaining per episode = `max(0, duration − position)` when
     /// duration known; unplayed with duration contributes full duration; **played** (not current)
     /// → 0; **unknown duration skipped** (tilde when any skipped). Currently playing uses live
     /// `PlaybackService` position/duration. Wall-clock only (no playback-speed divide).
@@ -675,7 +689,28 @@ struct FeedDetailView: View {
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
 
-            // AntennaPod-like Feed detail info bar (visible sort→chip→search list remaining time).
+            // itunes:episodeType chips — hide when no known/unknown types in this feed catalog.
+            if showFeedEpisodeTypeFilterChips {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(feedEpisodeTypeFilterChips) { chip in
+                                FeedEpisodeFilterChip(
+                                    title: chip.label,
+                                    selected: settings.feedEpisodeTypeFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the Feed episodes list by episode type")
+                                ) {
+                                    settings.feedEpisodeTypeFilter = chip
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                }
+            }
+
+            // AntennaPod-like Feed detail info bar (visible sort→status→type→search list remaining time).
             // Distinct from Download all / Mark all as played / Add all to queue full-feed eligibility counts.
             if let remainingLabel = feedRemainingInfoLabel {
                 Section {
@@ -1142,10 +1177,11 @@ struct FeedDetailView: View {
 
 
 
-/// Filter chip for Feed detail All / Unplayed / Played (mirrors Downloads / All Episodes).
+/// Filter chip for Feed detail status / itunes:episodeType rows (mirrors Downloads / All Episodes).
 private struct FeedEpisodeFilterChip: View {
     let title: String
     let selected: Bool
+    var accessibilityHint: String = String(localized: "Filters the Feed episodes list")
     let action: () -> Void
 
     var body: some View {
@@ -1159,7 +1195,7 @@ private struct FeedEpisodeFilterChip: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
-        .accessibilityHint(String(localized: "Filters the Feed episodes list"))
+        .accessibilityHint(accessibilityHint)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

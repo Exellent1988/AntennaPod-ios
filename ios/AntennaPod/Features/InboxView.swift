@@ -140,16 +140,40 @@ struct InboxView: View {
         }
     }
 
-    /// Visible Inbox rows: `inboxSort` → podcast chip.
+    /// Visible Inbox rows: `inboxSort` → podcast chip → itunes:episodeType chip.
     /// Library `.searchable` replaces this list entirely (`LibrarySearchResultsView`).
     /// View-only — Mark all / Add all to queue / Archive all stay full-catalog scoped.
     private var filteredItems: [InboxEpisode] {
+        var base: [InboxEpisode]
         switch podcastFilter {
         case .all:
-            return sortedItems
+            base = sortedItems
         case .feed(let feedId):
-            return sortedItems.filter { store.feed(containingEpisodeId: $0.episode.id)?.id == feedId }
+            base = sortedItems.filter { store.feed(containingEpisodeId: $0.episode.id)?.id == feedId }
         }
+        if settings.inboxEpisodeTypeFilter != .all {
+            base = base.filter { settings.inboxEpisodeTypeFilter.matches($0.episode) }
+        }
+        return base
+    }
+
+    /// Type chips for the full Inbox catalog (before podcast/type). Hide zero-match.
+    private var episodeTypeFilterChips: [EpisodeTypeFilter] {
+        EpisodeTypeFilter.chips(
+            presentIn: store.inboxEpisodes.map(\.episode),
+            selected: settings.inboxEpisodeTypeFilter
+        )
+    }
+
+    private var showEpisodeTypeFilterChips: Bool {
+        EpisodeTypeFilter.shouldShowChipRow(
+            presentIn: store.inboxEpisodes.map(\.episode),
+            selected: settings.inboxEpisodeTypeFilter
+        )
+    }
+
+    private var isEpisodeTypeFiltering: Bool {
+        settings.inboxEpisodeTypeFilter != .all
     }
 
     private var isSearching: Bool {
@@ -164,7 +188,7 @@ struct InboxView: View {
         store.inboxEpisodes.filter { !store.isInQueue($0.episode.id) }.count
     }
 
-    /// Visible Inbox rows for remaining-time: podcast-filtered sorted list when **not** in
+    /// Visible Inbox rows for remaining-time: podcast+type-filtered sorted list when **not** in
     /// library-search mode. While `.searchable` shows `LibrarySearchResultsView` (full library),
     /// the info bar is hidden — do not report full-Inbox / tab-badge totals over a different surface.
     private var visibleInboxForRemaining: [InboxEpisode] {
@@ -231,7 +255,28 @@ struct InboxView: View {
                     }
                 }
 
-                // AntennaPod-like inbox info bar (visible sorted+podcast-filtered Inbox remaining time).
+                // itunes:episodeType chips — hide when no types in Inbox catalog / while searching.
+                if !isSearching, !store.inboxEpisodes.isEmpty, showEpisodeTypeFilterChips {
+                    Section {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(episodeTypeFilterChips) { chip in
+                                    InboxPodcastFilterChip(
+                                        title: chip.label,
+                                        selected: settings.inboxEpisodeTypeFilter == chip,
+                                        accessibilityHint: String(localized: "Filters the Inbox list by episode type")
+                                    ) {
+                                        settings.inboxEpisodeTypeFilter = chip
+                                    }
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                    }
+                }
+
+                // AntennaPod-like inbox info bar (visible sorted+podcast+type-filtered Inbox remaining time).
                 // Hidden while library search replaces the Inbox rows.
                 if let remainingLabel = inboxRemainingInfoLabel {
                     Section {
@@ -259,7 +304,7 @@ struct InboxView: View {
                         "No matching inbox episodes",
                         systemImage: "magnifyingglass",
                         description: Text(
-                            isPodcastFiltering
+                            (isPodcastFiltering || isEpisodeTypeFiltering)
                                 ? String(localized: "No inbox episodes match your filter.")
                                 : String(localized: "No inbox episodes match your search.")
                         )
