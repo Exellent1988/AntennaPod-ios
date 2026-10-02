@@ -17566,6 +17566,96 @@
         }
       }
     },
+    "Height copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for an alternate enclosure's displayed height.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Height copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Höhe in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy height": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying an alternate enclosure's displayed height.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy height"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Höhe kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed alternate enclosure height to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying an alternate enclosure's displayed height.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed alternate enclosure height to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigte Höhe der alternativen Enclosure in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Share height": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing an alternate enclosure's displayed height.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share height"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Höhe teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed alternate enclosure height as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing an alternate enclosure's displayed height.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed alternate enclosure height as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigte Höhe der alternativen Enclosure als reinen Text"
+          }
+        }
+      }
+    },
     "Alternate enclosure language copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Copied alert message for an alternate enclosure's displayed language.",

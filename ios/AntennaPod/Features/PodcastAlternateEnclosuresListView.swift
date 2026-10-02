@@ -76,6 +76,7 @@ struct PodcastAlternateEnclosuresListView: View {
         let bitrate = PodcastAlternateEnclosureDisplay.bitrateLabel(enclosure.bitrate)
         let lengthLabel = PodcastAlternateEnclosureDisplay.lengthLabel(enclosure.length)
         let codecs = enclosure.displayCodecs
+        let heightLabel = PodcastAlternateEnclosureDisplay.heightLabel(enclosure.height)
         let language = PodcastAlternateEnclosureDisplay.languageLabel(enclosure.displayLang)
         let captionParts: [String] = {
             var parts: [String] = []
@@ -88,8 +89,8 @@ struct PodcastAlternateEnclosuresListView: View {
             if let lengthLabel {
                 parts.append(lengthLabel)
             }
-            if let h = PodcastAlternateEnclosureDisplay.heightLabel(enclosure.height) {
-                parts.append(h)
+            if let heightLabel {
+                parts.append(heightLabel)
             }
             if let language {
                 parts.append(language)
@@ -222,6 +223,33 @@ struct PodcastAlternateEnclosuresListView: View {
                     .accessibilityLabel(String(localized: "Share length"))
                     .accessibilityHint(
                         String(localized: "Shares the exact displayed alternate enclosure length as plain text")
+                    )
+                }
+            }
+
+            if let heightLabel {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            heightLabel,
+                            confirmation: String(localized: "Height copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy height", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy height"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed alternate enclosure height to the pasteboard")
+                    )
+
+                    ShareLink(item: heightLabel) {
+                        Label("Share height", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share height"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed alternate enclosure height as plain text")
                     )
                 }
             }
