@@ -45,7 +45,9 @@ final class NotificationDeepLinkRouter: ObservableObject {
 /// **Permission:** requested once from Settings (toggle on) or the first refresh that finds
 /// new episodes while the toggle is on and status is `.notDetermined`.
 /// **Honesty:** posts when global or per-feed Always allows it **and** authorization
-/// is `.authorized` / `.provisional`. Denied stays denied — Settings shows the real status.
+/// is `.authorized` / `.provisional`. Denied stays denied — Settings shows the real status
+/// (Allowed/Denied/Not determined), **Open iOS Settings** when denied, and **Notifies /
+/// Does not notify** coverage (no download-complete / no server-side push).
 /// Per-feed Never suppresses that feed even when global is on.
 /// **Aggregation:** one local banner per refresh (not one per feed) to avoid spam.
 @MainActor

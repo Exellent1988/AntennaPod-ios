@@ -56,7 +56,9 @@ struct SettingsView: View {
     @State private var showCustomDefaultSpeed = false
     @State private var customSkipIntervalMode: CustomSkipIntervalSheet.Mode?
     @State private var showCustomSmartMark = false
-    @State private var notificationAuthLabel = "Checking…"
+    @Environment(\.scenePhase) private var scenePhase
+    /// System notification auth — store status (not display string) so Denied checks survive EN/DE.
+    @State private var notificationAuthStatus: NotificationAuthStatus = .checking
     @State private var podcastIndexAPIKeyDraft = ""
     @State private var podcastIndexAPISecretDraft = ""
     @State private var podcastIndexKeysSaved = PodcastIndexKeychain.hasCredentials
@@ -190,7 +192,13 @@ struct SettingsView: View {
                     "Download errors",
                     "Allowed",
                     "Denied",
-                    "Not determined"
+                    "Not determined",
+                    "Notifies",
+                    "Does not notify",
+                    "local only",
+                    "no push",
+                    "APNs",
+                    "download complete"
                 ) {
                     notificationsSection
                 }
@@ -383,6 +391,11 @@ struct SettingsView: View {
                     await NewEpisodeNotificationCoordinator.requestPermissionIfNeeded()
                     await refreshNotificationAuthLabel()
                 }
+            }
+            .onChange(of: scenePhase) { _, phase in
+                // Re-read after returning from iOS Settings (Allow / Deny).
+                guard phase == .active else { return }
+                Task { await refreshNotificationAuthLabel() }
             }
             .onChange(of: notificationDeepLink.settingsSyncOpenToken) { _, token in
                 guard token != nil else { return }
@@ -1071,22 +1084,49 @@ struct SettingsView: View {
     private var notificationsSection: some View {
         Section {
             Toggle("Notify on new episodes", isOn: $settings.notifyOnNewEpisodes)
-                .accessibilityHint(String(localized: "Local notifications only; no push server."))
+                .accessibilityHint(String(localized: "Local notifications only after a feed refresh finds new episodes; no push server."))
             Toggle("Notify on download errors", isOn: $settings.notifyOnDownloadErrors)
-                .accessibilityHint(String(localized: "Local notifications when a download fails."))
+                .accessibilityHint(String(localized: "Local notifications when a download fails — not when a download completes successfully."))
             Toggle("Notify on sync errors", isOn: $settings.notifyOnSyncErrors)
                 .accessibilityHint(String(localized: "Local notifications when gpodder or Nextcloud sync fails."))
             Toggle("Notify when sleep timer ends", isOn: $settings.notifyOnSleepTimerEnd)
                 .accessibilityHint(String(localized: "Local notification and haptic when the sleep timer pauses or stops playback."))
+
             LabeledContent("Permission") {
-                Text(notificationAuthLabel)
+                Text(notificationAuthStatus.label)
                     .foregroundStyle(.secondary)
             }
-            if notificationAuthLabel == "Denied" {
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "Permission"))
+            .accessibilityValue(notificationAuthStatus.label)
+
+            if notificationAuthStatus == .denied {
                 Button("Open iOS Settings") {
                     NewEpisodeNotificationCoordinator.openSystemNotificationSettings()
                 }
+                .accessibilityHint(String(localized: "Opens the system Settings app so you can allow Notifications for AntennaPod. App toggles stay on; banners stay off until iOS allows them."))
             }
+
+            LabeledContent("Notifies") {
+                Text(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)"))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "Notifies"))
+            .accessibilityValue(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)"))
+
+            LabeledContent("Does not notify") {
+                Text(String(localized: "No push / APNs / server-side alerts. No download-complete success banners. No episode-level deep link for new episodes (Inbox only). Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.trailing)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "Does not notify"))
+            .accessibilityValue(String(localized: "No push / APNs / server-side alerts. No download-complete success banners. No episode-level deep link for new episodes (Inbox only). Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push."))
+
             NavigationLink {
                 DownloadErrorsView()
             } label: {
@@ -1102,20 +1142,22 @@ struct SettingsView: View {
             Text(notificationsHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .accessibilityLabel(String(localized: "Notifications help"))
+                .accessibilityValue(notificationsHelpText)
         } header: {
             Text("Notifications")
         }
     }
 
     private var notificationsHelpText: String {
-        if notificationAuthLabel == "Denied" {
-            return String(localized: "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings. Toggles stay on so your preference is clear.")
+        if notificationAuthStatus == .denied {
+            return String(localized: "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings (Open iOS Settings). Toggles stay on so your preference is clear. Local UserNotifications only — never push / APNs / server-side alerts. No download-complete banners.")
         }
         if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors && !settings.notifyOnSyncErrors && !settings.notifyOnSleepTimerEnd {
-            return String(localized: "When enabled: new episodes after refresh (aggregated local banner), download failures, gpodder/Nextcloud login or sync failures, and/or sleep timer end. Local only — no push; needs permission.")
+            return String(localized: "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync, and/or sleep timer end (banner + foreground haptic). Local only — no push / APNs; iOS Notifications permission required. Does not notify on download complete.")
         }
-        if notificationAuthLabel == "Not determined" {
-            return String(localized: "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails / sleep timer ends. Local only — no push.")
+        if notificationAuthStatus == .notDetermined {
+            return String(localized: "iOS permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails / sleep timer ends. Local UserNotifications only — no push / APNs / server-side alerts. No download-complete banners.")
         }
         var parts: [String] = []
         if settings.notifyOnNewEpisodes {
@@ -1130,7 +1172,7 @@ struct SettingsView: View {
         if settings.notifyOnSleepTimerEnd {
             parts.append(String(localized: "Sleep timer end → local banner + foreground haptic (one per fire)"))
         }
-        return parts.joined(separator: ". ") + ". " + String(localized: "No APNs / push.")
+        return parts.joined(separator: ". ") + ". " + String(localized: "Local only — no APNs / push / download-complete. OS Notifications permission required.")
     }
 
     @MainActor
@@ -1138,13 +1180,13 @@ struct SettingsView: View {
         let status = await NewEpisodeNotificationCoordinator.authorizationStatus()
         switch status {
         case .authorized, .provisional, .ephemeral:
-            notificationAuthLabel = "Allowed"
+            notificationAuthStatus = .allowed
         case .denied:
-            notificationAuthLabel = "Denied"
+            notificationAuthStatus = .denied
         case .notDetermined:
-            notificationAuthLabel = "Not determined"
+            notificationAuthStatus = .notDetermined
         @unknown default:
-            notificationAuthLabel = "Unknown"
+            notificationAuthStatus = .unknown
         }
     }
 
@@ -1590,4 +1632,29 @@ struct SettingsView: View {
         }
     }
 
+}
+
+
+/// Display-only authorization status for Settings → Notifications (not a preference).
+private enum NotificationAuthStatus: Equatable {
+    case checking
+    case allowed
+    case denied
+    case notDetermined
+    case unknown
+
+    var label: String {
+        switch self {
+        case .checking:
+            return String(localized: "Checking…")
+        case .allowed:
+            return String(localized: "Allowed")
+        case .denied:
+            return String(localized: "Denied")
+        case .notDetermined:
+            return String(localized: "Not determined")
+        case .unknown:
+            return String(localized: "Unknown")
+        }
+    }
 }

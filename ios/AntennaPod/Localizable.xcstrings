@@ -20854,6 +20854,312 @@
           }
         }
       }
+    },
+    "Permission": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permission"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Berechtigung"
+          }
+        }
+      }
+    },
+    "Allowed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allowed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erlaubt"
+          }
+        }
+      }
+    },
+    "Denied": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denied"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verweigert"
+          }
+        }
+      }
+    },
+    "Not determined": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not determined"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht festgelegt"
+          }
+        }
+      }
+    },
+    "Checking…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfe…"
+          }
+        }
+      }
+    },
+    "Unknown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbekannt"
+          }
+        }
+      }
+    },
+    "Notifies": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifies"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benachrichtigt bei"
+          }
+        }
+      }
+    },
+    "Does not notify": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Does not notify"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benachrichtigt nicht"
+          }
+        }
+      }
+    },
+    "Notifications help": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notifications help"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hilfe zu Benachrichtigungen"
+          }
+        }
+      }
+    },
+    "Local notifications only after a feed refresh finds new episodes; no push server.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local notifications only after a feed refresh finds new episodes; no push server."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur lokale Benachrichtigungen, wenn eine Feed-Aktualisierung neue Episoden findet; kein Push-Server."
+          }
+        }
+      }
+    },
+    "Local notifications when a download fails — not when a download completes successfully.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local notifications when a download fails — not when a download completes successfully."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Benachrichtigungen bei fehlgeschlagenem Download — nicht bei erfolgreichem Abschluss."
+          }
+        }
+      }
+    },
+    "Opens the system Settings app so you can allow Notifications for AntennaPod. App toggles stay on; banners stay off until iOS allows them.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system Settings app so you can allow Notifications for AntennaPod. App toggles stay on; banners stay off until iOS allows them."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Systemeinstellungen, damit du Benachrichtigungen für AntennaPod erlauben kannst. App-Schalter bleiben an; Banner bleiben aus, bis iOS sie erlaubt."
+          }
+        }
+      }
+    },
+    "New episodes after refresh (one local banner → Inbox); download failures → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes after refresh (one local banner → Inbox); download failures → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Episoden nach Aktualisierung (ein lokales Banner → Inbox); Download-Fehler → Downloads; Sync-/Login-Fehler → Einstellungen Sync; Ende des Sleep-Timers (Banner + Haptik im Vordergrund)"
+          }
+        }
+      }
+    },
+    "No push / APNs / server-side alerts. No download-complete success banners. No episode-level deep link for new episodes (Inbox only). Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No push / APNs / server-side alerts. No download-complete success banners. No episode-level deep link for new episodes (Inbox only). Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Push / APNs / serverseitige Alerts. Keine Banner bei erfolgreichem Download. Kein Episoden-Deep-Link für neue Episoden (nur Inbox). Braucht In-App-Aktualisierung, Download, Sync oder Sleep-Timer — keinen Remote-Push."
+          }
+        }
+      }
+    },
+    "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings (Open iOS Settings). Toggles stay on so your preference is clear. Local UserNotifications only — never push / APNs / server-side alerts. No download-complete banners.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings (Open iOS Settings). Toggles stay on so your preference is clear. Local UserNotifications only — never push / APNs / server-side alerts. No download-complete banners."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benachrichtigungsberechtigung wurde verweigert. AntennaPod zeigt keine Banner, bis du Benachrichtigungen in den iOS-Einstellungen erlaubst (iOS-Einstellungen öffnen). Schalter bleiben an, damit deine Präferenz klar ist. Nur lokale UserNotifications — nie Push / APNs / serverseitige Alerts. Keine Banner bei erfolgreichem Download."
+          }
+        }
+      }
+    },
+    "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync, and/or sleep timer end (banner + foreground haptic). Local only — no push / APNs; iOS Notifications permission required. Does not notify on download complete.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync, and/or sleep timer end (banner + foreground haptic). Local only — no push / APNs; iOS Notifications permission required. Does not notify on download complete."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiviert: neue Episoden nach Aktualisierung (ein aggregiertes lokales Banner → Inbox), Download-Fehler → Downloads, gpodder-/Nextcloud-Login- oder Sync-Fehler → Einstellungen Sync und/oder Ende des Sleep-Timers (Banner + Haptik im Vordergrund). Nur lokal — kein Push / APNs; iOS-Benachrichtigungsberechtigung erforderlich. Keine Benachrichtigung bei erfolgreichem Download."
+          }
+        }
+      }
+    },
+    "iOS permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails / sleep timer ends. Local UserNotifications only — no push / APNs / server-side alerts. No download-complete banners.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iOS permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails / sleep timer ends. Local UserNotifications only — no push / APNs / server-side alerts. No download-complete banners."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die iOS-Berechtigung wird angefragt, wenn du einen Benachrichtigungs-Schalter einschaltest oder wenn erstmals neue Episoden gefunden werden / ein Download fehlschlägt / Sync fehlschlägt / der Sleep-Timer endet. Nur lokale UserNotifications — kein Push / APNs / serverseitige Alerts. Keine Banner bei erfolgreichem Download."
+          }
+        }
+      }
+    },
+    "Local only — no APNs / push / download-complete. OS Notifications permission required.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local only — no APNs / push / download-complete. OS Notifications permission required."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur lokal — kein APNs / Push / Download-fertig. OS-Benachrichtigungsberechtigung erforderlich."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

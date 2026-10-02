@@ -294,6 +294,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Settings: Suche (Titel / Fußnoten; leere Abschnitte aus; NavigationLinks bleiben) | ☐ Settings: search (titles / footnotes; empty sections hide; NavigationLinks stay) |
 | ☐ Home-Layout: Suche (Abschnitts-Label; Debounce; leer bei keinen Treffern; nur vorhandene Labels; Toggle bleibt; kein Drag-Reorder während Filter; Reset = volles Layout) | ☐ Home layout search (section label; debounce; empty when no matches; existing labels only; toggle stays; no drag reorder while filtering; Reset = full layout) |
 | ☐ Notify new episodes (default aus; lokal; ein Banner; kein Push) | ☐ Notify new episodes (default off; local; one banner; no push) |
+| ☐ Notifications-Settings: Permission-Status EN/DE; Open iOS Settings bei Denied; Notifies / Does not notify (kein Push, kein Download-fertig) | ☐ Notifications Settings: Permission status EN/DE; Open iOS Settings when Denied; Notifies / Does not notify (no push, no download-complete) |
+| ☐ Notify download errors / sync errors / sleep timer end (lokal; gleiche OS-Permission; kein Download-complete) | ☐ Notify download errors / sync errors / sleep timer end (local; same OS permission; no download-complete) |
 | ☐ Per-feed settings (auto-DL / keep / notify / tags; Speed Use global·Presets + Custom… 0,50–3,00×) | ☐ Per-feed settings (auto-DL / keep / notify / tags; Speed Use global·presets + Custom… 0.50–3.00×) |
 | ☐ Per-feed Keep updated → Never: Refresh all überspringt; Einzel-Refresh OK | ☐ Per-feed Keep updated → Never: Refresh all skips; single-feed refresh OK |
 | ☐ Feed refresh interval / Keep updated | ☐ Feed refresh interval / Keep updated |
@@ -315,8 +317,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
   **No** custom CarPlay templates without Apple entitlement.
 - Apple Watch: **kein** unabhängiges Watch-Playback / Downloads / Queue — nur Continue-Snapshot + Play-on-iPhone + System-Now-Playing.  
   Apple Watch: **no** independent Watch playback / downloads / queue — Continue snapshot + Play on iPhone + system Now Playing only.
-- **Kein** Push (nur lokale UserNotifications).  
-  **No** push (local UserNotifications only).
+- **Kein** Push / APNs / serverseitige Alerts (nur lokale UserNotifications). **Kein** Download-complete-Banner (nur Fehler). Settings → Notifications zeigt Permission + Open iOS Settings bei Denied + Notifies / Does not notify.  
+  **No** push / APNs / server-side alerts (local UserNotifications only). **No** download-complete banner (errors only). Settings → Notifications shows Permission + Open iOS Settings when Denied + Notifies / Does not notify.
 - Skip silence: Preference only — nicht auf stock AVPlayer.  
   Skip silence: preference only — not applied on stock AVPlayer.
 - Volume adaptation: iOS session mode (`.spokenAudio`), nicht Android LoudnessEnhancer.  
@@ -431,7 +433,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 - Skip-Intervalle Custom…: Settings → Playback → Rewind / Fast-forward Presets 5/10/15/20/30/60 + **Custom…** (5–60 s, Sheet); gilt für Mini/Full/Lockscreen; Defaults 10/30; SF-Symbol nummeriert wenn verfügbar.  
   Skip intervals Custom…: Settings → Playback → Rewind / Fast-forward presets 5/10/15/20/30/60 + **Custom…** (5–60 s sheet); mini/full/Lockscreen; defaults 10/30; numbered SF Symbol when available.
 - Sleep-Timer Ende: Settings → Benachrichtigungen → **Bei Schlaf-Timer-Ende benachrichtigen** (Standard **an**); bei Ablauf (Uhr oder Ende der Episode) **eine** lokale Benachrichtigung („Schlaf-Timer beendet“) + Haptik im Vordergrund; gleiche System-Berechtigung wie DL/Sync; kein Push.  
-  Sleep timer end: Settings → Notifications → **Notify when sleep timer ends** (default **on**); on expiry (clock or end-of-episode) **one** local banner (“Sleep timer ended”) + foreground haptic; same system permission as DL/sync; no push.
+  Sleep timer end: Settings → Notifications → **Notify when sleep timer ends** (default **on**); on expiry (clock or end-of-episode) **one** local banner (“Sleep timer ended”) + foreground haptic; same OS permission as new eps / DL / sync; Permission + Open iOS Settings when denied; **no** push / download-complete.
 - Show remaining time: Settings Toggle Standard **aus**; an = Mini + Full rechts −Restzeit statt Dauer; Links Position; Tippen auf Full-Player-Label toggelt.  
   Show remaining time: Settings toggle default **off**; on = mini + full right −remaining instead of duration; left position; tap full-player label toggles.
 - Rewind after pause: Settings → Playback Picker Off/1/2/3/5/10 (Standard **2**); nur nach echter Pause ≥1s der aktuellen Episode — nicht bei Cold-Play / erstem Start; fester Betrag (nicht Android-Zeitstufen).  
