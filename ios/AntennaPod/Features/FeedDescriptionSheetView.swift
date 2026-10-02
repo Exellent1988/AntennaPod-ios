@@ -39,6 +39,21 @@ struct FeedDescriptionSheetView: View {
         !plainDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    /// Full plain podcast description with a title header for system sharing.
+    /// This intentionally ignores the searchable, visible subset.
+    private var descriptionShareText: String {
+        let body = plainDescription.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !body.isEmpty else { return "" }
+        let title = resolvedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        let header = title.isEmpty ? String(localized: "Description") : title
+        return "\(header)\n\n\(body)"
+    }
+
+    private var descriptionShareSubject: String {
+        let title = resolvedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        return title.isEmpty ? String(localized: "Description") : title
+    }
+
     private var displayAuthor: String? {
         feed.displayAuthor
     }
@@ -252,6 +267,18 @@ struct FeedDescriptionSheetView: View {
                     .disabled(!hasPlainDescription)
                     .accessibilityLabel(String(localized: "Copy podcast description"))
                     .accessibilityHint(String(localized: "Copies the podcast description to the pasteboard"))
+
+                    ShareLink(
+                        item: descriptionShareText,
+                        subject: Text(descriptionShareSubject)
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .disabled(!hasPlainDescription)
+                    .accessibilityLabel(String(localized: "Share podcast description"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the full podcast description as plain text, with HTML stripped; ignores search filters")
+                    )
 
                     if let url = websiteURL {
                         Button {
