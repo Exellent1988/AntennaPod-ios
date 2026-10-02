@@ -246,6 +246,19 @@ struct HistoryView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver context for the catalog-empty state versus a podcast/search mismatch.
+    /// The visible ContentUnavailableView text stays concise; this value explains the
+    /// next useful action without changing History filtering or catalog semantics.
+    private var historyEmptyStateAccessibilityValue: String {
+        if items.isEmpty {
+            return String(localized: "There are no history episodes. Episodes you play or mark as played appear here, ordered by last played.")
+        }
+        if isPodcastFiltering && !isSearching {
+            return String(localized: "The selected podcast has no history episodes. Choose All or another podcast filter.")
+        }
+        return String(localized: "No history episodes match your search. Clear or change the search to see History.")
+    }
+
     private var historyRemainingSummary: EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
             episodes: filteredItems.map(\.episode),
@@ -331,6 +344,9 @@ struct HistoryView: View {
                     systemImage: "clock",
                     description: Text("Episodes you play or mark as played appear here, ordered by last played.")
                 )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No history yet"))
+                .accessibilityValue(historyEmptyStateAccessibilityValue)
             } else if filteredItems.isEmpty {
                 ContentUnavailableView(
                     "No matching history",
@@ -341,6 +357,9 @@ struct HistoryView: View {
                             : String(localized: "No history matches your search.")
                     )
                 )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No matching history"))
+                .accessibilityValue(historyEmptyStateAccessibilityValue)
             } else {
                 ForEach(filteredItems) { item in
                     EpisodeRow(
