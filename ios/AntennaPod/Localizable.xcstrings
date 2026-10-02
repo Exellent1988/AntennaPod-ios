@@ -3483,6 +3483,125 @@
         }
       }
     },
+    "This podcast has no tags assigned. Tags are local labels for Subscriptions filters — not folders synced to gpodder.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast has no tags assigned. Tags are local labels for Subscriptions filters — not folders synced to gpodder."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diesem Podcast sind keine Tags zugewiesen. Tags sind lokale Bezeichnungen für Abonnement-Filter — keine mit gpodder synchronisierten Ordner."
+          }
+        }
+      }
+    },
+    "Add a new tag below, or tap a suggested tag if any appear. Tags filter Subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a new tag below, or tap a suggested tag if any appear. Tags filter Subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge unten einen neuen Tag hinzu oder tippe auf einen Vorschlag, falls einer erscheint. Tags filtern Abonnements."
+          }
+        }
+      }
+    },
+    "Adds this existing tag to this podcast.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds this existing tag to this podcast."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fügt diesen vorhandenen Tag diesem Podcast hinzu."
+          }
+        }
+      }
+    },
+    "Type a new tag name for this podcast, then Add. Empty or whitespace-only names are ignored.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type a new tag name for this podcast, then Add. Empty or whitespace-only names are ignored."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib einen neuen Tag-Namen für diesen Podcast ein und tippe auf Hinzufügen. Leere oder nur aus Leerzeichen bestehende Namen werden ignoriert."
+          }
+        }
+      }
+    },
+    "Add tag": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add tag"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag hinzufügen"
+          }
+        }
+      }
+    },
+    "Enter a non-empty tag name to enable Add.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a non-empty tag name to enable Add."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib einen nicht leeren Tag-Namen ein, um Hinzufügen zu aktivieren."
+          }
+        }
+      }
+    },
+    "Assigns the new tag name to this podcast.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assigns the new tag name to this podcast."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weist den neuen Tag-Namen diesem Podcast zu."
+          }
+        }
+      }
+    },
     "No transcript text": {
       "extractionState": "manual",
       "localizations": {

@@ -341,8 +341,14 @@ struct PerFeedSettingsView: View {
 
             Section {
                 if assignedTags.isEmpty {
-                    Text("No tags yet")
+                    Text(String(localized: "No tags yet"))
                         .foregroundStyle(.secondary)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(String(localized: "No tags yet"))
+                        .accessibilityValue(perFeedNoTagsEmptyStateAccessibilityValue)
+                        .accessibilityHint(
+                            String(localized: "Add a new tag below, or tap a suggested tag if any appear. Tags filter Subscriptions.")
+                        )
                 } else {
                     ForEach(assignedTags, id: \.self) { tag in
                         HStack {
@@ -384,6 +390,8 @@ struct PerFeedSettingsView: View {
                         } label: {
                             Label(tag, systemImage: "plus.circle")
                         }
+                        .accessibilityLabel(tag)
+                        .accessibilityHint(String(localized: "Adds this existing tag to this podcast."))
                     }
                 }
 
@@ -391,9 +399,22 @@ struct PerFeedSettingsView: View {
                     TextField("New tag", text: $newTagDraft)
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
+                        .accessibilityLabel(String(localized: "New tag"))
+                        .accessibilityHint(String(localized: "Type a new tag name for this podcast, then Add. Empty or whitespace-only names are ignored."))
+                        .accessibilityValue(
+                            FeedTags.normalize(newTagDraft) == nil
+                                ? String(localized: "Empty")
+                                : (FeedTags.normalize(newTagDraft) ?? newTagDraft)
+                        )
                         .onSubmit(addDraftTag)
                     Button("Add") { addDraftTag() }
                         .disabled(FeedTags.normalize(newTagDraft) == nil)
+                        .accessibilityLabel(String(localized: "Add tag"))
+                        .accessibilityHint(
+                            FeedTags.normalize(newTagDraft) == nil
+                                ? String(localized: "Enter a non-empty tag name to enable Add.")
+                                : String(localized: "Assigns the new tag name to this podcast.")
+                        )
                 }
             } header: {
                 Text("Tags / Folders")
@@ -597,6 +618,10 @@ struct PerFeedSettingsView: View {
                 store.updateFeedSettings(for: feedId) { $0.notifyOnNewEpisodes = value }
             }
         )
+    }
+
+    private var perFeedNoTagsEmptyStateAccessibilityValue: String {
+        String(localized: "This podcast has no tags assigned. Tags are local labels for Subscriptions filters — not folders synced to gpodder.")
     }
 
     private var newEpisodeActionBinding: Binding<PerFeedNewEpisodeAction> {
