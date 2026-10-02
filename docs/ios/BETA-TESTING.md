@@ -6,6 +6,8 @@ Kurz-Checkliste (DE/EN) der wichtigsten Flows vor einem Geräte-/TestFlight-Beta
 Mark each item: ☐ todo · ☑ ok · ✗ fail (+ note).  
 Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 
+**Bekannte Teilumfänge / Known partials:** Skip silence ist nur eine Präferenz und überspringt Stille nicht auf dem Standard-AVPlayer. / Skip silence is a preference only and does not skip silence on stock AVPlayer. CarPlay bietet nur System-Now-Playing und Remote-Steuerung; kein eigenes `CPTemplate`- oder Browse-UI erwarten. / CarPlay provides system Now Playing and remote controls only; do not expect custom `CPTemplate` or browse UI.
+
 ---
 
 ## Setup / Einrichtung
@@ -127,6 +129,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Remaining time respects speed (Settings default aus; Listen/Home-Bars ÷ Feed-/Default ≥0,5; Player −Rest + Kapitel-Listen-Rest ÷ Live-Session-Rate; Widget/Watch Wanduhr; Boost ≠ Tempo) | ☐ Remaining time respects speed (Settings default off; list/Home bars ÷ feed/default ≥0.5; player −remaining + chapter-list remaining ÷ live session rate; widget/watch wall-clock; boost ≠ speed) |
 | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; auch Routenwechsel; Route kann ignorieren) | ☐ Stereo to mono (Settings; best-effort preferredOutputChannels=1; also on route change; route may ignore) |
 | ☐ Preserve pitch (Settings; Standard an → `.timeDomain`; aus → `.varispeed` Chipmunk; kein Skip Silence) | ☐ Preserve pitch (Settings; default on → `.timeDomain`; off → `.varispeed` chipmunks; not Skip Silence) |
+| ☐ Skip silence **AN** → Stille wird **nicht** übersprungen (nur Präferenz; nicht auf dem Standard-AVPlayer angewendet) | ☐ Skip silence **ON** → silences are **not** skipped (preference only; not applied on stock AVPlayer) |
 | ☐ Volume boost (Settings Playback; 100–300%, Standard 100; AVAudioMix; >100% kann clippen; kein ReplayGain/LoudnessEnhancer; HLS ggf. ohne Effekt) | ☐ Volume boost (Settings Playback; 100–300%, default 100; AVAudioMix; >100% may clip; not ReplayGain/LoudnessEnhancer; HLS may ignore) |
 | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; Pause ≥1s → Seek zurück; kein Cold-Play) | ☐ Rewind after pause (Settings Off/1/2/3/5/10, default 2; pause ≥1s → seek back; not on cold play) |
 | ☐ Progress speichern / Resume | ☐ Progress save / resume |
@@ -143,7 +146,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Remote Play/Pause/Skip/Seek | ☐ Remote play/pause/skip/seek |
 | ☐ Hintergrund weiterhören (Audio-Session `.playback`) | ☐ Background continues (`.playback` session) |
 | ☐ Headset/BT Pause bei Unterbrechung / Unplug | ☐ Headset/BT pause on interrupt / unplug |
-| ☐ CarPlay: System-Now-Playing sichtbar (kein eigenes CPTemplate) | ☐ CarPlay: system Now Playing only (no custom CPTemplate) |
+| ☐ CarPlay: System-Now-Playing + Play/Pause/Skip/Seek-Remotes bei laufendem Audio; **kein** eigenes Browse-/Listen-UI und keine `CPTemplate`-Vorlagen | ☐ CarPlay: system Now Playing + play/pause/skip/seek remotes while audio plays; **no** custom browse/list UI or `CPTemplate` templates |
 
 ---
 
