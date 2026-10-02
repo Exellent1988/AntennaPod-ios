@@ -5,6 +5,7 @@ import UIKit
 /// **Play soundbite** seeks to `startTime` and auto-pauses at `startTime + duration` via
 /// `PlaybackService.playSoundbite` (same episode player — **not** a separate clip player).
 /// Works for the current episode or starts playback when media is available; otherwise **Copy / Share soundbite details**.
+/// Displayed feed start and duration captions have distinct **Copy / Share** actions; missing values are hidden.
 /// When a feed title is displayed, distinct **Copy / Share soundbite title** (exact title only — never invent from time caption).
 /// Cap + honesty footnote.
 struct PodcastSoundbitesListView: View {
@@ -83,17 +84,16 @@ struct PodcastSoundbitesListView: View {
 
     @ViewBuilder
     private func soundbiteRow(_ bite: PodcastSoundbite) -> some View {
-        let headline = bite.displayTitle ?? PodcastSoundbiteDisplay.timeCaption(bite)
-        let caption = PodcastSoundbiteDisplay.timeCaption(bite)
-        let startLabel = PodcastSoundbiteDisplay.formatSeconds(bite.startTimeSeconds)
-        let durationLabel = PodcastSoundbiteDisplay.formatSeconds(bite.durationSeconds)
+        let headline = bite.displayTitle ?? String(localized: "Soundbite")
+        let startCaption = PodcastSoundbiteDisplay.startCaption(bite)
+        let durationCaption = PodcastSoundbiteDisplay.durationCaption(bite)
         let a11y: String = {
             var parts: [String] = [String(localized: "Soundbite")]
             if let t = bite.displayTitle {
                 parts.append(t)
             }
-            parts.append(String(localized: "Start \(startLabel)"))
-            parts.append(String(localized: "Duration \(durationLabel)"))
+            parts.append(startCaption)
+            parts.append(durationCaption)
             return parts.joined(separator: ", ")
         }()
 
@@ -112,16 +112,70 @@ struct PodcastSoundbitesListView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(a11y)
 
-            if bite.displayTitle != nil {
-                Text(caption)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(startCaption)
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
+                Text(durationCaption)
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(.secondary)
                     .accessibilityHidden(true)
             }
 
-            let detailsText = PodcastSoundbiteDisplay.copyText(bite)
-            // Feed-provided title only — never invent from the time caption.
             let feedTitle = bite.displayTitle
+            // Details match the displayed feed title and time captions exactly.
+            let detailsText = PodcastSoundbiteDisplay.copyText(bite)
+
+            HStack(spacing: 12) {
+                Button {
+                    copyToPasteboard(
+                        startCaption,
+                        confirmation: String(localized: "Soundbite start copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy soundbite start", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy soundbite start"))
+                .accessibilityHint(
+                    String(localized: "Copies the exact displayed feed-provided soundbite start time as plain text")
+                )
+
+                ShareLink(item: startCaption) {
+                    Label("Share soundbite start", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share soundbite start"))
+                .accessibilityHint(
+                    String(localized: "Shares the exact displayed feed-provided soundbite start time as plain text")
+                )
+            }
+
+            HStack(spacing: 12) {
+                Button {
+                    copyToPasteboard(
+                        durationCaption,
+                        confirmation: String(localized: "Soundbite duration copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy soundbite duration", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy soundbite duration"))
+                .accessibilityHint(
+                    String(localized: "Copies the exact displayed feed-provided soundbite duration as plain text")
+                )
+
+                ShareLink(item: durationCaption) {
+                    Label("Share soundbite duration", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share soundbite duration"))
+                .accessibilityHint(
+                    String(localized: "Shares the exact displayed feed-provided soundbite duration as plain text")
+                )
+            }
 
             HStack(spacing: 12) {
                 if canPlaySoundbite {

@@ -38699,6 +38699,186 @@
       }
     },
     "comment": "VoiceOver hint for Share license URL; prefers http(s), else raw; honesty: display-only, no DRM."
+  },
+  "Copy soundbite start": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy soundbite start"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite-Start kopieren"
+        }
+      }
+    },
+    "comment": "VoiceOver label for copying the exact displayed feed-provided podcast:soundbite start time."
+  },
+  "Share soundbite start": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share soundbite start"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite-Start teilen"
+        }
+      }
+    },
+    "comment": "VoiceOver label for sharing the exact displayed feed-provided podcast:soundbite start time."
+  },
+  "Soundbite start copied to the pasteboard.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite start copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite-Start in die Zwischenablage kopiert."
+        }
+      }
+    },
+    "comment": "Copied confirmation for the exact displayed feed-provided podcast:soundbite start time."
+  },
+  "Copies the exact displayed feed-provided soundbite start time as plain text": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed feed-provided soundbite start time as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt angezeigte, vom Feed gelieferte Soundbite-Startzeit als Klartext"
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Copy soundbite start; hide with the soundbite row when the feed-provided value is missing."
+  },
+  "Shares the exact displayed feed-provided soundbite start time as plain text": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact displayed feed-provided soundbite start time as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die exakt angezeigte, vom Feed gelieferte Soundbite-Startzeit als Klartext"
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Share soundbite start; hide with the soundbite row when the feed-provided value is missing."
+  },
+  "Copy soundbite duration": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy soundbite duration"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite-Dauer kopieren"
+        }
+      }
+    },
+    "comment": "VoiceOver label for copying the exact displayed feed-provided podcast:soundbite duration."
+  },
+  "Share soundbite duration": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share soundbite duration"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite-Dauer teilen"
+        }
+      }
+    },
+    "comment": "VoiceOver label for sharing the exact displayed feed-provided podcast:soundbite duration."
+  },
+  "Soundbite duration copied to the pasteboard.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite duration copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Soundbite-Dauer in die Zwischenablage kopiert."
+        }
+      }
+    },
+    "comment": "Copied confirmation for the exact displayed feed-provided podcast:soundbite duration."
+  },
+  "Copies the exact displayed feed-provided soundbite duration as plain text": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed feed-provided soundbite duration as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt angezeigte, vom Feed gelieferte Soundbite-Dauer als Klartext"
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Copy soundbite duration; hide with the soundbite row when the feed-provided value is missing."
+  },
+  "Shares the exact displayed feed-provided soundbite duration as plain text": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact displayed feed-provided soundbite duration as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die exakt angezeigte, vom Feed gelieferte Soundbite-Dauer als Klartext"
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Share soundbite duration; hide with the soundbite row when the feed-provided value is missing."
   }
   },
   "version": "1.0"

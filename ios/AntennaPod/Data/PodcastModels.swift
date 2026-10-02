@@ -1029,20 +1029,28 @@ enum PodcastSoundbiteDisplay {
         return String(format: "%d:%02d", m, s)
     }
 
-    /// Caption `start · duration` (localized separators left to UI).
-    static func timeCaption(_ item: PodcastSoundbite) -> String {
-        let start = formatSeconds(item.startTimeSeconds)
-        let dur = formatSeconds(item.durationSeconds)
-        return "\(start) · \(dur)"
+    /// Exact displayed start caption for a feed-provided soundbite.
+    static func startCaption(_ item: PodcastSoundbite) -> String {
+        String(localized: "Start \(formatSeconds(item.startTimeSeconds))")
     }
 
-    /// Pasteboard / summary line: optional title + start + duration.
+    /// Exact displayed duration caption for a feed-provided soundbite.
+    static func durationCaption(_ item: PodcastSoundbite) -> String {
+        String(localized: "Duration \(formatSeconds(item.durationSeconds))")
+    }
+
+    /// Caption `start · duration` retained for callers that use the compact summary form.
+    static func timeCaption(_ item: PodcastSoundbite) -> String {
+        "\(formatSeconds(item.startTimeSeconds)) · \(formatSeconds(item.durationSeconds))"
+    }
+
+    /// Plain-text summary matching the displayed title and separate start/duration captions.
     static func copyText(_ item: PodcastSoundbite) -> String {
-        let times = timeCaption(item)
+        var lines = [startCaption(item), durationCaption(item)]
         if let title = item.displayTitle {
-            return "\(title) — \(times)"
+            lines.insert(title, at: 0)
         }
-        return times
+        return lines.joined(separator: "\n")
     }
 }
 
