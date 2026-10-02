@@ -225,6 +225,19 @@ struct ArchivedView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver context for the catalog-empty state versus a podcast/search mismatch.
+    /// The visible ContentUnavailableView text stays concise; this value explains the
+    /// next useful action without changing Archived filtering or catalog semantics.
+    private var archivedEmptyStateAccessibilityValue: String {
+        if items.isEmpty {
+            return String(localized: "There are no archived episodes. Archive hides episodes from Inbox without marking them played. Restore them here or from a feed.")
+        }
+        if isPodcastFiltering && !isSearching {
+            return String(localized: "The selected podcast has no archived episodes. Choose All or another podcast filter.")
+        }
+        return String(localized: "No archived episodes match your search. Clear or change the search to see Archived.")
+    }
+
     private var archivedRemainingSummary: EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
             episodes: filteredItems.map(\.episode),
@@ -309,6 +322,9 @@ struct ArchivedView: View {
                     systemImage: "archivebox",
                     description: Text("Archive hides episodes from Inbox without marking them played. Restore them here or from a feed.")
                 )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No archived episodes"))
+                .accessibilityValue(archivedEmptyStateAccessibilityValue)
             } else if filteredItems.isEmpty {
                 ContentUnavailableView(
                     "No matching archived",
@@ -319,6 +335,9 @@ struct ArchivedView: View {
                             : String(localized: "No archived episodes match your search.")
                     )
                 )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No matching archived"))
+                .accessibilityValue(archivedEmptyStateAccessibilityValue)
             } else {
                 ForEach(filteredItems) { item in
                     EpisodeRow(
