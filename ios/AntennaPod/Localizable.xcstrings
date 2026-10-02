@@ -26452,6 +26452,60 @@
         }
       },
       "comment": "Help caption / VoiceOver hint under Home feed cards picker."
+    },
+    "Pinned": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pinned"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angepinnt"
+          }
+        }
+      },
+      "comment": "Subscriptions tag-row chip: show only Keep-at-top / pinned podcasts."
+    },
+    "No pinned podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No pinned podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine angepinnten Podcasts"
+          }
+        }
+      },
+      "comment": "Empty state when Subscriptions Pinned chip yields no feeds (after search/category/language)."
+    },
+    "Filters the Subscriptions list to pinned podcasts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Subscriptions list to pinned podcasts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Abonnementliste auf angepinnte Podcasts"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Subscriptions Pinned filter chip."
     }
   },
   "version": "1.0"

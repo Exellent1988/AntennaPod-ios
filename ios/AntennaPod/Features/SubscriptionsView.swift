@@ -199,12 +199,16 @@ struct SubscriptionsView: View {
         return base.filter { languageFilter.matches($0) }
     }
 
-    /// Search → category → language → tag (AND). Remaining-time / unplayed bars use this visible set.
+    /// Search → category → language → tag/pin (AND). Remaining-time / unplayed bars use this visible set.
+    /// `.pinned` is session `@State` like other tag chips (not a sort mode); pin partition still
+    /// applies within the filtered set via `sortedFeeds`.
     private var tagFilteredFeeds: [PodcastFeed] {
         let base = languageFilteredFeeds
         switch tagFilter {
         case .all:
             return base
+        case .pinned:
+            return base.filter { store.isPinned(feedId: $0.id) }
         case .untagged:
             return base.filter { store.tags(for: $0.id).isEmpty }
         case .tag(let name):
@@ -237,8 +241,17 @@ struct SubscriptionsView: View {
         return sections
     }
 
+    /// Any subscribed feed with Keep at top (`FeedSettings.isPinned`). Drives Pinned chip visibility.
+    private var hasAnyPinnedSubscription: Bool {
+        store.feeds.contains { store.isPinned(feedId: $0.id) }
+    }
+
     private var filterChips: [SubscriptionTagFilter] {
         var chips: [SubscriptionTagFilter] = [.all]
+        // Pinned sits with All / tags / Untagged; hide when no Keep-at-top feeds remain.
+        if hasAnyPinnedSubscription {
+            chips.append(.pinned)
+        }
         chips.append(contentsOf: store.allTags.map { .tag($0) })
         if !store.untaggedFeeds.isEmpty || store.allTags.isEmpty == false {
             chips.append(.untagged)
@@ -435,7 +448,7 @@ struct SubscriptionsView: View {
                     }
                 }
 
-                if !store.feeds.isEmpty, !store.allTags.isEmpty || tagFilter != .all {
+                if !store.feeds.isEmpty, !store.allTags.isEmpty || hasAnyPinnedSubscription || tagFilter != .all {
                     Section {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 8) {
@@ -443,7 +456,7 @@ struct SubscriptionsView: View {
                                     TagFilterChip(
                                         title: chip.label,
                                         selected: tagFilter == chip,
-                                        accessibilityHint: String(localized: "Filters the Subscriptions list by tag")
+                                        accessibilityHint: chipAccessibilityHint(chip)
                                     ) {
                                         tagFilter = chip
                                     }
@@ -453,6 +466,7 @@ struct SubscriptionsView: View {
                         }
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
 
+                        // Group by tag only for All (Pinned / tag / Untagged stay flat — same gate as grouping).
                         if tagFilter == .all {
                             Toggle("Group by tag", isOn: $groupByTag)
                         }
@@ -623,6 +637,9 @@ struct SubscriptionsView: View {
                     tagFilter = .all
                 }
             }
+            .onChange(of: store.feedSettingsById) { _, _ in
+                resetPinnedFilterIfNeeded()
+            }
             .onChange(of: store.feeds) { _, _ in
                 // Drop category filter if that category is no longer present on any stored feed.
                 if case .category(let name) = categoryFilter,
@@ -634,8 +651,10 @@ struct SubscriptionsView: View {
                    !libraryLanguages.contains(where: { FeedTags.equal($0, code) }) {
                     settings.subscriptionsLanguageFilter = ""
                 }
+                resetPinnedFilterIfNeeded()
             }
             .onAppear {
+                resetPinnedFilterIfNeeded()
                 consumePendingFeedOpenIfNeeded()
             }
             .onChange(of: notificationDeepLink.feedOpenToken) { _, _ in
@@ -717,7 +736,7 @@ struct SubscriptionsView: View {
         }
     }
 
-    /// Prefer search copy, then category, then language, then tag — honest about which filter emptied the list.
+    /// Prefer search copy, then category, then language, then pinned, then tag — honest about which filter emptied the list.
     private var subscriptionsEmptyFilterMessage: String {
         if isSearchFiltering {
             return String(localized: "No subscriptions match your search.")
@@ -728,7 +747,27 @@ struct SubscriptionsView: View {
         if isLanguageFiltering {
             return String(localized: "No subscriptions match this language filter.")
         }
+        if tagFilter == .pinned {
+            return String(localized: "No pinned podcasts")
+        }
         return String(localized: "No subscriptions match this tag filter.")
+    }
+
+    /// VoiceOver hint for tag-row chips (Pinned vs tag / Untagged / All).
+    private func chipAccessibilityHint(_ chip: SubscriptionTagFilter) -> String {
+        switch chip {
+        case .pinned:
+            return String(localized: "Filters the Subscriptions list to pinned podcasts")
+        default:
+            return String(localized: "Filters the Subscriptions list by tag")
+        }
+    }
+
+    /// If Pinned is selected and the last Keep-at-top feed was unpinned/removed, fall back to All.
+    private func resetPinnedFilterIfNeeded() {
+        if tagFilter == .pinned, !hasAnyPinnedSubscription {
+            tagFilter = .all
+        }
     }
 
     @ViewBuilder

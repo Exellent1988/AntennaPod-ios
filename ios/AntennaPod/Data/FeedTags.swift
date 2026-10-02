@@ -33,12 +33,14 @@ enum FeedTags {
 /// Filter / grouping selection on the Subscriptions list.
 enum SubscriptionTagFilter: Hashable, Identifiable {
     case all
+    case pinned
     case tag(String)
     case untagged
 
     var id: String {
         switch self {
         case .all: return "__all__"
+        case .pinned: return "__pinned__"
         case .untagged: return "__untagged__"
         case .tag(let name): return "tag:\(name.lowercased())"
         }
@@ -46,8 +48,9 @@ enum SubscriptionTagFilter: Hashable, Identifiable {
 
     var label: String {
         switch self {
-        case .all: return "All"
-        case .untagged: return "Untagged"
+        case .all: return String(localized: "All")
+        case .pinned: return String(localized: "Pinned")
+        case .untagged: return String(localized: "Untagged")
         case .tag(let name): return name
         }
     }
