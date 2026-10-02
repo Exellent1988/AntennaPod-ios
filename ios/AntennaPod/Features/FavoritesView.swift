@@ -12,6 +12,7 @@ struct FavoritesView: View {
     @State private var debounceTask: Task<Void, Never>?
     @State private var showClearFavoritesConfirm = false
     @State private var showEnqueueAllConfirm = false
+    @State private var showEnqueueAllUnplayedConfirm = false
     @State private var showMarkAllPlayedConfirm = false
     @State private var showMarkAllUnplayedConfirm = false
     @State private var showArchiveAllConfirm = false
@@ -31,6 +32,12 @@ struct FavoritesView: View {
     /// Confirm count and `enqueueAllFavorites()` share this eligibility.
     private var enqueueAllFavoritesCandidatesCount: Int {
         items.filter { !store.isInQueue($0.episode.id) }.count
+    }
+
+    /// Unplayed, non-archived, not-already-queued episodes in the full Favorites catalog.
+    /// Confirm count and enqueue action share this catalog-scoped eligibility; UI filters are ignored.
+    private var enqueueAllUnplayedFavoritesCandidatesCount: Int {
+        store.enqueueAllUnplayedFavoritesCandidates().count
     }
 
     private var markAllFavoritesPlayedCandidatesCount: Int {
@@ -446,6 +453,17 @@ struct FavoritesView: View {
                     .accessibilityHint(String(localized: "Appends favorite episodes not already queued"))
 
                     Button {
+                        showEnqueueAllUnplayedConfirm = true
+                    } label: {
+                        Label("Add all unplayed to queue", systemImage: "text.badge.plus")
+                    }
+                    .disabled(enqueueAllUnplayedFavoritesCandidatesCount == 0)
+                    .accessibilityLabel(String(localized: "Add all unplayed to queue"))
+                    .accessibilityHint(
+                        String(localized: "Appends unplayed, non-archived favorite episodes not already queued; ignores podcast, search, and sort filters")
+                    )
+
+                    Button {
                         showMarkAllPlayedConfirm = true
                     } label: {
                         Label("Mark all as played", systemImage: "checkmark.circle")
@@ -489,7 +507,7 @@ struct FavoritesView: View {
                 .disabled(items.isEmpty)
                 .accessibilityLabel(String(localized: "Favorites actions"))
                 .accessibilityHint(
-                    String(localized: "Copy favorites, share favorites, play random, add all to queue, mark all as played, mark all as unplayed, archive all, or clear favorites")
+                    String(localized: "Copy favorites, share favorites, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, archive all, or clear favorites")
                 )
             }
         }
@@ -513,6 +531,18 @@ struct FavoritesView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("Appends \(enqueueAllFavoritesCandidatesCount) favorite episodes to the end of the queue (newest favorited first). Already queued episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the podcast or searchable filter. Queue lock does not block enqueue.")
+        }
+        .confirmationDialog(
+            "Add all unplayed to queue?",
+            isPresented: $showEnqueueAllUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all unplayed to queue") {
+                store.enqueueAllUnplayedFavorites()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllUnplayedFavoritesCandidatesCount) unplayed, non-archived favorite episodes to the end of the queue (newest favorited first). Already queued, played, and archived episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the podcast, search, or sort filter. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived episodes.")
         }
         .confirmationDialog(
             "Mark all as played?",

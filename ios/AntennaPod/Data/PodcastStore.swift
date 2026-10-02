@@ -1764,6 +1764,32 @@ final class PodcastStore: ObservableObject {
         return candidates.count
     }
 
+    /// Append unplayed, non-archived, not-already-queued episodes from the full Favorites catalog.
+    /// Uses `favoriteEpisodes` order (newest favorited first), not the UI podcast, search, or sort
+    /// filters. This follows the same eligibility policy as All Episodes / Feed detail: played,
+    /// archived, and already-queued episodes are skipped. Uses `enqueue` (append), not `playNext`,
+    /// and remains allowed while the queue lock is on.
+    /// Callers must confirm first (Favorites toolbar `confirmationDialog`).
+    /// - Returns: number of episodes newly appended.
+    @discardableResult
+    func enqueueAllUnplayedFavorites() -> Int {
+        let candidates = enqueueAllUnplayedFavoritesCandidates()
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
+    /// Eligible episodes for Favorites **Add all unplayed to queue**. Shared by the confirmation
+    /// count and `enqueueAllUnplayedFavorites`; the catalog is always the full Favorites catalog.
+    func enqueueAllUnplayedFavoritesCandidates() -> [PodcastEpisode] {
+        favoriteEpisodes
+            .map(\.episode)
+            .filter { episode in
+                !isPlayed(episode.id) && !isArchived(episode.id) && !isInQueue(episode.id)
+            }
+    }
+
     /// Append every completed download that is not already queued (bulk).
     /// Uses `DownloadService.downloads` **catalog order** (array as persisted — oldest completed
     /// first; new finishes append). Same full completed catalog as Delete played downloads /
