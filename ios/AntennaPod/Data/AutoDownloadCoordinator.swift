@@ -138,6 +138,10 @@ final class NetworkPathGate: ObservableObject {
     @Published private(set) var pathSatisfied = true
     @Published private(set) var isWifiOrEthernet = true
     @Published private(set) var kind: NetworkPathKind = .wifi
+    /// False until the first `NWPath` callback. `kind` stays the optimistic `.wifi`
+    /// default so cold-start `allowsTransfer` is unchanged; Settings must not present
+    /// that default as a measured Wi‑Fi path.
+    @Published private(set) var hasReportedPath = false
 
     private init() {}
 
@@ -154,6 +158,7 @@ final class NetworkPathGate: ObservableObject {
     }
 
     private func apply(_ path: NWPath) {
+        hasReportedPath = true
         pathSatisfied = path.status == .satisfied
         let wifi = path.usesInterfaceType(.wifi)
         let ethernet = path.usesInterfaceType(.wiredEthernet)

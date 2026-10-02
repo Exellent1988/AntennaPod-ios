@@ -1503,21 +1503,25 @@ struct SettingsView: View {
     private var networkDownloadsSection: some View {
         Section {
             LabeledContent(String(localized: "Current network")) {
-                Text(networkPath.kind.statusLabel)
+                Text(currentNetworkStatusLabel)
                     .foregroundStyle(.secondary)
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel(networkPath.kind.accessibilityLabel)
-            .accessibilityHint(String(localized: "Live status from the system path monitor. Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular does not. No VPN or proxy detection."))
+            .accessibilityLabel(String(localized: "Current network"))
+            .accessibilityValue(currentNetworkAccessibilityValue)
+            .accessibilityHint(String(localized: "After the first path sample, Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular, other, and offline do not. Before that sample the row says Checking and does not claim Wi‑Fi. No VPN or proxy detection."))
 
             Toggle(String(localized: "Auto-download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.autoDownloadWifiOnly))
                 .accessibilityLabel(String(localized: "Auto-download Wi‑Fi only"))
+                .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.autoDownloadWifiOnly, role: .autoDownload))
                 .accessibilityHint(String(localized: "When on (default), auto-download after refresh skips cellular. Does not block manual downloads."))
             Toggle(String(localized: "Manual download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.manualDownloadWifiOnly))
                 .accessibilityLabel(String(localized: "Manual download Wi‑Fi only"))
+                .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.manualDownloadWifiOnly, role: .manualDownload))
                 .accessibilityHint(String(localized: "When on, user-initiated downloads are refused on cellular and an error is recorded. Default off — manual downloads may use mobile data."))
             Toggle(String(localized: "Stream Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.streamWifiOnly))
                 .accessibilityLabel(String(localized: "Stream Wi‑Fi only"))
+                .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.streamWifiOnly, role: .stream))
                 .accessibilityHint(String(localized: "When on, network streaming is blocked on cellular; local offline files still play. Default off."))
             if parental.isEnabled && parental.lockNetworkDownloadsSettings && parental.isLocked {
                 Text(String(localized: "Network / Downloads settings are locked. Enter the parental PIN to change these toggles."))
@@ -1672,6 +1676,77 @@ struct SettingsView: View {
                 }
             }
         )
+    }
+
+    /// Visible Current network label. The gate's optimistic `.wifi` default is not shown.
+    private var currentNetworkStatusLabel: String {
+        guard networkPath.hasReportedPath else {
+            return String(localized: "Checking…")
+        }
+        return networkPath.kind.statusLabel
+    }
+
+    /// VoiceOver for Current network. Checking is not a measured Wi‑Fi path.
+    private var currentNetworkAccessibilityValue: String {
+        guard networkPath.hasReportedPath else {
+            return String(localized: "Checking. The system path monitor has not delivered a sample, so this is not Wi‑Fi, Ethernet, cellular, offline, or another network. No status is invented.")
+        }
+        return networkPath.kind.statusLabel
+    }
+
+    private enum WifiOnlyVoiceOverRole {
+        case autoDownload
+        case manualDownload
+        case stream
+    }
+
+    /// VoiceOver value for a Wi‑Fi-only toggle: saved On/Off, what that action does, and the
+    /// reported path. A missing sample is not spoken as allowed or blocked.
+    private func wifiOnlyToggleAccessibilityValue(isOn: Bool, role: WifiOnlyVoiceOverRole) -> String {
+        var parts: [String] = []
+        if parental.needsPINForNetworkDownloads {
+            parts.append(String(localized: "Locked. Enter the parental PIN to change this toggle. The saved On or Off choice stays until then."))
+        }
+        parts.append(isOn ? String(localized: "On.") : String(localized: "Off."))
+        parts.append(wifiOnlyPolicySentence(isOn: isOn, role: role))
+        parts.append(wifiOnlyPathSentence)
+        return parts.joined(separator: " ")
+    }
+
+    private func wifiOnlyPolicySentence(isOn: Bool, role: WifiOnlyVoiceOverRole) -> String {
+        switch (role, isOn) {
+        case (.autoDownload, true):
+            return String(localized: "Auto-download after a successful refresh is skipped unless the path is Wi‑Fi or Ethernet. This does not start a download. Manual downloads and streaming stay on their own toggles.")
+        case (.autoDownload, false):
+            return String(localized: "Auto-download is not limited to Wi‑Fi or Ethernet. It still runs only after a successful refresh and still needs a satisfied path. This does not start a download.")
+        case (.manualDownload, true):
+            return String(localized: "User-started downloads are refused unless the path is Wi‑Fi or Ethernet, and a download error is recorded. Files already saved stay. This does not start a download.")
+        case (.manualDownload, false):
+            return String(localized: "User-started downloads are not limited to Wi‑Fi or Ethernet by this toggle. A missing network can still fail the transfer. No Wi‑Fi-only error is recorded just because this is off.")
+        case (.stream, true):
+            return String(localized: "Network streaming is blocked unless the path is Wi‑Fi or Ethernet. Local offline files still play. This does not download the episode.")
+        case (.stream, false):
+            return String(localized: "Network streaming is not limited to Wi‑Fi or Ethernet by this toggle. Local offline files still play. This does not download the episode.")
+        }
+    }
+
+    /// Describes the measured path only. Does not claim the toggle allows or blocks it.
+    private var wifiOnlyPathSentence: String {
+        guard networkPath.hasReportedPath else {
+            return String(localized: "Current network is not yet reported. It is not assumed to be Wi‑Fi, and this row does not claim the action is allowed or blocked.")
+        }
+        switch networkPath.kind {
+        case .wifi:
+            return String(localized: "Reported network is Wi‑Fi.")
+        case .ethernet:
+            return String(localized: "Reported network is Ethernet.")
+        case .cellular:
+            return String(localized: "Reported network is Cellular.")
+        case .other:
+            return String(localized: "Reported network is another interface, not Wi‑Fi.")
+        case .offline:
+            return String(localized: "Reported network is offline. No network is invented.")
+        }
     }
 
     private var networkDownloadsHelpText: String {

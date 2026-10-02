@@ -41135,6 +41135,295 @@
           }
         }
       }
+    },
+  "After the first path sample, Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular, other, and offline do not. Before that sample the row says Checking and does not claim Wi‑Fi. No VPN or proxy detection.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After the first path sample, Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular, other, and offline do not. Before that sample the row says Checking and does not claim Wi‑Fi. No VPN or proxy detection."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach der ersten Pfadmessung erlauben Wi‑Fi und Ethernet Nur-Wi‑Fi-Aktionen; Mobilfunk, andere Netze und offline nicht. Vor der Messung steht Prüfe und es wird kein Wi‑Fi behauptet. Keine VPN- oder Proxy-Erkennung."
+          }
+        }
+      }
+    },
+  "Checking. The system path monitor has not delivered a sample, so this is not Wi‑Fi, Ethernet, cellular, offline, or another network. No status is invented.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking. The system path monitor has not delivered a sample, so this is not Wi‑Fi, Ethernet, cellular, offline, or another network. No status is invented."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prüfe. Der System-Pfadmonitor hat noch keine Messung geliefert, also ist das weder Wi‑Fi, Ethernet, Mobilfunk, offline noch ein anderes Netz. Es wird kein Status erfunden."
+          }
+        }
+      }
+    },
+  "Locked. Enter the parental PIN to change this toggle. The saved On or Off choice stays until then.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locked. Enter the parental PIN to change this toggle. The saved On or Off choice stays until then."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesperrt. Gib die Eltern-PIN ein, um diesen Schalter zu ändern. Die gespeicherte Wahl An oder Aus bleibt bis dahin."
+          }
+        }
+      }
+    },
+  "On.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An."
+          }
+        }
+      }
+    },
+  "Off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus."
+          }
+        }
+      }
+    },
+  "Auto-download after a successful refresh is skipped unless the path is Wi‑Fi or Ethernet. This does not start a download. Manual downloads and streaming stay on their own toggles.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-download after a successful refresh is skipped unless the path is Wi‑Fi or Ethernet. This does not start a download. Manual downloads and streaming stay on their own toggles."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-Download nach einem erfolgreichen Refresh wird übersprungen, außer der Pfad ist Wi‑Fi oder Ethernet. Das startet keinen Download. Manuelle Downloads und Streaming bleiben bei ihren eigenen Schaltern."
+          }
+        }
+      }
+    },
+  "Auto-download is not limited to Wi‑Fi or Ethernet. It still runs only after a successful refresh and still needs a satisfied path. This does not start a download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-download is not limited to Wi‑Fi or Ethernet. It still runs only after a successful refresh and still needs a satisfied path. This does not start a download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-Download ist nicht auf Wi‑Fi oder Ethernet beschränkt. Er läuft weiterhin nur nach einem erfolgreichen Refresh und braucht weiterhin einen erfüllten Pfad. Das startet keinen Download."
+          }
+        }
+      }
+    },
+  "User-started downloads are refused unless the path is Wi‑Fi or Ethernet, and a download error is recorded. Files already saved stay. This does not start a download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User-started downloads are refused unless the path is Wi‑Fi or Ethernet, and a download error is recorded. Files already saved stay. This does not start a download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vom Nutzer gestartete Downloads werden abgelehnt, außer der Pfad ist Wi‑Fi oder Ethernet, und ein Download-Fehler wird protokolliert. Bereits gespeicherte Dateien bleiben. Das startet keinen Download."
+          }
+        }
+      }
+    },
+  "User-started downloads are not limited to Wi‑Fi or Ethernet by this toggle. A missing network can still fail the transfer. No Wi‑Fi-only error is recorded just because this is off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "User-started downloads are not limited to Wi‑Fi or Ethernet by this toggle. A missing network can still fail the transfer. No Wi‑Fi-only error is recorded just because this is off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vom Nutzer gestartete Downloads sind durch diesen Schalter nicht auf Wi‑Fi oder Ethernet beschränkt. Ein fehlendes Netz kann die Übertragung trotzdem scheitern lassen. Nur weil dies aus ist, wird kein Nur-Wi‑Fi-Fehler protokolliert."
+          }
+        }
+      }
+    },
+  "Network streaming is blocked unless the path is Wi‑Fi or Ethernet. Local offline files still play. This does not download the episode.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network streaming is blocked unless the path is Wi‑Fi or Ethernet. Local offline files still play. This does not download the episode."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Netzwerk-Streaming ist gesperrt, außer der Pfad ist Wi‑Fi oder Ethernet. Lokale Offline-Dateien spielen weiter. Das lädt die Episode nicht herunter."
+          }
+        }
+      }
+    },
+  "Network streaming is not limited to Wi‑Fi or Ethernet by this toggle. Local offline files still play. This does not download the episode.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Network streaming is not limited to Wi‑Fi or Ethernet by this toggle. Local offline files still play. This does not download the episode."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Netzwerk-Streaming ist durch diesen Schalter nicht auf Wi‑Fi oder Ethernet beschränkt. Lokale Offline-Dateien spielen weiter. Das lädt die Episode nicht herunter."
+          }
+        }
+      }
+    },
+  "Current network is not yet reported. It is not assumed to be Wi‑Fi, and this row does not claim the action is allowed or blocked.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Current network is not yet reported. It is not assumed to be Wi‑Fi, and this row does not claim the action is allowed or blocked."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das aktuelle Netz ist noch nicht gemeldet. Es wird nicht als Wi‑Fi angenommen, und diese Zeile behauptet nicht, dass die Aktion erlaubt oder blockiert ist."
+          }
+        }
+      }
+    },
+  "Reported network is Wi‑Fi.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reported network is Wi‑Fi."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemeldetes Netz ist Wi‑Fi."
+          }
+        }
+      }
+    },
+  "Reported network is Ethernet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reported network is Ethernet."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemeldetes Netz ist Ethernet."
+          }
+        }
+      }
+    },
+  "Reported network is Cellular.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reported network is Cellular."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemeldetes Netz ist Mobilfunk."
+          }
+        }
+      }
+    },
+  "Reported network is another interface, not Wi‑Fi.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reported network is another interface, not Wi‑Fi."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemeldetes Netz ist eine andere Schnittstelle, nicht Wi‑Fi."
+          }
+        }
+      }
+    },
+  "Reported network is offline. No network is invented.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reported network is offline. No network is invented."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gemeldetes Netz ist offline. Es wird kein Netz erfunden."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
