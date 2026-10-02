@@ -282,6 +282,28 @@ struct InboxView: View {
         )
     }
 
+    /// VoiceOver context for an empty Inbox catalog versus a podcast/type/search mismatch.
+    /// The visible ContentUnavailableView copy stays concise; this value explains the next
+    /// useful action without changing Inbox filtering or catalog semantics.
+    private var inboxEmptyStateAccessibilityValue: String {
+        if store.inboxEpisodes.isEmpty {
+            return String(localized: "There are no new or unplayed episodes in Inbox. New and unplayed episodes from your subscriptions appear here. Use Search library to find any episode or podcast in your library.")
+        }
+        if isSearching {
+            return String(localized: "No Inbox episodes match your search. Clear or change the search to see Inbox.")
+        }
+        if isPodcastFiltering && isEpisodeTypeFiltering {
+            return String(localized: "No Inbox episodes match the selected podcast and episode type filters. Choose All for the podcast or episode type to see more episodes.")
+        }
+        if isPodcastFiltering {
+            return String(localized: "The selected podcast has no matching Inbox episodes. Choose All or another podcast filter.")
+        }
+        if isEpisodeTypeFiltering {
+            return String(localized: "No Inbox episodes match the selected episode type. Choose All or another episode type.")
+        }
+        return String(localized: "No Inbox episodes match the active filters. Choose All or another filter.")
+    }
+
 
     /// Full Inbox catalog episodes in **store** newest-first order (`PodcastStore.inboxEpisodes`).
     /// **Not** podcast-chip / episode-type / UI `inboxSort` / library-search filtered.
@@ -381,6 +403,9 @@ struct InboxView: View {
                         systemImage: "tray",
                         description: Text("New and unplayed episodes from your subscriptions appear here. Use search to find any episode or podcast in your library.")
                     )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "Inbox empty"))
+                    .accessibilityValue(inboxEmptyStateAccessibilityValue)
                 } else if filteredItems.isEmpty {
                     ContentUnavailableView(
                         "No matching inbox episodes",
@@ -391,6 +416,9 @@ struct InboxView: View {
                                 : String(localized: "No inbox episodes match your search.")
                         )
                     )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "No matching inbox episodes"))
+                    .accessibilityValue(inboxEmptyStateAccessibilityValue)
                 } else {
                     ForEach(filteredItems) { item in
                         EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
