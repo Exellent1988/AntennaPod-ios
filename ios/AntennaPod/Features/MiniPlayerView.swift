@@ -11,6 +11,7 @@ struct MiniPlayerView: View {
     @State private var showCustomSleepTimer = false
     @State private var showCustomPlaybackSpeed = false
     @State private var showBookmarks = false
+    @State private var showEpisodePrivateNote = false
     @State private var showChapters = false
     @State private var showAtCapAlert = false
     @State private var bookmarkAddedTick = 0
@@ -205,6 +206,21 @@ struct MiniPlayerView: View {
                         .accessibilityHint(String(localized: "Lists bookmarks for this episode and saves the current position"))
                         .accessibilityValue(bookmarksAccessibilityValue(for: episode.id))
                         Button {
+                            showEpisodePrivateNote = true
+                        } label: {
+                            Label(
+                                String(localized: "Private note…"),
+                                systemImage: store.hasEpisodePrivateNote(for: episode.id) ? "note.text" : "square.and.pencil"
+                            )
+                        }
+                        .accessibilityLabel(String(localized: "Private note"))
+                        .accessibilityHint(String(localized: "Opens the private note editor for this episode"))
+                        .accessibilityValue(
+                            store.hasEpisodePrivateNote(for: episode.id)
+                                ? String(localized: "Has private note")
+                                : String(localized: "Empty")
+                        )
+                        Button {
                             showJumpToPosition = true
                         } label: {
                             Label("Jump to position", systemImage: "arrow.right.to.line")
@@ -393,6 +409,10 @@ struct MiniPlayerView: View {
             .sheet(isPresented: $showBookmarks) {
                 EpisodeBookmarksSheet(episodeId: episode.id)
                     .environmentObject(playback)
+                    .environmentObject(store)
+            }
+            .sheet(isPresented: $showEpisodePrivateNote) {
+                EpisodePrivateNoteSheet(episodeId: episode.id)
                     .environmentObject(store)
             }
             .sheet(isPresented: $showChapters) {

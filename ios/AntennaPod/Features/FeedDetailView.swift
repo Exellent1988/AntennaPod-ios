@@ -1458,6 +1458,7 @@ struct EpisodeRow: View {
     var dateAccessibilityLabel: String? = nil
 
     @State private var showDescription = false
+    @State private var showEpisodePrivateNote = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyURLFeedbackTick = 0
@@ -1508,6 +1509,11 @@ struct EpisodeRow: View {
                     if store.isFavorite(episode.id) {
                         Image(systemName: "star.fill")
                             .foregroundStyle(.yellow)
+                    }
+                    if store.hasEpisodePrivateNote(for: episode.id) {
+                        Image(systemName: "note.text")
+                            .foregroundStyle(.secondary)
+                            .accessibilityLabel(String(localized: "Private note"))
                     }
                     if store.isArchived(episode.id) {
                         Image(systemName: "archivebox.fill")
@@ -1787,6 +1793,16 @@ struct EpisodeRow: View {
                 }
             }
             Button {
+                showEpisodePrivateNote = true
+            } label: {
+                Label(
+                    String(localized: "Private note…"),
+                    systemImage: store.hasEpisodePrivateNote(for: episode.id) ? "note.text" : "square.and.pencil"
+                )
+            }
+            .accessibilityLabel(String(localized: "Private note"))
+            .accessibilityHint(String(localized: "Opens the private note editor for this episode"))
+            Button {
                 showDescription = true
             } label: {
                 Label("Shownotes", systemImage: "doc.text")
@@ -1794,6 +1810,10 @@ struct EpisodeRow: View {
         }
         .sheet(isPresented: $showDescription) {
             EpisodeDescriptionSheetView(episode: episode, feedTitle: feedTitle)
+        }
+        .sheet(isPresented: $showEpisodePrivateNote) {
+            EpisodePrivateNoteSheet(episodeId: episode.id)
+                .environmentObject(store)
         }
         .alert(
             String(localized: "Copied"),

@@ -32,6 +32,10 @@ final class PodcastStore: ObservableObject {
     @Published var bookmarksByEpisodeId: [String: [EpisodeBookmark]] = [:] {
         didSet { PodcastPersistence.saveBookmarks(bookmarksByEpisodeId) }
     }
+    /// Episode id → local-only private note (`episode-notes.json`). Not RSS / gpodder / OPML / HTML / chapters / Share.
+    @Published var episodePrivateNotesById: [String: String] = [:] {
+        didSet { PodcastPersistence.saveEpisodePrivateNotes(episodePrivateNotesById) }
+    }
     /// Feed id → tag names (`feed-tags.json` side map). Tags exist only while assigned.
     @Published var tagsByFeedId: [UUID: [String]] = [:] {
         didSet { PodcastPersistence.saveFeedTags(tagsByFeedId) }
@@ -66,6 +70,7 @@ final class PodcastStore: ObservableObject {
         favoriteAtById = PodcastPersistence.loadFavorites()
         archivedAtById = PodcastPersistence.loadArchived()
         bookmarksByEpisodeId = PodcastPersistence.loadBookmarks()
+        episodePrivateNotesById = PodcastPersistence.loadEpisodePrivateNotes()
         tagsByFeedId = PodcastPersistence.loadFeedTags()
         LocalFolderBookmarkStore.reloadFromPersistence()
         rescanLocalFolderFeedsBestEffort()
@@ -81,6 +86,7 @@ final class PodcastStore: ObservableObject {
         favoriteAtById = PodcastPersistence.loadFavorites()
         archivedAtById = PodcastPersistence.loadArchived()
         bookmarksByEpisodeId = PodcastPersistence.loadBookmarks()
+        episodePrivateNotesById = PodcastPersistence.loadEpisodePrivateNotes()
         tagsByFeedId = PodcastPersistence.loadFeedTags()
         LocalFolderBookmarkStore.reloadFromPersistence()
         pendingAutoDeleteIds = []
@@ -107,7 +113,7 @@ final class PodcastStore: ObservableObject {
 
     /// Remove a subscription.
     /// Clears the feed from the list, per-feed settings, tags, queue items from this feed,
-    /// and favorites / archive / bookmarks / playback-history entries for its episodes.
+    /// and favorites / archive / bookmarks / episode private notes / playback-history entries for its episodes.
     /// Also deletes per-feed HTTP Basic credentials from the Keychain (never in JSON).
     /// Local-folder feeds also release the security-scoped bookmark.
     /// Does **not** delete downloaded episode files by itself — UI may call
@@ -128,6 +134,7 @@ final class PodcastStore: ObservableObject {
             favoriteAtById.removeValue(forKey: id)
             archivedAtById.removeValue(forKey: id)
             bookmarksByEpisodeId.removeValue(forKey: id)
+            episodePrivateNotesById.removeValue(forKey: id)
         }
     }
 
@@ -1385,6 +1392,31 @@ final class PodcastStore: ObservableObject {
         var map = bookmarksByEpisodeId
         map.removeValue(forKey: episodeId)
         bookmarksByEpisodeId = map
+    }
+
+    // MARK: - Episode private notes (local-only)
+
+    /// Local-only private note for an episode, or `nil` when unset.
+    func episodePrivateNote(for episodeId: String) -> String? {
+        episodePrivateNotesById[episodeId]
+    }
+
+    /// Whether the episode has a non-empty local private note.
+    func hasEpisodePrivateNote(for episodeId: String) -> Bool {
+        episodePrivateNotesById[episodeId] != nil
+    }
+
+    /// Set or clear the local private note for an episode.
+    /// Pass `nil` or empty (after normalize) to remove the key. Persists via didSet → `episode-notes.json`.
+    func setEpisodePrivateNote(for episodeId: String, _ note: String?) {
+        let normalized = EpisodePrivateNotes.normalized(note)
+        var map = episodePrivateNotesById
+        if let normalized {
+            map[episodeId] = normalized
+        } else {
+            map.removeValue(forKey: episodeId)
+        }
+        episodePrivateNotesById = map
     }
 
     func isFavorite(_ episodeId: String) -> Bool {

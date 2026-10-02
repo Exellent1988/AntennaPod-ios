@@ -26,6 +26,7 @@ struct FullPlayerView: View {
     @State private var showCustomPlaybackSpeed = false
     @State private var showJumpToPosition = false
     @State private var showBookmarks = false
+    @State private var showEpisodePrivateNote = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyURLFeedbackTick = 0
@@ -342,6 +343,12 @@ struct FullPlayerView: View {
                     }
             }
         }
+        .sheet(isPresented: $showEpisodePrivateNote) {
+            if let episode {
+                EpisodePrivateNoteSheet(episodeId: episode.id)
+                    .environmentObject(store)
+            }
+        }
     }
 
     @ViewBuilder
@@ -400,6 +407,19 @@ struct FullPlayerView: View {
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                         .accessibilityLabel(playback.isPlayingFromLocalFile ? String(localized: "Playing from download") : String(localized: "Streaming"))
+                        if store.hasEpisodePrivateNote(for: episode.id) {
+                            Button {
+                                showEpisodePrivateNote = true
+                            } label: {
+                                Label(String(localized: "Private note"), systemImage: "note.text")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel(String(localized: "Private note"))
+                            .accessibilityValue(store.episodePrivateNote(for: episode.id) ?? "")
+                            .accessibilityHint(String(localized: "Opens the private note editor for this episode"))
+                        }
                     }
                     .padding(.horizontal)
 
@@ -1179,6 +1199,22 @@ struct FullPlayerView: View {
             .accessibilityLabel(String(localized: "Bookmarks"))
             .accessibilityHint(String(localized: "Lists bookmarks for this episode and saves the current position"))
             .accessibilityValue(bookmarksAccessibilityValue(for: episode.id))
+
+            Button {
+                showEpisodePrivateNote = true
+            } label: {
+                Label(
+                    String(localized: "Private note…"),
+                    systemImage: store.hasEpisodePrivateNote(for: episode.id) ? "note.text" : "square.and.pencil"
+                )
+            }
+            .accessibilityLabel(String(localized: "Private note"))
+            .accessibilityHint(String(localized: "Opens the private note editor for this episode"))
+            .accessibilityValue(
+                store.hasEpisodePrivateNote(for: episode.id)
+                    ? String(localized: "Has private note")
+                    : String(localized: "Empty")
+            )
 
             Button {
                 store.togglePlayed(episode.id)

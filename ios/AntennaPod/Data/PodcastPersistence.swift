@@ -20,6 +20,7 @@ enum PodcastPersistence {
     private static var downloadErrorsURL: URL { directory.appendingPathComponent("download-errors.json") }
     private static var localFolderBookmarksURL: URL { directory.appendingPathComponent("local-folder-bookmarks.json") }
     private static var bookmarksURL: URL { directory.appendingPathComponent("bookmarks.json") }
+    private static var episodeNotesURL: URL { directory.appendingPathComponent("episode-notes.json") }
 
     /// Application Support/AntennaPod directory (created if needed).
     static var applicationSupportDirectory: URL { directory }
@@ -163,6 +164,17 @@ enum PodcastPersistence {
         // Drop empty episode keys so the file stays tidy.
         let cleaned = map.filter { !$0.value.isEmpty }
         encode(cleaned, to: bookmarksURL)
+    }
+
+    /// Episode id → local-only private note (`episode-notes.json`). Empty / nil keys omitted.
+    static func loadEpisodePrivateNotes() -> [String: String] {
+        decode(episodeNotesURL) ?? [:]
+    }
+
+    static func saveEpisodePrivateNotes(_ map: [String: String]) {
+        // Drop empty notes so the file stays tidy.
+        let cleaned = map.filter { !$0.value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        encode(cleaned, to: episodeNotesURL)
     }
 
     private static func decode<T: Decodable>(_ url: URL) -> T? {

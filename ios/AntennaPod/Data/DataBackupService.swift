@@ -99,7 +99,8 @@ enum DataBackupService {
         "feed-tags.json",
         "download-errors.json",
         "local-folder-bookmarks.json",
-        "bookmarks.json"
+        "bookmarks.json",
+        "episode-notes.json"
     ]
 
     // MARK: - Media size estimate (UI warnings)
