@@ -187,11 +187,30 @@ struct DownloadsView: View {
         downloads.downloads.filter { !store.isInQueue($0.episode.id) }.count
     }
 
+    /// Completed Downloads catalog rows with a local playable file on disk
+    /// (`DownloadService.localURL` — completed offline file under Documents/downloads).
+    /// Full catalog — **not** played-chip / podcast-chip / searchable filtered.
+    /// Distinct from Add all to queue / Delete played / Clear all / remaining-time visible counts.
+    private var playRandomEligibleEpisodes: [PodcastEpisode] {
+        downloads.downloads.compactMap { item in
+            guard downloads.localURL(for: item.episode) != nil else { return nil }
+            return item.episode
+        }
+    }
+
+    /// Prefer unplayed among `playRandomEligibleEpisodes` when any remain; otherwise all eligible
+    /// (played allowed when every eligible completed download is played, or none unplayed eligible).
+    private var playRandomCandidates: [PodcastEpisode] {
+        let eligible = playRandomEligibleEpisodes
+        let unplayed = eligible.filter { !store.isPlayed($0.id) }
+        return unplayed.isEmpty ? eligible : unplayed
+    }
+
     /// AntennaPod-like info bar: episode count + remaining over the **visible** filtered list.
     /// Remaining per episode = `max(0, duration − position)` when duration known; unplayed with
     /// duration contributes full duration; **played** (not current) → 0; **unknown duration skipped**
     /// (tilde when any skipped). Currently playing uses live `PlaybackService` position/duration.
-    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge (full catalog count).
+    /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge / Add all / Play random / Delete played / Clear all (full catalog).
     private var downloadsRemainingInfoLabel: String? {
         guard !filteredDownloads.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: downloadsRemainingSummary)
@@ -447,6 +466,15 @@ struct DownloadsView: View {
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
                         Button {
+                            playRandomEpisode()
+                        } label: {
+                            Label("Play random", systemImage: "shuffle")
+                        }
+                        .disabled(playRandomCandidates.isEmpty)
+                        .accessibilityLabel(String(localized: "Play random"))
+                        .accessibilityHint(String(localized: "Plays a random completed download with a local file. Prefers unplayed when any remain."))
+
+                        Button {
                             showEnqueueAllConfirm = true
                         } label: {
                             Label("Add all to queue", systemImage: "text.append")
@@ -480,8 +508,8 @@ struct DownloadsView: View {
                         Label("Downloads actions", systemImage: "ellipsis.circle")
                     }
                     // Menu available when completed catalog is non-empty **or** anything is in-flight /
-                    // waiting (Cancel all). Add all / Cancel all / Delete played / Clear all each
-                    // disable independently — same honesty as Favorites Add all + Clear.
+                    // waiting (Cancel all). Play random / Add all / Cancel all / Delete played / Clear all
+                    // each disable independently — same honesty as Favorites Play random / Add all + Clear.
                     .disabled(downloads.downloads.isEmpty && downloads.cancelAllInFlightCount == 0)
                 }
             }
@@ -571,6 +599,15 @@ struct DownloadsView: View {
         }
         parts.append(item.localFileURL.lastPathComponent)
         return parts.joined(separator: ", ")
+    }
+
+    /// Uniform pick among `playRandomCandidates`; starts via `PlaybackService.play` with local
+    /// file path preferred (`fileURL` from `DownloadService.localURL`). Resume rules unchanged.
+    /// No confirm; does not invent queue mutations beyond what `play` already does.
+    private func playRandomEpisode() {
+        guard let episode = playRandomCandidates.randomElement() else { return }
+        let fileURL = downloads.localURL(for: episode)
+        _ = playback.play(episode: episode, fileURL: fileURL)
     }
 
     private func scheduleFilter(for term: String) {

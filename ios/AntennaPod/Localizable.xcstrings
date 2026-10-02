@@ -24526,7 +24526,7 @@
     },
     "Play random": {
       "extractionState": "manual",
-      "comment": "Feed detail / Favorites ⋯: play a uniformly random playable episode. Feed: non-archived on this podcast. Favorites: full favorites catalog. Prefers unplayed when any remain; no confirm.",
+      "comment": "Feed detail / Favorites / Downloads ⋯: play a uniformly random playable episode. Feed: non-archived on this podcast. Favorites: full favorites catalog. Downloads: completed offline with local file. Prefers unplayed when any remain; no confirm.",
       "localizations": {
         "en": {
           "stringUnit": {
@@ -24574,6 +24574,24 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spielt eine zufällige favorisierte Episode mit abspielbarem Medium. Bevorzugt ungehörte, wenn vorhanden."
+          }
+        }
+      }
+    },
+    "Plays a random completed download with a local file. Prefers unplayed when any remain.": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Downloads toolbar Play random.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random completed download with a local file. Prefers unplayed when any remain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt einen zufälligen abgeschlossenen Download mit lokaler Datei. Bevorzugt ungehörte, wenn vorhanden."
           }
         }
       }
