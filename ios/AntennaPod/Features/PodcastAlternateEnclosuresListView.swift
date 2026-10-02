@@ -76,6 +76,7 @@ struct PodcastAlternateEnclosuresListView: View {
         let bitrate = PodcastAlternateEnclosureDisplay.bitrateLabel(enclosure.bitrate)
         let lengthLabel = PodcastAlternateEnclosureDisplay.lengthLabel(enclosure.length)
         let codecs = enclosure.displayCodecs
+        let language = PodcastAlternateEnclosureDisplay.languageLabel(enclosure.displayLang)
         let captionParts: [String] = {
             var parts: [String] = []
             if enclosure.displayTitle != nil, let mime = enclosure.displayType {
@@ -90,8 +91,8 @@ struct PodcastAlternateEnclosuresListView: View {
             if let h = PodcastAlternateEnclosureDisplay.heightLabel(enclosure.height) {
                 parts.append(h)
             }
-            if let lang = PodcastAlternateEnclosureDisplay.languageLabel(enclosure.displayLang) {
-                parts.append(lang)
+            if let language {
+                parts.append(language)
             }
             if let rel = enclosure.displayRel {
                 parts.append(rel)
@@ -248,6 +249,33 @@ struct PodcastAlternateEnclosuresListView: View {
                     .accessibilityLabel(String(localized: "Share codecs"))
                     .accessibilityHint(
                         String(localized: "Shares the exact displayed alternate enclosure codecs as plain text")
+                    )
+                }
+            }
+
+            if let language {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            language,
+                            confirmation: String(localized: "Alternate enclosure language copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy language", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy language"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed alternate enclosure language to the pasteboard")
+                    )
+
+                    ShareLink(item: language) {
+                        Label("Share language", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share language"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed alternate enclosure language as plain text")
                     )
                 }
             }

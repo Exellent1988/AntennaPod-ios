@@ -17566,6 +17566,60 @@
         }
       }
     },
+    "Alternate enclosure language copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for an alternate enclosure's displayed language.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternate enclosure language copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprache der alternativen Enclosure in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the exact displayed alternate enclosure language to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying an alternate enclosure's displayed language.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed alternate enclosure language to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigte Sprache der alternativen Enclosure in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed alternate enclosure language as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing an alternate enclosure's displayed language.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed alternate enclosure language as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigte Sprache der alternativen Enclosure als reinen Text"
+          }
+        }
+      }
+    },
     "Content type copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Copied alert message for alternate source content type.",
