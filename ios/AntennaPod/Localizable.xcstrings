@@ -36739,5 +36739,95 @@
       }
     }
   },
+  "Alternate enclosure default copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Copied alert for the exact displayed localized Default label on a feed-provided alternate enclosure.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Alternate enclosure default copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Standard der alternativen Anlage in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Copy alternate enclosure default": {
+    "extractionState": "manual",
+    "comment": "VoiceOver label for copying the exact displayed localized Default label on a feed-provided alternate enclosure.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy alternate enclosure default"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Standard der alternativen Anlage kopieren"
+        }
+      }
+    }
+  },
+  "Copies the exact displayed Default label for this feed-provided alternate enclosure to the pasteboard": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for copying the exact displayed localized Default label on a feed-provided alternate enclosure.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed Default label for this feed-provided alternate enclosure to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert das exakt angezeigte Standard-Label dieser vom Feed gelieferten alternativen Anlage in die Zwischenablage"
+        }
+      }
+    }
+  },
+  "Share alternate enclosure default": {
+    "extractionState": "manual",
+    "comment": "VoiceOver label for sharing the exact displayed localized Default label on a feed-provided alternate enclosure.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share alternate enclosure default"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Standard der alternativen Anlage teilen"
+        }
+      }
+    }
+  },
+  "Shares the exact displayed Default label for this feed-provided alternate enclosure as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for sharing the exact displayed localized Default label on a feed-provided alternate enclosure.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact displayed Default label for this feed-provided alternate enclosure as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt das exakt angezeigte Standard-Label dieser vom Feed gelieferten alternativen Anlage als Klartext"
+        }
+      }
+    }
+  },
   "version": "1.0"
 }

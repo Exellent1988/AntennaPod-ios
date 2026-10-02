@@ -73,6 +73,7 @@ struct PodcastAlternateEnclosuresListView: View {
     private func enclosureRow(_ enclosure: PodcastAlternateEnclosure) -> some View {
         let headline = enclosure.displayTitle ?? enclosure.displayType ?? enclosure.type
         let title = enclosure.displayTitle
+        let defaultLabel = enclosure.markedDefault ? String(localized: "Default") : nil
         let bitrate = PodcastAlternateEnclosureDisplay.bitrateLabel(enclosure.bitrate)
         let lengthLabel = PodcastAlternateEnclosureDisplay.lengthLabel(enclosure.length)
         let codecs = enclosure.displayCodecs
@@ -105,8 +106,8 @@ struct PodcastAlternateEnclosuresListView: View {
         }()
         let a11y: String = {
             var parts: [String] = [String(localized: "Alternate media"), headline]
-            if enclosure.markedDefault {
-                parts.append(String(localized: "Default"))
+            if let defaultLabel {
+                parts.append(defaultLabel)
             }
             parts.append(contentsOf: captionParts)
             return parts.joined(separator: ", ")
@@ -122,8 +123,8 @@ struct PodcastAlternateEnclosuresListView: View {
                     .font(.subheadline)
                     .foregroundStyle(.primary)
                     .lineLimit(2)
-                if enclosure.markedDefault {
-                    Text(String(localized: "Default"))
+                if let defaultLabel {
+                    Text(defaultLabel)
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(.secondary)
                         .padding(.horizontal, 6)
@@ -169,6 +170,33 @@ struct PodcastAlternateEnclosuresListView: View {
                     .accessibilityLabel(String(localized: "Share title"))
                     .accessibilityHint(
                         String(localized: "Shares the exact displayed alternate enclosure title as plain text")
+                    )
+                }
+            }
+
+            if let defaultLabel {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            defaultLabel,
+                            confirmation: String(localized: "Alternate enclosure default copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy alternate enclosure default", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy alternate enclosure default"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact displayed Default label for this feed-provided alternate enclosure to the pasteboard")
+                    )
+
+                    ShareLink(item: defaultLabel) {
+                        Label("Share alternate enclosure default", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share alternate enclosure default"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact displayed Default label for this feed-provided alternate enclosure as plain text")
                     )
                 }
             }
