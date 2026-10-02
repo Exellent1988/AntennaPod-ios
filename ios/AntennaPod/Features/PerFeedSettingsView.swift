@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Per-subscription overrides (Auto-download / Auto-delete after play / Keep updated / New episodes / Notifications / Skip intro·outro / Speed) + tags.
+/// Per-subscription overrides (Auto-download / Auto-delete after play / Keep updated / New episodes / Notifications / Skip intro·outro / Speed / Episode sort) + tags.
 struct PerFeedSettingsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var appSettings: AppSettings
@@ -147,6 +147,25 @@ struct PerFeedSettingsView: View {
                     .accessibilityLabel(playbackSpeedHelp)
             } header: {
                 Text("Playback")
+            }
+
+            Section {
+                Picker("Episode sort", selection: episodeSortBinding) {
+                    Text("Use global").tag(Optional<FeedEpisodeSort>.none)
+                    ForEach(FeedEpisodeSort.allCases) { sort in
+                        Label(sort.label, systemImage: sort.systemImage)
+                            .tag(Optional(sort))
+                    }
+                }
+                .accessibilityLabel(String(localized: "Episode sort"))
+                .accessibilityHint(String(localized: "Use global, Newest first, or Oldest first for this podcast’s episode list. Does not follow itunes:type."))
+                .accessibilityValue(episodeSortAccessibilityValue)
+                Text(episodeSortHelp)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel(episodeSortHelp)
+            } header: {
+                Text("Episodes")
             }
 
             Section {
@@ -409,6 +428,33 @@ struct PerFeedSettingsView: View {
             set: { value in
                 store.updateFeedSettings(for: feedId) { $0.playbackSpeed = value }
             }
+        )
+    }
+
+    private var episodeSortBinding: Binding<FeedEpisodeSort?> {
+        Binding(
+            get: { current.episodeSort },
+            set: { value in
+                store.updateFeedSettings(for: feedId) { $0.episodeSort = value }
+            }
+        )
+    }
+
+    private var episodeSortAccessibilityValue: String {
+        current.episodeSort?.label ?? String(localized: "Use global")
+    }
+
+    private var episodeSortHelp: String {
+        if let sort = current.episodeSort {
+            return String(
+                format: String(localized: "This podcast: %@. Feed detail Sort menu saves per podcast. itunes:type does not change sort."),
+                sort.label
+            )
+        }
+        let global = appSettings.feedEpisodeSort.label
+        return String(
+            format: String(localized: "Using global default (%@). Change here or via Feed detail Sort to override for this podcast only."),
+            global
         )
     }
 

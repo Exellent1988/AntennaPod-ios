@@ -17,7 +17,7 @@ enum PerFeedOverride: String, CaseIterable, Identifiable, Codable, Hashable {
     }
 }
 
-/// Per-subscription overrides (keyed by `PodcastFeed.id` in a side map).
+/// Per-subscription overrides (keyed by `PodcastFeed.id` in a side map), including optional episode list sort.
 struct FeedSettings: Hashable, Codable, Equatable {
     var autoDownload: PerFeedOverride
     var keepUpdated: PerFeedOverride
@@ -32,6 +32,9 @@ struct FeedSettings: Hashable, Codable, Equatable {
     var skipOutroSeconds: Int?
     /// Playback speed override; `nil` = Use global. Presets or Custom… (0.50–3.00× @ 0.05).
     var playbackSpeed: Float?
+    /// Feed detail episode list sort override; `nil` = Use global (`AppSettings.feedEpisodeSort`).
+    /// Newest first / Oldest first only (no duration/title modes — not invented). itunes:type does **not** change this.
+    var episodeSort: FeedEpisodeSort?
 
     static let `default` = FeedSettings(
         autoDownload: .useGlobal,
@@ -41,7 +44,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
         newEpisodeAction: .useGlobal,
         skipIntroSeconds: nil,
         skipOutroSeconds: nil,
-        playbackSpeed: nil
+        playbackSpeed: nil,
+        episodeSort: nil
     )
 
     init(
@@ -52,7 +56,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
         newEpisodeAction: PerFeedNewEpisodeAction = .useGlobal,
         skipIntroSeconds: Int? = nil,
         skipOutroSeconds: Int? = nil,
-        playbackSpeed: Float? = nil
+        playbackSpeed: Float? = nil,
+        episodeSort: FeedEpisodeSort? = nil
     ) {
         self.autoDownload = autoDownload
         self.keepUpdated = keepUpdated
@@ -62,6 +67,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         self.skipIntroSeconds = Self.normalizedSkipIntroOutro(skipIntroSeconds)
         self.skipOutroSeconds = Self.normalizedSkipIntroOutro(skipOutroSeconds)
         self.playbackSpeed = Self.normalizedSpeed(playbackSpeed)
+        self.episodeSort = episodeSort
     }
 
     init(from decoder: Decoder) throws {
@@ -80,6 +86,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         playbackSpeed = Self.normalizedSpeed(
             try c.decodeIfPresent(Float.self, forKey: .playbackSpeed)
         )
+        episodeSort = try c.decodeIfPresent(FeedEpisodeSort.self, forKey: .episodeSort)
     }
 
     /// Whether auto-download may enqueue for this feed (override beats global).
@@ -133,6 +140,11 @@ struct FeedSettings: Hashable, Codable, Equatable {
         playbackSpeed ?? global
     }
 
+    /// Feed detail episode sort: override if set, else global `AppSettings.feedEpisodeSort`.
+    func resolvedEpisodeSort(global: FeedEpisodeSort) -> FeedEpisodeSort {
+        episodeSort ?? global
+    }
+
     var isDefault: Bool {
         self == .default
     }
@@ -165,6 +177,6 @@ struct FeedSettings: Hashable, Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case autoDownload, keepUpdated, notifyOnNewEpisodes, autoDeleteAfterPlaying, newEpisodeAction
-        case skipIntroSeconds, skipOutroSeconds, playbackSpeed
+        case skipIntroSeconds, skipOutroSeconds, playbackSpeed, episodeSort
     }
 }

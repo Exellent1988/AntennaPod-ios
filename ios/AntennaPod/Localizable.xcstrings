@@ -21432,6 +21432,91 @@
           }
         }
       }
+    },
+    "Episode sort": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode sort"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden-Sortierung"
+          }
+        }
+      }
+    },
+    "Orders this podcast’s episode list. Saved per podcast; does not follow itunes:type.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders this podcast’s episode list. Saved per podcast; does not follow itunes:type."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordnet die Episodenliste dieses Podcasts. Pro Podcast gespeichert; folgt nicht itunes:type."
+          }
+        }
+      }
+    },
+    "Use global, Newest first, or Oldest first for this podcast’s episode list. Does not follow itunes:type.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, Newest first, or Oldest first for this podcast’s episode list. Does not follow itunes:type."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global verwenden, Neueste zuerst oder Älteste zuerst für die Episodenliste dieses Podcasts. Folgt nicht itunes:type."
+          }
+        }
+      }
+    },
+    "This podcast: %@. Feed detail Sort menu saves per podcast. itunes:type does not change sort.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast: %@. Feed detail Sort menu saves per podcast. itunes:type does not change sort."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Podcast: %@. Das Sortieren-Menü im Feed-Detail speichert pro Podcast. itunes:type ändert die Sortierung nicht."
+          }
+        }
+      }
+    },
+    "Using global default (%@). Change here or via Feed detail Sort to override for this podcast only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Using global default (%@). Change here or via Feed detail Sort to override for this podcast only."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nutzt die globale Vorgabe (%@). Hier oder über Sortieren im Feed-Detail nur für diesen Podcast überschreiben."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

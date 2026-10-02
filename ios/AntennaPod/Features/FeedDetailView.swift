@@ -157,11 +157,17 @@ struct FeedDetailView: View {
         liveFeed.displayUpdateFrequency
     }
 
-    /// Episodes for this feed ordered by `AppSettings.feedEpisodeSort` (`pubDateEpochMs`).
+    /// Resolved sort for this feed: `FeedSettings.episodeSort` or global `AppSettings.feedEpisodeSort`.
+    private var resolvedEpisodeSort: FeedEpisodeSort {
+        store.feedSettings(for: feed.id).resolvedEpisodeSort(global: settings.feedEpisodeSort)
+    }
+
+    /// Episodes for this feed ordered by resolved per-feed/`Use global` sort (`pubDateEpochMs`).
     /// Missing dates sort last in both modes. Does not mutate stored feed order.
+    /// itunes:type is display-only — never auto-changes this sort.
     private var sortedEpisodes: [PodcastEpisode] {
         liveFeed.episodes.sorted { lhs, rhs in
-            switch settings.feedEpisodeSort {
+            switch resolvedEpisodeSort {
             case .newestFirst:
                 let l = lhs.pubDateEpochMs ?? Int64.min
                 let r = rhs.pubDateEpochMs ?? Int64.min
@@ -174,6 +180,16 @@ struct FeedDetailView: View {
                 return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
             }
         }
+    }
+
+    /// Toolbar Sort writes an explicit per-feed override (`feed-settings.json`); does not change other feeds.
+    private var feedEpisodeSortBinding: Binding<FeedEpisodeSort> {
+        Binding(
+            get: { resolvedEpisodeSort },
+            set: { value in
+                store.updateFeedSettings(for: feed.id) { $0.episodeSort = value }
+            }
+        )
     }
 
     /// Visible episodes: sort → chip filter → search.
@@ -692,7 +708,7 @@ struct FeedDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Menu {
-                    Picker(selection: $settings.feedEpisodeSort) {
+                    Picker(selection: feedEpisodeSortBinding) {
                         ForEach(FeedEpisodeSort.allCases) { sort in
                             Label(sort.label, systemImage: sort.systemImage)
                                 .tag(sort)
@@ -704,6 +720,8 @@ struct FeedDetailView: View {
                     Label("Sort", systemImage: "arrow.up.arrow.down")
                 }
                 .accessibilityLabel(String(localized: "Sort episodes"))
+                .accessibilityValue(resolvedEpisodeSort.label)
+                .accessibilityHint(String(localized: "Orders this podcast’s episode list. Saved per podcast; does not follow itunes:type."))
             }
             ToolbarItem(placement: .primaryAction) {
                 HStack(spacing: 12) {

@@ -339,7 +339,9 @@ enum SubscriptionsSort: String, CaseIterable, Identifiable {
 
 
 /// How Feed detail orders episodes in one podcast (client-side; All Episodes unchanged; Inbox has its own `inboxSort`).
-enum FeedEpisodeSort: String, CaseIterable, Identifiable {
+/// Global default for feeds with `FeedSettings.episodeSort == nil` (Use global). Per-feed override lives in `feed-settings.json`.
+/// Newest / Oldest by `pubDateEpochMs` only — no duration/title modes. itunes:type must not auto-change this.
+enum FeedEpisodeSort: String, CaseIterable, Identifiable, Codable {
     case newestFirst
     case oldestFirst
 
@@ -855,7 +857,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -1295,8 +1297,9 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// Feed detail episode list order by `pubDateEpochMs`: newest first (default) or oldest first.
-    /// Global preference (not per-feed) for simplicity. All Episodes uses `allEpisodesSort`; Inbox uses `inboxSort`.
+    /// Global default for Feed detail episode list order (`pubDateEpochMs`: newest / oldest).
+    /// Per-feed override: `FeedSettings.episodeSort` (nil = Use global). All Episodes uses `allEpisodesSort`; Inbox uses `inboxSort`.
+    /// itunes:type is display-only and must not change this.
     @Published var feedEpisodeSort: FeedEpisodeSort {
         didSet {
             UserDefaults.standard.set(feedEpisodeSort.rawValue, forKey: Keys.feedEpisodeSort)
