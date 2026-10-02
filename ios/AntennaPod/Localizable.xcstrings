@@ -40981,6 +40981,57 @@
           }
         }
       }
+    },
+    "Never. No subscription sync has finished yet. Login alone does not write this time, and no timestamp is invented. This is not each podcast's Last refreshed time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never. No subscription sync has finished yet. Login alone does not write this time, and no timestamp is invented. This is not each podcast's Last refreshed time."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie. Es wurde noch kein Abo-Sync abgeschlossen. Alleiniges Anmelden schreibt diese Zeit nicht, und es wird kein Zeitpunkt erfunden. Das ist nicht die Zeit „Zuletzt aktualisiert“ jedes Podcasts."
+          }
+        }
+      }
+    },
+    "Subscription sync finished %@. The stamp is written when Sync now finishes the http(s) feed URL pull and push, even if some new subscriptions failed. A failed sync that throws before finishing keeps the previous time. It is not episode actions, queue, bookmarks, or each podcast's Last refreshed time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscription sync finished %@. The stamp is written when Sync now finishes the http(s) feed URL pull and push, even if some new subscriptions failed. A failed sync that throws before finishing keeps the previous time. It is not episode actions, queue, bookmarks, or each podcast's Last refreshed time."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abo-Sync abgeschlossen %@. Der Stempel wird geschrieben, wenn Jetzt synchronisieren den Abruf und Upload der http(s)-Feed-URLs beendet, auch wenn einige neue Abos fehlschlagen. Ein Sync, der vor dem Abschluss fehlschlägt, behält die vorherige Zeit. Das sind nicht Episodenaktionen, Warteschlange, Lesezeichen oder die Zeit „Zuletzt aktualisiert“ jedes Podcasts."
+          }
+        }
+      }
+    },
+    "Subscriptions only: additive http(s) feed URLs. Not a full sync. Logout does not clear this time. Local folders are not pushed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions only: additive http(s) feed URLs. Not a full sync. Logout does not clear this time. Local folders are not pushed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Abonnements: additive http(s)-Feed-URLs. Kein vollständiger Sync. Abmelden löscht diese Zeit nicht. Lokale Ordner werden nicht hochgeladen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

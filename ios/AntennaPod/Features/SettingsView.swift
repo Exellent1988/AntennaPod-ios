@@ -2186,19 +2186,22 @@ struct SettingsView: View {
                 .disabled(gpodder.isBusy)
                 .accessibilityHint(String(localized: "Logs in and stores the password in the Keychain. Sync remains subscriptions-only."))
             }
-            if let last = gpodder.lastSyncAt {
-                LabeledContent("Last sync") {
+            // Visible relative time stays; VoiceOver uses Never vs absolute finish time.
+            // Stamp is the last Sync now that finished subscription URL pull/push — not login,
+            // not each podcast's Last refreshed, and not cleared by logout.
+            LabeledContent("Last sync") {
+                if let last = gpodder.lastSyncAt {
                     Text(last, style: .relative)
                         .foregroundStyle(.secondary)
-                }
-                .accessibilityElement(children: .combine)
-            } else {
-                LabeledContent("Last sync") {
+                } else {
                     Text("Never")
                         .foregroundStyle(.secondary)
                 }
-                .accessibilityElement(children: .combine)
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(String(localized: "Last sync"))
+            .accessibilityValue(lastSyncAccessibilityValue)
+            .accessibilityHint(lastSyncAccessibilityHint)
             Text(gpodder.lastSyncStatus)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -2240,6 +2243,23 @@ struct SettingsView: View {
         } header: {
             Text("Sync")
         }
+    }
+
+    /// VoiceOver for Settings → Last sync. Never means no subscription sync has finished;
+    /// a date is the last Sync now that completed http(s) feed URL pull/push.
+    private var lastSyncAccessibilityValue: String {
+        guard let last = gpodder.lastSyncAt else {
+            return String(localized: "Never. No subscription sync has finished yet. Login alone does not write this time, and no timestamp is invented. This is not each podcast's Last refreshed time.")
+        }
+        let formatted = last.formatted(date: .abbreviated, time: .shortened)
+        return String(
+            format: String(localized: "Subscription sync finished %@. The stamp is written when Sync now finishes the http(s) feed URL pull and push, even if some new subscriptions failed. A failed sync that throws before finishing keeps the previous time. It is not episode actions, queue, bookmarks, or each podcast's Last refreshed time."),
+            formatted
+        )
+    }
+
+    private var lastSyncAccessibilityHint: String {
+        String(localized: "Subscriptions only: additive http(s) feed URLs. Not a full sync. Logout does not clear this time. Local folders are not pushed.")
     }
 
     private var gpodderHelpText: String {
