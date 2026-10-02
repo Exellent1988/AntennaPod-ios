@@ -13,6 +13,7 @@ struct PodcastImagesListView: View {
     var title: String = String(localized: "Images")
 
     @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = String(localized: "Image URL copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     private var capped: (shown: [PodcastImageVariant], truncated: Bool) {
@@ -59,7 +60,7 @@ struct PodcastImagesListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Image URL copied to the pasteboard."))
+                Text(copiedAlertMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -127,8 +128,34 @@ struct PodcastImagesListView: View {
             }
 
             HStack(spacing: 12) {
+                if let purpose {
+                    Button {
+                        UIPasteboard.general.string = purpose
+                        copiedAlertMessage = String(localized: "Image purpose copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy image purpose", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy image purpose"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided image purpose to the pasteboard")
+                    )
+
+                    ShareLink(item: purpose) {
+                        Label("Share image purpose", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share image purpose"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided image purpose as plain text")
+                    )
+                }
+
                 Button {
                     UIPasteboard.general.string = PodcastImagesDisplay.copyText(entry)
+                    copiedAlertMessage = String(localized: "Image URL copied to the pasteboard.")
                     copyFeedbackTick += 1
                     showCopiedAlert = true
                 } label: {

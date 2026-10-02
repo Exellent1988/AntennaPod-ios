@@ -35061,6 +35061,96 @@
         }
       }
     }
+  },
+  "Copy image purpose": {
+    "extractionState": "manual",
+    "comment": "Copy action for the exact feed-provided podcast:image purpose; hidden when purpose is missing.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy image purpose"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Bildzweck kopieren"
+        }
+      }
+    }
+  },
+  "Share image purpose": {
+    "extractionState": "manual",
+    "comment": "Share action for the exact feed-provided podcast:image purpose; hidden when purpose is missing.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share image purpose"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Bildzweck teilen"
+        }
+      }
+    }
+  },
+  "Image purpose copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Alert message after copying the exact displayed podcast:image purpose.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Image purpose copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Bildzweck in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Copies the exact feed-provided image purpose to the pasteboard": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for Copy image purpose on a podcast:image row.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact feed-provided image purpose to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert den vom Feed bereitgestellten Bildzweck in die Zwischenablage"
+        }
+      }
+    }
+  },
+  "Shares the exact feed-provided image purpose as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for Share image purpose on a podcast:image row.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact feed-provided image purpose as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt den vom Feed bereitgestellten Bildzweck als Klartext"
+        }
+      }
+    }
   }
 
   },
