@@ -9083,6 +9083,96 @@
         }
       }
     },
+    "Copy podcast website": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy podcast website"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Website kopieren"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯: copy the feed-provided podcast website URL. Hidden when websiteURL is missing. Distinct from the feed RSS and funding URLs."
+    },
+    "Share podcast website": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share podcast website"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Website teilen"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯: share the feed-provided podcast website URL. Hidden when websiteURL is missing. Distinct from the feed RSS and funding URLs."
+    },
+    "Copies the feed-provided podcast website URL to the pasteboard; distinct from the feed RSS URL and funding URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided podcast website URL to the pasteboard; distinct from the feed RSS URL and funding URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vom Feed bereitgestellte Podcast-Website-URL in die Zwischenablage; unterscheidet sich von der RSS- und Funding-URL des Feeds"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy podcast website. Display/copy only; use the feed website URL, not the feed RSS or funding URL."
+    },
+    "Shares the feed-provided podcast website URL; distinct from the feed RSS URL and funding URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the feed-provided podcast website URL; distinct from the feed RSS URL and funding URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die vom Feed bereitgestellte Podcast-Website-URL; unterscheidet sich von der RSS- und Funding-URL des Feeds"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share podcast website. Display/share only; use the feed website URL, not the feed RSS or funding URL."
+    },
+    "Podcast website URL copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast website URL copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Website-URL in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Alert message after copying the feed-provided podcast website URL."
+    },
     "Filters the Feed episodes list": {
       "extractionState": "manual",
       "localizations": {

@@ -18,12 +18,14 @@ struct FeedDetailView: View {
     @State private var showUnsubscribeConfirm = false
     @State private var showFeedURLCopied = false
     @State private var showFundingURLCopied = false
+    @State private var showPodcastWebsiteURLCopied = false
     @State private var showPodcastGuidCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
     @State private var copyFeedURLFeedbackTick = 0
     @State private var copyFundingURLFeedbackTick = 0
+    @State private var copyPodcastWebsiteURLFeedbackTick = 0
     @State private var copyPodcastGuidFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
@@ -979,6 +981,28 @@ struct FeedDetailView: View {
                             }
                             .accessibilityLabel(String(localized: "Open podcast website"))
                             .accessibilityHint(String(localized: "Opens the podcast webpage in the system browser"))
+
+                            Button {
+                                copyPodcastWebsiteURL(url)
+                            } label: {
+                                Label("Copy podcast website", systemImage: "doc.on.doc")
+                            }
+                            .accessibilityLabel(String(localized: "Copy podcast website"))
+                            .accessibilityHint(
+                                String(localized: "Copies the feed-provided podcast website URL to the pasteboard; distinct from the feed RSS URL and funding URL")
+                            )
+
+                            ShareLink(
+                                item: url,
+                                subject: Text(feedDisplayTitle),
+                                message: Text(feedDisplayTitle)
+                            ) {
+                                Label("Share podcast website", systemImage: "square.and.arrow.up")
+                            }
+                            .accessibilityLabel(String(localized: "Share podcast website"))
+                            .accessibilityHint(
+                                String(localized: "Shares the feed-provided podcast website URL; distinct from the feed RSS URL and funding URL")
+                            )
                         }
 
                         if let url = liveFeed.fundingURL {
@@ -1278,6 +1302,14 @@ struct FeedDetailView: View {
         }
         .alert(
             String(localized: "Copied"),
+            isPresented: $showPodcastWebsiteURLCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Podcast website URL copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
             isPresented: $showPodcastGuidCopied
         ) {
             Button("OK", role: .cancel) {}
@@ -1286,6 +1318,7 @@ struct FeedDetailView: View {
         }
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyPodcastWebsiteURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyPodcastGuidFeedbackTick)
         .sheet(isPresented: $showPerFeedSettings) {
             NavigationStack {
@@ -1342,6 +1375,12 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = url.absoluteString
         copyFundingURLFeedbackTick += 1
         showFundingURLCopied = true
+    }
+
+    private func copyPodcastWebsiteURL(_ url: URL) {
+        UIPasteboard.general.string = url.absoluteString
+        copyPodcastWebsiteURLFeedbackTick += 1
+        showPodcastWebsiteURLCopied = true
     }
 
     /// Feed-provided Podcast Index `podcast:guid` only — never invent / never derive from feed URL.

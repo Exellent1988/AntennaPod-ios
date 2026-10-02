@@ -409,8 +409,8 @@ Opens the podcast’s homepage (`PodcastFeed.siteLink`) in the **system browser*
 - **URL rule:** only non-empty `http` / `https` `feed.siteLink` (`PodcastFeed.websiteURL`). **No** fallback to `feedUrl` / RSS. Never invents a URL.
 - **Hidden** when missing or non-http(s) (do not show a disabled control that implies a website exists).
 - **Distinct from** in-app **Open podcast** (full/mini player → Subscriptions → Feed detail) and from **Open episode website** (episode `link`).
-- **Entry points:** Feed detail ⋯ **Feed actions** menu; Subscriptions row context menu.
-- EN / DE + VoiceOver label **Open podcast website** / **Podcast-Website öffnen** and hint **Opens the podcast webpage in the system browser**.
+- **Entry points:** Feed detail ⋯ **Feed actions** menu; Subscriptions row context menu. Feed detail also offers **Copy podcast website** and **Share podcast website** when the same feed-provided `siteLink` exists.
+- EN / DE + VoiceOver label **Open podcast website** / **Podcast-Website öffnen** and hint **Opens the podcast webpage in the system browser**; copy/share are distinct from the feed RSS and funding URLs.
 
 ## Support / Funding (beta)
 
