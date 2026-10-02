@@ -2,7 +2,9 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided `podcast:value` / `valueRecipient` list — **Value / Support creators** metadata only.
-/// Shows name, type/method, split % when known. When a feed name is shown, distinct Copy / Share value recipient name
+/// Shows name, type/method, split % when known. When a parent value block provides non-empty `suggested`, show that
+/// exact string once per block (before recipients) with distinct Copy / Share value suggested (hide when missing —
+/// never invent a suggested amount). When a feed name is shown, distinct Copy / Share value recipient name
 /// uses that exact text (separate from details + address). When type/method caption is shown, distinct Copy / Share
 /// value type/method uses that exact caption (separate from name, details, address). When the split label is shown,
 /// distinct Copy / Share value split uses that exact displayed string (separate from name, type/method, fee, details,
@@ -28,6 +30,11 @@ struct PodcastValueRecipientsListView: View {
         PodcastValueDisplay.capped(values)
     }
 
+    /// Exact feed `suggested` strings from value blocks that contribute recipients. Once per block; hide when missing.
+    private var suggestedEntries: [(id: String, text: String)] {
+        PodcastValueDisplay.displaySuggestedList(values)
+    }
+
     var body: some View {
         let result = capped
         if !result.shown.isEmpty {
@@ -36,6 +43,10 @@ struct PodcastValueRecipientsListView: View {
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(.secondary)
                     .accessibilityAddTraits(.isHeader)
+
+                ForEach(suggestedEntries, id: \.id) { entry in
+                    suggestedBlock(entry.text)
+                }
 
                 ForEach(Array(result.shown.enumerated()), id: \.offset) { _, row in
                     recipientRow(row)
@@ -64,6 +75,48 @@ struct PodcastValueRecipientsListView: View {
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
+    }
+
+    @ViewBuilder
+    private func suggestedBlock(_ suggested: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(suggested)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .textSelection(.enabled)
+                .accessibilityLabel(String(localized: "Value suggested \(suggested)"))
+
+            HStack(spacing: 12) {
+                Button {
+                    copyToPasteboard(
+                        suggested,
+                        confirmation: String(localized: "Value suggested copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy value suggested", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy value suggested"))
+                .accessibilityHint(
+                    String(
+                        localized: "Copies the exact displayed feed-provided value suggested string as plain text; this app does not send payments."
+                    )
+                )
+
+                ShareLink(item: suggested) {
+                    Label("Share value suggested", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share value suggested"))
+                .accessibilityHint(
+                    String(
+                        localized: "Shares the exact displayed feed-provided value suggested string as plain text; this app does not send payments."
+                    )
+                )
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 2)
     }
 
     @ViewBuilder

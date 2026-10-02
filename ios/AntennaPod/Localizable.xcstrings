@@ -36178,6 +36178,114 @@
     },
     "comment": "VoiceOver hint for Share value address; prefers http(s) URL else raw address; honesty: no payments."
   },
+  "Copy value suggested": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy value suggested"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Vorschlag kopieren"
+        }
+      }
+    },
+    "comment": "Distinct Copy action for the exact displayed podcast:value suggested string (not recipient name, type/method, split, fee, details, or address); hidden when missing — never invent."
+  },
+  "Share value suggested": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share value suggested"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Vorschlag teilen"
+        }
+      }
+    },
+    "comment": "Distinct Share action for the exact displayed podcast:value suggested string (not recipient name, type/method, split, fee, details, or address); hidden when missing — never invent."
+  },
+  "Value suggested copied to the pasteboard.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Value suggested copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Vorschlag in die Zwischenablage kopiert."
+        }
+      }
+    },
+    "comment": "Alert message after copying the exact displayed podcast:value suggested string."
+  },
+  "Copies the exact displayed feed-provided value suggested string as plain text; this app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed feed-provided value suggested string as plain text; this app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert den exakt angezeigten Feed-Wert-Vorschlag als Klartext; diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Copy value suggested; honesty: no payments."
+  },
+  "Shares the exact displayed feed-provided value suggested string as plain text; this app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact displayed feed-provided value suggested string as plain text; this app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt den exakt angezeigten Feed-Wert-Vorschlag als Klartext; diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Share value suggested; honesty: no payments."
+  },
+  "Value suggested %@": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Value suggested %@"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Vorschlag %@"
+        }
+      }
+    },
+    "comment": "VoiceOver label for the exact displayed podcast:value suggested string; %@ is the feed-provided suggested text."
+  },
   "Copy text purpose": {
     "extractionState": "manual",
     "comment": "Copy action for the exact feed-provided podcast:txt purpose; hidden when purpose is missing.",

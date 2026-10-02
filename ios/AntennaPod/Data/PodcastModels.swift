@@ -575,6 +575,13 @@ struct PodcastValue: Identifiable, Hashable, Codable {
         self.suggested = suggested
         self.recipients = recipients
     }
+
+    /// Trimmed non-empty feed `suggested` when set. Informational only — never invent / never use to send payments.
+    var displaySuggested: String? {
+        guard let suggested else { return nil }
+        let trimmed = suggested.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
 }
 
 /// One `podcast:valueRecipient` — type, address, split required by Podcast Index; name recommended; fee optional.
@@ -700,6 +707,24 @@ enum PodcastValueDisplay {
             return (list, false)
         }
         return (Array(list.prefix(displayCap)), true)
+    }
+
+    /// Feed-provided `suggested` strings from value blocks that also contribute at least one valid recipient.
+    /// Once per block, feed order. Hide when missing — never invent a suggested amount.
+    static func displaySuggestedList(_ values: [PodcastValue]) -> [(id: String, text: String)] {
+        var out: [(id: String, text: String)] = []
+        for value in values {
+            guard let text = value.displaySuggested else { continue }
+            let vType = value.type.trimmingCharacters(in: .whitespacesAndNewlines)
+            let vMethod = value.method.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !vType.isEmpty, !vMethod.isEmpty else { continue }
+            let hasRecipient = value.recipients.contains { rec in
+                rec.displayType != nil && rec.displayAddress != nil && rec.split >= 0
+            }
+            guard hasRecipient else { continue }
+            out.append((value.id, text))
+        }
+        return out
     }
 }
 
