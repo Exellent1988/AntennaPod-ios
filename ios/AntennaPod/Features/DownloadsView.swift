@@ -15,6 +15,7 @@ struct DownloadsView: View {
     @State private var showCancelAllConfirm = false
     @State private var showEnqueueAllConfirm = false
     @State private var showMarkAllPlayedConfirm = false
+    @State private var showMarkAllUnplayedConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyFeedbackTick = 0
@@ -32,7 +33,7 @@ struct DownloadsView: View {
     /// `PodcastStore.episodeMatchesLibraryQuery` (same fields as library / Feed detail / Queue / Favorites / History / Archived), plus
     /// feed display title (`displayTitle(containingEpisodeId:)`). View-only —
     /// Does not mutate `DownloadService.downloads` (tab badge / Play random / Add all / Delete played / Clear all / Copy / Share stay full-catalog).
-    /// Play random / Add all to queue / Mark all as played / Delete played / Clear all / Cancel all / Copy downloads / Share downloads stay full-catalog scoped.
+    /// Play random / Add all to queue / Mark all as played / Mark all as unplayed / Delete played / Clear all / Cancel all / Copy downloads / Share downloads stay full-catalog scoped.
     private var filteredDownloads: [DownloadedEpisode] {
         var base = downloads.downloads
         switch settings.downloadsFilter {
@@ -201,6 +202,13 @@ struct DownloadsView: View {
     /// podcast, search, or sort filtered. Same archive policy as All Episodes / feed Mark all as played.
     private var markAllDownloadsPlayedCandidatesCount: Int {
         store.markAllDownloadsPlayedCandidateCount()
+    }
+
+    /// Played episodes in the **full completed Downloads catalog** — not chip, podcast, search,
+    /// or sort filtered. Includes archived played episodes, matching feed / All Episodes Mark all
+    /// as unplayed.
+    private var markAllDownloadsUnplayedCandidatesCount: Int {
+        store.markAllDownloadsUnplayedCandidateCount()
     }
 
     /// Completed Downloads catalog rows with a local playable file on disk via shared
@@ -570,6 +578,16 @@ struct DownloadsView: View {
                         )
 
                         Button {
+                            showMarkAllUnplayedConfirm = true
+                        } label: {
+                            Label("Mark all as unplayed", systemImage: "circle")
+                        }
+                        .disabled(markAllDownloadsUnplayedCandidatesCount == 0)
+                        .accessibilityHint(
+                            String(localized: "Marks played episodes, including archived episodes, in the full Downloads catalog as unplayed; ignores chip, podcast, search, and sort filters and does not delete files")
+                        )
+
+                        Button {
                             showCancelAllConfirm = true
                         } label: {
                             Label("Cancel all downloads", systemImage: "xmark.circle")
@@ -596,12 +614,12 @@ struct DownloadsView: View {
                     }
                     // Menu available when completed catalog is non-empty **or** anything is in-flight /
                     // waiting (Cancel all). Copy / Share / Play random / Add all / Cancel all / Delete
-                    // played / Mark all as played / Clear all each disable independently — same honesty as Favorites /
+                    // played / Mark all as played / Mark all as unplayed / Clear all each disable independently — same honesty as Favorites /
                     // History / Archived Copy / Share.
                     .disabled(downloads.downloads.isEmpty && downloads.cancelAllInFlightCount == 0)
                     .accessibilityLabel(String(localized: "Downloads actions"))
                     .accessibilityHint(
-                        String(localized: "Copy downloads, share downloads, play random, add all to queue, mark all as played, cancel all downloads, delete played downloads, or clear all downloads")
+                        String(localized: "Copy downloads, share downloads, play random, add all to queue, mark all as played, mark all as unplayed, cancel all downloads, delete played downloads, or clear all downloads")
                     )
                 }
             }
@@ -638,6 +656,20 @@ struct DownloadsView: View {
             } message: {
                 Text(
                     "Marks \(markAllDownloadsPlayedCandidatesCount) unplayed, non-archived downloaded episode(s) as played. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not itself clear downloads."
+                )
+            }
+            .confirmationDialog(
+                "Mark all as unplayed?",
+                isPresented: $showMarkAllUnplayedConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Mark all as unplayed") {
+                    store.markAllDownloadsUnplayed()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Marks \(markAllDownloadsUnplayedCandidatesCount) played downloaded episode(s), including archived episodes, as unplayed. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Does not delete download files, clear the queue, stop playback, or unarchive episodes."
                 )
             }
             .confirmationDialog(

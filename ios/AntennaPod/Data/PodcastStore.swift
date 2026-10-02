@@ -1099,6 +1099,33 @@ final class PodcastStore: ObservableObject {
             .map(\.id)
     }
 
+    /// Mark every played episode in the full completed Downloads catalog as unplayed.
+    ///
+    /// This includes archived played episodes, matching feed / All Episodes Mark all as
+    /// unplayed. IDs are snapshotted before calling `markUnplayed`; the per-episode path does
+    /// not delete download files, remove queue items, stop playback, or unarchive episodes.
+    /// This intentionally ignores all Downloads view filters. Callers must confirm first.
+    func markAllDownloadsUnplayed() {
+        let ids = markAllDownloadsUnplayedCandidateIds
+        for id in ids {
+            markUnplayed(id)
+        }
+    }
+
+    /// Number of played episodes in the full completed Downloads catalog.
+    /// This intentionally ignores all Downloads view filters.
+    func markAllDownloadsUnplayedCandidateCount() -> Int {
+        markAllDownloadsUnplayedCandidateIds.count
+    }
+
+    private var markAllDownloadsUnplayedCandidateIds: [String] {
+        guard let downloads else { return [] }
+        return downloads.downloads
+            .map(\.episode)
+            .filter { isPlayed($0.id) }
+            .map(\.id)
+    }
+
     /// Mark every played episode in the soft-capped All Episodes catalog as unplayed.
     /// The catalog is the newest 500 episodes by publish date, matching `allEpisodes` and the
     /// Add all / Play random / Copy / Share catalog. This deliberately ignores UI status, podcast,
