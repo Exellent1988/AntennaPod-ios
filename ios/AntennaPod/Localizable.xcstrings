@@ -17044,6 +17044,96 @@
       },
       "comment": "VoiceOver hint for contentLink open button."
     },
+    "Live item details copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live item details copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Details in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy feedback alert for displayed feed-provided podcast:liveItem status and schedule metadata."
+    },
+    "Copy live item details": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy live item details"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Details kopieren"
+          }
+        }
+      },
+      "comment": "VoiceOver label for copying displayed podcast:liveItem status and schedule metadata."
+    },
+    "Copies the displayed live item status, optional title, and start/end times to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the displayed live item status, optional title, and start/end times to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den angezeigten Live-Item-Status, den optionalen Titel und die Start-/Endzeiten in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy live item details."
+    },
+    "Share live item details": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share live item details"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live-Item-Details teilen"
+          }
+        }
+      },
+      "comment": "VoiceOver label for sharing displayed podcast:liveItem status and schedule metadata."
+    },
+    "Shares the displayed live item status, optional title, and start/end times as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the displayed live item status, optional title, and start/end times as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den angezeigten Live-Item-Status, den optionalen Titel und die Start-/Endzeiten als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share live item details."
+    },
     "Live item URL copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {

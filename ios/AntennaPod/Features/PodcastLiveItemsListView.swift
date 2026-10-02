@@ -4,11 +4,12 @@ import UIKit
 /// Feed-provided `podcast:liveItem` list: status + title + start/end + Copy / Share / Open link / contentLinks.
 /// Caps at `PodcastLiveItemDisplay.displayCap` with an honesty footnote when truncated.
 /// **Display-only** — does **not** play live enclosures, open chat, record, or process payments.
-/// Copy / Share / Open actions use only feed-provided http(s) link / contentLink URLs.
+/// Copy / Share metadata and Open / Copy / Share link actions use only displayed or feed-provided values.
 struct PodcastLiveItemsListView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = String(localized: "Live item URL copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     let liveItems: [PodcastLiveItem]
@@ -49,7 +50,7 @@ struct PodcastLiveItemsListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Live item URL copied to the pasteboard."))
+                Text(copiedAlertMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -64,6 +65,11 @@ struct PodcastLiveItemsListView: View {
             guard let end = item.end else { return nil }
             return PodcastLiveItemDisplay.formatTimestamp(raw: end, epochMs: item.endEpochMs)
         }()
+        var detailLines = [statusText]
+        if let titleText { detailLines.append(titleText) }
+        detailLines.append(String(localized: "Starts \(startText)"))
+        if let endText { detailLines.append(String(localized: "Ends \(endText)")) }
+        let detailsText = detailLines.joined(separator: "\n")
         let linkURL = item.linkURL
         let contentLinks = item.openableContentLinks
 
@@ -112,10 +118,36 @@ struct PodcastLiveItemsListView: View {
                 }
             }
 
+            HStack(spacing: 12) {
+                Button {
+                    UIPasteboard.general.string = detailsText
+                    copiedAlertMessage = String(localized: "Live item details copied to the pasteboard.")
+                    copyFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Label("Copy live item details", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy live item details"))
+                .accessibilityHint(
+                    String(localized: "Copies the displayed live item status, optional title, and start/end times to the pasteboard")
+                )
+
+                ShareLink(item: detailsText) {
+                    Label("Share live item details", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share live item details"))
+                .accessibilityHint(
+                    String(localized: "Shares the displayed live item status, optional title, and start/end times as plain text")
+                )
+            }
+
             if let url = linkURL {
                 HStack(spacing: 12) {
                     Button {
                         UIPasteboard.general.string = url.absoluteString
+                        copiedAlertMessage = String(localized: "Live item URL copied to the pasteboard.")
                         copyFeedbackTick += 1
                         showCopiedAlert = true
                     } label: {
