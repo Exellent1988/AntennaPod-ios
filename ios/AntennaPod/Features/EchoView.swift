@@ -42,6 +42,9 @@ struct EchoView: View {
                     systemImage: "sparkles.rectangle.stack",
                     description: Text(emptyDescription)
                 )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(emptyTitle)
+                .accessibilityValue(emptyDescription)
             } else {
                 Section {
                     if settings.statisticsTimeRange == .thisYear {
@@ -49,30 +52,52 @@ struct EchoView: View {
                             Text("\(summary.year)")
                                 .foregroundStyle(.secondary)
                         }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(String(localized: "Year"))
+                        .accessibilityValue("\(summary.year)")
                     } else {
                         LabeledContent("Period") {
                             Text(settings.statisticsTimeRange.label)
                                 .foregroundStyle(.secondary)
                         }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(String(localized: "Period"))
+                        .accessibilityValue(settings.statisticsTimeRange.label)
                     }
                     LabeledContent("Played episodes") {
                         Text("\(summary.playedEpisodeCount)")
                             .foregroundStyle(.secondary)
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "Played episodes"))
+                    .accessibilityValue("\(summary.playedEpisodeCount)")
+
                     LabeledContent("Approx. listening time") {
                         Text(StatisticsView.formatDuration(summary.approximateListenedSeconds))
                             .foregroundStyle(.secondary)
                     }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "Approx. listening time"))
+                    .accessibilityValue(StatisticsView.formatDuration(summary.approximateListenedSeconds))
+                    .accessibilityHint(
+                        String(localized: "Wall-clock estimate from saved duration or position, not speed-adjusted")
+                    )
                     if summary.favoritesCountThisYear > 0 || summary.favoritesTotalCount > 0 {
                         LabeledContent(favoritesInRangeLabel) {
                             Text("\(summary.favoritesCountThisYear)")
                                 .foregroundStyle(.secondary)
                         }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(favoritesInRangeLabel)
+                        .accessibilityValue("\(summary.favoritesCountThisYear)")
                         if summary.favoritesTotalCount != summary.favoritesCountThisYear {
                             LabeledContent("Favorites total") {
                                 Text("\(summary.favoritesTotalCount)")
                                     .foregroundStyle(.secondary)
                             }
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel(String(localized: "Favorites total"))
+                            .accessibilityValue("\(summary.favoritesTotalCount)")
                         }
                     }
                 } header: {
@@ -102,6 +127,13 @@ struct EchoView: View {
                                     .padding(.leading, 32)
                             }
                             .accessibilityElement(children: .combine)
+                            .accessibilityLabel(
+                                "\(index + 1). \(feed.feedTitle), \(StatisticsView.formatDuration(feed.approximateListenedSeconds))"
+                            )
+                            .accessibilityValue(Self.feedSubtitle(feed))
+                            .accessibilityHint(
+                                String(localized: "Per-feed rollup using the same wall-clock estimate as Totals")
+                            )
                         }
                     } header: {
                         Text("Top podcasts")
