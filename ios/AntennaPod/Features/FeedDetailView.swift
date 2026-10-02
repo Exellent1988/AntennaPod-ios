@@ -12,6 +12,7 @@ struct FeedDetailView: View {
     @State private var showDownloadAllConfirm = false
     @State private var showMarkAllPlayedConfirm = false
     @State private var showMarkAllUnplayedConfirm = false
+    @State private var showArchiveAllConfirm = false
     @State private var showEnqueueAllConfirm = false
     @State private var showEnqueueAllUnplayedConfirm = false
     @State private var showDeleteDownloadsConfirm = false
@@ -374,6 +375,10 @@ struct FeedDetailView: View {
     /// unplayed bulk still flips played archived). Full-feed eligibility (not chip/search).
     private var markAllUnplayedCandidates: [PodcastEpisode] {
         liveFeed.episodes.filter { store.isPlayed($0.id) }
+    }
+
+    private var archiveAllFeedCandidatesCount: Int {
+        store.archiveAllCandidateCount(inFeedId: liveFeed.id)
     }
 
     /// Full feed episode catalog minus already queued — Add all to queue always uses this,
@@ -1197,6 +1202,15 @@ struct FeedDetailView: View {
                         .accessibilityHint(String(localized: "Marks played episodes in this podcast as unplayed, including archived"))
 
                         Button {
+                            showArchiveAllConfirm = true
+                        } label: {
+                            Label("Archive all", systemImage: "archivebox")
+                        }
+                        .disabled(archiveAllFeedCandidatesCount == 0)
+                        .accessibilityLabel(String(localized: "Archive all"))
+                        .accessibilityHint(String(localized: "Archives non-archived episodes in this podcast’s full feed catalog, not the status, episode type, search, or sort filters"))
+
+                        Button {
                             showEnqueueAllUnplayedConfirm = true
                         } label: {
                             Label("Add all unplayed to queue", systemImage: "text.badge.plus")
@@ -1282,6 +1296,20 @@ struct FeedDetailView: View {
         } message: {
             Text(
                 "Marks \(markAllUnplayedCandidates.count) played episodes in this podcast as unplayed (including archived). Does not delete downloads, remove from queue, stop playback, or unarchive."
+            )
+        }
+        .confirmationDialog(
+            "Archive all?",
+            isPresented: $showArchiveAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Archive all") {
+                store.archiveAll(inFeedId: liveFeed.id)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Archives \(archiveAllFeedCandidatesCount) non-archived episodes in this podcast’s full feed catalog, not the status, episode type, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue. Distinct from global Archive all actions."
             )
         }
         .confirmationDialog(

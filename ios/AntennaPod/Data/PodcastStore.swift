@@ -1581,6 +1581,37 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Archive every non-archived episode in one feed (bulk).
+    ///
+    /// Uses the full stored catalog for this feed only, not Feed detail status, episode-type,
+    /// search, or sort filters. Existing archive timestamps are preserved and all new timestamps
+    /// are persisted in one `archivedAtById` write. Archiving does not mark played, delete
+    /// downloads, clear the queue, or change playback. Callers must confirm first.
+    func archiveAll(inFeedId feedId: String) {
+        guard let feed = feeds.first(where: { $0.id == feedId }) else { return }
+        let ids = feed.episodes
+            .filter { !isArchived($0.id) }
+            .map(\.id)
+        guard !ids.isEmpty else { return }
+
+        let now = Int64(Date().timeIntervalSince1970 * 1000)
+        var map = archivedAtById
+        for id in ids {
+            if map[id] == nil {
+                map[id] = now
+            }
+        }
+        archivedAtById = map
+    }
+
+    /// Number of non-archived episodes in one feed's full stored catalog.
+    /// This deliberately ignores Feed detail status, episode-type, search, and sort filters.
+    func archiveAllCandidateCount(inFeedId feedId: String) -> Int {
+        feeds.first(where: { $0.id == feedId })?.episodes
+            .filter { !isArchived($0.id) }
+            .count ?? 0
+    }
+
     /// Mark every **played** episode in one feed as unplayed (bulk), **including archived**.
     /// Archive policy: prefer mark unplayed even if archived (inverted of Mark all as played
     /// which skips archived unplayed — here any `isPlayed` on this feed is eligible).

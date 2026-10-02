@@ -29841,6 +29841,42 @@
           }
         }
       }
+    },
+    "Archives non-archived episodes in this podcast’s full feed catalog, not the status, episode type, search, or sort filters": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Feed detail Archive all.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archives non-archived episodes in this podcast’s full feed catalog, not the status, episode type, search, or sort filters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert nicht archivierte Episoden im vollständigen Feed-Katalog dieses Podcasts, unabhängig von Status-, Episodentyp-, Such- oder Sortierfiltern"
+          }
+        }
+      }
+    },
+    "Archives %lld non-archived episodes in this podcast’s full feed catalog, not the status, episode type, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue. Distinct from global Archive all actions.": {
+      "extractionState": "manual",
+      "comment": "Feed detail Archive all confirmation — full feed catalog, non-archived eligibility, not status/episode type/search/sort filters; distinct from global Archive all.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archives %lld non-archived episodes in this podcast’s full feed catalog, not the status, episode type, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue. Distinct from global Archive all actions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert %lld nicht archivierte Episoden im vollständigen Feed-Katalog dieses Podcasts, nicht nach Status-, Episodentyp-, Such- oder Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange. Unterscheidet sich von den globalen Aktionen Alle archivieren."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
