@@ -14,6 +14,7 @@ struct QueueView: View {
     @State private var showClearQueueConfirm = false
     @State private var showRemovePlayedConfirm = false
     @State private var showMarkAllQueuePlayedConfirm = false
+    @State private var showMarkAllQueueUnplayedConfirm = false
     @State private var showShuffleQueueConfirm = false
     @State private var showShuffleKeepPlayingFirstConfirm = false
     @State private var showReverseQueueConfirm = false
@@ -114,6 +115,12 @@ struct QueueView: View {
     /// Mark all as played uses the same archive policy as sibling bulk actions.
     private var markAllQueuePlayedCandidatesCount: Int {
         store.markAllQueuePlayedCandidateCount()
+    }
+
+    /// Count of played episodes in the full persisted queue, including archived episodes.
+    /// Mark all as unplayed uses the same full-catalog policy as sibling bulk actions.
+    private var markAllQueueUnplayedCandidatesCount: Int {
+        store.markAllQueueUnplayedCandidateCount()
     }
 
     /// Queued episodes with playable media via shared `EpisodePlayRandom` (local file via
@@ -652,6 +659,20 @@ struct QueueView: View {
                             String(localized: "Marks unplayed, non-archived episodes in the full queue as played, ignoring filters")
                         )
 
+                        Button {
+                            // Always confirm before markAllQueueUnplayed() — never bulk-mark from the menu alone.
+                            showMarkAllQueueUnplayedConfirm = true
+                        } label: {
+                            Label("Mark all as unplayed", systemImage: "circle")
+                        }
+                        // Mark all targets the full queue, including archived played episodes;
+                        // Queue lock does not block this playback-state action.
+                        .disabled(markAllQueueUnplayedCandidatesCount == 0)
+                        .accessibilityLabel(String(localized: "Mark all as unplayed"))
+                        .accessibilityHint(
+                            String(localized: "Marks played episodes in the full queue, including archived episodes")
+                        )
+
                         Button(role: .destructive) {
                             // Always confirm before removePlayedFromQueue() — never remove from the menu alone.
                             showRemovePlayedConfirm = true
@@ -683,7 +704,7 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, mark all as played, remove played, or clear the entire queue")
+                        String(localized: "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, mark all as played, mark all as unplayed, remove played, or clear the entire queue")
                     )
                 }
             }
@@ -708,6 +729,20 @@ struct QueueView: View {
             } message: {
                 Text(
                     "Marks \(markAllQueuePlayedCandidatesCount) unplayed, non-archived episodes in the full queue as played. They leave the queue, and auto-delete after playing still applies when enabled. This ignores the Queue played/podcast/search filters."
+                )
+            }
+            .confirmationDialog(
+                "Mark all as unplayed?",
+                isPresented: $showMarkAllQueueUnplayedConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Mark all as unplayed") {
+                    store.markAllQueueUnplayed()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Marks \(markAllQueueUnplayedCandidatesCount) played episodes in the full queue as unplayed, including archived episodes. This does not delete downloads, remove episodes from the queue, stop playback, or unarchive episodes. It ignores the Queue played/podcast/search filters."
                 )
             }
             .confirmationDialog(

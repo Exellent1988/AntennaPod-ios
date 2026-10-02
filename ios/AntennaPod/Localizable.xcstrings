@@ -29264,6 +29264,94 @@
           }
         }
       }
+    },
+    "Mark all as unplayed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark all as unplayed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle als ungehört markieren"
+          }
+        }
+      }
+    },
+    "Mark all as unplayed?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark all as unplayed?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle als ungehört markieren?"
+          }
+        }
+      }
+    },
+    "Marks played episodes in the full queue, including archived episodes": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Queue Mark all as unplayed.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks played episodes in the full queue, including archived episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert gehörte Episoden in der vollständigen Warteschlange, einschließlich archivierter Episoden"
+          }
+        }
+      }
+    },
+    "Marks %lld played episodes in the full queue as unplayed, including archived episodes. This does not delete downloads, remove episodes from the queue, stop playback, or unarchive episodes. It ignores the Queue played/podcast/search filters.": {
+      "extractionState": "manual",
+      "comment": "Queue Mark all as unplayed confirmation — full queue, including archived played episodes.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld played episodes in the full queue as unplayed, including archived episodes. This does not delete downloads, remove episodes from the queue, stop playback, or unarchive episodes. It ignores the Queue played/podcast/search filters."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld gehörte Episoden aus der vollständigen Warteschlange als ungehört, einschließlich archivierter Episoden. Löscht keine Downloads, entfernt keine Episoden aus der Warteschlange, stoppt nicht die Wiedergabe und hebt die Archivierung nicht auf. Played-, Podcast- und Suchfilter werden ignoriert."
+          }
+        }
+      }
+    },
+    "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, mark all as played, mark all as unplayed, remove played, or clear the entire queue": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Queue actions menu.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, mark all as played, mark all as unplayed, remove played, or clear the entire queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange kopieren, teilen, zufällig abspielen, mischen, mischen (aktuelle Wiedergabe zuerst), umkehren, nach Datum, Dauer oder Titel sortieren, aktuelle Wiedergabe an den Anfang oder das Ende verschieben, alles als gehört, alles als ungehört markieren, Gehörte entfernen oder die gesamte Warteschlange leeren"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
