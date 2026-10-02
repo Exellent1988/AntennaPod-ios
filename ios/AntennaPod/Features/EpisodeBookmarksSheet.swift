@@ -1,8 +1,9 @@
 import SwiftUI
 import UIKit
 
-/// List / add / delete user bookmarks for the current episode.
-/// Tap a row → `PlaybackService.seek(toSeconds:)`. Swipe → remove.
+/// List / add / delete / edit-note user bookmarks for the current episode.
+/// Tap a row → `PlaybackService.seek(toSeconds:)`. Swipe delete → remove.
+/// Swipe / context menu **Edit note** → alert TextField (position unchanged).
 /// Local-only (`bookmarks.json`); not gpodder; wall-clock positions; cap 50/episode.
 /// Toolbar **Copy bookmarks** + **Share bookmarks** export a plain-text list matching
 /// sheet order (newest-first): `m:ss`/`h:mm:ss` + note when non-empty; Share includes
@@ -19,6 +20,10 @@ struct EpisodeBookmarksSheet: View {
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyFeedbackTick = 0
+
+    @State private var editNoteBookmarkId: UUID?
+    @State private var editNoteDraft = ""
+    @State private var showEditNoteAlert = false
 
     private var bookmarks: [EpisodeBookmark] {
         store.bookmarks(for: episodeId)
@@ -77,7 +82,29 @@ struct EpisodeBookmarksSheet: View {
                                 bookmarkRow(bookmark)
                             }
                             .accessibilityLabel(bookmarkAccessibilityLabel(bookmark))
-                            .accessibilityHint(String(localized: "Seeks playback to this bookmark"))
+                            .accessibilityHint(String(localized: "Seeks playback to this bookmark. Swipe or use the context menu to edit the note or delete."))
+                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                Button {
+                                    beginEditNote(bookmark)
+                                } label: {
+                                    Label(String(localized: "Edit note"), systemImage: "pencil")
+                                }
+                                .tint(.indigo)
+                                .accessibilityLabel(String(localized: "Edit note"))
+                                .accessibilityHint(String(localized: "Opens a field to change or clear this bookmark’s note. Position stays the same."))
+                            }
+                            .contextMenu {
+                                Button {
+                                    beginEditNote(bookmark)
+                                } label: {
+                                    Label(String(localized: "Edit note"), systemImage: "pencil")
+                                }
+                                Button(role: .destructive) {
+                                    store.removeBookmark(episodeId: episodeId, bookmarkId: bookmark.id)
+                                } label: {
+                                    Label(String(localized: "Delete"), systemImage: "trash")
+                                }
+                            }
                         }
                         .onDelete(perform: deleteBookmarks)
                     }
@@ -155,6 +182,25 @@ struct EpisodeBookmarksSheet: View {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(copiedAlertMessage)
+            }
+            .alert(
+                String(localized: "Edit note"),
+                isPresented: $showEditNoteAlert
+            ) {
+                TextField(String(localized: "Optional note"), text: $editNoteDraft)
+                    .textInputAutocapitalization(.sentences)
+                    .accessibilityLabel(String(localized: "Optional note"))
+                    .accessibilityHint(String(localized: "Short note saved with the bookmark, up to 120 characters. Leave empty to clear."))
+                Button(String(localized: "Cancel"), role: .cancel) {
+                    editNoteBookmarkId = nil
+                    editNoteDraft = ""
+                }
+                Button(String(localized: "Save")) {
+                    saveEditNote()
+                }
+                .accessibilityHint(String(localized: "Saves the note for this bookmark. Position stays the same."))
+            } message: {
+                Text(String(localized: "Change or clear the note. Playback position is not changed. Local only; up to 120 characters."))
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -248,6 +294,23 @@ struct EpisodeBookmarksSheet: View {
         } else {
             showAtCapAlert = true
         }
+    }
+
+    private func beginEditNote(_ bookmark: EpisodeBookmark) {
+        editNoteBookmarkId = bookmark.id
+        editNoteDraft = bookmark.note
+        showEditNoteAlert = true
+    }
+
+    private func saveEditNote() {
+        guard let id = editNoteBookmarkId else { return }
+        store.updateBookmarkNote(
+            episodeId: episodeId,
+            bookmarkId: id,
+            note: editNoteDraft
+        )
+        editNoteBookmarkId = nil
+        editNoteDraft = ""
     }
 
     private func deleteBookmarks(at offsets: IndexSet) {

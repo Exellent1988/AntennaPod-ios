@@ -25090,6 +25090,108 @@
           }
         }
       }
+    },
+    "Edit note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit note"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notiz bearbeiten"
+          }
+        }
+      }
+    },
+    "Seeks playback to this bookmark. Swipe or use the context menu to edit the note or delete.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks playback to this bookmark. Swipe or use the context menu to edit the note or delete."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt die Wiedergabe zu diesem Lesezeichen. Wischen oder Kontextmenü zum Bearbeiten der Notiz oder Löschen."
+          }
+        }
+      }
+    },
+    "Opens a field to change or clear this bookmark’s note. Position stays the same.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a field to change or clear this bookmark’s note. Position stays the same."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet ein Feld zum Ändern oder Löschen der Notiz. Die Position bleibt unverändert."
+          }
+        }
+      }
+    },
+    "Short note saved with the bookmark, up to 120 characters. Leave empty to clear.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Short note saved with the bookmark, up to 120 characters. Leave empty to clear."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kurze Notiz zum Lesezeichen, bis zu 120 Zeichen. Leer lassen zum Entfernen."
+          }
+        }
+      }
+    },
+    "Saves the note for this bookmark. Position stays the same.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saves the note for this bookmark. Position stays the same."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert die Notiz für dieses Lesezeichen. Die Position bleibt unverändert."
+          }
+        }
+      }
+    },
+    "Change or clear the note. Playback position is not changed. Local only; up to 120 characters.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the note. Playback position is not changed. Local only; up to 120 characters."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notiz ändern oder löschen. Die Wiedergabeposition bleibt unverändert. Nur lokal; bis zu 120 Zeichen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

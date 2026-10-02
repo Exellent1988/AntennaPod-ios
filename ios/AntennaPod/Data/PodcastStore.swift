@@ -1345,6 +1345,20 @@ final class PodcastStore: ObservableObject {
         bookmarksByEpisodeId = map
     }
 
+    /// Update the optional note on an existing bookmark. Position and id stay unchanged.
+    /// Trims and caps to `EpisodeBookmarkStore.maxNoteLength` (same as add). Empty note clears it.
+    /// No-op when the bookmark is missing. Persists via `bookmarksByEpisodeId` didSet → `bookmarks.json`.
+    func updateBookmarkNote(episodeId: String, bookmarkId: UUID, note: String) {
+        guard var list = bookmarksByEpisodeId[episodeId] else { return }
+        guard let idx = list.firstIndex(where: { $0.id == bookmarkId }) else { return }
+        let trimmed = EpisodeBookmarkStore.trimNote(note)
+        guard list[idx].note != trimmed else { return }
+        list[idx].note = trimmed
+        var map = bookmarksByEpisodeId
+        map[episodeId] = list
+        bookmarksByEpisodeId = map
+    }
+
     /// Remove every bookmark for an episode.
     func clearBookmarks(for episodeId: String) {
         guard bookmarksByEpisodeId[episodeId] != nil else { return }
