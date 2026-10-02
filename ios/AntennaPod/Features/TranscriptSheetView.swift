@@ -247,6 +247,11 @@ struct TranscriptSheetView: View {
                     }
                 }
             }
+            .safeAreaInset(edge: .top, spacing: 0) {
+                if let transcriptType = episode.displayTranscriptType {
+                    transcriptTypeHeader(transcriptType)
+                }
+            }
             .safeAreaInset(edge: .bottom) {
                 Text("From feed URL only — no speech-to-text")
                     .font(.caption2)
@@ -399,6 +404,59 @@ struct TranscriptSheetView: View {
             errorMessage = error.localizedDescription
             transcript = nil
         }
+    }
+
+    @ViewBuilder
+    private func transcriptTypeHeader(_ type: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text(String(localized: "Transcript type"))
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .accessibilityAddTraits(.isHeader)
+
+                Spacer(minLength: 8)
+
+                Button {
+                    copyTranscriptType(type)
+                } label: {
+                    Image(systemName: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy transcript type"))
+                .accessibilityHint(
+                    String(localized: "Copies the exact displayed transcript type to the pasteboard")
+                )
+
+                ShareLink(item: type) {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share transcript type"))
+                .accessibilityHint(
+                    String(localized: "Shares the exact displayed transcript type as plain text")
+                )
+            }
+
+            Text(type)
+                .font(.caption.monospaced())
+                .foregroundStyle(.primary)
+                .textSelection(.enabled)
+                .lineLimit(2)
+                .accessibilityLabel(
+                    "\(String(localized: "Transcript type")), \(type)"
+                )
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(.bar)
+        .accessibilityElement(children: .contain)
+    }
+
+    private func copyTranscriptType(_ type: String) {
+        UIPasteboard.general.string = type
+        copiedAlertMessage = String(localized: "Transcript type copied to the pasteboard.")
+        copyFeedbackTick &+= 1
+        showCopiedAlert = true
     }
 
     private func copyTranscript() {

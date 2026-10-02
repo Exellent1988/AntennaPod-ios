@@ -1733,6 +1733,14 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         return true
     }
 
+    /// Trimmed non-empty feed-provided transcript type. Hidden when missing — never invent MIME.
+    /// The raw `transcriptType` remains the fetch hint; this value is display/copy/share text only.
+    var displayTranscriptType: String? {
+        guard let transcriptType else { return nil }
+        let trimmed = transcriptType.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     /// Trimmed non-empty `podcast:chapters` type attribute. Hidden when missing — never invent MIME.
     var displayPodcastIndexChapterType: String? {
         guard let podcastIndexChapterType else { return nil }

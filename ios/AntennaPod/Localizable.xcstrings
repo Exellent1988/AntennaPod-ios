@@ -14139,6 +14139,114 @@
         }
       }
     },
+    "Transcript type": {
+      "extractionState": "manual",
+      "comment": "Caption for the feed-provided transcript type.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkripttyp"
+          }
+        }
+      }
+    },
+    "Copy transcript type": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying a transcript type.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy transcript type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkripttyp kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed transcript type to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying a transcript type.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed transcript type to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den exakt angezeigten Transkripttyp in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Share transcript type": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing a transcript type.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share transcript type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkripttyp teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed transcript type as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing a transcript type.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed transcript type as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den exakt angezeigten Transkripttyp als reinen Text"
+          }
+        }
+      }
+    },
+    "Transcript type copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for a transcript type.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript type copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkripttyp in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
     "Copy transcript": {
       "extractionState": "manual",
       "localizations": {
