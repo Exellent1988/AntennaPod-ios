@@ -9,6 +9,7 @@ struct MiniPlayerView: View {
     @State private var showCustomSleepTimer = false
     @State private var showCustomPlaybackSpeed = false
     @State private var showBookmarks = false
+    @State private var showJumpToPosition = false
 
     var body: some View {
         if let episode = playback.currentEpisode {
@@ -111,6 +112,17 @@ struct MiniPlayerView: View {
                             Label("Bookmarks", systemImage: "bookmark")
                         }
                         .accessibilityHint(String(localized: "Lists bookmarks for this episode and saves the current position"))
+                        Button {
+                            showJumpToPosition = true
+                        } label: {
+                            Label("Jump to position", systemImage: "arrow.right.to.line")
+                        }
+                        .disabled(!canJumpToPosition)
+                        .accessibilityHint(
+                            canJumpToPosition
+                                ? String(localized: "Enter a time to seek")
+                                : String(localized: "Duration unknown — jump unavailable.")
+                        )
                     } label: {
                         Image(systemName: "ellipsis.circle")
                     }
@@ -145,7 +157,18 @@ struct MiniPlayerView: View {
                     .environmentObject(playback)
                     .environmentObject(store)
             }
+            .sheet(isPresented: $showJumpToPosition) {
+                JumpToPositionSheet(initialSeconds: playback.positionSeconds)
+                    .environmentObject(playback)
+            }
         }
+    }
+
+    /// Same gate as FullPlayerView: known finite duration and a current episode.
+    private var canJumpToPosition: Bool {
+        playback.currentEpisode != nil
+            && playback.durationSeconds.isFinite
+            && playback.durationSeconds > 0
     }
 
     /// Chapters already on the store/player episode (PSC / persisted Podcast Index / media).

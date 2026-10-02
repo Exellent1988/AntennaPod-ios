@@ -47,7 +47,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Full/Mini: Open podcast → Feed-Detail (fehlt → disabled / Hinweis) | ☐ Full/Mini: Open podcast → feed detail (missing → disabled / alert) |
 | ☐ Play/Pause, Rewind/FF (Settings-Intervalle; Presets + Custom… 5–60s) | ☐ Play/Pause, rewind/FF (Settings intervals; presets + Custom… 5–60s) |
 | ☐ Scrubber / Seek | ☐ Scrubber / seek |
-| ☐ Jump to position (Full: mm:ss / Min+Sek → Seek; disabled ohne Dauer) | ☐ Jump to position (Full: mm:ss / min+sec → seek; disabled without duration) |
+| ☐ Jump to position (Full links + Mini ⋯: mm:ss / Min+Sek → Seek; disabled ohne Dauer) | ☐ Jump to position (Full left time + Mini ⋯: mm:ss / min+sec → seek; disabled without duration) |
 | ☐ Lesezeichen (Full secondary + Mini ⋯; aktuelle Wanduhr-Position + optionale Notiz; Liste/Tap-Seek/Swipe-Löschen; `bookmarks.json`; max. 50/Episode + Hinweis; nur lokal — nicht gpodder; ≠ Kapitel / Mit Position teilen) | ☐ Bookmarks (Full secondary + Mini ⋯; current wall-clock position + optional note; list/tap-seek/swipe-delete; `bookmarks.json`; cap 50/episode + honesty; local-only — not gpodder; ≠ chapters / Share with position) |
 | ☐ Play from beginning (Full secondary: Seek 0 + Play; EpisodeRow Kontext; kein Unplayed-Flag) | ☐ Play from beginning (Full secondary: seek 0 + play; EpisodeRow context; no unplayed flag) |
 | ☐ Mark played / unplayed (Full secondary; `isPlayed` Toggle via `togglePlayed`; kein Seek/Stop; gleiche playback.json wie Listen) | ☐ Mark played / unplayed (Full secondary; `isPlayed` toggle via `togglePlayed`; no seek/stop; same playback.json as lists) |
