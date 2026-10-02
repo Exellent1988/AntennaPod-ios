@@ -2569,6 +2569,24 @@ struct EpisodeRow: View {
                 .accessibilityLabel(String(localized: "Share episode type"))
                 .accessibilityHint(String(localized: "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"))
             }
+            if dateOverride == nil, let publishDate = formattedPubDateCaption {
+                Button {
+                    copyEpisodeMetadata(
+                        publishDate,
+                        message: String(localized: "Episode publish date copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy episode publish date", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy episode publish date"))
+                .accessibilityHint(String(localized: "Copies the same publish-date caption shown in this episode row to the pasteboard; known feed metadata only; no date invented"))
+
+                ShareLink(item: publishDate, subject: Text(episode.title)) {
+                    Label("Share episode publish date", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share episode publish date"))
+                .accessibilityHint(String(localized: "Shares the same publish-date caption shown in this episode row as plain text; known feed metadata only; no date invented"))
+            }
             if let duration = formattedKnownDuration {
                 Button {
                     copyEpisodeMetadata(
@@ -2868,9 +2886,7 @@ struct EpisodeRow: View {
 
     /// Publish-date caption: Today / Yesterday / N days ago (≤7) / medium absolute.
     private var formattedPubDateCaption: String? {
-        guard let ms = episode.pubDateEpochMs else { return nil }
-        let date = Date(timeIntervalSince1970: Double(ms) / 1000)
-        return EpisodeDateFormatting.listCaption(for: date)
+        EpisodeCopyLinks.formattedPublishDate(for: episode)
     }
 
     /// Feed/media duration, then saved playback duration; hidden when unknown — never invents.

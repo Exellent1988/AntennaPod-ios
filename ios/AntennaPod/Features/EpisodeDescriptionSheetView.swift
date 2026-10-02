@@ -161,11 +161,17 @@ struct EpisodeDescriptionSheetView: View {
         EpisodeCopyLinks.formattedByteSize(for: episode, downloads: downloads)
     }
 
+    /// Same publish-date caption shown in EpisodeRow; hidden when feed metadata is missing.
+    private var formattedPublishDate: String? {
+        EpisodeCopyLinks.formattedPublishDate(for: episode)
+    }
+
     private var hasEpisodeMeta: Bool {
         hasEpisodeType
             || seasonEpisodeCaption != nil
             || episode.isExplicit
             || episode.displayMedium != nil
+            || formattedPublishDate != nil
             || formattedKnownDuration != nil
             || formattedKnownByteSize != nil
     }
@@ -521,6 +527,14 @@ struct EpisodeDescriptionSheetView: View {
                             .background(Color.secondary.opacity(0.15), in: Capsule())
                             .accessibilityLabel(String(localized: "Medium \(medium)"))
                     }
+                    if let formattedPublishDate {
+                        Text(formattedPublishDate)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.secondary.opacity(0.15), in: Capsule())
+                            .accessibilityLabel(String(localized: "Publish date \(formattedPublishDate)"))
+                    }
                     if let episodeType = displayEpisodeType {
                         Text(episodeType)
                             .font(.caption.weight(.semibold))
@@ -588,6 +602,16 @@ struct EpisodeDescriptionSheetView: View {
                         copyHint: String(localized: "Copies the same item itunes:episodeType label shown above to the pasteboard; distinct from channel podcast:trailer"),
                         shareHint: String(localized: "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"),
                         copiedMessage: String(localized: "Episode type copied to the pasteboard.")
+                    )
+                }
+                if let formattedPublishDate {
+                    episodeMetadataActions(
+                        text: formattedPublishDate,
+                        copyLabel: String(localized: "Copy episode publish date"),
+                        shareLabel: String(localized: "Share episode publish date"),
+                        copyHint: String(localized: "Copies the same publish-date caption shown above to the pasteboard; known feed metadata only; no date invented"),
+                        shareHint: String(localized: "Shares the same publish-date caption shown above as plain text; known feed metadata only; no date invented"),
+                        copiedMessage: String(localized: "Episode publish date copied to the pasteboard.")
                     )
                 }
                 if let formattedKnownDuration {

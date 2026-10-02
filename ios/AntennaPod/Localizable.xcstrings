@@ -31997,6 +31997,158 @@
       }
     },
 
+    "Copy episode publish date": {
+      "extractionState": "manual",
+      "comment": "Copy the same publish-date caption shown on the episode surface.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy episode publish date"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodenveröffentlichungsdatum kopieren"
+          }
+        }
+      }
+    },
+
+    "Share episode publish date": {
+      "extractionState": "manual",
+      "comment": "Share the same publish-date caption shown on the episode surface as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share episode publish date"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodenveröffentlichungsdatum teilen"
+          }
+        }
+      }
+    },
+
+    "Publish date %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for the visible episode publish-date caption.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publish date %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veröffentlichungsdatum %@"
+          }
+        }
+      }
+    },
+
+    "Copies the same publish-date caption shown in this episode row to the pasteboard; known feed metadata only; no date invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the EpisodeRow publish date.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same publish-date caption shown in this episode row to the pasteboard; known feed metadata only; no date invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe in dieser Episodenzeile angezeigte Veröffentlichungsdatumsbeschriftung in die Zwischenablage; nur bekannte Feed-Metadaten; kein Datum erfunden"
+          }
+        }
+      }
+    },
+
+    "Shares the same publish-date caption shown in this episode row as plain text; known feed metadata only; no date invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the EpisodeRow publish date.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same publish-date caption shown in this episode row as plain text; known feed metadata only; no date invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe in dieser Episodenzeile angezeigte Veröffentlichungsdatumsbeschriftung als Klartext; nur bekannte Feed-Metadaten; kein Datum erfunden"
+          }
+        }
+      }
+    },
+
+    "Copies the same publish-date caption shown above to the pasteboard; known feed metadata only; no date invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the publish date from metadata actions.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same publish-date caption shown above to the pasteboard; known feed metadata only; no date invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe oben angezeigte Veröffentlichungsdatumsbeschriftung in die Zwischenablage; nur bekannte Feed-Metadaten; kein Datum erfunden"
+          }
+        }
+      }
+    },
+
+    "Shares the same publish-date caption shown above as plain text; known feed metadata only; no date invented": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the publish date from metadata actions.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same publish-date caption shown above as plain text; known feed metadata only; no date invented"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe oben angezeigte Veröffentlichungsdatumsbeschriftung als Klartext; nur bekannte Feed-Metadaten; kein Datum erfunden"
+          }
+        }
+      }
+    },
+
+    "Episode publish date copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for episode publish date.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode publish date copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodenveröffentlichungsdatum in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+
     "Copies the same duration caption shown in this episode row to the pasteboard; feed or known playback metadata only; no length invented": {
       "extractionState": "manual",
       "comment": "Accessibility hint for copying the EpisodeRow duration.",

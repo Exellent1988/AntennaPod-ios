@@ -25,6 +25,15 @@ enum EpisodeCopyLinks {
         return nil
     }
 
+    /// Same publish-date caption used by EpisodeRow (Today / Yesterday / N days ago / medium absolute).
+    /// Returns nil when the feed did not provide a publish timestamp; never invents a date.
+    static func formattedPublishDate(for episode: PodcastEpisode) -> String? {
+        guard let milliseconds = episode.pubDateEpochMs else { return nil }
+        return EpisodeDateFormatting.listCaption(
+            for: Date(timeIntervalSince1970: Double(milliseconds) / 1000)
+        )
+    }
+
     /// Same human-readable duration caption used by episode metadata surfaces.
     static func formattedDuration(
         for episode: PodcastEpisode,
