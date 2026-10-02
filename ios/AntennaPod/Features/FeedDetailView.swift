@@ -2514,6 +2514,43 @@ struct EpisodeRow: View {
                 .accessibilityLabel(String(localized: "Share season and episode"))
                 .accessibilityHint(String(localized: "Shares the same season and episode caption shown above as plain text; item metadata only; no numbers invented"))
             }
+            if episode.isExplicit {
+                let explicit = String(localized: "Explicit")
+                Button {
+                    copyEpisodeMetadata(
+                        explicit,
+                        message: String(localized: "Episode explicit badge copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy episode explicit badge", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy episode explicit badge"))
+                .accessibilityHint(String(localized: "Copies the localized Explicit badge shown above for this episode to the pasteboard; display-only; does not enforce content restrictions"))
+
+                ShareLink(item: explicit, subject: Text(episode.title)) {
+                    Label("Share episode explicit badge", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share episode explicit badge"))
+                .accessibilityHint(String(localized: "Shares the localized Explicit badge shown above for this episode as plain text; display-only; does not enforce content restrictions"))
+            }
+            if let medium = episode.displayMedium {
+                Button {
+                    copyEpisodeMetadata(
+                        medium,
+                        message: String(localized: "Episode medium copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy episode medium", systemImage: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy episode medium"))
+                .accessibilityHint(String(localized: "Copies the same item-provided medium string shown above to the pasteboard; display-only; no playback change or remapping"))
+
+                ShareLink(item: medium, subject: Text(episode.title)) {
+                    Label("Share episode medium", systemImage: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share episode medium"))
+                .accessibilityHint(String(localized: "Shares the same item-provided medium string shown above as plain text; display-only; no playback change or remapping"))
+            }
             if let episodeType = episode.displayEpisodeType {
                 Button {
                     copyEpisodeMetadata(

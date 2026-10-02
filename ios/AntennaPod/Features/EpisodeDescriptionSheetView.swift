@@ -525,6 +525,26 @@ struct EpisodeDescriptionSheetView: View {
                         copiedMessage: String(localized: "Season and episode copied to the pasteboard.")
                     )
                 }
+                if episode.isExplicit {
+                    episodeMetadataActions(
+                        text: String(localized: "Explicit"),
+                        copyLabel: String(localized: "Copy episode explicit badge"),
+                        shareLabel: String(localized: "Share episode explicit badge"),
+                        copyHint: String(localized: "Copies the localized Explicit badge shown above for this episode to the pasteboard; display-only; does not enforce content restrictions"),
+                        shareHint: String(localized: "Shares the localized Explicit badge shown above for this episode as plain text; display-only; does not enforce content restrictions"),
+                        copiedMessage: String(localized: "Episode explicit badge copied to the pasteboard.")
+                    )
+                }
+                if let medium = episode.displayMedium {
+                    episodeMetadataActions(
+                        text: medium,
+                        copyLabel: String(localized: "Copy episode medium"),
+                        shareLabel: String(localized: "Share episode medium"),
+                        copyHint: String(localized: "Copies the same item-provided medium string shown above to the pasteboard; display-only; no playback change or remapping"),
+                        shareHint: String(localized: "Shares the same item-provided medium string shown above as plain text; display-only; no playback change or remapping"),
+                        copiedMessage: String(localized: "Episode medium copied to the pasteboard.")
+                    )
+                }
                 if let episodeType = displayEpisodeType {
                     episodeMetadataActions(
                         text: episodeType,

@@ -31729,6 +31729,196 @@
           }
         }
       }
+    },
+
+    "Copy episode explicit badge": {
+      "extractionState": "manual",
+      "comment": "Copy the item-level Explicit badge.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy episode explicit badge"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explizit-Badge der Episode kopieren"
+          }
+        }
+      }
+    },
+
+    "Share episode explicit badge": {
+      "extractionState": "manual",
+      "comment": "Share the item-level Explicit badge as plain text.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share episode explicit badge"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explizit-Badge der Episode teilen"
+          }
+        }
+      }
+    },
+
+    "Copy episode medium": {
+      "extractionState": "manual",
+      "comment": "Copy the item podcast:medium string exactly as displayed; hidden when missing; no playback change or remapping.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy episode medium"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodenmedium kopieren"
+          }
+        }
+      }
+    },
+
+    "Share episode medium": {
+      "extractionState": "manual",
+      "comment": "Share the item podcast:medium string exactly as displayed as plain text; hidden when missing; no playback change or remapping.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share episode medium"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodenmedium teilen"
+          }
+        }
+      }
+    },
+
+    "Copies the localized Explicit badge shown above for this episode to the pasteboard; display-only; does not enforce content restrictions": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying the item-level Explicit badge.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the localized Explicit badge shown above for this episode to the pasteboard; display-only; does not enforce content restrictions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert das lokalisierte oben angezeigte Explizit-Badge dieser Episode in die Zwischenablage; nur Anzeige; erzwingt keine Inhaltsbeschr\u00e4nkungen"
+          }
+        }
+      }
+    },
+
+    "Shares the localized Explicit badge shown above for this episode as plain text; display-only; does not enforce content restrictions": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing the item-level Explicit badge.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the localized Explicit badge shown above for this episode as plain text; display-only; does not enforce content restrictions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt das lokalisierte oben angezeigte Explizit-Badge dieser Episode als Klartext; nur Anzeige; erzwingt keine Inhaltsbeschr\u00e4nkungen"
+          }
+        }
+      }
+    },
+
+    "Copies the same item-provided medium string shown above to the pasteboard; display-only; no playback change or remapping": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for copying item podcast:medium.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same item-provided medium string shown above to the pasteboard; display-only; no playback change or remapping"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert denselben oben angezeigten, vom Episoden-Item bereitgestellten Medium-String in die Zwischenablage; nur Anzeige; keine \u00c4nderung oder Zuordnung der Wiedergabe"
+          }
+        }
+      }
+    },
+
+    "Shares the same item-provided medium string shown above as plain text; display-only; no playback change or remapping": {
+      "extractionState": "manual",
+      "comment": "Accessibility hint for sharing item podcast:medium.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same item-provided medium string shown above as plain text; display-only; no playback change or remapping"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt denselben oben angezeigten, vom Episoden-Item bereitgestellten Medium-String als Klartext; nur Anzeige; keine \u00c4nderung oder Zuordnung der Wiedergabe"
+          }
+        }
+      }
+    },
+
+    "Episode explicit badge copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for the item-level Explicit badge.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode explicit badge copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explizit-Badge der Episode in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+
+    "Episode medium copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert for item podcast:medium.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode medium copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodenmedium in die Zwischenablage kopiert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
