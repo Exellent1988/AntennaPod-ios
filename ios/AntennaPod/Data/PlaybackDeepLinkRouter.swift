@@ -35,7 +35,8 @@ enum AntennaPodURLAction: String, CaseIterable {
 ///
 /// Intents open the app (`openAppWhenRun`); playback runs when an episode is already loaded.
 /// No App Group / background audio control from Shortcuts when the process is cold without a
-/// current item — documented honestly in FEATURE-MATRIX / README.
+/// current item. Playback schemes only — not episode/feed deep links, not CarPlay templates.
+/// Documented honestly in FEATURE-MATRIX / Settings / README.
 @MainActor
 final class PlaybackDeepLinkRouter: ObservableObject {
     static let shared = PlaybackDeepLinkRouter()

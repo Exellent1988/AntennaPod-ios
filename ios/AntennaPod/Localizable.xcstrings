@@ -4985,23 +4985,6 @@
         }
       }
     },
-    "Siri / Shortcuts (lite): Play/Pause, Skip forward, Skip back. Also open via URL schemes: antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents open the app and control playback when an episode is already loaded. Not background-only without App Groups.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Siri / Shortcuts (lite): Play/Pause, Skip forward, Skip back. Also open via URL schemes: antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents open the app and control playback when an episode is already loaded. Not background-only without App Groups."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Siri / Kurzbefehle (lite): Play/Pause, Vor-/Zurückspringen. Auch per URL: antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents öffnen die App und steuern die Wiedergabe, wenn eine Episode geladen ist. Ohne App Groups nicht rein im Hintergrund."
-          }
-        }
-      }
-    },
     "Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Override per podcast via Feed detail → gear → Playback.": {
       "extractionState": "manual",
       "localizations": {
@@ -22381,6 +22364,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sanfte Verstärkung über `AVMutableAudioMix`-Spurlautstärke (100% = unverändert, bis 300%). Über 100% kann clippen oder verzerren. Kein ReplayGain / Lautheitsnormalisierung / Android-LoudnessEnhancer. Bleibt bei stock AVPlayer (Video / PiP / Now Playing). Manche Streams (z. B. HLS) ignorieren audioMix ggf. Sleep-Timer-Fade nutzt weiter die Player-Lautstärke. Standard 100%."
+          }
+        }
+      }
+    },
+    "Siri / Shortcuts (lite): App Intents — Play, Pause, Play/Pause (toggle), Skip Forward, Skip Back — donated via AppShortcutsProvider for Siri / Shortcuts discoverability. Same actions via URL schemes antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents use openAppWhenRun (open the app) and control playback only when a current episode is already loaded. Not background-only / no App Group shared store. Not episode or feed deep links. Not CarPlay templates (see CarPlay note).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siri / Shortcuts (lite): App Intents — Play, Pause, Play/Pause (toggle), Skip Forward, Skip Back — donated via AppShortcutsProvider for Siri / Shortcuts discoverability. Same actions via URL schemes antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents use openAppWhenRun (open the app) and control playback only when a current episode is already loaded. Not background-only / no App Group shared store. Not episode or feed deep links. Not CarPlay templates (see CarPlay note)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siri / Kurzbefehle (lite): App Intents — Play, Pause, Play/Pause (Umschalten), Vor-/Zurückspringen — über AppShortcutsProvider für Siri / Kurzbefehle. Gleiche Aktionen per URL: antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents nutzen openAppWhenRun (öffnen die App) und steuern die Wiedergabe nur, wenn eine Episode geladen ist. Nicht rein im Hintergrund / kein App-Group-Shared-Store. Keine Episode-/Feed-Deep-Links. Keine CarPlay-Templates (siehe CarPlay-Hinweis)."
+          }
+        }
+      }
+    },
+    "Lite App Intents Play Pause Skip; opens app; needs current episode; not CarPlay templates.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lite App Intents Play Pause Skip; opens app; needs current episode; not CarPlay templates."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lite App Intents Play Pause Skip; öffnet App; braucht geladene Episode; keine CarPlay-Templates."
+          }
+        }
+      }
+    },
+    "Skip Forward": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip Forward"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorspringen"
+          }
+        }
+      }
+    },
+    "Skip Back": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip Back"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurückspringen"
           }
         }
       }

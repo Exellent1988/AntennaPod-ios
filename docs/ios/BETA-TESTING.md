@@ -307,7 +307,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Per-feed Keep updated → Never: Refresh all überspringt; Einzel-Refresh OK | ☐ Per-feed Keep updated → Never: Refresh all skips; single-feed refresh OK |
 | ☐ Feed refresh interval / Keep updated | ☐ Feed refresh interval / Keep updated |
 | ☐ New-episode action (Inbox / Queue) | ☐ New-episode action (Inbox / Queue) |
-| ☐ Siri / Shortcuts lite (`antennapod://…`) | ☐ Siri / Shortcuts lite (`antennapod://…`) |
+| ☐ Siri / Shortcuts lite (App Intents Play/Pause/Skip + `antennapod://…`; öffnet App; Episode geladen; kein CarPlay-Template) | ☐ Siri / Shortcuts lite (App Intents Play/Pause/Skip + `antennapod://…`; opens app; episode loaded; not CarPlay templates) |
 | ☐ Homescreen widget Continue listening + Restzeit (kann stale sein; `~` wenn Dauer unbekannt) | ☐ Homescreen widget Continue listening + remaining time (may be stale; `~` when duration unknown) |
 | ☐ Apple Watch: Continue listening + Restzeit + Play on iPhone (kein eigenes Playback) | ☐ Apple Watch: Continue listening + remaining time + Play on iPhone (no independent playback) |
 | ☐ About / Version / Links | ☐ About / version / links |
@@ -322,6 +322,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 
 - **Kein** eigenes CarPlay-UI (`CPTemplate`) ohne Apple-Entitlement.  
   **No** custom CarPlay templates without Apple entitlement.
+- Siri / Shortcuts (lite): App Intents **Play / Pause / Play/Pause / Skip Forward / Skip Back** + gleiche `antennapod://` Schemes; `openAppWhenRun`; braucht geladene Episode; **kein** Hintergrund-only / App-Group-Shared-Store; **keine** Episode-/Feed-Deep-Links; **keine** CarPlay-Templates. EN/DE + VoiceOver.  
+  Siri / Shortcuts (lite): App Intents **Play / Pause / Play/Pause / Skip Forward / Skip Back** + same `antennapod://` schemes; `openAppWhenRun`; needs current episode; **not** background-only / App Group shared store; **not** episode/feed deep links; **not** CarPlay templates. EN/DE + VoiceOver.
 - Apple Watch: **kein** unabhängiges Watch-Playback / Downloads / Queue — nur Continue-Snapshot + Play-on-iPhone + System-Now-Playing.  
   Apple Watch: **no** independent Watch playback / downloads / queue — Continue snapshot + Play on iPhone + system Now Playing only.
 - **Kein** Push / APNs / serverseitige Alerts (nur lokale UserNotifications). **Kein** Download-complete-Banner (nur Fehler). Settings → Notifications zeigt Permission + Open iOS Settings bei Denied + Notifies / Does not notify.  

@@ -1,11 +1,13 @@
 import AppIntents
 import Foundation
 
-/// Lite Siri / Shortcuts: Play/Pause, Skip forward, Skip back.
+/// Lite Siri / Shortcuts: Play, Pause, Play/Pause (toggle), Skip Forward, Skip Back.
 ///
-/// Uses `openAppWhenRun` and the same handlers as `antennapod://` URL schemes.
+/// Uses `openAppWhenRun` and the same handlers as `antennapod://` URL schemes
+/// (`play` / `pause` / `toggle` / `skip-forward` / `skip-back`).
 /// Full in-process control without opening the UI would need App Groups / a shared store —
 /// not wired in this beta. Discoverable via `AppShortcutsProvider` + Shortcuts app.
+/// **Not** CarPlay templates, **not** episode/feed deep links beyond these playback actions.
 
 struct TogglePlaybackAppIntent: AppIntent {
     static var title: LocalizedStringResource = "Play/Pause"
@@ -85,10 +87,30 @@ struct SkipBackAppIntent: AppIntent {
 struct AntennaPodAppShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
+            intent: PlayCurrentAppIntent(),
+            phrases: [
+                "Play \(.applicationName)",
+                "Resume \(.applicationName)",
+                "Continue playing in \(.applicationName)"
+            ],
+            shortTitle: "Play",
+            systemImageName: "play.fill"
+        )
+        AppShortcut(
+            intent: PauseCurrentAppIntent(),
+            phrases: [
+                "Pause \(.applicationName)",
+                "Pause playback in \(.applicationName)"
+            ],
+            shortTitle: "Pause",
+            systemImageName: "pause.fill"
+        )
+        AppShortcut(
             intent: TogglePlaybackAppIntent(),
             phrases: [
                 "Play or pause \(.applicationName)",
-                "Toggle playback in \(.applicationName)"
+                "Toggle playback in \(.applicationName)",
+                "Pause or resume \(.applicationName)"
             ],
             shortTitle: "Play/Pause",
             systemImageName: "playpause.fill"
@@ -97,7 +119,8 @@ struct AntennaPodAppShortcuts: AppShortcutsProvider {
             intent: SkipForwardAppIntent(),
             phrases: [
                 "Skip forward in \(.applicationName)",
-                "Fast forward \(.applicationName)"
+                "Fast forward \(.applicationName)",
+                "Skip ahead in \(.applicationName)"
             ],
             shortTitle: "Skip Forward",
             systemImageName: "goforward"
@@ -106,7 +129,8 @@ struct AntennaPodAppShortcuts: AppShortcutsProvider {
             intent: SkipBackAppIntent(),
             phrases: [
                 "Skip back in \(.applicationName)",
-                "Rewind \(.applicationName)"
+                "Rewind \(.applicationName)",
+                "Go back in \(.applicationName)"
             ],
             shortTitle: "Skip Back",
             systemImageName: "gobackward"

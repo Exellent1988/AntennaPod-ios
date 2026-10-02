@@ -73,7 +73,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Echo / Year in Review (beta lite; Library + Settings; shared Statistics time range on playback/favorites; ShareLink plain-text + VoiceOver hint)
 - About / contribute links (Settings → About; fork blurb; Bundle version; antennapod.org / GitHub / contribute / docs / this fork)
 - Rating prompt (optional; after 10 mark-played, once per install `AppStore.requestReview`; Settings toggle default on + Reset; iOS may suppress)
-- Siri Shortcuts lite (App Intents Play/Pause / Skip forward/back + `antennapod://` URL schemes; opens app; needs current episode)
+- Siri Shortcuts lite (App Intents Play / Pause / Play/Pause / Skip Forward / Skip Back + `antennapod://` URL schemes; opens app; needs current episode; not episode/feed deep links; not CarPlay templates)
 - Homescreen widget (beta lite; WidgetKit Continue listening from App Group snapshot — title + feed + remaining time; tap → `antennapod://play`; empty placeholder; may be stale / no scrubber)
 - Apple Watch companion (beta lite; watchOS Continue listening from same snapshot via WC push — title + feed + remaining time; Play → iPhone `antennapod://play`; empty state; no independent playback / downloads / queue)
 - Swipe actions (Queue Remove(**confirm**+title; queue only)+Mark played/unplayed+Archive + drag reorder (off when Queue locked) + Shuffle confirm (full queue; blocked when locked; <2 off) + Shuffle (keep playing first) confirm (full queue; shuffle then pin playing when queued; blocked when locked; <2 off) + Reverse order confirm (full queue; blocked when locked; <2 off) + Newest/Oldest first confirm (full queue by pubDate; blocked when locked; <2 off; one-shot) + Shortest/Longest first confirm (full queue by known duration; unknown last; blocked when locked; <2 off; one-shot) + Move playing to top (current queued/not first; blocked when locked) + Clear queue confirm + EpisodeRow Move to top/bottom when queued and unlocked; Downloads Mark played/unplayed+Play Next+Add to queue+Delete + toolbar Add all to queue confirm + Delete played downloads confirm + Clear all downloads confirm; Inbox Archive+Mark played+Play Next+Add to queue; Feed Mark played/unplayed+Archive (+ remaining time sort→chip→search; searchable title; Download all / Mark all played / Add all to queue confirm on full-feed eligibility)/History(Mark played/unplayed + remaining time + searchable + Add all to queue confirm + Clear history confirm)/Favorites(Mark played/unplayed+Archive + remaining time + searchable + Add all to queue confirm + Clear favorites confirm)/Archived(+ remaining time + searchable + Add all to queue confirm + Restore all confirm)/All Episodes(+ remaining time soft-capped+filtered; Mark played/unplayed+Archive; toolbar Add all to queue confirm soft-cap newest 500))
@@ -303,11 +303,13 @@ Honest empty / out-of-range states. Footnote: approximate **wall-clock** — sam
 
 ## Siri Shortcuts (lite)
 
-**App Intents** + `AppShortcutsProvider`: Play/Pause, Skip forward, Skip back (plus Play / Pause intents). Phrases registered for Siri / Shortcuts app discoverability. Intents use `openAppWhenRun` and the same path as URL schemes.
+**App Intents** (`PlaybackAppIntents.swift`) + `AppShortcutsProvider`: donated shortcuts for **Play**, **Pause**, **Play/Pause** (toggle), **Skip Forward**, **Skip Back**, with Siri / Shortcuts phrases. Intents use `openAppWhenRun` and the same path as URL schemes.
 
 **URL schemes** (`Info.plist` `CFBundleURLTypes`): `antennapod://play`, `antennapod://pause`, `antennapod://toggle`, `antennapod://skip-forward`, `antennapod://skip-back` — handled in `AntennaPodApp.onOpenURL` → `PlaybackDeepLinkRouter` → `PlaybackService` (skip uses Settings rewind / fast-forward intervals).
 
-**Limits:** opens the app; controls playback only when a current episode is already loaded. Not a background-only / App Group shared-store control surface — full in-process Shortcuts without UI would need more plumbing.
+**Settings → Siri / Shortcuts** documents the same inventory (EN/DE) so beta testers see what exists.
+
+**Limits (honest):** opens the app; controls playback only when a current episode is already loaded. Not a background-only / App Group shared-store control surface — full in-process Shortcuts without UI would need more plumbing. **Not** episode or feed deep links (no `antennapod://episode/…`). **Not** CarPlay templates (`CPTemplate`) — see CarPlay note (system Now Playing only).
 
 ## Homescreen widget (beta lite)
 
