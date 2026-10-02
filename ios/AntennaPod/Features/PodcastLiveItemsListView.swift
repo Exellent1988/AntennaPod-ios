@@ -326,7 +326,7 @@ struct PodcastLiveItemsListView: View {
                             copyFeedbackTick += 1
                             showCopiedAlert = true
                         } label: {
-                            Label("Copy", systemImage: "doc.on.doc")
+                            Label("Copy content link", systemImage: "doc.on.doc")
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Copy content link"))
@@ -335,7 +335,7 @@ struct PodcastLiveItemsListView: View {
                         )
 
                         ShareLink(item: url) {
-                            Label("Share", systemImage: "square.and.arrow.up")
+                            Label("Share content link", systemImage: "square.and.arrow.up")
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Share content link"))
