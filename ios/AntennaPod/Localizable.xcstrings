@@ -28546,6 +28546,57 @@
         }
       },
       "comment": "VoiceOver hint for Manage tags actions menu."
+    },
+    "Marks unplayed, non-archived episodes in the full Favorites catalog as played; ignores podcast, search, and sort filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks unplayed, non-archived episodes in the full Favorites catalog as played; ignores podcast, search, and sort filters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert ungehörte, nicht archivierte Episoden im vollständigen Favoriten-Katalog als gehört; ignoriert Podcast-, Such- und Sortierfilter"
+          }
+        }
+      }
+    },
+    "Copy favorites, share favorites, play random, add all to queue, mark all as played, or clear favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy favorites, share favorites, play random, add all to queue, mark all as played, or clear favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten kopieren, Favoriten teilen, Zufällig abspielen, Alle zur Warteschlange, Alle als gehört markieren oder Favoriten leeren"
+          }
+        }
+      }
+    },
+    "Marks %lld unplayed, non-archived favorite episode(s) as played. Uses the full Favorites catalog (newest favorited first), not the podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not clear Favorites, unfavorite episodes, or delete downloads itself.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld unplayed, non-archived favorite episode(s) as played. Uses the full Favorites catalog (newest favorited first), not the podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not clear Favorites, unfavorite episodes, or delete downloads itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld ungehörte, nicht archivierte Favoriten-Episode(n) als gehört. Nutzt den vollständigen Favoriten-Katalog (zuletzt favorisiert zuerst), nicht Podcast-, Such- oder Sortierfilter. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert; diese Aktion entfernt weder Favoriten noch löscht sie Downloads selbst."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

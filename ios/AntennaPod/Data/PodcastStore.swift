@@ -1096,6 +1096,23 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    func markAllFavoritesPlayed() {
+        for id in markAllFavoritesPlayedCandidateIds {
+            markPlayed(id)
+        }
+    }
+
+    func markAllFavoritesPlayedCandidateCount() -> Int {
+        markAllFavoritesPlayedCandidateIds.count
+    }
+
+    private var markAllFavoritesPlayedCandidateIds: [String] {
+        favoriteEpisodes
+            .map(\.episode)
+            .filter { !isPlayed($0.id) && !isArchived($0.id) }
+            .map(\.id)
+    }
+
     /// Mark every eligible completed download as played.
     ///
     /// Uses the full `DownloadService.downloads` catalog, not the Downloads view's chip,
