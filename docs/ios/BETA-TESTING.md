@@ -261,7 +261,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Statistics: Teilen (ShareLink; reiner Text: Zeitraum, Counts, Näherungszeit, Top-Podcasts + Fußnote; keine Charts) | ☐ Statistics: Share (ShareLink; plain text: range, counts, approx time, top podcasts + footnote; no charts) |
 | ☐ Echo: Teilen (ShareLink; reiner Text; VoiceOver-Hinweis) | ☐ Echo: Share (ShareLink; plain text; VoiceOver hint) |
 | ☐ Favoriten (Stern; Full Player + EpisodeRow; VoiceOver Add/Remove) | ☐ Favorites (star; Full Player + EpisodeRow; VoiceOver Add/Remove) |
-| ☐ Favoriten: Suche (Titel / Feed) | ☐ Favorites: search (title / feed) |
+| ☐ Favoriten: Suche (Titel/Beschreibung + private Notizen + Bookmark-Notizen + Feed-Titel; nicht Kapitel/Transkript) | ☐ Favorites: search (title/description + private notes + bookmark notes + feed title; not chapter/transcript) |
 | ☐ Favoriten: Sortierung (Neueste / Älteste / Kürzeste / Längste / Titel A–Z / Titel Z–A; favoritedAt, bekannte Dauer oder Titel; leere/unbekannte zuletzt; persistiert; Home-Favoriten bleibt newest-first) | ☐ Favorites: sort (Newest / Oldest / Shortest / Longest / Title A–Z / Title Z–A; favoritedAt, known duration, or title; empty/unknown last; persisted; Home Favorites stays newest-first) |
 | ☐ Favoriten: Favoriten leeren (Bestätigung) | ☐ Favorites: Clear favorites (confirm) |
 | ☐ Favoriten: Zufällig abspielen (⋯; favorisiert + playable; bevorzugt ungehört; kein Confirm; disabled wenn 0; `PlaybackService.play`; nicht Podcast-Chip/Suche) | ☐ Favorites: Play random (⋯; favorited + playable; prefers unplayed; no confirm; disabled when 0; `PlaybackService.play`; not podcast chip/search) |

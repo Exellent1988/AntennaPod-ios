@@ -115,8 +115,11 @@ struct FavoritesView: View {
     /// (feed when known, else saved playback — same path as Queue / Inbox / History / Archived;
     /// never invent; unknown last). Stable tiebreaker episode `id`.
     /// Empty query shows the podcast-filtered list; sort applies to search-filtered results too.
+    /// Search matches title / descriptionText / episode private note / any bookmark note via
+    /// `PodcastStore.episodeMatchesLibraryQuery` (same fields as library / Feed detail / Queue), plus
+    /// feed title (`FavoriteEpisode.feedTitle` = display title). View-only —
     /// Does not mutate `PodcastStore.favoriteEpisodes` (Home Favorites preview / Clear favorites stay newest-first catalog).
-    /// View-only — Clear favorites / Add all to queue / Play random stay full-catalog scoped.
+    /// Clear favorites / Add all to queue / Play random / Copy / Share stay full-catalog scoped.
     private var filteredItems: [FavoriteEpisode] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let afterPodcast: [FavoriteEpisode]
@@ -131,7 +134,7 @@ struct FavoritesView: View {
             filtered = afterPodcast
         } else {
             filtered = afterPodcast.filter { item in
-                if item.episode.title.localizedCaseInsensitiveContains(q) { return true }
+                if store.episodeMatchesLibraryQuery(item.episode, query: q) { return true }
                 return item.feedTitle.localizedCaseInsensitiveContains(q)
             }
         }
