@@ -27984,6 +27984,186 @@
         }
       }
     },
+    "Copy private notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy private notes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private Notizen kopieren"
+          }
+        }
+      },
+      "comment": "Settings → Library read-only export action; copies all non-empty feed and episode private notes as plain text."
+    },
+    "Share private notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share private notes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private Notizen teilen"
+          }
+        }
+      },
+      "comment": "Settings → Library read-only export action; opens the system share sheet for all non-empty feed and episode private notes."
+    },
+    "Private notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private notes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private Notizen"
+          }
+        }
+      },
+      "comment": "Plain-text header and ShareLink subject for the local private-notes export."
+    },
+    "Feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed"
+          }
+        }
+      },
+      "comment": "Plain-text private-notes export label for a feed note."
+    },
+    "No private notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No private notes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine privaten Notizen"
+          }
+        }
+      },
+      "comment": "VoiceOver accessibilityValue when Settings private-notes export is disabled."
+    },
+    "%lld private notes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld private notes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld private Notizen"
+          }
+        }
+      },
+      "comment": "VoiceOver accessibilityValue with count for Settings private-notes export."
+    },
+    "Copies all non-empty feed and episode private notes as plain text; notes stay local until you choose to share": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies all non-empty feed and episode private notes as plain text; notes stay local until you choose to share"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert alle nicht-leeren privaten Feed- und Episoden-Notizen als Klartext; Notizen bleiben lokal, bis du sie teilst"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Settings Copy private notes."
+    },
+    "Opens the system share sheet with all non-empty feed and episode private notes as plain text; sharing is your choice": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with all non-empty feed and episode private notes as plain text; sharing is your choice"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit allen nicht-leeren privaten Feed- und Episoden-Notizen als Klartext; du entscheidest über das Teilen"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Settings Share private notes."
+    },
+    "Exports all non-empty local feed and episode private notes as plain text. Copy stays in the pasteboard; Share opens the system sheet. Notes are local until you choose to share; this is not automatic sync.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exports all non-empty local feed and episode private notes as plain text. Copy stays in the pasteboard; Share opens the system sheet. Notes are local until you choose to share; this is not automatic sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exportiert alle nicht-leeren lokalen privaten Feed- und Episoden-Notizen als Klartext. Kopieren bleibt in der Zwischenablage; Teilen öffnet das System-Menü. Notizen bleiben lokal, bis du sie teilst; dies ist keine automatische Synchronisierung."
+          }
+        }
+      },
+      "comment": "Settings Library footnote for the private-notes export; explicit local-only and opt-in sharing honesty."
+    },
+    "Private notes copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private notes copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private Notizen in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Settings Copy private notes success alert."
+    },
     "Clear all episode private notes": {
       "extractionState": "manual",
       "localizations": {

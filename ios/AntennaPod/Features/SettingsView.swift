@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Picker tags for the storage-limit section (maps to `DownloadStorageLimit`).
 private enum StorageLimitPickerChoice: String, CaseIterable, Identifiable {
@@ -56,6 +57,8 @@ struct SettingsView: View {
     @State private var showClearEpisodeNotesConfirmation = false
     @State private var showClearFeedNotesConfirmation = false
     @State private var showClearAllBookmarksConfirmation = false
+    @State private var showPrivateNotesCopiedAlert = false
+    @State private var privateNotesCopyFeedbackTick = 0
     @State private var showCustomDefaultSpeed = false
     @State private var customSkipIntervalMode: CustomSkipIntervalSheet.Mode?
     @State private var showCustomSmartMark = false
@@ -81,6 +84,30 @@ struct SettingsView: View {
 
     private var isSearchFiltering: Bool {
         !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private var privateNotesExportItems: [PrivateNoteExportItem] {
+        PrivateNotesExport.items(
+            feeds: store.feeds,
+            feedSettingsById: store.feedSettingsById,
+            episodeNotesById: store.episodePrivateNotesById
+        )
+    }
+
+    private var privateNotesPlainText: String {
+        PrivateNotesExport.plainText(items: privateNotesExportItems)
+    }
+
+    private var privateNotesShareText: String {
+        PrivateNotesExport.shareText(items: privateNotesExportItems)
+    }
+
+    private func copyPrivateNotes() {
+        let text = privateNotesPlainText
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        showPrivateNotesCopiedAlert = true
+        privateNotesCopyFeedbackTick += 1
     }
 
     /// Case-insensitive match on source keys and their localized catalog values (EN/DE).
@@ -502,6 +529,15 @@ struct SettingsView: View {
                     "Removes \(store.bookmarksCount) local bookmarks across \(store.bookmarkedEpisodesCount) episodes from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
                 )
             }
+            .alert(
+                String(localized: "Copied"),
+                isPresented: $showPrivateNotesCopiedAlert
+            ) {
+                Button(String(localized: "OK"), role: .cancel) {}
+            } message: {
+                Text(String(localized: "Private notes copied to the pasteboard."))
+            }
+            .sensoryFeedback(.success, trigger: privateNotesCopyFeedbackTick)
             .sheet(isPresented: $showCustomDefaultSpeed) {
                 CustomPlaybackSpeedSheet(mode: .defaultSpeed, initialSpeed: settings.defaultPlaybackSpeed)
                     .environmentObject(playback)
@@ -630,6 +666,12 @@ struct SettingsView: View {
             "500 episodes",
             "Unlimited",
             "Caps History-listed episodes in playback.json (played / in-progress). Oldest by lastPlayedAt (else updatedAt) are removed first — same as Remove from history (progress and played flags gone). Unlimited keeps the full list. Does not touch favorites, archive, downloads, or queue. Statistics and Continue listening may lose trimmed episodes. Default Unlimited.",
+            "Copy private notes",
+            "Share private notes",
+            "Private notes",
+            "local private notes",
+            "plain text",
+            "Notes are local until you choose to share; this is not automatic sync.",
             "Clear all episode private notes",
             "Clear all feed private notes",
             "Clear all bookmarks",
@@ -955,6 +997,48 @@ struct SettingsView: View {
                 } label: {
                     Label("Echo", systemImage: "sparkles.rectangle.stack")
                 }
+            }
+            if matchesSearch(
+                "Library",
+                "Copy private notes",
+                "Share private notes",
+                "Private notes",
+                "local private notes",
+                "plain text",
+                "Notes are local until you choose to share; this is not automatic sync."
+            ) {
+                Button {
+                    copyPrivateNotes()
+                } label: {
+                    Label(String(localized: "Copy private notes"), systemImage: "doc.on.clipboard")
+                }
+                .disabled(privateNotesExportItems.isEmpty)
+                .accessibilityLabel(String(localized: "Copy private notes"))
+                .accessibilityValue(
+                    privateNotesExportItems.isEmpty
+                        ? String(localized: "No private notes")
+                        : String(localized: "\(privateNotesExportItems.count) private notes")
+                )
+                .accessibilityHint(String(localized: "Copies all non-empty feed and episode private notes as plain text; notes stay local until you choose to share"))
+
+                ShareLink(
+                    item: privateNotesShareText,
+                    subject: Text(String(localized: "Private notes"))
+                ) {
+                    Label(String(localized: "Share private notes"), systemImage: "square.and.arrow.up")
+                }
+                .disabled(privateNotesExportItems.isEmpty)
+                .accessibilityLabel(String(localized: "Share private notes"))
+                .accessibilityValue(
+                    privateNotesExportItems.isEmpty
+                        ? String(localized: "No private notes")
+                        : String(localized: "\(privateNotesExportItems.count) private notes")
+                )
+                .accessibilityHint(String(localized: "Opens the system share sheet with all non-empty feed and episode private notes as plain text; sharing is your choice"))
+
+                Text(String(localized: "Exports all non-empty local feed and episode private notes as plain text. Copy stays in the pasteboard; Share opens the system sheet. Notes are local until you choose to share; this is not automatic sync."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
             if matchesSearch(
                 "Library",
