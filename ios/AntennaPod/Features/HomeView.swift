@@ -798,14 +798,23 @@ struct HomeView: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                             if let ms = feed.episodes.compactMap(\.pubDateEpochMs).max() {
-                                Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .relative)
+                                let newestDate = Date(timeIntervalSince1970: Double(ms) / 1000)
+                                Text(newestDate, style: .relative)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
-                                    .accessibilityLabel(String(localized: "Newest episode"))
+                                    .accessibilityLabel(
+                                        String(localized: "Newest episode")
+                                            + " "
+                                            + EpisodeDateFormatting.listCaption(for: newestDate)
+                                    )
                             }
                         }
                     }
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(recentlyUpdatedFeedAccessibilityLabel(for: feed))
+                .accessibilityValue(recentlyUpdatedFeedAccessibilityValue(for: feed))
+                .accessibilityHint(String(localized: "Open podcast"))
             }
         } header: {
             sectionHeader("Recently updated", systemImage: "dot.radiowaves.left.and.right")
@@ -962,6 +971,29 @@ struct HomeView: View {
                     .font(.footnote)
             }
         }
+    }
+
+    private func recentlyUpdatedFeedAccessibilityLabel(for feed: PodcastFeed) -> String {
+        let title = store.displayTitle(for: feed).trimmingCharacters(in: .whitespacesAndNewlines)
+        return title.isEmpty ? String(localized: "Podcast title unavailable") : String(localized: "Podcast \(title)")
+    }
+
+    private func recentlyUpdatedFeedAccessibilityValue(for feed: PodcastFeed) -> String {
+        let episodeCount = feed.episodes.count
+        var parts = [
+            episodeCount == 1
+                ? String(localized: "1 episode")
+                : String(localized: "\(episodeCount) episodes")
+        ]
+        if let ms = feed.episodes.compactMap(\.pubDateEpochMs).max() {
+            let newestDate = Date(timeIntervalSince1970: Double(ms) / 1000)
+            parts.append(
+                String(localized: "Newest episode")
+                    + " "
+                    + EpisodeDateFormatting.listCaption(for: newestDate)
+            )
+        }
+        return parts.joined(separator: ", ")
     }
 
     @ViewBuilder
