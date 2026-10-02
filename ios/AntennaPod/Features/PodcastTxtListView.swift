@@ -130,6 +130,29 @@ struct PodcastTxtListView: View {
                 }
 
                 Button {
+                    UIPasteboard.general.string = body
+                    copiedAlertMessage = String(localized: "Text content copied to the pasteboard.")
+                    copyFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Label("Copy text content", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy text content"))
+                .accessibilityHint(
+                    String(localized: "Copies the exact displayed feed text content to the pasteboard")
+                )
+
+                ShareLink(item: body) {
+                    Label("Share text content", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share text content"))
+                .accessibilityHint(
+                    String(localized: "Shares the exact displayed feed text content as plain text")
+                )
+
+                Button {
                     UIPasteboard.general.string = PodcastTxtDisplay.copyText(entry)
                     copiedAlertMessage = String(localized: "Text copied to the pasteboard.")
                     copyFeedbackTick += 1

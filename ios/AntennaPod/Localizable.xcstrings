@@ -19240,6 +19240,96 @@
         }
       }
     },
+    "Copy text content": {
+      "extractionState": "manual",
+      "comment": "Copy action for the exact displayed podcast:txt text body; always present for a visible entry.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy text content"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Textinhalt kopieren"
+          }
+        }
+      }
+    },
+    "Share text content": {
+      "extractionState": "manual",
+      "comment": "Share action for the exact displayed podcast:txt text body as plain text; always present for a visible entry.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share text content"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Textinhalt teilen"
+          }
+        }
+      }
+    },
+    "Text content copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Alert message after copying the exact displayed podcast:txt text body.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Text content copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Textinhalt in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copies the exact displayed feed text content to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Copy text content on a podcast:txt row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed feed text content to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den exakt angezeigten Feed-Textinhalt in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed feed text content as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Share text content on a podcast:txt row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed feed text content as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den exakt angezeigten Feed-Textinhalt als Klartext"
+          }
+        }
+      }
+    },
     "Copies the feed text entry to the pasteboard": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Copy on podcast:txt row.",
