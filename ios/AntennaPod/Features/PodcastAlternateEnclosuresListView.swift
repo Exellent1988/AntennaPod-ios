@@ -152,22 +152,22 @@ struct PodcastAlternateEnclosuresListView: View {
                     Button {
                         copyToPasteboard(
                             title,
-                            confirmation: String(localized: "Title copied to the pasteboard.")
+                            confirmation: String(localized: "Alternate media title copied to the pasteboard.")
                         )
                     } label: {
-                        Label("Copy title", systemImage: "doc.on.doc")
+                        Label("Copy alternate media title", systemImage: "doc.on.doc")
                             .font(.subheadline)
                     }
-                    .accessibilityLabel(String(localized: "Copy title"))
+                    .accessibilityLabel(String(localized: "Copy alternate media title"))
                     .accessibilityHint(
                         String(localized: "Copies the exact displayed alternate enclosure title to the pasteboard")
                     )
 
                     ShareLink(item: title) {
-                        Label("Share title", systemImage: "square.and.arrow.up")
+                        Label("Share alternate media title", systemImage: "square.and.arrow.up")
                             .font(.subheadline)
                     }
-                    .accessibilityLabel(String(localized: "Share title"))
+                    .accessibilityLabel(String(localized: "Share alternate media title"))
                     .accessibilityHint(
                         String(localized: "Shares the exact displayed alternate enclosure title as plain text")
                     )

@@ -18877,38 +18877,38 @@
         }
       }
     },
-    "Title copied to the pasteboard.": {
+    "Alternate media title copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Copied alert message for an alternate enclosure title.",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Title copied to the pasteboard."
+            "value": "Alternate media title copied to the pasteboard."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Titel in die Zwischenablage kopiert."
+            "value": "Titel des alternativen Mediums in die Zwischenablage kopiert."
           }
         }
       }
     },
-    "Copy title": {
+    "Copy alternate media title": {
       "extractionState": "manual",
       "comment": "VoiceOver label for copying an alternate enclosure title.",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copy title"
+            "value": "Copy alternate media title"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Titel kopieren"
+            "value": "Alternativen Medientitel kopieren"
           }
         }
       }
@@ -18931,20 +18931,20 @@
         }
       }
     },
-    "Share title": {
+    "Share alternate media title": {
       "extractionState": "manual",
       "comment": "VoiceOver label for sharing an alternate enclosure title.",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Share title"
+            "value": "Share alternate media title"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Titel teilen"
+            "value": "Alternativen Medientitel teilen"
           }
         }
       }
