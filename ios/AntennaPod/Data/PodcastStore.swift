@@ -473,6 +473,32 @@ final class PodcastStore: ObservableObject {
         return before - queue.count
     }
 
+    /// Mark every unplayed, non-archived episode in the **full** persisted queue as played.
+    ///
+    /// Queue uses the same mark-played semantics as the row action: `markPlayed` removes each
+    /// episode from the queue by default, while preserving its playback state and applying
+    /// configured auto-delete-after-playing behavior. The catalog is snapshotted before mutation
+    /// so removing an item does not skip the next one. Archived unplayed episodes are skipped,
+    /// matching the sibling bulk Mark all as played actions. Callers must confirm first.
+    func markAllQueuePlayed() {
+        let ids = markAllQueuePlayedCandidateIds
+        for id in ids {
+            markPlayed(id)
+        }
+    }
+
+    /// Number of unplayed, non-archived episodes in the full persisted queue.
+    /// This deliberately ignores the Queue played/podcast/search filters.
+    func markAllQueuePlayedCandidateCount() -> Int {
+        markAllQueuePlayedCandidateIds.count
+    }
+
+    private var markAllQueuePlayedCandidateIds: [String] {
+        queue
+            .filter { !isPlayed($0.id) && !isArchived($0.id) }
+            .map(\.id)
+    }
+
     /// Randomly reorder the **full** persisted queue (Fisher–Yates via `Array.shuffle()`).
     /// Persists via `queue` `didSet` (same path as `moveQueue`). No-op when fewer than 2 items.
     /// Does **not** change `PlaybackService.currentEpisode` identity, seek, or stop playback —

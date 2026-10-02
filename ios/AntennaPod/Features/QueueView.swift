@@ -13,6 +13,7 @@ struct QueueView: View {
     @State private var debounceTask: Task<Void, Never>?
     @State private var showClearQueueConfirm = false
     @State private var showRemovePlayedConfirm = false
+    @State private var showMarkAllQueuePlayedConfirm = false
     @State private var showShuffleQueueConfirm = false
     @State private var showShuffleKeepPlayingFirstConfirm = false
     @State private var showReverseQueueConfirm = false
@@ -107,6 +108,12 @@ struct QueueView: View {
     /// is queued. Queue lock does **not** disable (reorder-only, same as Clear queue).
     private var canRemovePlayed: Bool {
         playedInFullQueueCount > 0
+    }
+
+    /// Count of unplayed, non-archived episodes in the **full** persisted queue — not chip/search.
+    /// Mark all as played uses the same archive policy as sibling bulk actions.
+    private var markAllQueuePlayedCandidatesCount: Int {
+        store.markAllQueuePlayedCandidateCount()
     }
 
     /// Queued episodes with playable media via shared `EpisodePlayRandom` (local file via
@@ -631,6 +638,20 @@ struct QueueView: View {
                         .accessibilityHint(
                             String(localized: "Moves the currently playing episode to the end of the queue")
                         )
+                        Button {
+                            // Always confirm before markAllQueuePlayed() — never bulk-mark from the menu alone.
+                            showMarkAllQueuePlayedConfirm = true
+                        } label: {
+                            Label("Mark all as played", systemImage: "checkmark.circle")
+                        }
+                        // Mark all targets the full queue (not the filtered subset), skipping archived
+                        // unplayed episodes. Queue lock does not block this playback-state action.
+                        .disabled(markAllQueuePlayedCandidatesCount == 0)
+                        .accessibilityLabel(String(localized: "Mark all as played"))
+                        .accessibilityHint(
+                            String(localized: "Marks unplayed, non-archived episodes in the full queue as played, ignoring filters")
+                        )
+
                         Button(role: .destructive) {
                             // Always confirm before removePlayedFromQueue() — never remove from the menu alone.
                             showRemovePlayedConfirm = true
@@ -662,7 +683,7 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, remove played, or clear the entire queue")
+                        String(localized: "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, mark all as played, remove played, or clear the entire queue")
                     )
                 }
             }
@@ -675,6 +696,20 @@ struct QueueView: View {
                 Text(copiedAlertMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
+            .confirmationDialog(
+                "Mark all as played?",
+                isPresented: $showMarkAllQueuePlayedConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Mark all as played") {
+                    store.markAllQueuePlayed()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Marks \(markAllQueuePlayedCandidatesCount) unplayed, non-archived episodes in the full queue as played. They leave the queue, and auto-delete after playing still applies when enabled. This ignores the Queue played/podcast/search filters."
+                )
+            }
             .confirmationDialog(
                 "Remove played?",
                 isPresented: $showRemovePlayedConfirm,
