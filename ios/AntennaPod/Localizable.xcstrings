@@ -24767,6 +24767,114 @@
           }
         }
       }
+    },
+    "Add all unplayed to queue": {
+      "extractionState": "manual",
+      "comment": "Feed detail ⋯: bulk enqueue unplayed/not-archived/not-queued in effective episode sort; confirm with eligible count.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add all unplayed to queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle ungehörten zur Warteschlange hinzufügen"
+          }
+        }
+      }
+    },
+    "Add all unplayed to queue?": {
+      "extractionState": "manual",
+      "comment": "Confirmation title for Feed detail Add all unplayed to queue.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add all unplayed to queue?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle ungehörten zur Warteschlange hinzufügen?"
+          }
+        }
+      }
+    },
+    "Appends unplayed episodes in this podcast that are not archived and not already queued, in episode sort order": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Feed detail Add all unplayed to queue.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends unplayed episodes in this podcast that are not archived and not already queued, in episode sort order"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht ungehörte Episoden dieses Podcasts ein, die nicht archiviert und noch nicht in der Warteschlange sind, in der Episodensortierreihenfolge"
+          }
+        }
+      }
+    },
+    "Appends all feed episodes not already queued, including played and archived": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Feed detail Add all to queue (includes played/archived).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends all feed episodes not already queued, including played and archived"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht alle Feed-Episoden ein, die noch nicht in der Warteschlange sind, einschließlich gehörter und archivierter"
+          }
+        }
+      }
+    },
+    "Appends %lld unplayed episodes from this podcast to the end of the queue in this podcast’s episode sort order (per-feed or global). Played, archived, and already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all unplayed / Mark all as played), not the chip or search filter. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "comment": "Confirmation message for Feed detail Add all unplayed to queue.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld unplayed episodes from this podcast to the end of the queue in this podcast’s episode sort order (per-feed or global). Played, archived, and already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all unplayed / Mark all as played), not the chip or search filter. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld ungehörte Episoden dieses Podcasts am Ende der Warteschlange in der Episodensortierreihenfolge dieses Podcasts ein (pro Feed oder global). Gehörte, archivierte und bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Feed-Episodenkatalog (gleiche Ehrlichkeit wie Alle ungehörten herunterladen / Alle als gehört markieren), nicht den Chip- oder Suchfilter. Die Warteschlangen-Sperre blockiert das Einreihen nicht."
+          }
+        }
+      }
+    },
+    "Appends %lld episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all unplayed / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue. Distinct from Add all unplayed to queue.": {
+      "extractionState": "manual",
+      "comment": "Confirmation message for Feed detail Add all to queue (includes played/archived).",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all unplayed / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue. Distinct from Add all unplayed to queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld Episoden dieses Podcasts am Ende der Warteschlange ein (neuestes Erscheinungsdatum zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Feed-Episodenkatalog (gleiche Ehrlichkeit wie Alle ungehörten herunterladen / Alle als gehört markieren), nicht den Chip- oder Suchfilter. Einschließlich gehörter und archivierter. Die Warteschlangen-Sperre blockiert das Einreihen nicht. Unterschiedlich von Alle ungehörten zur Warteschlange hinzufügen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -1826,7 +1826,7 @@ final class AppSettings: ObservableObject {
     /// only overrides sort via `episodeSort`). Applied after status chip, before `.searchable`.
     /// Chips hide when zero matches in the current feed catalog; Other only when unknown raw
     /// types exist in scope. Missing episodeType matches All only — never invent.
-    /// Bulk Download all unplayed / Mark all played / Add all to queue stay full-feed.
+    /// Bulk Download all unplayed / Mark all played / Add all unplayed to queue / Add all to queue stay full-feed.
     @Published var feedEpisodeTypeFilter: EpisodeTypeFilter {
         didSet {
             UserDefaults.standard.set(feedEpisodeTypeFilter.rawValue, forKey: Keys.feedEpisodeTypeFilter)

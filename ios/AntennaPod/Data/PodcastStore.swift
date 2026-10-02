@@ -1200,7 +1200,8 @@ final class PodcastStore: ObservableObject {
     /// by `pubDateEpochMs` (missing dates last; title tiebreak — same spirit as Feed Download all unplayed).
     /// Does **not** follow UI `feedEpisodeSort`, chip filter (`feedEpisodeFilter`), or searchable filter
     /// — same full-feed honesty as Mark all as played / Download all unplayed.
-    /// Includes played and archived episodes (unlike Download all unplayed / Mark all eligibility).
+    /// Includes played and archived episodes (unlike Download all unplayed / Mark all /
+    /// **Add all unplayed to queue** eligibility).
     /// Skips already-queued ids (no duplicates). Uses `enqueue` (append), not `playNext`.
     /// Safe while queue lock is on (reorder-only — enqueue stays allowed).
     /// Callers must confirm first (Feed detail toolbar `confirmationDialog`).
@@ -1218,6 +1219,43 @@ final class PodcastStore: ObservableObject {
             enqueue(episode)
         }
         return candidates.count
+    }
+
+    /// Append **unplayed**, **non-archived**, not-already-queued episodes from one feed (bulk).
+    /// Uses the **full** stored feed episode catalog (`feed.episodes`) — **not** chip filter
+    /// (`feedEpisodeFilter`) or searchable filter — same full-feed honesty as Download all unplayed
+    /// / Mark all as played / Add all to queue.
+    /// Order: effective feed episode sort (`FeedSettings.episodeSort` ?? global
+    /// `AppSettings.feedEpisodeSort` — Newest / Oldest / Shortest / Longest / Title A–Z / Z–A;
+    /// same rules as Feed detail list / continuous Same-podcast).
+    /// Skips played, archived, and already-queued ids (no duplicates). Uses `enqueue` (append),
+    /// not `playNext`. Safe while queue lock is on (reorder-only — enqueue stays allowed).
+    /// Callers must confirm first (Feed detail toolbar `confirmationDialog`).
+    /// Distinct from `enqueueAllFromFeed` (which includes played/archived, newest-pubDate-first).
+    /// - Returns: number of episodes newly appended.
+    @discardableResult
+    func enqueueAllUnplayedFromFeed(_ feed: PodcastFeed) -> Int {
+        let candidates = enqueueAllUnplayedFromFeedCandidates(feed)
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
+    /// Eligible episodes for Feed detail **Add all unplayed to queue** (full catalog; effective
+    /// episode sort). Shared by confirm count and `enqueueAllUnplayedFromFeed`.
+    func enqueueAllUnplayedFromFeedCandidates(_ feed: PodcastFeed) -> [PodcastEpisode] {
+        let global = settings?.feedEpisodeSort ?? .newestFirst
+        let sort = feedSettings(for: feed.id).resolvedEpisodeSort(global: global)
+        let ordered = Self.episodesSortedForContinuous(feed.episodes, sort: sort) { episode in
+            EpisodeRemainingTime.knownDurationSeconds(
+                for: episode,
+                savedDurationSeconds: playbackState(for: episode.id).durationSeconds
+            )
+        }
+        return ordered.filter { episode in
+            !isPlayed(episode.id) && !isArchived(episode.id) && !isInQueue(episode.id)
+        }
     }
 
     /// Archived episodes across feeds, newest archived first.
