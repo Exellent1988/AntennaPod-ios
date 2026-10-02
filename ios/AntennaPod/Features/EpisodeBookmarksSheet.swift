@@ -1,13 +1,15 @@
 import SwiftUI
 import UIKit
 
-/// List / add / delete / edit-note user bookmarks for the current episode.
+/// List / add / delete / edit-note / clear-all user bookmarks for the current episode.
 /// Tap a row → `PlaybackService.seek(toSeconds:)`. Swipe delete → remove.
 /// Swipe / context menu **Edit note** → alert TextField (position unchanged).
 /// Local-only (`bookmarks.json`); not gpodder; wall-clock positions; cap 50/episode.
 /// Toolbar **Copy bookmarks** + **Share bookmarks** export a plain-text list matching
 /// sheet order (newest-first): `m:ss`/`h:mm:ss` + note when non-empty; Share includes
 /// the episode title header — same pasteboard / ShareLink honesty as chapters TOC / transcript.
+/// Toolbar **Clear bookmarks** (destructive) → `confirmationDialog` with count →
+/// `PodcastStore.clearBookmarks(for:)` for this episode only; disabled when empty.
 struct EpisodeBookmarksSheet: View {
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var store: PodcastStore
@@ -24,6 +26,7 @@ struct EpisodeBookmarksSheet: View {
     @State private var editNoteBookmarkId: UUID?
     @State private var editNoteDraft = ""
     @State private var showEditNoteAlert = false
+    @State private var showClearBookmarksConfirm = false
 
     private var bookmarks: [EpisodeBookmark] {
         store.bookmarks(for: episodeId)
@@ -165,6 +168,17 @@ struct EpisodeBookmarksSheet: View {
                     .accessibilityHint(
                         String(localized: "Opens the system share sheet with the episode title and bookmark list")
                     )
+
+                    Button(role: .destructive) {
+                        showClearBookmarksConfirm = true
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .disabled(bookmarks.isEmpty)
+                    .accessibilityLabel(String(localized: "Clear bookmarks"))
+                    .accessibilityHint(
+                        String(localized: "Removes all bookmarks for this episode after confirmation. Does not affect other episodes, chapters, playback, favorites, or the queue.")
+                    )
                 }
             }
             .alert(
@@ -201,6 +215,22 @@ struct EpisodeBookmarksSheet: View {
                 .accessibilityHint(String(localized: "Saves the note for this bookmark. Position stays the same."))
             } message: {
                 Text(String(localized: "Change or clear the note. Playback position is not changed. Local only; up to 120 characters."))
+            }
+            .confirmationDialog(
+                String(localized: "Clear bookmarks?"),
+                isPresented: $showClearBookmarksConfirm,
+                titleVisibility: .visible
+            ) {
+                Button(String(localized: "Clear bookmarks"), role: .destructive) {
+                    store.clearBookmarks(for: episodeId)
+                }
+                Button(String(localized: "Cancel"), role: .cancel) {}
+            } message: {
+                Text(
+                    String(
+                        localized: "Removes \(bookmarks.count) bookmarks for this episode. Does not affect other episodes, chapters, playback, favorites, or the queue."
+                    )
+                )
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
