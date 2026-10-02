@@ -512,12 +512,18 @@ struct SubscriptionsView: View {
                         systemImage: "dot.radiowaves.left.and.right",
                         description: Text("Search Apple Podcasts, open Discover for charts, add by feed URL, pick a local Folder, or import an OPML file from Files (Add podcast → OPML).")
                     )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "No subscriptions"))
+                    .accessibilityValue(subscriptionsEmptyStateAccessibilityValue)
                 } else if tagFilteredFeeds.isEmpty {
                     ContentUnavailableView(
                         "No matching podcasts",
                         systemImage: "magnifyingglass",
                         description: Text(subscriptionsEmptyFilterMessage)
                     )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "No matching podcasts"))
+                    .accessibilityValue(subscriptionsEmptyStateAccessibilityValue)
                 } else {
                     ForEach(groupedSections, id: \.title) { section in
                         Section(section.title) {
@@ -858,6 +864,28 @@ struct SubscriptionsView: View {
             return String(localized: "No pinned podcasts")
         }
         return String(localized: "No subscriptions match this tag filter.")
+    }
+
+    /// VoiceOver context for the catalog-empty state versus a search/category/language/tag mismatch.
+    /// The visible ContentUnavailableView copy stays concise; this value explains the next useful
+    /// action without changing the subscription filtering semantics.
+    private var subscriptionsEmptyStateAccessibilityValue: String {
+        if store.feeds.isEmpty {
+            return String(localized: "There are no subscriptions. Use Add podcast to subscribe, open Discover, choose a local folder, or import an OPML file.")
+        }
+        if isSearchFiltering {
+            return String(localized: "No subscriptions match your search. Clear or change the search to see your podcasts.")
+        }
+        if isCategoryFiltering {
+            return String(localized: "No subscriptions match this category filter. Choose All or another category.")
+        }
+        if isLanguageFiltering {
+            return String(localized: "No subscriptions match this language filter. Choose All or another language.")
+        }
+        if tagFilter == .pinned {
+            return String(localized: "No pinned podcasts match the active filters. Choose All or change the search, category, or language filter.")
+        }
+        return String(localized: "No subscriptions match this tag filter. Choose All or another tag.")
     }
 
     /// VoiceOver hint for tag-row chips (Pinned vs tag / Untagged / All).
