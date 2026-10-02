@@ -28792,5 +28792,76 @@
       }
     }
   },
+    "Archive all?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archive all?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle archivieren?"
+          }
+        }
+      }
+    },
+    "Archives non-archived episodes in the full Favorites catalog; ignores podcast, search, and sort filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archives non-archived episodes in the full Favorites catalog; ignores podcast, search, and sort filters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert nicht archivierte Episoden im vollständigen Favoriten-Katalog; ignoriert Podcast-, Such- und Sortierfilter"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Favorites Archive all."
+    },
+    "Archives %lld non-archived favorite episode(s) in the full Favorites catalog (newest favorited first), not the podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archives %lld non-archived favorite episode(s) in the full Favorites catalog (newest favorited first), not the podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert %lld nicht archivierte Favoriten-Episode(n) im vollständigen Favoriten-Katalog (zuletzt favorisiert zuerst), nicht nach Podcast-, Such- oder Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange."
+          }
+        }
+      },
+      "comment": "Favorites Archive all confirmation message — full catalog, non-archived eligibility, not podcast/search/sort."
+    },
+    "Copy favorites, share favorites, play random, add all to queue, mark all as played, mark all as unplayed, archive all, or clear favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy favorites, share favorites, play random, add all to queue, mark all as played, mark all as unplayed, archive all, or clear favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten kopieren, Favoriten teilen, Zufällig abspielen, Alle zur Warteschlange, Alle als gehört markieren, Alle als ungehört markieren, Alle archivieren oder Favoriten leeren"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Favorites actions menu."
+    },
   "version": "1.0"
 }

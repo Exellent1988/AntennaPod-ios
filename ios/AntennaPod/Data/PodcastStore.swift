@@ -1729,6 +1729,25 @@ final class PodcastStore: ObservableObject {
         favoriteAtById = [:]
     }
 
+    /// Archive every non-archived episode in the full Favorites catalog (bulk).
+    /// Uses store `favoriteEpisodes` order (**newest-first** by `favoritedAtEpochMs`) and ignores
+    /// podcast, search, and sort filters. Writes `archivedAtById` once, preserving existing archive
+    /// timestamps for any already-archived ids. Callers must confirm first.
+    func archiveAllFavorites() {
+        let ids = favoriteEpisodes
+            .map(\.episode.id)
+            .filter { !isArchived($0) }
+        guard !ids.isEmpty else { return }
+        let now = Int64(Date().timeIntervalSince1970 * 1000)
+        var map = archivedAtById
+        for id in ids {
+            if map[id] == nil {
+                map[id] = now
+            }
+        }
+        archivedAtById = map
+    }
+
     /// Append every favorite episode that is not already queued (bulk).
     /// Uses store `favoriteEpisodes` order (**newest-first** by `favoritedAtEpochMs` — same catalog as
     /// Clear favorites / Home Favorites preview). Does **not** follow UI `favoritesSort`, podcast chip, or searchable filter.
