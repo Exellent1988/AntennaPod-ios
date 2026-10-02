@@ -564,6 +564,7 @@ struct SettingsView: View {
             || matchesPlaybackVideoAudio
             || matchesPlaybackVolume
             || matchesPlaybackVolumeBoost
+            || matchesPlaybackSleepTimerFade
             || matchesPlaybackSkipSilence
             || matchesPlaybackStereo
             || matchesPlaybackPreservePitch
@@ -625,6 +626,13 @@ struct SettingsView: View {
         matchesSearch(
             "Volume boost",
             "Soft gain via `AVMutableAudioMix` track volume (100% = unity, up to 300%). Above 100% may clip or distort. Not ReplayGain / loudness normalization / Android LoudnessEnhancer. Keeps stock AVPlayer (video / PiP / Now Playing). Some streams (e.g. HLS) may ignore audioMix. Sleep-timer fade still uses player volume. Default 100%."
+        )
+    }
+
+    private var matchesPlaybackSleepTimerFade: Bool {
+        matchesSearch(
+            "Sleep timer volume fade",
+            "When on, clock sleep timer linearly lowers AVPlayer.volume over the last ~10 seconds before pause. End-of-episode / end-of-chapter do not fade. Not equal-loudness / ReplayGain; may be coarse with stock AVPlayer. Volume boost stays on AVAudioMix. Default on (Android always fades)."
         )
     }
 
@@ -914,6 +922,13 @@ struct SettingsView: View {
                 }
                 .accessibilityHint(String(localized: "Soft gain via AVAudioMix. Above 100% may clip or distort. Not ReplayGain or LoudnessEnhancer. Default 100%."))
                 Text("Soft gain via `AVMutableAudioMix` track volume (100% = unity, up to 300%). Above 100% may clip or distort. Not ReplayGain / loudness normalization / Android LoudnessEnhancer. Keeps stock AVPlayer (video / PiP / Now Playing). Some streams (e.g. HLS) may ignore audioMix. Sleep-timer fade still uses player volume. Default 100%.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackSleepTimerFade {
+                Toggle("Sleep timer volume fade", isOn: $settings.sleepTimerFadeEnabled)
+                    .accessibilityHint(String(localized: "Lowers volume over the last ~10 seconds of a clock sleep timer. End of episode or chapter do not fade. Default on."))
+                Text("When on, clock sleep timer linearly lowers `AVPlayer.volume` over the last ~10 seconds before pause (Android `NOTIFICATION_THRESHOLD`). End-of-episode / end-of-chapter do **not** fade. Soft player volume only — **not** equal-loudness / ReplayGain; may be coarse with stock `AVPlayer`. Volume boost stays on `AVAudioMix`. Pause / seek / cancel timer restores pre-fade volume. Default **on** (Android always fades; no Android off-toggle).")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

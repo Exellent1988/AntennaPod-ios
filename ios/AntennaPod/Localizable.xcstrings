@@ -23459,6 +23459,74 @@
           }
         }
       }
+    },
+    "Sleep timer volume fade": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep timer volume fade"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlaf-Timer-Lautstärke-Fade"
+          }
+        }
+      }
+    },
+    "Lowers volume over the last ~10 seconds of a clock sleep timer. End of episode or chapter do not fade. Default on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lowers volume over the last ~10 seconds of a clock sleep timer. End of episode or chapter do not fade. Default on."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Senkt die Lautstärke in den letzten ~10 Sekunden eines Uhr-Schlaf-Timers. Ende der Episode oder des Kapitels faden nicht. Standard an."
+          }
+        }
+      }
+    },
+    "When on, clock sleep timer linearly lowers `AVPlayer.volume` over the last ~10 seconds before pause (Android `NOTIFICATION_THRESHOLD`). End-of-episode / end-of-chapter do **not** fade. Soft player volume only — **not** equal-loudness / ReplayGain; may be coarse with stock `AVPlayer`. Volume boost stays on `AVAudioMix`. Pause / seek / cancel timer restores pre-fade volume. Default **on** (Android always fades; no Android off-toggle).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, clock sleep timer linearly lowers `AVPlayer.volume` over the last ~10 seconds before pause (Android `NOTIFICATION_THRESHOLD`). End-of-episode / end-of-chapter do **not** fade. Soft player volume only — **not** equal-loudness / ReplayGain; may be coarse with stock `AVPlayer`. Volume boost stays on `AVAudioMix`. Pause / seek / cancel timer restores pre-fade volume. Default **on** (Android always fades; no Android off-toggle)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an, senkt der Uhr-Schlaf-Timer `AVPlayer.volume` linear in den letzten ~10 Sekunden vor dem Pausieren (Android `NOTIFICATION_THRESHOLD`). Ende der Episode / des Kapitels **faden nicht**. Nur weiche Player-Lautstärke — **keine** Equal-Loudness / ReplayGain; mit stock-`AVPlayer` ggf. grob. Lautstärke-Verstärkung bleibt auf `AVAudioMix`. Pause / Seek / Timer abbrechen stellt die Lautstärke vor dem Fade wieder her. Standard **an** (Android fadet immer; kein Android-Aus-Schalter)."
+          }
+        }
+      }
+    },
+    "When on, clock sleep timer linearly lowers AVPlayer.volume over the last ~10 seconds before pause. End-of-episode / end-of-chapter do not fade. Not equal-loudness / ReplayGain; may be coarse with stock AVPlayer. Volume boost stays on AVAudioMix. Default on (Android always fades).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, clock sleep timer linearly lowers AVPlayer.volume over the last ~10 seconds before pause. End-of-episode / end-of-chapter do not fade. Not equal-loudness / ReplayGain; may be coarse with stock AVPlayer. Volume boost stays on AVAudioMix. Default on (Android always fades)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an, senkt der Uhr-Schlaf-Timer AVPlayer.volume linear in den letzten ~10 Sekunden vor dem Pausieren. Ende der Episode / des Kapitels faden nicht. Keine Equal-Loudness / ReplayGain; mit stock-AVPlayer ggf. grob. Lautstärke-Verstärkung bleibt auf AVAudioMix. Standard an (Android fadet immer)."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

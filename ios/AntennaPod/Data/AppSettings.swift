@@ -1133,7 +1133,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, volume boost (100–300%), skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes podcast filter, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Feed/All Episodes/Inbox itunes:episodeType filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
+/// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, sleep timer volume fade, skip intro/outro, volume adaptation, volume boost (100–300%), skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes podcast filter, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Feed/All Episodes/Inbox itunes:episodeType filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -1223,6 +1223,7 @@ final class AppSettings: ObservableObject {
         static let notifyOnSyncErrors = "settings.notifyOnSyncErrors"
         static let notifyOnSleepTimerEnd = "settings.notifyOnSleepTimerEnd"
         static let lastCustomSleepTimerMinutes = "settings.lastCustomSleepTimerMinutes"
+        static let sleepTimerFadeEnabled = "settings.sleepTimerFadeEnabled"
         static let chartsCountryCode = "settings.chartsCountryCode"
         static let askForAppStoreRating = "settings.askForAppStoreRating"
         static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
@@ -1460,6 +1461,16 @@ final class AppSettings: ObservableObject {
     @Published var lastCustomSleepTimerMinutes: Int {
         didSet {
             UserDefaults.standard.set(lastCustomSleepTimerMinutes, forKey: Keys.lastCustomSleepTimerMinutes)
+        }
+    }
+
+    /// Soft volume fade in the last ~10s of a **clock** sleep timer (`AVPlayer.volume` 0…1).
+    /// Default **on** (Android always fades; no Android off-toggle). Does **not** fade end-of-episode / end-of-chapter.
+    /// Not equal-loudness / ReplayGain; may be coarse with stock `AVPlayer`. Volume boost stays on `AVAudioMix`.
+    /// Persisted + iOS JSON backup.
+    @Published var sleepTimerFadeEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(sleepTimerFadeEnabled, forKey: Keys.sleepTimerFadeEnabled)
         }
     }
 
@@ -2149,6 +2160,12 @@ final class AppSettings: ObservableObject {
             notifyOnSleepTimerEnd = true
         }
         lastCustomSleepTimerMinutes = Self.loadLastCustomSleepTimerMinutes()
+        if UserDefaults.standard.object(forKey: Keys.sleepTimerFadeEnabled) != nil {
+            sleepTimerFadeEnabled = UserDefaults.standard.bool(forKey: Keys.sleepTimerFadeEnabled)
+        } else {
+            // Default on — Android always fades in the last NOTIFICATION_THRESHOLD (10s).
+            sleepTimerFadeEnabled = true
+        }
         if UserDefaults.standard.object(forKey: Keys.askForAppStoreRating) != nil {
             askForAppStoreRating = UserDefaults.standard.bool(forKey: Keys.askForAppStoreRating)
         } else {
@@ -2579,6 +2596,7 @@ final class AppSettings: ObservableObject {
             notifyOnSyncErrors: notifyOnSyncErrors,
             notifyOnSleepTimerEnd: notifyOnSleepTimerEnd,
             lastCustomSleepTimerMinutes: lastCustomSleepTimerMinutes,
+            sleepTimerFadeEnabled: sleepTimerFadeEnabled,
             askForAppStoreRating: askForAppStoreRating,
             playVideoAsAudioOnly: playVideoAsAudioOnly,
             volumeAdaptationEnabled: volumeAdaptationEnabled,
@@ -2689,6 +2707,7 @@ final class AppSettings: ObservableObject {
         let customSleep = snap.lastCustomSleepTimerMinutes ?? Self.defaultLastCustomSleepTimerMinutes
         let sleepRange = PlaybackService.customSleepTimerMinutesRange
         lastCustomSleepTimerMinutes = min(max(customSleep, sleepRange.lowerBound), sleepRange.upperBound)
+        sleepTimerFadeEnabled = snap.sleepTimerFadeEnabled ?? true
         askForAppStoreRating = snap.askForAppStoreRating ?? true
         playVideoAsAudioOnly = snap.playVideoAsAudioOnly ?? false
         volumeAdaptationEnabled = snap.volumeAdaptationEnabled ?? false
@@ -2857,6 +2876,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var notifyOnSleepTimerEnd: Bool? = true
     /// Absent in older backups → 15 (Android LastValue default). Clamped 1–180 on restore.
     var lastCustomSleepTimerMinutes: Int? = 15
+    /// Absent in older backups → treated as on (Android always fades).
+    var sleepTimerFadeEnabled: Bool? = true
     /// Absent in older backups → treated as on (default).
     var askForAppStoreRating: Bool? = true
     /// Absent in older backups → treated as off (show video when detected).

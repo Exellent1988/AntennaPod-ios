@@ -95,6 +95,9 @@ struct RootTabView: View {
         .onChange(of: settings.volumeBoostPercent) { _, _ in
             playback.applyVolumeBoost()
         }
+        .onChange(of: settings.sleepTimerFadeEnabled) { _, _ in
+            playback.applySleepTimerFadePreference()
+        }
         .onChange(of: settings.playVideoAsAudioOnly) { _, _ in
             playback.applyAudioSessionConfiguration()
             playback.applyVideoAsAudioOnlyPolicy()

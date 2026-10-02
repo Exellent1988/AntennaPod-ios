@@ -19,7 +19,7 @@ final class PlaybackService: ObservableObject {
     static let defaultSmartMarkAsPlayedSeconds: Double = 30
     /// Throttle JSON writes while the periodic observer fires every 0.5s.
     private static let persistIntervalSeconds: Double = 5
-    /// Soft fade window matching Android `SleepTimer.NOTIFICATION_THRESHOLD` (10s).
+    /// Soft fade window matching Android `SleepTimer.NOTIFICATION_THRESHOLD` (10s). Clock only.
     static let fadeThresholdSeconds: Double = 10
 
     static let clockPresetsMinutes: [Int] = [5, 10, 15, 30, 45, 60]
@@ -280,6 +280,8 @@ final class PlaybackService: ObservableObject {
             // Pause only saves progress; smart-mark happens on leave/end (AntennaPod-like).
             persistProgress(force: true)
             pauseSleepTimerCountdown()
+            // Cancel fade + restore volume so resume is not stuck at a faded level.
+            cancelSleepTimerFade(restoreVolume: true)
             recordPausedAt()
         } else {
             applyRewindAfterPauseIfNeeded()
@@ -357,6 +359,8 @@ final class PlaybackService: ObservableObject {
         guard let player else {
             return
         }
+        // User seek cancels an in-progress sleep fade and restores pre-fade volume.
+        cancelSleepTimerFade(restoreVolume: true)
         if clearEnd {
             clearSoundbiteEndMarker()
         }
@@ -535,9 +539,7 @@ final class PlaybackService: ObservableObject {
         case .clock:
             let current = sleepTimerRemainingSeconds ?? sleepTimerPausedRemaining ?? 0
             let next = current + Double(minutes * 60)
-            sleepTimerDidFade = false
-            sleepVolume = 1.0
-            player?.volume = 1.0
+            cancelSleepTimerFade(restoreVolume: true)
             if isPlaying {
                 sleepTimerEndDate = Date().addingTimeInterval(next)
                 sleepTimerPausedRemaining = nil
@@ -855,6 +857,7 @@ final class PlaybackService: ObservableObject {
         positionSeconds = target
         persistProgress(force: true)
         pauseSleepTimerCountdown()
+        cancelSleepTimerFade(restoreVolume: true)
         recordPausedAt()
         updateNowPlayingInfo(force: true)
         applyIdleTimerPolicy()
@@ -902,23 +905,43 @@ final class PlaybackService: ObservableObject {
             return
         }
 
-        if remaining < Self.fadeThresholdSeconds {
+        let fadeOn = settings?.sleepTimerFadeEnabled ?? true
+        if fadeOn, remaining < Self.fadeThresholdSeconds {
             applyFade(remaining: remaining)
         } else if sleepTimerDidFade {
-            sleepTimerDidFade = false
-            sleepVolume = 1.0
-            player?.volume = 1.0
+            // Extended past fade window, or fade disabled mid-window → restore.
+            cancelSleepTimerFade(restoreVolume: true)
         }
     }
 
     private func applyFade(remaining: Double) {
-        // Same step curve idea as Android multiplicators over the last 10s.
-        let multiplicators: [Float] = [0.1, 0.2, 0.3, 0.3, 0.3, 0.4, 0.4, 0.4, 0.6, 0.8]
-        let index = max(0, min(multiplicators.count - 1, Int(remaining)))
-        let volume = multiplicators[index]
+        // Linear fade toward 0 over the last `fadeThresholdSeconds` (Android Media3
+        // millisLeft / NOTIFICATION_THRESHOLD). Soft `AVPlayer.volume` only — volume
+        // boost stays on AVAudioMix; volume adaptation is session mode, not a multiplier.
+        let fraction = max(0.0, min(1.0, remaining / Self.fadeThresholdSeconds))
+        let volume = Float(fraction)
         sleepVolume = volume
         player?.volume = volume
         sleepTimerDidFade = true
+    }
+
+    /// Cancel an in-progress clock sleep fade and optionally restore `AVPlayer.volume`
+    /// to the pre-fade level (`1.0` on the player path; boost remains on the mix).
+    /// Used on user pause / seek / disable / fire restore / Settings off.
+    func cancelSleepTimerFade(restoreVolume: Bool) {
+        guard sleepTimerDidFade || sleepVolume < 0.999 else {
+            if restoreVolume {
+                sleepVolume = 1.0
+                player?.volume = 1.0
+            }
+            sleepTimerDidFade = false
+            return
+        }
+        sleepTimerDidFade = false
+        if restoreVolume {
+            sleepVolume = 1.0
+            player?.volume = 1.0
+        }
     }
 
     /// End-of-chapter: resolve boundary when chapters/duration become known; expire at chapter end.
@@ -1022,12 +1045,9 @@ final class PlaybackService: ObservableObject {
         sleepTimerRemainingSeconds = nil
         sleepTimerEndDate = nil
         sleepTimerPausedRemaining = nil
-        sleepTimerDidFade = false
         sleepTimerChapterEndSeconds = nil
-        if restoreVolume {
-            sleepVolume = 1.0
-            player?.volume = 1.0
-        }
+        // Cancel fade + restore (disable / fire / replace timer).
+        cancelSleepTimerFade(restoreVolume: restoreVolume)
     }
 
     private func tearDownPlayer(clearSleepTimer: Bool) {
@@ -1066,6 +1086,16 @@ final class PlaybackService: ObservableObject {
     func applyTimePitchAlgorithm() {
         guard let item = player?.currentItem else { return }
         applyTimePitchAlgorithm(to: item)
+    }
+
+    /// Re-apply / cancel sleep-timer fade after Settings **Sleep timer volume fade** changes.
+    /// When turned off mid-fade, restores pre-fade `AVPlayer.volume` immediately.
+    func applySleepTimerFadePreference() {
+        let fadeOn = settings?.sleepTimerFadeEnabled ?? true
+        if !fadeOn {
+            cancelSleepTimerFade(restoreVolume: true)
+        }
+        // When turned on, next `tickSleepTimer` applies fade if still in the last 10s.
     }
 
     /// Re-apply soft **Volume boost** (`AVMutableAudioMix` track volume) after Settings changes
@@ -1351,6 +1381,7 @@ final class PlaybackService: ObservableObject {
             isPlaying = false
             persistProgress(force: true)
             pauseSleepTimerCountdown()
+            cancelSleepTimerFade(restoreVolume: true)
             recordPausedAt()
         }
         updateNowPlayingInfo(force: true)
