@@ -26730,6 +26730,108 @@
           }
         }
       }
+    },
+    "Copy favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten kopieren"
+          }
+        }
+      }
+    },
+    "Share favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten teilen"
+          }
+        }
+      }
+    },
+    "Copies the full favorites list to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full favorites list to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die gesamte Favoritenliste in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the full favorites list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the full favorites list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit der gesamten Favoritenliste"
+          }
+        }
+      }
+    },
+    "Favorites copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favorites copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy favorites, share favorites, play random, add all to queue, or clear favorites": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy favorites, share favorites, play random, add all to queue, or clear favorites"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Favoriten kopieren, Favoriten teilen, Zufällig abspielen, Alle zur Warteschlange, oder Favoriten leeren"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

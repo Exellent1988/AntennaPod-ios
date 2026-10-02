@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct FavoritesView: View {
     @EnvironmentObject private var store: PodcastStore
@@ -11,6 +12,9 @@ struct FavoritesView: View {
     @State private var debounceTask: Task<Void, Never>?
     @State private var showClearFavoritesConfirm = false
     @State private var showEnqueueAllConfirm = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -234,6 +238,27 @@ struct FavoritesView: View {
     }
 
 
+    /// Plain-text list of the **full** Favorites catalog — not podcast-chip / search / UI sort filtered.
+    /// Same honesty as Clear favorites / Add all to queue / Play random (`store.favoriteEpisodes`, newest favorited first).
+    private var favoritesPlainText: String {
+        FavoritesExport.plainText(episodes: items.map(\.episode)) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
+    }
+
+    /// Enabled when the full Favorites catalog is non-empty (read-only export).
+    private var canExportFavorites: Bool {
+        !items.isEmpty
+    }
+
+    /// “Favorites” header + body for system share sheet (same body as Copy).
+    private var favoritesShareText: String {
+        FavoritesExport.shareText(episodes: items.map(\.episode)) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
+    }
+
+
     var body: some View {
         List {
             if !items.isEmpty, !favoritesPodcastFeeds.isEmpty || isPodcastFiltering {
@@ -360,6 +385,31 @@ struct FavoritesView: View {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {
+                        copyFavorites()
+                    } label: {
+                        Label("Copy favorites", systemImage: "doc.plaintext")
+                    }
+                    // Full Favorites catalog (not podcast/search/UI sort).
+                    .disabled(!canExportFavorites)
+                    .accessibilityLabel(String(localized: "Copy favorites"))
+                    .accessibilityHint(
+                        String(localized: "Copies the full favorites list to the pasteboard")
+                    )
+
+                    ShareLink(
+                        item: favoritesShareText,
+                        subject: Text(String(localized: "Favorites"))
+                    ) {
+                        Label("Share favorites", systemImage: "square.and.arrow.up")
+                    }
+                    // Same gates as Copy favorites — full catalog.
+                    .disabled(!canExportFavorites)
+                    .accessibilityLabel(String(localized: "Share favorites"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the full favorites list")
+                    )
+
+                    Button {
                         playRandomEpisode()
                     } label: {
                         Label("Play random", systemImage: "shuffle")
@@ -388,8 +438,21 @@ struct FavoritesView: View {
                 }
                 // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
                 .disabled(items.isEmpty)
+                .accessibilityLabel(String(localized: "Favorites actions"))
+                .accessibilityHint(
+                    String(localized: "Copy favorites, share favorites, play random, add all to queue, or clear favorites")
+                )
             }
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
         .confirmationDialog(
             "Add all to queue?",
             isPresented: $showEnqueueAllConfirm,
@@ -414,6 +477,16 @@ struct FavoritesView: View {
         } message: {
             Text("Removes \(items.count) episodes from favorites. Does not delete downloads, archive, mark played, or clear the queue.")
         }
+    }
+
+    /// Pasteboard copy of the **full** Favorites catalog (not podcast/search/UI sort). Read-only.
+    private func copyFavorites() {
+        let text = favoritesPlainText
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Favorites copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     /// Uniform pick via shared `EpisodePlayRandom.pick` among eligible (prefer unplayed);
