@@ -408,6 +408,12 @@ struct DownloadsView: View {
                         systemImage: "arrow.down.circle",
                         description: Text("Downloaded episodes will appear here for offline playback.")
                     )
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "No downloads"))
+                    .accessibilityValue(
+                        String(localized: "Downloaded episodes will appear here for offline playback.")
+                    )
+                    .accessibilityHint(String(localized: "Download an episode to see it here."))
                 } else if filteredDownloads.isEmpty {
                     ContentUnavailableView(
                         "No matching downloads",
@@ -417,6 +423,16 @@ struct DownloadsView: View {
                                 ? String(localized: "No downloads match your filter.")
                                 : String(localized: "No downloads match your search.")
                         )
+                    )
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "No matching downloads"))
+                    .accessibilityValue(
+                        isFiltering
+                            ? String(localized: "No downloads match your filter.")
+                            : String(localized: "No downloads match your search.")
+                    )
+                    .accessibilityHint(
+                        String(localized: "Change or clear the Downloads filters or search to see other downloads.")
                     )
                 } else {
                     Section {

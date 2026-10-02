@@ -562,6 +562,23 @@
         }
       }
     },
+    "Change or clear the Downloads filters or search to see other downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the Downloads filters or search to see other downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Downloads-Filter oder die Suche, um andere Downloads zu sehen."
+          }
+        }
+      }
+    },
     "Change PIN": {
       "extractionState": "manual",
       "localizations": {
@@ -1153,6 +1170,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Herunterladen"
+          }
+        }
+      }
+    },
+    "Download an episode to see it here.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download an episode to see it here."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lade eine Episode herunter, um sie hier zu sehen."
           }
         }
       }
