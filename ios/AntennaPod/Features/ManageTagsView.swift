@@ -56,12 +56,18 @@ struct ManageTagsView: View {
                     systemImage: "tag",
                     description: Text("Add tags on a podcast under Feed detail → gear → Tags / Folders. They also appear as filter chips on Subscriptions.")
                 )
+                .accessibilityLabel(String(localized: "No tags yet"))
+                .accessibilityValue(noTagsEmptyStateAccessibilityValue)
+                .accessibilityHint(String(localized: "Add a tag from Feed detail, then return here to rename or delete it."))
             } else if filteredTags.isEmpty {
                 ContentUnavailableView(
                     "No matching tags",
                     systemImage: "magnifyingglass",
                     description: Text("No tags match your search.")
                 )
+                .accessibilityLabel(String(localized: "No matching tags"))
+                .accessibilityValue(noMatchingTagsEmptyStateAccessibilityValue)
+                .accessibilityHint(String(localized: "Clear or change Search tags to see existing tag names."))
             } else {
                 Section {
                     ForEach(filteredTags, id: \.self) { tag in
@@ -208,6 +214,14 @@ struct ManageTagsView: View {
                 Label("Delete tag", systemImage: "trash")
             }
         }
+    }
+
+    private var noTagsEmptyStateAccessibilityValue: String {
+        String(localized: "No tags are assigned to any podcast. Add a tag from Feed detail → gear → Tags / Folders.")
+    }
+
+    private var noMatchingTagsEmptyStateAccessibilityValue: String {
+        String(localized: "The tag catalog is not empty, but no existing tag name matches the current search.")
     }
 
     private func copyTags() {

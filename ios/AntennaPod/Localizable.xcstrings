@@ -14258,6 +14258,74 @@
         }
       }
     },
+    "No tags are assigned to any podcast. Add a tag from Feed detail → gear → Tags / Folders.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No tags are assigned to any podcast. Add a tag from Feed detail → gear → Tags / Folders."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keinem Podcast sind Tags zugewiesen. Füge unter Feed-Detail → Zahnrad → Tags / Ordner einen Tag hinzu."
+          }
+        }
+      }
+    },
+    "The tag catalog is not empty, but no existing tag name matches the current search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The tag catalog is not empty, but no existing tag name matches the current search."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Tag-Katalog ist nicht leer, aber kein vorhandener Tag-Name passt zur aktuellen Suche."
+          }
+        }
+      }
+    },
+    "Add a tag from Feed detail, then return here to rename or delete it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a tag from Feed detail, then return here to rename or delete it."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge unter Feed-Detail einen Tag hinzu und kehre dann hierher zurück, um ihn umzubenennen oder zu löschen."
+          }
+        }
+      }
+    },
+    "Clear or change Search tags to see existing tag names.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear or change Search tags to see existing tag names."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leere oder ändere Tags durchsuchen, um vorhandene Tag-Namen anzuzeigen."
+          }
+        }
+      }
+    },
     "Copy shownotes": {
       "extractionState": "manual",
       "localizations": {
