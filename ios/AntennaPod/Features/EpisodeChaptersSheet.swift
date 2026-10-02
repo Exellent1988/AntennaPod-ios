@@ -117,13 +117,18 @@ struct EpisodeChaptersSheet: View {
                         systemImage: "list.bullet",
                         description: Text(String(localized: "No chapters known for this episode yet."))
                     )
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "No chapters available"))
+                    .accessibilityValue(String(localized: "No chapters are known for this episode yet."))
                 } else if isFilteringChapters && filteredChapterIndices.isEmpty {
                     ContentUnavailableView(
                         "No matching chapters",
                         systemImage: "magnifyingglass",
                         description: Text("No chapters match your search.")
                     )
-                    .accessibilityElement(children: .combine)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "No matching chapters"))
+                    .accessibilityValue(String(localized: "No chapters match your search."))
                 } else {
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 0) {

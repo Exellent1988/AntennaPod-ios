@@ -13986,6 +13986,23 @@
         }
       }
     },
+    "No chapters are known for this episode yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No chapters are known for this episode yet."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für diese Episode sind noch keine Kapitel bekannt."
+          }
+        }
+      }
+    },
     "Seeks playback to this chapter": {
       "extractionState": "manual",
       "localizations": {
