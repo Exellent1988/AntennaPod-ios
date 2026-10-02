@@ -18972,6 +18972,499 @@
           }
         }
       }
+    },
+    "Add your Podcast Index API key and secret in Settings → Discovery": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add your Podcast Index API key and secret in Settings → Discovery"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trage deinen Podcast-Index-API-Schlüssel und das Secret unter Einstellungen → Discovery ein"
+          }
+        }
+      },
+      "comment": "Podcast Index SearchError.missingCredentials"
+    },
+    "Enter a search term": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a search term"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suchbegriff eingeben"
+          }
+        }
+      },
+      "comment": "Discovery search empty query"
+    },
+    "Podcast Index rejected the API key or secret. Check Settings → Discovery, or register free keys at podcastindex.org.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast Index rejected the API key or secret. Check Settings → Discovery, or register free keys at podcastindex.org."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast Index hat den API-Schlüssel oder das Secret abgelehnt. Prüfe Einstellungen → Discovery oder registriere kostenlose Schlüssel auf podcastindex.org."
+          }
+        }
+      },
+      "comment": "HTTP 401/403 from Podcast Index"
+    },
+    "Podcast Index search failed (HTTP %lld)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast Index search failed (HTTP %lld)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Index-Suche fehlgeschlagen (HTTP %lld)"
+          }
+        }
+      },
+      "comment": "Non-auth HTTP error from Podcast Index search"
+    },
+    "Could not read Podcast Index search results": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not read Podcast Index search results"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Index-Suchergebnisse konnten nicht gelesen werden"
+          }
+        }
+      }
+    },
+    "Empty response from Podcast Index": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empty response from Podcast Index"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leere Antwort vom Podcast Index"
+          }
+        }
+      }
+    },
+    "Podcast Index network error: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast Index network error: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Index-Netzwerkfehler: %@"
+          }
+        }
+      },
+      "comment": "URLSession/URLError wrapper for Index search"
+    },
+    "No directory search without your keys. Use Apple, fyyd, or URL meanwhile. Keys are never shipped with the app.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No directory search without your keys. Use Apple, fyyd, or URL meanwhile. Keys are never shipped with the app."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ohne deine Schlüssel keine Verzeichnissuche. Nutze vorerst Apple, fyyd oder URL. Schlüssel werden nie mit der App ausgeliefert."
+          }
+        }
+      },
+      "comment": "Add sheet Index missing-keys footer"
+    },
+    "Searches podcastindex.org with your Keychain API keys. Results open Preview before subscribe.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searches podcastindex.org with your Keychain API keys. Results open Preview before subscribe."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durchsucht podcastindex.org mit deinen Keychain-API-Schlüsseln. Ergebnisse öffnen die Vorschau vor dem Abonnieren."
+          }
+        }
+      },
+      "comment": "Index search field VoiceOver hint"
+    },
+    "Searching Podcast Index": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searching Podcast Index"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast Index wird durchsucht"
+          }
+        }
+      },
+      "comment": "ProgressView a11y while Index search runs"
+    },
+    "Uses your Podcast Index API key from Settings → Discovery (Keychain only). Tap a result for Preview → Confirm Subscribe — not fire-and-forget.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uses your Podcast Index API key from Settings → Discovery (Keychain only). Tap a result for Preview → Confirm Subscribe — not fire-and-forget."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nutzt deinen Podcast-Index-API-Schlüssel aus Einstellungen → Discovery (nur Keychain). Tippe ein Ergebnis für Vorschau → Bestätigen — kein Sofort-Abo."
+          }
+        }
+      },
+      "comment": "Index search section footer"
+    },
+    "Retry search": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry search"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suche erneut"
+          }
+        }
+      },
+      "comment": "Index search error retry button"
+    },
+    "Runs the Podcast Index search again with the same term": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runs the Podcast Index search again with the same term"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Führt die Podcast-Index-Suche mit demselben Begriff erneut aus"
+          }
+        }
+      }
+    },
+    "Type a podcast name or author. Results use podcastindex.org — not Apple charts. Subscribe still previews the feed URL.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type a podcast name or author. Results use podcastindex.org — not Apple charts. Subscribe still previews the feed URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe einen Podcast-Namen oder Autor. Ergebnisse kommen von podcastindex.org — nicht von Apple Charts. Abonnieren zeigt weiter die Feed-Vorschau."
+          }
+        }
+      },
+      "comment": "Idle Index empty state description"
+    },
+    "Showing up to 25 matches with a feed URL. Empty feed URLs are skipped.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing up to 25 matches with a feed URL. Empty feed URLs are skipped."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeigt bis zu 25 Treffer mit Feed-URL. Leere Feed-URLs werden übersprungen."
+          }
+        }
+      },
+      "comment": "Index results footer honesty"
+    },
+    "Opens the subscribed feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the subscribed feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den abonnierten Feed"
+          }
+        }
+      },
+      "comment": "DiscoveryResultRow hint when already subscribed"
+    },
+    "Opens an online feed preview before you confirm subscribe": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens an online feed preview before you confirm subscribe"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet eine Online-Feed-Vorschau, bevor du das Abonnement bestätigst"
+          }
+        }
+      },
+      "comment": "DiscoveryResultRow hint before subscribe"
+    },
+    "Enter both API key and secret": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter both API key and secret"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API-Schlüssel und Secret eingeben"
+          }
+        }
+      },
+      "comment": "Settings Discovery validation"
+    },
+    "API key": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API key"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API-Schlüssel"
+          }
+        }
+      },
+      "comment": "Settings Discovery SecureField"
+    },
+    "API secret": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API secret"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API-Secret"
+          }
+        }
+      },
+      "comment": "Settings Discovery SecureField"
+    },
+    "Save keys": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save keys"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlüssel speichern"
+          }
+        }
+      }
+    },
+    "Clear keys": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear keys"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlüssel löschen"
+          }
+        }
+      }
+    },
+    "Replace keys…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replace keys…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlüssel ersetzen…"
+          }
+        }
+      }
+    },
+    "Shows fields to paste a new Podcast Index API key and secret": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shows fields to paste a new Podcast Index API key and secret"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeigt Felder zum Einfügen eines neuen Podcast-Index-API-Schlüssels und Secrets"
+          }
+        }
+      }
+    },
+    "Removes Podcast Index API key and secret from the Keychain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes Podcast Index API key and secret from the Keychain"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt Podcast-Index-API-Schlüssel und Secret aus dem Schlüsselbund"
+          }
+        }
+      }
+    },
+    "Paste your free Podcast Index API key from podcastindex.org": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste your free Podcast Index API key from podcastindex.org"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge deinen kostenlosen Podcast-Index-API-Schlüssel von podcastindex.org ein"
+          }
+        }
+      }
+    },
+    "Paste your free Podcast Index API secret from podcastindex.org": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste your free Podcast Index API secret from podcastindex.org"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Füge dein kostenloses Podcast-Index-API-Secret von podcastindex.org ein"
+          }
+        }
+      }
+    },
+    "Stores the API key and secret in the Keychain on this device only": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stores the API key and secret in the Keychain on this device only"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert API-Schlüssel und Secret nur im Schlüsselbund auf diesem Gerät"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

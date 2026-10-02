@@ -6,7 +6,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 
 - Subscribe by feed URL
 - Apple Podcasts / iTunes Search discovery (Add sheet; debounced; Subscribe via feed URL)
-- Podcast Index discovery (Add sheet tab; user-supplied API key+secret in Keychain; Settings → Discovery; debounced; Subscribe via feed URL)
+- Podcast Index discovery (beta polish; Add sheet **Index** tab; user-supplied API key+secret in Keychain via Settings → Discovery — **never hardcoded**; sha1 auth; `max=25`; debounced ~400 ms; honest idle / missing-keys / empty / 401·403 / network + Retry; Preview → Confirm Subscribe via feed URL; EN/DE + VoiceOver)
 - fyyd discovery (Add sheet tab; public fyyd.de search API, no key; debounced; Preview → Subscribe via feed URL)
 - Top lists / Quick discovery (Apple iTunes RSS charts; Home preview + Subscriptions → Discover; country in Settings; pull-to-refresh; Subscribe via feed URL)
 - Online feed preview (before subscribe: discovery rows + Feed URL → Preview via FeedRepository; episode count + first titles; Confirm Subscribe / Cancel; already subscribed → Open feed)

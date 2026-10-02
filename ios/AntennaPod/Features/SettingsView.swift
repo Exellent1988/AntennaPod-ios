@@ -1239,6 +1239,7 @@ struct SettingsView: View {
                     podcastIndexAPISecretDraft = ""
                     podcastIndexKeyError = nil
                 }
+                .accessibilityHint(String(localized: "Shows fields to paste a new Podcast Index API key and secret"))
                 Button("Clear keys", role: .destructive) {
                     PodcastIndexKeychain.deleteCredentials()
                     podcastIndexKeysSaved = false
@@ -1246,16 +1247,22 @@ struct SettingsView: View {
                     podcastIndexAPISecretDraft = ""
                     podcastIndexKeyError = nil
                 }
+                .accessibilityHint(String(localized: "Removes Podcast Index API key and secret from the Keychain"))
             } else {
                 SecureField("API key", text: $podcastIndexAPIKeyDraft)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
+                    .accessibilityLabel(String(localized: "API key"))
+                    .accessibilityHint(String(localized: "Paste your free Podcast Index API key from podcastindex.org"))
                 SecureField("API secret", text: $podcastIndexAPISecretDraft)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
+                    .accessibilityLabel(String(localized: "API secret"))
+                    .accessibilityHint(String(localized: "Paste your free Podcast Index API secret from podcastindex.org"))
                 Button("Save keys") {
                     savePodcastIndexKeys()
                 }
+                .accessibilityHint(String(localized: "Stores the API key and secret in the Keychain on this device only"))
                 .disabled(
                     podcastIndexAPIKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                         || podcastIndexAPISecretDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -1301,7 +1308,7 @@ struct SettingsView: View {
         let key = podcastIndexAPIKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines)
         let secret = podcastIndexAPISecretDraft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !key.isEmpty, !secret.isEmpty else {
-            podcastIndexKeyError = "Enter both API key and secret"
+            podcastIndexKeyError = String(localized: "Enter both API key and secret")
             return
         }
         do {

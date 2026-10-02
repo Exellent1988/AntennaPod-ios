@@ -37,11 +37,27 @@ struct DiscoveryResultRow: View {
         }
         .buttonStyle(.plain)
         .disabled(feedUrl.isEmpty)
-        .accessibilityLabel(isSubscribed ? String(localized: "Open subscribed podcast") : String(localized: "Preview podcast before subscribe"))
+        .accessibilityLabel(discoveryAccessibilityLabel)
+        .accessibilityHint(
+            isSubscribed
+                ? String(localized: "Opens the subscribed feed")
+                : String(localized: "Opens an online feed preview before you confirm subscribe")
+        )
+    }
+
+    private var discoveryAccessibilityLabel: String {
+        let action = isSubscribed
+            ? String(localized: "Open subscribed podcast")
+            : String(localized: "Preview podcast before subscribe")
+        if author.isEmpty {
+            return "\(action). \(title)"
+        }
+        return "\(action). \(title), \(author)"
     }
 
     @ViewBuilder
     private var artwork: some View {
+
         let size: CGFloat = 56
         if let url = artworkURL {
             AsyncImage(url: url) { phase in

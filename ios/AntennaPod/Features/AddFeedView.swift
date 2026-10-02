@@ -263,20 +263,27 @@ struct AddFeedView: View {
                         )
                     )
                     .listRowBackground(Color.clear)
+                    .accessibilityElement(children: .combine)
+                } footer: {
+                    Text("No directory search without your keys. Use Apple, fyyd, or URL meanwhile. Keys are never shipped with the app.")
                 }
             } else {
                 Section {
                     HStack {
                         Image(systemName: "magnifyingglass")
                             .foregroundStyle(.secondary)
+                            .accessibilityHidden(true)
                         TextField("Search Podcast Index", text: $indexSearchText)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
                             .submitLabel(.search)
                             .onSubmit { runIndexSearchImmediately() }
+                            .accessibilityLabel(String(localized: "Search Podcast Index"))
+                            .accessibilityHint(String(localized: "Searches podcastindex.org with your Keychain API keys. Results open Preview before subscribe."))
                         if indexIsSearching {
                             ProgressView()
                                 .controlSize(.small)
+                                .accessibilityLabel(String(localized: "Searching Podcast Index"))
                         } else if !indexSearchText.isEmpty {
                             Button {
                                 indexSearchText = ""
@@ -292,6 +299,8 @@ struct AddFeedView: View {
                             .accessibilityLabel(String(localized: "Clear search"))
                         }
                     }
+                } footer: {
+                    Text("Uses your Podcast Index API key from Settings → Discovery (Keychain only). Tap a result for Preview → Confirm Subscribe — not fire-and-forget.")
                 }
 
                 if let indexSearchError {
@@ -299,6 +308,24 @@ struct AddFeedView: View {
                         Text(indexSearchError)
                             .foregroundStyle(.red)
                             .font(.subheadline)
+                            .accessibilityLabel(indexSearchError)
+                        Button("Retry search") {
+                            runIndexSearchImmediately()
+                        }
+                        .disabled(indexSearchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || indexIsSearching)
+                        .accessibilityHint(String(localized: "Runs the Podcast Index search again with the same term"))
+                    }
+                }
+
+                if !indexDidSearch && !indexIsSearching && indexSearchError == nil && indexResults.isEmpty {
+                    Section {
+                        ContentUnavailableView(
+                            "Search Podcast Index",
+                            systemImage: "dot.radiowaves.left.and.right",
+                            description: Text("Type a podcast name or author. Results use podcastindex.org — not Apple charts. Subscribe still previews the feed URL.")
+                        )
+                        .listRowBackground(Color.clear)
+                        .accessibilityElement(children: .combine)
                     }
                 }
 
@@ -310,11 +337,12 @@ struct AddFeedView: View {
                             description: Text("Try another name or author, or switch to Apple / fyyd / URL.")
                         )
                         .listRowBackground(Color.clear)
+                        .accessibilityElement(children: .combine)
                     }
                 }
 
                 if !indexResults.isEmpty {
-                    Section("Results") {
+                    Section {
                         ForEach(indexResults) { item in
                             DiscoveryResultRow(
                                 title: item.title,
@@ -332,6 +360,10 @@ struct AddFeedView: View {
                                 }
                             )
                         }
+                    } header: {
+                        Text("Results")
+                    } footer: {
+                        Text("Showing up to 25 matches with a feed URL. Empty feed URLs are skipped.")
                     }
                 }
             }

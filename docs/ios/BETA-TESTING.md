@@ -26,7 +26,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Aus Zwischenablage hinzufügen (http(s); Vorschau; kein Auto-Abo) | ☐ Add from Clipboard (http(s); Preview; no auto-subscribe) |
 | ☐ Online-Vorschau → Confirm Subscribe | ☐ Online feed preview → Confirm Subscribe |
 | ☐ Discovery: Apple Podcasts / iTunes Search | ☐ Discovery: Apple Podcasts / iTunes Search |
-| ☐ Discovery: Podcast Index (API-Key in Settings) | ☐ Discovery: Podcast Index (API keys in Settings) |
+| ☐ Discovery: Podcast Index (API-Keys Keychain Settings → Discovery; Idle/fehlende Keys/leere Treffer/401·Netzwerk+Retry; Vorschau→Confirm; max 25; keine Secrets in App) | ☐ Discovery: Podcast Index (Keychain API keys Settings → Discovery; idle/missing-keys/empty/401·network+Retry; Preview→Confirm; max 25; no shipped secrets) |
 | ☐ Discovery: fyyd | ☐ Discovery: fyyd |
 | ☐ Top lists / Charts (Land in Settings) | ☐ Top lists / charts (country in Settings) |
 | ☐ Local folder feed (Datei-Ordner) | ☐ Local folder feed |

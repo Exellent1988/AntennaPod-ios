@@ -6,26 +6,34 @@ import Foundation
 /// Keys come from `PodcastIndexKeychain` (user-supplied); never hardcoded.
 struct PodcastIndexSearchService {
     private static let searchURL = "https://api.podcastindex.org/api/1.0/search/byterm"
+    /// Cap results like iTunes (`limit=25`) / fyyd (`count=25`). Podcast Index `max` defaults higher.
+    private static let resultLimit = 25
 
     enum SearchError: LocalizedError {
         case missingCredentials
         case invalidQuery
+        case unauthorized
         case httpStatus(Int)
         case decoding
         case emptyResponse
+        case network(String)
 
         var errorDescription: String? {
             switch self {
             case .missingCredentials:
-                return "Add your Podcast Index API key and secret in Settings → Discovery"
+                return String(localized: "Add your Podcast Index API key and secret in Settings → Discovery")
             case .invalidQuery:
-                return "Enter a search term"
+                return String(localized: "Enter a search term")
+            case .unauthorized:
+                return String(localized: "Podcast Index rejected the API key or secret. Check Settings → Discovery, or register free keys at podcastindex.org.")
             case .httpStatus(let code):
-                return "Podcast Index search failed (HTTP \(code))"
+                return String(localized: "Podcast Index search failed (HTTP \(code))")
             case .decoding:
-                return "Could not read Podcast Index search results"
+                return String(localized: "Could not read Podcast Index search results")
             case .emptyResponse:
-                return "Empty response from Podcast Index"
+                return String(localized: "Empty response from Podcast Index")
+            case .network(let detail):
+                return String(localized: "Podcast Index network error: \(detail)")
             }
         }
     }
@@ -47,6 +55,7 @@ struct PodcastIndexSearchService {
         var components = URLComponents(string: Self.searchURL)!
         components.queryItems = [
             URLQueryItem(name: "q", value: trimmed),
+            URLQueryItem(name: "max", value: String(Self.resultLimit)),
         ]
         guard let url = components.url else {
             throw SearchError.invalidQuery
@@ -60,11 +69,26 @@ struct PodcastIndexSearchService {
         request.setValue(apiKey, forHTTPHeaderField: "X-Auth-Key")
         request.setValue(authHash, forHTTPHeaderField: "Authorization")
         request.setValue("AntennaPod-iOS/0.1", forHTTPHeaderField: "User-Agent")
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.timeoutInterval = 20
 
-        let (data, response) = try await URLSession.shared.data(for: request)
-        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-            throw SearchError.httpStatus(http.statusCode)
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await URLSession.shared.data(for: request)
+        } catch let urlError as URLError {
+            throw SearchError.network(urlError.localizedDescription)
+        } catch {
+            throw SearchError.network(error.localizedDescription)
+        }
+
+        if let http = response as? HTTPURLResponse {
+            if http.statusCode == 401 || http.statusCode == 403 {
+                throw SearchError.unauthorized
+            }
+            if !(200...299).contains(http.statusCode) {
+                throw SearchError.httpStatus(http.statusCode)
+            }
         }
         guard !data.isEmpty else {
             throw SearchError.emptyResponse
@@ -77,8 +101,8 @@ struct PodcastIndexSearchService {
             throw SearchError.decoding
         }
 
-        // Skip entries without a usable feed URL (same as Android / iTunes).
-        return decoded.feeds.filter { !$0.feedUrl.isEmpty }
+        // Skip entries without a usable feed URL (same as Android / iTunes). Cap client-side too.
+        return Array(decoded.feeds.filter { !$0.feedUrl.isEmpty }.prefix(Self.resultLimit))
     }
 
     /// SHA-1 hex digest per Podcast Index auth docs (and Android `PodcastIndexPodcastSearcher`).
