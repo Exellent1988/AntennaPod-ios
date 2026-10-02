@@ -248,8 +248,13 @@ struct TranscriptSheetView: View {
                 }
             }
             .safeAreaInset(edge: .top, spacing: 0) {
-                if let transcriptType = episode.displayTranscriptType {
-                    transcriptTypeHeader(transcriptType)
+                VStack(spacing: 0) {
+                    if let transcriptLanguage = episode.displayTranscriptLanguage {
+                        transcriptLanguageHeader(transcriptLanguage)
+                    }
+                    if let transcriptType = episode.displayTranscriptType {
+                        transcriptTypeHeader(transcriptType)
+                    }
                 }
             }
             .safeAreaInset(edge: .bottom) {
@@ -407,6 +412,52 @@ struct TranscriptSheetView: View {
     }
 
     @ViewBuilder
+    private func transcriptLanguageHeader(_ language: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text(String(localized: "Transcript language"))
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .accessibilityAddTraits(.isHeader)
+
+                Spacer(minLength: 8)
+
+                Button {
+                    copyTranscriptLanguage(language)
+                } label: {
+                    Image(systemName: "doc.on.doc")
+                }
+                .accessibilityLabel(String(localized: "Copy transcript language"))
+                .accessibilityHint(
+                    String(localized: "Copies the exact displayed transcript language to the pasteboard")
+                )
+
+                ShareLink(item: language) {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                .accessibilityLabel(String(localized: "Share transcript language"))
+                .accessibilityHint(
+                    String(localized: "Shares the exact displayed transcript language as plain text")
+                )
+            }
+
+            Text(language)
+                .font(.caption.monospaced())
+                .foregroundStyle(.primary)
+                .textSelection(.enabled)
+                .lineLimit(2)
+                .accessibilityLabel(
+                    "\(String(localized: "Transcript language")), \(language)"
+                )
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(.bar)
+        .accessibilityElement(children: .contain)
+    }
+
+    @ViewBuilder
     private func transcriptTypeHeader(_ type: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -450,6 +501,13 @@ struct TranscriptSheetView: View {
         .padding(.vertical, 8)
         .background(.bar)
         .accessibilityElement(children: .contain)
+    }
+
+    private func copyTranscriptLanguage(_ language: String) {
+        UIPasteboard.general.string = language
+        copiedAlertMessage = String(localized: "Transcript language copied to the pasteboard.")
+        copyFeedbackTick &+= 1
+        showCopiedAlert = true
     }
 
     private func copyTranscriptType(_ type: String) {

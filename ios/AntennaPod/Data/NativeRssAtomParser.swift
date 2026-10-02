@@ -109,6 +109,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var enclosureLength: Int64 = 0
     private var transcriptUrl: String?
     private var transcriptType: String?
+    private var transcriptLanguage: String?
     private var transcriptPriority: Int = 0
     private var itemChapters: [PodcastChapter] = []
     private var podcastIndexChapterUrl: String?
@@ -308,6 +309,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             enclosureLength = 0
             transcriptUrl = nil
             transcriptType = nil
+            transcriptLanguage = nil
             transcriptPriority = 0
             itemChapters = []
             podcastIndexChapterUrl = nil
@@ -513,11 +515,12 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 }
             }
         case "transcript":
-            // Podcast Index: <podcast:transcript url="…" type="application/json|text/vtt|application/srt"/>
+            // Podcast Index: <podcast:transcript url="…" type="application/json|text/vtt|application/srt" language="…"/>
             // Prefer JSON > VTT > SRT (AntennaPod Android TranscriptType priority).
             if inItem {
                 let href = attributeDict["url"] ?? attributeDict["href"]
                 let type = attributeDict["type"]
+                let language = Self.nonEmptyAttr(attributeDict["language"] ?? attributeDict["lang"])
                 if let href, !href.isEmpty {
                     let priority = TranscriptTypePreference.priority(forMime: type)
                     // Accept unknown/missing type at lowest priority so a lone URL still works.
@@ -525,6 +528,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     if transcriptUrl == nil || effective > transcriptPriority {
                         transcriptUrl = href
                         transcriptType = type
+                        transcriptLanguage = language
                         transcriptPriority = effective
                     }
                 }
@@ -917,6 +921,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     size: enclosureLength,
                     transcriptUrl: transcriptUrl,
                     transcriptType: transcriptType,
+                    transcriptLanguage: transcriptLanguage,
                     chapters: sorted,
                     podcastIndexChapterUrl: podcastIndexChapterUrl,
                     podcastIndexChapterType: podcastIndexChapterType,

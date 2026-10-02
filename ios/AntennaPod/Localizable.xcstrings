@@ -14139,6 +14139,114 @@
         }
       }
     },
+    "Transcript language": {
+      "extractionState": "manual",
+      "comment": "Caption for the exact non-empty feed-provided podcast:transcript language attribute.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript language"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript-Sprache"
+          }
+        }
+      }
+    },
+    "Copy transcript language": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying a transcript language.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy transcript language"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript-Sprache kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed transcript language to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying a transcript language.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed transcript language to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigte Transkript-Sprache in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Share transcript language": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing a transcript language.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share transcript language"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript-Sprache teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed transcript language as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing a transcript language.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed transcript language as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigte Transkript-Sprache als reinen Text"
+          }
+        }
+      }
+    },
+    "Transcript language copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for a transcript language.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript language copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transkript-Sprache in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
     "Transcript type": {
       "extractionState": "manual",
       "comment": "Caption for the feed-provided transcript type.",

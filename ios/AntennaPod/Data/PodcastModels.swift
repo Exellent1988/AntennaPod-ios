@@ -1674,6 +1674,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     var transcriptUrl: String?
     /// Podcast Index transcript MIME (`application/json`, `text/vtt`, `application/srt`, …).
     var transcriptType: String?
+    /// Feed-provided Podcast Index transcript language attribute; nil when absent.
+    var transcriptLanguage: String?
     /// Chapters: feed PSC/Atom, fetched Podcast Index JSON, or media-file tags (when persisted after local read).
     var chapters: [PodcastChapter]
     /// Podcast Index `podcast:chapters` remote JSON URL (fetched lazily when needed).
@@ -1740,6 +1742,14 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         return true
     }
 
+    /// Trimmed non-empty feed-provided transcript language. Hidden when missing — never invent a language.
+    /// The raw feed string is display/copy/share text; no locale or language code is synthesized.
+    var displayTranscriptLanguage: String? {
+        guard let transcriptLanguage else { return nil }
+        let trimmed = transcriptLanguage.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
     /// Trimmed non-empty feed-provided transcript type. Hidden when missing — never invent MIME.
     /// The raw `transcriptType` remains the fetch hint; this value is display/copy/share text only.
     var displayTranscriptType: String? {
@@ -1801,6 +1811,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         size: Int64 = 0,
         transcriptUrl: String? = nil,
         transcriptType: String? = nil,
+        transcriptLanguage: String? = nil,
         chapters: [PodcastChapter] = [],
         podcastIndexChapterUrl: String? = nil,
         podcastIndexChapterType: String? = nil,
@@ -1830,6 +1841,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.size = size
         self.transcriptUrl = transcriptUrl
         self.transcriptType = transcriptType
+        self.transcriptLanguage = transcriptLanguage
         self.chapters = chapters
         self.podcastIndexChapterUrl = podcastIndexChapterUrl
         self.podcastIndexChapterType = podcastIndexChapterType
@@ -1862,6 +1874,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         size = try c.decodeIfPresent(Int64.self, forKey: .size) ?? 0
         transcriptUrl = try c.decodeIfPresent(String.self, forKey: .transcriptUrl)
         transcriptType = try c.decodeIfPresent(String.self, forKey: .transcriptType)
+        transcriptLanguage = try c.decodeIfPresent(String.self, forKey: .transcriptLanguage)
         chapters = try c.decodeIfPresent([PodcastChapter].self, forKey: .chapters) ?? []
         podcastIndexChapterUrl = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterUrl)
         podcastIndexChapterType = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterType)
