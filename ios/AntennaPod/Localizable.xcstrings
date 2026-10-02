@@ -17098,6 +17098,96 @@
         }
       }
     },
+    "Content type copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for alternate source content type.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Content type copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inhaltstyp in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy content type": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying an alternate source content type.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy content type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inhaltstyp kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed alternate source content type to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying an alternate source content type.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed alternate source content type to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den exakt angezeigten Inhaltstyp der alternativen Quelle in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Share content type": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing an alternate source content type.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share content type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inhaltstyp teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed alternate source content type as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing an alternate source content type.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed alternate source content type as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den exakt angezeigten Inhaltstyp der alternativen Quelle als reinen Text"
+          }
+        }
+      }
+    },
     "Content type %@": {
       "extractionState": "manual",
       "comment": "VoiceOver label for podcast:source contentType when set.",

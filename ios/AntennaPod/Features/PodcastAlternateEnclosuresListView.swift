@@ -16,6 +16,7 @@ struct PodcastAlternateEnclosuresListView: View {
     var title: String = String(localized: "Alternate media")
 
     @State private var showCopiedAlert = false
+    @State private var copiedMessage = String(localized: "Media URL copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     private var capped: (shown: [PodcastAlternateEnclosure], truncated: Bool) {
@@ -62,7 +63,7 @@ struct PodcastAlternateEnclosuresListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Media URL copied to the pasteboard."))
+                Text(copiedMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -195,9 +196,10 @@ struct PodcastAlternateEnclosuresListView: View {
 
             if let copyText, !copyText.isEmpty {
                 Button {
-                    UIPasteboard.general.string = copyText
-                    copyFeedbackTick += 1
-                    showCopiedAlert = true
+                    copyToPasteboard(
+                        copyText,
+                        confirmation: String(localized: "Media URL copied to the pasteboard.")
+                    )
                 } label: {
                     Label("Copy", systemImage: "doc.on.doc")
                         .font(.subheadline)
@@ -230,5 +232,39 @@ struct PodcastAlternateEnclosuresListView: View {
                 )
             }
         }
+
+        if let contentType = source.displayContentType {
+            HStack(spacing: 12) {
+                Button {
+                    copyToPasteboard(
+                        contentType,
+                        confirmation: String(localized: "Content type copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy content type", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy content type"))
+                .accessibilityHint(
+                    String(localized: "Copies the exact displayed alternate source content type to the pasteboard")
+                )
+
+                ShareLink(item: contentType) {
+                    Label("Share content type", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share content type"))
+                .accessibilityHint(
+                    String(localized: "Shares the exact displayed alternate source content type as plain text")
+                )
+            }
+        }
+    }
+
+    private func copyToPasteboard(_ string: String, confirmation: String) {
+        UIPasteboard.general.string = string
+        copiedMessage = confirmation
+        copyFeedbackTick &+= 1
+        showCopiedAlert = true
     }
 }
