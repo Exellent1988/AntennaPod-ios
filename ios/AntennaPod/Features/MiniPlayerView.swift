@@ -11,6 +11,8 @@ struct MiniPlayerView: View {
     @State private var showCustomSleepTimer = false
     @State private var showCustomPlaybackSpeed = false
     @State private var showBookmarks = false
+    @State private var showAtCapAlert = false
+    @State private var bookmarkAddedTick = 0
     @State private var showJumpToPosition = false
     @State private var showDescription = false
     @State private var showTranscript = false
@@ -170,12 +172,28 @@ struct MiniPlayerView: View {
                             .accessibilityLabel(String(localized: "Next chapter"))
                             .accessibilityHint(String(localized: "Seeks to the next chapter"))
                         }
+                        // Add bookmark — one-tap at current wall-clock position (empty note).
+                        // Same 50/episode cap as Full sheet: disabled at cap + honesty alert.
+                        Button {
+                            addBookmarkFromMini()
+                        } label: {
+                            Label(
+                                String(localized: "Add bookmark"),
+                                systemImage: "bookmark.fill"
+                            )
+                        }
+                        .disabled(!canAddBookmark)
+                        .accessibilityLabel(String(localized: "Add bookmark"))
+                        .accessibilityHint(addBookmarkAccessibilityHint)
+                        .accessibilityValue(format(playback.positionSeconds))
                         Button {
                             showBookmarks = true
                         } label: {
                             Label("Bookmarks", systemImage: "bookmark")
                         }
+                        .accessibilityLabel(String(localized: "Bookmarks"))
                         .accessibilityHint(String(localized: "Lists bookmarks for this episode and saves the current position"))
+                        .accessibilityValue(bookmarksAccessibilityValue(for: episode.id))
                         Button {
                             showJumpToPosition = true
                         } label: {
@@ -366,6 +384,15 @@ struct MiniPlayerView: View {
                     .environmentObject(playback)
                     .environmentObject(store)
             }
+            .alert(
+                String(localized: "Bookmark limit reached"),
+                isPresented: $showAtCapAlert
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(String(localized: "This episode already has 50 bookmarks. Delete one to add another."))
+            }
+            .sensoryFeedback(.success, trigger: bookmarkAddedTick)
             .sheet(isPresented: $showJumpToPosition) {
                 JumpToPositionSheet(initialSeconds: playback.positionSeconds)
                     .environmentObject(playback)
@@ -382,6 +409,50 @@ struct MiniPlayerView: View {
                 TranscriptSheetView(episode: store.episode(id: episode.id) ?? episode)
                     .environmentObject(playback)
             }
+        }
+    }
+
+    /// Same cap gate as `EpisodeBookmarksSheet.canAdd` (minus note UI): current episode + finite position + under 50.
+    private var canAddBookmark: Bool {
+        guard let episode = playback.currentEpisode else { return false }
+        return playback.positionSeconds.isFinite
+            && playback.positionSeconds >= 0
+            && !store.isBookmarkCapReached(for: episode.id)
+    }
+
+    private var addBookmarkAccessibilityHint: String {
+        if let episode = playback.currentEpisode, store.isBookmarkCapReached(for: episode.id) {
+            return String(localized: "Limit reached — delete a bookmark first")
+        }
+        return String(localized: "Saves the current playback position as a bookmark")
+    }
+
+    private func bookmarksAccessibilityValue(for episodeId: String) -> String {
+        let count = store.bookmarkCount(for: episodeId)
+        if count == 0 {
+            return String(localized: "No bookmarks")
+        }
+        return String(localized: "\(count) bookmarks")
+    }
+
+    /// One-tap Add from mini ⋯ — empty note; same `PodcastStore.addBookmark` / 50-cap as Full sheet.
+    private func addBookmarkFromMini() {
+        guard let episode = playback.currentEpisode else { return }
+        if store.isBookmarkCapReached(for: episode.id) {
+            showAtCapAlert = true
+            return
+        }
+        let position = playback.positionSeconds
+        guard position.isFinite, position >= 0 else { return }
+        let ok = store.addBookmark(
+            episodeId: episode.id,
+            positionSeconds: position,
+            note: ""
+        )
+        if ok {
+            bookmarkAddedTick += 1
+        } else {
+            showAtCapAlert = true
         }
     }
 

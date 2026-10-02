@@ -441,8 +441,9 @@ Tap the mini player title or progress bar to open a full-screen sheet: feed artw
 
 **User bookmarks** for the **currently playing episode** — not feed chapters and not **Share with position**.
 
-- **Save:** Full player secondary **Bookmarks** (or mini player ⋯ → **Bookmarks**) → **Bookmark current position** stores wall-clock `PlaybackService.positionSeconds` plus an optional short note (trimmed, ≤120 characters) in Application Support `bookmarks.json` (episode id → array).
-- **List / seek / delete:** Same sheet lists bookmarks newest-first; tap seeks via `PlaybackService.seek(toSeconds:)`; swipe deletes. Cap **50 per episode** — Add is disabled with an honesty alert when at the limit.
+- **Save (Full / sheet):** Full player secondary **Bookmarks** → sheet → **Bookmark current position** stores wall-clock `PlaybackService.positionSeconds` plus an optional short note (trimmed, ≤120 characters) in Application Support `bookmarks.json` (episode id → array).
+- **Save (Mini ⋯ one-tap):** **Add bookmark** saves the current wall-clock position with an **empty note** (same `PodcastStore.addBookmark` / `bookmarks.json`). **Disabled** at the **50/episode** cap with the same honesty alert as the sheet (“Bookmark limit reached”). Hidden when nothing is playing (mini only exists while an episode is loaded).
+- **List / seek / delete:** Mini ⋯ **Bookmarks** (and Full secondary) open the same `EpisodeBookmarksSheet`: newest-first list; tap seeks via `PlaybackService.seek(toSeconds:)`; swipe deletes; sheet Add still accepts an optional note. Cap **50 per episode**.
 - **Honesty:** **Local-only** (included in JSON data backup); **not** synced via gpodder / Nextcloud. Positions are wall-clock (no playback-speed divide). Distinct from PSC/Podcast Index/media **chapters** and from **Share with position** (share text timestamp only). Unsubscribing a feed clears bookmarks for that feed’s episodes.
 
 

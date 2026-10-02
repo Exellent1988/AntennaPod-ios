@@ -23527,6 +23527,23 @@
           }
         }
       }
+    },
+    "Add bookmark": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add bookmark"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesezeichen hinzufügen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
