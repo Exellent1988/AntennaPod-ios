@@ -60,6 +60,13 @@ struct FeedSettings: Hashable, Codable, Equatable {
     /// Survives feed refresh; cleared with other FeedSettings on unsubscribe.
     var privateNote: String?
 
+    /// Local **Keep at top** preference for the Subscriptions list (AntennaPod-like pin).
+    /// Default `false`. When true, this feed sorts above unpinned feeds after filters, for every
+    /// `subscriptionsSort` — not a separate Picker sort mode; not synced (gpodder/OPML).
+    /// Stored in `feed-settings.json`; survives refresh; cleared with other FeedSettings on unsubscribe.
+    /// iOS JSON backup already includes FeedSettings — no side map.
+    var isPinned: Bool
+
     /// Max stored length for `customTitle` (trim first; empty → nil).
     static let customTitleMaxLength = 100
 
@@ -77,7 +84,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
         playbackSpeed: nil,
         episodeSort: nil,
         customTitle: nil,
-        privateNote: nil
+        privateNote: nil,
+        isPinned: false
     )
 
     init(
@@ -91,7 +99,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
         playbackSpeed: Float? = nil,
         episodeSort: FeedEpisodeSort? = nil,
         customTitle: String? = nil,
-        privateNote: String? = nil
+        privateNote: String? = nil,
+        isPinned: Bool = false
     ) {
         self.autoDownload = autoDownload
         self.keepUpdated = keepUpdated
@@ -104,6 +113,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         self.episodeSort = episodeSort
         self.customTitle = Self.normalizedCustomTitle(customTitle)
         self.privateNote = Self.normalizedPrivateNote(privateNote)
+        self.isPinned = isPinned
     }
 
     init(from decoder: Decoder) throws {
@@ -129,6 +139,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         privateNote = Self.normalizedPrivateNote(
             try c.decodeIfPresent(String.self, forKey: .privateNote)
         )
+        isPinned = try c.decodeIfPresent(Bool.self, forKey: .isPinned) ?? false
     }
 
     /// Whether auto-download may enqueue for this feed (override beats global).
@@ -222,7 +233,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
 
     private enum CodingKeys: String, CodingKey {
         case autoDownload, keepUpdated, notifyOnNewEpisodes, autoDeleteAfterPlaying, newEpisodeAction
-        case skipIntroSeconds, skipOutroSeconds, playbackSpeed, episodeSort, customTitle, privateNote
+        case skipIntroSeconds, skipOutroSeconds, playbackSpeed, episodeSort, customTitle, privateNote, isPinned
     }
 
     /// Trim, empty → nil, cap at `customTitleMaxLength` (grapheme-aware via String count).

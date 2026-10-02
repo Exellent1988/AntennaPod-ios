@@ -36,21 +36,26 @@ struct SubscriptionsView: View {
     /// Inbox / `unplayedCountsByFeedId`); equal counts → title A–Z tiebreak.
     /// Recently / Least recently refreshed: by `lastRefreshedAtEpochMs` (successful network only);
     /// nil / local-folder last — never invent; title tiebreak.
+    /// After the chosen `subscriptionsSort`, **pinned** feeds (`FeedSettings.isPinned`) are partitioned
+    /// first (stable among pinned / unpinned by the same sort key). Local preference only — not a
+    /// separate Picker sort mode. Flat-list partition runs before grouping; tag sections inherit
+    /// that order (pinned still first within each section).
     private func sortedFeeds(_ feeds: [PodcastFeed]) -> [PodcastFeed] {
+        let sorted: [PodcastFeed]
         switch settings.subscriptionsSort {
         case .recentlyUpdated:
-            return feeds.sorted { lhs, rhs in
+            sorted = feeds.sorted { lhs, rhs in
                 let l = lhs.episodes.compactMap(\.pubDateEpochMs).max() ?? Int64.min
                 let r = rhs.episodes.compactMap(\.pubDateEpochMs).max() ?? Int64.min
                 if l != r { return l > r }
                 return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
             }
         case .alphabetical:
-            return feeds.sorted {
+            sorted = feeds.sorted {
                 feedDisplayTitle($0).localizedCaseInsensitiveCompare(feedDisplayTitle($1)) == .orderedAscending
             }
         case .byAuthor:
-            return feeds.sorted { lhs, rhs in
+            sorted = feeds.sorted { lhs, rhs in
                 switch (lhs.displayAuthor, rhs.displayAuthor) {
                 case (nil, nil):
                     return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
@@ -65,7 +70,7 @@ struct SubscriptionsView: View {
                 }
             }
         case .byLanguage:
-            return feeds.sorted { lhs, rhs in
+            sorted = feeds.sorted { lhs, rhs in
                 switch (lhs.displayLanguage, rhs.displayLanguage) {
                 case (nil, nil):
                     return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
@@ -82,7 +87,7 @@ struct SubscriptionsView: View {
         case .mostUnplayed:
             // Same definition as row badges / Inbox (`!isPlayed && !isArchived`; missing = 0).
             let counts = store.unplayedCountsByFeedId()
-            return feeds.sorted { lhs, rhs in
+            sorted = feeds.sorted { lhs, rhs in
                 let l = counts[lhs.id] ?? 0
                 let r = counts[rhs.id] ?? 0
                 if l != r { return l > r }
@@ -90,7 +95,7 @@ struct SubscriptionsView: View {
             }
         case .recentlyRefreshed:
             // Newest successful network stamp first; nil / local-folder last (never invent).
-            return feeds.sorted { lhs, rhs in
+            sorted = feeds.sorted { lhs, rhs in
                 switch (lhs.lastRefreshedAtEpochMs, rhs.lastRefreshedAtEpochMs) {
                 case (nil, nil):
                     return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
@@ -105,7 +110,7 @@ struct SubscriptionsView: View {
             }
         case .leastRecentlyRefreshed:
             // Oldest successful network stamp first; nil / local-folder last (never invent).
-            return feeds.sorted { lhs, rhs in
+            sorted = feeds.sorted { lhs, rhs in
                 switch (lhs.lastRefreshedAtEpochMs, rhs.lastRefreshedAtEpochMs) {
                 case (nil, nil):
                     return feedDisplayTitle(lhs).localizedCaseInsensitiveCompare(feedDisplayTitle(rhs)) == .orderedAscending
@@ -119,6 +124,10 @@ struct SubscriptionsView: View {
                 }
             }
         }
+        // Invisible pin partition on every existing sort (not a new Picker case).
+        let pinned = sorted.filter { store.isPinned(feedId: $0.id) }
+        let unpinned = sorted.filter { !store.isPinned(feedId: $0.id) }
+        return pinned + unpinned
     }
 
     /// Visible subscriptions after search; empty query shows full list under current sort.
@@ -206,7 +215,8 @@ struct SubscriptionsView: View {
     }
 
     /// Sections when grouping is on and filter is All (multi-tag feeds appear under each tag).
-    /// Feeds within each section follow `subscriptionsSort` (inherited from `languageFilteredFeeds`).
+    /// Feeds within each section follow `subscriptionsSort` + pin partition (inherited from
+    /// `languageFilteredFeeds` / flat-list order before grouping — pinned still first within section).
     private var groupedSections: [(title: String, feeds: [PodcastFeed])] {
         guard tagFilter == .all, groupByTag, !store.allTags.isEmpty else {
             return [("Podcasts", tagFilteredFeeds)]
@@ -841,6 +851,13 @@ struct SubscriptionsView: View {
                     }
                 }
                 Spacer(minLength: 8)
+                // Subtle Keep-at-top pin (does not replace unplayed badge).
+                if store.isPinned(feedId: feed.id) {
+                    Image(systemName: "pin.fill")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
+                }
                 // AntennaPod-like unplayed badge + per-feed remaining; both hidden when 0 unplayed.
                 // Remaining text also hidden when all durations unknown (badge still shows count).
                 VStack(alignment: .trailing, spacing: 4) {
@@ -878,6 +895,22 @@ struct SubscriptionsView: View {
         }
         .swipeActions(edge: .leading) {
             Button {
+                store.togglePinned(feedId: feed.id)
+            } label: {
+                if store.isPinned(feedId: feed.id) {
+                    Label("Don’t keep at top", systemImage: "pin.slash")
+                } else {
+                    Label("Keep at top", systemImage: "pin")
+                }
+            }
+            .tint(.orange)
+            .accessibilityLabel(
+                store.isPinned(feedId: feed.id)
+                    ? String(localized: "Don’t keep at top")
+                    : String(localized: "Keep at top")
+            )
+            .accessibilityHint(String(localized: "Pins or unpins this podcast at the top of the Subscriptions list"))
+            Button {
                 Task { await store.refresh(feed) }
             } label: {
                 if LocalFolderFeed.isLocalFolderFeed(feed) {
@@ -893,7 +926,13 @@ struct SubscriptionsView: View {
                     : String(localized: "Fetches the podcast feed from the network")
             )
         }
-        .modifier(OpenPodcastWebsiteContextMenu(url: feed.websiteURL, openURL: openURL))
+        .modifier(SubscriptionRowContextMenu(
+            feedId: feed.id,
+            websiteURL: feed.websiteURL,
+            isPinned: store.isPinned(feedId: feed.id),
+            openURL: openURL,
+            onTogglePin: { store.togglePinned(feedId: feed.id) }
+        ))
     }
 
 
@@ -929,6 +968,9 @@ struct SubscriptionsView: View {
         remainingLabel: String?
     ) -> String {
         var parts: [String] = [feedDisplayTitle(feed)]
+        if store.isPinned(feedId: feed.id) {
+            parts.append(String(localized: "Kept at top"))
+        }
         if LocalFolderFeed.isLocalFolderFeed(feed) {
             parts.append(String(localized: "Folder"))
         }
@@ -980,15 +1022,33 @@ struct SubscriptionsView: View {
 }
 
 
-/// Attaches a context-menu action only when `siteLink` is a usable http(s) URL (hidden otherwise).
-private struct OpenPodcastWebsiteContextMenu: ViewModifier {
-    let url: URL?
+/// Subscriptions row context menu: Keep at top toggle + optional Open podcast website.
+private struct SubscriptionRowContextMenu: ViewModifier {
+    let feedId: UUID
+    let websiteURL: URL?
+    let isPinned: Bool
     let openURL: OpenURLAction
+    let onTogglePin: () -> Void
 
-    @ViewBuilder
     func body(content: Content) -> some View {
-        if let url {
-            content.contextMenu {
+        content.contextMenu {
+            Button {
+                onTogglePin()
+            } label: {
+                if isPinned {
+                    Label("Don’t keep at top", systemImage: "pin.slash")
+                } else {
+                    Label("Keep at top", systemImage: "pin")
+                }
+            }
+            .accessibilityLabel(
+                isPinned
+                    ? String(localized: "Don’t keep at top")
+                    : String(localized: "Keep at top")
+            )
+            .accessibilityHint(String(localized: "Pins or unpins this podcast at the top of the Subscriptions list"))
+
+            if let url = websiteURL {
                 Button {
                     openURL(url)
                 } label: {
@@ -997,8 +1057,6 @@ private struct OpenPodcastWebsiteContextMenu: ViewModifier {
                 .accessibilityLabel(String(localized: "Open podcast website"))
                 .accessibilityHint(String(localized: "Opens the podcast webpage in the system browser"))
             }
-        } else {
-            content
         }
     }
 }

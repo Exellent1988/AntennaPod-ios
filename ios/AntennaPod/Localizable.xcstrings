@@ -26193,6 +26193,125 @@
           }
         }
       }
+    },
+    "Keep at top": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep at top"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oben halten"
+          }
+        }
+      }
+    },
+    "Don’t keep at top": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Don’t keep at top"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht oben halten"
+          }
+        }
+      }
+    },
+    "Kept at top": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kept at top"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oben gehalten"
+          }
+        }
+      }
+    },
+    "Pins or unpins this podcast at the top of the Subscriptions list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pins or unpins this podcast at the top of the Subscriptions list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heftet diesen Podcast oben in der Abonnementliste an oder löst ihn"
+          }
+        }
+      }
+    },
+    "Pins this podcast above unpinned ones on the Subscriptions list for every sort. Local preference only — not synced.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pins this podcast above unpinned ones on the Subscriptions list for every sort. Local preference only — not synced."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heftet diesen Podcast über nicht angeheftete in der Abonnementliste für jede Sortierung. Nur lokale Einstellung — nicht synchronisiert."
+          }
+        }
+      }
+    },
+    "Subscriptions list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnementliste"
+          }
+        }
+      }
+    },
+    "When on, this podcast stays above unpinned podcasts on Subscriptions for every sort (Recently updated, Alphabetical, …). Local preference only — not a separate sort mode; not synced to gpodder; cleared when you unsubscribe. Included in iOS JSON backup with other feed settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, this podcast stays above unpinned podcasts on Subscriptions for every sort (Recently updated, Alphabetical, …). Local preference only — not a separate sort mode; not synced to gpodder; cleared when you unsubscribe. Included in iOS JSON backup with other feed settings."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, bleibt dieser Podcast über nicht angehefteten Podcasts in Abonnements bei jeder Sortierung (Zuletzt aktualisiert, Alphabetisch, …). Nur lokale Einstellung — kein eigener Sortiermodus; nicht mit gpodder synchronisiert; wird beim Abbestellen gelöscht. In iOS-JSON-Backup mit anderen Feed-Einstellungen enthalten."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

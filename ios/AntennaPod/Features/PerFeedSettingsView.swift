@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Per-subscription overrides (Display name / Private note / Auto-download / Auto-delete after play / Keep updated / New episodes / Notifications / Skip intro·outro / Speed / Episode sort) + HTTP Basic auth (Keychain) + tags.
+/// Per-subscription overrides (Display name / Private note / Keep at top / Auto-download / Auto-delete after play / Keep updated / New episodes / Notifications / Skip intro·outro / Speed / Episode sort) + HTTP Basic auth (Keychain) + tags.
 struct PerFeedSettingsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var appSettings: AppSettings
@@ -114,6 +114,23 @@ struct PerFeedSettingsView: View {
                 Text(String(localized: "Private note"))
             } footer: {
                 Text(String(localized: "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML or HTML export. Included in iOS JSON backup with other feed settings. Survives refresh; cleared when you unsubscribe. Maximum 1000 characters."))
+            }
+
+            Section {
+                Toggle(isOn: isPinnedBinding) {
+                    Label(String(localized: "Keep at top"), systemImage: "pin.fill")
+                }
+                .accessibilityLabel(String(localized: "Keep at top"))
+                .accessibilityHint(String(localized: "Pins this podcast above unpinned ones on the Subscriptions list for every sort. Local preference only — not synced."))
+                .accessibilityValue(
+                    current.isPinned
+                        ? String(localized: "On")
+                        : String(localized: "Off")
+                )
+            } header: {
+                Text(String(localized: "Subscriptions list"))
+            } footer: {
+                Text(String(localized: "When on, this podcast stays above unpinned podcasts on Subscriptions for every sort (Recently updated, Alphabetical, …). Local preference only — not a separate sort mode; not synced to gpodder; cleared when you unsubscribe. Included in iOS JSON backup with other feed settings."))
             }
 
             Section {
@@ -551,6 +568,15 @@ struct PerFeedSettingsView: View {
             get: { current.autoDeleteAfterPlaying },
             set: { value in
                 store.updateFeedSettings(for: feedId) { $0.autoDeleteAfterPlaying = value }
+            }
+        )
+    }
+
+    private var isPinnedBinding: Binding<Bool> {
+        Binding(
+            get: { current.isPinned },
+            set: { value in
+                store.setPinned(feedId: feedId, value)
             }
         )
     }

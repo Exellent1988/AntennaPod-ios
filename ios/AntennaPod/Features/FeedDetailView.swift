@@ -1029,6 +1029,22 @@ struct FeedDetailView: View {
                         .accessibilityHint(String(localized: "Plays a random non-archived episode from this podcast. Prefers unplayed when any remain."))
 
                         Button {
+                            store.togglePinned(feedId: liveFeed.id)
+                        } label: {
+                            if store.isPinned(feedId: liveFeed.id) {
+                                Label("Don’t keep at top", systemImage: "pin.slash")
+                            } else {
+                                Label("Keep at top", systemImage: "pin")
+                            }
+                        }
+                        .accessibilityLabel(
+                            store.isPinned(feedId: liveFeed.id)
+                                ? String(localized: "Don’t keep at top")
+                                : String(localized: "Keep at top")
+                        )
+                        .accessibilityHint(String(localized: "Pins or unpins this podcast at the top of the Subscriptions list"))
+
+                        Button {
                             showDownloadAllConfirm = true
                         } label: {
                             Label("Download all unplayed", systemImage: "arrow.down.circle")

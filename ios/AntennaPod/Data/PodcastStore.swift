@@ -191,6 +191,21 @@ final class PodcastStore: ObservableObject {
         setFeedSettings(current, for: feedId)
     }
 
+    /// Local Keep-at-top / pin preference (`FeedSettings.isPinned`; default false).
+    func isPinned(feedId: UUID) -> Bool {
+        feedSettings(for: feedId).isPinned
+    }
+
+    /// Sets Keep at top for this subscription (persists in `feed-settings.json`; not gpodder).
+    func setPinned(feedId: UUID, _ pinned: Bool) {
+        updateFeedSettings(for: feedId) { $0.isPinned = pinned }
+    }
+
+    /// Toggles Keep at top for this subscription.
+    func togglePinned(feedId: UUID) {
+        setPinned(feedId: feedId, !isPinned(feedId: feedId))
+    }
+
     /// User-facing podcast name for lists / nav / player / search (customTitle ?? RSS title).
     func displayTitle(for feed: PodcastFeed) -> String {
         feed.displayTitle(settings: feedSettings(for: feed.id))
