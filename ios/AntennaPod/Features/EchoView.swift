@@ -1,8 +1,13 @@
 import SwiftUI
+import UIKit
 
 struct EchoView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
+
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     private var summary: EchoYearSummary {
         store.echoYearSummary(in: settings.statisticsTimeRange)
@@ -109,15 +114,45 @@ struct EchoView: View {
         .navigationTitle("Echo")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItemGroup(placement: .primaryAction) {
                 if !summary.isEmpty {
+                    Button {
+                        copyEcho()
+                    } label: {
+                        Label("Copy Echo", systemImage: "doc.on.clipboard")
+                    }
+                    .accessibilityLabel(String(localized: "Copy Echo"))
+                    .accessibilityHint(
+                        String(localized: "Copies the same plain-text summary as Share, using the selected Statistics time range and Reset baseline.")
+                    )
+
                     ShareLink(item: Self.shareText(for: summary, range: settings.statisticsTimeRange)) {
                         Label("Share", systemImage: "square.and.arrow.up")
                     }
-                    .accessibilityHint(String(localized: "Opens the system share sheet with a plain-text Echo summary"))
+                    .accessibilityHint(
+                        String(localized: "Shares the same plain-text Echo summary using the selected Statistics time range and Reset baseline.")
+                    )
                 }
             }
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
+    }
+
+    private func copyEcho() {
+        let text = Self.shareText(for: summary, range: settings.statisticsTimeRange)
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Echo summary copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private var sectionHeader: String {

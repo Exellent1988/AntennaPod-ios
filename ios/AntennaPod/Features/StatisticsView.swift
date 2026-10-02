@@ -1,10 +1,14 @@
 import SwiftUI
+import UIKit
 
 struct StatisticsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
 
     @State private var showResetConfirm = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     private var stats: ListeningStatistics {
         store.listeningStatistics(in: settings.statisticsTimeRange)
@@ -130,9 +134,22 @@ struct StatisticsView: View {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     if !stats.isEmpty {
+                        Button {
+                            copyStatistics()
+                        } label: {
+                            Label("Copy statistics", systemImage: "doc.on.clipboard")
+                        }
+                        .accessibilityLabel(String(localized: "Copy statistics"))
+                        .accessibilityHint(
+                            String(localized: "Copies the same plain-text summary as Share, using the selected Statistics time range and Reset baseline.")
+                        )
+
                         ShareLink(item: Self.shareText(for: stats, range: settings.statisticsTimeRange)) {
                             Label("Share", systemImage: "square.and.arrow.up")
                         }
+                        .accessibilityHint(
+                            String(localized: "Shares the same plain-text summary using the selected Statistics time range and Reset baseline.")
+                        )
                     }
                     Button("Reset statistics", role: .destructive) {
                         showResetConfirm = true
@@ -142,9 +159,18 @@ struct StatisticsView: View {
                     Label("Statistics actions", systemImage: "ellipsis.circle")
                 }
                 .accessibilityLabel(String(localized: "Statistics actions"))
-                .accessibilityHint(String(localized: "Share summary or reset Statistics baseline"))
+                .accessibilityHint(String(localized: "Copy or share the same plain-text summary, or reset Statistics baseline"))
             }
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
         .confirmationDialog(
             "Reset statistics?",
             isPresented: $showResetConfirm,
@@ -157,6 +183,15 @@ struct StatisticsView: View {
         } message: {
             Text(Self.resetConfirmMessage)
         }
+    }
+
+    private func copyStatistics() {
+        let text = Self.shareText(for: stats, range: settings.statisticsTimeRange)
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Statistics copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private var emptyTitle: String {
