@@ -28,7 +28,7 @@ enum AppTheme: String, CaseIterable, Identifiable {
 }
 
 /// Max size of Documents/downloads (P0 Speicherverwaltung).
-/// AntennaPod Android uses an episode *count* cache; iOS beta uses a byte budget instead.
+/// Byte budget (MB/GB). Episode *count* cache is `DownloadEpisodeCacheLimit` (Android-like).
 enum DownloadStorageLimit: Equatable, Hashable, Identifiable {
     case unlimited
     case gigabytes(Int)
@@ -149,6 +149,36 @@ enum MaxParallelDownloads: Int, CaseIterable, Identifiable {
     }
 }
 
+
+/// Cap: how many **completed** offline downloads to keep (episode count cache).
+/// `0` = Unlimited. When over the cap, `DownloadService` evicts eligible files
+/// (played non-favorite non-queued first; favorites and queued are never auto-deleted by this cap).
+enum DownloadEpisodeCacheLimit: Int, CaseIterable, Identifiable {
+    case twentyFive = 25
+    case fifty = 50
+    case oneHundred = 100
+    case twoHundred = 200
+    case fiveHundred = 500
+    case unlimited = 0
+
+    var id: Int { rawValue }
+
+    /// `nil` means no eviction by episode count.
+    var episodeLimit: Int? {
+        self == .unlimited ? nil : rawValue
+    }
+
+    var label: String {
+        switch self {
+        case .twentyFive: return String(localized: "25 episodes")
+        case .fifty: return String(localized: "50 episodes")
+        case .oneHundred: return String(localized: "100 episodes")
+        case .twoHundred: return String(localized: "200 episodes")
+        case .fiveHundred: return String(localized: "500 episodes")
+        case .unlimited: return String(localized: "Unlimited")
+        }
+    }
+}
 
 
 /// Preferred media source when starting playback (P0 Prefer stream vs download).
@@ -769,7 +799,7 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 }
 
 
-/// User preferences for P0 Settings (theme, default playback speed, download storage limit, max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
+/// User preferences for P0 Settings (theme, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, skip intro/outro, volume adaptation, skip silence preference, Stereo to mono, new-episode / download-error / sync-error notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort, Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Queue filter chips, queue lock, Statistics/Echo time range).
 @MainActor
 final class AppSettings: ObservableObject {
     static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
@@ -826,6 +856,7 @@ final class AppSettings: ObservableObject {
         static let autoDownloadEnabled = "settings.autoDownload.enabled"
         static let autoDownloadEpisodesPerFeed = "settings.autoDownload.episodesPerFeed"
         static let maxParallelDownloads = "settings.maxParallelDownloads"
+        static let downloadEpisodeCacheLimit = "settings.downloadEpisodeCacheLimit"
         static let autoDownloadWifiOnly = "settings.autoDownload.wifiOnly"
         static let manualDownloadWifiOnly = "settings.manualDownload.wifiOnly"
         static let streamWifiOnly = "settings.stream.wifiOnly"
@@ -946,6 +977,13 @@ final class AppSettings: ObservableObject {
     @Published var maxParallelDownloads: MaxParallelDownloads {
         didSet {
             UserDefaults.standard.set(maxParallelDownloads.rawValue, forKey: Keys.maxParallelDownloads)
+        }
+    }
+
+    /// Max completed offline downloads to keep (25/50/100/200/500 or Unlimited). Default Unlimited.
+    @Published var downloadEpisodeCacheLimit: DownloadEpisodeCacheLimit {
+        didSet {
+            UserDefaults.standard.set(downloadEpisodeCacheLimit.rawValue, forKey: Keys.downloadEpisodeCacheLimit)
         }
     }
 
@@ -1464,6 +1502,9 @@ final class AppSettings: ObservableObject {
         let parallelRaw = UserDefaults.standard.object(forKey: Keys.maxParallelDownloads) as? Int
             ?? MaxParallelDownloads.three.rawValue
         maxParallelDownloads = MaxParallelDownloads(rawValue: parallelRaw) ?? .three
+        let cacheRaw = UserDefaults.standard.object(forKey: Keys.downloadEpisodeCacheLimit) as? Int
+            ?? DownloadEpisodeCacheLimit.unlimited.rawValue
+        downloadEpisodeCacheLimit = DownloadEpisodeCacheLimit(rawValue: cacheRaw) ?? .unlimited
         if UserDefaults.standard.object(forKey: Keys.autoDownloadWifiOnly) != nil {
             autoDownloadWifiOnly = UserDefaults.standard.bool(forKey: Keys.autoDownloadWifiOnly)
         } else {
@@ -1880,6 +1921,7 @@ final class AppSettings: ObservableObject {
             autoDownloadEnabled: autoDownloadEnabled,
             autoDownloadEpisodesPerFeed: autoDownloadEpisodesPerFeed.rawValue,
             maxParallelDownloads: maxParallelDownloads.rawValue,
+            downloadEpisodeCacheLimit: downloadEpisodeCacheLimit.rawValue,
             autoDownloadWifiOnly: autoDownloadWifiOnly,
             manualDownloadWifiOnly: manualDownloadWifiOnly,
             streamWifiOnly: streamWifiOnly,
@@ -1964,6 +2006,9 @@ final class AppSettings: ObservableObject {
             AutoDownloadEpisodesPerFeed(rawValue: snap.autoDownloadEpisodesPerFeed) ?? .two
         maxParallelDownloads =
             MaxParallelDownloads(rawValue: snap.maxParallelDownloads ?? MaxParallelDownloads.three.rawValue) ?? .three
+        downloadEpisodeCacheLimit =
+            DownloadEpisodeCacheLimit(rawValue: snap.downloadEpisodeCacheLimit ?? DownloadEpisodeCacheLimit.unlimited.rawValue)
+            ?? .unlimited
         autoDownloadWifiOnly = snap.autoDownloadWifiOnly
         manualDownloadWifiOnly = snap.manualDownloadWifiOnly
         streamWifiOnly = snap.streamWifiOnly
@@ -2102,6 +2147,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var autoDownloadEpisodesPerFeed: Int
     /// Absent in older backups → 3 (default).
     var maxParallelDownloads: Int? = 3
+    /// Absent in older backups → Unlimited (0). Raw `DownloadEpisodeCacheLimit` value.
+    var downloadEpisodeCacheLimit: Int? = 0
     var autoDownloadWifiOnly: Bool
     var manualDownloadWifiOnly: Bool
     var streamWifiOnly: Bool

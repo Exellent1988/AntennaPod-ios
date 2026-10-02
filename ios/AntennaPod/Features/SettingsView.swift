@@ -199,16 +199,23 @@ struct SettingsView: View {
                     "Delete episode after playing",
                     "Used",
                     "Max storage",
+                    "Max downloaded episodes",
                     "Parallel downloads",
                     "Clear downloads",
                     "Unlimited",
                     "Custom (MB)",
+                    "25 episodes",
+                    "50 episodes",
+                    "100 episodes",
+                    "200 episodes",
+                    "500 episodes",
                     "1 at a time",
                     "2 parallel",
                     "3 parallel",
                     "4 parallel",
                     "5 parallel",
                     "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch.",
+                    "When over the episode count, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU). Favorites and queued episodes are never auto-deleted by this cap. Runs after each successful download, when opening Settings, and on launch. Separate from the Max storage byte budget.",
                     "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch."
                 ) {
                     storageSection
@@ -1137,6 +1144,20 @@ struct SettingsView: View {
             Text(evictionHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            Picker(String(localized: "Max downloaded episodes"), selection: $settings.downloadEpisodeCacheLimit) {
+                ForEach(DownloadEpisodeCacheLimit.allCases) { cap in
+                    Text(cap.label).tag(cap)
+                }
+            }
+            .accessibilityLabel(String(localized: "Max downloaded episodes"))
+            .accessibilityHint(String(localized: "Maximum number of completed offline downloads to keep. Unlimited by default. Favorites and queued episodes are never auto-deleted by this limit."))
+            .onChange(of: settings.downloadEpisodeCacheLimit) { _, _ in
+                downloads.runStorageMaintenance()
+            }
+            Text(episodeCacheHelpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(episodeCacheHelpText)
             Picker(String(localized: "Parallel downloads"), selection: $settings.maxParallelDownloads) {
                 ForEach(MaxParallelDownloads.allCases) { cap in
                     Text(cap.label).tag(cap)
@@ -1158,6 +1179,10 @@ struct SettingsView: View {
         } header: {
             Text("Downloads / Storage")
         }
+    }
+
+    private var episodeCacheHelpText: String {
+        String(localized: "When over the episode count, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU). Favorites and queued episodes are never auto-deleted by this cap. Runs after each successful download, when opening Settings, and on launch. Separate from the Max storage byte budget.")
     }
 
     private var parallelDownloadsHelpText: String {

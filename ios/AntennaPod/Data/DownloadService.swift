@@ -164,7 +164,7 @@ final class DownloadService: ObservableObject {
 
     static let downloadErrorRingCapacity = 50
 
-    /// Bound from the app so eviction can prefer played episodes (AntennaPod-like).
+    /// Bound from the app so eviction can prefer played episodes and skip favorites / queue.
     weak var store: PodcastStore?
     /// Bound for the configured byte budget.
     weak var settings: AppSettings?
@@ -547,10 +547,41 @@ final class DownloadService: ObservableObject {
         return removed
     }
 
-    /// App launch / Settings: refresh usage then evict if over budget.
+    /// App launch / Settings: refresh usage then evict if over byte budget and/or episode-count cache.
     func runStorageMaintenance() {
         refreshStorageUsage()
         _ = enforceStorageLimit()
+        _ = enforceEpisodeCacheLimit()
+    }
+
+    /// Keeps completed Downloads catalog at or under `downloadEpisodeCacheLimit`.
+    /// Eviction order (honest — favorites and queue are never auto-deleted by this cap):
+    /// 1. Played + not favorited + not queued, oldest file mtime first.
+    /// 2. Unplayed + not favorited + not queued, oldest mtime first.
+    /// 3. If only favorites / queued remain over the cap, stop (no silent favorite deletion).
+    /// 4. Unlimited (`episodeLimit == nil`) is a no-op.
+    /// 5. `keepEpisodeId` (just-finished download) is skipped when choosing victims.
+    ///
+    /// Distinct from the byte `enforceStorageLimit` (which does not protect favorites/queue).
+    /// Called after successful downloads, on Settings open, and on app launch / backup reload.
+    @discardableResult
+    func enforceEpisodeCacheLimit(keepEpisodeId: String? = nil) -> Int {
+        guard let limit = settings?.downloadEpisodeCacheLimit.episodeLimit else {
+            return 0
+        }
+        var removed = 0
+        while downloads.count > limit {
+            guard let victim = nextEpisodeCacheEvictionCandidate(keeping: keepEpisodeId) else {
+                break
+            }
+            let countBefore = downloads.count
+            delete(victim.episode)
+            removed += 1
+            if downloads.count >= countBefore {
+                break
+            }
+        }
+        return removed
     }
 
     // MARK: - Delegate callbacks (from DownloadSessionDelegate)
@@ -568,6 +599,7 @@ final class DownloadService: ObservableObject {
         refreshStorageUsage()
         // Keep the episode we just finished; evict older/played peers if over budget.
         _ = enforceStorageLimit(keepEpisodeId: episode.id)
+        _ = enforceEpisodeCacheLimit(keepEpisodeId: episode.id)
     }
 
     fileprivate func handleTaskCompleted(taskIdentifier: Int, error: Error?) {
@@ -683,6 +715,31 @@ final class DownloadService: ObservableObject {
         let candidates = downloads.filter { item in
             if let keepEpisodeId, item.id == keepEpisodeId { return false }
             return FileManager.default.fileExists(atPath: item.localFileURL.path)
+        }
+        guard !candidates.isEmpty else { return nil }
+
+        func mtime(_ item: DownloadedEpisode) -> Date {
+            let values = try? item.localFileURL.resourceValues(forKeys: [.contentModificationDateKey])
+            return values?.contentModificationDate ?? .distantPast
+        }
+
+        let played = candidates.filter { store?.isPlayed($0.id) == true }
+        if let oldestPlayed = played.min(by: { mtime($0) < mtime($1) }) {
+            return oldestPlayed
+        }
+        return candidates.min(by: { mtime($0) < mtime($1) })
+    }
+
+    /// Episode-count cache victim: never favorites or queued; prefer played, then unplayed; oldest mtime.
+    private func nextEpisodeCacheEvictionCandidate(keeping keepEpisodeId: String?) -> DownloadedEpisode? {
+        let candidates = downloads.filter { item in
+            if let keepEpisodeId, item.id == keepEpisodeId { return false }
+            guard FileManager.default.fileExists(atPath: item.localFileURL.path) else { return false }
+            // Never auto-delete favorited / starred offline files via the count cache.
+            if store?.isFavorite(item.id) == true { return false }
+            // Never auto-delete queued episodes via the count cache (user still intends to listen).
+            if store?.isInQueue(item.id) == true { return false }
+            return true
         }
         guard !candidates.isEmpty else { return nil }
 
