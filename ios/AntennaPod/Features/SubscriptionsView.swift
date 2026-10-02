@@ -826,9 +826,18 @@ struct SubscriptionsView: View {
             Button {
                 Task { await store.refresh(feed) }
             } label: {
-                Label("Refresh", systemImage: "arrow.clockwise")
+                if LocalFolderFeed.isLocalFolderFeed(feed) {
+                    Label("Rescan folder", systemImage: "arrow.clockwise")
+                } else {
+                    Label("Refresh", systemImage: "arrow.clockwise")
+                }
             }
             .tint(.blue)
+            .accessibilityHint(
+                LocalFolderFeed.isLocalFolderFeed(feed)
+                    ? String(localized: "Re-reads audio files in the folder. Does not fetch an RSS feed.")
+                    : String(localized: "Fetches the podcast feed from the network")
+            )
         }
         .modifier(OpenPodcastWebsiteContextMenu(url: feed.websiteURL, openURL: openURL))
     }

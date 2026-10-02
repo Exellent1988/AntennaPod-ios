@@ -16,6 +16,7 @@ struct FeedDetailView: View {
     @State private var showFeedURLCopied = false
     @State private var showPodcastGuidCopied = false
     @State private var showFeedDescription = false
+    @State private var isRescanningLocalFolder = false
     @Environment(\.dismiss) private var dismiss
     @State private var copyFeedURLFeedbackTick = 0
     @State private var copyPodcastGuidFeedbackTick = 0
@@ -273,9 +274,34 @@ struct FeedDetailView: View {
                 Section {
                     Label("Local folder feed", systemImage: "folder.fill")
                         .foregroundStyle(.orange)
-                    Text("Episodes are audio files in a picked folder (mp3 / m4a / aac / wav / flac). No RSS and no network refresh — pull Refresh (swipe on Subscriptions) to re-scan. Unsubscribe releases folder access.")
+                        .accessibilityLabel(String(localized: "Local folder feed"))
+
+                    Text("Episodes are audio files in a picked folder (\(LocalFolderFeed.audioFormatsDisplay); this folder only, not subfolders). No RSS and no network refresh. Podcasting 2.0 / iTunes feed tags do not apply. Omitted from OPML, HTML export, and gpodder sync. Unsubscribe releases folder access.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                        .accessibilityLabel(String(localized: "Episodes are audio files in a picked folder. No RSS and no network refresh. Podcasting 2.0 tags do not apply. Omitted from OPML. Unsubscribe releases folder access."))
+
+                    Button {
+                        Task { await rescanLocalFolder() }
+                    } label: {
+                        if isRescanningLocalFolder {
+                            Label("Rescanning…", systemImage: "arrow.clockwise")
+                        } else {
+                            Label("Rescan folder", systemImage: "arrow.clockwise")
+                        }
+                    }
+                    .disabled(isRescanningLocalFolder || store.isLoading)
+                    .accessibilityLabel(String(localized: "Rescan folder"))
+                    .accessibilityHint(String(localized: "Re-reads audio files in the folder via the saved bookmark. Does not fetch an RSS feed."))
+
+                    if let err = store.lastError, LocalFolderFeed.isLocalFolderFeed(liveFeed) {
+                        Text(err)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                            .accessibilityLabel(err)
+                    }
+                } footer: {
+                    Text("Swipe Refresh on Subscriptions also re-scans. Empty folders stay subscribed until you add files or unsubscribe.")
                 }
             }
             if let author = displayAuthor {
@@ -573,11 +599,19 @@ struct FeedDetailView: View {
 
             Section("Episodes") {
                 if liveFeed.episodes.isEmpty {
-                    ContentUnavailableView(
-                        "No episodes",
-                        systemImage: "list.bullet",
-                        description: Text("This podcast has no episodes yet. Pull to refresh on Subscriptions.")
-                    )
+                    if LocalFolderFeed.isLocalFolderFeed(liveFeed) {
+                        ContentUnavailableView(
+                            "No audio files",
+                            systemImage: "folder",
+                            description: Text("This folder has no \(LocalFolderFeed.audioFormatsDisplay) files yet (subfolders are not scanned). Add files in Files, then Rescan folder, or swipe Refresh on Subscriptions.")
+                        )
+                    } else {
+                        ContentUnavailableView(
+                            "No episodes",
+                            systemImage: "list.bullet",
+                            description: Text("This podcast has no episodes yet. Pull to refresh on Subscriptions.")
+                        )
+                    }
                 } else if filteredEpisodes.isEmpty {
                     ContentUnavailableView(
                         "No matching episodes",
@@ -897,6 +931,15 @@ struct FeedDetailView: View {
         }
     }
 
+
+    /// Re-scan the security-scoped folder (same path as Subscriptions Refresh swipe).
+    @MainActor
+    private func rescanLocalFolder() async {
+        guard LocalFolderFeed.isLocalFolderFeed(liveFeed) else { return }
+        isRescanningLocalFolder = true
+        defer { isRescanningLocalFolder = false }
+        await store.refresh(liveFeed)
+    }
 
     /// Network RSS/Atom feeds only — local-folder feeds use a synthetic `local-folder://` id, not a pasteable feed URL.
     private var canCopyFeedURL: Bool {

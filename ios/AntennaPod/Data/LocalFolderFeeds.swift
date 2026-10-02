@@ -1,7 +1,8 @@
 import Foundation
 
 /// Synthetic podcast feeds backed by a user-picked folder (security-scoped bookmark).
-/// No RSS / no network — episodes are audio files in the folder.
+/// No RSS / no network — episodes are audio files in the folder (non-recursive).
+/// Podcasting 2.0 / iTunes RSS tags do not apply; omitted from OPML/HTML/gpodder.
 enum LocalFolderFeed {
     static let urlScheme = "local-folder"
 
@@ -22,6 +23,11 @@ enum LocalFolderFeed {
 
     static func isLocalFolderFeed(_ feed: PodcastFeed) -> Bool {
         isLocalFolderFeedURL(feed.feedUrl)
+    }
+
+    /// Formats accepted as episodes (display / VoiceOver).
+    static var audioFormatsDisplay: String {
+        "mp3, m4a, aac, wav, flac"
     }
 
     /// Whether a media URL is an already-local `file://` path (folder episode).
@@ -52,17 +58,20 @@ enum LocalFolderFeedError: LocalizedError {
     case bookmarkFailed
     case bookmarkStale
     case notAFolder
+    case alreadySubscribed
 
     var errorDescription: String? {
         switch self {
         case .cannotAccessFolder:
-            return "Could not access the selected folder. Pick it again under Add podcast → Folder."
+            return String(localized: "Could not access the selected folder. Pick it again under Add podcast → Folder. If Files permission was revoked, choose the folder again.")
         case .bookmarkFailed:
-            return "Could not save lasting access to this folder."
+            return String(localized: "Could not save lasting access to this folder. Try another folder from Files.")
         case .bookmarkStale:
-            return "Folder access expired. Unsubscribe and add the folder again."
+            return String(localized: "Folder access expired or was revoked. Unsubscribe this local folder feed, then add the folder again under Add podcast → Folder.")
         case .notAFolder:
-            return "Please choose a folder, not a single file."
+            return String(localized: "Please choose a folder, not a single file.")
+        case .alreadySubscribed:
+            return String(localized: "This folder is already added as a local folder feed.")
         }
     }
 }
@@ -150,6 +159,18 @@ enum LocalFolderBookmarkStore {
 
     static func hasBookmark(feedId: UUID) -> Bool {
         loadMap()[feedId.uuidString.lowercased()] != nil
+    }
+
+    /// Find an existing local-folder subscription that points at the same folder path.
+    static func existingFeed(matchingFolderURL url: URL, in feeds: [PodcastFeed]) -> PodcastFeed? {
+        let path = url.standardizedFileURL.path
+        for feed in feeds where LocalFolderFeed.isLocalFolderFeed(feed) {
+            guard let resolved = try? resolveFolderURL(feedId: feed.id) else { continue }
+            if resolved.standardizedFileURL.path == path {
+                return feed
+            }
+        }
+        return nil
     }
 }
 
@@ -264,7 +285,9 @@ enum LocalFolderScanner {
             feedUrl: LocalFolderFeed.feedURL(for: feedId),
             siteLink: nil,
             imageUrl: nil,
-            descriptionText: "Local folder · \(folderURL.lastPathComponent) · no RSS · refresh re-scans files",
+            descriptionText: String(
+                localized: "Local folder · \(folderURL.lastPathComponent) · no RSS · refresh re-scans files · Podcasting 2.0 tags do not apply · omitted from OPML"
+            ),
             author: nil,
             language: nil,
             fundingUrl: nil,

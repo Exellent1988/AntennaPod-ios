@@ -115,7 +115,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - History size limit (Settings → Library **History size**: 50 / 100 / 200 / 500 / **Unlimited** default; `historySizeLimit` + backup; trim oldest by lastPlayedAt else updatedAt on append/load/Settings change — same as Remove from history; no separate history.json; History footnote when finite)
 - Favorites sort (Favorites toolbar: Newest first default / Oldest first by `favoritedAtEpochMs`; `favoritesSort` pref + backup; tiebreaker episode `id`; applies to search; store catalog stays newest-first for Home Favorites preview / Clear counts)
 - Archived sort (Archived toolbar: Newest first default / Oldest first by `archivedAtEpochMs`; `archivedSort` pref + backup; tiebreaker episode `id`; applies to search; store catalog stays newest-first for Restore all counts)
-- Local folder feeds (beta; Add podcast → Folder via fileImporter; security-scoped bookmark; synthetic feed from mp3/m4a/aac/wav/flac; refresh re-scans; no RSS/network; Folder badge; unsubscribe releases bookmark)
+- Local folder feeds (beta polish; Add podcast → Folder via fileImporter; security-scoped bookmark; synthetic feed from mp3/m4a/aac/wav/flac **non-recursive**; Rescan on Feed detail + Subscriptions swipe; empty-folder state; no RSS/network/**no Podcasting 2.0 tags**; omitted from OPML/HTML/gpodder; duplicate path blocked; Folder badge; unsubscribe releases bookmark; EN/DE + VoiceOver)
 - OPML import/export (Settings + Subscriptions + Add podcast → OPML; Files fileImporter `.opml`/`.xml`; Save OPML to Files… fileExporter + share sheet; Added/Skipped/Failed; local folders omitted; no cloud sync)
 - HTML subscription export (Settings + Subscriptions Import / Export; share sheet `.html`)
 - Local data backup import/export (Settings → Backup; iOS JSON ZIP of Application Support maps + Settings + gpodder prefs; optional Include downloaded episode files → ZIP `downloads/`; no Keychain secrets; not Android DB)
@@ -936,9 +936,11 @@ The same sheet also manages **Tags / Folders** (see below).
 
 **Add podcast → Folder → Choose folder…** uses SwiftUI `fileImporter` (UIDocumentPicker) to pick a directory. A **security-scoped bookmark** is stored in Application Support `local-folder-bookmarks.json`.
 
-**Synthetic feed:** `PodcastFeed` with `feedUrl` scheme `local-folder://{uuid}`. Episodes = audio files in that folder (**mp3 / m4a / aac / wav / flac**, non-recursive); **title** = filename without extension; `downloadUrl` = `file://…` so `DownloadService.localURL` / play treat them as **already local** (no network download).
+**Synthetic feed:** `PodcastFeed` with `feedUrl` scheme `local-folder://{uuid}`. Episodes = audio files in that folder (**mp3 / m4a / aac / wav / flac**, **non-recursive** — subfolders ignored); **title** = filename without extension; `downloadUrl` = `file://…` so `DownloadService.localURL` / play treat them as **already local** (no network download; not listed in Downloads catalog).
 
-**Refresh** (Subscriptions swipe or Keep-updated bulk) **re-scans** the folder via the bookmark. **Unsubscribe** deletes the bookmark and ends scoped access.
+**Honesty:** no RSS / Atom, no network refresh, **Podcasting 2.0 / iTunes feed tags do not apply**, omitted from OPML / HTML export / gpodder. Empty folders stay subscribed. Same folder path cannot be added twice.
+
+**Rescan:** Feed detail **Rescan folder** and Subscriptions leading swipe (**Rescan folder** label) re-read files via the bookmark. Keep-updated bulk also re-scans. Stale/revoked access shows a localized error — unsubscribe and pick the folder again. **Unsubscribe** deletes the bookmark and ends scoped access.
 
 ## Unsubscribe
 

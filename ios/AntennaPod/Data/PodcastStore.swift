@@ -1625,11 +1625,16 @@ final class PodcastStore: ObservableObject {
 
     /// Subscribe to a user-picked folder: persist security-scoped bookmark + synthetic feed.
     /// Call while the picker URL still has security-scoped access (`fileImporter`).
-    func subscribeLocalFolder(folderURL: URL) throws {
+    /// Throws `alreadySubscribed` when the same folder path is already a local-folder feed.
+    @discardableResult
+    func subscribeLocalFolder(folderURL: URL) throws -> PodcastFeed {
         lastError = nil
         var isDir: ObjCBool = false
         guard FileManager.default.fileExists(atPath: folderURL.path, isDirectory: &isDir), isDir.boolValue else {
             throw LocalFolderFeedError.notAFolder
+        }
+        if LocalFolderBookmarkStore.existingFeed(matchingFolderURL: folderURL, in: feeds) != nil {
+            throw LocalFolderFeedError.alreadySubscribed
         }
         let feedId = UUID()
         let accessed = folderURL.startAccessingSecurityScopedResource()
@@ -1649,9 +1654,10 @@ final class PodcastStore: ObservableObject {
             throw error
         }
         feeds.append(feed)
+        return feed
     }
 
-    /// Re-scan one local folder feed (manual Refresh swipe).
+    /// Re-scan one local folder feed (manual Refresh swipe / Feed detail Rescan).
     func refreshLocalFolderFeed(_ feed: PodcastFeed) async {
         lastError = nil
         isLoading = true

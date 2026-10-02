@@ -491,24 +491,61 @@ struct AddFeedView: View {
                     Label("Choose folder…", systemImage: "folder.badge.plus")
                 }
                 .disabled(isAddingFolder)
+                .accessibilityLabel(String(localized: "Choose folder…"))
+                .accessibilityHint(String(localized: "Opens Files to pick a folder of audio files. Creates a local subscription — no RSS and no network."))
 
                 if isAddingFolder {
                     ProgressView("Scanning folder…")
+                        .accessibilityLabel(String(localized: "Scanning folder…"))
                 }
                 if let folderStatus {
                     Text(folderStatus)
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .accessibilityLabel(folderStatus)
                 }
                 if let folderError {
                     Text(folderError)
                         .font(.caption)
                         .foregroundStyle(.red)
+                        .accessibilityLabel(folderError)
                 }
             } header: {
                 Text("Local folder feed")
             } footer: {
-                Text("Beta: pick a folder of audio files (mp3, m4a, aac, wav, flac). Creates a synthetic subscription — no RSS, no network refresh. Access is kept via a security-scoped bookmark; unsubscribe releases it. Refresh re-scans the folder.")
+                Text("Beta: pick a folder of audio files (\(LocalFolderFeed.audioFormatsDisplay)). Creates a synthetic subscription from files in that folder only (not subfolders) — no RSS, no network refresh, no Podcasting 2.0 / iTunes tags. Access is kept via a security-scoped bookmark; unsubscribe releases it. Refresh / Rescan re-reads the folder. Local folder podcasts are omitted from OPML, HTML export, and gpodder sync.")
+            }
+
+            Section {
+                Label {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("What you get")
+                            .font(.subheadline.weight(.semibold))
+                        Text("Episodes = audio files in the folder. Play works offline from the file path. Empty folders are allowed — add files later, then Rescan.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } icon: {
+                    Image(systemName: "checkmark.circle")
+                        .foregroundStyle(.secondary)
+                }
+                .accessibilityElement(children: .combine)
+
+                Label {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("What you do not get")
+                            .font(.subheadline.weight(.semibold))
+                        Text("No RSS / Atom feed, no Podcasting 2.0 chapters or funding tags from the folder, no automatic network updates, no OPML export of this subscription.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } icon: {
+                    Image(systemName: "xmark.circle")
+                        .foregroundStyle(.secondary)
+                }
+                .accessibilityElement(children: .combine)
+            } header: {
+                Text("Honesty")
             }
         }
         .listStyle(.insetGrouped)
@@ -524,9 +561,14 @@ struct AddFeedView: View {
     private func handleFolderPick(_ result: Result<[URL], Error>) {
         switch result {
         case .failure(let error):
+            // User cancel typically does not report failure; surface real picker/permission errors.
             folderError = error.localizedDescription
+            folderStatus = nil
         case .success(let urls):
-            guard let url = urls.first else { return }
+            guard let url = urls.first else {
+                folderError = String(localized: "No folder was selected.")
+                return
+            }
             isAddingFolder = true
             folderError = nil
             folderStatus = nil
@@ -538,8 +580,19 @@ struct AddFeedView: View {
                 }
             }
             do {
-                try store.subscribeLocalFolder(folderURL: url)
-                folderStatus = "Added “\(url.lastPathComponent)” as a local folder feed."
+                if let existing = LocalFolderBookmarkStore.existingFeed(matchingFolderURL: url, in: store.feeds) {
+                    folderError = String(localized: "This folder is already added as “\(existing.title)”. Open it from Subscriptions instead of adding a duplicate.")
+                    return
+                }
+                let feed = try store.subscribeLocalFolder(folderURL: url)
+                let count = feed.episodes.count
+                if count == 0 {
+                    folderStatus = String(localized: "Added “\(url.lastPathComponent)” with no audio files yet. Add \(LocalFolderFeed.audioFormatsDisplay) files, then Rescan from the feed or swipe Refresh on Subscriptions.")
+                } else if count == 1 {
+                    folderStatus = String(localized: "Added “\(url.lastPathComponent)” as a local folder feed (1 episode).")
+                } else {
+                    folderStatus = String(localized: "Added “\(url.lastPathComponent)” as a local folder feed (\(count) episodes).")
+                }
                 dismiss()
             } catch {
                 folderError = error.localizedDescription

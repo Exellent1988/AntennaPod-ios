@@ -19789,6 +19789,510 @@
         }
       },
       "comment": "Confirm Subscribe VoiceOver hint"
+    },
+    "Could not access the selected folder. Pick it again under Add podcast → Folder. If Files permission was revoked, choose the folder again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not access the selected folder. Pick it again under Add podcast → Folder. If Files permission was revoked, choose the folder again."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf den gewählten Ordner konnte nicht zugegriffen werden. Wähle ihn erneut unter Podcast hinzufügen → Ordner. Wenn die Dateien-Berechtigung entzogen wurde, wähle den Ordner erneut."
+          }
+        }
+      },
+      "comment": "LocalFolderFeedError.cannotAccessFolder"
+    },
+    "Could not save lasting access to this folder. Try another folder from Files.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not save lasting access to this folder. Try another folder from Files."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dauerhafter Zugriff auf diesen Ordner konnte nicht gespeichert werden. Versuche einen anderen Ordner aus Dateien."
+          }
+        }
+      },
+      "comment": "LocalFolderFeedError.bookmarkFailed"
+    },
+    "Folder access expired or was revoked. Unsubscribe this local folder feed, then add the folder again under Add podcast → Folder.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder access expired or was revoked. Unsubscribe this local folder feed, then add the folder again under Add podcast → Folder."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordnerzugriff abgelaufen oder entzogen. Beende das Abo dieses lokalen Ordner-Feeds und füge den Ordner erneut unter Podcast hinzufügen → Ordner hinzu."
+          }
+        }
+      },
+      "comment": "LocalFolderFeedError.bookmarkStale"
+    },
+    "Please choose a folder, not a single file.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please choose a folder, not a single file."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitte einen Ordner wählen, keine einzelne Datei."
+          }
+        }
+      },
+      "comment": "LocalFolderFeedError.notAFolder"
+    },
+    "This folder is already added as a local folder feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already added as a local folder feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Ordner ist bereits als lokaler Ordner-Feed hinzugefügt."
+          }
+        }
+      },
+      "comment": "LocalFolderFeedError.alreadySubscribed"
+    },
+    "Opens Files to pick a folder of audio files. Creates a local subscription — no RSS and no network.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens Files to pick a folder of audio files. Creates a local subscription — no RSS and no network."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet Dateien, um einen Ordner mit Audiodateien zu wählen. Erstellt ein lokales Abo — kein RSS und kein Netzwerk."
+          }
+        }
+      },
+      "comment": "AddFeed Folder choose a11y hint"
+    },
+    "Beta: pick a folder of audio files (%@). Creates a synthetic subscription from files in that folder only (not subfolders) — no RSS, no network refresh, no Podcasting 2.0 / iTunes tags. Access is kept via a security-scoped bookmark; unsubscribe releases it. Refresh / Rescan re-reads the folder. Local folder podcasts are omitted from OPML, HTML export, and gpodder sync.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beta: pick a folder of audio files (%@). Creates a synthetic subscription from files in that folder only (not subfolders) — no RSS, no network refresh, no Podcasting 2.0 / iTunes tags. Access is kept via a security-scoped bookmark; unsubscribe releases it. Refresh / Rescan re-reads the folder. Local folder podcasts are omitted from OPML, HTML export, and gpodder sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beta: Wähle einen Ordner mit Audiodateien (%@). Erstellt ein synthetisches Abo nur aus Dateien in diesem Ordner (keine Unterordner) — kein RSS, keine Netzwerk-Aktualisierung, keine Podcasting-2.0-/iTunes-Tags. Zugriff bleibt über ein security-scoped Bookmark; Abo beenden gibt ihn frei. Aktualisieren / Neu scannen liest den Ordner erneut. Lokale Ordner-Podcasts fehlen in OPML, HTML-Export und gpodder-Sync."
+          }
+        }
+      },
+      "comment": "AddFeed Folder footer (formats)"
+    },
+    "What you get": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What you get"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was du bekommst"
+          }
+        }
+      },
+      "comment": "AddFeed Folder honesty"
+    },
+    "Episodes = audio files in the folder. Play works offline from the file path. Empty folders are allowed — add files later, then Rescan.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodes = audio files in the folder. Play works offline from the file path. Empty folders are allowed — add files later, then Rescan."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden = Audiodateien im Ordner. Wiedergabe offline über den Dateipfad. Leere Ordner sind erlaubt — später Dateien hinzufügen und dann Neu scannen."
+          }
+        }
+      },
+      "comment": "AddFeed Folder honesty get"
+    },
+    "What you do not get": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What you do not get"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was du nicht bekommst"
+          }
+        }
+      },
+      "comment": "AddFeed Folder honesty"
+    },
+    "No RSS / Atom feed, no Podcasting 2.0 chapters or funding tags from the folder, no automatic network updates, no OPML export of this subscription.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No RSS / Atom feed, no Podcasting 2.0 chapters or funding tags from the folder, no automatic network updates, no OPML export of this subscription."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein RSS-/Atom-Feed, keine Podcasting-2.0-Kapitel- oder Funding-Tags aus dem Ordner, keine automatischen Netzwerk-Updates, kein OPML-Export dieses Abos."
+          }
+        }
+      },
+      "comment": "AddFeed Folder honesty not"
+    },
+    "Honesty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Honesty"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ehrlichkeit"
+          }
+        }
+      },
+      "comment": "AddFeed Folder honesty header"
+    },
+    "No folder was selected.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No folder was selected."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es wurde kein Ordner ausgewählt."
+          }
+        }
+      },
+      "comment": "AddFeed Folder picker empty"
+    },
+    "This folder is already added as “%@”. Open it from Subscriptions instead of adding a duplicate.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already added as “%@”. Open it from Subscriptions instead of adding a duplicate."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Ordner ist bereits als „%@“ hinzugefügt. Öffne ihn unter Abos statt ein Duplikat anzulegen."
+          }
+        }
+      },
+      "comment": "AddFeed Folder duplicate"
+    },
+    "Added “%@” with no audio files yet. Add %@ files, then Rescan from the feed or swipe Refresh on Subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added “%@” with no audio files yet. Add %@ files, then Rescan from the feed or swipe Refresh on Subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„%@“ hinzugefügt — noch keine Audiodateien. Füge %@-Dateien hinzu und scanne neu im Feed oder per Wischen Aktualisieren unter Abos."
+          }
+        }
+      },
+      "comment": "AddFeed Folder empty success"
+    },
+    "Added “%@” as a local folder feed (1 episode).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added “%@” as a local folder feed (1 episode)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„%@“ als lokaler Ordner-Feed hinzugefügt (1 Episode)."
+          }
+        }
+      },
+      "comment": "AddFeed Folder success 1"
+    },
+    "Added “%@” as a local folder feed (%lld episodes).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added “%@” as a local folder feed (%lld episodes)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„%@“ als lokaler Ordner-Feed hinzugefügt (%lld Episoden)."
+          }
+        }
+      },
+      "comment": "AddFeed Folder success N"
+    },
+    "Local folder · %@ · no RSS · refresh re-scans files · Podcasting 2.0 tags do not apply · omitted from OPML": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local folder · %@ · no RSS · refresh re-scans files · Podcasting 2.0 tags do not apply · omitted from OPML"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokaler Ordner · %@ · kein RSS · Aktualisieren scannt Dateien neu · Podcasting-2.0-Tags gelten nicht · nicht in OPML"
+          }
+        }
+      },
+      "comment": "LocalFolderScanner descriptionText"
+    },
+    "Episodes are audio files in a picked folder (%@; this folder only, not subfolders). No RSS and no network refresh. Podcasting 2.0 / iTunes feed tags do not apply. Omitted from OPML, HTML export, and gpodder sync. Unsubscribe releases folder access.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodes are audio files in a picked folder (%@; this folder only, not subfolders). No RSS and no network refresh. Podcasting 2.0 / iTunes feed tags do not apply. Omitted from OPML, HTML export, and gpodder sync. Unsubscribe releases folder access."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden sind Audiodateien in einem gewählten Ordner (%@; nur dieser Ordner, keine Unterordner). Kein RSS und keine Netzwerk-Aktualisierung. Podcasting-2.0-/iTunes-Feed-Tags gelten nicht. Fehlt in OPML, HTML-Export und gpodder-Sync. Abo beenden gibt den Ordnerzugriff frei."
+          }
+        }
+      },
+      "comment": "FeedDetail local folder body"
+    },
+    "Episodes are audio files in a picked folder. No RSS and no network refresh. Podcasting 2.0 tags do not apply. Omitted from OPML. Unsubscribe releases folder access.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodes are audio files in a picked folder. No RSS and no network refresh. Podcasting 2.0 tags do not apply. Omitted from OPML. Unsubscribe releases folder access."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden sind Audiodateien in einem gewählten Ordner. Kein RSS und keine Netzwerk-Aktualisierung. Podcasting-2.0-Tags gelten nicht. Fehlt in OPML. Abo beenden gibt den Ordnerzugriff frei."
+          }
+        }
+      },
+      "comment": "FeedDetail local folder a11y"
+    },
+    "Rescan folder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rescan folder"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordner neu scannen"
+          }
+        }
+      },
+      "comment": "FeedDetail / Subscriptions local folder rescan"
+    },
+    "Rescanning…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rescanning…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird neu gescannt…"
+          }
+        }
+      },
+      "comment": "FeedDetail local folder rescanning"
+    },
+    "Re-reads audio files in the folder via the saved bookmark. Does not fetch an RSS feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Re-reads audio files in the folder via the saved bookmark. Does not fetch an RSS feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liest Audiodateien im Ordner über das gespeicherte Bookmark erneut. Holt keinen RSS-Feed."
+          }
+        }
+      },
+      "comment": "FeedDetail Rescan a11y hint"
+    },
+    "Swipe Refresh on Subscriptions also re-scans. Empty folders stay subscribed until you add files or unsubscribe.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipe Refresh on Subscriptions also re-scans. Empty folders stay subscribed until you add files or unsubscribe."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wischen Aktualisieren unter Abos scannt ebenfalls neu. Leere Ordner bleiben abonniert, bis du Dateien hinzufügst oder das Abo beendest."
+          }
+        }
+      },
+      "comment": "FeedDetail local folder footer"
+    },
+    "No audio files": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No audio files"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Audiodateien"
+          }
+        }
+      },
+      "comment": "FeedDetail local folder empty title"
+    },
+    "This folder has no %@ files yet (subfolders are not scanned). Add files in Files, then Rescan folder, or swipe Refresh on Subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder has no %@ files yet (subfolders are not scanned). Add files in Files, then Rescan folder, or swipe Refresh on Subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In diesem Ordner gibt es noch keine %@-Dateien (Unterordner werden nicht gescannt). Füge Dateien in Dateien hinzu und scanne den Ordner neu, oder wische Aktualisieren unter Abos."
+          }
+        }
+      },
+      "comment": "FeedDetail local folder empty body"
+    },
+    "Re-reads audio files in the folder. Does not fetch an RSS feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Re-reads audio files in the folder. Does not fetch an RSS feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liest Audiodateien im Ordner erneut. Holt keinen RSS-Feed."
+          }
+        }
+      },
+      "comment": "Subscriptions Rescan a11y hint"
+    },
+    "Fetches the podcast feed from the network": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fetches the podcast feed from the network"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Holt den Podcast-Feed aus dem Netzwerk"
+          }
+        }
+      },
+      "comment": "Subscriptions Refresh a11y hint"
     }
   },
   "version": "1.0"
