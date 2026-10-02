@@ -9,25 +9,79 @@ struct AllEpisodesView: View {
     @State private var showEnqueueAllConfirm = false
 
     /// Soft-capped catalog (`store.allEpisodes`, newest-500) — Add all to queue always uses this,
-    /// **not** the chip/search filtered visible list (`items`).
+    /// **not** the chip/podcast/search filtered visible list (`items`).
     private var catalogItems: [InboxEpisode] {
         store.allEpisodes
     }
 
     /// Episodes from the **soft-capped All Episodes catalog** (`store.allEpisodes`, newest 500 by
     /// `pubDateEpochMs`) that are not already queued — same catalog as the list’s soft cap,
-    /// **not** chip (`allEpisodesFilter`) or searchable filter.
+    /// **not** chip (`allEpisodesFilter`), podcast chip, or searchable filter.
     /// Confirm count and `enqueueAllEpisodes()` share this eligibility.
     /// **Soft-cap honesty:** never claims eligibility beyond the newest-500 set.
     private var enqueueAllEpisodesCandidatesCount: Int {
         catalogItems.filter { !store.isInQueue($0.episode.id) }.count
     }
 
-    /// Soft cap first (newest 500 via `store.allEpisodes`), then sort → chip → search.
+    /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
+    private var podcastFilter: AllEpisodesPodcastFilter {
+        AllEpisodesPodcastFilter.fromStorage(settings.allEpisodesPodcastFilter)
+    }
+
+    private var isPodcastFiltering: Bool {
+        if case .feed = podcastFilter { return true }
+        return false
+    }
+
+    /// Unique feeds that currently have at least one episode in the soft-capped All Episodes
+    /// catalog (title A–Z). Built via `feed(containingEpisodeId:)` — never invent.
+    private var allEpisodesPodcastFeeds: [PodcastFeed] {
+        var seen = Set<UUID>()
+        var feeds: [PodcastFeed] = []
+        for item in catalogItems {
+            guard let feed = store.feed(containingEpisodeId: item.episode.id) else { continue }
+            if seen.insert(feed.id).inserted {
+                feeds.append(feed)
+            }
+        }
+        return feeds.sorted {
+            $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        }
+    }
+
+    private var podcastFilterChips: [AllEpisodesPodcastFilter] {
+        var chips: [AllEpisodesPodcastFilter] = [.all]
+        var feeds = allEpisodesPodcastFeeds
+        // Keep a persisted selection visible (even if that feed no longer appears in the
+        // soft-capped set) so the user can see why the list is empty and tap All.
+        if case .feed(let id) = podcastFilter,
+           !feeds.contains(where: { $0.id == id }),
+           let feed = store.feeds.first(where: { $0.id == id }) {
+            feeds.append(feed)
+            feeds.sort {
+                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+            }
+        }
+        chips.append(contentsOf: feeds.map { .feed($0.id) })
+        return chips
+    }
+
+    private func podcastChipTitle(_ chip: AllEpisodesPodcastFilter) -> String {
+        switch chip {
+        case .all:
+            return String(localized: "All")
+        case .feed(let id):
+            return store.feeds.first(where: { $0.id == id })?.title
+                ?? allEpisodesPodcastFeeds.first(where: { $0.id == id })?.title
+                ?? String(localized: "Podcast")
+        }
+    }
+
+    /// Soft cap first (newest 500 via `store.allEpisodes`), then sort → status chip → podcast → search.
     /// **Honesty:** `store.allEpisodes` is already the newest-500 by `pubDateEpochMs`.
     /// Oldest first only reorders within that capped set — it does **not** pull older
     /// episodes from beyond the soft limit. Missing dates sort last; stable tiebreaker
-    /// is episode `id` (same as Inbox).
+    /// is episode `id` (same as Inbox). Orphan episodes (missing feed) match **All** only.
     private var items: [InboxEpisode] {
         var base = store.allEpisodes.sorted { lhs, rhs in
             switch settings.allEpisodesSort {
@@ -55,6 +109,12 @@ struct AllEpisodesView: View {
             // Starred via PodcastStore.isFavorite / favorites.json — still within the capped set.
             base = base.filter { store.isFavorite($0.episode.id) }
         }
+        switch podcastFilter {
+        case .all:
+            break
+        case .feed(let feedId):
+            base = base.filter { store.feed(containingEpisodeId: $0.episode.id)?.id == feedId }
+        }
         let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         if q.isEmpty { return base }
         return base.filter { item in
@@ -65,11 +125,12 @@ struct AllEpisodesView: View {
 
     private var isFiltering: Bool {
         settings.allEpisodesFilter != .all
+            || isPodcastFiltering
             || !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     /// AntennaPod-like info bar: episode count + remaining over the **visible** All Episodes list
-    /// (soft cap newest-500 → sort → chip → search). Remaining per episode =
+    /// (soft cap newest-500 → sort → status chip → podcast → search). Remaining per episode =
     /// `max(0, duration − position)` when duration known; unplayed with duration contributes
     /// full duration; **played** (not current) → 0; **unknown duration skipped** (tilde when
     /// any skipped). Currently playing uses live `PlaybackService` position/duration.
@@ -111,7 +172,8 @@ struct AllEpisodesView: View {
                         ForEach(AllEpisodesFilter.allCases) { chip in
                             AllEpisodesFilterChip(
                                 title: chip.label,
-                                selected: settings.allEpisodesFilter == chip
+                                selected: settings.allEpisodesFilter == chip,
+                                accessibilityHint: String(localized: "Filters the All Episodes list")
                             ) {
                                 settings.allEpisodesFilter = chip
                             }
@@ -122,8 +184,30 @@ struct AllEpisodesView: View {
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
 
+            if !catalogItems.isEmpty, !allEpisodesPodcastFeeds.isEmpty || isPodcastFiltering {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(podcastFilterChips) { chip in
+                                AllEpisodesFilterChip(
+                                    title: podcastChipTitle(chip),
+                                    selected: podcastFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the All Episodes list by podcast")
+                                ) {
+                                    settings.allEpisodesPodcastFilter = chip.storageValue
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                } header: {
+                    Text("Podcasts")
+                }
+            }
+
             // AntennaPod-like All Episodes info bar (visible soft-capped+filtered list remaining time).
-            // Soft-cap honesty: sums only the newest-500 → sort → chip → search set — never beyond.
+            // Soft-cap honesty: sums only the newest-500 → sort → status → podcast → search set — never beyond.
             if let remainingLabel = allEpisodesRemainingInfoLabel {
                 Section {
                     Text(remainingLabel)
@@ -219,7 +303,7 @@ struct AllEpisodesView: View {
                 } label: {
                     Label("Episodes actions", systemImage: "ellipsis.circle")
                 }
-                // Menu enabled whenever soft-capped catalog is non-empty (even if chip/search hides rows).
+                // Menu enabled whenever soft-capped catalog is non-empty (even if chip/podcast/search hides rows).
                 .disabled(catalogItems.isEmpty)
             }
         }
@@ -234,7 +318,7 @@ struct AllEpisodesView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Appends \(enqueueAllEpisodesCandidatesCount) episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the chip or search filter. Queue lock does not block enqueue.")
+            Text("Appends \(enqueueAllEpisodesCandidatesCount) episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the chip, podcast, or search filter. Queue lock does not block enqueue.")
         }
     }
 }
@@ -242,6 +326,7 @@ struct AllEpisodesView: View {
 private struct AllEpisodesFilterChip: View {
     let title: String
     let selected: Bool
+    let accessibilityHint: String
     let action: () -> Void
 
     var body: some View {
@@ -255,7 +340,7 @@ private struct AllEpisodesFilterChip: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(title)
-        .accessibilityHint(String(localized: "Filters the All Episodes list"))
+        .accessibilityHint(accessibilityHint)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }
