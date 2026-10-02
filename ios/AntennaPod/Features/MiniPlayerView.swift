@@ -451,6 +451,40 @@ struct MiniPlayerView: View {
                 TranscriptSheetView(episode: store.episode(id: episode.id) ?? episode)
                     .environmentObject(playback)
             }
+        } else {
+            Button {
+                showFullPlayer = true
+            } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "play.slash")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(String(localized: "Nothing playing"))
+                            .font(.subheadline.weight(.semibold))
+                        Text(String(localized: "Start an episode from Inbox, Queue, or a feed."))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    }
+                    Spacer(minLength: 0)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+            .background(.bar)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(String(localized: "Nothing playing"))
+            .accessibilityValue(String(localized: "No episode is currently loaded"))
+            .accessibilityHint(
+                String(localized: "Start an episode from Inbox, Queue, or a feed to use the player controls.")
+            )
+            .sheet(isPresented: $showFullPlayer) {
+                FullPlayerView()
+            }
         }
     }
 
