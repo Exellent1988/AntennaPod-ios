@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct QueueView: View {
     @EnvironmentObject private var store: PodcastStore
@@ -23,6 +24,9 @@ struct QueueView: View {
     @State private var showSortTitleZAQueueConfirm = false
     /// Single episode pending swipe-remove confirmation (nil = dialog dismissed).
     @State private var episodePendingRemove: PodcastEpisode?
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -248,6 +252,26 @@ struct QueueView: View {
         )
     }
 
+    /// Plain-text list of the **full** persisted queue — not chip/podcast/search filtered.
+    /// Same honesty as Clear queue / Remove played / Shuffle (full `store.queue`).
+    private var queuePlainText: String {
+        QueueExport.plainText(episodes: store.queue) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
+    }
+
+    /// Enabled when the full queue is non-empty. Queue lock does **not** disable (read-only export).
+    private var canExportQueue: Bool {
+        !store.queue.isEmpty
+    }
+
+    /// “Queue” header + body for system share sheet (same body as Copy).
+    private var queueShareText: String {
+        QueueExport.shareText(episodes: store.queue) { episode in
+            store.displayTitle(containingEpisodeId: episode.id)
+        }
+    }
+
     var body: some View {
         NavigationStack {
             List {
@@ -424,6 +448,31 @@ struct QueueView: View {
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
+                        Button {
+                            copyQueue()
+                        } label: {
+                            Label("Copy queue", systemImage: "doc.plaintext")
+                        }
+                        // Full persisted queue (not chip/search). Queue lock does **not** disable.
+                        .disabled(!canExportQueue)
+                        .accessibilityLabel(String(localized: "Copy queue"))
+                        .accessibilityHint(
+                            String(localized: "Copies the full queue list to the pasteboard")
+                        )
+
+                        ShareLink(
+                            item: queueShareText,
+                            subject: Text(String(localized: "Queue"))
+                        ) {
+                            Label("Share queue", systemImage: "square.and.arrow.up")
+                        }
+                        // Same gates as Copy queue — full queue; lock does not block.
+                        .disabled(!canExportQueue)
+                        .accessibilityLabel(String(localized: "Share queue"))
+                        .accessibilityHint(
+                            String(localized: "Opens the system share sheet with the full queue list")
+                        )
+
                         Button {
                             playRandomEpisode()
                         } label: {
@@ -611,10 +660,19 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, remove played, or clear the entire queue")
+                        String(localized: "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, remove played, or clear the entire queue")
                     )
                 }
             }
+            .alert(
+                String(localized: "Copied"),
+                isPresented: $showCopiedAlert
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(copiedAlertMessage)
+            }
+            .sensoryFeedback(.success, trigger: copyFeedbackTick)
             .confirmationDialog(
                 "Remove played?",
                 isPresented: $showRemovePlayedConfirm,
@@ -791,6 +849,16 @@ struct QueueView: View {
                 )
             }
         }
+    }
+
+    /// Pasteboard copy of the **full** persisted queue (not chip/search). Read-only — does not reorder.
+    private func copyQueue() {
+        let text = queuePlainText
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Queue copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     /// Uniform pick via shared `EpisodePlayRandom.pick` among eligible (prefer unplayed);
