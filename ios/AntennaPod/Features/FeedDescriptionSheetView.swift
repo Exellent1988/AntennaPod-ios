@@ -365,6 +365,10 @@ struct FeedDescriptionSheetView: View {
                         systemImage: "info.circle",
                         description: Text("This podcast has no description in the feed.")
                     )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "No description"))
+                    .accessibilityValue(String(localized: "This podcast has no description in the feed."))
+                    .accessibilityHint(String(localized: "There is no podcast description to read."))
                 } else if plainDescription.isEmpty {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
@@ -482,6 +486,10 @@ struct FeedDescriptionSheetView: View {
                 systemImage: "magnifyingglass",
                 description: Text("No description text matches your search.")
             )
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "No matching text"))
+            .accessibilityValue(String(localized: "No description text matches your search."))
+            .accessibilityHint(String(localized: "Change or clear the podcast description search to see other text."))
         } else if isFiltering {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 16) {
