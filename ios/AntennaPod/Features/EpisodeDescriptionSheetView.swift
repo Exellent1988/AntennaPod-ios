@@ -509,15 +509,13 @@ struct EpisodeDescriptionSheetView: View {
     }
 
     private func copyEpisodeLink(_ url: URL) {
-        UIPasteboard.general.string = url.absoluteString
-        copiedAlertMessage = String(localized: "Episode link copied to the pasteboard.")
+        copiedAlertMessage = EpisodeCopyLinks.copyEpisodeLink(url)
         copyURLFeedbackTick += 1
         showCopiedAlert = true
     }
 
     private func copyMediaURL(_ url: URL) {
-        UIPasteboard.general.string = url.absoluteString
-        copiedAlertMessage = String(localized: "Media URL copied to the pasteboard.")
+        copiedAlertMessage = EpisodeCopyLinks.copyMediaURL(url)
         copyURLFeedbackTick += 1
         showCopiedAlert = true
     }

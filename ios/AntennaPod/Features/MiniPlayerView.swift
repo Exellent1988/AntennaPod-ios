@@ -11,6 +11,9 @@ struct MiniPlayerView: View {
     @State private var showBookmarks = false
     @State private var showJumpToPosition = false
     @State private var showDescription = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyURLFeedbackTick = 0
 
     var body: some View {
         if let episode = playback.currentEpisode {
@@ -198,6 +201,16 @@ struct MiniPlayerView: View {
                                 ? String(localized: "Restores this episode from the archive")
                                 : String(localized: "Hides this episode from Inbox without marking it played")
                         )
+                        // Copy episode link / Copy media URL — same websiteURL / mediaURL gates as Full.
+                        // Prefer store episode (post-refresh) over a possibly stale player copy.
+                        EpisodeCopyLinks.labelStyle(
+                            episode: store.episode(id: episode.id) ?? episode,
+                            onCopied: { message in
+                                copiedAlertMessage = message
+                                copyURLFeedbackTick += 1
+                                showCopiedAlert = true
+                            }
+                        )
                         // Current episode only (mini always shows current). Hidden when nothing shareable.
                         EpisodeShareLinks.labelStyle(
                             episode: episode,
@@ -223,6 +236,15 @@ struct MiniPlayerView: View {
             } message: {
                 Text(String(localized: "This episode is not linked to a subscribed podcast."))
             }
+            .alert(
+                String(localized: "Copied"),
+                isPresented: $showCopiedAlert
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(copiedAlertMessage)
+            }
+            .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
             .sheet(isPresented: $showCustomSleepTimer) {
                 CustomSleepTimerSheet(initialMinutes: settings.lastCustomSleepTimerMinutes)
                     .environmentObject(playback)
