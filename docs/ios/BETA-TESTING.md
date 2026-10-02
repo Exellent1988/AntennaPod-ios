@@ -8,6 +8,8 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 
 **Bekannte Teilumfänge / Known partials:** Skip silence ist nur eine Präferenz und überspringt Stille nicht auf dem Standard-AVPlayer. / Skip silence is a preference only and does not skip silence on stock AVPlayer. CarPlay bietet nur System-Now-Playing und Remote-Steuerung; kein eigenes `CPTemplate`- oder Browse-UI erwarten. / CarPlay provides system Now Playing and remote controls only; do not expect custom `CPTemplate` or browse UI.
 
+**Fehlende Feed-Titel / Missing feed titles:** Podcast-Filterchips zeigen ehrlich **Unbekannter Podcast / Unknown podcast**, wenn kein Feed-Anzeigename verfügbar ist; sie erfinden keinen Titel und **Alle / All** bleibt als Rückweg verfügbar. / Podcast filter chips honestly show **Unbekannter Podcast / Unknown podcast** when no feed display title is available; they never invent a title, and **All / Alle** remains available as the way back.
+
 ---
 
 ## Setup / Einrichtung

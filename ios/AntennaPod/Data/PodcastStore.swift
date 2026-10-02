@@ -242,6 +242,19 @@ final class PodcastStore: ObservableObject {
         return displayTitle(for: feed)
     }
 
+    /// Trimmed display title for a known feed, or nil when the feed provides no usable title.
+    /// Filter chips use this to avoid presenting a generic label as feed metadata.
+    func nonEmptyDisplayTitle(for feed: PodcastFeed) -> String? {
+        let trimmed = displayTitle(for: feed).trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Trimmed display title for a known feed id, or nil when the feed is missing/title-less.
+    func nonEmptyDisplayTitle(forFeedId feedId: UUID) -> String? {
+        guard let feed = feeds.first(where: { $0.id == feedId }) else { return nil }
+        return nonEmptyDisplayTitle(for: feed)
+    }
+
     /// Display title for the feed containing `episodeId`, or empty string when unknown.
     func displayTitle(containingEpisodeId episodeId: String) -> String {
         guard let feed = feed(containingEpisodeId: episodeId) else { return "" }

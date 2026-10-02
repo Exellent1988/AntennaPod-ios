@@ -156,13 +156,14 @@ struct AllEpisodesView: View {
         case .all:
             return String(localized: "All")
         case .feed(let id):
-            if let shown = store.displayTitle(forFeedId: id) {
+            if let shown = store.nonEmptyDisplayTitle(forFeedId: id) {
                 return shown
             }
-            if let feed = allEpisodesPodcastFeeds.first(where: { $0.id == id }) {
-                return store.displayTitle(for: feed)
+            if let feed = allEpisodesPodcastFeeds.first(where: { $0.id == id }),
+               let shown = store.nonEmptyDisplayTitle(for: feed) {
+                return shown
             }
-            return String(localized: "Podcast")
+            return String(localized: "Unknown podcast")
         }
     }
 

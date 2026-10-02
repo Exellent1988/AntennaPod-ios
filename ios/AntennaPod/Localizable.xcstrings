@@ -4112,6 +4112,23 @@
         }
       }
     },
+    "Unknown podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbekannter Podcast"
+          }
+        }
+      }
+    },
     "Podcast": {
       "extractionState": "manual",
       "localizations": {

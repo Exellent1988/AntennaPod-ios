@@ -119,9 +119,9 @@ struct HistoryView: View {
         case .all:
             return String(localized: "All")
         case .feed(let id):
-            return store.displayTitle(forFeedId: id)
-                ?? historyPodcastFeeds.first(where: { $0.id == id })?.title
-                ?? String(localized: "Podcast")
+            return store.nonEmptyDisplayTitle(forFeedId: id)
+                ?? historyPodcastFeeds.first(where: { $0.id == id }).flatMap { store.nonEmptyDisplayTitle(for: $0) }
+                ?? String(localized: "Unknown podcast")
         }
     }
 
