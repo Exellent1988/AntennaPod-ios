@@ -34238,6 +34238,40 @@
         }
       }
     },
+    "Bookmarks empty state": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmarks empty state"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leerzustand Lesezeichen"
+          }
+        }
+      }
+    },
+    "Bookmarks search empty state": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmarks search empty state"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leerzustand Lesezeichen-Suche"
+          }
+        }
+      }
+    },
     "No matching bookmarks": {
       "extractionState": "manual",
       "localizations": {

@@ -62,16 +62,24 @@ struct BookmarksView: View {
         List {
             if catalogItems.isEmpty {
                 ContentUnavailableView(
-                    String(localized: "No bookmarks"),
+                    emptyStateTitle,
                     systemImage: "bookmark",
-                    description: Text(String(localized: "Bookmarks saved from the player will appear here."))
+                    description: Text(emptyStateDescription)
                 )
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(emptyStateTitle)
+                .accessibilityValue(emptyStateDescription)
+                .accessibilityHint(String(localized: "Bookmarks empty state"))
             } else if filteredItems.isEmpty {
                 ContentUnavailableView(
-                    String(localized: "No matching bookmarks"),
+                    emptyStateTitle,
                     systemImage: "magnifyingglass",
-                    description: Text(String(localized: "No bookmarks match your search."))
+                    description: Text(emptyStateDescription)
                 )
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(emptyStateTitle)
+                .accessibilityValue(emptyStateDescription)
+                .accessibilityHint(String(localized: "Bookmarks search empty state"))
             } else {
                 ForEach(filteredItems) { item in
                     Button {
@@ -161,6 +169,18 @@ struct BookmarksView: View {
             }
         }
         .padding(.vertical, 2)
+    }
+
+    private var emptyStateTitle: String {
+        catalogItems.isEmpty
+            ? String(localized: "No bookmarks")
+            : String(localized: "No matching bookmarks")
+    }
+
+    private var emptyStateDescription: String {
+        catalogItems.isEmpty
+            ? String(localized: "Bookmarks saved from the player will appear here.")
+            : String(localized: "No bookmarks match your search.")
     }
 
     private func bookmarkAccessibilityLabel(_ item: BookmarkExportItem) -> String {
