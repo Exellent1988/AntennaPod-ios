@@ -53,7 +53,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Medium / `podcast:medium` (beta; parse channel and/or item Podcast Index `podcast:medium` into `PodcastFeed.medium` / `PodcastEpisode.medium` as **raw feed string**; Feed detail + description + preview + Subscriptions + EpisodeRow capsule when set; VoiceOver **Medium …**; **feed-provided only** — never invent or remap; **display-only** — **no** playback pipeline change; **hide when missing**; refresh to populate existing feeds)
 - Update frequency / `podcast:updateFrequency` (beta; parse channel Podcast Index `podcast:updateFrequency` into `PodcastFeed.updateFrequency` — free-form text + optional `rrule`/`dtstart`/`complete`; Feed detail + description block + preview/Subscriptions capsule; VoiceOver; **feed-provided only** — never invent schedule from rrule; **display-only** — **no** Keep updated / refresh scheduling change; **hide when missing**; refresh to populate existing feeds; **distinct** from Apple `itunes:complete`)
 - itunes:complete (beta; parse channel Apple Podcasts `itunes:complete` yes/true into `PodcastFeed.isItunesComplete`; Feed detail + description sheet **Complete** / **Abgeschlossen** capsule + honest footnote; preview + Subscriptions capsule when true; VoiceOver; **feed-provided only** — never invent; **display-only** — **no** Keep updated / refresh change; **hide when false/missing**; **distinct** from `podcast:updateFrequency` `complete` — both may show; refresh to populate existing feeds)
-- Shared list/Home **remaining-time** helper (`EpisodeRemainingTime`): sum `max(0, duration − position)` (unknowns → `~`, live current, played→0); optional Settings **Remaining time respects speed** divides each episode by feed/default speed (≥0.5, estimate — not session rate); call sites keep their own episode scopes (visible filtered / Home preview soft-cap / Subscriptions unplayed map / library search episode hits). Mini/full player −remaining stays wall-clock.
+- Shared list/Home **remaining-time** helper (`EpisodeRemainingTime`): sum `max(0, duration − position)` (unknowns → `~`, live current, played→0); optional Settings **Remaining time respects speed** divides each episode by feed/default speed (≥0.5, estimate — not session rate for lists); call sites keep their own episode scopes. Mini/full player −remaining uses live session rate when the same setting is on (`playerChromeRemainingSeconds`; fallback feed/default ≥0.5). Chapter / Widget / Watch stay wall-clock.
 - Relative publish dates on list rows (beta; EpisodeRow `pubDateEpochMs` via `EpisodeDateFormatting`: Today / Yesterday / N days ago for ≤7 calendar days (`RelativeDateTimeFormatter` locale-aware EN/DE), else medium absolute; caption `S2 E5 · date · duration · size` (+ episodeType capsule when set) (omit unknown parts); History/Favorites/Archived `dateOverride` stays live SwiftUI `.relative`; VoiceOver includes publish caption; no Settings toggle)
 - EpisodeRow in-progress playback (beta polish; thin `ProgressView` under caption when `playback.json` `positionSeconds > 1` and not `isPlayed` and duration known — fraction = position/duration; duration from playback state or feed `itunes:duration`/media; hide when unplayed, played, or duration unknown; VoiceOver EN/DE **N percent played** + remaining, or **At m:ss** if duration unknown; no Settings toggle)
 - Feed / podcast description (beta; channel `description`/`subtitle`/`summary` → `PodcastFeed.descriptionText`; Feed detail toolbar info → sheet with title + optional author/language/categories + plain text; `.searchable` over already-loaded paragraphs/lines, ~250 ms debounce; hidden when empty; refresh may be needed for older saves)
@@ -91,8 +91,8 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - Prefer stream vs download (Prefer download / Prefer stream / Automatic; honored on play)
 - Continuous playback (Settings picker Off / **Queue** (default) / **Same podcast**; Queue = auto-next from Queue; Same podcast = next unplayed non-archived episode of the same feed by episode sort — does not jump Queue; Off = stop without advance)
 - Reset position when marked played (Settings toggle, default on; on = clear `positionSeconds` on mark-played; off = keep position for Mark unplayed resume)
-- Show remaining time (Settings toggle, default off; mini + full player right label −remaining; full-player tap toggles; wall-clock)
-- Remaining time respects speed (Settings toggle, default off; list/Home info bars ÷ feed/default speed ≥0.5; estimate; not session rate; boost ≠ speed; player chrome wall-clock)
+- Show remaining time (Settings toggle, default off; mini + full player right label −remaining; full-player tap toggles; wall-clock unless respects-speed)
+- Remaining time respects speed (Settings toggle, default off; list/Home ÷ feed/default ≥0.5; mini/full −remaining ÷ live session rate; estimate for lists; boost ≠ speed; chapter/widget/watch wall-clock)
 - Rewind after pause (Settings Off/1/2/3/5/10, default 2; resume after pause ≥1s seeks back; not on cold play)
 - Smart mark as played (Settings presets Off/15/30/60/120/300/600 + Custom… 1–600s, default 30; Off = natural end / explicit only; seconds remaining — not percent)
 - Feed refresh / Keep updated (global interval; auto on launch & foreground when due; **per-feed Last refreshed** via `lastRefreshedAtEpochMs` — stamp only on successful network parse; Feed detail + VoiceOver; hide when nil / local-folder)
@@ -585,7 +585,7 @@ When **on**, `PodcastStore.markPlayed` sets `positionSeconds = 0` so a later pla
 
 Settings → **Playback → Show remaining time**. Default **off** (Android `pref_show_remain_time`). Persisted in `AppSettings` / UserDefaults (`showRemainingTime`) and included in iOS JSON backup.
 
-When **on**, the mini player and full player show **remaining** time on the right (`−m:ss` / `−h:mm:ss` = duration − position) instead of total duration. The left label stays current position. Tapping the full-player right-hand time label toggles the setting (AntennaPod-style); Settings toggle is the primary control. **Honesty:** mini/full −remaining stays **wall-clock** (does not divide by playback speed).
+When **on**, the mini player and full player show **remaining** time on the right (`−m:ss` / `−h:mm:ss` = duration − position) instead of total duration. The left label stays current position. Tapping the full-player right-hand time label toggles the setting (AntennaPod-style); Settings toggle is the primary control. **Honesty:** mini/full −remaining is **wall-clock** unless **Remaining time respects speed** is also on (then ÷ live session rate — see below).
 
 ## Remaining time respects speed (beta)
 
@@ -593,11 +593,14 @@ Settings → **Playback → Remaining time respects speed**. Default **off** (ke
 
 When **on**, shared `EpisodeRemainingTime` list/Home info bars (Queue / Downloads / Inbox / Favorites / History / Archived / All Episodes / Subscriptions list + per-feed / Home preview bars / library search episode hits) divide each episode’s wall-clock remaining by that podcast’s effective playback speed: `FeedSettings.playbackSpeed` if set, else **Default speed**, clamped to ≥ **0.5**.
 
+**Mini/full player:** when Show remaining time is also on, −remaining uses `EpisodeRemainingTime.playerChromeRemainingSeconds` — divides wall-clock remaining by the **live** `PlaybackService.rate` (fallback feed override / Default speed if rate is non-finite / ≤ 0), clamped ≥ **0.5**. Live session rate is preferred for player chrome (more honest while listening than feed default alone).
+
 **Honesty limits:**
-- **Estimate only** — not a live ETA; unknowns still prefix `~`; **played** (not current) → **0** unchanged.
-- Uses **feed override / Default speed**, not the current player **session rate** (temporary mini/full speed changes do not rewrite list totals).
+- List/Home bars: **estimate only** — not a live ETA; unknowns still prefix `~`; **played** (not current) → **0** unchanged.
+- List/Home bars use **feed override / Default speed**, not the current player **session rate** (temporary mini/full speed changes do not rewrite list totals).
+- Mini/full −remaining **does** follow the live session rate when this toggle is on.
 - **Volume boost ≠ speed** (gain only).
-- Mini/full player −remaining labels and chapter remaining stay **wall-clock** (not this toggle). Widget / Watch Continue remaining stay wall-clock snapshots.
+- Chapter remaining and Widget / Watch Continue remaining stay **wall-clock** snapshots (no live session rate in App Group / Watch — not wired).
 
 ## Rewind after pause (beta)
 

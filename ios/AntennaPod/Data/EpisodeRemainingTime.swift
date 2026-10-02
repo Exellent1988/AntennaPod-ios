@@ -13,11 +13,12 @@ import Foundation
 ///
 /// Default is **wall-clock**. When callers pass `effectivePlaybackSpeed`, each episode’s
 /// remaining is divided by `max(0.5, speed)` (feed override ?? global default — estimate;
-/// session rate / volume boost are not applied here).
+/// session rate / volume boost are not applied here for list/Home totals).
 ///
 /// Distinct from `WidgetRemainingTime` (single Continue snapshot labels) and from
 /// `ChapterIndexing.remainingSeconds` (chapter end − position). Player chrome −remaining
-/// (mini/full) stays wall-clock — not this helper.
+/// (mini/full) uses `playerChromeRemainingSeconds` when Settings respects speed — live
+/// session rate preferred over feed/default.
 enum EpisodeRemainingTime {
     /// Aggregate over one caller-chosen episode list.
     struct Summary: Equatable {
@@ -89,6 +90,39 @@ enum EpisodeRemainingTime {
         let divisor = max(Double(minimumPlaybackSpeedDivisor), Double(playbackSpeed))
         guard divisor > 0, wallClockSeconds.isFinite else { return max(0, wallClockSeconds) }
         return max(0, wallClockSeconds) / divisor
+    }
+
+    /// Divisor for mini/full player −remaining when Settings → Remaining time respects speed is on.
+    /// Prefer live `PlaybackService.rate`; if non-finite / ≤ 0, use `fallbackSpeed` (feed override
+    /// ?? default). Always clamped to ≥ `minimumPlaybackSpeedDivisor`.
+    static func playerChromeSpeedDivisor(sessionRate: Float, fallbackSpeed: Float) -> Float {
+        let preferred: Float
+        if sessionRate.isFinite, sessionRate > 0 {
+            preferred = sessionRate
+        } else if fallbackSpeed.isFinite, fallbackSpeed > 0 {
+            preferred = fallbackSpeed
+        } else {
+            preferred = 1.0
+        }
+        return max(minimumPlaybackSpeedDivisor, preferred)
+    }
+
+    /// Mini/full scrubber −remaining seconds. When `respectsSpeed` is false, wall-clock.
+    /// When true, divide by live session rate (fallback feed/default), clamp ≥ 0.5.
+    static func playerChromeRemainingSeconds(
+        wallClockSeconds: Double,
+        respectsSpeed: Bool,
+        sessionRate: Float,
+        fallbackSpeed: Float
+    ) -> Double {
+        guard respectsSpeed else { return max(0, wallClockSeconds) }
+        return speedAdjustedRemainingSeconds(
+            wallClockSeconds: wallClockSeconds,
+            playbackSpeed: playerChromeSpeedDivisor(
+                sessionRate: sessionRate,
+                fallbackSpeed: fallbackSpeed
+            )
+        )
     }
 
     static func summarize(

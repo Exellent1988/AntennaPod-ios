@@ -611,9 +611,27 @@ struct MiniPlayerView: View {
     }
 
     /// Duration, or −remaining when Settings → Show remaining time is on.
+    /// When Remaining time respects speed is on, −remaining ÷ live session rate
+    /// (fallback feed/default, ≥ 0.5); otherwise wall-clock.
     private var rightTimeLabel: String {
         if settings.showRemainingTime {
-            return formatRemaining(playback.durationSeconds - playback.positionSeconds)
+            let wall = playback.durationSeconds - playback.positionSeconds
+            let fallback: Float
+            if let episode = playback.currentEpisode {
+                fallback = store.resolvedPlaybackSpeedForRemaining(for: episode)
+            } else {
+                fallback = max(
+                    EpisodeRemainingTime.minimumPlaybackSpeedDivisor,
+                    settings.defaultPlaybackSpeed
+                )
+            }
+            let display = EpisodeRemainingTime.playerChromeRemainingSeconds(
+                wallClockSeconds: wall,
+                respectsSpeed: settings.remainingTimeRespectsSpeed,
+                sessionRate: playback.rate,
+                fallbackSpeed: fallback
+            )
+            return formatRemaining(display)
         }
         return format(playback.durationSeconds)
     }

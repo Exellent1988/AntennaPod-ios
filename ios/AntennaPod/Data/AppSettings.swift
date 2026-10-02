@@ -1734,7 +1734,8 @@ final class AppSettings: ObservableObject {
     /// podcast’s effective playback speed (`FeedSettings.playbackSpeed` ?? `defaultPlaybackSpeed`,
     /// clamped ≥ 0.5). Default **false** (wall-clock — today’s behavior). Estimate only: does
     /// **not** use the live player session rate for list totals; volume boost ≠ speed.
-    /// Mini/full player −remaining labels stay wall-clock (not this flag).
+    /// Mini/full player −remaining (when Show remaining time is on) uses live session rate
+    /// (fallback feed/default, ≥ 0.5). Chapter / Widget / Watch remaining stay wall-clock.
     @Published var remainingTimeRespectsSpeed: Bool {
         didSet {
             UserDefaults.standard.set(remainingTimeRespectsSpeed, forKey: Keys.remainingTimeRespectsSpeed)
