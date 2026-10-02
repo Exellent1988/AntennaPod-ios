@@ -23544,6 +23544,40 @@
           }
         }
       }
+    },
+    "Lists chapters for this episode; tap a chapter to seek": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lists chapters for this episode; tap a chapter to seek"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listet Kapitel dieser Episode; Tippen springt zum Kapitelanfang"
+          }
+        }
+      }
+    },
+    "No chapters known for this episode yet.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No chapters known for this episode yet."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für diese Episode sind noch keine Kapitel bekannt."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

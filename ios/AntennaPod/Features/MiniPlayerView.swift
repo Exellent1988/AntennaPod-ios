@@ -11,6 +11,7 @@ struct MiniPlayerView: View {
     @State private var showCustomSleepTimer = false
     @State private var showCustomPlaybackSpeed = false
     @State private var showBookmarks = false
+    @State private var showChapters = false
     @State private var showAtCapAlert = false
     @State private var bookmarkAddedTick = 0
     @State private var showJumpToPosition = false
@@ -171,6 +172,15 @@ struct MiniPlayerView: View {
                             .disabled(nextChapterTarget == nil)
                             .accessibilityLabel(String(localized: "Next chapter"))
                             .accessibilityHint(String(localized: "Seeks to the next chapter"))
+                            // Chapters list — same searchable list + seek as Full (EpisodeChaptersSheet).
+                            // Only when chapters already on store/player episode (no mini lazy fetch).
+                            Button {
+                                showChapters = true
+                            } label: {
+                                Label("Chapters", systemImage: "list.bullet")
+                            }
+                            .accessibilityLabel(String(localized: "Chapters"))
+                            .accessibilityHint(String(localized: "Lists chapters for this episode; tap a chapter to seek"))
                         }
                         // Add bookmark — one-tap at current wall-clock position (empty note).
                         // Same 50/episode cap as Full sheet: disabled at cap + honesty alert.
@@ -383,6 +393,16 @@ struct MiniPlayerView: View {
                 EpisodeBookmarksSheet(episodeId: episode.id)
                     .environmentObject(playback)
                     .environmentObject(store)
+            }
+            .sheet(isPresented: $showChapters) {
+                // Prefer store episode (post-refresh) — same already-on-episode chapters as mini prev/next.
+                // EpisodeChaptersSheet does not lazy-fetch remote/media chapters.
+                EpisodeChaptersSheet(
+                    chapters: chapters,
+                    episode: store.episode(id: episode.id) ?? episode
+                )
+                .environmentObject(playback)
+                .environmentObject(store)
             }
             .alert(
                 String(localized: "Bookmark limit reached"),
