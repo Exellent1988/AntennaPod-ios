@@ -5,6 +5,7 @@ import UIKit
 /// Caps at `PodcastLiveItemDisplay.displayCap` with an honesty footnote when truncated.
 /// **Display-only** — does **not** play live enclosures, open chat, record, or process payments.
 /// Copy / Share metadata and Open / Copy / Share link actions use only displayed or feed-provided values.
+/// When the status capsule is shown, distinct **Copy / Share live item status** use the exact displayed status string.
 struct PodcastLiveItemsListView: View {
     @Environment(\.openURL) private var openURL
 
@@ -116,6 +117,31 @@ struct PodcastLiveItemsListView: View {
                         .foregroundStyle(.secondary)
                         .accessibilityHidden(true)
                 }
+            }
+
+            HStack(spacing: 12) {
+                Button {
+                    UIPasteboard.general.string = statusText
+                    copiedAlertMessage = String(localized: "Live item status copied to the pasteboard.")
+                    copyFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Label("Copy live item status", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy live item status"))
+                .accessibilityHint(
+                    String(localized: "Copies the exact displayed live item status as plain text")
+                )
+
+                ShareLink(item: statusText) {
+                    Label("Share live item status", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share live item status"))
+                .accessibilityHint(
+                    String(localized: "Shares the exact displayed live item status as plain text")
+                )
             }
 
             if let titleText {
