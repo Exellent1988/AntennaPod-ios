@@ -14,6 +14,7 @@ struct DownloadsView: View {
     @State private var showClearAllConfirm = false
     @State private var showCancelAllConfirm = false
     @State private var showEnqueueAllConfirm = false
+    @State private var showEnqueueAllUnplayedConfirm = false
     @State private var showMarkAllPlayedConfirm = false
     @State private var showMarkAllUnplayedConfirm = false
     @State private var showCopiedAlert = false
@@ -196,6 +197,12 @@ struct DownloadsView: View {
     /// Confirm count and `enqueueAllDownloads()` share this eligibility.
     private var enqueueAllDownloadsCandidatesCount: Int {
         downloads.downloads.filter { !store.isInQueue($0.episode.id) }.count
+    }
+
+    /// Unplayed, non-archived, not-already-queued episodes in the full completed Downloads
+    /// catalog. The count and enqueue action share this catalog-scoped eligibility; UI filters are ignored.
+    private var enqueueAllUnplayedDownloadsCandidatesCount: Int {
+        store.enqueueAllUnplayedDownloadsCandidates().count
     }
 
     /// Unplayed, non-archived episodes in the **full completed Downloads catalog** — not chip,
@@ -568,6 +575,17 @@ struct DownloadsView: View {
                         .accessibilityHint(String(localized: "Appends downloaded episodes not already queued"))
 
                         Button {
+                            showEnqueueAllUnplayedConfirm = true
+                        } label: {
+                            Label("Add all unplayed to queue", systemImage: "text.badge.plus")
+                        }
+                        .disabled(enqueueAllUnplayedDownloadsCandidatesCount == 0)
+                        .accessibilityLabel(String(localized: "Add all unplayed to queue"))
+                        .accessibilityHint(
+                            String(localized: "Appends unplayed, non-archived downloaded episodes not already queued; ignores chip, podcast, search, and sort filters")
+                        )
+
+                        Button {
                             showMarkAllPlayedConfirm = true
                         } label: {
                             Label("Mark all as played", systemImage: "checkmark.circle")
@@ -619,7 +637,7 @@ struct DownloadsView: View {
                     .disabled(downloads.downloads.isEmpty && downloads.cancelAllInFlightCount == 0)
                     .accessibilityLabel(String(localized: "Downloads actions"))
                     .accessibilityHint(
-                        String(localized: "Copy downloads, share downloads, play random, add all to queue, mark all as played, mark all as unplayed, cancel all downloads, delete played downloads, or clear all downloads")
+                        String(localized: "Copy downloads, share downloads, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, cancel all downloads, delete played downloads, or clear all downloads")
                     )
                 }
             }
@@ -643,6 +661,18 @@ struct DownloadsView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Appends \(enqueueAllDownloadsCandidatesCount) downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue.")
+            }
+            .confirmationDialog(
+                "Add all unplayed to queue?",
+                isPresented: $showEnqueueAllUnplayedConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Add all unplayed to queue") {
+                    store.enqueueAllUnplayedDownloads()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Appends \(enqueueAllUnplayedDownloadsCandidatesCount) unplayed, non-archived downloaded episode(s) to the end of the queue (catalog order — oldest completed first). Already queued, played, and archived episodes are skipped. Uses the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived downloads.")
             }
             .confirmationDialog(
                 "Mark all as played?",

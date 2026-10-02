@@ -1809,6 +1809,32 @@ final class PodcastStore: ObservableObject {
         return candidates.count
     }
 
+    /// Append unplayed, non-archived, not-already-queued episodes from the full completed
+    /// Downloads catalog. Uses DownloadService.downloads catalog order (oldest completed first),
+    /// not the Downloads UI chip, podcast, search, or sort filters. Played, archived, and already
+    /// queued episodes are skipped. Safe while queue lock is on; callers must confirm first.
+    /// Requires downloads to be wired on the store; returns 0 if unset.
+    /// - Returns: number of episodes newly appended.
+    @discardableResult
+    func enqueueAllUnplayedDownloads() -> Int {
+        let candidates = enqueueAllUnplayedDownloadsCandidates()
+        for episode in candidates {
+            enqueue(episode)
+        }
+        return candidates.count
+    }
+
+    /// Eligible episodes for Downloads **Add all unplayed to queue**. Shared by the confirmation
+    /// count and enqueue action; the catalog is always the full completed Downloads catalog.
+    func enqueueAllUnplayedDownloadsCandidates() -> [PodcastEpisode] {
+        guard let downloads else { return [] }
+        return downloads.downloads
+            .map(\.episode)
+            .filter { episode in
+                !isPlayed(episode.id) && !isArchived(episode.id) && !isInQueue(episode.id)
+            }
+    }
+
     /// Starred episodes across feeds, newest favorited first.
     var favoriteEpisodes: [FavoriteEpisode] {
         var items: [FavoriteEpisode] = []
