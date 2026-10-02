@@ -401,6 +401,14 @@ struct SettingsView: View {
                         systemImage: "magnifyingglass",
                         description: Text("No settings rows or sections match your search.")
                     )
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "No matching settings"))
+                    .accessibilityValue(
+                        String(localized: "No settings rows or sections match your search.")
+                    )
+                    .accessibilityHint(
+                        String(localized: "Clear the search field or try another settings term.")
+                    )
                 }
             }
             .navigationTitle("Settings")
