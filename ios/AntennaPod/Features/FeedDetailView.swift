@@ -302,7 +302,7 @@ struct FeedDetailView: View {
     /// duration known; unplayed with duration contributes full duration; **played** (not current)
     /// → 0; **unknown duration skipped** (tilde when any skipped). Currently playing uses live
     /// `PlaybackService` position/duration. Wall-clock only (no playback-speed divide).
-    /// Distinct from **Download all** / **Mark all as played** / **Mark all as unplayed** / **Add all to queue** / **Delete downloads** full-feed eligibility counts.
+    /// Distinct from **Download all** / **Mark all as played** / **Mark all as unplayed** / **Add all to queue** / **Delete downloads** / **Play random** full-feed eligibility counts.
     private var feedRemainingInfoLabel: String? {
         guard !filteredEpisodes.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: feedRemainingSummary)
@@ -385,6 +385,24 @@ struct FeedDetailView: View {
     /// Shown in confirm for honesty when some favorites remain after eligible delete.
     private var deleteFeedDownloadsSkippedFavoritesCount: Int {
         max(0, downloads.downloads(forFeed: liveFeed).count - deleteFeedDownloadsEligible.count)
+    }
+
+    /// Non-archived episodes on this feed with playable media (local file via
+    /// `DownloadService.localURL` — downloads + local-folder `file://` — or streamable http(s)
+    /// `downloadUrl`). Full-feed catalog — **not** chip/search filtered.
+    /// Distinct from Download all / Mark all / Add all eligibility.
+    private var playRandomEligibleEpisodes: [PodcastEpisode] {
+        liveFeed.episodes.filter { episode in
+            !store.isArchived(episode.id) && episodeHasPlayableMedia(episode)
+        }
+    }
+
+    /// Prefer unplayed among `playRandomEligibleEpisodes` when any remain; otherwise all eligible
+    /// (played allowed when every eligible episode is played, or none unplayed eligible).
+    private var playRandomCandidates: [PodcastEpisode] {
+        let eligible = playRandomEligibleEpisodes
+        let unplayed = eligible.filter { !store.isPlayed($0.id) }
+        return unplayed.isEmpty ? eligible : unplayed
     }
 
     var body: some View {
@@ -748,7 +766,7 @@ struct FeedDetailView: View {
             }
 
             // AntennaPod-like Feed detail info bar (visible sort→status→type→search list remaining time).
-            // Distinct from Download all / Mark all as played / Mark all as unplayed / Add all to queue / Delete downloads full-feed eligibility counts.
+            // Distinct from Download all / Mark all as played / Mark all as unplayed / Add all to queue / Delete downloads / Play random full-feed eligibility counts.
             if let remainingLabel = feedRemainingInfoLabel {
                 Section {
                     Text(remainingLabel)
@@ -942,6 +960,15 @@ struct FeedDetailView: View {
                             .accessibilityLabel(String(localized: "Copy podcast GUID"))
                             .accessibilityHint(String(localized: "Copies the podcast GUID from the feed to the pasteboard"))
                         }
+
+                        Button {
+                            playRandomEpisode()
+                        } label: {
+                            Label("Play random", systemImage: "shuffle")
+                        }
+                        .disabled(playRandomCandidates.isEmpty)
+                        .accessibilityLabel(String(localized: "Play random"))
+                        .accessibilityHint(String(localized: "Plays a random non-archived episode from this podcast. Prefers unplayed when any remain."))
 
                         Button {
                             showDownloadAllConfirm = true
@@ -1245,6 +1272,24 @@ struct FeedDetailView: View {
         }
     }
 
+
+    /// Local download / local-folder file, or streamable http(s) enclosure — same honesty as
+    /// `PlaybackService.resolvePlaybackURL` inputs (Wi‑Fi stream gate still applies at play time).
+    private func episodeHasPlayableMedia(_ episode: PodcastEpisode) -> Bool {
+        if downloads.localURL(for: episode) != nil { return true }
+        guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty,
+              let url = URL(string: raw) else { return false }
+        let scheme = url.scheme?.lowercased()
+        return scheme == "http" || scheme == "https"
+    }
+
+    /// Uniform pick among `playRandomCandidates`; starts via `PlaybackService.play` (resume rules unchanged).
+    /// No confirm; does not invent queue mutations beyond what `play` already does.
+    private func playRandomEpisode() {
+        guard let episode = playRandomCandidates.randomElement() else { return }
+        _ = playback.play(episode: episode)
+    }
 
     private func scheduleFilter(for term: String) {
         debounceTask?.cancel()

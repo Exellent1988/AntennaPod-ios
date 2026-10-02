@@ -145,6 +145,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 |----|----|
 | ☐ Episode manuell laden | ☐ Manual download |
 | ☐ Full Player + Mini ⋯: Download / Abbrechen / Download löschen (gleiche DownloadService-APIs; Wi‑Fi-Gate; **Confirm** + Titel; nur lokale Datei; shared `EpisodeDownloadActions`) | ☐ Full Player + Mini ⋯: Download / Cancel / Delete download (same DownloadService APIs; Wi‑Fi gate; **confirm** + title; local file only; shared `EpisodeDownloadActions`) |
+| ☐ Feed: Zufällig abspielen (⋯; nicht archiviert + playable; bevorzugt ungehört; kein Confirm; disabled wenn 0; `PlaybackService.play`; nicht Chip/Suche) | ☐ Feed: Play random (⋯; non-archived + playable; prefers unplayed; no confirm; disabled when 0; `PlaybackService.play`; not chip/search) |
 | ☐ Feed: Alle herunterladen (Bestätigung + Cap) | ☐ Feed: Download all (confirm + cap) |
 | ☐ Feed: Alle als gehört markieren (Bestätigung) | ☐ Feed: Mark all as played (confirm) |
 | ☐ Feed: Alle als ungehört markieren (Bestätigung; inkl. archiviert gespielt; keine Downloads/Queue löschen) | ☐ Feed: Mark all as unplayed (confirm; incl. archived played; no delete downloads/queue) |

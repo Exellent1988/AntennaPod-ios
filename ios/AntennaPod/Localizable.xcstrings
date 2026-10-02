@@ -24591,6 +24591,42 @@
         }
       },
       "extractionState": "manual"
+    },
+    "Play random": {
+      "extractionState": "manual",
+      "comment": "Feed detail ⋯: play a uniformly random non-archived playable episode from this podcast. Prefers unplayed when any remain; no confirm.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play random"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zufällig abspielen"
+          }
+        }
+      }
+    },
+    "Plays a random non-archived episode from this podcast. Prefers unplayed when any remain.": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for Feed detail Play random.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random non-archived episode from this podcast. Prefers unplayed when any remain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine zufällige nicht archivierte Episode dieses Podcasts. Bevorzugt ungehörte, wenn vorhanden."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
