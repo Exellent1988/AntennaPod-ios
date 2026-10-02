@@ -1234,11 +1234,17 @@ struct SettingsView: View {
                         Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
                     }
                 }
+                .accessibilityLabel(String(localized: "Skip intro"))
+                .accessibilityValue(skipIntroAccessibilityValue)
+                .accessibilityHint(skipIntroAccessibilityHint)
                 Picker("Skip outro", selection: $settings.skipOutroSeconds) {
                     ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
                         Text(AppSettings.skipIntroOutroLabel(secs)).tag(secs)
                     }
                 }
+                .accessibilityLabel(String(localized: "Skip outro"))
+                .accessibilityValue(skipOutroAccessibilityValue)
+                .accessibilityHint(skipOutroAccessibilityHint)
                 Text("Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Override per podcast via Feed detail → gear → Playback.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -1527,6 +1533,63 @@ struct SettingsView: View {
 
     private var rewindAfterPauseAccessibilityHint: String {
         String(localized: "Presets are Off, 1, 2, 3, 5, and 10 seconds. The default is 2 seconds. Off never seeks on resume. Any other value seeks back that many seconds, not before 0, only when this item resumes after a pause of at least 1 second. Cold play, first start from a row, play from beginning, and stop do not rewind. Changing the picker does not move the current position, start playback, or download. Not the Rewind or Fast-forward buttons, and not Android elapsed-time tiers. There is no Pause-on-headset setting.")
+    }
+
+    /// Spoken preset for Settings Skip intro / Skip outro. The visible picker
+    /// still uses `AppSettings.skipIntroOutroLabel`, which is not catalog-backed.
+    private func skipIntroOutroVoiceOverLabel(_ seconds: Int) -> String {
+        switch seconds {
+        case 0:
+            return String(localized: "Off")
+        case 5:
+            return String(localized: "5 seconds")
+        case 10:
+            return String(localized: "10 seconds")
+        case 15:
+            return String(localized: "15 seconds")
+        case 30:
+            return String(localized: "30 seconds")
+        case 60:
+            return String(localized: "60 seconds")
+        default:
+            return AppSettings.skipIntroOutroLabel(seconds)
+        }
+    }
+
+    /// VoiceOver for Settings → Skip intro. Off is the default. A fresh start
+    /// (saved position at most about 1 second, not play from beginning) seeks once.
+    /// Changing the picker does not seek now. A per-podcast override wins.
+    private var skipIntroAccessibilityValue: String {
+        let seconds = settings.skipIntroSeconds
+        if seconds <= 0 {
+            return String(localized: "Off. This is the default. A fresh start stays at the beginning and does not seek forward. Play from beginning stays at 0. Resume when the saved position is past about 1 second does not skip an intro. A played episode whose resume position is 0 is a fresh start. Changing this does not seek now, start playback, or download. A per-podcast Skip intro override still replaces this global value. It is not Rewind, Fast-forward, Skip outro, Skip silence, or Rewind after pause.")
+        }
+        return String(
+            format: String(localized: "%@. This is not the default of Off. The next fresh start seeks forward once to this many seconds when the saved position is at most about 1 second. Play from beginning stays at 0 and does not skip the intro. Resume past about 1 second does not skip the intro. A played episode whose resume position is 0 counts as a fresh start. Changing this does not seek now, start playback, or download. A per-podcast override replaces this global value. It is not the Rewind or Fast-forward skip interval, Skip outro, Skip silence, or Rewind after pause."),
+            skipIntroOutroVoiceOverLabel(seconds)
+        )
+    }
+
+    private var skipIntroAccessibilityHint: String {
+        String(localized: "Presets are Off, 5, 10, 15, 30, and 60 seconds. The default is Off. Off never seeks on a fresh start. Any other value seeks forward once to that many seconds only when the saved position is about 0. Play from beginning does not skip the intro. Resuming past about 1 second does not skip the intro. Changing the picker does not seek now, start playback, or download. Feed detail can override this for one podcast. Not Rewind, Fast-forward, Skip outro, Skip silence, or Rewind after pause.")
+    }
+
+    /// VoiceOver for Settings → Skip outro. Off is the default. A non-zero value
+    /// finishes once per session like a natural end when duration is known.
+    /// Changing the picker does not mark played now. A per-podcast override wins.
+    private var skipOutroAccessibilityValue: String {
+        let seconds = settings.skipOutroSeconds
+        if seconds <= 0 {
+            return String(localized: "Off. This is the default. Playback does not finish early while time remains. Unknown duration does not invent an end. Changing this does not mark the current episode played, seek, start playback, or download. A per-podcast Skip outro override still replaces this global value. It is not Smart mark as played, Skip intro, Skip silence, or Rewind after pause.")
+        }
+        return String(
+            format: String(localized: "%@. This is not the default of Off. While this episode is playing, if duration is known, position is past 1 second, and remaining time is at most this many seconds, it finishes once this session the same way as a natural end: mark played, then Continuous playback decides what plays next. Off stops. Queue plays the next queue item only. Same podcast plays the next unplayed, non-archived episode of this podcast only. An end-of-episode or end-of-chapter sleep timer still stops without advancing. End of queue still advances only through the queue. It does not fire at the very start. Unknown duration does not finish early. Changing this does not mark played now, seek, start playback, or download. A per-podcast override replaces this global value. It is not Smart mark as played, which applies when leaving or stopping, and not Skip intro, Skip silence, or Rewind after pause."),
+            skipIntroOutroVoiceOverLabel(seconds)
+        )
+    }
+
+    private var skipOutroAccessibilityHint: String {
+        String(localized: "Presets are Off, 5, 10, 15, 30, and 60 seconds. The default is Off. Off never finishes early. Any other value finishes once per play session when remaining time is within that window, duration is known, and playback is past 1 second, the same as a natural end. Continuous playback chooses what plays next. Changing the picker does not mark played now, seek, start playback, or download. Feed detail can override this for one podcast. Not Smart mark as played, Skip intro, Skip silence, or Rewind after pause.")
     }
 
     private var refreshHelpText: String {

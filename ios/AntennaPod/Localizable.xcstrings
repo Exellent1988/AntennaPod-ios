@@ -42275,6 +42275,142 @@
           }
         }
       }
+    },
+    "Skip intro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip intro"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intro überspringen"
+          }
+        }
+      }
+    },
+    "Skip outro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip outro"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outro überspringen"
+          }
+        }
+      }
+    },
+    "Off. This is the default. A fresh start stays at the beginning and does not seek forward. Play from beginning stays at 0. Resume when the saved position is past about 1 second does not skip an intro. A played episode whose resume position is 0 is a fresh start. Changing this does not seek now, start playback, or download. A per-podcast Skip intro override still replaces this global value. It is not Rewind, Fast-forward, Skip outro, Skip silence, or Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. This is the default. A fresh start stays at the beginning and does not seek forward. Play from beginning stays at 0. Resume when the saved position is past about 1 second does not skip an intro. A played episode whose resume position is 0 is a fresh start. Changing this does not seek now, start playback, or download. A per-podcast Skip intro override still replaces this global value. It is not Rewind, Fast-forward, Skip outro, Skip silence, or Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. Das ist der Standard. Ein Neustart bleibt am Anfang und spult nicht vor. Von vorne abspielen bleibt bei 0. Fortsetzen, wenn die gespeicherte Position mehr als etwa 1 Sekunde ist, überspringt kein Intro. Eine als gespielt markierte Episode, deren Fortsetzungsposition 0 ist, ist ein Neustart. Die Änderung sucht jetzt nicht, startet keine Wiedergabe und lädt nichts herunter. Eine podcastbezogene Intro-Einstellung ersetzt weiterhin diesen globalen Wert. Nicht Zurückspulen, Vorspulen, Outro überspringen, Stille überspringen oder Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "%@. This is not the default of Off. The next fresh start seeks forward once to this many seconds when the saved position is at most about 1 second. Play from beginning stays at 0 and does not skip the intro. Resume past about 1 second does not skip the intro. A played episode whose resume position is 0 counts as a fresh start. Changing this does not seek now, start playback, or download. A per-podcast override replaces this global value. It is not the Rewind or Fast-forward skip interval, Skip outro, Skip silence, or Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is not the default of Off. The next fresh start seeks forward once to this many seconds when the saved position is at most about 1 second. Play from beginning stays at 0 and does not skip the intro. Resume past about 1 second does not skip the intro. A played episode whose resume position is 0 counts as a fresh start. Changing this does not seek now, start playback, or download. A per-podcast override replaces this global value. It is not the Rewind or Fast-forward skip interval, Skip outro, Skip silence, or Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist nicht der Standard Aus. Der nächste Neustart spult einmal auf diese Sekunden vor, wenn die gespeicherte Position höchstens etwa 1 Sekunde ist. Von vorne abspielen bleibt bei 0 und überspringt das Intro nicht. Fortsetzen nach mehr als etwa 1 Sekunde überspringt das Intro nicht. Eine als gespielt markierte Episode, deren Fortsetzungsposition 0 ist, zählt als Neustart. Die Änderung sucht jetzt nicht, startet keine Wiedergabe und lädt nichts herunter. Eine podcastbezogene Einstellung ersetzt diesen globalen Wert. Nicht das Zurückspul- oder Vorspulintervall, nicht Outro überspringen, nicht Stille überspringen und nicht Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "Presets are Off, 5, 10, 15, 30, and 60 seconds. The default is Off. Off never seeks on a fresh start. Any other value seeks forward once to that many seconds only when the saved position is about 0. Play from beginning does not skip the intro. Resuming past about 1 second does not skip the intro. Changing the picker does not seek now, start playback, or download. Feed detail can override this for one podcast. Not Rewind, Fast-forward, Skip outro, Skip silence, or Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are Off, 5, 10, 15, 30, and 60 seconds. The default is Off. Off never seeks on a fresh start. Any other value seeks forward once to that many seconds only when the saved position is about 0. Play from beginning does not skip the intro. Resuming past about 1 second does not skip the intro. Changing the picker does not seek now, start playback, or download. Feed detail can override this for one podcast. Not Rewind, Fast-forward, Skip outro, Skip silence, or Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voreinstellungen sind Aus, 5, 10, 15, 30 und 60 Sekunden. Der Standard ist Aus. Aus sucht bei einem Neustart nie. Jeder andere Wert spult einmal auf diese Sekunden vor, nur wenn die gespeicherte Position etwa 0 ist. Von vorne abspielen überspringt das Intro nicht. Fortsetzen nach mehr als etwa 1 Sekunde überspringt das Intro nicht. Die Änderung sucht jetzt nicht, startet keine Wiedergabe und lädt nichts herunter. Die Feed-Details können das für einen Podcast überschreiben. Nicht Zurückspulen, Vorspulen, Outro überspringen, Stille überspringen oder Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "Off. This is the default. Playback does not finish early while time remains. Unknown duration does not invent an end. Changing this does not mark the current episode played, seek, start playback, or download. A per-podcast Skip outro override still replaces this global value. It is not Smart mark as played, Skip intro, Skip silence, or Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. This is the default. Playback does not finish early while time remains. Unknown duration does not invent an end. Changing this does not mark the current episode played, seek, start playback, or download. A per-podcast Skip outro override still replaces this global value. It is not Smart mark as played, Skip intro, Skip silence, or Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. Das ist der Standard. Die Wiedergabe endet nicht vorzeitig, solange Zeit übrig ist. Eine unbekannte Dauer erfindet kein Ende. Die Änderung markiert die aktuelle Episode nicht als gehört, sucht nicht, startet keine Wiedergabe und lädt nichts herunter. Eine podcastbezogene Outro-Einstellung ersetzt weiterhin diesen globalen Wert. Nicht Intelligent als gehört markieren, Intro überspringen, Stille überspringen oder Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "%@. This is not the default of Off. While this episode is playing, if duration is known, position is past 1 second, and remaining time is at most this many seconds, it finishes once this session the same way as a natural end: mark played, then Continuous playback decides what plays next. Off stops. Queue plays the next queue item only. Same podcast plays the next unplayed, non-archived episode of this podcast only. An end-of-episode or end-of-chapter sleep timer still stops without advancing. End of queue still advances only through the queue. It does not fire at the very start. Unknown duration does not finish early. Changing this does not mark played now, seek, start playback, or download. A per-podcast override replaces this global value. It is not Smart mark as played, which applies when leaving or stopping, and not Skip intro, Skip silence, or Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is not the default of Off. While this episode is playing, if duration is known, position is past 1 second, and remaining time is at most this many seconds, it finishes once this session the same way as a natural end: mark played, then Continuous playback decides what plays next. Off stops. Queue plays the next queue item only. Same podcast plays the next unplayed, non-archived episode of this podcast only. An end-of-episode or end-of-chapter sleep timer still stops without advancing. End of queue still advances only through the queue. It does not fire at the very start. Unknown duration does not finish early. Changing this does not mark played now, seek, start playback, or download. A per-podcast override replaces this global value. It is not Smart mark as played, which applies when leaving or stopping, and not Skip intro, Skip silence, or Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist nicht der Standard Aus. Während diese Episode läuft, endet sie einmal in dieser Sitzung wie ein natürliches Ende, wenn die Dauer bekannt ist, die Position mehr als 1 Sekunde ist und die Restzeit höchstens diese Sekunden beträgt: als gehört markieren, danach entscheidet Fortlaufende Wiedergabe, was als Nächstes läuft. Aus stoppt. Warteschlange spielt nur den nächsten Eintrag der Warteschlange. Gleicher Podcast spielt nur die nächste ungehörte, nicht archivierte Episode dieses Podcasts. Ein Schlaf-Timer auf Ende der Episode oder Ende des Kapitels stoppt weiterhin ohne Weiterleiten. Ende der Warteschlange springt weiterhin nur in der Warteschlange weiter. Ganz am Anfang löst es nicht aus. Eine unbekannte Dauer beendet nicht vorzeitig. Die Änderung markiert jetzt nicht als gehört, sucht nicht, startet keine Wiedergabe und lädt nichts herunter. Eine podcastbezogene Einstellung ersetzt diesen globalen Wert. Nicht Intelligent als gehört markieren, das beim Verlassen oder Stoppen gilt, und nicht Intro überspringen, Stille überspringen oder Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "Presets are Off, 5, 10, 15, 30, and 60 seconds. The default is Off. Off never finishes early. Any other value finishes once per play session when remaining time is within that window, duration is known, and playback is past 1 second, the same as a natural end. Continuous playback chooses what plays next. Changing the picker does not mark played now, seek, start playback, or download. Feed detail can override this for one podcast. Not Smart mark as played, Skip intro, Skip silence, or Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are Off, 5, 10, 15, 30, and 60 seconds. The default is Off. Off never finishes early. Any other value finishes once per play session when remaining time is within that window, duration is known, and playback is past 1 second, the same as a natural end. Continuous playback chooses what plays next. Changing the picker does not mark played now, seek, start playback, or download. Feed detail can override this for one podcast. Not Smart mark as played, Skip intro, Skip silence, or Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voreinstellungen sind Aus, 5, 10, 15, 30 und 60 Sekunden. Der Standard ist Aus. Aus beendet nie vorzeitig. Jeder andere Wert beendet einmal pro Wiedergabesitzung, wenn die Restzeit in diesem Fenster liegt, die Dauer bekannt ist und die Wiedergabe mehr als 1 Sekunde fortgeschritten ist, wie ein natürliches Ende. Fortlaufende Wiedergabe wählt, was als Nächstes läuft. Die Änderung markiert jetzt nicht als gehört, sucht nicht, startet keine Wiedergabe und lädt nichts herunter. Die Feed-Details können das für einen Podcast überschreiben. Nicht Intelligent als gehört markieren, Intro überspringen, Stille überspringen oder Zurückspulen nach Pause."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
