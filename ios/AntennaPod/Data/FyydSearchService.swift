@@ -42,7 +42,7 @@ struct FyydSearchService {
         }
 
         var request = URLRequest(url: url)
-        request.setValue("AntennaPod-iOS/0.1", forHTTPHeaderField: "User-Agent")
+        AppUserAgent.apply(to: &request)
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.timeoutInterval = 20
 

@@ -97,6 +97,7 @@ Fork-only SwiftUI shell. Playback via AVFoundation; networking/downloads via URL
 - New-episode action (Inbox only / Add to Queue / Add to Queue and download; per-feed Use global / Inbox / Queue; after refresh newcomers only)
 - Auto-download (global on/off + episodes-per-feed cap; **new episode IDs after refresh only**; Wi‑Fi only under Network / Downloads; per-feed Use global / Always / Never; skips local-folder)
 - Mobile / Wi‑Fi policy (Current network status + auto / manual download / stream Wi‑Fi-only toggles; shared NWPathMonitor; no VPN/proxy)
+- Custom User-Agent (Settings → Network / Downloads; optional override, empty → `AntennaPod-iOS/0.1`; newlines stripped; feed refresh + downloads + other URLSession clients; **AVPlayer streaming may still use system UA**; not a proxy / not certificate pinning)
 - Per-feed settings (Feed detail → gear: Auto-download, Keep updated, New episodes, Notify, Skip intro/outro, Playback speed overrides, **HTTP Basic Authentication** in Keychain — never in feed-settings.json; local-folder N/A)
 - Tags / Folders for subscriptions (side map `feed-tags.json`; assign on per-feed settings; **Manage tags** in Settings → Library + Subscriptions toolbar — searchable list with counts, rename, delete with confirm; filter chips + optional group-by-tag; untagged)
 - Unsubscribe confirm (Subscriptions trailing swipe + Feed detail ⋯; destructive dialog with podcast title; removes feed + feed-settings + tags + queue items from that feed + favorites/archive/bookmarks/playback history for its episodes; **Unsubscribe** keeps downloaded files; optional **Unsubscribe and delete N downloads (~size)** deletes only this feed’s offline files via `deleteDownloads(forFeed:)` before unsubscribe — incl. favorited; cancels in-flight; not Clear all; local-folder releases bookmark; dismisses Feed detail after confirm)
@@ -458,6 +459,15 @@ Mini + full player speed control: **tap** advances to the next `AppSettings.spee
 **Lockscreen / Now Playing:** Remains audio metadata + feed artwork (no video on lock screen). System PiP window is separate from Lockscreen Now Playing.
 
 **Honest limits:** No dedicated landscape video chrome; no AirPlay redesign; automatic PiP only via `canStartPictureInPictureAutomaticallyFromInline` (not a custom home-button handler); exotic codecs depend on AVFoundation; local-folder feeds stay audio-extension-only; PiP availability is system-dependent (`isPictureInPicturePossible`).
+
+## Custom User-Agent (beta polish)
+
+Settings → **Network / Downloads → Custom User-Agent**. Default **empty** (uses app default `AntennaPod-iOS/0.1`). Persisted in `AppSettings` / UserDefaults and included in iOS JSON backup.
+
+- **Sanitize:** CR/LF and other control characters are removed (HTTP header safety). Whitespace is collapsed/trimmed. Empty after sanitize → default.
+- **Applied on:** feed refresh (`FeedRepository`), media downloads (`DownloadService`), and other app `URLSession` clients (discovery search, chapters JSON, transcripts, gpodder). Shared helper `AppUserAgent`.
+- **Honest limits:** stock `AVPlayer` **streaming** may still send the **system** User-Agent — this override is not wired into AVPlayer. This is **not** an HTTP proxy setting and **not** certificate pinning.
+- EN/DE strings + VoiceOver (label, hint, effective value).
 
 ## Volume adaptation (P3 lite)
 

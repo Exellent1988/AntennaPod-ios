@@ -396,7 +396,7 @@ final class DownloadService: ObservableObject {
         let fileName = "\(safeName).\(ext)"
 
         var request = URLRequest(url: url)
-        request.setValue("AntennaPod-iOS/0.1", forHTTPHeaderField: "User-Agent")
+        AppUserAgent.apply(to: &request)
         if let creds = httpBasicCredentialsForDownload(episode: episode, mediaURL: url) {
             FeedHttpBasicAuth.apply(creds, to: &request)
         }

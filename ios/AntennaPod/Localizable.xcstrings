@@ -22265,6 +22265,74 @@
           }
         }
       }
+    },
+    "Custom User-Agent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom User-Agent"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefinierter User-Agent"
+          }
+        }
+      }
+    },
+    "Effective User-Agent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effective User-Agent"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effektiver User-Agent"
+          }
+        }
+      }
+    },
+    "Using app default": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Using app default"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App-Standard wird verwendet"
+          }
+        }
+      }
+    },
+    "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Not a proxy.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Not a proxy."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optionaler Override für Feed-Aktualisierung und Downloads. Leer = App-Standard. Zeilenumbrüche werden entfernt. AVPlayer-Streaming kann weiterhin die System-User-Agent nutzen. Kein Proxy."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

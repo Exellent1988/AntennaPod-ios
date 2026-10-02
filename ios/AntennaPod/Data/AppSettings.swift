@@ -937,6 +937,7 @@ final class AppSettings: ObservableObject {
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
         static let stereoToMonoEnabled = "settings.stereoToMonoEnabled"
         static let preservePitchEnabled = "settings.preservePitchEnabled"
+        static let customUserAgent = "settings.customUserAgent"
         static let keepScreenOnWhilePlaying = "settings.keepScreenOnWhilePlaying"
         static let continuousPlaybackEnabled = "settings.continuousPlaybackEnabled"
         static let resetPositionWhenMarkedPlayed = "settings.resetPositionWhenMarkedPlayed"
@@ -1216,6 +1217,26 @@ final class AppSettings: ObservableObject {
         didSet {
             UserDefaults.standard.set(preservePitchEnabled, forKey: Keys.preservePitchEnabled)
         }
+    }
+
+    /// Optional custom HTTP `User-Agent` for feed refresh + media downloads (and other URLSession clients).
+    /// Empty (after sanitize) → app default `AntennaPod-iOS/0.1`. Newlines/controls stripped (header safety).
+    /// **Not** applied to stock `AVPlayer` streaming (system UA). Not a proxy / not certificate pinning.
+    /// Persisted + iOS JSON backup. Default empty.
+    @Published var customUserAgent: String {
+        didSet {
+            let sanitized = AppUserAgent.sanitize(customUserAgent)
+            if sanitized != customUserAgent {
+                customUserAgent = sanitized
+                return
+            }
+            UserDefaults.standard.set(customUserAgent, forKey: Keys.customUserAgent)
+        }
+    }
+
+    /// Effective User-Agent string currently sent on feed/download requests.
+    var effectiveUserAgent: String {
+        AppUserAgent.resolved(override: customUserAgent)
     }
 
     /// When true, keep the screen awake (`UIApplication.isIdleTimerDisabled`) while playback is actively playing.
@@ -1696,6 +1717,9 @@ final class AppSettings: ObservableObject {
             // Default on: speech-friendly pitch correction (AVPlayerItem .timeDomain).
             preservePitchEnabled = true
         }
+        customUserAgent = AppUserAgent.sanitize(
+            UserDefaults.standard.string(forKey: Keys.customUserAgent) ?? ""
+        )
         if UserDefaults.standard.object(forKey: Keys.keepScreenOnWhilePlaying) != nil {
             keepScreenOnWhilePlaying = UserDefaults.standard.bool(forKey: Keys.keepScreenOnWhilePlaying)
         } else {
@@ -2052,6 +2076,7 @@ final class AppSettings: ObservableObject {
             skipSilenceEnabled: skipSilenceEnabled,
             stereoToMonoEnabled: stereoToMonoEnabled,
             preservePitchEnabled: preservePitchEnabled,
+            customUserAgent: customUserAgent,
             keepScreenOnWhilePlaying: keepScreenOnWhilePlaying,
             continuousPlaybackEnabled: continuousPlaybackEnabled,
             resetPositionWhenMarkedPlayed: resetPositionWhenMarkedPlayed,
@@ -2151,6 +2176,7 @@ final class AppSettings: ObservableObject {
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
         stereoToMonoEnabled = snap.stereoToMonoEnabled ?? false
         preservePitchEnabled = snap.preservePitchEnabled ?? true
+        customUserAgent = AppUserAgent.sanitize(snap.customUserAgent ?? "")
         keepScreenOnWhilePlaying = snap.keepScreenOnWhilePlaying ?? false
         continuousPlaybackEnabled = snap.continuousPlaybackEnabled ?? true
         resetPositionWhenMarkedPlayed = snap.resetPositionWhenMarkedPlayed ?? true
@@ -2299,6 +2325,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var stereoToMonoEnabled: Bool? = false
     /// Absent in older backups → treated as on (speech-friendly pitch correction).
     var preservePitchEnabled: Bool? = true
+    /// Absent in older backups → empty (app default User-Agent).
+    var customUserAgent: String? = nil
     /// Absent in older backups → treated as off (allow idle lock).
     var keepScreenOnWhilePlaying: Bool? = false
     /// Absent in older backups → treated as on (auto-next from queue).

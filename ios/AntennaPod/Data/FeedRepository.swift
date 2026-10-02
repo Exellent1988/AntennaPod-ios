@@ -58,7 +58,7 @@ struct FeedRepository {
         }
 
         var request = URLRequest(url: url)
-        request.setValue("AntennaPod-iOS/0.1", forHTTPHeaderField: "User-Agent")
+        AppUserAgent.apply(to: &request)
         request.setValue(
             "application/rss+xml, application/atom+xml, application/xml, text/xml, */*;q=0.8",
             forHTTPHeaderField: "Accept"

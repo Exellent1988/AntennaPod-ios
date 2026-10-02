@@ -42,7 +42,7 @@ struct ItunesSearchService {
         }
 
         var request = URLRequest(url: url)
-        request.setValue("AntennaPod-iOS/0.1", forHTTPHeaderField: "User-Agent")
+        AppUserAgent.apply(to: &request)
         request.timeoutInterval = 20
 
         let (data, response) = try await URLSession.shared.data(for: request)

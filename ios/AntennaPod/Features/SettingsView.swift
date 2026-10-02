@@ -176,8 +176,12 @@ struct SettingsView: View {
                     "Mobilfunk",
                     "Ethernet",
                     "Offline",
+                    "Custom User-Agent",
+                    "User-Agent",
+                    "AntennaPod-iOS",
                     "Network / Downloads settings are locked. Enter the parental PIN to change these toggles.",
-                    "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action."
+                    "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action.",
+                    "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Not a proxy."
                 ) {
                     networkDownloadsSection
                 }
@@ -456,7 +460,9 @@ struct SettingsView: View {
                 "Network / Downloads",
                 "Auto-download Wi‑Fi only",
                 "Manual download Wi‑Fi only",
-                "Stream Wi‑Fi only"
+                "Stream Wi‑Fi only",
+                "Custom User-Agent",
+                "User-Agent"
             )
             || matchesSearch(
                 "Notifications",
@@ -1053,6 +1059,37 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.orange)
             }
+
+            TextField(
+                String(localized: "Custom User-Agent"),
+                text: $settings.customUserAgent,
+                prompt: Text(AppUserAgent.defaultValue)
+            )
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .accessibilityLabel(String(localized: "Custom User-Agent"))
+            .accessibilityHint(String(localized: "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Not a proxy."))
+            .accessibilityValue(
+                settings.customUserAgent.isEmpty
+                    ? String(localized: "Using app default")
+                    : settings.customUserAgent
+            )
+
+            LabeledContent(String(localized: "Effective User-Agent")) {
+                Text(settings.effectiveUserAgent)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "Effective User-Agent"))
+            .accessibilityValue(settings.effectiveUserAgent)
+
+            Text(customUserAgentHelpText)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(customUserAgentHelpText)
+
             Text(networkDownloadsHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -1101,6 +1138,10 @@ struct SettingsView: View {
 
     private var networkDownloadsHelpText: String {
         String(localized: "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action.")
+    }
+
+    private var customUserAgentHelpText: String {
+        String(localized: "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Not a proxy.")
     }
 
     @ViewBuilder

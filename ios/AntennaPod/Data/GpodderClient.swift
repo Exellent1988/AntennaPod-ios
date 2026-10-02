@@ -146,7 +146,7 @@ struct GpodderClient {
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.timeoutInterval = 30
-        request.setValue("AntennaPod-iOS/0.1", forHTTPHeaderField: "User-Agent")
+        AppUserAgent.apply(to: &request)
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         let raw = "\(username):\(password)"
         let basic = Data(raw.utf8).base64EncodedString()
