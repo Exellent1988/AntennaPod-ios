@@ -1814,7 +1814,7 @@ final class AppSettings: ObservableObject {
 
     /// Feed detail chip filter (All / Unplayed / Played). Default All. Persisted globally (not per-feed).
     /// Unplayed matches All Episodes: `!isPlayed` && not archived. Played uses `isPlayed` only (archive ignored).
-    /// Applied after `feedEpisodeSort`, before `.searchable`. Bulk Download all / Mark all played stay full-feed.
+    /// Applied after `feedEpisodeSort`, before `.searchable`. Bulk Download all unplayed / Mark all played stay full-feed.
     @Published var feedEpisodeFilter: FeedEpisodeFilter {
         didSet {
             UserDefaults.standard.set(feedEpisodeFilter.rawValue, forKey: Keys.feedEpisodeFilter)
@@ -1826,7 +1826,7 @@ final class AppSettings: ObservableObject {
     /// only overrides sort via `episodeSort`). Applied after status chip, before `.searchable`.
     /// Chips hide when zero matches in the current feed catalog; Other only when unknown raw
     /// types exist in scope. Missing episodeType matches All only — never invent.
-    /// Bulk Download all / Mark all played / Add all to queue stay full-feed.
+    /// Bulk Download all unplayed / Mark all played / Add all to queue stay full-feed.
     @Published var feedEpisodeTypeFilter: EpisodeTypeFilter {
         didSet {
             UserDefaults.standard.set(feedEpisodeTypeFilter.rawValue, forKey: Keys.feedEpisodeTypeFilter)

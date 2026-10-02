@@ -1157,40 +1157,6 @@
         }
       }
     },
-    "Download all": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download all"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle herunterladen"
-          }
-        }
-      }
-    },
-    "Download all?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download all?"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle herunterladen?"
-          }
-        }
-      }
-    },
     "Download errors": {
       "extractionState": "manual",
       "localizations": {
@@ -4302,23 +4268,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Warteschlange leer"
-          }
-        }
-      }
-    },
-    "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, and already downloaded are skipped. Manual download Wi‑Fi only still applies.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, and already downloaded are skipped. Manual download Wi‑Fi only still applies."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stellt den Download von %lld ungehörten Episoden in die Warteschlange (neueste zuerst, max. %lld). Gehörte, archivierte und bereits heruntergeladene werden übersprungen. „Manueller Download nur per WLAN“ gilt weiterhin."
           }
         }
       }
@@ -11551,23 +11500,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reiht Feed-Episoden ein, die noch nicht in der Warteschlange sind"
-          }
-        }
-      }
-    },
-    "Appends %lld episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends %lld episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht %lld Episoden dieses Podcasts am Ende der Warteschlange ein (neuestes Erscheinungsdatum zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Feed-Episodenkatalog (gleiche Ehrlichkeit wie Alle herunterladen / Alle als gehört markieren), nicht Chip- oder Suchfilter. Einschließlich gehört und archiviert. Warteschlangen-Sperre blockiert Einreihen nicht."
           }
         }
       }
@@ -24675,6 +24607,95 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiv, nutzen Listen-Restzeit-Leisten die Abspielgeschwindigkeit jedes Podcasts; Mini-/Vollbild −Restzeit die Live-Session-Rate. Standard aus."
+          }
+        }
+      }
+    },
+    "Download all unplayed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download all unplayed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle ungehörten herunterladen"
+          }
+        }
+      },
+      "comment": "Feed detail ⋯: bulk download unplayed/not-archived/not-downloaded http(s) episodes; confirm with eligible count; soft cap newest 50."
+    },
+    "Download all unplayed?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download all unplayed?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle ungehörten herunterladen?"
+          }
+        }
+      },
+      "comment": "Confirmation title for Feed detail Download all unplayed."
+    },
+    "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, already downloaded, and local-folder files are skipped. Requires http(s) enclosure. Uses the full feed catalog — not the chip or search filter. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, already downloaded, and local-folder files are skipped. Requires http(s) enclosure. Uses the full feed catalog — not the chip or search filter. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stellt den Download von %lld ungehörten Episoden in die Warteschlange (neueste zuerst, max. %lld). Gehörte, archivierte, bereits heruntergeladene und Local-Folder-Dateien werden übersprungen. Erfordert http(s)-Enclosure. Nutzt den vollen Feed-Katalog — nicht Chip- oder Suchfilter. „Manueller Download nur per WLAN“, Parallel-Download-Limit und Speicherlimit gelten weiterhin."
+          }
+        }
+      },
+      "comment": "Confirm message for Feed detail Download all unplayed (eligible count + soft cap)."
+    },
+    "Queues downloads for unplayed episodes in this podcast that are not archived and not already downloaded": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queues downloads for unplayed episodes in this podcast that are not archived and not already downloaded"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stellt Downloads für ungehörte Episoden dieses Podcasts in die Warteschlange, die nicht archiviert und noch nicht heruntergeladen sind"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Feed detail Download all unplayed."
+    },
+    "Appends %lld episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all unplayed / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all unplayed / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld Episoden dieses Podcasts am Ende der Warteschlange ein (neuestes Erscheinungsdatum zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen Feed-Episodenkatalog (gleiche Ehrlichkeit wie Alle ungehörten herunterladen / Alle als gehört markieren), nicht Chip- oder Suchfilter. Einschließlich gehört und archiviert. Warteschlangen-Sperre blockiert Einreihen nicht."
           }
         }
       }

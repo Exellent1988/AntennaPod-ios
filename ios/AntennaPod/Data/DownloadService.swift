@@ -296,12 +296,13 @@ final class DownloadService: ObservableObject {
     static let manualCellularBlockedMessage =
         "Manual downloads are Wi‑Fi only. Connect to Wi‑Fi or Ethernet, or turn off Manual download Wi‑Fi only in Settings → Network / Downloads."
 
-    /// Soft cap for Feed detail **Download all** (newest eligible first).
+    /// Soft cap for Feed detail **Download all unplayed** (newest eligible first).
     static let feedDownloadAllCap = 50
 
-    /// Episodes on `feed` eligible for manual bulk download: unplayed, not archived,
-    /// not already downloaded / in-flight, with a remote media URL (skips local-folder files).
-    /// Newest `pubDateEpochMs` first, limited to `cap` (default `feedDownloadAllCap`).
+    /// Episodes on `feed` eligible for manual bulk **Download all unplayed**: unplayed, not
+    /// archived, not already downloaded / in-flight, with an **http(s)** media enclosure
+    /// (skips local-folder `file://` and non-http schemes). Newest `pubDateEpochMs` first,
+    /// limited to `cap` (default `feedDownloadAllCap`). Full-feed catalog — not chip/search.
     func eligibleForFeedDownloadAll(
         in feed: PodcastFeed,
         store: PodcastStore,
@@ -316,7 +317,11 @@ final class DownloadService: ObservableObject {
         var picked: [PodcastEpisode] = []
         for episode in sorted {
             guard picked.count < cap else { break }
-            guard let raw = episode.downloadUrl, !raw.isEmpty else { continue }
+            guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
+                  !raw.isEmpty,
+                  let url = URL(string: raw) else { continue }
+            let scheme = url.scheme?.lowercased()
+            guard scheme == "http" || scheme == "https" else { continue }
             guard !LocalFolderFeed.isLocalFileDownloadURL(raw) else { continue }
             guard !store.isPlayed(episode.id) else { continue }
             guard !store.isArchived(episode.id) else { continue }

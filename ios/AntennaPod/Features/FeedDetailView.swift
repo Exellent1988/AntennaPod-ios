@@ -302,7 +302,7 @@ struct FeedDetailView: View {
     /// duration known; unplayed with duration contributes full duration; **played** (not current)
     /// → 0; **unknown duration skipped** (tilde when any skipped). Currently playing uses live
     /// `PlaybackService` position/duration. Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate).
-    /// Distinct from **Download all** / **Mark all as played** / **Mark all as unplayed** / **Add all to queue** / **Delete downloads** / **Play random** full-feed eligibility counts.
+    /// Distinct from **Download all unplayed** / **Mark all as played** / **Mark all as unplayed** / **Add all to queue** / **Delete downloads** / **Play random** full-feed eligibility counts.
     private var feedRemainingInfoLabel: String? {
         guard !filteredEpisodes.isEmpty else { return nil }
         return EpisodeRemainingTime.episodesInfoBarLabel(for: feedRemainingSummary)
@@ -336,8 +336,8 @@ struct FeedDetailView: View {
     }
 
 
-    /// Unplayed, not archived, not downloaded — newest first, soft-capped.
-    /// Bulk Download all always uses full-feed eligibility (not the filtered subset).
+    /// Unplayed, not archived, not downloaded, http(s) enclosure — newest first, soft-capped.
+    /// Bulk **Download all unplayed** always uses full-feed eligibility (not the filtered subset).
     private var downloadAllCandidates: [PodcastEpisode] {
         downloads.eligibleForFeedDownloadAll(in: liveFeed, store: store)
     }
@@ -357,7 +357,7 @@ struct FeedDetailView: View {
 
     /// Full feed episode catalog minus already queued — Add all to queue always uses this,
     /// **not** the chip/search filtered visible list (`filteredEpisodes`). Same full-feed
-    /// honesty as Download all / Mark all as played / Mark all as unplayed (eligibility not limited to visible filter).
+    /// honesty as Download all unplayed / Mark all as played / Mark all as unplayed (eligibility not limited to visible filter).
     /// Confirm count and `enqueueAllFromFeed` share this eligibility (played/archived included).
     private var enqueueAllFromFeedCandidatesCount: Int {
         liveFeed.episodes.filter { !store.isInQueue($0.id) }.count
@@ -395,7 +395,7 @@ struct FeedDetailView: View {
     /// Non-archived episodes on this feed with playable media (local file via
     /// `DownloadService.localURL` — downloads + local-folder `file://` — or streamable http(s)
     /// `downloadUrl`). Full-feed catalog — **not** chip/search filtered.
-    /// Distinct from Download all / Mark all / Add all eligibility.
+    /// Distinct from Download all unplayed / Mark all / Add all eligibility.
     private var playRandomEligibleEpisodes: [PodcastEpisode] {
         liveFeed.episodes.filter { episode in
             !store.isArchived(episode.id) && episodeHasPlayableMedia(episode)
@@ -771,7 +771,7 @@ struct FeedDetailView: View {
             }
 
             // AntennaPod-like Feed detail info bar (visible sort→status→type→search list remaining time).
-            // Distinct from Download all / Mark all as played / Mark all as unplayed / Add all to queue / Delete downloads / Play random full-feed eligibility counts.
+            // Distinct from Download all unplayed / Mark all as played / Mark all as unplayed / Add all to queue / Delete downloads / Play random full-feed eligibility counts.
             if let remainingLabel = feedRemainingInfoLabel {
                 Section {
                     Text(remainingLabel)
@@ -978,9 +978,11 @@ struct FeedDetailView: View {
                         Button {
                             showDownloadAllConfirm = true
                         } label: {
-                            Label("Download all", systemImage: "arrow.down.circle")
+                            Label("Download all unplayed", systemImage: "arrow.down.circle")
                         }
                         .disabled(downloadAllCandidates.isEmpty)
+                        .accessibilityLabel(String(localized: "Download all unplayed"))
+                        .accessibilityHint(String(localized: "Queues downloads for unplayed episodes in this podcast that are not archived and not already downloaded"))
 
                         Button {
                             showMarkAllPlayedConfirm = true
@@ -1032,11 +1034,11 @@ struct FeedDetailView: View {
             }
         }
         .confirmationDialog(
-            "Download all?",
+            "Download all unplayed?",
             isPresented: $showDownloadAllConfirm,
             titleVisibility: .visible
         ) {
-            Button("Download all") {
+            Button("Download all unplayed") {
                 let episodes = downloadAllCandidates
                 Task {
                     await downloads.downloadAllManual(episodes)
@@ -1045,7 +1047,7 @@ struct FeedDetailView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text(
-                "Queues download of \(downloadAllCandidates.count) unplayed episodes (newest first, max \(DownloadService.feedDownloadAllCap)). Played, archived, and already downloaded are skipped. Manual download Wi‑Fi only still applies."
+                "Queues download of \(downloadAllCandidates.count) unplayed episodes (newest first, max \(DownloadService.feedDownloadAllCap)). Played, archived, already downloaded, and local-folder files are skipped. Requires http(s) enclosure. Uses the full feed catalog — not the chip or search filter. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply."
             )
         }
         .confirmationDialog(
@@ -1087,7 +1089,7 @@ struct FeedDetailView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text(
-                "Appends \(enqueueAllFromFeedCandidatesCount) episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue."
+                "Appends \(enqueueAllFromFeedCandidatesCount) episodes from this podcast to the end of the queue (newest publish date first). Already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all unplayed / Mark all as played), not the chip or search filter. Includes played and archived. Queue lock does not block enqueue."
             )
         }
         .confirmationDialog(

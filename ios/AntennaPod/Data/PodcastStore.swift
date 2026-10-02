@@ -1197,10 +1197,10 @@ final class PodcastStore: ObservableObject {
 
     /// Append every episode from one feed that is not already queued (bulk).
     /// Uses the **full** stored feed episode catalog (`feed.episodes`), sorted **newest-first**
-    /// by `pubDateEpochMs` (missing dates last; title tiebreak — same spirit as Feed Download all).
+    /// by `pubDateEpochMs` (missing dates last; title tiebreak — same spirit as Feed Download all unplayed).
     /// Does **not** follow UI `feedEpisodeSort`, chip filter (`feedEpisodeFilter`), or searchable filter
-    /// — same full-feed honesty as Mark all as played / Download all.
-    /// Includes played and archived episodes (unlike Download all / Mark all eligibility).
+    /// — same full-feed honesty as Mark all as played / Download all unplayed.
+    /// Includes played and archived episodes (unlike Download all unplayed / Mark all eligibility).
     /// Skips already-queued ids (no duplicates). Uses `enqueue` (append), not `playNext`.
     /// Safe while queue lock is on (reorder-only — enqueue stays allowed).
     /// Callers must confirm first (Feed detail toolbar `confirmationDialog`).
