@@ -25072,6 +25072,24 @@
           }
         }
       }
+    },
+    "Plays a random All Episodes catalog episode with playable media within the newest-500 soft cap. Prefers unplayed when any remain.": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for All Episodes toolbar Play random. Soft-cap honesty: newest-500 catalog only — same set as Add all.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random All Episodes catalog episode with playable media within the newest-500 soft cap. Prefers unplayed when any remain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine zufällige Episode aus dem Alle-Episoden-Katalog mit abspielbarem Medium innerhalb des Soft-Caps neueste 500. Bevorzugt ungehörte, wenn vorhanden."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

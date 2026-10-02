@@ -23,6 +23,23 @@ struct AllEpisodesView: View {
         catalogItems.filter { !store.isInQueue($0.episode.id) }.count
     }
 
+    /// Soft-capped All Episodes catalog episodes with playable media (local file via
+    /// `DownloadService.localURL` — downloads + local-folder `file://` — or streamable http(s)
+    /// `downloadUrl`). Same newest-500 set as Add all (`store.allEpisodes`) — **not**
+    /// status/podcast/type/search filtered. **Soft-cap honesty:** never invents eligibility
+    /// beyond the capped catalog. Distinct from Add all / remaining-time visible counts.
+    private var playRandomEligibleEpisodes: [PodcastEpisode] {
+        catalogItems.map(\.episode).filter { episodeHasPlayableMedia($0) }
+    }
+
+    /// Prefer unplayed among `playRandomEligibleEpisodes` when any remain; otherwise all eligible
+    /// (played allowed when every eligible capped episode is played, or none unplayed eligible).
+    private var playRandomCandidates: [PodcastEpisode] {
+        let eligible = playRandomEligibleEpisodes
+        let unplayed = eligible.filter { !store.isPlayed($0.id) }
+        return unplayed.isEmpty ? eligible : unplayed
+    }
+
     /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
     private var podcastFilter: AllEpisodesPodcastFilter {
         AllEpisodesPodcastFilter.fromStorage(settings.allEpisodesPodcastFilter)
@@ -391,6 +408,15 @@ struct AllEpisodesView: View {
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {
+                        playRandomEpisode()
+                    } label: {
+                        Label("Play random", systemImage: "shuffle")
+                    }
+                    .disabled(playRandomCandidates.isEmpty)
+                    .accessibilityLabel(String(localized: "Play random"))
+                    .accessibilityHint(String(localized: "Plays a random All Episodes catalog episode with playable media within the newest-500 soft cap. Prefers unplayed when any remain."))
+
+                    Button {
                         showEnqueueAllConfirm = true
                     } label: {
                         Label("Add all to queue", systemImage: "text.append")
@@ -400,7 +426,7 @@ struct AllEpisodesView: View {
                 } label: {
                     Label("Episodes actions", systemImage: "ellipsis.circle")
                 }
-                // Menu enabled whenever soft-capped catalog is non-empty (even if chip/podcast/search hides rows).
+                // Menu stays available when soft-capped catalog non-empty so Play random / Add all can disable per eligibility.
                 .disabled(catalogItems.isEmpty)
             }
         }
@@ -417,6 +443,25 @@ struct AllEpisodesView: View {
         } message: {
             Text("Appends \(enqueueAllEpisodesCandidatesCount) episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the status, podcast, type, or search filter. Queue lock does not block enqueue.")
         }
+    }
+
+    /// Local download / local-folder file, or streamable http(s) enclosure — same honesty as
+    /// Archived / History / Favorites / Feed detail Play random / `PlaybackService.resolvePlaybackURL` inputs (Wi‑Fi stream gate still applies at play time).
+    private func episodeHasPlayableMedia(_ episode: PodcastEpisode) -> Bool {
+        if downloads.localURL(for: episode) != nil { return true }
+        guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty,
+              let url = URL(string: raw) else { return false }
+        let scheme = url.scheme?.lowercased()
+        return scheme == "http" || scheme == "https"
+    }
+
+    /// Uniform pick among `playRandomCandidates`; starts via `PlaybackService.play` (resume rules unchanged).
+    /// No confirm; soft-capped newest-500 catalog only — does **not** invent episodes beyond the cap;
+    /// no invented queue mutations beyond what `play` already does.
+    private func playRandomEpisode() {
+        guard let episode = playRandomCandidates.randomElement() else { return }
+        _ = playback.play(episode: episode)
     }
 }
 
