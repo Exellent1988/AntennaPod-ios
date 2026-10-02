@@ -24506,6 +24506,91 @@
         }
       },
       "extractionState": "manual"
+    },
+    "Copy bookmarks": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy bookmarks"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesezeichen kopieren"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Share bookmarks": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share bookmarks"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesezeichen teilen"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Copies the bookmark list to the pasteboard": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the bookmark list to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die Lesezeichenliste in die Zwischenablage"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Opens the system share sheet with the episode title and bookmark list": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title and bookmark list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit Episodentitel und Lesezeichenliste"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Bookmarks copied to the pasteboard.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bookmarks copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lesezeichen in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "extractionState": "manual"
     }
   },
   "version": "1.0"

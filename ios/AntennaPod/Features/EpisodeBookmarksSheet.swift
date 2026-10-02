@@ -1,8 +1,12 @@
 import SwiftUI
+import UIKit
 
 /// List / add / delete user bookmarks for the current episode.
 /// Tap a row → `PlaybackService.seek(toSeconds:)`. Swipe → remove.
 /// Local-only (`bookmarks.json`); not gpodder; wall-clock positions; cap 50/episode.
+/// Toolbar **Copy bookmarks** + **Share bookmarks** export a plain-text list matching
+/// sheet order (newest-first): `m:ss`/`h:mm:ss` + note when non-empty; Share includes
+/// the episode title header — same pasteboard / ShareLink honesty as chapters TOC / transcript.
 struct EpisodeBookmarksSheet: View {
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var store: PodcastStore
@@ -12,9 +16,38 @@ struct EpisodeBookmarksSheet: View {
 
     @State private var noteDraft = ""
     @State private var showAtCapAlert = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     private var bookmarks: [EpisodeBookmark] {
         store.bookmarks(for: episodeId)
+    }
+
+    private var episodeTitle: String? {
+        if let title = store.episode(id: episodeId)?.title,
+           !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return title
+        }
+        if playback.currentEpisode?.id == episodeId {
+            let title = playback.currentEpisode?.title.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            return title.isEmpty ? nil : title
+        }
+        return nil
+    }
+
+    /// Plain list matching sheet order (newest-first) — local bookmarks only.
+    private var bookmarksPlain: String {
+        BookmarksExport.plainText(from: bookmarks)
+    }
+
+    private var canExportBookmarks: Bool {
+        !bookmarksPlain.isEmpty
+    }
+
+    /// Episode title + bookmark list for system share sheet (same body as Copy).
+    private var bookmarksShareText: String {
+        BookmarksExport.shareText(from: bookmarks, episodeTitle: episodeTitle)
     }
 
     private var atCap: Bool {
@@ -84,6 +117,28 @@ struct EpisodeBookmarksSheet: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "Done")) { dismiss() }
                 }
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Button {
+                        copyBookmarks()
+                    } label: {
+                        Image(systemName: "doc.plaintext")
+                    }
+                    .disabled(!canExportBookmarks)
+                    .accessibilityLabel(String(localized: "Copy bookmarks"))
+                    .accessibilityHint(String(localized: "Copies the bookmark list to the pasteboard"))
+
+                    ShareLink(
+                        item: bookmarksShareText,
+                        subject: Text(episodeTitle ?? String(localized: "Bookmarks"))
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .disabled(!canExportBookmarks)
+                    .accessibilityLabel(String(localized: "Share bookmarks"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the episode title and bookmark list")
+                    )
+                }
             }
             .alert(
                 String(localized: "Bookmark limit reached"),
@@ -93,6 +148,15 @@ struct EpisodeBookmarksSheet: View {
             } message: {
                 Text(String(localized: "This episode already has 50 bookmarks. Delete one to add another."))
             }
+            .alert(
+                String(localized: "Copied"),
+                isPresented: $showCopiedAlert
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(copiedAlertMessage)
+            }
+            .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
         .presentationDetents([.medium, .large])
     }
@@ -192,6 +256,15 @@ struct EpisodeBookmarksSheet: View {
             guard items.indices.contains(index) else { continue }
             store.removeBookmark(episodeId: episodeId, bookmarkId: items[index].id)
         }
+    }
+
+    private func copyBookmarks() {
+        let text = bookmarksPlain
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Bookmarks copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private func format(_ seconds: Double) -> String {
