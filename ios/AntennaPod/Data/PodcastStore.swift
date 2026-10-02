@@ -1459,6 +1459,15 @@ final class PodcastStore: ObservableObject {
         episodePrivateNotesById = map
     }
 
+    /// Remove every episode private note from `episode-notes.json` (same as per-episode Clear → nil).
+    /// Clears the whole `episodePrivateNotesById` map; persists via didSet.
+    /// Does **not** touch feed private notes, bookmarks, favorites, archive, queue, downloads, or playback.
+    /// Callers must confirm first (Settings → Library `confirmationDialog`).
+    func clearAllEpisodePrivateNotes() {
+        guard !episodePrivateNotesById.isEmpty else { return }
+        episodePrivateNotesById = [:]
+    }
+
     func isFavorite(_ episodeId: String) -> Bool {
         favoriteAtById[episodeId] != nil
     }

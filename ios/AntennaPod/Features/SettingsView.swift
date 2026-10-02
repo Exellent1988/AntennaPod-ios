@@ -53,6 +53,7 @@ struct SettingsView: View {
 
     @State private var customMB: Int = 500
     @State private var showClearConfirmation = false
+    @State private var showClearEpisodeNotesConfirmation = false
     @State private var showCustomDefaultSpeed = false
     @State private var customSkipIntervalMode: CustomSkipIntervalSheet.Mode?
     @State private var showCustomSmartMark = false
@@ -449,6 +450,20 @@ struct SettingsView: View {
                     "Deletes \(downloads.downloads.count) completed offline file(s) (\(DownloadStorageUsage.formatBytes(downloads.completedDownloadsByteSize()))), including favorited downloads. Uses the full Downloads catalog. Local files only — keeps played status, queue, favorites list, and history. Distinct from Delete played downloads and from Clear queue."
                 )
             }
+            .confirmationDialog(
+                "Clear all episode private notes?",
+                isPresented: $showClearEpisodeNotesConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Clear all episode private notes", role: .destructive) {
+                    store.clearAllEpisodePrivateNotes()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Removes \(store.episodePrivateNotesById.count) local episode private notes from episode-notes.json. Does not clear feed private notes, bookmarks, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+                )
+            }
             .sheet(isPresented: $showCustomDefaultSpeed) {
                 CustomPlaybackSpeedSheet(mode: .defaultSpeed, initialSpeed: settings.defaultPlaybackSpeed)
                     .environmentObject(playback)
@@ -572,7 +587,15 @@ struct SettingsView: View {
             "200 episodes",
             "500 episodes",
             "Unlimited",
-            "Caps History-listed episodes in playback.json (played / in-progress). Oldest by lastPlayedAt (else updatedAt) are removed first — same as Remove from history (progress and played flags gone). Unlimited keeps the full list. Does not touch favorites, archive, downloads, or queue. Statistics and Continue listening may lose trimmed episodes. Default Unlimited."
+            "Caps History-listed episodes in playback.json (played / in-progress). Oldest by lastPlayedAt (else updatedAt) are removed first — same as Remove from history (progress and played flags gone). Unlimited keeps the full list. Does not touch favorites, archive, downloads, or queue. Statistics and Continue listening may lose trimmed episodes. Default Unlimited.",
+            "Clear all episode private notes",
+            "Clear",
+            "clear",
+            "notes",
+            "private notes",
+            "episode notes",
+            "episode private notes",
+            "Removes every local episode private note from episode-notes.json. Does not clear feed private notes, bookmarks, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
         )
     }
 
@@ -870,6 +893,46 @@ struct SettingsView: View {
                 } label: {
                     Label("Echo", systemImage: "sparkles.rectangle.stack")
                 }
+            }
+            if matchesSearch(
+                "Library",
+                "Clear all episode private notes",
+                "Clear",
+                "clear",
+                "notes",
+                "private notes",
+                "episode notes",
+                "episode private notes",
+                "Removes every local episode private note from episode-notes.json. Does not clear feed private notes, bookmarks, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+            ) {
+                Button("Clear all episode private notes", role: .destructive) {
+                    showClearEpisodeNotesConfirmation = true
+                }
+                .disabled(store.episodePrivateNotesById.isEmpty)
+                .accessibilityLabel(String(localized: "Clear all episode private notes"))
+                .accessibilityValue(
+                    store.episodePrivateNotesById.isEmpty
+                        ? String(localized: "No episode private notes")
+                        : String(
+                            localized: "\(store.episodePrivateNotesById.count) episode private notes"
+                        )
+                )
+                .accessibilityHint(
+                    String(
+                        localized: "Removes every local episode private note after confirmation. Does not clear feed notes, bookmarks, favorites, downloads, queue, or history."
+                    )
+                )
+                Text(
+                    store.episodePrivateNotesById.isEmpty
+                        ? String(
+                            localized: "No episode private notes saved. Removes every local episode private note from episode-notes.json when any exist. Does not clear feed private notes, bookmarks, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+                        )
+                        : String(
+                            localized: "\(store.episodePrivateNotesById.count) episode private notes saved. Removes every local episode private note from episode-notes.json. Does not clear feed private notes, bookmarks, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+                        )
+                )
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
         }
     }
