@@ -15353,6 +15353,96 @@
       },
       "comment": "VoiceOver hint for sharing a podcast:person href. ShareLink prefers an http(s) URL and falls back to the raw feed string."
     },
+    "Copy person details": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy person details"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personendetails kopieren"
+          }
+        }
+      },
+      "comment": "Distinct Copy action for the displayed podcast:person name and optional role."
+    },
+    "Copies the displayed person name and role as plain text; role is included only when provided by the feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the displayed person name and role as plain text; role is included only when provided by the feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den angezeigten Namen und die Rolle der Person als Klartext; die Rolle wird nur einbezogen, wenn der Feed sie bereitstellt"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for copying displayed podcast:person metadata."
+    },
+    "Person details copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Person details copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personendetails in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy confirmation message for displayed podcast:person metadata."
+    },
+    "Share person details": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share person details"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personendetails teilen"
+          }
+        }
+      },
+      "comment": "Distinct Share action for the displayed podcast:person name and optional role."
+    },
+    "Shares the displayed person name and role as plain text; role is included only when provided by the feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the displayed person name and role as plain text; role is included only when provided by the feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt den angezeigten Namen und die Rolle der Person als Klartext; die Rolle wird nur einbezogen, wenn der Feed sie bereitstellt"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for sharing displayed podcast:person metadata."
+    },
     "Person link copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {

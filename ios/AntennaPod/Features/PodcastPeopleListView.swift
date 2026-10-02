@@ -8,6 +8,7 @@ struct PodcastPeopleListView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var showCopiedAlert = false
+    @State private var copiedMessage = String(localized: "Person link copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     let people: [PodcastPerson]
@@ -43,7 +44,7 @@ struct PodcastPeopleListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Person link copied to the pasteboard."))
+                Text(copiedMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -61,6 +62,7 @@ struct PodcastPeopleListView: View {
         }()
 
         let url = person.profileURL
+        let detailsText = [name, role].compactMap { $0 }.joined(separator: " · ")
         let copyText = person.href?.trimmingCharacters(in: .whitespacesAndNewlines)
             .flatMap { $0.isEmpty ? nil : $0 }
 
@@ -80,10 +82,40 @@ struct PodcastPeopleListView: View {
                     .accessibilityLabel(label)
             }
 
+            HStack(spacing: 12) {
+                Button {
+                    UIPasteboard.general.string = detailsText
+                    copiedMessage = String(localized: "Person details copied to the pasteboard.")
+                    copyFeedbackTick += 1
+                    showCopiedAlert = true
+                } label: {
+                    Label("Copy person details", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy person details"))
+                .accessibilityHint(
+                    String(
+                        localized: "Copies the displayed person name and role as plain text; role is included only when provided by the feed"
+                    )
+                )
+
+                ShareLink(item: detailsText) {
+                    Label("Share person details", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share person details"))
+                .accessibilityHint(
+                    String(
+                        localized: "Shares the displayed person name and role as plain text; role is included only when provided by the feed"
+                    )
+                )
+            }
+
             if let copyText {
                 HStack(spacing: 12) {
                     Button {
                         UIPasteboard.general.string = copyText
+                        copiedMessage = String(localized: "Person link copied to the pasteboard.")
                         copyFeedbackTick += 1
                         showCopiedAlert = true
                     } label: {
