@@ -5,8 +5,10 @@ import UIKit
 /// Shows name, type/method, split % when known. When a feed name is shown, distinct Copy / Share value recipient name
 /// uses that exact text (separate from details + address). When type/method caption is shown, distinct Copy / Share
 /// value type/method uses that exact caption (separate from name, details, address). When the split label is shown,
-/// distinct Copy / Share value split uses that exact displayed string (separate from name, type/method, details,
-/// address). http(s) address → Share / Open in browser; otherwise Copy / Share address.
+/// distinct Copy / Share value split uses that exact displayed string (separate from name, type/method, fee, details,
+/// address). When the Fee capsule is shown (`isFee`), distinct Copy / Share value fee uses that exact displayed Fee
+/// label (separate from name, type/method, split, details, address; hide when not a fee — never invent Fee).
+/// http(s) address → Share / Open in browser; otherwise Copy / Share address.
 /// **Does not send Lightning / wallet payments** — informational display only. Cap + honesty footnote.
 struct PodcastValueRecipientsListView: View {
     @Environment(\.openURL) private var openURL
@@ -213,6 +215,37 @@ struct PodcastValueRecipientsListView: View {
                         localized: "Shares the exact displayed value split as plain text; this app does not send payments."
                     )
                 )
+            }
+
+            if row.isFee {
+                HStack(spacing: 12) {
+                    Button {
+                        copyToPasteboard(
+                            feeLabel,
+                            confirmation: String(localized: "Value fee copied to the pasteboard.")
+                        )
+                    } label: {
+                        Label("Copy value fee", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy value fee"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Copies the exact displayed Fee label as plain text; this app does not send payments."
+                        )
+                    )
+
+                    ShareLink(item: feeLabel) {
+                        Label("Share value fee", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share value fee"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the exact displayed Fee label as plain text; this app does not send payments."
+                        )
+                    )
+                }
             }
 
             HStack(spacing: 12) {

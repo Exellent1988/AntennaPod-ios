@@ -35908,6 +35908,96 @@
     },
     "comment": "VoiceOver hint for Share value split; honesty: no payments."
   },
+  "Copy value fee": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy value fee"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Gebühr kopieren"
+        }
+      }
+    },
+    "comment": "Distinct Copy action for the exact displayed podcast:valueRecipient Fee capsule label (not name, type/method, split, details, or address); hidden when not a fee."
+  },
+  "Share value fee": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share value fee"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Gebühr teilen"
+        }
+      }
+    },
+    "comment": "Distinct Share action for the exact displayed podcast:valueRecipient Fee capsule label (not name, type/method, split, details, or address); hidden when not a fee."
+  },
+  "Value fee copied to the pasteboard.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Value fee copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Gebühr in die Zwischenablage kopiert."
+        }
+      }
+    },
+    "comment": "Alert message after copying the exact displayed podcast:valueRecipient Fee capsule label."
+  },
+  "Copies the exact displayed Fee label as plain text; this app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed Fee label as plain text; this app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert die exakt angezeigte Gebührenkennzeichnung als Klartext; diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Copy value fee; honesty: no payments."
+  },
+  "Shares the exact displayed Fee label as plain text; this app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact displayed Fee label as plain text; this app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt die exakt angezeigte Gebührenkennzeichnung als Klartext; diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Share value fee; honesty: no payments."
+  },
   "Copy text purpose": {
     "extractionState": "manual",
     "comment": "Copy action for the exact feed-provided podcast:txt purpose; hidden when purpose is missing.",
