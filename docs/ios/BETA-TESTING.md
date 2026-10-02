@@ -65,7 +65,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Kapitel-Liste: Dauer (next−start; letztes = Episodendauer−start wenn bekannt) / aktuelles Remaining live; ohne Ende ausgeblendet; Wanduhr | ☐ Chapter list: duration (next−start; last = episode duration−start when known) / current remaining live; hide when end unknown; wall-clock |
 | ☐ Transcript sheet (nur Feed-URL) | ☐ Transcript sheet (feed URL only) |
 | ☐ Transkript-Suche (Cue-Text; Groß/Klein egal; Debounce; leer bei keinen Treffern; nur geladene Cues) | ☐ Transcript search (cue text; case-insensitive; debounce; empty when no matches; already-loaded cues only) |
-| ☐ Shownotes / Beschreibung (Full Player + Episode-Kontext; leer wenn keine; HTML → Plain Text) | ☐ Shownotes / description (full player + episode context; empty when none; HTML → plain text) |
+| ☐ Shownotes / Beschreibung (Full Player + Mini ⋯ + Episode-Kontext; leer wenn keine; HTML → Plain Text) | ☐ Shownotes / description (full player + Mini ⋯ + episode context; empty when none; HTML → plain text) |
 | ☐ Shownotes-Suche (Absätze/Zeilen; Groß/Klein egal; Debounce; leer bei keinen Treffern; nur geladener Text) | ☐ Shownotes search (paragraphs/lines; case-insensitive; debounce; empty when no matches; already-loaded text only) |
 | ☐ Shownotes kopieren (Shownotes-Toolbar; Plain-Text Zwischenablage; Copied-Alert; disabled wenn leer) | ☐ Copy shownotes (Shownotes toolbar; plain text pasteboard; Copied alert; disabled when empty) |
 | ☐ Episoden-Dauer in Listen (EpisodeRow Caption `m:ss`/`h:mm:ss` aus Feed/`playback`; versteckt wenn unbekannt; VoiceOver Dauer) | ☐ Episode duration on lists (EpisodeRow caption `m:ss`/`h:mm:ss` from feed/playback; hidden when unknown; VoiceOver Duration) |

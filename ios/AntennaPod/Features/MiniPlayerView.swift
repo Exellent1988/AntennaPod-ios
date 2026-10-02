@@ -10,6 +10,7 @@ struct MiniPlayerView: View {
     @State private var showCustomPlaybackSpeed = false
     @State private var showBookmarks = false
     @State private var showJumpToPosition = false
+    @State private var showDescription = false
 
     var body: some View {
         if let episode = playback.currentEpisode {
@@ -107,6 +108,17 @@ struct MiniPlayerView: View {
                         }
                         .disabled(feedForCurrentEpisode == nil)
                         Button {
+                            showDescription = true
+                        } label: {
+                            Label("Shownotes", systemImage: "doc.text")
+                        }
+                        .accessibilityLabel(String(localized: "Show shownotes"))
+                        .accessibilityHint(
+                            episode.hasDescriptionText
+                                ? String(localized: "Opens the episode description from the feed")
+                                : String(localized: "No description available for this episode")
+                        )
+                        Button {
                             playback.playFromBeginning()
                         } label: {
                             Label("Play from beginning", systemImage: "backward.end.fill")
@@ -173,6 +185,13 @@ struct MiniPlayerView: View {
             .sheet(isPresented: $showJumpToPosition) {
                 JumpToPositionSheet(initialSeconds: playback.positionSeconds)
                     .environmentObject(playback)
+            }
+            .sheet(isPresented: $showDescription) {
+                // Prefer store episode (post-refresh) over a possibly stale player copy — same as Full.
+                EpisodeDescriptionSheetView(
+                    episode: store.episode(id: episode.id) ?? episode,
+                    feedTitle: feedForCurrentEpisode?.title
+                )
             }
         }
     }
