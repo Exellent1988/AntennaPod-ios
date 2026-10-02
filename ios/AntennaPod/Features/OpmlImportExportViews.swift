@@ -91,8 +91,9 @@ struct OpmlImportExportSection: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                .accessibilityElement(children: .combine)
-                .accessibilityLabel(progressLabel)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(String(localized: "OPML import in progress"))
+                .accessibilityValue(progressLabel)
             } else if store.opmlImport.total > 0 {
                 Button {
                     showImportResult = true
@@ -277,7 +278,10 @@ struct OpmlImportResultView: View {
                                     .font(.caption)
                                     .foregroundStyle(.red)
                             }
-                            .accessibilityElement(children: .combine)
+                            .accessibilityElement(children: .ignore)
+                                .accessibilityLabel(failureAccessibilityLabel(for: failure))
+                                .accessibilityValue(failureAccessibilityValue(for: failure))
+                                .accessibilityHint(String(localized: "This feed was not added during the OPML import."))
                         }
                     }
                 }
@@ -290,6 +294,18 @@ struct OpmlImportResultView: View {
                 }
             }
         }
+    }
+
+    private func failureAccessibilityLabel(for failure: OpmlImportFailure) -> String {
+        let title = failure.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !title.isEmpty else {
+            return String(localized: "Failed OPML feed")
+        }
+        return String(localized: "Failed OPML feed \(title)")
+    }
+
+    private func failureAccessibilityValue(for failure: OpmlImportFailure) -> String {
+        String(localized: "URL \(failure.url). Error \(failure.error)")
     }
 }
 

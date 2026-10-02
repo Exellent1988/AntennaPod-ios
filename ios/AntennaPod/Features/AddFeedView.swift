@@ -629,8 +629,9 @@ struct AddFeedView: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel(opmlProgressLabel)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "OPML import in progress"))
+                    .accessibilityValue(opmlProgressLabel)
                 } else if store.opmlImport.total > 0 {
                     Button {
                         showOpmlImportResult = true
@@ -640,6 +641,7 @@ struct AddFeedView: View {
                             .foregroundStyle(.secondary)
                     }
                     .accessibilityLabel(store.opmlImport.summary)
+                    .accessibilityHint(String(localized: "Shows added, already subscribed, and failed counts from the last OPML import."))
                 }
 
                 if let opmlPickError {
@@ -656,6 +658,7 @@ struct AddFeedView: View {
                 Text("Import from Files")
             } footer: {
                 Text("Beta: pick an .opml or .xml subscription list from Files. Already subscribed feed URLs are skipped. Each new feed is fetched over the network. Same import path as Settings → Import / Export. No cloud sync.")
+                    .accessibilityLabel(String(localized: "Beta: pick an .opml or .xml subscription list from Files. Already subscribed feed URLs are skipped. Each new feed is fetched over the network. Same import path as Settings → Import / Export. No cloud sync."))
             }
         }
         .listStyle(.insetGrouped)

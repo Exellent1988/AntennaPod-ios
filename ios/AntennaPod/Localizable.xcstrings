@@ -40106,6 +40106,96 @@
         }
       },
       "comment": "ProgressView accessibility label while fyyd search runs"
+    },
+    "OPML import in progress": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label while an OPML file is being imported.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPML import in progress"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPML-Import läuft"
+          }
+        }
+      }
+    },
+    "Failed OPML feed": {
+      "extractionState": "manual",
+      "comment": "VoiceOver fallback label for an OPML feed failure without a feed title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed OPML feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fehlgeschlagener OPML-Feed"
+          }
+        }
+      }
+    },
+    "Failed OPML feed %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for an OPML feed failure with its feed-provided title.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed OPML feed %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fehlgeschlagener OPML-Feed %@"
+          }
+        }
+      }
+    },
+    "URL %@. Error %@": {
+      "extractionState": "manual",
+      "comment": "VoiceOver value for a failed OPML feed, preserving the feed URL and import error.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL %@. Error %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL %@. Fehler %@"
+          }
+        }
+      }
+    },
+    "This feed was not added during the OPML import.": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for a failed OPML feed row.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This feed was not added during the OPML import."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Feed wurde beim OPML-Import nicht hinzugefügt."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
