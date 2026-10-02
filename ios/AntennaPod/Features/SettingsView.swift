@@ -1201,6 +1201,9 @@ struct SettingsView: View {
                             .tag(settings.rewindSeconds)
                     }
                 }
+                .accessibilityLabel(String(localized: "Rewind"))
+                .accessibilityValue(rewindIntervalAccessibilityValue)
+                .accessibilityHint(rewindIntervalAccessibilityHint)
                 Button(String(localized: "Custom…")) {
                     customSkipIntervalMode = .rewind
                 }
@@ -1214,6 +1217,9 @@ struct SettingsView: View {
                             .tag(settings.fastForwardSeconds)
                     }
                 }
+                .accessibilityLabel(String(localized: "Fast-forward"))
+                .accessibilityValue(fastForwardIntervalAccessibilityValue)
+                .accessibilityHint(fastForwardIntervalAccessibilityHint)
                 Button(String(localized: "Custom…")) {
                     customSkipIntervalMode = .fastForward
                 }
@@ -1461,6 +1467,46 @@ struct SettingsView: View {
 
     private var continuousPlaybackAccessibilityHint: String {
         String(localized: "Off stops at episode end. Queue, the default, plays the next Queue item only. Same podcast plays the next unplayed, non-archived episode of this feed by episode sort, forward only, no wrap, and does not jump the Queue. Mark played and progress still apply in every mode. An end-of-episode or last-chapter sleep timer still stops without advancing. End of queue still advances through the Queue only, even when this is Off or Same podcast. Changing this does not start playback, seek, or download, and it does not invent a next episode.")
+    }
+
+    /// VoiceOver for Settings → Rewind. Names the saved interval and whether it is
+    /// the 10-second default. Changing the picker does not seek.
+    private var rewindIntervalAccessibilityValue: String {
+        let label = AppSettings.skipIntervalLabel(settings.rewindSeconds)
+        if settings.rewindSeconds == AppSettings.defaultRewindSeconds {
+            return String(
+                format: String(localized: "%@. This is the default rewind interval. The next rewind in the mini player, full player, Lockscreen and Now Playing, Siri skip back, and the antennapod skip-back link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause."),
+                label
+            )
+        }
+        return String(
+            format: String(localized: "%@. This is not the default rewind interval of 10 seconds. The next rewind in the mini player, full player, Lockscreen and Now Playing, Siri skip back, and the antennapod skip-back link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause."),
+            label
+        )
+    }
+
+    private var rewindIntervalAccessibilityHint: String {
+        String(localized: "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default rewind is 10 seconds. The next rewind uses the saved interval. Changing it does not move the current position. Not Rewind after pause, which seeks back only after a pause of at least 1 second.")
+    }
+
+    /// VoiceOver for Settings → Fast-forward. Names the saved interval and whether it is
+    /// the 30-second default. Changing the picker does not seek.
+    private var fastForwardIntervalAccessibilityValue: String {
+        let label = AppSettings.skipIntervalLabel(settings.fastForwardSeconds)
+        if settings.fastForwardSeconds == AppSettings.defaultFastForwardSeconds {
+            return String(
+                format: String(localized: "%@. This is the default fast-forward interval. The next fast-forward in the mini player, full player, Lockscreen and Now Playing, Siri skip forward, and the antennapod skip-forward link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause."),
+                label
+            )
+        }
+        return String(
+            format: String(localized: "%@. This is not the default fast-forward interval of 30 seconds. The next fast-forward in the mini player, full player, Lockscreen and Now Playing, Siri skip forward, and the antennapod skip-forward link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause."),
+            label
+        )
+    }
+
+    private var fastForwardIntervalAccessibilityHint: String {
+        String(localized: "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default fast-forward is 30 seconds. The next fast-forward uses the saved interval. Changing it does not move the current position. Not Rewind after pause.")
     }
 
     private var refreshHelpText: String {

@@ -42071,6 +42071,142 @@
           }
         }
       }
+    },
+    "Rewind": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rewind"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurückspulen"
+          }
+        }
+      }
+    },
+    "Fast-forward": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fast-forward"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorspulen"
+          }
+        }
+      }
+    },
+    "%@. This is the default rewind interval. The next rewind in the mini player, full player, Lockscreen and Now Playing, Siri skip back, and the antennapod skip-back link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is the default rewind interval. The next rewind in the mini player, full player, Lockscreen and Now Playing, Siri skip back, and the antennapod skip-back link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist das Standard-Rücksprungintervall. Der nächste Rücksprung im Mini-Player, im Vollbild-Player, auf dem Sperrbildschirm und in der Wiedergabeansicht, bei Siri Zurückspringen und über den antennapod-Link zum Zurückspringen verwendet diese Sekunden. Siri und der Link springen nur zurück, wenn bereits eine Episode geladen ist, und erfinden keine. Die Änderung aktualisiert diese Steuerungen und sucht nicht die aktuelle Position, startet keine Wiedergabe und lädt nichts herunter. Das ist nicht Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "%@. This is not the default rewind interval of 10 seconds. The next rewind in the mini player, full player, Lockscreen and Now Playing, Siri skip back, and the antennapod skip-back link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is not the default rewind interval of 10 seconds. The next rewind in the mini player, full player, Lockscreen and Now Playing, Siri skip back, and the antennapod skip-back link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist nicht das Standard-Rücksprungintervall von 10 Sekunden. Der nächste Rücksprung im Mini-Player, im Vollbild-Player, auf dem Sperrbildschirm und in der Wiedergabeansicht, bei Siri Zurückspringen und über den antennapod-Link zum Zurückspringen verwendet diese Sekunden. Siri und der Link springen nur zurück, wenn bereits eine Episode geladen ist, und erfinden keine. Die Änderung aktualisiert diese Steuerungen und sucht nicht die aktuelle Position, startet keine Wiedergabe und lädt nichts herunter. Das ist nicht Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "%@. This is the default fast-forward interval. The next fast-forward in the mini player, full player, Lockscreen and Now Playing, Siri skip forward, and the antennapod skip-forward link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is the default fast-forward interval. The next fast-forward in the mini player, full player, Lockscreen and Now Playing, Siri skip forward, and the antennapod skip-forward link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist das Standard-Vorspulintervall. Das nächste Vorspulen im Mini-Player, im Vollbild-Player, auf dem Sperrbildschirm und in der Wiedergabeansicht, bei Siri Vorspulen und über den antennapod-Link zum Vorspulen verwendet diese Sekunden. Siri und der Link springen nur vor, wenn bereits eine Episode geladen ist, und erfinden keine. Die Änderung aktualisiert diese Steuerungen und sucht nicht die aktuelle Position, startet keine Wiedergabe und lädt nichts herunter. Das ist nicht Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "%@. This is not the default fast-forward interval of 30 seconds. The next fast-forward in the mini player, full player, Lockscreen and Now Playing, Siri skip forward, and the antennapod skip-forward link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is not the default fast-forward interval of 30 seconds. The next fast-forward in the mini player, full player, Lockscreen and Now Playing, Siri skip forward, and the antennapod skip-forward link uses this many seconds. Siri and the link skip only when an episode is already loaded and do not invent one. Changing this updates those controls and does not seek the current position, start playback, or download. It is not Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist nicht das Standard-Vorspulintervall von 30 Sekunden. Das nächste Vorspulen im Mini-Player, im Vollbild-Player, auf dem Sperrbildschirm und in der Wiedergabeansicht, bei Siri Vorspulen und über den antennapod-Link zum Vorspulen verwendet diese Sekunden. Siri und der Link springen nur vor, wenn bereits eine Episode geladen ist, und erfinden keine. Die Änderung aktualisiert diese Steuerungen und sucht nicht die aktuelle Position, startet keine Wiedergabe und lädt nichts herunter. Das ist nicht Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default rewind is 10 seconds. The next rewind uses the saved interval. Changing it does not move the current position. Not Rewind after pause, which seeks back only after a pause of at least 1 second.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default rewind is 10 seconds. The next rewind uses the saved interval. Changing it does not move the current position. Not Rewind after pause, which seeks back only after a pause of at least 1 second."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voreinstellungen sind 5, 10, 15, 20, 30 und 60 Sekunden, plus Benutzerdefiniert von 5 bis 60. Der Standard für Zurückspulen ist 10 Sekunden. Der nächste Rücksprung verwendet das gespeicherte Intervall. Die Änderung verschiebt die aktuelle Position nicht. Nicht Zurückspulen nach Pause, das nur nach einer Pause von mindestens 1 Sekunde zurückspringt."
+          }
+        }
+      }
+    },
+    "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default fast-forward is 30 seconds. The next fast-forward uses the saved interval. Changing it does not move the current position. Not Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default fast-forward is 30 seconds. The next fast-forward uses the saved interval. Changing it does not move the current position. Not Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voreinstellungen sind 5, 10, 15, 20, 30 und 60 Sekunden, plus Benutzerdefiniert von 5 bis 60. Der Standard für Vorspulen ist 30 Sekunden. Das nächste Vorspulen verwendet das gespeicherte Intervall. Die Änderung verschiebt die aktuelle Position nicht. Nicht Zurückspulen nach Pause."
+          }
+        }
+      }
     }
 
   },
