@@ -35818,6 +35818,96 @@
     },
     "comment": "VoiceOver hint for Share value type/method; honesty: no payments."
   },
+  "Copy value split": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy value split"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Anteil kopieren"
+        }
+      }
+    },
+    "comment": "Distinct Copy action for the exact displayed podcast:valueRecipient split label (not name, type/method, details, or address)."
+  },
+  "Share value split": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share value split"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Anteil teilen"
+        }
+      }
+    },
+    "comment": "Distinct Share action for the exact displayed podcast:valueRecipient split label (not name, type/method, details, or address)."
+  },
+  "Value split copied to the pasteboard.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Value split copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Anteil in die Zwischenablage kopiert."
+        }
+      }
+    },
+    "comment": "Alert message after copying the exact displayed podcast:valueRecipient split label."
+  },
+  "Copies the exact displayed value split as plain text; this app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact displayed value split as plain text; this app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert den exakt angezeigten Wert-Anteil als Klartext; diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Copy value split; honesty: no payments."
+  },
+  "Shares the exact displayed value split as plain text; this app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact displayed value split as plain text; this app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt den exakt angezeigten Wert-Anteil als Klartext; diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for Share value split; honesty: no payments."
+  },
   "Copy text purpose": {
     "extractionState": "manual",
     "comment": "Copy action for the exact feed-provided podcast:txt purpose; hidden when purpose is missing.",

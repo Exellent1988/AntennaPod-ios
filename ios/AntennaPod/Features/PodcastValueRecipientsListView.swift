@@ -4,8 +4,9 @@ import UIKit
 /// Feed-provided `podcast:value` / `valueRecipient` list — **Value / Support creators** metadata only.
 /// Shows name, type/method, split % when known. When a feed name is shown, distinct Copy / Share value recipient name
 /// uses that exact text (separate from details + address). When type/method caption is shown, distinct Copy / Share
-/// value type/method uses that exact caption (separate from name, details, address). http(s) address → Share / Open
-/// in browser; otherwise Copy / Share address.
+/// value type/method uses that exact caption (separate from name, details, address). When the split label is shown,
+/// distinct Copy / Share value split uses that exact displayed string (separate from name, type/method, details,
+/// address). http(s) address → Share / Open in browser; otherwise Copy / Share address.
 /// **Does not send Lightning / wallet payments** — informational display only. Cap + honesty footnote.
 struct PodcastValueRecipientsListView: View {
     @Environment(\.openURL) private var openURL
@@ -183,6 +184,35 @@ struct PodcastValueRecipientsListView: View {
                         )
                     )
                 }
+            }
+
+            HStack(spacing: 12) {
+                Button {
+                    copyToPasteboard(
+                        splitLabel,
+                        confirmation: String(localized: "Value split copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy value split", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy value split"))
+                .accessibilityHint(
+                    String(
+                        localized: "Copies the exact displayed value split as plain text; this app does not send payments."
+                    )
+                )
+
+                ShareLink(item: splitLabel) {
+                    Label("Share value split", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share value split"))
+                .accessibilityHint(
+                    String(
+                        localized: "Shares the exact displayed value split as plain text; this app does not send payments."
+                    )
+                )
             }
 
             HStack(spacing: 12) {
