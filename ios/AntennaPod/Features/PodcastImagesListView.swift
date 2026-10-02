@@ -153,6 +153,31 @@ struct PodcastImagesListView: View {
                     )
                 }
 
+                if let alt {
+                    Button {
+                        UIPasteboard.general.string = alt
+                        copiedAlertMessage = String(localized: "Image alt text copied to the pasteboard.")
+                        copyFeedbackTick += 1
+                        showCopiedAlert = true
+                    } label: {
+                        Label("Copy image alt text", systemImage: "doc.on.doc")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Copy image alt text"))
+                    .accessibilityHint(
+                        String(localized: "Copies the exact feed-provided image alt text to the pasteboard")
+                    )
+
+                    ShareLink(item: alt) {
+                        Label("Share image alt text", systemImage: "square.and.arrow.up")
+                            .font(.subheadline)
+                    }
+                    .accessibilityLabel(String(localized: "Share image alt text"))
+                    .accessibilityHint(
+                        String(localized: "Shares the exact feed-provided image alt text as plain text")
+                    )
+                }
+
                 Button {
                     UIPasteboard.general.string = PodcastImagesDisplay.copyText(entry)
                     copiedAlertMessage = String(localized: "Image URL copied to the pasteboard.")

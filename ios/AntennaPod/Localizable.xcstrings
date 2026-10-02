@@ -35512,6 +35512,97 @@
       }
     }
   }
+,
+  "Copy image alt text": {
+    "extractionState": "manual",
+    "comment": "Copy action for the exact feed-provided podcast:image alt text; hidden when alt text is missing.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy image alt text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Alternativtext des Bildes kopieren"
+        }
+      }
+    }
+  },
+  "Share image alt text": {
+    "extractionState": "manual",
+    "comment": "Share action for the exact feed-provided podcast:image alt text; hidden when alt text is missing.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share image alt text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Alternativtext des Bildes teilen"
+        }
+      }
+    }
+  },
+  "Image alt text copied to the pasteboard.": {
+    "extractionState": "manual",
+    "comment": "Alert message after copying the exact displayed podcast:image alt text.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Image alt text copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Alternativtext des Bildes in die Zwischenablage kopiert."
+        }
+      }
+    }
+  },
+  "Copies the exact feed-provided image alt text to the pasteboard": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for Copy image alt text on a podcast:image row.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the exact feed-provided image alt text to the pasteboard"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert den vom Feed bereitgestellten Bildalternativtext in die Zwischenablage"
+        }
+      }
+    }
+  },
+  "Shares the exact feed-provided image alt text as plain text": {
+    "extractionState": "manual",
+    "comment": "VoiceOver hint for Share image alt text on a podcast:image row.",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the exact feed-provided image alt text as plain text"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt den vom Feed bereitgestellten Bildalternativtext als Klartext"
+        }
+      }
+    }
+  }
 
   },
   "version": "1.0"
