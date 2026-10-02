@@ -19,6 +19,9 @@ Podcast chapters URL (iOS): Open / Copy / Share nutzt nur die entfernte, vom Fee
 Podroll recommendations (iOS): Feed detail and description rows offer Share beside Copy when feed-provided text exists; ShareLink prefers a parseable http(s) feed URL and otherwise shares the same raw Copy text. No recommendations or Podcast Index GUIDs are invented or resolved.
 Podroll-Empfehlungen (iOS): In Feed-Detail und Beschreibung steht Teilen neben Kopieren, wenn vom Feed gelieferter Text vorhanden ist; ShareLink bevorzugt eine parsebare http(s)-Feed-URL und teilt sonst denselben Rohtext wie Kopieren. Es werden keine Empfehlungen oder Podcast-Index-GUIDs erfunden oder aufgelöst.
 
+License sharing (iOS): Feed detail, description, and shownotes rows offer Share beside Copy when license content is copyable; ShareLink prefers a parseable http(s) license URL and otherwise shares the same raw Copy text. Display-only; no DRM or license enforcement.
+Lizenz-Teilen (iOS): In Feed-Detail, Beschreibung und Shownotes steht Teilen neben Kopieren, wenn Lizenzinhalt kopierbar ist; ShareLink bevorzugt eine parsebare http(s)-Lizenz-URL und teilt sonst denselben Rohtext wie Kopieren. Nur Anzeige; kein DRM und keine Durchsetzung von Lizenzbedingungen.
+
 Feed trailer URL (iOS): Feed detail shows Copy trailer URL and Share trailer URL beside Play/Open when `podcast:trailer` provides the same http(s) media URL. Title-only and non-http(s) trailer values remain without URL actions; this is distinct from the episode `itunes:episodeType=trailer` badge.
 Podcast-Trailer-URL (iOS): Im Feed-Detail stehen Trailer-URL kopieren und Trailer-URL teilen neben Abspielen/Öffnen, wenn `podcast:trailer` dieselbe http(s)-Medien-URL liefert. Titel-only und nicht-http(s)-Werte erhalten keine URL-Aktionen; dies ist getrennt von der Episode-Kapsel `itunes:episodeType=trailer`.
 

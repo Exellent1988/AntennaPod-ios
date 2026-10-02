@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided `podcast:license` list — license text (+ optional url attribute).
-/// **Copy** always; **Open** when url is http(s). Cap + honesty footnote.
+/// **Copy** always; **Share** when copyable (prefers an http(s) url); **Open** when url is http(s). Cap + honesty footnote.
 /// **Display-only** — no DRM enforcement. Hidden when none.
 struct PodcastLicenseListView: View {
     @Environment(\.openURL) private var openURL
@@ -124,6 +124,29 @@ struct PodcastLicenseListView: View {
                 .accessibilityHint(
                     String(localized: "Copies the license text to the pasteboard")
                 )
+
+                let copyText = PodcastLicenseDisplay.copyText(entry)
+                if !copyText.isEmpty {
+                    Group {
+                        if let url {
+                            ShareLink(item: url) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        } else {
+                            ShareLink(item: copyText) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
+                    .accessibilityLabel(String(localized: "Share"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the license URL when it is a parseable http(s) URL; otherwise shares the same license text as Copy"
+                        )
+                    )
+                }
 
                 if let url {
                     Button {

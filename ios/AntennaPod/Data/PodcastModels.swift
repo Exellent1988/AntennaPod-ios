@@ -1086,7 +1086,7 @@ struct PodcastLicense: Identifiable, Hashable, Codable {
     }
 }
 
-/// Display helpers for `podcast:license` lists (channel or item). Feed-provided only; Copy + optional Open.
+/// Display helpers for `podcast:license` lists (channel or item). Feed-provided only; Copy + Share + optional Open.
 enum PodcastLicenseDisplay {
     /// Soft UI cap — namespace is typically single; show first N if a feed lists more + honesty footnote.
     static let displayCap = 5
