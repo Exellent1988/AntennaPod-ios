@@ -41,7 +41,9 @@ struct CustomPlaybackSpeedSheet: View {
                 Section {
                     TextField(String(localized: "Speed"), text: $speedText)
                         .keyboardType(.decimalPad)
-                        .accessibilityLabel(String(localized: "Speed"))
+                        .accessibilityLabel(String(localized: "Playback speed"))
+                        .accessibilityValue(speedFieldAccessibilityValue)
+                        .accessibilityHint(String(localized: "Enter a playback speed from 0.50× to 3.00×. Slider and Stepper use 0.05 steps."))
 
                     Slider(
                         value: Binding(
@@ -51,8 +53,9 @@ struct CustomPlaybackSpeedSheet: View {
                         in: range,
                         step: step
                     )
-                    .accessibilityLabel(String(localized: "Speed"))
+                    .accessibilityLabel(String(localized: "Playback speed"))
                     .accessibilityValue(PlaybackService.formatPlaybackSpeed(parsedOrFallback))
+                    .accessibilityHint(String(localized: "Adjusts playback speed in 0.05 increments"))
 
                     Stepper(value: Binding(
                         get: { parsedOrFallback },
@@ -61,9 +64,13 @@ struct CustomPlaybackSpeedSheet: View {
                         Text(PlaybackService.formatPlaybackSpeed(parsedOrFallback))
                             .monospacedDigit()
                     }
+                    .accessibilityLabel(String(localized: "Playback speed"))
+                    .accessibilityValue(PlaybackService.formatPlaybackSpeed(parsedOrFallback))
+                    .accessibilityHint(String(localized: "Adjusts playback speed in 0.05 increments"))
 
                     if mode == .session {
                         Toggle(String(localized: "Also set as default"), isOn: $alsoSetAsDefault)
+                            .accessibilityHint(String(localized: "Also saves this value as the global default playback speed"))
                     }
                 } footer: {
                     Text(footerText)
@@ -78,6 +85,8 @@ struct CustomPlaybackSpeedSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button(String(localized: "Set")) { confirm() }
                         .disabled(!isValid)
+                        .accessibilityLabel(String(localized: "Set playback speed"))
+                        .accessibilityHint(setAccessibilityHint)
                 }
             }
         }
@@ -103,6 +112,27 @@ struct CustomPlaybackSpeedSheet: View {
             return String(localized: "New episodes start at this speed (0.50×–3.00×, 0.05 steps). Does not change the rate of what’s already playing. Stock AVPlayer — quality may degrade above ~2×.")
         case .feedOverride:
             return String(localized: "This podcast’s episodes use this speed (0.50×–3.00×, 0.05 steps). Applied on a fresh episode start and immediately if an episode from this podcast is already playing. Does not rewrite the player’s session rate from every tap — only this Feed setting (and Custom…) persists per feed. Stock AVPlayer — quality may degrade above ~2×.")
+        }
+    }
+
+    private var speedFieldAccessibilityValue: String {
+        guard let value = parsedSpeed, range.contains(value) else { return speedText }
+        return PlaybackService.formatPlaybackSpeed(value)
+    }
+
+    private var setAccessibilityHint: String {
+        guard isValid else {
+            return String(localized: "Enter a playback speed from 0.50× to 3.00× before setting")
+        }
+        switch mode {
+        case .session:
+            return alsoSetAsDefault
+                ? String(localized: "Sets the current playback speed and the global default")
+                : String(localized: "Sets the current playback speed for this session")
+        case .defaultSpeed:
+            return String(localized: "Sets the default playback speed for new episodes")
+        case .feedOverride:
+            return String(localized: "Sets this podcast's playback speed for new episodes and the currently playing episode from this podcast")
         }
     }
 

@@ -39711,6 +39711,159 @@
           }
         }
       }
+    },
+    "Enter a playback speed from 0.50× to 3.00×. Slider and Stepper use 0.05 steps.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a playback speed from 0.50× to 3.00×. Slider and Stepper use 0.05 steps."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine Wiedergabegeschwindigkeit von 0,50× bis 3,00× ein. Schieberegler und Stepper verwenden Schritte von 0,05."
+          }
+        }
+      }
+    },
+    "Adjusts playback speed in 0.05 increments": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjusts playback speed in 0.05 increments"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passt die Wiedergabegeschwindigkeit in Schritten von 0,05 an"
+          }
+        }
+      }
+    },
+    "Also saves this value as the global default playback speed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Also saves this value as the global default playback speed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert diesen Wert zusätzlich als globale Standard-Wiedergabegeschwindigkeit"
+          }
+        }
+      }
+    },
+    "Set playback speed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set playback speed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedergabegeschwindigkeit festlegen"
+          }
+        }
+      }
+    },
+    "Enter a playback speed from 0.50× to 3.00× before setting": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a playback speed from 0.50× to 3.00× before setting"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib vor dem Festlegen eine Wiedergabegeschwindigkeit von 0,50× bis 3,00× ein"
+          }
+        }
+      }
+    },
+    "Sets the current playback speed and the global default": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets the current playback speed and the global default"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Legt die aktuelle Wiedergabegeschwindigkeit und die globale Standard-Wiedergabegeschwindigkeit fest"
+          }
+        }
+      }
+    },
+    "Sets the current playback speed for this session": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets the current playback speed for this session"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Legt die aktuelle Wiedergabegeschwindigkeit für diese Sitzung fest"
+          }
+        }
+      }
+    },
+    "Sets the default playback speed for new episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets the default playback speed for new episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Legt die Standard-Wiedergabegeschwindigkeit für neue Episoden fest"
+          }
+        }
+      }
+    },
+    "Sets this podcast's playback speed for new episodes and the currently playing episode from this podcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets this podcast's playback speed for new episodes and the currently playing episode from this podcast"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Legt die Wiedergabegeschwindigkeit dieses Podcasts für neue Episoden und die aktuell wiedergegebene Episode dieses Podcasts fest"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
