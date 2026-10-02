@@ -12,6 +12,7 @@ struct PodcastValueRecipientsListView: View {
     var title: String = String(localized: "Value / Support creators")
 
     @State private var showCopiedAlert = false
+    @State private var copiedMessage = String(localized: "Address copied to the pasteboard.")
     @State private var copyFeedbackTick = 0
 
     private var capped: (shown: [PodcastValueRecipientRow], truncated: Bool) {
@@ -50,7 +51,7 @@ struct PodcastValueRecipientsListView: View {
             .alert(String(localized: "Copied"), isPresented: $showCopiedAlert) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text(String(localized: "Address copied to the pasteboard."))
+                Text(copiedMessage)
             }
             .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
@@ -65,6 +66,15 @@ struct PodcastValueRecipientsListView: View {
                 return String(localized: "Split \(pct) percent")
             }
             return String(localized: "Split shares \(row.split)")
+        }()
+        let feeLabel = String(localized: "Fee")
+        let detailsText: String = {
+            var parts: [String] = []
+            if let name { parts.append(name) }
+            parts.append(row.typeMethodCaption)
+            parts.append(splitLabel)
+            if row.isFee { parts.append(feeLabel) }
+            return parts.joined(separator: " · ")
         }()
         let a11y: String = {
             var parts: [String] = []
@@ -106,6 +116,35 @@ struct PodcastValueRecipientsListView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(a11y)
 
+            HStack(spacing: 12) {
+                Button {
+                    copyToPasteboard(
+                        detailsText,
+                        confirmation: String(localized: "Value recipient details copied to the pasteboard.")
+                    )
+                } label: {
+                    Label("Copy value recipient details", systemImage: "doc.on.doc")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Copy value recipient details"))
+                .accessibilityHint(
+                    String(
+                        localized: "Copies the displayed value recipient name, type, method, split, and fee metadata as plain text; this app does not send payments."
+                    )
+                )
+
+                ShareLink(item: detailsText) {
+                    Label("Share value recipient details", systemImage: "square.and.arrow.up")
+                        .font(.subheadline)
+                }
+                .accessibilityLabel(String(localized: "Share value recipient details"))
+                .accessibilityHint(
+                    String(
+                        localized: "Shares the displayed value recipient name, type, method, split, and fee metadata as plain text; this app does not send payments."
+                    )
+                )
+            }
+
             if let address = row.displayAddress {
                 Text(address)
                     .font(.caption.monospaced())
@@ -117,9 +156,10 @@ struct PodcastValueRecipientsListView: View {
                 HStack(spacing: 12) {
                     if row.browserURL == nil {
                         Button {
-                            UIPasteboard.general.string = address
-                            copyFeedbackTick += 1
-                            showCopiedAlert = true
+                            copyToPasteboard(
+                                address,
+                                confirmation: String(localized: "Address copied to the pasteboard.")
+                            )
                         } label: {
                             Label("Copy", systemImage: "doc.on.doc")
                                 .font(.subheadline)
@@ -167,5 +207,12 @@ struct PodcastValueRecipientsListView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 2)
+    }
+
+    private func copyToPasteboard(_ string: String, confirmation: String) {
+        UIPasteboard.general.string = string
+        copiedMessage = confirmation
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 }

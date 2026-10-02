@@ -33603,6 +33603,96 @@
         }
       }
     }
+  },
+  "Copy value recipient details": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copy value recipient details"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Empfängerdetails kopieren"
+        }
+      }
+    },
+    "comment": "Distinct Copy action for displayed podcast:value recipient metadata."
+  },
+  "Copies the displayed value recipient name, type, method, split, and fee metadata as plain text; this app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Copies the displayed value recipient name, type, method, split, and fee metadata as plain text; this app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Kopiert Name, Typ, Methode, Anteil und Gebührenstatus des angezeigten Value-Empfängers als Klartext; diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for copying displayed podcast:value recipient metadata."
+  },
+  "Share value recipient details": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Share value recipient details"
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Empfängerdetails teilen"
+        }
+      }
+    },
+    "comment": "Distinct Share action for displayed podcast:value recipient metadata."
+  },
+  "Shares the displayed value recipient name, type, method, split, and fee metadata as plain text; this app does not send payments.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Shares the displayed value recipient name, type, method, split, and fee metadata as plain text; this app does not send payments."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Teilt Name, Typ, Methode, Anteil und Gebührenstatus des angezeigten Value-Empfängers als Klartext; diese App sendet keine Zahlungen."
+        }
+      }
+    },
+    "comment": "VoiceOver hint for sharing displayed podcast:value recipient metadata."
+  },
+  "Value recipient details copied to the pasteboard.": {
+    "extractionState": "manual",
+    "localizations": {
+      "en": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Value recipient details copied to the pasteboard."
+        }
+      },
+      "de": {
+        "stringUnit": {
+          "state": "translated",
+          "value": "Wert-Empfängerdetails in die Zwischenablage kopiert."
+        }
+      }
+    },
+    "comment": "Alert message after copying displayed podcast:value recipient metadata."
   }
   },
   "version": "1.0"
