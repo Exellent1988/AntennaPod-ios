@@ -785,6 +785,9 @@ struct DownloadErrorsView: View {
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var store: PodcastStore
     @State private var showClearConfirmation = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -794,6 +797,16 @@ struct DownloadErrorsView: View {
     /// Full persisted ring buffer — Clear always targets this list (not the filtered subset).
     private var allErrors: [DownloadErrorEntry] {
         downloads.recentErrors
+    }
+
+    /// Plain-text body for the full persisted ring buffer — never the searchable subset.
+    private var errorsPlainText: String {
+        DownloadErrorsExport.plainText(from: allErrors)
+    }
+
+    /// Localized header + body for the system share sheet, still scoped to the full log.
+    private var errorsShareText: String {
+        DownloadErrorsExport.shareText(from: allErrors)
     }
 
     /// Visible errors; empty query shows the full log. Filters title, feed, and message.
@@ -845,7 +858,49 @@ struct DownloadErrorsView: View {
                 // Clear always targets the full persisted log (not the filtered subset).
                 .disabled(allErrors.isEmpty && downloads.lastError == nil)
             }
+            ToolbarItem(placement: .primaryAction) {
+                Menu {
+                    Button {
+                        copyDownloadErrors()
+                    } label: {
+                        Label("Copy download errors", systemImage: "doc.plaintext")
+                    }
+                    .disabled(allErrors.isEmpty)
+                    .accessibilityLabel(String(localized: "Copy download errors"))
+                    .accessibilityHint(
+                        String(localized: "Copies the full persisted download error log as plain text; ignores the search filter and is not OPML")
+                    )
+
+                    ShareLink(
+                        item: errorsShareText,
+                        subject: Text(String(localized: "Download errors"))
+                    ) {
+                        Label("Share download errors", systemImage: "square.and.arrow.up")
+                    }
+                    .disabled(allErrors.isEmpty)
+                    .accessibilityLabel(String(localized: "Share download errors"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the full persisted download error log as plain text; ignores the search filter and is not OPML")
+                    )
+                } label: {
+                    Label("Download errors actions", systemImage: "ellipsis.circle")
+                }
+                .accessibilityLabel(String(localized: "Download errors actions"))
+                .accessibilityHint(
+                    String(localized: "Copy or share the full persisted download error log as plain text; actions ignore the search filter and are not OPML")
+                )
+                .disabled(allErrors.isEmpty)
+            }
         }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
         .confirmationDialog(
             "Clear download errors?",
             isPresented: $showClearConfirmation,
@@ -858,6 +913,16 @@ struct DownloadErrorsView: View {
         } message: {
             Text("Removes the saved error log and the Downloads banner. Offline files are kept.")
         }
+    }
+
+    /// Pasteboard copy of the full persisted ring buffer, not the searchable subset.
+    private func copyDownloadErrors() {
+        let text = errorsPlainText
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Download errors copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private func scheduleFilter(for term: String) {
