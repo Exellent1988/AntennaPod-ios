@@ -1806,23 +1806,6 @@
         }
       }
     },
-    "Filter by title or podcast": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filter by title or podcast"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nach Titel oder Podcast filtern"
-          }
-        }
-      }
-    },
     "Folder": {
       "extractionState": "manual",
       "localizations": {
@@ -6784,6 +6767,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kein Verlauf passt zu deiner Suche."
+          }
+        }
+      }
+    },
+    "Search all episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search all episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Episoden durchsuchen"
           }
         }
       }

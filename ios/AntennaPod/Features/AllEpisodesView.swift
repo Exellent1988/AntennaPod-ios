@@ -110,6 +110,11 @@ struct AllEpisodesView: View {
     /// **not** pull older episodes from beyond the soft limit. Missing dates / unknown durations /
     /// empty titles sort last; stable tiebreaker is episode `id` (same as Inbox). Orphan episodes
     /// (missing feed) match **All** only.
+    /// Search matches title / descriptionText / episode private note / any bookmark note via
+    /// `PodcastStore.episodeMatchesLibraryQuery` (same fields as library / Feed detail / Queue /
+    /// Favorites / History / Archived / Downloads / Home), plus feed title (`InboxEpisode.feedTitle`
+    /// = display title). View-only — soft-cap / status / podcast / type chips / Play random / Add all
+    /// stay soft-cap catalog scoped. **Not** chapters / transcripts.
     private var items: [InboxEpisode] {
         var base = store.allEpisodes.sorted { lhs, rhs in
             switch settings.allEpisodesSort {
@@ -169,7 +174,7 @@ struct AllEpisodesView: View {
         let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         if q.isEmpty { return base }
         return base.filter { item in
-            item.episode.title.localizedCaseInsensitiveContains(q)
+            store.episodeMatchesLibraryQuery(item.episode, query: q)
                 || item.feedTitle.localizedCaseInsensitiveContains(q)
         }
     }
@@ -440,7 +445,7 @@ struct AllEpisodesView: View {
                 .disabled(catalogItems.isEmpty)
             }
         }
-        .searchable(text: $searchText, prompt: "Filter by title or podcast")
+        .searchable(text: $searchText, prompt: "Search all episodes")
         .confirmationDialog(
             "Add all to queue?",
             isPresented: $showEnqueueAllConfirm,
