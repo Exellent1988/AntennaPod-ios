@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// Feed-provided `podcast:value` / `valueRecipient` list — **Value / Support creators** metadata only.
-/// Shows name, type/method, split % when known. http(s) address → Open in browser; otherwise Copy address.
+/// Shows name, type/method, split % when known. http(s) address → Share / Open in browser; otherwise Copy / Share address.
 /// **Does not send Lightning / wallet payments** — informational display only. Cap + honesty footnote.
 struct PodcastValueRecipientsListView: View {
     @Environment(\.openURL) private var openURL
@@ -106,16 +106,7 @@ struct PodcastValueRecipientsListView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(a11y)
 
-            if let url = row.browserURL {
-                Button {
-                    openURL(url)
-                } label: {
-                    Label("Open in browser", systemImage: "safari")
-                        .font(.subheadline)
-                }
-                .accessibilityLabel(String(localized: "Open in browser"))
-                .accessibilityHint(String(localized: "Opens the recipient page from the feed in the system browser"))
-            } else if let address = row.displayAddress {
+            if let address = row.displayAddress {
                 Text(address)
                     .font(.caption.monospaced())
                     .foregroundStyle(.secondary)
@@ -123,18 +114,55 @@ struct PodcastValueRecipientsListView: View {
                     .textSelection(.enabled)
                     .accessibilityLabel(String(localized: "Address \(address)"))
 
-                Button {
-                    UIPasteboard.general.string = address
-                    copyFeedbackTick += 1
-                    showCopiedAlert = true
-                } label: {
-                    Label("Copy", systemImage: "doc.on.doc")
-                        .font(.subheadline)
+                HStack(spacing: 12) {
+                    if row.browserURL == nil {
+                        Button {
+                            UIPasteboard.general.string = address
+                            copyFeedbackTick += 1
+                            showCopiedAlert = true
+                        } label: {
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Copy"))
+                        .accessibilityHint(
+                            String(localized: "Copies the recipient address to the pasteboard. This app does not send payments.")
+                        )
+                    }
+
+                    Group {
+                        if let url = row.browserURL {
+                            ShareLink(item: url) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        } else {
+                            ShareLink(item: address) {
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
+                    .accessibilityLabel(String(localized: "Share recipient address"))
+                    .accessibilityHint(
+                        String(
+                            localized: "Shares the feed-provided http(s) recipient URL when available; otherwise shares the same raw recipient address as Copy. This app does not send payments."
+                        )
+                    )
+
+                    if let url = row.browserURL {
+                        Button {
+                            openURL(url)
+                        } label: {
+                            Label("Open in browser", systemImage: "safari")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Open in browser"))
+                        .accessibilityHint(
+                            String(localized: "Opens the recipient page from the feed in the system browser")
+                        )
+                    }
                 }
-                .accessibilityLabel(String(localized: "Copy"))
-                .accessibilityHint(
-                    String(localized: "Copies the recipient address to the pasteboard. This app does not send payments.")
-                )
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -15978,6 +15978,42 @@
       },
       "comment": "Button to copy a non-http(s) valueRecipient address (Lightning/node) to the pasteboard."
     },
+    "Share recipient address": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share recipient address"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empfängeradresse teilen"
+          }
+        }
+      },
+      "comment": "Distinct VoiceOver label for sharing a feed-provided valueRecipient address; no payment action."
+    },
+    "Shares the feed-provided http(s) recipient URL when available; otherwise shares the same raw recipient address as Copy. This app does not send payments.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the feed-provided http(s) recipient URL when available; otherwise shares the same raw recipient address as Copy. This app does not send payments."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die http(s)-Empfänger-URL aus dem Feed, falls vorhanden; andernfalls wird derselbe rohe Empfängertext wie bei Kopieren geteilt. Diese App sendet keine Zahlungen."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share on a valueRecipient: URL preferred for http(s), otherwise exact raw address; no Lightning/wallet send."
+    },
     "Copies the recipient address to the pasteboard. This app does not send payments.": {
       "extractionState": "manual",
       "localizations": {
