@@ -22710,23 +22710,6 @@
         }
       }
     },
-    "Orders the Archived list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Restore all stays full catalog.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Orders the Archived list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Restore all stays full catalog."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sortiert die Archiviert-Liste. Kürzeste und Längste nutzen bekannte Dauer; Titel A–Z / Z–A nach Titel; leere oder unbekannte zuletzt. Alle wiederherstellen bleibt voller Katalog."
-          }
-        }
-      }
-    },
     "Orders the Downloads list. Largest and Smallest use known size; Title A–Z / Z–A by title; empty or unknown last. Does not change eviction order.": {
       "extractionState": "manual",
       "localizations": {
@@ -25365,121 +25348,208 @@
         }
       }
     },
-    "Opens Home layout to show, hide, and reorder Home sections. Same editor as Settings → Home layout. Optional History, Favorites, and Downloads previews are off by default.": {
+    "Home Archived remaining time %@": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Opens Home layout to show, hide, and reorder Home sections. Same editor as Settings → Home layout. Optional History, Favorites, and Downloads previews are off by default."
+            "value": "Home Archived remaining time %@"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Öffnet das Startseiten-Layout zum Ein-/Ausblenden und Neuordnen der Home-Abschnitte. Derselbe Editor wie Einstellungen → Startseiten-Layout. Optionale Verlauf-, Favoriten- und Downloads-Vorschauen sind standardmäßig aus."
+            "value": "Verbleibende Archiviert-Zeit auf dem Home %@"
+          }
+        }
+      },
+      "comment": "VoiceOver for Home Archived preview info bar (episode count + remaining over visible soft-capped preview rows)."
+    },
+    "Home Archived remaining time covers the preview only (first %lld), not the full Archived list": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home Archived remaining time covers the preview only (first %lld), not the full Archived list"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Verbleibende Zeit für Archiviert auf dem Home gilt nur für die Vorschau (erste %lld), nicht für die gesamte Archiviert-Liste"
+          }
+        }
+      },
+      "comment": "VoiceOver soft-cap honesty when Home Archived preview is capped below the full archived catalog."
+    },
+    "See all in Archived": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "See all in Archived"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle im Archiv anzeigen"
           }
         }
       }
     },
-    "Show, hide, and drag-reorder Home tab sections. Same editor as Home toolbar Configure Home. Persisted in AppSettings / backup. Optional History, Favorites, and Downloads previews are off by default.": {
+    "Open Archived": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Show, hide, and drag-reorder Home tab sections. Same editor as Home toolbar Configure Home. Persisted in AppSettings / backup. Optional History, Favorites, and Downloads previews are off by default."
+            "value": "Open Archived"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Home-Tab-Abschnitte ein-/ausblenden und neu ordnen. Derselbe Editor wie Home-Werkzeugleiste Startseite konfigurieren. Gespeichert in AppSettings / Backup. Optionale Verlauf-, Favoriten- und Downloads-Vorschauen sind standardmäßig aus."
+            "value": "Archiviert öffnen"
           }
         }
       }
     },
-    "Reset restores Discover → Continue → History → Inbox → Queue → Recently updated → Favorites → Downloads (History, Favorites, and Downloads hidden). Does not change Home search, subscriptions, queue, or the Downloads tab catalog.": {
+    "Opens Home layout to show, hide, and reorder Home sections. Same editor as Settings → Home layout. Optional History, Archived, Favorites, and Downloads previews are off by default.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reset restores Discover → Continue → History → Inbox → Queue → Recently updated → Favorites → Downloads (History, Favorites, and Downloads hidden). Does not change Home search, subscriptions, queue, or the Downloads tab catalog."
+            "value": "Opens Home layout to show, hide, and reorder Home sections. Same editor as Settings → Home layout. Optional History, Archived, Favorites, and Downloads previews are off by default."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zurücksetzen stellt Entdecken → Weiterhören → Verlauf → Posteingang → Warteschlange → Kürzlich aktualisiert → Favoriten → Downloads wieder her (Verlauf, Favoriten und Downloads ausgeblendet). Ändert nicht die Home-Suche, Abonnements, Warteschlange oder den Downloads-Tab-Katalog."
+            "value": "Öffnet das Startseiten-Layout zum Ein-/Ausblenden und Neuordnen der Home-Abschnitte. Derselbe Editor wie Einstellungen → Startseiten-Layout. Optionale Verlauf-, Archiviert-, Favoriten- und Downloads-Vorschauen sind standardmäßig aus."
           }
         }
       }
     },
-    "Restores the full default section order and visibility (History, Favorites, and Downloads off). Applies to the whole layout — not only rows matching the current search. Home content search, subscriptions, queue, and the Downloads tab catalog are unchanged.": {
+    "Show, hide, and drag-reorder Home tab sections. Same editor as Home toolbar Configure Home. Persisted in AppSettings / backup. Optional History, Archived, Favorites, and Downloads previews are off by default.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Restores the full default section order and visibility (History, Favorites, and Downloads off). Applies to the whole layout — not only rows matching the current search. Home content search, subscriptions, queue, and the Downloads tab catalog are unchanged."
+            "value": "Show, hide, and drag-reorder Home tab sections. Same editor as Home toolbar Configure Home. Persisted in AppSettings / backup. Optional History, Archived, Favorites, and Downloads previews are off by default."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Stellt die vollständige Standard-Abschnittsreihenfolge und -sichtbarkeit wieder her (Verlauf, Favoriten und Downloads aus). Gilt für das gesamte Layout — nicht nur für Zeilen der aktuellen Suche. Home-Inhaltssuche, Abonnements, Warteschlange und der Downloads-Tab-Katalog bleiben unverändert."
+            "value": "Home-Tab-Abschnitte ein-/ausblenden und neu ordnen. Derselbe Editor wie Home-Werkzeugleiste Startseite konfigurieren. Gespeichert in AppSettings / Backup. Optionale Verlauf-, Archiviert-, Favoriten- und Downloads-Vorschauen sind standardmäßig aus."
           }
         }
       }
     },
-    "Toggle visibility on matching rows. Drag reorder is off while searching (filtered positions would not match the full layout). Empty optional sections (Continue, Inbox, Queue, Recently updated, History, Favorites, Downloads) still hide on Home when they have no items. Discover always shows its charts preview when enabled. History, Favorites, and Downloads are off by default.": {
+    "Reset restores Discover → Continue → History → Archived → Inbox → Queue → Recently updated → Favorites → Downloads (History, Archived, Favorites, and Downloads hidden). Does not change Home search, subscriptions, queue, or the Downloads tab catalog.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toggle visibility on matching rows. Drag reorder is off while searching (filtered positions would not match the full layout). Empty optional sections (Continue, Inbox, Queue, Recently updated, History, Favorites, Downloads) still hide on Home when they have no items. Discover always shows its charts preview when enabled. History, Favorites, and Downloads are off by default."
+            "value": "Reset restores Discover → Continue → History → Archived → Inbox → Queue → Recently updated → Favorites → Downloads (History, Archived, Favorites, and Downloads hidden). Does not change Home search, subscriptions, queue, or the Downloads tab catalog."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sichtbarkeit auf Trefferzeilen umschalten. Ziehen zum Neuordnen ist während der Suche aus (gefilterte Positionen würden nicht dem vollen Layout entsprechen). Leere optionale Abschnitte (Weiterhören, Posteingang, Warteschlange, Kürzlich aktualisiert, Verlauf, Favoriten, Downloads) bleiben auf dem Home ausgeblendet, wenn sie keine Einträge haben. Entdecken zeigt bei Aktivierung immer die Charts-Vorschau. Verlauf, Favoriten und Downloads sind standardmäßig aus."
+            "value": "Zurücksetzen stellt Entdecken → Weiterhören → Verlauf → Archiviert → Posteingang → Warteschlange → Kürzlich aktualisiert → Favoriten → Downloads wieder her (Verlauf, Archiviert, Favoriten und Downloads ausgeblendet). Ändert nicht die Home-Suche, Abonnements, Warteschlange oder den Downloads-Tab-Katalog."
           }
         }
       }
     },
-    "Toggle visibility and tap Edit to drag-reorder. Empty optional sections (Continue, Inbox, Queue, Recently updated, History, Favorites, Downloads) still hide on Home when they have no items. Discover always shows its charts preview when enabled. History, Favorites, and Downloads are off by default.": {
+    "Restores the full default section order and visibility (History, Archived, Favorites, and Downloads off). Applies to the whole layout — not only rows matching the current search. Home content search, subscriptions, queue, and the Downloads tab catalog are unchanged.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toggle visibility and tap Edit to drag-reorder. Empty optional sections (Continue, Inbox, Queue, Recently updated, History, Favorites, Downloads) still hide on Home when they have no items. Discover always shows its charts preview when enabled. History, Favorites, and Downloads are off by default."
+            "value": "Restores the full default section order and visibility (History, Archived, Favorites, and Downloads off). Applies to the whole layout — not only rows matching the current search. Home content search, subscriptions, queue, and the Downloads tab catalog are unchanged."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sichtbarkeit umschalten und Bearbeiten tippen zum Neuordnen per Ziehen. Leere optionale Abschnitte (Weiterhören, Posteingang, Warteschlange, Kürzlich aktualisiert, Verlauf, Favoriten, Downloads) bleiben auf dem Home ausgeblendet, wenn sie keine Einträge haben. Entdecken zeigt bei Aktivierung immer die Charts-Vorschau. Verlauf, Favoriten und Downloads sind standardmäßig aus."
+            "value": "Stellt die vollständige Standard-Abschnittsreihenfolge und -sichtbarkeit wieder her (Verlauf, Archiviert, Favoriten und Downloads aus). Gilt für das gesamte Layout — nicht nur für Zeilen der aktuellen Suche. Home-Inhaltssuche, Abonnements, Warteschlange und der Downloads-Tab-Katalog bleiben unverändert."
           }
         }
       }
     },
-    "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home.": {
+    "Toggle visibility on matching rows. Drag reorder is off while searching (filtered positions would not match the full layout). Empty optional sections (Continue, Inbox, Queue, Recently updated, History, Archived, Favorites, Downloads) still hide on Home when they have no items. Discover always shows its charts preview when enabled. History, Archived, Favorites, and Downloads are off by default.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home."
+            "value": "Toggle visibility on matching rows. Drag reorder is off while searching (filtered positions would not match the full layout). Empty optional sections (Continue, Inbox, Queue, Recently updated, History, Archived, Favorites, Downloads) still hide on Home when they have no items. Discover always shows its charts preview when enabled. History, Archived, Favorites, and Downloads are off by default."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Home-Tab-Abschnitte ein-/ausblenden und per Ziehen neu ordnen (Weiterhören, Posteingang, Warteschlange, Entdecken, Kürzlich aktualisiert, Verlauf, Favoriten, Downloads). Suche filtert Abschnittsbezeichnungen; Bearbeiten/Ziehen zum Neuordnen ist während der Suche aus. Zurücksetzen stellt nach Bestätigung das volle Standard-Layout wieder her. Leere optionale Abschnitte bleiben ausgeblendet, wenn sie keine Einträge haben. Verlauf, Favoriten und Downloads sind standardmäßig aus. Derselbe Editor wie Home-Werkzeugleiste Startseite konfigurieren."
+            "value": "Sichtbarkeit auf Trefferzeilen umschalten. Ziehen zum Neuordnen ist während der Suche aus (gefilterte Positionen würden nicht dem vollen Layout entsprechen). Leere optionale Abschnitte (Weiterhören, Posteingang, Warteschlange, Kürzlich aktualisiert, Verlauf, Archiviert, Favoriten, Downloads) bleiben auf dem Home ausgeblendet, wenn sie keine Einträge haben. Entdecken zeigt bei Aktivierung immer die Charts-Vorschau. Verlauf, Archiviert, Favoriten und Downloads sind standardmäßig aus."
+          }
+        }
+      }
+    },
+    "Toggle visibility and tap Edit to drag-reorder. Empty optional sections (Continue, Inbox, Queue, Recently updated, History, Archived, Favorites, Downloads) still hide on Home when they have no items. Discover always shows its charts preview when enabled. History, Archived, Favorites, and Downloads are off by default.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggle visibility and tap Edit to drag-reorder. Empty optional sections (Continue, Inbox, Queue, Recently updated, History, Archived, Favorites, Downloads) still hide on Home when they have no items. Discover always shows its charts preview when enabled. History, Archived, Favorites, and Downloads are off by default."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sichtbarkeit umschalten und Bearbeiten tippen zum Neuordnen per Ziehen. Leere optionale Abschnitte (Weiterhören, Posteingang, Warteschlange, Kürzlich aktualisiert, Verlauf, Archiviert, Favoriten, Downloads) bleiben auf dem Home ausgeblendet, wenn sie keine Einträge haben. Entdecken zeigt bei Aktivierung immer die Charts-Vorschau. Verlauf, Archiviert, Favoriten und Downloads sind standardmäßig aus."
+          }
+        }
+      }
+    },
+    "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Archived, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Archived, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show, hide, and drag-reorder Home tab sections (Continue, Inbox, Queue, Discover, Recently updated, History, Archived, Favorites, Downloads). Search filters section labels; Edit/drag reorder is off while searching. Reset restores the full default layout after confirmation. Empty optional sections still hide when they have no items. History, Archived, Favorites, and Downloads are off by default. Same editor as Home toolbar Configure Home."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home-Tab-Abschnitte ein-/ausblenden und per Ziehen neu ordnen (Weiterhören, Posteingang, Warteschlange, Entdecken, Kürzlich aktualisiert, Verlauf, Archiviert, Favoriten, Downloads). Suche filtert Abschnittsbezeichnungen; Bearbeiten/Ziehen ist während der Suche aus. Zurücksetzen stellt nach Bestätigung das volle Standard-Layout wieder her. Leere optionale Abschnitte bleiben ausgeblendet, wenn sie keine Einträge haben. Verlauf, Archiviert, Favoriten und Downloads sind standardmäßig aus. Derselbe Editor wie Home-Werkzeugleiste Startseite konfigurieren."
+          }
+        }
+      }
+    },
+    "Orders the Archived list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home Archived preview stays newest-first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the Archived list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home Archived preview stays newest-first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Archiviert-Liste. Kürzeste und Längste nutzen bekannte Dauer; Titel A–Z / Z–A nach Titel; leere oder unbekannte zuletzt. Die Home-Archiviert-Vorschau bleibt neueste-zuerst."
           }
         }
       }

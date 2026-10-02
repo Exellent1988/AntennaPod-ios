@@ -816,7 +816,7 @@ enum FavoritesPodcastFilter: Hashable, Identifiable {
 /// Newest / Oldest by archived-at timestamp; Shortest / Longest by known duration
 /// (feed when known, else saved playback — same path as Queue / Inbox / Favorites / History;
 /// unknown last; id tiebreak); Title A–Z / Z–A by `localizedCaseInsensitiveCompare`
-/// (empty titles last; id tiebreak). Restore all / Add all stay full newest-first catalog.
+/// (empty titles last; id tiebreak). Home Archived preview / Restore all / Add all stay full newest-first catalog.
 enum ArchivedSort: String, CaseIterable, Identifiable {
     case newestFirst
     case oldestFirst
@@ -1080,6 +1080,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
     case favorites
     case downloads
     case history
+    case archived
 
     var id: String { rawValue }
 
@@ -1093,6 +1094,7 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
         case .favorites: return String(localized: "Favorites")
         case .downloads: return String(localized: "Downloads")
         case .history: return String(localized: "History")
+        case .archived: return String(localized: "Archived")
         }
     }
 
@@ -1106,17 +1108,18 @@ enum HomeSectionId: String, CaseIterable, Identifiable, Codable, Hashable {
         case .favorites: return "star"
         case .downloads: return "arrow.down.circle"
         case .history: return "clock.arrow.circlepath"
+        case .archived: return "archivebox"
         }
     }
 
     /// Default order matches the previous fixed Home layout (Discover first).
-    /// History sits near Continue (newest last-played preview) but stays opt-in via `defaultHidden`.
+    /// History / Archived sit near Continue (newest last-played / newest-archived previews) but stay opt-in via `defaultHidden`.
     static let defaultOrder: [HomeSectionId] = [
-        .discover, .continueListening, .history, .inbox, .queue, .recentlyUpdated, .favorites, .downloads
+        .discover, .continueListening, .history, .archived, .inbox, .queue, .recentlyUpdated, .favorites, .downloads
     ]
 
-    /// History, Favorites, and Downloads start hidden so enabling them is opt-in (optional Home previews).
-    static let defaultHidden: Set<HomeSectionId> = [.history, .favorites, .downloads]
+    /// History, Archived, Favorites, and Downloads start hidden so enabling them is opt-in (optional Home previews).
+    static let defaultHidden: Set<HomeSectionId> = [.history, .archived, .favorites, .downloads]
 }
 
 
@@ -1992,7 +1995,7 @@ final class AppSettings: ObservableObject {
     /// Archived list order by `ArchivedEpisode.archivedAtEpochMs` (`archived.json` / `archivedAtById`):
     /// newest first (default) or oldest first.
     /// Stable tiebreaker is episode `id`. Client-side re-sort in ArchivedView only — `PodcastStore.archivedEpisodes`
-    /// stays newest-first for Restore all counts. Applies to podcast-chip + search-filtered results too.
+    /// stays newest-first for Home Archived preview / Restore all counts. Applies to podcast-chip + search-filtered results too.
     @Published var archivedSort: ArchivedSort {
         didSet {
             UserDefaults.standard.set(archivedSort.rawValue, forKey: Keys.archivedSort)
@@ -2004,7 +2007,7 @@ final class AppSettings: ObservableObject {
     /// `.searchable`; `archivedSort` still orders the filtered list. Chips list only feeds
     /// present in the current Archived catalog (never invent). Orphan archived without a
     /// matching library feed match All only. **View-only** — Restore all / Add all to queue
-    /// stay full Archived catalog.
+    /// stay full Archived catalog. Home Archived preview does not follow this chip.
     @Published var archivedPodcastFilter: String {
         didSet {
             UserDefaults.standard.set(archivedPodcastFilter, forKey: Keys.archivedPodcastFilter)

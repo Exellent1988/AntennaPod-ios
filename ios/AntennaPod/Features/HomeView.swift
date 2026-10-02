@@ -3,7 +3,7 @@ import SwiftUI
 /// Landing tab: honest previews driven by Settings → Home layout (order + visibility).
 /// Toolbar **Configure Home** opens the same layout editor (Android `configure_home` parity).
 /// `.searchable` filters visible section episode/podcast previews (title + feed); empty sections hide while filtering.
-/// Optional **History** / **Favorites** / **Downloads** previews (off by default) soft-cap like Continue.
+/// Optional **History** / **Archived** / **Favorites** / **Downloads** previews (off by default) soft-cap like Continue.
 struct HomeView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
@@ -72,6 +72,13 @@ struct HomeView: View {
     /// Distinct from Continue (in-progress-only): includes played + in-progress.
     private var historyItems: [HistoryEpisode] {
         Array(filterEpisodes(store.historyEpisodes).prefix(previewLimit))
+    }
+
+    /// Archived Home preview: newest archived first (`archivedEpisodes` / `archivedAtEpochMs`).
+    /// Does **not** follow Archived `archivedSort` / `archivedPodcastFilter` — Home stays
+    /// newest-archived-first store order.
+    private var archivedItems: [ArchivedEpisode] {
+        Array(filterEpisodes(store.archivedEpisodes).prefix(previewLimit))
     }
 
     /// Downloads Home preview catalog: newest completed first (`downloadedAtEpochMs`, else
@@ -356,6 +363,57 @@ struct HomeView: View {
         )
     }
 
+    /// AntennaPod-like info bar: episode count + remaining over the **visible Archived preview**
+    /// rows only (`archivedItems` = filter then soft-cap `previewLimit`). Remaining per episode =
+    /// `max(0, duration − position)` when duration known; unplayed with duration contributes full
+    /// duration; **played** (not current) → 0; **unknown duration skipped** (tilde when any
+    /// skipped). Currently playing uses live `PlaybackService` position/duration. Wall-clock only
+    /// (no playback-speed divide by default; optional Remaining time respects speed).
+    /// **Preview soft-cap honesty:** never claims remaining beyond the visible preview rows
+    /// (first `previewLimit` after search filter) — not the full `archivedEpisodes` catalog /
+    /// Archived screen podcast+sort+search filter / Restore all count.
+    /// Preview stays newest-archived-first (does **not** follow Archived `archivedSort`).
+    private var archivedRemainingInfoLabel: String? {
+        guard !archivedItems.isEmpty else { return nil }
+        return EpisodeRemainingTime.episodesInfoBarLabel(for: archivedRemainingSummary)
+    }
+
+    private var archivedRemainingAccessibilityLabel: String {
+        guard let label = archivedRemainingInfoLabel else { return "" }
+        var parts = [String(localized: "Home Archived remaining time \(label)")]
+        let unknown = archivedRemainingSummary.unknownCount
+        if unknown > 0 {
+            parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
+        }
+        // Soft-cap: filtered archived catalog longer than visible preview rows.
+        let filteredCatalogCount = filterEpisodes(store.archivedEpisodes).count
+        if filteredCatalogCount > archivedItems.count {
+            parts.append(
+                String(
+                    localized: "Home Archived remaining time covers the preview only (first \(previewLimit)), not the full Archived list"
+                )
+            )
+        }
+        return parts.joined(separator: ". ")
+    }
+
+    private var archivedRemainingSummary: EpisodeRemainingTime.Summary {
+        EpisodeRemainingTime.summarize(
+            episodes: archivedItems.map(\.episode),
+            currentEpisodeId: playback.currentEpisode?.id,
+            liveDurationSeconds: playback.durationSeconds,
+            livePositionSeconds: playback.positionSeconds,
+            isPlayed: { store.isPlayed($0) },
+            savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
+            savedPositionSeconds: { store.positionSeconds(for: $0) },
+            effectivePlaybackSpeed: {
+                let enabled = settings.remainingTimeRespectsSpeed
+                _ = settings.defaultPlaybackSpeed
+                return enabled ? { store.resolvedPlaybackSpeedForRemaining(for: $0) } : nil
+            }()
+        )
+    }
+
     /// AntennaPod-like info bar: episode count + remaining over the **visible Downloads preview**
     /// rows only (`downloadItems` = newest-completed + title/feed filter then soft-cap
     /// `previewLimit`). Remaining per episode = `max(0, duration − position)` when duration known;
@@ -425,6 +483,8 @@ struct HomeView: View {
                 if !downloadItems.isEmpty { return true }
             case .history:
                 if !historyItems.isEmpty { return true }
+            case .archived:
+                if !archivedItems.isEmpty { return true }
             case .discover:
                 continue
             }
@@ -463,7 +523,7 @@ struct HomeView: View {
                     }
                     .accessibilityLabel(String(localized: "Configure Home"))
                     .accessibilityHint(
-                        String(localized: "Opens Home layout to show, hide, and reorder Home sections. Same editor as Settings → Home layout. Optional History, Favorites, and Downloads previews are off by default.")
+                        String(localized: "Opens Home layout to show, hide, and reorder Home sections. Same editor as Settings → Home layout. Optional History, Archived, Favorites, and Downloads previews are off by default.")
                     )
                 }
             }
@@ -561,6 +621,10 @@ struct HomeView: View {
         case .history:
             if !historyItems.isEmpty {
                 historySection
+            }
+        case .archived:
+            if !archivedItems.isEmpty {
+                archivedSection
             }
         }
     }
@@ -768,6 +832,41 @@ struct HomeView: View {
     }
 
     @ViewBuilder
+    private var archivedSection: some View {
+        Section {
+            // AntennaPod-like Archived preview info bar (visible preview rows remaining time).
+            // Soft-cap honesty: first `previewLimit` after search filter — not full Archived / Restore count.
+            if let remainingLabel = archivedRemainingInfoLabel {
+                Text(remainingLabel)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(archivedRemainingAccessibilityLabel)
+                    .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            }
+            ForEach(archivedItems) { item in
+                EpisodeRow(
+                    episode: item.episode,
+                    feedTitle: item.feedTitle,
+                    dateOverride: Date(timeIntervalSince1970: Double(item.archivedAtEpochMs) / 1000),
+                    dateAccessibilityLabel: "Archived"
+                )
+            }
+        } header: {
+            sectionHeader("Archived", systemImage: "archivebox")
+        } footer: {
+            NavigationLink {
+                ArchivedView()
+            } label: {
+                Text(store.archivedEpisodes.count > previewLimit ? "See all in Archived" : "Open Archived")
+                    .font(.footnote)
+            }
+        }
+    }
+
+    @ViewBuilder
     private var favoritesSection: some View {
         Section {
             // AntennaPod-like Favorites preview info bar (visible preview rows remaining time).
@@ -872,7 +971,7 @@ struct HomeView: View {
         }
     }
 
-    /// Episode-like items with `episode.title` + `feedTitle` (Continue / Inbox / History / Favorites).
+    /// Episode-like items with `episode.title` + `feedTitle` (Continue / Inbox / History / Archived / Favorites).
     private func filterEpisodes<T>(_ items: [T]) -> [T] where T: HomeSearchableEpisode {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !q.isEmpty else { return items }
@@ -906,4 +1005,5 @@ private protocol HomeSearchableEpisode {
 extension HistoryEpisode: HomeSearchableEpisode {}
 extension InboxEpisode: HomeSearchableEpisode {}
 extension FavoriteEpisode: HomeSearchableEpisode {}
+extension ArchivedEpisode: HomeSearchableEpisode {}
 
