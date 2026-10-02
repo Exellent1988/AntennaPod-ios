@@ -1,8 +1,11 @@
 import SwiftUI
+import UIKit
 
 /// Chapters list sheet mirroring Full player list UX: searchable titles, tap → seek,
 /// current highlight, duration / current remaining when end known, optional per-chapter
 /// Open link (http(s) href), optional chapters URL.
+/// Toolbar **Copy chapters** + **Share chapters** export a plain-text TOC from the **full**
+/// already-known chapter array (ignores search filter) — same honesty as transcript Copy/Share.
 ///
 /// Already-loaded chapters only — does **not** fetch remote Podcast Index JSON or
 /// media-file tags (same honesty as mini Previous/Next). Full Player still lazy-loads.
@@ -19,6 +22,10 @@ struct EpisodeChaptersSheet: View {
     @State private var chapterSearchText = ""
     @State private var chapterDebouncedQuery = ""
     @State private var chapterDebounceTask: Task<Void, Never>?
+
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     private let chapterDebounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -60,6 +67,20 @@ struct EpisodeChaptersSheet: View {
         episode?.hasPodcastIndexChapterURL == true
     }
 
+    /// Plain TOC from the **full** already-known chapter array — ignores search filter.
+    private var chaptersTOCPlain: String {
+        ChaptersTOCExport.plainText(from: chapters)
+    }
+
+    private var canExportChaptersTOC: Bool {
+        !chaptersTOCPlain.isEmpty
+    }
+
+    /// Episode title + TOC body for system share sheet (same body as Copy).
+    private var chaptersTOCShareText: String {
+        ChaptersTOCExport.shareText(from: chapters, episodeTitle: episode?.title)
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -99,11 +120,42 @@ struct EpisodeChaptersSheet: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "Done")) { dismiss() }
                 }
+                ToolbarItemGroup(placement: .primaryAction) {
+                    Button {
+                        copyChaptersTOC()
+                    } label: {
+                        Image(systemName: "doc.plaintext")
+                    }
+                    .disabled(!canExportChaptersTOC)
+                    .accessibilityLabel(String(localized: "Copy chapters"))
+                    .accessibilityHint(String(localized: "Copies the chapter table of contents to the pasteboard"))
+
+                    ShareLink(
+                        item: chaptersTOCShareText,
+                        subject: Text(episode?.title ?? String(localized: "Chapters"))
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .disabled(!canExportChaptersTOC)
+                    .accessibilityLabel(String(localized: "Share chapters"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the episode title and chapter table of contents")
+                    )
+                }
             }
             .searchable(text: $chapterSearchText, prompt: "Search chapters")
             .onChange(of: chapterSearchText) { _, newValue in
                 scheduleChapterFilter(for: newValue)
             }
+            .alert(
+                String(localized: "Copied"),
+                isPresented: $showCopiedAlert
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(copiedAlertMessage)
+            }
+            .sensoryFeedback(.success, trigger: copyFeedbackTick)
         }
         .presentationDetents([.medium, .large])
         .onDisappear {
@@ -184,6 +236,15 @@ struct EpisodeChaptersSheet: View {
             guard !Task.isCancelled else { return }
             chapterDebouncedQuery = trimmed
         }
+    }
+
+    private func copyChaptersTOC() {
+        let text = chaptersTOCPlain
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Chapters copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private func format(_ seconds: Double) -> String {

@@ -456,8 +456,31 @@ struct FullPlayerView: View {
             .padding(.top, 8)
         } else if !chapters.isEmpty {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Chapters")
-                    .font(.headline)
+                HStack(spacing: 12) {
+                    Text("Chapters")
+                        .font(.headline)
+                    Spacer(minLength: 8)
+                    Button {
+                        copyChaptersTOC()
+                    } label: {
+                        Image(systemName: "doc.plaintext")
+                    }
+                    .disabled(!canExportChaptersTOC)
+                    .accessibilityLabel(String(localized: "Copy chapters"))
+                    .accessibilityHint(String(localized: "Copies the chapter table of contents to the pasteboard"))
+
+                    ShareLink(
+                        item: chaptersTOCShareText,
+                        subject: Text(chaptersEpisode?.title ?? String(localized: "Chapters"))
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .disabled(!canExportChaptersTOC)
+                    .accessibilityLabel(String(localized: "Share chapters"))
+                    .accessibilityHint(
+                        String(localized: "Opens the system share sheet with the episode title and chapter table of contents")
+                    )
+                }
                 if isFilteringChapters && filteredChapterIndices.isEmpty {
                     ContentUnavailableView(
                         "No matching chapters",
@@ -526,7 +549,34 @@ struct FullPlayerView: View {
         }
     }
 
+    /// Plain TOC from the **full** already-known chapter array — ignores search filter.
+    private var chaptersTOCPlain: String {
+        ChaptersTOCExport.plainText(from: chapters)
+    }
+
+    private var canExportChaptersTOC: Bool {
+        !chaptersTOCPlain.isEmpty
+    }
+
+    /// Episode title + TOC body for system share sheet (same body as Copy).
+    private var chaptersTOCShareText: String {
+        ChaptersTOCExport.shareText(
+            from: chapters,
+            episodeTitle: (resolvedEpisode ?? episode)?.title
+        )
+    }
+
+    private func copyChaptersTOC() {
+        let text = chaptersTOCPlain
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Chapters copied to the pasteboard.")
+        copyURLFeedbackTick += 1
+        showCopiedAlert = true
+    }
+
     private func resetChapterSearch() {
+
         chapterDebounceTask?.cancel()
         chapterSearchText = ""
         chapterDebouncedQuery = ""

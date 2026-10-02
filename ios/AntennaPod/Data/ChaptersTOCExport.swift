@@ -1,0 +1,48 @@
+import Foundation
+
+/// Plain-text table of contents from **already-known** chapters only.
+/// One line per chapter: `mm:ss Title` or `h:mm:ss Title` (start time); optional href on the same line.
+/// Empty/whitespace titles → localized **Chapter**. Callers must pass the **full** chapter array
+/// (ignore any UI search filter) — same honesty as transcript Copy/Share.
+enum ChaptersTOCExport {
+    /// TOC body only (no episode title). Empty when `chapters` is empty.
+    static func plainText(from chapters: [PodcastChapter]) -> String {
+        guard !chapters.isEmpty else { return "" }
+        return chapters.map { line(for: $0) }.joined(separator: "\n")
+    }
+
+    /// System share payload: optional episode title + blank line + TOC body (same body as `plainText`).
+    static func shareText(from chapters: [PodcastChapter], episodeTitle: String?) -> String {
+        let body = plainText(from: chapters)
+        guard !body.isEmpty else { return "" }
+        let title = episodeTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if title.isEmpty { return body }
+        return "\(title)\n\n\(body)"
+    }
+
+    private static func line(for chapter: PodcastChapter) -> String {
+        let time = formatStart(chapter.startTimeSeconds)
+        var title = chapter.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        if title.isEmpty {
+            title = String(localized: "Chapter")
+        }
+        var result = "\(time) \(title)"
+        if let href = chapter.href?.trimmingCharacters(in: .whitespacesAndNewlines), !href.isEmpty {
+            result += " \(href)"
+        }
+        return result
+    }
+
+    /// Start time `m:ss` / `h:mm:ss` — same as chapter list / scrubber formatters.
+    private static func formatStart(_ seconds: Double) -> String {
+        guard seconds.isFinite, seconds >= 0 else { return "--:--" }
+        let total = Int(seconds)
+        let h = total / 3600
+        let m = (total % 3600) / 60
+        let s = total % 60
+        if h > 0 {
+            return String(format: "%d:%02d:%02d", h, m, s)
+        }
+        return String(format: "%d:%02d", m, s)
+    }
+}

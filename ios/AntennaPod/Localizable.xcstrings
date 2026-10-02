@@ -24404,6 +24404,108 @@
           }
         }
       }
+    },
+    "Chapter": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Copy chapters": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy chapters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel kopieren"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Share chapters": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share chapters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel teilen"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Copies the chapter table of contents to the pasteboard": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the chapter table of contents to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert das Kapitel-Inhaltsverzeichnis in die Zwischenablage"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Opens the system share sheet with the episode title and chapter table of contents": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title and chapter table of contents"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit Episodentitel und Kapitel-Inhaltsverzeichnis"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Chapters copied to the pasteboard.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chapters copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kapitel in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "extractionState": "manual"
     }
   },
   "version": "1.0"
