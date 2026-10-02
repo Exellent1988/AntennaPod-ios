@@ -199,10 +199,97 @@ struct FeedDescriptionSheetView: View {
         feed.websiteURL
     }
 
+    /// Channel claim badges shown on the description sheet, matching Feed detail.
+    /// Locked is a display-only transfer claim; neither claim changes subscribe/play behavior.
+    @ViewBuilder
+    private var feedClaimMetadata: some View {
+        if feed.isLocked {
+            VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(String(localized: "Locked"))
+                        .font(.caption.weight(.semibold))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.secondary.opacity(0.2), in: Capsule())
+                    Text(String(localized: "This feed claims to be locked for transfer. This app does not verify ownership."))
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(
+                    [
+                        String(localized: "Locked"),
+                        String(localized: "This feed claims to be locked for transfer. This app does not verify ownership.")
+                    ].joined(separator: ". ")
+                )
+
+                if let owner = feed.displayLockedOwner {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(String(localized: "Locked owner \(owner)"))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .textSelection(.enabled)
+                            .accessibilityLabel(String(localized: "Locked owner \(owner)"))
+                        HStack(spacing: 12) {
+                            Button {
+                                copyLockedOwner(owner)
+                            } label: {
+                                Label("Copy locked owner", systemImage: "doc.on.doc")
+                                    .font(.subheadline)
+                            }
+                            .accessibilityLabel(String(localized: "Copy locked owner"))
+                            .accessibilityHint(String(localized: "Copies the feed-provided locked owner string to the pasteboard; display-only; no ownership verification"))
+
+                            if let url = lockedOwnerShareURL(owner) {
+                                ShareLink(
+                                    item: url,
+                                    subject: Text(resolvedTitle)
+                                ) {
+                                    Label("Share locked owner", systemImage: "square.and.arrow.up")
+                                        .font(.subheadline)
+                                }
+                                .accessibilityLabel(String(localized: "Share locked owner"))
+                                .accessibilityHint(String(localized: "Shares the feed-provided locked owner string; display-only; no ownership verification"))
+                            } else {
+                                ShareLink(
+                                    item: owner,
+                                    subject: Text(resolvedTitle)
+                                ) {
+                                    Label("Share locked owner", systemImage: "square.and.arrow.up")
+                                        .font(.subheadline)
+                                }
+                                .accessibilityLabel(String(localized: "Share locked owner"))
+                                .accessibilityHint(String(localized: "Shares the feed-provided locked owner string; display-only; no ownership verification"))
+                            }
+                        }
+                    }
+                    .accessibilityElement(children: .contain)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
+        if feed.isBlocked {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(String(localized: "Blocked"))
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.secondary.opacity(0.2), in: Capsule())
+                Text(String(localized: "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work."))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(feed.podcastBlockAccessibilityLabel)
+        }
+    }
+
     var body: some View {
         NavigationStack {
             Group {
-                if plainDescription.isEmpty && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasLiveItems && !hasTexts && !hasLicenses {
+                if plainDescription.isEmpty && !feed.isLocked && !feed.isBlocked && !hasPeople && !hasLocations && !hasSocialInteracts && !hasValues && !hasLiveItems && !hasTexts && !hasLicenses {
                     ContentUnavailableView(
                         "No description",
                         systemImage: "info.circle",
@@ -211,6 +298,8 @@ struct FeedDescriptionSheetView: View {
                 } else if plainDescription.isEmpty {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
+                            feedClaimMetadata
+
                             if hasPeople {
                                 PodcastPeopleListView(people: displayPeople)
                             }
@@ -387,21 +476,7 @@ struct FeedDescriptionSheetView: View {
                         .accessibilityLabel(feed.itunesCompleteAccessibilityLabel)
                     }
 
-                    if feed.isBlocked {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(String(localized: "Blocked"))
-                                .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.secondary.opacity(0.2), in: Capsule())
-                            Text(String(localized: "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work."))
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(feed.podcastBlockAccessibilityLabel)
-                    }
+                    feedClaimMetadata
 
                     if !displayCategories.isEmpty {
                         FeedDescriptionCategoryChips(categories: displayCategories)
@@ -519,21 +594,7 @@ struct FeedDescriptionSheetView: View {
                         .accessibilityLabel(feed.itunesCompleteAccessibilityLabel)
                     }
 
-                    if feed.isBlocked {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(String(localized: "Blocked"))
-                                .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.secondary.opacity(0.2), in: Capsule())
-                            Text(String(localized: "This feed marks podcast:block or itunes:block for directories. This app does not enforce it — subscribe and play still work."))
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(feed.podcastBlockAccessibilityLabel)
-                    }
+                    feedClaimMetadata
 
                     if !displayCategories.isEmpty {
                         FeedDescriptionCategoryChips(categories: displayCategories)
@@ -584,6 +645,20 @@ struct FeedDescriptionSheetView: View {
                 .padding()
             }
         }
+    }
+
+    private func lockedOwnerShareURL(_ owner: String) -> URL? {
+        guard let url = URL(string: owner) else { return nil }
+        let scheme = url.scheme?.lowercased()
+        guard scheme == "mailto" || scheme == "http" || scheme == "https" else { return nil }
+        return url
+    }
+
+    private func copyLockedOwner(_ owner: String) {
+        UIPasteboard.general.string = owner
+        copiedAlertMessage = String(localized: "Locked owner copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     private func copyPodcastDescription() {
