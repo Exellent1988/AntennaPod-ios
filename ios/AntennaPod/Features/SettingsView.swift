@@ -1355,7 +1355,9 @@ struct SettingsView: View {
                         Text(AppSettings.rewindAfterPauseLabel(secs)).tag(secs)
                     }
                 }
-                .accessibilityHint(String(localized: "Seconds to seek back when resuming after a pause of at least 1 second. Off disables. Default 2."))
+                .accessibilityLabel(String(localized: "Rewind after pause"))
+                .accessibilityValue(rewindAfterPauseAccessibilityValue)
+                .accessibilityHint(rewindAfterPauseAccessibilityHint)
                 Text("When resuming after a pause of at least 1 second, seek backward by this many seconds so you do not lose context. Off (0) disables. Does not apply on first start / cold play from a row — only after an actual pause of the current item. Fixed amount (honest beta; not Android’s elapsed-time tiers). Default 2.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -1507,6 +1509,24 @@ struct SettingsView: View {
 
     private var fastForwardIntervalAccessibilityHint: String {
         String(localized: "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default fast-forward is 30 seconds. The next fast-forward uses the saved interval. Changing it does not move the current position. Not Rewind after pause.")
+    }
+
+    /// VoiceOver for Settings → Rewind after pause. Names the saved preset and whether
+    /// it is the 2-second default. Changing the picker does not seek now.
+    private var rewindAfterPauseAccessibilityValue: String {
+        let seconds = settings.rewindAfterPauseSeconds
+        let label = AppSettings.rewindAfterPauseLabel(seconds)
+        if seconds <= 0 {
+            return String(localized: "Off. This is not the default. Resuming the current item does not seek backward, even after a pause of at least 1 second. Cold play, first start from a row, play from beginning, and stop do not rewind. Changing this does not seek the current position, start playback, or download. It is not the Rewind or Fast-forward skip interval, and not Android elapsed-time tiers.")
+        }
+        let format = seconds == AppSettings.defaultRewindAfterPauseSeconds
+            ? String(localized: "%@. This is the default. The next resume of the current item seeks back this many seconds, not before 0, only after a pause of at least 1 second. A shorter pause does not rewind. Play and pause in the mini player, full player, Lockscreen, and Now Playing count. An audio interruption that pauses counts; if the system resumes, the seek happens then, otherwise on the next manual resume. A soundbite that pauses at its end, and a sleep timer that pauses playback, also count. That sleep-timer pause is separate from any fade rewind. Cold play, first start from a row, play from beginning, and stop do not rewind and do not invent a position. Changing this does not seek now, start playback, or download. It is a fixed number of seconds, not the Rewind or Fast-forward skip interval, and not Android elapsed-time tiers.")
+            : String(localized: "%@. This is not the default of 2 seconds. The next resume of the current item seeks back this many seconds, not before 0, only after a pause of at least 1 second. A shorter pause does not rewind. Play and pause in the mini player, full player, Lockscreen, and Now Playing count. An audio interruption that pauses counts; if the system resumes, the seek happens then, otherwise on the next manual resume. A soundbite that pauses at its end, and a sleep timer that pauses playback, also count. That sleep-timer pause is separate from any fade rewind. Cold play, first start from a row, play from beginning, and stop do not rewind and do not invent a position. Changing this does not seek now, start playback, or download. It is a fixed number of seconds, not the Rewind or Fast-forward skip interval, and not Android elapsed-time tiers.")
+        return String(format: format, label)
+    }
+
+    private var rewindAfterPauseAccessibilityHint: String {
+        String(localized: "Presets are Off, 1, 2, 3, 5, and 10 seconds. The default is 2 seconds. Off never seeks on resume. Any other value seeks back that many seconds, not before 0, only when this item resumes after a pause of at least 1 second. Cold play, first start from a row, play from beginning, and stop do not rewind. Changing the picker does not move the current position, start playback, or download. Not the Rewind or Fast-forward buttons, and not Android elapsed-time tiers. There is no Pause-on-headset setting.")
     }
 
     private var refreshHelpText: String {

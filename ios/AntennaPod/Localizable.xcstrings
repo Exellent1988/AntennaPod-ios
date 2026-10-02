@@ -42207,8 +42207,75 @@
           }
         }
       }
+    },
+    "Off. This is not the default. Resuming the current item does not seek backward, even after a pause of at least 1 second. Cold play, first start from a row, play from beginning, and stop do not rewind. Changing this does not seek the current position, start playback, or download. It is not the Rewind or Fast-forward skip interval, and not Android elapsed-time tiers.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. This is not the default. Resuming the current item does not seek backward, even after a pause of at least 1 second. Cold play, first start from a row, play from beginning, and stop do not rewind. Changing this does not seek the current position, start playback, or download. It is not the Rewind or Fast-forward skip interval, and not Android elapsed-time tiers."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. Das ist nicht der Standard. Beim Fortsetzen der aktuellen Episode wird nicht zurückgespult, auch nicht nach einer Pause von mindestens 1 Sekunde. Kaltstart, erster Start aus einer Zeile, Von Anfang spielen und Stopp spulen nicht zurück. Die Änderung sucht die aktuelle Position nicht, startet keine Wiedergabe und lädt nichts herunter. Das ist nicht das Rücksprung- oder Vorspulintervall und nicht die Android-Zeitstufen."
+          }
+        }
+      }
+    },
+    "%@. This is the default. The next resume of the current item seeks back this many seconds, not before 0, only after a pause of at least 1 second. A shorter pause does not rewind. Play and pause in the mini player, full player, Lockscreen, and Now Playing count. An audio interruption that pauses counts; if the system resumes, the seek happens then, otherwise on the next manual resume. A soundbite that pauses at its end, and a sleep timer that pauses playback, also count. That sleep-timer pause is separate from any fade rewind. Cold play, first start from a row, play from beginning, and stop do not rewind and do not invent a position. Changing this does not seek now, start playback, or download. It is a fixed number of seconds, not the Rewind or Fast-forward skip interval, and not Android elapsed-time tiers.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is the default. The next resume of the current item seeks back this many seconds, not before 0, only after a pause of at least 1 second. A shorter pause does not rewind. Play and pause in the mini player, full player, Lockscreen, and Now Playing count. An audio interruption that pauses counts; if the system resumes, the seek happens then, otherwise on the next manual resume. A soundbite that pauses at its end, and a sleep timer that pauses playback, also count. That sleep-timer pause is separate from any fade rewind. Cold play, first start from a row, play from beginning, and stop do not rewind and do not invent a position. Changing this does not seek now, start playback, or download. It is a fixed number of seconds, not the Rewind or Fast-forward skip interval, and not Android elapsed-time tiers."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist der Standard. Beim nächsten Fortsetzen der aktuellen Episode wird um diese Sekunden zurückgespult, nicht vor 0, nur nach einer Pause von mindestens 1 Sekunde. Eine kürzere Pause spult nicht zurück. Play und Pause im Mini-Player, im Vollbild-Player, auf dem Sperrbildschirm und in der Wiedergabeansicht zählen. Eine Audio-Unterbrechung, die pausiert, zählt; setzt das System fort, erfolgt der Sprung dann, sonst beim nächsten manuellen Fortsetzen. Ein Soundbite, das am Ende pausiert, und ein Schlaf-Timer, der die Wiedergabe pausiert, zählen ebenfalls. Diese Schlaf-Timer-Pause ist getrennt vom Zurückspulen einer Ausblendung. Kaltstart, erster Start aus einer Zeile, Von Anfang spielen und Stopp spulen nicht zurück und erfinden keine Position. Die Änderung sucht jetzt nicht, startet keine Wiedergabe und lädt nichts herunter. Es ist eine feste Sekundenzahl, nicht das Rücksprung- oder Vorspulintervall und nicht die Android-Zeitstufen."
+          }
+        }
+      }
+    },
+    "%@. This is not the default of 2 seconds. The next resume of the current item seeks back this many seconds, not before 0, only after a pause of at least 1 second. A shorter pause does not rewind. Play and pause in the mini player, full player, Lockscreen, and Now Playing count. An audio interruption that pauses counts; if the system resumes, the seek happens then, otherwise on the next manual resume. A soundbite that pauses at its end, and a sleep timer that pauses playback, also count. That sleep-timer pause is separate from any fade rewind. Cold play, first start from a row, play from beginning, and stop do not rewind and do not invent a position. Changing this does not seek now, start playback, or download. It is a fixed number of seconds, not the Rewind or Fast-forward skip interval, and not Android elapsed-time tiers.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is not the default of 2 seconds. The next resume of the current item seeks back this many seconds, not before 0, only after a pause of at least 1 second. A shorter pause does not rewind. Play and pause in the mini player, full player, Lockscreen, and Now Playing count. An audio interruption that pauses counts; if the system resumes, the seek happens then, otherwise on the next manual resume. A soundbite that pauses at its end, and a sleep timer that pauses playback, also count. That sleep-timer pause is separate from any fade rewind. Cold play, first start from a row, play from beginning, and stop do not rewind and do not invent a position. Changing this does not seek now, start playback, or download. It is a fixed number of seconds, not the Rewind or Fast-forward skip interval, and not Android elapsed-time tiers."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist nicht der Standard von 2 Sekunden. Beim nächsten Fortsetzen der aktuellen Episode wird um diese Sekunden zurückgespult, nicht vor 0, nur nach einer Pause von mindestens 1 Sekunde. Eine kürzere Pause spult nicht zurück. Play und Pause im Mini-Player, im Vollbild-Player, auf dem Sperrbildschirm und in der Wiedergabeansicht zählen. Eine Audio-Unterbrechung, die pausiert, zählt; setzt das System fort, erfolgt der Sprung dann, sonst beim nächsten manuellen Fortsetzen. Ein Soundbite, das am Ende pausiert, und ein Schlaf-Timer, der die Wiedergabe pausiert, zählen ebenfalls. Diese Schlaf-Timer-Pause ist getrennt vom Zurückspulen einer Ausblendung. Kaltstart, erster Start aus einer Zeile, Von Anfang spielen und Stopp spulen nicht zurück und erfinden keine Position. Die Änderung sucht jetzt nicht, startet keine Wiedergabe und lädt nichts herunter. Es ist eine feste Sekundenzahl, nicht das Rücksprung- oder Vorspulintervall und nicht die Android-Zeitstufen."
+          }
+        }
+      }
+    },
+    "Presets are Off, 1, 2, 3, 5, and 10 seconds. The default is 2 seconds. Off never seeks on resume. Any other value seeks back that many seconds, not before 0, only when this item resumes after a pause of at least 1 second. Cold play, first start from a row, play from beginning, and stop do not rewind. Changing the picker does not move the current position, start playback, or download. Not the Rewind or Fast-forward buttons, and not Android elapsed-time tiers. There is no Pause-on-headset setting.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are Off, 1, 2, 3, 5, and 10 seconds. The default is 2 seconds. Off never seeks on resume. Any other value seeks back that many seconds, not before 0, only when this item resumes after a pause of at least 1 second. Cold play, first start from a row, play from beginning, and stop do not rewind. Changing the picker does not move the current position, start playback, or download. Not the Rewind or Fast-forward buttons, and not Android elapsed-time tiers. There is no Pause-on-headset setting."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voreinstellungen sind Aus, 1, 2, 3, 5 und 10 Sekunden. Der Standard ist 2 Sekunden. Aus sucht beim Fortsetzen nie. Jeder andere Wert spult um diese Sekunden zurück, nicht vor 0, nur wenn diese Episode nach einer Pause von mindestens 1 Sekunde fortgesetzt wird. Kaltstart, erster Start aus einer Zeile, Von Anfang spielen und Stopp spulen nicht zurück. Die Änderung verschiebt die aktuelle Position nicht, startet keine Wiedergabe und lädt nichts herunter. Nicht die Zurückspulen- oder Vorspulen-Tasten und nicht die Android-Zeitstufen. Es gibt keine Einstellung Pause bei Kopfhörern."
+          }
+        }
+      }
     }
-
   },
   "version": "1.0"
 }
