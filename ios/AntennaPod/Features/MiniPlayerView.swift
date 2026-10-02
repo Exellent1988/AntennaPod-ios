@@ -107,6 +107,13 @@ struct MiniPlayerView: View {
                         }
                         .disabled(feedForCurrentEpisode == nil)
                         Button {
+                            playback.playFromBeginning()
+                        } label: {
+                            Label("Play from beginning", systemImage: "backward.end.fill")
+                        }
+                        .accessibilityLabel(String(localized: "Play from beginning"))
+                        .accessibilityHint(String(localized: "Seeks to the start of this episode and plays"))
+                        Button {
                             showBookmarks = true
                         } label: {
                             Label("Bookmarks", systemImage: "bookmark")
