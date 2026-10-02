@@ -42411,6 +42411,108 @@
           }
         }
       }
+    },
+    "Default speed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default speed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standardgeschwindigkeit"
+          }
+        }
+      }
+    },
+    "%@. This is the default.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is the default."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist der Standard."
+          }
+        }
+      }
+    },
+    "%@. This is not the default of 1.0×.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is not the default of 1.0×."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist nicht der Standard von 1,0×."
+          }
+        }
+      }
+    },
+    "%@. This is a custom speed, not one of the presets, and not the default of 1.0×.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is a custom speed, not one of the presets, and not the default of 1.0×."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist eine benutzerdefinierte Geschwindigkeit, keine der Vorgaben, und nicht der Standard von 1,0×."
+          }
+        }
+      }
+    },
+    "A different episode starts at this speed unless that podcast has its own playback speed. An episode with no podcast uses this speed. The episode already loaded keeps its session rate, including when you play that same episode again without stopping. After Stop, the next play is a fresh start and uses this speed unless a podcast override applies. Changing this does not change the rate already playing, start playback, seek, or download. List and Home remaining-time bars use this speed only when Remaining time respects speed is on and that podcast has no speed override. Those bars are not the live session rate. Mini and full player remaining time uses the live session rate while one is set. Not Volume boost, Preserve pitch, or Skip silence. Stock AVPlayer, not Android ExoPlayer. Quality may be worse above about 2×.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A different episode starts at this speed unless that podcast has its own playback speed. An episode with no podcast uses this speed. The episode already loaded keeps its session rate, including when you play that same episode again without stopping. After Stop, the next play is a fresh start and uses this speed unless a podcast override applies. Changing this does not change the rate already playing, start playback, seek, or download. List and Home remaining-time bars use this speed only when Remaining time respects speed is on and that podcast has no speed override. Those bars are not the live session rate. Mini and full player remaining time uses the live session rate while one is set. Not Volume boost, Preserve pitch, or Skip silence. Stock AVPlayer, not Android ExoPlayer. Quality may be worse above about 2×."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine andere Episode startet mit dieser Geschwindigkeit, außer dieser Podcast hat eine eigene Wiedergabegeschwindigkeit. Eine Episode ohne Podcast verwendet diese Geschwindigkeit. Die bereits geladene Episode behält ihre Sitzungsgeschwindigkeit, auch wenn dieselbe Episode ohne Stopp erneut abgespielt wird. Nach Stopp ist die nächste Wiedergabe ein Neustart und verwendet diese Geschwindigkeit, sofern kein Podcast-Override gilt. Die Änderung ändert nicht die bereits laufende Geschwindigkeit, startet keine Wiedergabe, sucht nicht und lädt nichts herunter. Restzeit-Leisten in Listen und auf Home verwenden diese Geschwindigkeit nur, wenn Verbleibende Zeit berücksichtigt Tempo an ist und der Podcast keine eigene Geschwindigkeit hat. Diese Leisten sind nicht die Live-Sitzungsrate. Die Restzeit in Mini- und Vollbild-Player verwendet die Live-Sitzungsrate, solange eine gesetzt ist. Nicht Lautstärke-Verstärkung, Tonhöhe beibehalten oder Stille überspringen. Stock AVPlayer, nicht Android ExoPlayer. Über etwa 2× kann die Qualität schlechter sein."
+          }
+        }
+      }
+    },
+    "Presets are 0.8×, 1.0×, 1.1×, 1.2×, 1.3×, 1.5×, and 2.0×, plus Custom from 0.50× to 3.00× in steps of 0.05. The default is 1.0×. A podcast playback-speed override replaces this for that podcast and, unlike this picker, also changes the rate if an episode from that podcast is already loaded. Changing this picker does not change the rate already playing, start playback, seek, or download. Player tap and long-press change only the session rate unless Also set as default is on. Not Volume boost, Preserve pitch, or Skip silence.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are 0.8×, 1.0×, 1.1×, 1.2×, 1.3×, 1.5×, and 2.0×, plus Custom from 0.50× to 3.00× in steps of 0.05. The default is 1.0×. A podcast playback-speed override replaces this for that podcast and, unlike this picker, also changes the rate if an episode from that podcast is already loaded. Changing this picker does not change the rate already playing, start playback, seek, or download. Player tap and long-press change only the session rate unless Also set as default is on. Not Volume boost, Preserve pitch, or Skip silence."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorgaben sind 0,8×, 1,0×, 1,1×, 1,2×, 1,3×, 1,5× und 2,0×, plus Benutzerdefiniert von 0,50× bis 3,00× in Schritten von 0,05. Der Standard ist 1,0×. Eine podcastbezogene Wiedergabegeschwindigkeit ersetzt diesen Wert für diesen Podcast und ändert, anders als diese Einstellung, auch die Rate, wenn bereits eine Episode dieses Podcasts geladen ist. Die Änderung ändert nicht die bereits laufende Geschwindigkeit, startet keine Wiedergabe, sucht nicht und lädt nichts herunter. Tippen und langes Drücken im Player ändern nur die Sitzungsrate, außer Auch als Standard festlegen ist an. Nicht Lautstärke-Verstärkung, Tonhöhe beibehalten oder Stille überspringen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

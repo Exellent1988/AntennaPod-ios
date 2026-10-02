@@ -1183,6 +1183,9 @@ struct SettingsView: View {
                             .tag(settings.defaultPlaybackSpeed)
                     }
                 }
+                .accessibilityLabel(String(localized: "Default speed"))
+                .accessibilityValue(defaultSpeedAccessibilityValue)
+                .accessibilityHint(defaultSpeedAccessibilityHint)
                 Button(String(localized: "Custom…")) {
                     showCustomDefaultSpeed = true
                 }
@@ -1590,6 +1593,31 @@ struct SettingsView: View {
 
     private var skipOutroAccessibilityHint: String {
         String(localized: "Presets are Off, 5, 10, 15, 30, and 60 seconds. The default is Off. Off never finishes early. Any other value finishes once per play session when remaining time is within that window, duration is known, and playback is past 1 second, the same as a natural end. Continuous playback chooses what plays next. Changing the picker does not mark played now, seek, start playback, or download. Feed detail can override this for one podcast. Not Smart mark as played, Skip intro, Skip silence, or Rewind after pause.")
+    }
+
+    /// VoiceOver for Settings → Default speed. 1.0× is the default.
+    /// A different episode (or the next play after Stop) uses this unless that
+    /// podcast has its own speed. The loaded item keeps its session rate.
+    /// Changing the picker persists the preference and does not call setRate.
+    private var defaultSpeedAccessibilityValue: String {
+        let label = PlaybackService.formatPlaybackSpeed(settings.defaultPlaybackSpeed)
+        let speed = settings.defaultPlaybackSpeed
+        let isDefault = abs(speed - 1.0) < 0.001
+        let isPreset = AppSettings.speedPresets.contains(speed)
+        let headFormat: String
+        if isDefault {
+            headFormat = String(localized: "%@. This is the default.")
+        } else if isPreset {
+            headFormat = String(localized: "%@. This is not the default of 1.0×.")
+        } else {
+            headFormat = String(localized: "%@. This is a custom speed, not one of the presets, and not the default of 1.0×.")
+        }
+        let head = String(format: headFormat, locale: .current, label)
+        return head + " " + String(localized: "A different episode starts at this speed unless that podcast has its own playback speed. An episode with no podcast uses this speed. The episode already loaded keeps its session rate, including when you play that same episode again without stopping. After Stop, the next play is a fresh start and uses this speed unless a podcast override applies. Changing this does not change the rate already playing, start playback, seek, or download. List and Home remaining-time bars use this speed only when Remaining time respects speed is on and that podcast has no speed override. Those bars are not the live session rate. Mini and full player remaining time uses the live session rate while one is set. Not Volume boost, Preserve pitch, or Skip silence. Stock AVPlayer, not Android ExoPlayer. Quality may be worse above about 2×.")
+    }
+
+    private var defaultSpeedAccessibilityHint: String {
+        String(localized: "Presets are 0.8×, 1.0×, 1.1×, 1.2×, 1.3×, 1.5×, and 2.0×, plus Custom from 0.50× to 3.00× in steps of 0.05. The default is 1.0×. A podcast playback-speed override replaces this for that podcast and, unlike this picker, also changes the rate if an episode from that podcast is already loaded. Changing this picker does not change the rate already playing, start playback, seek, or download. Player tap and long-press change only the session rate unless Also set as default is on. Not Volume boost, Preserve pitch, or Skip silence.")
     }
 
     private var refreshHelpText: String {
