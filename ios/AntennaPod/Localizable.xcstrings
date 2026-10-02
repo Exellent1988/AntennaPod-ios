@@ -14958,6 +14958,132 @@
       },
       "comment": "Copy confirmation for the exact raw feed-provided podcast:trailer pubdate string."
     },
+    "Copy trailer season": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy trailer season"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-Staffel kopieren"
+          }
+        }
+      },
+      "comment": "Feed detail button: copy the same displayed feed-provided podcast:trailer season caption. Hidden when season is missing."
+    },
+    "Copies the same displayed feed-provided trailer season to the pasteboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same displayed feed-provided trailer season to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe angezeigte, vom Feed gelieferte Trailer-Staffel in die Zwischenablage"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy trailer season. Uses the localized caption displayed in the Feed detail trailer row."
+    },
+    "Podcast trailer season from the feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast trailer season from the feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-Staffel des Podcasts aus dem Feed."
+          }
+        }
+      },
+      "comment": "ShareLink message for the same displayed feed-provided podcast:trailer season caption."
+    },
+    "Share trailer season": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share trailer season"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-Staffel teilen"
+          }
+        }
+      },
+      "comment": "Feed detail button: share the same displayed feed-provided podcast:trailer season caption as plain text. Hidden when season is missing."
+    },
+    "Shares the same displayed feed-provided trailer season as plain text": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same displayed feed-provided trailer season as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe angezeigte, vom Feed gelieferte Trailer-Staffel als Klartext"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share trailer season. Uses the localized caption displayed in the Feed detail trailer row."
+    },
+    "Trailer season": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer season"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-Staffel"
+          }
+        }
+      },
+      "comment": "Feed detail accessibility label for the displayed podcast:trailer season caption. Hidden when season is missing."
+    },
+    "Trailer season copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer season copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trailer-Staffel in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Copy confirmation for the same displayed feed-provided podcast:trailer season caption."
+    },
     "Trailer": {
       "extractionState": "manual",
       "comment": "Capsule when item itunes:episodeType is trailer (Apple Podcasts). Distinct from channel podcast:trailer. Hidden when missing — never invent. Display-only.",

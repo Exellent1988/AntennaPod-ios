@@ -29,6 +29,7 @@ struct FeedDetailView: View {
     @State private var showTrailerURLCopied = false
     @State private var showTrailerTitleCopied = false
     @State private var showTrailerPubDateCopied = false
+    @State private var showTrailerSeasonCopied = false
     @State private var showLockedOwnerCopied = false
     @State private var showAuthorCopied = false
     @State private var showLanguageCopied = false
@@ -55,6 +56,7 @@ struct FeedDetailView: View {
     @State private var copyTrailerURLFeedbackTick = 0
     @State private var copyTrailerTitleFeedbackTick = 0
     @State private var copyTrailerPubDateFeedbackTick = 0
+    @State private var copyTrailerSeasonFeedbackTick = 0
     @State private var copyLockedOwnerFeedbackTick = 0
     @State private var copyAuthorFeedbackTick = 0
     @State private var copyLanguageFeedbackTick = 0
@@ -1786,6 +1788,14 @@ struct FeedDetailView: View {
         }
         .alert(
             String(localized: "Copied"),
+            isPresented: $showTrailerSeasonCopied
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(String(localized: "Trailer season copied to the pasteboard."))
+        }
+        .alert(
+            String(localized: "Copied"),
             isPresented: $showLockedOwnerCopied
         ) {
             Button("OK", role: .cancel) {}
@@ -1884,6 +1894,7 @@ struct FeedDetailView: View {
         .sensoryFeedback(.success, trigger: copyTrailerURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerTitleFeedbackTick)
         .sensoryFeedback(.success, trigger: copyTrailerPubDateFeedbackTick)
+        .sensoryFeedback(.success, trigger: copyTrailerSeasonFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLockedOwnerFeedbackTick)
         .sensoryFeedback(.success, trigger: copyAuthorFeedbackTick)
         .sensoryFeedback(.success, trigger: copyLanguageFeedbackTick)
@@ -2280,6 +2291,13 @@ struct FeedDetailView: View {
         showTrailerPubDateCopied = true
     }
 
+    private func copyTrailerSeason(_ seasonText: String) {
+        guard !seasonText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        UIPasteboard.general.string = seasonText
+        copyTrailerSeasonFeedbackTick += 1
+        showTrailerSeasonCopied = true
+    }
+
     /// Channel podcast:trailer row — title, raw pubdate (+ optional season); Play via PlaybackService when enclosure-like, else openURL.
     @ViewBuilder
     private func feedTrailerRow(_ trailer: PodcastTrailer) -> some View {
@@ -2361,9 +2379,39 @@ struct FeedDetailView: View {
             }
 
             if let season = trailer.season {
-                Text(String(localized: "Season \(season)"))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                let seasonText = String(localized: "Season \(season)")
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(seasonText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .accessibilityLabel("\(String(localized: "Trailer season")), \(seasonText)")
+
+                    HStack(spacing: 12) {
+                        Button {
+                            copyTrailerSeason(seasonText)
+                        } label: {
+                            Label("Copy trailer season", systemImage: "doc.on.doc")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Copy trailer season"))
+                        .accessibilityHint(
+                            String(localized: "Copies the same displayed feed-provided trailer season to the pasteboard")
+                        )
+
+                        ShareLink(
+                            item: seasonText,
+                            subject: Text(title),
+                            message: Text(String(localized: "Podcast trailer season from the feed."))
+                        ) {
+                            Label("Share trailer season", systemImage: "square.and.arrow.up")
+                                .font(.subheadline)
+                        }
+                        .accessibilityLabel(String(localized: "Share trailer season"))
+                        .accessibilityHint(
+                            String(localized: "Shares the same displayed feed-provided trailer season as plain text")
+                        )
+                    }
+                }
             }
 
             if let url = trailer.mediaURL {
