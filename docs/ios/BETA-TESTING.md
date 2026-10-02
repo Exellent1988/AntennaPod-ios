@@ -364,9 +364,9 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Nextcloud Gpodder: Base-URL + Sync (gleiche Grenzen) | ☐ Nextcloud Gpodder: base URL + sync (same limits) |
 | ☐ Sync: lokale Ordner / Bookmarks / Tags / Downloads nicht gepusht; Fehler sichtbar | ☐ Sync: local folders / bookmarks / tags / downloads not pushed; errors visible |
 | ☐ Sync-Fehler-Notification (lokal) | ☐ Sync error notification (local) |
-| ☐ Backup export ZIP (ohne Keychain-Secrets; default ohne Media) | ☐ Backup export ZIP (no Keychain secrets; default no media) |
+| ☐ Backup export ZIP (ohne Keychain-Secrets; default ohne Media; VoiceOver für Toggle, Aktion, Fortschritt/Status/Fehler) | ☐ Backup export ZIP (no Keychain secrets; default no media; VoiceOver for toggle, action, progress/status/errors) |
 | ☐ Backup: Include downloaded episode files (Warnung Größe/Zeit) | ☐ Backup: Include downloaded episode files (size/time warning) |
-| ☐ Backup import (Warnung + Reload; Media-Merge wenn vorhanden) | ☐ Backup import (warn + reload; media merge when present) |
+| ☐ Backup import (Warnung + Reload; Media-Merge wenn vorhanden; VoiceOver für Dateiauswahl-/Replace-Hinweis) | ☐ Backup import (warn + reload; media merge when present; VoiceOver for file-picker/replace guidance) |
 | ☐ OPML export (Share + Save to Files…; lokale Ordner ausgelassen) / HTML export (Metadaten nur wenn vorhanden; lokale Ordner fehlen) | ☐ OPML export (Share + Save to Files…; local folders omitted) / HTML export (metadata only when present; local folders omitted) |
 
 ---

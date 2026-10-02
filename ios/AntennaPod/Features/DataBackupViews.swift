@@ -31,6 +31,9 @@ struct DataBackupSection: View {
                 }
             }
             .disabled(isBusy)
+            .accessibilityLabel(String(localized: "Include downloaded episode files"))
+            .accessibilityValue(includeDownloadedMedia ? String(localized: "On") : String(localized: "Off"))
+            .accessibilityHint(mediaToggleCaption)
 
             Button {
                 requestExport()
@@ -38,6 +41,8 @@ struct DataBackupSection: View {
                 Label("Export data backup", systemImage: "externaldrive.badge.timemachine")
             }
             .disabled(isBusy)
+            .accessibilityLabel(String(localized: "Export data backup"))
+            .accessibilityHint(String(localized: "Creates an iOS JSON backup ZIP and opens the system share sheet. Optional downloaded media is controlled above."))
 
             Button {
                 errorMessage = nil
@@ -47,19 +52,27 @@ struct DataBackupSection: View {
                 Label("Import data backup", systemImage: "square.and.arrow.down.on.square")
             }
             .disabled(isBusy)
+            .accessibilityLabel(String(localized: "Import data backup"))
+            .accessibilityHint(String(localized: "Opens a file picker. The selected backup replaces local catalog data only after confirmation; Keychain secrets stay unchanged."))
 
             if isBusy {
                 ProgressView("Working…")
+                    .accessibilityLabel(String(localized: "Working…"))
+                    .accessibilityValue(String(localized: "Backup operation in progress"))
             }
             if let statusMessage {
                 Text(statusMessage)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(statusMessage)
             }
             if let errorMessage {
                 Text(errorMessage)
                     .font(.caption)
                     .foregroundStyle(.red)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(String(localized: "Backup error: \(errorMessage)"))
             }
             Text(helpText)
                 .font(.caption)
@@ -89,6 +102,7 @@ struct DataBackupSection: View {
                     performImport(from: pendingImportURL)
                 }
             }
+            .accessibilityHint(String(localized: "Replaces the local catalog and preferences with the selected backup. This cannot be undone except by importing another backup."))
             Button("Cancel", role: .cancel) {
                 clearPendingImportAccess()
             }
@@ -103,6 +117,7 @@ struct DataBackupSection: View {
             Button("Export with media") {
                 exportBackup(includeMedia: true)
             }
+            .accessibilityHint(String(localized: "Includes the estimated offline episode files in the backup ZIP. Export and sharing may take longer."))
             Button("Export without media") {
                 includeDownloadedMedia = false
                 exportBackup(includeMedia: false)
