@@ -17206,6 +17206,96 @@
         }
       }
     },
+    "Length copied to the pasteboard.": {
+      "extractionState": "manual",
+      "comment": "Copied alert message for an alternate enclosure length.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Length copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Länge in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
+    "Copy length": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for copying an alternate enclosure length.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy length"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Länge kopieren"
+          }
+        }
+      }
+    },
+    "Copies the exact displayed alternate enclosure length to the pasteboard": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for copying an alternate enclosure length.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the exact displayed alternate enclosure length to the pasteboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die exakt angezeigte Länge der alternativen Enclosure in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Share length": {
+      "extractionState": "manual",
+      "comment": "VoiceOver label for sharing an alternate enclosure length.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share length"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Länge teilen"
+          }
+        }
+      }
+    },
+    "Shares the exact displayed alternate enclosure length as plain text": {
+      "extractionState": "manual",
+      "comment": "VoiceOver hint for sharing an alternate enclosure length.",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the exact displayed alternate enclosure length as plain text"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt die exakt angezeigte Länge der alternativen Enclosure als reinen Text"
+          }
+        }
+      }
+    },
     "Bitrate copied to the pasteboard.": {
       "extractionState": "manual",
       "comment": "Copied alert message for an alternate enclosure bitrate.",
