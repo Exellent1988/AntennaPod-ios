@@ -350,6 +350,18 @@ final class PodcastStore: ObservableObject {
         queue = []
     }
 
+    /// Remove **played** episodes from the **full** persisted queue (`isPlayed`). Persists via `queue` `didSet`.
+    /// Does not stop playback, change progress, unmark played, or delete downloads — queue entries only
+    /// (same honesty as per-row `removeFromQueue` / `clearQueue`). If the currently playing episode is
+    /// played and queued, it leaves the queue but playback continues. Callers must confirm first;
+    /// safe while queue lock is on (reorder-only). Returns how many entries were removed.
+    @discardableResult
+    func removePlayedFromQueue() -> Int {
+        let before = queue.count
+        queue.removeAll { isPlayed($0.id) }
+        return before - queue.count
+    }
+
     /// Randomly reorder the **full** persisted queue (Fisher–Yates via `Array.shuffle()`).
     /// Persists via `queue` `didSet` (same path as `moveQueue`). No-op when fewer than 2 items.
     /// Does **not** change `PlaybackService.currentEpisode` identity, seek, or stop playback —

@@ -11,6 +11,7 @@ struct QueueView: View {
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
     @State private var showClearQueueConfirm = false
+    @State private var showRemovePlayedConfirm = false
     @State private var showShuffleQueueConfirm = false
     @State private var showShuffleKeepPlayingFirstConfirm = false
     @State private var showReverseQueueConfirm = false
@@ -80,6 +81,18 @@ struct QueueView: View {
         return index > 0
     }
 
+    /// Count of **played** episodes in the **full** persisted queue (`isPlayed`) — not chip/search.
+    /// Used for Remove played enablement + confirmation count (same honesty as Clear queue).
+    private var playedInFullQueueCount: Int {
+        store.queue.filter { store.isPlayed($0.id) }.count
+    }
+
+    /// Remove played targets the **full** persisted queue. Enabled when at least one played item
+    /// is queued. Queue lock does **not** disable (reorder-only, same as Clear queue).
+    private var canRemovePlayed: Bool {
+        playedInFullQueueCount > 0
+    }
+
     /// Bound podcast chip from `AppSettings` (empty = All). Feed UUIDs only — never invent.
     private var podcastFilter: QueuePodcastFilter {
         QueuePodcastFilter.fromStorage(settings.queuePodcastFilter)
@@ -137,7 +150,7 @@ struct QueueView: View {
     /// Visible queue rows: played chip (`isPlayed`) → podcast chip → search.
     /// Empty query shows the chip+podcast-filtered queue order (persisted order preserved).
     /// View-only — does not remove episodes from the actual queue.
-    /// Clear queue / Shuffle / lock ops / Play Next stay full-queue scoped (not the visible subset).
+    /// Clear queue / Remove played / Shuffle / lock ops / Play Next stay full-queue scoped (not the visible subset).
     private var filteredQueue: [PodcastEpisode] {
         var base = store.queue
         switch settings.queueFilter {
@@ -502,6 +515,19 @@ struct QueueView: View {
                             String(localized: "Moves the currently playing episode to the start of the queue")
                         )
                         Button(role: .destructive) {
+                            // Always confirm before removePlayedFromQueue() — never remove from the menu alone.
+                            showRemovePlayedConfirm = true
+                        } label: {
+                            Label("Remove played", systemImage: "checkmark.circle")
+                        }
+                        // Remove played always targets the full queue (not the filtered subset).
+                        // Queue lock does **not** disable — reorder-only lock (same as Clear queue).
+                        .disabled(!canRemovePlayed)
+                        .accessibilityLabel(String(localized: "Remove played"))
+                        .accessibilityHint(
+                            String(localized: "Asks for confirmation, then removes played episodes from the queue")
+                        )
+                        Button(role: .destructive) {
                             // Always confirm before clearQueue() — never clear from the menu alone.
                             showClearQueueConfirm = true
                         } label: {
@@ -519,9 +545,23 @@ struct QueueView: View {
                     .disabled(store.queue.isEmpty)
                     .accessibilityLabel(String(localized: "Queue actions"))
                     .accessibilityHint(
-                        String(localized: "Shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, or clear the entire queue")
+                        String(localized: "Shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, remove played, or clear the entire queue")
                     )
                 }
+            }
+            .confirmationDialog(
+                "Remove played?",
+                isPresented: $showRemovePlayedConfirm,
+                titleVisibility: .visible
+            ) {
+                Button("Remove played", role: .destructive) {
+                    store.removePlayedFromQueue()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text(
+                    "Removes \(playedInFullQueueCount) played episodes from the entire queue (not only the current filter). Does not stop playback, change progress, unmark played, or delete downloads."
+                )
             }
             .confirmationDialog(
                 "Clear queue?",
