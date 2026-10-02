@@ -26610,7 +26610,7 @@
           }
         }
       },
-      "comment": "VoiceOver label for Subscriptions ellipsis toolbar menu (Unpin all)."
+      "comment": "VoiceOver label for Subscriptions ellipsis toolbar menu (Copy / Share subscriptions, Unpin all)."
     },
     "Unpin %lld podcasts?": {
       "extractionState": "manual",
@@ -27846,6 +27846,114 @@
         }
       },
       "comment": "Settings searchable keyword / honesty for Clear all bookmarks."
+    },
+    "Copy subscriptions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy subscriptions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnements kopieren"
+          }
+        }
+      },
+      "comment": "Subscriptions toolbar: copy full library plain-text list to pasteboard."
+    },
+    "Share subscriptions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share subscriptions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnements teilen"
+          }
+        }
+      },
+      "comment": "Subscriptions toolbar: share full library plain-text list via system share sheet."
+    },
+    "Subscriptions copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnements in die Zwischenablage kopiert."
+          }
+        }
+      },
+      "comment": "Alert message after Copy subscriptions succeeds."
+    },
+    "Copies the full subscriptions list to the pasteboard as plain text. Not OPML. Ignores search and filters.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full subscriptions list to the pasteboard as plain text. Not OPML. Ignores search and filters."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die gesamte Abonnementliste als Klartext in die Zwischenablage. Nicht OPML. Ignoriert Suche und Filter."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Copy subscriptions."
+    },
+    "Opens the system share sheet with the full subscriptions list as plain text. Not OPML. Ignores search and filters.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the full subscriptions list as plain text. Not OPML. Ignores search and filters."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit der gesamten Abonnementliste als Klartext. Nicht OPML. Ignoriert Suche und Filter."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Share subscriptions."
+    },
+    "Copy subscriptions, share subscriptions, or unpin all": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy subscriptions, share subscriptions, or unpin all"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnements kopieren, Abonnements teilen, oder Alle nicht mehr oben halten"
+          }
+        }
+      },
+      "comment": "VoiceOver hint for Subscriptions actions menu."
     }
   },
   "version": "1.0"

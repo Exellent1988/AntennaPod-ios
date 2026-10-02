@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SubscriptionsView: View {
     @EnvironmentObject private var store: PodcastStore
@@ -22,6 +23,9 @@ struct SubscriptionsView: View {
     @State private var groupByTag = true
     @State private var feedPendingUnsubscribe: PodcastFeed?
     @State private var showUnpinAllConfirm = false
+    @State private var showCopiedAlert = false
+    @State private var copiedAlertMessage = ""
+    @State private var copyFeedbackTick = 0
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -245,6 +249,22 @@ struct SubscriptionsView: View {
     /// Any subscribed feed with Keep at top (`FeedSettings.isPinned`). Drives Pinned chip visibility.
     private var hasAnyPinnedSubscription: Bool {
         store.feeds.contains { store.isPinned(feedId: $0.id) }
+    }
+
+    /// Plain-text list of the **full** subscriptions library — not search / category / language / tag /
+    /// Pinned-chip / UI `subscriptionsSort` / pin-partition filtered. Display title A–Z (empty last; id tiebreak).
+    private var subscriptionsPlainText: String {
+        SubscriptionsExport.plainText(feeds: store.feeds) { store.displayTitle(for: $0) }
+    }
+
+    /// Enabled when the full library is non-empty (read-only export).
+    private var canExportSubscriptions: Bool {
+        !store.feeds.isEmpty
+    }
+
+    /// “Subscriptions” header + body for system share sheet (same body as Copy).
+    private var subscriptionsShareText: String {
+        SubscriptionsExport.shareText(feeds: store.feeds) { store.displayTitle(for: $0) }
     }
 
     /// Count of subscribed feeds with Keep at top — drives Unpin all enablement + confirm title.
@@ -571,6 +591,31 @@ struct SubscriptionsView: View {
                 ToolbarItem(placement: .topBarLeading) {
                     Menu {
                         Button {
+                            copySubscriptions()
+                        } label: {
+                            Label("Copy subscriptions", systemImage: "doc.plaintext")
+                        }
+                        // Full library (not search/category/language/tag/Pinned/UI sort/pin partition).
+                        .disabled(!canExportSubscriptions)
+                        .accessibilityLabel(String(localized: "Copy subscriptions"))
+                        .accessibilityHint(
+                            String(localized: "Copies the full subscriptions list to the pasteboard as plain text. Not OPML. Ignores search and filters.")
+                        )
+
+                        ShareLink(
+                            item: subscriptionsShareText,
+                            subject: Text(String(localized: "Subscriptions"))
+                        ) {
+                            Label("Share subscriptions", systemImage: "square.and.arrow.up")
+                        }
+                        // Same gates as Copy subscriptions — full library plain text.
+                        .disabled(!canExportSubscriptions)
+                        .accessibilityLabel(String(localized: "Share subscriptions"))
+                        .accessibilityHint(
+                            String(localized: "Opens the system share sheet with the full subscriptions list as plain text. Not OPML. Ignores search and filters.")
+                        )
+
+                        Button {
                             showUnpinAllConfirm = true
                         } label: {
                             Label("Unpin all", systemImage: "pin.slash")
@@ -582,6 +627,9 @@ struct SubscriptionsView: View {
                         Label("Subscriptions actions", systemImage: "ellipsis.circle")
                     }
                     .accessibilityLabel(String(localized: "Subscriptions actions"))
+                    .accessibilityHint(
+                        String(localized: "Copy subscriptions, share subscriptions, or unpin all")
+                    )
                     .disabled(store.feeds.isEmpty)
                 }
                 ToolbarItem(placement: .topBarLeading) {
@@ -682,6 +730,15 @@ struct SubscriptionsView: View {
             .onChange(of: notificationDeepLink.feedOpenToken) { _, _ in
                 consumePendingFeedOpenIfNeeded()
             }
+            .alert(
+                String(localized: "Copied"),
+                isPresented: $showCopiedAlert
+            ) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(copiedAlertMessage)
+            }
+            .sensoryFeedback(.success, trigger: copyFeedbackTick)
             .confirmationDialog(
                 "Unpin \(pinnedSubscriptionCount) podcasts?",
                 isPresented: $showUnpinAllConfirm,
@@ -740,6 +797,17 @@ struct SubscriptionsView: View {
                 }
             }
         }
+    }
+
+    /// Pasteboard copy of the **full** subscriptions library (not search/filters/UI sort/pin). Read-only.
+    /// Distinct from OPML / HTML export (those omit local-folder feeds; this includes feed URLs honestly).
+    private func copySubscriptions() {
+        let text = subscriptionsPlainText
+        guard !text.isEmpty else { return }
+        UIPasteboard.general.string = text
+        copiedAlertMessage = String(localized: "Subscriptions copied to the pasteboard.")
+        copyFeedbackTick += 1
+        showCopiedAlert = true
     }
 
     /// Push Feed detail for a pending `openFeed` deep link (player → Subscriptions).
