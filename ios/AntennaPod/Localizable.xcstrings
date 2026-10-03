@@ -7449,6 +7449,23 @@
         }
       }
     },
+    "Transcript HTTP %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transcript HTTP %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP %lld beim Transkript"
+          }
+        }
+      }
+    },
     "Transcript unavailable": {
       "extractionState": "manual",
       "localizations": {
@@ -28289,6 +28306,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ungültige Antwort vom Sync-Server"
+          }
+        }
+      }
+    },
+    "Invalid transcript URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid transcript URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungültige Transkript-URL"
           }
         }
       }

@@ -48,13 +48,13 @@ enum TranscriptService {
             return hit
         }
         guard let url = URL(string: urlString) else {
-            throw FeedParsingError.message("Invalid transcript URL")
+            throw FeedParsingError.message(String(localized: "Invalid transcript URL"))
         }
         var request = URLRequest(url: url)
         AppUserAgent.apply(to: &request)
         let (data, response) = try await AppURLSession.shared.data(for: request)
         if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-            throw FeedParsingError.message("Transcript HTTP \(http.statusCode)")
+            throw FeedParsingError.message(String(localized: "Transcript HTTP \(http.statusCode)"))
         }
         let mime = mimeHint
             ?? (response as? HTTPURLResponse)?.mimeType
