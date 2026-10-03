@@ -24086,6 +24086,159 @@
         }
       }
     },
+    "There are no episodes in All Episodes. Episodes from your subscriptions appear here, newest first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There are no episodes in All Episodes. Episodes from your subscriptions appear here, newest first."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es gibt keine Episoden unter Alle Episoden. Episoden aus deinen Abonnements erscheinen hier, die neuesten zuerst."
+          }
+        }
+      }
+    },
+    "No All Episodes match your search. Clear or change the search to see episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No All Episodes match your search. Clear or change the search to see episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Alle-Episoden passen zu deiner Suche. Lösche oder ändere die Suche, um Episoden zu sehen."
+          }
+        }
+      }
+    },
+    "No All Episodes match the current view. Choose All or another filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No All Episodes match the current view. Choose All or another filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Alle-Episoden passen zur aktuellen Ansicht. Wähle Alle oder einen anderen Filter."
+          }
+        }
+      }
+    },
+    "There are no favorited episodes. Star an episode from a feed or the full player to add it to Favorites.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There are no favorited episodes. Star an episode from a feed or the full player to add it to Favorites."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es gibt keine Favoriten-Episoden. Markiere eine Episode aus einem Feed oder dem Vollbild-Player als Favorit, um sie hier hinzuzufügen."
+          }
+        }
+      }
+    },
+    "The selected podcast has no favorited episodes. Choose All or another podcast filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected podcast has no favorited episodes. Choose All or another podcast filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der gewählte Podcast hat keine Favoriten-Episoden. Wähle Alle oder einen anderen Podcast-Filter."
+          }
+        }
+      }
+    },
+    "No favorited episodes match your search. Clear or change the search to see Favorites.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No favorited episodes match your search. Clear or change the search to see Favorites."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Favoriten-Episoden passen zu deiner Suche. Lösche oder ändere die Suche, um die Favoriten zu sehen."
+          }
+        }
+      }
+    },
+    "There are no history episodes. Episodes you play or mark as played appear here, ordered by last played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There are no history episodes. Episodes you play or mark as played appear here, ordered by last played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es gibt keine Verlaufs-Episoden. Episoden, die du abspielst oder als gehört markierst, erscheinen hier, sortiert nach zuletzt gehört."
+          }
+        }
+      }
+    },
+    "The selected podcast has no history episodes. Choose All or another podcast filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected podcast has no history episodes. Choose All or another podcast filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der gewählte Podcast hat keine Verlaufs-Episoden. Wähle Alle oder einen anderen Podcast-Filter."
+          }
+        }
+      }
+    },
+    "No history episodes match your search. Clear or change the search to see History.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No history episodes match your search. Clear or change the search to see History."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Verlaufs-Episoden passen zu deiner Suche. Lösche oder ändere die Suche, um den Verlauf zu sehen."
+          }
+        }
+      }
+    },
     "Appends %lld Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full Inbox catalog (same as Mark all / Archive all), not library search or the podcast filter. Queue lock does not block enqueue.": {
       "extractionState": "manual",
       "comment": "Inbox Add all to queue confirmation — full catalog, not podcast filter or library search.",
