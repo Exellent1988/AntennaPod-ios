@@ -237,7 +237,7 @@ struct MiniPlayerView: View {
                             store.togglePlayed(episode.id)
                         } label: {
                             Label(
-                                store.isPlayed(episode.id) ? "Mark unplayed" : "Mark played",
+                                store.isPlayed(episode.id) ? String(localized: "Mark unplayed") : String(localized: "Mark played"),
                                 systemImage: store.isPlayed(episode.id) ? "circle" : "checkmark.circle"
                             )
                         }
@@ -255,7 +255,7 @@ struct MiniPlayerView: View {
                             store.toggleFavorite(episode.id)
                         } label: {
                             Label(
-                                store.isFavorite(episode.id) ? "Unfavorite" : "Favorite",
+                                store.isFavorite(episode.id) ? String(localized: "Unfavorite") : String(localized: "Favorite"),
                                 systemImage: store.isFavorite(episode.id) ? "star.fill" : "star"
                             )
                         }
@@ -273,7 +273,7 @@ struct MiniPlayerView: View {
                             store.toggleArchived(episode.id)
                         } label: {
                             Label(
-                                store.isArchived(episode.id) ? "Restore" : "Archive",
+                                store.isArchived(episode.id) ? String(localized: "Restore") : String(localized: "Archive"),
                                 systemImage: store.isArchived(episode.id) ? "archivebox.fill" : "archivebox"
                             )
                         }

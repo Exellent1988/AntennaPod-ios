@@ -573,7 +573,7 @@ struct FullPlayerView: View {
                                 .accessibilityLabel(String(localized: "Chapter \(chapterTitle)"))
                         }
                         Label(
-                            playback.isPlayingFromLocalFile ? "Playing from download" : "Streaming",
+                            playback.isPlayingFromLocalFile ? String(localized: "Playing from download") : String(localized: "Streaming"),
                             systemImage: playback.isPlayingFromLocalFile ? "internaldrive" : "wifi"
                         )
                         .font(.caption)
@@ -1499,7 +1499,7 @@ struct FullPlayerView: View {
                 store.togglePlayed(episode.id)
             } label: {
                 Label(
-                    played ? "Mark unplayed" : "Mark played",
+                    played ? String(localized: "Mark unplayed") : String(localized: "Mark played"),
                     systemImage: played ? "circle" : "checkmark.circle"
                 )
             }
@@ -1518,7 +1518,7 @@ struct FullPlayerView: View {
                 store.toggleFavorite(episode.id)
             } label: {
                 Label(
-                    favorited ? "Unfavorite" : "Favorite",
+                    favorited ? String(localized: "Unfavorite") : String(localized: "Favorite"),
                     systemImage: favorited ? "star.fill" : "star"
                 )
             }
@@ -1538,7 +1538,7 @@ struct FullPlayerView: View {
                 store.toggleArchived(episode.id)
             } label: {
                 Label(
-                    archived ? "Restore" : "Archive",
+                    archived ? String(localized: "Restore") : String(localized: "Archive"),
                     systemImage: archived ? "archivebox.fill" : "archivebox"
                 )
             }

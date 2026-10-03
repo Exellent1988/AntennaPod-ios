@@ -1172,7 +1172,7 @@ struct FeedDetailView: View {
                                     store.toggleArchived(episode.id)
                                 } label: {
                                     Label(
-                                        store.isArchived(episode.id) ? "Restore" : "Archive",
+                                        store.isArchived(episode.id) ? String(localized: "Restore") : String(localized: "Archive"),
                                         systemImage: store.isArchived(episode.id) ? "arrow.uturn.backward" : "archivebox"
                                     )
                                 }
@@ -2992,7 +2992,7 @@ struct EpisodeRow: View {
                     store.togglePlayed(episode.id)
                 } label: {
                     Label(
-                        state.isPlayed ? "Mark unplayed" : "Mark played",
+                        state.isPlayed ? String(localized: "Mark unplayed") : String(localized: "Mark played"),
                         systemImage: state.isPlayed ? "circle" : "checkmark.circle"
                     )
                 }
@@ -3012,7 +3012,7 @@ struct EpisodeRow: View {
                     store.toggleFavorite(episode.id)
                 } label: {
                     Label(
-                        store.isFavorite(episode.id) ? "Unfavorite" : "Favorite",
+                        store.isFavorite(episode.id) ? String(localized: "Unfavorite") : String(localized: "Favorite"),
                         systemImage: store.isFavorite(episode.id) ? "star.fill" : "star"
                     )
                 }
@@ -3028,7 +3028,7 @@ struct EpisodeRow: View {
                     store.toggleArchived(episode.id)
                 } label: {
                     Label(
-                        store.isArchived(episode.id) ? "Restore" : "Archive",
+                        store.isArchived(episode.id) ? String(localized: "Restore") : String(localized: "Archive"),
                         systemImage: store.isArchived(episode.id) ? "archivebox.fill" : "archivebox"
                     )
                 }
@@ -3284,7 +3284,7 @@ struct EpisodeRow: View {
                 store.toggleFavorite(episode.id)
             } label: {
                 Label(
-                    store.isFavorite(episode.id) ? "Unfavorite" : "Favorite",
+                    store.isFavorite(episode.id) ? String(localized: "Unfavorite") : String(localized: "Favorite"),
                     systemImage: store.isFavorite(episode.id) ? "star.slash" : "star"
                 )
             }
@@ -3297,7 +3297,7 @@ struct EpisodeRow: View {
                 store.toggleArchived(episode.id)
             } label: {
                 Label(
-                    store.isArchived(episode.id) ? "Restore" : "Archive",
+                    store.isArchived(episode.id) ? String(localized: "Restore") : String(localized: "Archive"),
                     systemImage: store.isArchived(episode.id) ? "arrow.uturn.backward" : "archivebox"
                 )
             }
@@ -3305,7 +3305,7 @@ struct EpisodeRow: View {
                 store.togglePlayed(episode.id)
             } label: {
                 Label(
-                    state.isPlayed ? "Mark unplayed" : "Mark played",
+                    state.isPlayed ? String(localized: "Mark unplayed") : String(localized: "Mark played"),
                     systemImage: state.isPlayed ? "circle" : "checkmark.circle"
                 )
             }
