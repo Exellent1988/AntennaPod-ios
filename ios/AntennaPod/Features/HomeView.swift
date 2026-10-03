@@ -293,6 +293,19 @@ struct HomeView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver hint for the Home Queue remaining bar. The visible label
+    /// stays the count and time. This says whether that time is wall-clock or
+    /// divided by podcast/default speed, and that the bar sums the visible
+    /// Queue preview only — not the full Queue, the Queue tab badge,
+    /// the other Home previews, or the full-screen remaining bars.
+    private var queueRemainingAccessibilityHint: String {
+        let limit = previewLimit
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. The Home Queue bar sums the visible preview rows only. Those rows follow the stored queue order. It does not follow the Queue played-status chip (All, Unplayed, or Played) or the Queue podcast filter, and it is not the Queue list. Home search, when set, keeps episodes whose title, description, episode private note, or bookmark note matches, or whose feed title matches. It does not search chapters or transcripts. Then it keeps at most the first \(limit) rows. When more episodes match, this is not the full Queue, not the Queue tab, and not the Queue tab badge. Played episodes that are not currently playing count as zero. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Home Continue listening preview, the Home New or Inbox preview, the Home History preview, the Home Archived preview, the Home Favorites preview, the Home Downloads preview, the Library search remaining bar, the Feed remaining bar, the Archived remaining bar, the Downloads remaining bar, the History remaining bar, the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+        }
+        return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The Home Queue bar sums the visible preview rows only. Those rows follow the stored queue order. It does not follow the Queue played-status chip (All, Unplayed, or Played) or the Queue podcast filter, and it is not the Queue list. Home search, when set, keeps episodes whose title, description, episode private note, or bookmark note matches, or whose feed title matches. It does not search chapters or transcripts. Then it keeps at most the first \(limit) rows. When more episodes match, this is not the full Queue, not the Queue tab, and not the Queue tab badge. Played episodes that are not currently playing count as zero. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Home Continue listening preview, the Home New or Inbox preview, the Home History preview, the Home Archived preview, the Home Favorites preview, the Home Downloads preview, the Library search remaining bar, the Feed remaining bar, the Archived remaining bar, the Downloads remaining bar, the History remaining bar, the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+    }
+
     private var queueRemainingSummary: EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
             episodes: queueItems,
@@ -810,6 +823,7 @@ struct HomeView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(queueRemainingAccessibilityLabel)
+                    .accessibilityHint(queueRemainingAccessibilityHint)
                     .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
             }
             ForEach(queueItems) { episode in
