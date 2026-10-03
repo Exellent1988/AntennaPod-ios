@@ -1349,6 +1349,23 @@
         }
       }
     },
+    "Download errors copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download errors copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-Fehler in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
     "Download failed": {
       "extractionState": "manual",
       "localizations": {
@@ -4143,6 +4160,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Noch kein Verlauf"
+          }
+        }
+      }
+    },
+    "No matching download errors": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No matching download errors"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine passenden Download-Fehler"
           }
         }
       }
@@ -15897,6 +15931,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keinem Podcast sind Tags zugewiesen. Füge unter Feed-Detail → Zahnrad → Tags / Ordner einen Tag hinzu."
+          }
+        }
+      }
+    },
+    "The log is empty. Failed downloads will appear here after a download error.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The log is empty. Failed downloads will appear here after a download error."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Protokoll ist leer. Fehlgeschlagene Downloads erscheinen hier nach einem Download-Fehler."
           }
         }
       }
@@ -33981,6 +34032,23 @@
         }
       }
     },
+    "Copies the full persisted download error log as plain text; ignores the search filter and is not OPML": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full persisted download error log as plain text; ignores the search filter and is not OPML"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert das vollständige gespeicherte Download-Fehlerprotokoll als Klartext; ignoriert den Suchfilter und ist kein OPML"
+          }
+        }
+      }
+    },
     "Copies the full queue list to the pasteboard": {
       "extractionState": "manual",
       "localizations": {
@@ -33994,6 +34062,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert die gesamte Warteschlange in die Zwischenablage"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the full persisted download error log as plain text; ignores the search filter and is not OPML": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the full persisted download error log as plain text; ignores the search filter and is not OPML"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit dem vollständigen gespeicherten Download-Fehlerprotokoll als Klartext; ignoriert den Suchfilter und ist kein OPML"
           }
         }
       }
@@ -35702,6 +35787,23 @@
         }
       },
       "comment": "VoiceOver hint for Share tags."
+    },
+    "Copy or share the full persisted download error log as plain text; actions ignore the search filter and are not OPML": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy or share the full persisted download error log as plain text; actions ignore the search filter and are not OPML"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vollständiges gespeichertes Download-Fehlerprotokoll als Klartext kopieren oder teilen; die Aktionen ignorieren den Suchfilter und sind kein OPML"
+          }
+        }
+      }
     },
     "Copy or share the full tag vocabulary as plain text. Does not rename or delete tags. Does not export OPML folder structure.": {
       "extractionState": "manual",
@@ -41888,6 +41990,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Die vollen Entdecken-Charts haben für das ausgewählte Land keine Podcasts mit aufgelöster RSS-Feed-URL zurückgegeben. Das sind Apple-iTunes-Charts, nicht die Home-Vorschau, nicht deine Abos und nicht Podcast Index oder fyyd. Explizite Top-Charts ausblenden ist aus, das ist also kein Explicit-Filter. Zeilen ohne Feed-URL werden weggelassen. Die Charts-Anzahl erfindet keine Ergebnisse."
+          }
+        }
+      }
+    },
+    "Change or clear the search to see other saved download errors.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the search to see other saved download errors."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Suche, um andere gespeicherte Download-Fehler zu sehen."
           }
         }
       }
