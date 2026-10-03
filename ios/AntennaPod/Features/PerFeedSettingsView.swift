@@ -431,7 +431,7 @@ struct PerFeedSettingsView: View {
                 }
             }
         }
-        .navigationTitle(feedTitle.isEmpty ? "Podcast settings" : feedTitle)
+        .navigationTitle(feedTitle.isEmpty ? String(localized: "Podcast settings") : feedTitle)
         .navigationBarTitleDisplayMode(.inline)
         .alert("Rename tag", isPresented: $showRenameAlert) {
             TextField("Tag name", text: $renameDraft)
