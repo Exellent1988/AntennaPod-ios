@@ -301,9 +301,9 @@ enum PlaybackSourcePreference: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .preferDownload: return "Prefer download"
-        case .preferStream: return "Prefer stream"
-        case .automatic: return "Automatic"
+        case .preferDownload: return String(localized: "Prefer download")
+        case .preferStream: return String(localized: "Prefer stream")
+        case .automatic: return String(localized: "Automatic")
         }
     }
 

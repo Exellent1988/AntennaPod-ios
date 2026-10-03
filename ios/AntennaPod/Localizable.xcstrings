@@ -512,6 +512,24 @@
         }
       }
     },
+    "Automatic": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatisch"
+          }
+        }
+      },
+      "comment": "Settings → Playback source option. No existing German term on this screen; Automatisch."
+    },
     "Backup": {
       "extractionState": "manual",
       "localizations": {
@@ -5026,6 +5044,42 @@
           }
         }
       }
+    },
+    "Prefer download": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prefer download"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download bevorzugen"
+          }
+        }
+      },
+      "comment": "Settings → Playback source option. No existing German term on this screen; Download bevorzugen."
+    },
+    "Prefer stream": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prefer stream"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stream bevorzugen"
+          }
+        }
+      },
+      "comment": "Settings → Playback source option. No existing German term on this screen; Stream bevorzugen."
     },
     "Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off.": {
       "extractionState": "manual",
