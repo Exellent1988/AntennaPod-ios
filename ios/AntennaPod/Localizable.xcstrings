@@ -13382,6 +13382,24 @@
         }
       }
     },
+    "Delete download for \"%@\"? Removes the local offline file only. Keeps played status, queue, and favorites.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete download for \"%@\"? Removes the local offline file only. Keeps played status, queue, and favorites."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download für „%@“ löschen? Entfernt nur die lokale Offline-Datei. Wiedergabestatus, Warteschlange und Favoriten bleiben erhalten."
+          }
+        }
+      },
+      "comment": "Mini and full player delete-download confirmation"
+    },
     "Delete download for \"%@\"? Removes the local offline file only. Keeps played status, queue membership, favorites, and archive state.": {
       "extractionState": "manual",
       "localizations": {
