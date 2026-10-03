@@ -8067,6 +8067,91 @@
         }
       }
     },
+    "Duration unknown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duration unknown"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dauer unbekannt"
+          }
+        }
+      }
+    },
+    "Remaining %@, live playback speed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining %@, live playback speed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibend %@, aktuelle Wiedergabegeschwindigkeit"
+          }
+        }
+      }
+    },
+    "Remaining %@, wall-clock": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining %@, wall-clock"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibend %@, Wanduhr"
+          }
+        }
+      }
+    },
+    "Right-hand time label. Not the playback-position scrubber and not Jump to position. Tap switches between total duration and remaining time. It does not seek, start playback, change the rate, or download. When duration is unknown, no time is invented. Remaining time is wall-clock unless Remaining time respects speed is on, then the live session rate from 0.5 to 3.0. Not Volume boost and not the list or Home remaining bars.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right-hand time label. Not the playback-position scrubber and not Jump to position. Tap switches between total duration and remaining time. It does not seek, start playback, change the rate, or download. When duration is unknown, no time is invented. Remaining time is wall-clock unless Remaining time respects speed is on, then the live session rate from 0.5 to 3.0. Not Volume boost and not the list or Home remaining bars."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechte Zeitbeschriftung. Nicht der Scrubber der Wiedergabeposition und nicht Zu Position springen. Tippen wechselt zwischen Gesamtdauer und verbleibender Zeit. Es sucht nicht, startet keine Wiedergabe, ändert nicht die Geschwindigkeit und lädt nichts herunter. Bei unbekannter Dauer wird keine Zeit erfunden. Verbleibende Zeit ist Wanduhr, außer Verbleibende Zeit berücksichtigt Tempo ist an; dann die Live-Sitzungsrate von 0,5 bis 3,0. Nicht Lautstärke-Verstärkung und nicht die Listen- oder Home-Restzeitleisten."
+          }
+        }
+      }
+    },
+    "Total duration %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total duration %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesamtdauer %@"
+          }
+        }
+      }
+    },
     "Toggles between remaining time and total duration": {
       "extractionState": "manual",
       "localizations": {

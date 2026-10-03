@@ -1136,8 +1136,8 @@ struct FullPlayerView: View {
                         ? String(localized: "Remaining time")
                         : String(localized: "Duration")
                 )
-                .accessibilityHint(String(localized: "Toggles between remaining time and total duration"))
-                .accessibilityValue(rightTimeLabel)
+                .accessibilityValue(rightTimeAccessibilityValue)
+                .accessibilityHint(rightTimeAccessibilityHint)
             }
         }
     }
@@ -1203,6 +1203,36 @@ struct FullPlayerView: View {
             return formatRemaining(display)
         }
         return format(playback.durationSeconds)
+    }
+
+    /// VoiceOver for the right-hand time button. Visible clock stays as-is.
+    /// Known duration names total duration, or remaining (wall-clock, or the
+    /// live session rate when Remaining time respects speed is on). Unknown
+    /// duration says so and does not invent an end. Not the scrubber.
+    private var rightTimeAccessibilityValue: String {
+        guard hasKnownPlaybackDuration else {
+            return String(localized: "Duration unknown")
+        }
+        if settings.showRemainingTime {
+            if settings.remainingTimeRespectsSpeed {
+                return String(
+                    format: String(localized: "Remaining %@, live playback speed"),
+                    rightTimeLabel
+                )
+            }
+            return String(
+                format: String(localized: "Remaining %@, wall-clock"),
+                rightTimeLabel
+            )
+        }
+        return String(
+            format: String(localized: "Total duration %@"),
+            rightTimeLabel
+        )
+    }
+
+    private var rightTimeAccessibilityHint: String {
+        String(localized: "Right-hand time label. Not the playback-position scrubber and not Jump to position. Tap switches between total duration and remaining time. It does not seek, start playback, change the rate, or download. When duration is unknown, no time is invented. Remaining time is wall-clock unless Remaining time respects speed is on, then the live session rate from 0.5 to 3.0. Not Volume boost and not the list or Home remaining bars.")
     }
 
     @ViewBuilder
