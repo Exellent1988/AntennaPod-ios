@@ -812,7 +812,7 @@ struct HomeView: View {
                     episode: item.episode,
                     feedTitle: item.feedTitle,
                     dateOverride: Date(timeIntervalSince1970: Double(item.lastPlayedAtEpochMs) / 1000),
-                    dateAccessibilityLabel: "Last played"
+                    dateAccessibilityLabel: String(localized: "Last played")
                 )
             }
         } header: {
@@ -964,7 +964,7 @@ struct HomeView: View {
                     episode: item.episode,
                     feedTitle: item.feedTitle,
                     dateOverride: Date(timeIntervalSince1970: Double(item.lastPlayedAtEpochMs) / 1000),
-                    dateAccessibilityLabel: "Last played"
+                    dateAccessibilityLabel: String(localized: "Last played")
                 )
             }
         } header: {
@@ -1000,7 +1000,7 @@ struct HomeView: View {
                     episode: item.episode,
                     feedTitle: item.feedTitle,
                     dateOverride: Date(timeIntervalSince1970: Double(item.archivedAtEpochMs) / 1000),
-                    dateAccessibilityLabel: "Archived"
+                    dateAccessibilityLabel: String(localized: "Archived")
                 )
             }
         } header: {
@@ -1036,7 +1036,7 @@ struct HomeView: View {
                     episode: item.episode,
                     feedTitle: item.feedTitle,
                     dateOverride: Date(timeIntervalSince1970: Double(item.favoritedAtEpochMs) / 1000),
-                    dateAccessibilityLabel: "Favorited"
+                    dateAccessibilityLabel: String(localized: "Favorited")
                 )
             }
         } header: {
@@ -1074,7 +1074,7 @@ struct HomeView: View {
                     dateOverride: item.downloadedAtEpochMs.map {
                         Date(timeIntervalSince1970: Double($0) / 1000)
                     },
-                    dateAccessibilityLabel: "Downloaded"
+                    dateAccessibilityLabel: String(localized: "Downloaded")
                 )
             }
         } header: {
