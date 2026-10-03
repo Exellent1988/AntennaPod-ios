@@ -769,7 +769,7 @@ struct HomeView: View {
         Section {
             HomeTopListsPreview()
         } header: {
-            sectionHeader("Discover", systemImage: "chart.bar")
+            sectionHeader(String(localized: "Discover"), systemImage: "chart.bar")
         } footer: {
             Button {
                 if parental.needsPINForAddDiscover {
