@@ -330,20 +330,20 @@ final class GpodderSyncService: ObservableObject {
 
             let localFolderOmitted = store.feeds.filter { LocalFolderFeed.isLocalFolderFeed($0) }.count
             // Always frame as partial subscriptions sync — never invent “full sync”.
-            var parts: [String] = ["Subscriptions sync (partial)"]
-            parts.append("pulled \(changes.add.count) remote add(s)")
-            if subscribed > 0 { parts.append("subscribed \(subscribed) new") }
-            if !toUpload.isEmpty { parts.append("pushed \(toUpload.count) local http(s)") }
+            var parts: [String] = [String(localized: "Subscriptions sync (partial)")]
+            parts.append(String(localized: "pulled \(changes.add.count) remote add(s)"))
+            if subscribed > 0 { parts.append(String(localized: "subscribed \(subscribed) new")) }
+            if !toUpload.isEmpty { parts.append(String(localized: "pushed \(toUpload.count) local http(s)")) }
             if !ignoredRemoves.isEmpty {
-                parts.append("ignored \(ignoredRemoves.count) remote remove(s) (additive)")
+                parts.append(String(localized: "ignored \(ignoredRemoves.count) remote remove(s) (additive)"))
             }
             if localFolderOmitted > 0 {
-                parts.append("omitted \(localFolderOmitted) local folder feed(s)")
+                parts.append(String(localized: "omitted \(localFolderOmitted) local folder feed(s)"))
             }
             if !subscribeFailures.isEmpty {
-                parts.append("\(subscribeFailures.count) subscribe error(s)")
+                parts.append(String(localized: "\(subscribeFailures.count) subscribe error(s)"))
             }
-            parts.append("episode actions / queue / bookmarks / tags / downloads: local-only")
+            parts.append(String(localized: "episode actions / queue / bookmarks / tags / downloads: local-only"))
             lastSyncStatus = parts.joined(separator: " · ")
             if let first = subscribeFailures.first {
                 // Sync completed with subscribe errors — still surface + notify.

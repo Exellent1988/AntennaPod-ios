@@ -28684,6 +28684,142 @@
         }
       }
     },
+    "Subscriptions sync (partial)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions sync (partial)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnements-Sync (teilweise)"
+          }
+        }
+      }
+    },
+    "pulled %lld remote add(s)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pulled %lld remote add(s)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Remote-Hinzufügung(en) geholt"
+          }
+        }
+      }
+    },
+    "subscribed %lld new": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "subscribed %lld new"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld neu abonniert"
+          }
+        }
+      }
+    },
+    "pushed %lld local http(s)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "pushed %lld local http(s)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld lokale http(s) hochgeladen"
+          }
+        }
+      }
+    },
+    "ignored %lld remote remove(s) (additive)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ignored %lld remote remove(s) (additive)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Remote-Entfernung(en) ignoriert (additiv)"
+          }
+        }
+      }
+    },
+    "omitted %lld local folder feed(s)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "omitted %lld local folder feed(s)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld lokale Ordner-Feed(s) ausgelassen"
+          }
+        }
+      }
+    },
+    "%lld subscribe error(s)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld subscribe error(s)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Abo-Fehler"
+          }
+        }
+      }
+    },
+    "episode actions / queue / bookmarks / tags / downloads: local-only": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "episode actions / queue / bookmarks / tags / downloads: local-only"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodenaktionen / Warteschlange / Lesezeichen / Tags / Downloads: nur lokal"
+          }
+        }
+      }
+    },
     "Follows Settings → New episodes (currently %@). Queue+download is only available as the global choice.": {
       "extractionState": "manual",
       "localizations": {
