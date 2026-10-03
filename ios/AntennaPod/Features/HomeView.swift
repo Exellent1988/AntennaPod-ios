@@ -816,7 +816,7 @@ struct HomeView: View {
                 )
             }
         } header: {
-            sectionHeader("Continue listening", systemImage: "play.circle")
+            sectionHeader(String(localized: "Continue listening"), systemImage: "play.circle")
         } footer: {
             NavigationLink {
                 HistoryView()
@@ -934,7 +934,7 @@ struct HomeView: View {
                 .accessibilityHint(String(localized: "Open podcast"))
             }
         } header: {
-            sectionHeader("Recently updated", systemImage: "dot.radiowaves.left.and.right")
+            sectionHeader(String(localized: "Recently updated"), systemImage: "dot.radiowaves.left.and.right")
         } footer: {
             Button("See all subscriptions") {
                 selectedTab = .subscriptions
@@ -968,7 +968,7 @@ struct HomeView: View {
                 )
             }
         } header: {
-            sectionHeader("History", systemImage: "clock.arrow.circlepath")
+            sectionHeader(String(localized: "History"), systemImage: "clock.arrow.circlepath")
         } footer: {
             NavigationLink {
                 HistoryView()
@@ -1004,7 +1004,7 @@ struct HomeView: View {
                 )
             }
         } header: {
-            sectionHeader("Archived", systemImage: "archivebox")
+            sectionHeader(String(localized: "Archived"), systemImage: "archivebox")
         } footer: {
             NavigationLink {
                 ArchivedView()
@@ -1040,7 +1040,7 @@ struct HomeView: View {
                 )
             }
         } header: {
-            sectionHeader("Favorites", systemImage: "star")
+            sectionHeader(String(localized: "Favorites"), systemImage: "star")
         } footer: {
             NavigationLink {
                 FavoritesView()
