@@ -11,9 +11,11 @@ import Foundation
 
 struct TogglePlaybackAppIntent: AppIntent {
     static var title: LocalizedStringResource = "Play/Pause"
-    static var description = IntentDescription(
-        "Play or pause the current episode in AntennaPod (opens the app)."
-    )
+    static var description: IntentDescription {
+        IntentDescription(
+            "Play or pause the current episode in AntennaPod (opens the app)."
+        )
+    }
     static var openAppWhenRun: Bool = true
 
     func perform() async throws -> some IntentResult {
@@ -26,9 +28,11 @@ struct TogglePlaybackAppIntent: AppIntent {
 
 struct PlayCurrentAppIntent: AppIntent {
     static var title: LocalizedStringResource = "Play"
-    static var description = IntentDescription(
-        "Resume the current episode in AntennaPod (opens the app)."
-    )
+    static var description: IntentDescription {
+        IntentDescription(
+            "Resume the current episode in AntennaPod (opens the app)."
+        )
+    }
     static var openAppWhenRun: Bool = true
 
     func perform() async throws -> some IntentResult {
@@ -41,9 +45,11 @@ struct PlayCurrentAppIntent: AppIntent {
 
 struct PauseCurrentAppIntent: AppIntent {
     static var title: LocalizedStringResource = "Pause"
-    static var description = IntentDescription(
-        "Pause playback in AntennaPod (opens the app)."
-    )
+    static var description: IntentDescription {
+        IntentDescription(
+            "Pause playback in AntennaPod (opens the app)."
+        )
+    }
     static var openAppWhenRun: Bool = true
 
     func perform() async throws -> some IntentResult {
@@ -56,9 +62,11 @@ struct PauseCurrentAppIntent: AppIntent {
 
 struct SkipForwardAppIntent: AppIntent {
     static var title: LocalizedStringResource = "Skip Forward"
-    static var description = IntentDescription(
-        "Skip forward by the Settings fast-forward interval (opens the app)."
-    )
+    static var description: IntentDescription {
+        IntentDescription(
+            "Skip forward by the Settings fast-forward interval (opens the app)."
+        )
+    }
     static var openAppWhenRun: Bool = true
 
     func perform() async throws -> some IntentResult {
@@ -71,9 +79,11 @@ struct SkipForwardAppIntent: AppIntent {
 
 struct SkipBackAppIntent: AppIntent {
     static var title: LocalizedStringResource = "Skip Back"
-    static var description = IntentDescription(
-        "Skip back by the Settings rewind interval (opens the app)."
-    )
+    static var description: IntentDescription {
+        IntentDescription(
+            "Skip back by the Settings rewind interval (opens the app)."
+        )
+    }
     static var openAppWhenRun: Bool = true
 
     func perform() async throws -> some IntentResult {

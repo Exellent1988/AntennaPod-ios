@@ -5661,6 +5661,23 @@
         }
       }
     },
+    "Pause playback in AntennaPod (opens the app).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pause playback in AntennaPod (opens the app)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausiere die Wiedergabe in AntennaPod (öffnet die App)."
+          }
+        }
+      }
+    },
     "Permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails / sync fails. Local only — no push.": {
       "extractionState": "manual",
       "localizations": {
@@ -5861,6 +5878,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wiedergabe/Pause"
+          }
+        }
+      }
+    },
+    "Play or pause the current episode in AntennaPod (opens the app).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Play or pause the current episode in AntennaPod (opens the app)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spiele die aktuelle Episode in AntennaPod ab oder pausiere sie (öffnet die App)."
           }
         }
       }
@@ -6578,6 +6612,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fortsetzen"
+          }
+        }
+      }
+    },
+    "Resume the current episode in AntennaPod (opens the app).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resume the current episode in AntennaPod (opens the app)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setze die aktuelle Episode in AntennaPod fort (öffnet die App)."
           }
         }
       }
@@ -31621,6 +31672,23 @@
         }
       }
     },
+    "Skip forward by the Settings fast-forward interval (opens the app).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip forward by the Settings fast-forward interval (opens the app)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springe um das Vorspulintervall aus den Einstellungen vor (öffnet die App)."
+          }
+        }
+      }
+    },
     "Skip Back": {
       "extractionState": "manual",
       "localizations": {
@@ -31634,6 +31702,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zurückspringen"
+          }
+        }
+      }
+    },
+    "Skip back by the Settings rewind interval (opens the app).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip back by the Settings rewind interval (opens the app)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springe um das Zurückspulintervall aus den Einstellungen zurück (öffnet die App)."
           }
         }
       }
