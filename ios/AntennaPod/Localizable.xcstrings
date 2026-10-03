@@ -4368,6 +4368,40 @@
         }
       }
     },
+    "No subscriptions match this category filter. Choose All or another category.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match this category filter. Choose All or another category."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu diesem Kategorie-Filter. Wähle Alle oder eine andere Kategorie."
+          }
+        }
+      }
+    },
+    "No subscriptions match this language filter. Choose All or another language.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match this language filter. Choose All or another language."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu diesem Sprach-Filter. Wähle Alle oder eine andere Sprache."
+          }
+        }
+      }
+    },
     "No subscriptions match this tag filter.": {
       "extractionState": "manual",
       "localizations": {
@@ -4381,6 +4415,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Abonnements passen zu diesem Tag-Filter."
+          }
+        }
+      }
+    },
+    "No subscriptions match this tag filter. Choose All or another tag.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match this tag filter. Choose All or another tag."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu diesem Tag-Filter. Wähle Alle oder einen anderen Tag."
           }
         }
       }
@@ -6748,6 +6799,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Die Feed-URL lieferte leeren oder unlesbaren Inhalt."
+          }
+        }
+      }
+    },
+    "There are no subscriptions. Use Add podcast to subscribe, open Discover, choose a local folder, or import an OPML file.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There are no subscriptions. Use Add podcast to subscribe, open Discover, choose a local folder, or import an OPML file."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es gibt keine Abonnements. Nutze Podcast hinzufügen zum Abonnieren, öffne Entdecken, wähle einen lokalen Ordner oder importiere eine OPML-Datei."
           }
         }
       }
@@ -10699,6 +10767,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Abonnements passen zu deiner Suche."
+          }
+        }
+      }
+    },
+    "No subscriptions match your search. Clear or change the search to see your podcasts.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match your search. Clear or change the search to see your podcasts."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu deiner Suche. Lösche oder ändere die Suche, um deine Podcasts zu sehen."
           }
         }
       }
@@ -15778,6 +15863,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kein passender Text"
+          }
+        }
+      }
+    },
+    "No pinned podcasts match the active filters. Choose All or change the search, category, or language filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No pinned podcasts match the active filters. Choose All or change the search, category, or language filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine angepinnten Podcasts passen zu den aktiven Filtern. Wähle Alle oder ändere die Suche, den Kategorie- oder den Sprachfilter."
           }
         }
       }
