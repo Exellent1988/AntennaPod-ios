@@ -3278,6 +3278,23 @@
         }
       }
     },
+    "Local": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokal"
+          }
+        }
+      }
+    },
     "Local folder": {
       "extractionState": "manual",
       "localizations": {
@@ -6255,6 +6272,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Im Schlüsselbund gespeichert"
+          }
+        }
+      }
+    },
+    "Stream": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stream"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stream"
           }
         }
       }

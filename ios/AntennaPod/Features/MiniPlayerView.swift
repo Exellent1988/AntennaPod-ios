@@ -668,7 +668,7 @@ struct MiniPlayerView: View {
 
     private var sourceIndicator: some View {
         Label(
-            playback.isPlayingFromLocalFile ? "Local" : "Stream",
+            playback.isPlayingFromLocalFile ? String(localized: "Local") : String(localized: "Stream"),
             systemImage: playback.isPlayingFromLocalFile ? "internaldrive" : "wifi"
         )
         .font(.caption2)
