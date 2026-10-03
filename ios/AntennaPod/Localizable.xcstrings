@@ -669,6 +669,125 @@
         }
       }
     },
+    "Backup is missing manifest.json": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup is missing manifest.json"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In der Sicherung fehlt manifest.json"
+          }
+        }
+      }
+    },
+    "Unsupported backup format “%@” (need %@)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsupported backup format “%@” (need %@)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht unterstütztes Sicherungsformat „%@“ (benötigt %@)"
+          }
+        }
+      }
+    },
+    "Unsupported backup version %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsupported backup version %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht unterstützte Sicherungsversion %lld"
+          }
+        }
+      }
+    },
+    "Backup contains no recognizable persistence files": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup contains no recognizable persistence files"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Sicherung enthält keine erkennbaren Datendateien"
+          }
+        }
+      }
+    },
+    "Could not encode backup payload": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not encode backup payload"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Sicherungsdaten konnten nicht erzeugt werden"
+          }
+        }
+      }
+    },
+    "Backup payload is too large for a single ZIP (%@). Turn off Include downloaded episode files or free space / fewer downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup payload is too large for a single ZIP (%@). Turn off Include downloaded episode files or free space / fewer downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Sicherung ist für eine einzelne ZIP zu groß (%@). Schalte „Heruntergeladene Episodendateien einbeziehen“ aus oder schaffe Platz bzw. lade weniger herunter."
+          }
+        }
+      }
+    },
+    "Episode file “%@” exceeds ZIP size limits (%@).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode file “%@” exceeds ZIP size limits (%@)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Episodendatei „%@“ überschreitet die ZIP-Größenlimits (%@)."
+          }
+        }
+      }
+    },
     "Cancel": {
       "extractionState": "manual",
       "localizations": {

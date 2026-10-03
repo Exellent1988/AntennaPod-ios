@@ -62,15 +62,15 @@ enum DataBackupError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .missingManifest:
-            return "Backup is missing manifest.json"
+            return String(localized: "Backup is missing manifest.json")
         case .unsupportedFormat(let f):
-            return "Unsupported backup format “\(f)” (need \(DataBackupManifest.formatID))"
+            return String(localized: "Unsupported backup format “\(f)” (need \(DataBackupManifest.formatID))")
         case .unsupportedVersion(let v):
-            return "Unsupported backup version \(v)"
+            return String(localized: "Unsupported backup version \(v)")
         case .noPersistenceFiles:
-            return "Backup contains no recognizable persistence files"
+            return String(localized: "Backup contains no recognizable persistence files")
         case .encodeFailed:
-            return "Could not encode backup payload"
+            return String(localized: "Could not encode backup payload")
         case .importFailed(let msg):
             return msg
         case .mediaTooLarge(let msg):
@@ -179,7 +179,7 @@ enum DataBackupService {
         let totalBytes = entries.reduce(Int64(0)) { $0 + Int64($1.data.count) }
         if totalBytes > Int64(UInt32.max) - 1_048_576 {
             throw DataBackupError.mediaTooLarge(
-                "Backup payload is too large for a single ZIP (\(Self.formatBytes(totalBytes))). Turn off Include downloaded episode files or free space / fewer downloads."
+                String(localized: "Backup payload is too large for a single ZIP (\(Self.formatBytes(totalBytes))). Turn off Include downloaded episode files or free space / fewer downloads.")
             )
         }
 
@@ -210,7 +210,7 @@ enum DataBackupService {
             let size = Int64(values?.fileSize ?? 0)
             if size > Int64(UInt32.max) {
                 throw DataBackupError.mediaTooLarge(
-                    "Episode file “\(name)” exceeds ZIP size limits (\(Self.formatBytes(size)))."
+                    String(localized: "Episode file “\(name)” exceeds ZIP size limits (\(Self.formatBytes(size))).")
                 )
             }
             let data = try Data(contentsOf: fileURL)
