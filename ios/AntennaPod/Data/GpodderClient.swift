@@ -292,22 +292,22 @@ enum GpodderError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .invalidHost:
-            return "Invalid sync host URL"
+            return String(localized: "Invalid sync host URL")
         case .missingCredentials:
-            return "Username and device id are required"
+            return String(localized: "Username and device id are required")
         case .unauthorized:
-            return "Login failed (unauthorized)"
+            return String(localized: "Login failed (unauthorized)")
         case .notFound:
-            return "Sync resource not found (404) — check host / Nextcloud Gpodder Sync path"
+            return String(localized: "Sync resource not found (404) — check host / Nextcloud Gpodder Sync path")
         case .invalidResponse:
-            return "Invalid response from sync server"
+            return String(localized: "Invalid response from sync server")
         case .httpStatus(let code, let body):
             if body.isEmpty {
-                return "Sync HTTP \(code)"
+                return String(localized: "Sync HTTP \(code)")
             }
-            return "Sync HTTP \(code): \(body)"
+            return String(localized: "Sync HTTP \(code): \(body)")
         case .notLoggedIn:
-            return "Not logged in to sync provider"
+            return String(localized: "Not logged in to sync provider")
         }
     }
 }

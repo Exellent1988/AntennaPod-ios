@@ -28038,6 +28038,142 @@
       },
       "comment": "VoiceOver label for lastSyncError"
     },
+    "Invalid sync host URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid sync host URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungültige Sync-Host-URL"
+          }
+        }
+      }
+    },
+    "Username and device id are required": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Username and device id are required"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzername und Geräte-ID sind erforderlich"
+          }
+        }
+      }
+    },
+    "Login failed (unauthorized)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Login failed (unauthorized)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anmeldung fehlgeschlagen (nicht autorisiert)"
+          }
+        }
+      }
+    },
+    "Sync resource not found (404) — check host / Nextcloud Gpodder Sync path": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync resource not found (404) — check host / Nextcloud Gpodder Sync path"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync-Ressource nicht gefunden (404) — prüfe den Host oder den Pfad für Nextcloud Gpodder Sync"
+          }
+        }
+      }
+    },
+    "Invalid response from sync server": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid response from sync server"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungültige Antwort vom Sync-Server"
+          }
+        }
+      }
+    },
+    "Sync HTTP %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync HTTP %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP %lld beim Sync"
+          }
+        }
+      }
+    },
+    "Sync HTTP %lld: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync HTTP %lld: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HTTP %lld beim Sync: %@"
+          }
+        }
+      }
+    },
+    "Not logged in to sync provider": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not logged in to sync provider"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht beim Sync-Anbieter angemeldet"
+          }
+        }
+      }
+    },
     "Sync coverage help": {
       "extractionState": "manual",
       "localizations": {
