@@ -25,7 +25,7 @@ enum PodcastIndexChapterParser {
             let img = obj["img"] as? String ?? obj["image"] as? String
             chapters.append(
                 PodcastChapter(
-                    title: (title?.isEmpty == false) ? title! : "Chapter",
+                    title: (title?.isEmpty == false) ? title! : String(localized: "Chapter"),
                     startTimeSeconds: start,
                     href: href,
                     imageUrl: img

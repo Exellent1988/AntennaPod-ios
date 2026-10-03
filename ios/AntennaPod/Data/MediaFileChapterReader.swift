@@ -47,7 +47,7 @@ enum MediaFileChapterReader {
         for group in groups {
             let start = CMTimeGetSeconds(group.timeRange.start)
             guard start.isFinite, start >= 0 else { continue }
-            let title = title(from: group.items) ?? "Chapter"
+            let title = title(from: group.items) ?? String(localized: "Chapter")
             chapters.append(
                 PodcastChapter(
                     title: title,

@@ -551,7 +551,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 let image = attributeDict["image"] ?? attributeDict["img"]
                 itemChapters.append(
                     PodcastChapter(
-                        title: (title?.isEmpty == false) ? title! : "Chapter",
+                        title: (title?.isEmpty == false) ? title! : String(localized: "Chapter"),
                         startTimeSeconds: startSeconds,
                         href: href,
                         imageUrl: image
