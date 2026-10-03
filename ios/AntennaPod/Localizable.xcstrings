@@ -24154,6 +24154,40 @@
         }
       }
     },
+    "No All Episodes match the active filters: %@. Choose All or another filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No All Episodes match the active filters: %@. Choose All or another filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Alle-Episoden passen zu den aktiven Filtern: %@. Wähle Alle oder einen anderen Filter."
+          }
+        }
+      }
+    },
+    "No All Episodes match your search and the active filters: %@. Clear the search or choose All or another filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No All Episodes match your search and the active filters: %@. Clear the search or choose All or another filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Alle-Episoden passen zu deiner Suche und den aktiven Filtern: %@. Lösche die Suche oder wähle Alle oder einen anderen Filter."
+          }
+        }
+      }
+    },
     "There are no favorited episodes. Star an episode from a feed or the full player to add it to Favorites.": {
       "extractionState": "manual",
       "localizations": {
