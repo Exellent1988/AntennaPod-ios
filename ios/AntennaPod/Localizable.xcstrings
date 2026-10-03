@@ -29168,6 +29168,40 @@
         }
       }
     },
+    "Marks unplayed, non-archived episodes in the full Downloads catalog as played; ignores chip, podcast, search, and sort filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks unplayed, non-archived episodes in the full Downloads catalog as played; ignores chip, podcast, search, and sort filters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert ungehörte, nicht archivierte Episoden im vollständigen Downloads-Katalog als gehört; ignoriert Chip-, Podcast-, Such- und Sortierfilter"
+          }
+        }
+      }
+    },
+    "Marks played episodes, including archived episodes, in the full Downloads catalog as unplayed; ignores chip, podcast, search, and sort filters and does not delete files": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks played episodes, including archived episodes, in the full Downloads catalog as unplayed; ignores chip, podcast, search, and sort filters and does not delete files"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert gehörte Episoden einschließlich archivierter Episoden im vollständigen Downloads-Katalog als ungehört; ignoriert Chip-, Podcast-, Such- und Sortierfilter und löscht keine Dateien"
+          }
+        }
+      }
+    },
     "Set sleep timer": {
       "extractionState": "manual",
       "localizations": {
