@@ -24483,6 +24483,23 @@
         }
       }
     },
+    "Appends %lld unplayed, non-archived favorite episodes to the end of the queue (newest favorited first). Already queued, played, and archived episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the podcast, search, or sort filter. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld unplayed, non-archived favorite episodes to the end of the queue (newest favorited first). Already queued, played, and archived episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the podcast, search, or sort filter. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld ungehörte, nicht archivierte Favoriten-Episoden am Ende der Warteschlange ein (zuletzt favorisiert zuerst). Bereits eingereihte, gehörte und archivierte Episoden werden übersprungen. Nutzt den vollständigen Favoriten-Katalog (wie Favoriten leeren), nicht Podcast-, Such- oder Sortierfilter. Warteschlangen-Sperre blockiert Einreihen nicht. Unterschiedlich von Alle zur Warteschlange, das auch gehörte und archivierte Episoden einschließt."
+          }
+        }
+      }
+    },
     "Appends %lld favorite episodes to the end of the queue (newest favorited first). Already queued episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the podcast or searchable filter. Queue lock does not block enqueue.": {
       "extractionState": "manual",
       "localizations": {
