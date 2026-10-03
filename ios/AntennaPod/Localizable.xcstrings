@@ -6662,7 +6662,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abonnieren-Fehler %@"
+            "value": "Fehler beim Abonnieren %@"
           }
         }
       }
