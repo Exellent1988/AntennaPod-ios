@@ -53,7 +53,7 @@ struct FeedPreviewView: View {
     }
 
     private var displayTitle: String {
-        parsed?.title.nilIfEmpty ?? request.hintTitle?.nilIfEmpty ?? "Podcast"
+        parsed?.title.nilIfEmpty ?? request.hintTitle?.nilIfEmpty ?? String(localized: "Podcast")
     }
 
     private var displayAuthor: String? {
@@ -206,8 +206,8 @@ struct FeedPreviewView: View {
                     } header: {
                         Text(
                             episodeCount > previewEpisodeLimit
-                                ? "Latest \(previewEpisodeLimit) episodes"
-                                : "Episodes"
+                                ? String(localized: "Latest \(previewEpisodeLimit) episodes")
+                                : String(localized: "Episodes")
                         )
                     } footer: {
                         if episodeCount > previewEpisodeLimit {

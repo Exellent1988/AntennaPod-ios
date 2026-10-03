@@ -3193,6 +3193,23 @@
         }
       }
     },
+    "Latest %lld episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest %lld episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neueste %lld Episoden"
+          }
+        }
+      }
+    },
     "Library": {
       "extractionState": "manual",
       "localizations": {
@@ -3922,6 +3939,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Episode ist aktuell geladen"
+          }
+        }
+      }
+    },
+    "No episodes found in this feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No episodes found in this feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Episoden in diesem Feed gefunden."
           }
         }
       }
@@ -17456,6 +17490,23 @@
         }
       },
       "comment": "Section title for podcast:person list on Feed detail / description / shownotes. Hidden when none."
+    },
+    "Showing %lld of %lld. Subscribe to see the full list.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing %lld of %lld. Subscribe to see the full list."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeige %lld von %lld. Abonniere, um die vollständige Liste zu sehen."
+          }
+        }
+      }
     },
     "Showing first 20 people from the feed.": {
       "extractionState": "manual",
