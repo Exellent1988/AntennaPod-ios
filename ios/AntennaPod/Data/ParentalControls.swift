@@ -139,7 +139,7 @@ final class ParentalControls: ObservableObject {
         var errorDescription: String? {
             switch self {
             case .wrongPIN:
-                return "Incorrect PIN"
+                return String(localized: "Incorrect PIN")
             }
         }
     }
