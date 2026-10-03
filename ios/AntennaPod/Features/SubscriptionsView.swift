@@ -587,7 +587,9 @@ struct SubscriptionsView: View {
                         Image(systemName: parental.needsPINForAddDiscover ? "plus.circle" : "plus")
                     }
                     .accessibilityLabel(
-                        parental.needsPINForAddDiscover ? "Add podcast (PIN required)" : "Add podcast"
+                        parental.needsPINForAddDiscover
+                            ? String(localized: "Add podcast (PIN required)")
+                            : String(localized: "Add podcast")
                     )
                 }
                 ToolbarItem(placement: .topBarLeading) {

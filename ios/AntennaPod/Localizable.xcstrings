@@ -120,6 +120,23 @@
         }
       }
     },
+    "Add podcast (PIN required)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add podcast (PIN required)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast hinzufügen (PIN erforderlich)"
+          }
+        }
+      }
+    },
     "Add to Queue": {
       "extractionState": "manual",
       "localizations": {
