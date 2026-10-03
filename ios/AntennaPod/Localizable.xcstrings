@@ -5407,6 +5407,23 @@
         }
       }
     },
+    "Podcast %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast %@"
+          }
+        }
+      }
+    },
     "Podcast Index needs a free API key and secret from podcastindex.org (API docs / register). Paste them under Settings → Discovery. Keys stay in the Keychain — nothing is hardcoded or shipped with the app.": {
       "extractionState": "manual",
       "localizations": {
