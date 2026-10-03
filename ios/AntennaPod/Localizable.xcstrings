@@ -18,6 +18,40 @@
         }
       }
     },
+    "%@ — Discuss": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ — Discuss"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ — Diskutieren"
+          }
+        }
+      }
+    },
+    "%@ — Feed URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ — Feed URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ — Feed-URL"
+          }
+        }
+      }
+    },
     "%lld episodes": {
       "extractionState": "manual",
       "localizations": {
