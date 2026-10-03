@@ -1099,8 +1099,8 @@ struct FullPlayerView: View {
                 }
             )
             .accessibilityLabel(String(localized: "Playback position"))
-            .accessibilityValue(format(displayPosition))
-            .accessibilityHint(String(localized: "Adjusts playback position"))
+            .accessibilityValue(playbackPositionAccessibilityValue)
+            .accessibilityHint(playbackPositionAccessibilityHint)
             HStack {
                 Button {
                     showJumpToPosition = true
@@ -1140,6 +1140,43 @@ struct FullPlayerView: View {
                 .accessibilityValue(rightTimeLabel)
             }
         }
+    }
+
+    /// Known finite duration from the player. Same gate as Jump to position.
+    /// Does not invent an end time when false.
+    private var hasKnownPlaybackDuration: Bool {
+        playback.durationSeconds.isFinite && playback.durationSeconds > 0
+    }
+
+    /// VoiceOver for the scrubber. Visible clock stays position-only.
+    /// Known duration names position of that duration. Unknown duration says so
+    /// and does not invent an end. Not the right-hand remaining/duration label.
+    private var playbackPositionAccessibilityValue: String {
+        let position = format(displayPosition)
+        if hasKnownPlaybackDuration {
+            return String(
+                format: String(localized: "Playback position %@ of %@"),
+                position,
+                format(playback.durationSeconds)
+            )
+        }
+        return String(
+            format: String(localized: "Playback position %@. Duration unknown."),
+            position
+        )
+    }
+
+    private var playbackPositionAccessibilityHint: String {
+        if isScrubbing {
+            if hasKnownPlaybackDuration {
+                return String(localized: "Release seeks to this time within the known duration. No duration is invented.")
+            }
+            return String(localized: "Release seeks to this clock time. Duration is unknown, so this is not a fraction of the episode and no end time is invented.")
+        }
+        if hasKnownPlaybackDuration {
+            return String(localized: "Drag to seek within the known episode duration. This is the live playback position, not a bookmark. It does not describe the right-hand time label.")
+        }
+        return String(localized: "Duration is unknown, so this is not a fraction of the episode and no end time is invented. Dragging seeks to a clock time. Jump to position stays unavailable until duration is known.")
     }
 
     /// Right scrubber label: total duration, or −remaining when Show remaining time is on.

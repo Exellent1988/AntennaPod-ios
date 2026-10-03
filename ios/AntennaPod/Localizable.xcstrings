@@ -14069,6 +14069,108 @@
         }
       }
     },
+    "Playback position %@ of %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback position %@ of %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedergabeposition %@ von %@"
+          }
+        }
+      }
+    },
+    "Playback position %@. Duration unknown.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback position %@. Duration unknown."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedergabeposition %@. Dauer unbekannt."
+          }
+        }
+      }
+    },
+    "Release seeks to this time within the known duration. No duration is invented.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Release seeks to this time within the known duration. No duration is invented."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loslassen springt zu dieser Zeit innerhalb der bekannten Dauer. Es wird keine Dauer erfunden."
+          }
+        }
+      }
+    },
+    "Release seeks to this clock time. Duration is unknown, so this is not a fraction of the episode and no end time is invented.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Release seeks to this clock time. Duration is unknown, so this is not a fraction of the episode and no end time is invented."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loslassen springt zu dieser Uhrzeit. Die Dauer ist unbekannt, daher ist das kein Anteil der Episode und es wird kein Ende erfunden."
+          }
+        }
+      }
+    },
+    "Drag to seek within the known episode duration. This is the live playback position, not a bookmark. It does not describe the right-hand time label.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drag to seek within the known episode duration. This is the live playback position, not a bookmark. It does not describe the right-hand time label."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ziehen sucht innerhalb der bekannten Episodendauer. Das ist die Live-Wiedergabeposition, kein Lesezeichen. Die Zeitbeschriftung rechts wird hier nicht beschrieben."
+          }
+        }
+      }
+    },
+    "Duration is unknown, so this is not a fraction of the episode and no end time is invented. Dragging seeks to a clock time. Jump to position stays unavailable until duration is known.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duration is unknown, so this is not a fraction of the episode and no end time is invented. Dragging seeks to a clock time. Jump to position stays unavailable until duration is known."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Dauer ist unbekannt, daher ist das kein Anteil der Episode und es wird kein Ende erfunden. Ziehen sucht eine Uhrzeit. Zu Position springen bleibt nicht verfügbar, bis die Dauer bekannt ist."
+          }
+        }
+      }
+    },
     "Local notifications only; no push server.": {
       "extractionState": "manual",
       "localizations": {
