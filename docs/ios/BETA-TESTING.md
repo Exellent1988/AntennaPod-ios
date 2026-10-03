@@ -421,7 +421,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Homescreen widget Continue listening + Restzeit (kann stale sein; `~` wenn Dauer unbekannt; leer: VoiceOver kein Snapshot — nicht live, nicht Queue; Tippen sendet play nur wenn Episode geladen) | ☐ Homescreen widget Continue listening + remaining time (may be stale; `~` when duration unknown; empty VoiceOver: no snapshot — not live, not queue; tap sends play only if an episode is loaded) |
 | ☐ Apple Watch: Continue listening + Restzeit + Play on iPhone (kein eigenes Playback; leer: VoiceOver kein Snapshot — nicht live, nicht Queue; Open on iPhone sendet play nur wenn Episode geladen) | ☐ Apple Watch: Continue listening + remaining time + Play on iPhone (no independent playback; empty VoiceOver: no snapshot — not live, not queue; Open on iPhone sends play only if an episode is loaded) |
 | ☐ About / Version / Links (VoiceOver: Identität als Überschrift, ehrlicher Beta-Hinweis, Links öffnen in Safari) | ☐ About / version / links (VoiceOver: identity heading, honest beta disclaimer, links announce Safari) |
-| ☐ Rating prompt (optional; iOS kann unterdrücken) | ☐ Rating prompt (optional; iOS may suppress) |
+| ☐ Rating prompt (optional; Schalter Um App-Store-Bewertung bitten; iOS kann unterdrücken) | ☐ Rating prompt (optional; toggle Ask for App Store rating; iOS may suppress) |
 
 ---
 

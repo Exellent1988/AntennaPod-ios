@@ -341,6 +341,24 @@
         }
       }
     },
+    "Ask for App Store rating": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ask for App Store rating"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um App-Store-Bewertung bitten"
+          }
+        }
+      },
+      "comment": "Settings → App Store toggle. Same wording as the German footer um eine Bewertung bitten."
+    },
     "App version": {
       "extractionState": "manual",
       "localizations": {
