@@ -1545,7 +1545,7 @@ struct SettingsView: View {
     }
 
     /// Spoken preset for Settings Skip intro / Skip outro. The visible picker
-    /// still uses `AppSettings.skipIntroOutroLabel`. Off is catalog-backed; second counts are not.
+    /// still uses `AppSettings.skipIntroOutroLabel`. Off and the preset second counts are catalog-backed.
     private func skipIntroOutroVoiceOverLabel(_ seconds: Int) -> String {
         switch seconds {
         case 0:

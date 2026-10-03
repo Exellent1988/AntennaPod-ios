@@ -2670,9 +2670,24 @@ final class AppSettings: ObservableObject {
         return skipIntroOutroPresets.contains(stored) ? stored : defaultSkipIntroOutroSeconds
     }
 
-    /// Label for Settings pickers (`Off` when 0).
+    /// Label for Settings pickers (`Off` when 0). Presets 5/10/15/30/60 use existing catalog keys.
     static func skipIntroOutroLabel(_ seconds: Int) -> String {
-        seconds == 0 ? String(localized: "Off") : "\(seconds) seconds"
+        switch seconds {
+        case 0:
+            return String(localized: "Off")
+        case 5:
+            return String(localized: "5 seconds")
+        case 10:
+            return String(localized: "10 seconds")
+        case 15:
+            return String(localized: "15 seconds")
+        case 30:
+            return String(localized: "30 seconds")
+        case 60:
+            return String(localized: "60 seconds")
+        default:
+            return "\(seconds) seconds"
+        }
     }
 
     /// Label for smart-mark Settings picker (`Off` when 0); uses String Catalog.
