@@ -6650,6 +6650,23 @@
         }
       }
     },
+    "Subscribe error %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscribe error %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnieren-Fehler %@"
+          }
+        }
+      }
+    },
     "Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Customize sections under Settings → Home layout.": {
       "extractionState": "manual",
       "localizations": {
