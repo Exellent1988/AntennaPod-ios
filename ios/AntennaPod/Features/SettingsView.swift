@@ -2439,7 +2439,11 @@ struct SettingsView: View {
     private var automaticCountryLabel: String {
         let resolved = ItunesTopListService.defaultCountryCode().uppercased()
         let name = Locale.current.localizedString(forRegionCode: resolved) ?? resolved
-        return "Automatic (\(name) · \(resolved))"
+        return String(
+            format: String(localized: "Automatic (%@ · %@)"),
+            name,
+            resolved
+        )
     }
 
     private func countryPickerLabel(_ code: String) -> String {

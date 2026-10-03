@@ -566,6 +566,24 @@
       },
       "comment": "Settings → Playback source option. No existing German term on this screen; Automatisch."
     },
+    "Automatic (%@ · %@)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatic (%@ · %@)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatisch (%@ · %@)"
+          }
+        }
+      },
+      "comment": "Settings → Discovery Charts country option for the device region. Same word as Automatic / Automatisch."
+    },
     "Backup": {
       "extractionState": "manual",
       "localizations": {
