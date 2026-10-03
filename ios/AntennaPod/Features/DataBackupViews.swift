@@ -183,9 +183,9 @@ struct DataBackupSection: View {
             showShare = true
             if includeMedia {
                 let est = mediaEstimate
-                statusMessage = "Backup ready (JSON + \(est.fileCount) media file(s) under downloads/; no Keychain secrets)."
+                statusMessage = String(localized: "Backup ready (JSON + \(est.fileCount) media file(s) under downloads/; no Keychain secrets).")
             } else {
-                statusMessage = "Backup ready to share (JSON ZIP, no media / no Keychain secrets)."
+                statusMessage = String(localized: "Backup ready to share (JSON ZIP, no media / no Keychain secrets).")
             }
         } catch {
             errorMessage = error.localizedDescription
@@ -230,7 +230,7 @@ struct DataBackupSection: View {
                 gpodder: gpodder
             )
             try? FileManager.default.removeItem(at: temp)
-            statusMessage = "Import finished. Media restored when present under downloads/ in the ZIP; otherwise re-download offline files. Re-enter gpodder / Podcast Index / per-feed HTTP Basic secrets if Keychain empty."
+            statusMessage = String(localized: "Import finished. Media restored when present under downloads/ in the ZIP; otherwise re-download offline files. Re-enter gpodder / Podcast Index / per-feed HTTP Basic secrets if Keychain empty.")
         } catch {
             errorMessage = error.localizedDescription
         }

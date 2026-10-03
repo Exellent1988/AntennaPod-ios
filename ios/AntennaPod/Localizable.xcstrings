@@ -805,6 +805,40 @@
         }
       }
     },
+    "Backup ready (JSON + %lld media file(s) under downloads/; no Keychain secrets).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup ready (JSON + %lld media file(s) under downloads/; no Keychain secrets)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sicherung bereit (JSON + %lld Mediendatei(en) unter downloads/; keine Schlüsselbund-Geheimnisse)."
+          }
+        }
+      }
+    },
+    "Backup ready to share (JSON ZIP, no media / no Keychain secrets).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup ready to share (JSON ZIP, no media / no Keychain secrets)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sicherung bereit zum Teilen (JSON-ZIP, keine Medien / keine Schlüsselbund-Geheimnisse)."
+          }
+        }
+      }
+    },
     "Invalid or corrupt backup ZIP": {
       "extractionState": "manual",
       "localizations": {
