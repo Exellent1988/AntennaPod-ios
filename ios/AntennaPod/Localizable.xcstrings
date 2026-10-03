@@ -3166,6 +3166,91 @@
         }
       }
     },
+    "Invalid country code for charts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid country code for charts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungültiger Ländercode für Charts"
+          }
+        }
+      }
+    },
+    "iTunes does not have chart data for the selected country": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iTunes does not have chart data for the selected country"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iTunes hat keine Chart-Daten für das ausgewählte Land"
+          }
+        }
+      }
+    },
+    "Could not read iTunes chart results": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not read iTunes chart results"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iTunes-Chart-Ergebnisse konnten nicht gelesen werden"
+          }
+        }
+      }
+    },
+    "Empty response from iTunes charts": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empty response from iTunes charts"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leere Antwort von den iTunes-Charts"
+          }
+        }
+      }
+    },
+    "Could not resolve podcast feed URLs from iTunes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not resolve podcast feed URLs from iTunes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Feed-URLs von iTunes konnten nicht aufgelöst werden"
+          }
+        }
+      }
+    },
     "iTunes returned no podcasts for this country, or feed URLs could not be resolved. Try another country in Settings.": {
       "extractionState": "manual",
       "localizations": {

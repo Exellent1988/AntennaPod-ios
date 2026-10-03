@@ -23,17 +23,17 @@ struct ItunesTopListService {
         var errorDescription: String? {
             switch self {
             case .invalidCountry:
-                return "Invalid country code for charts"
+                return String(localized: "Invalid country code for charts")
             case .httpStatus(let code):
                 return String(localized: "iTunes charts failed (HTTP \(code))")
             case .countryUnavailable:
-                return "iTunes does not have chart data for the selected country"
+                return String(localized: "iTunes does not have chart data for the selected country")
             case .decoding:
-                return "Could not read iTunes chart results"
+                return String(localized: "Could not read iTunes chart results")
             case .emptyResponse:
-                return "Empty response from iTunes charts"
+                return String(localized: "Empty response from iTunes charts")
             case .lookupFailed:
-                return "Could not resolve podcast feed URLs from iTunes"
+                return String(localized: "Could not resolve podcast feed URLs from iTunes")
             }
         }
     }
