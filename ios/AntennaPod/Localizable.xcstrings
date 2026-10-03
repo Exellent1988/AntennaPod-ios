@@ -29083,6 +29083,91 @@
         }
       }
     },
+    "Creates an iOS JSON backup ZIP and opens the system share sheet. Optional downloaded media is controlled above.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creates an iOS JSON backup ZIP and opens the system share sheet. Optional downloaded media is controlled above."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erstellt eine iOS-JSON-Sicherungs-ZIP und öffnet das System-Teilen-Menü. Optionale heruntergeladene Medien steuerst du oben."
+          }
+        }
+      }
+    },
+    "Opens a file picker. The selected backup replaces local catalog data only after confirmation; Keychain secrets stay unchanged.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a file picker. The selected backup replaces local catalog data only after confirmation; Keychain secrets stay unchanged."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet eine Dateiauswahl. Die gewählte Sicherung ersetzt lokale Katalogdaten erst nach Bestätigung; Schlüsselbund-Geheimnisse bleiben unverändert."
+          }
+        }
+      }
+    },
+    "Backup operation in progress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup operation in progress"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sicherung läuft"
+          }
+        }
+      }
+    },
+    "Replaces the local catalog and preferences with the selected backup. This cannot be undone except by importing another backup.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replaces the local catalog and preferences with the selected backup. This cannot be undone except by importing another backup."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ersetzt den lokalen Katalog und die Einstellungen durch die gewählte Sicherung. Das lässt sich nur durch Import einer anderen Sicherung rückgängig machen."
+          }
+        }
+      }
+    },
+    "Includes the estimated offline episode files in the backup ZIP. Export and sharing may take longer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Includes the estimated offline episode files in the backup ZIP. Export and sharing may take longer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nimmt die geschätzten Offline-Episodendateien in die Sicherungs-ZIP auf. Export und Teilen können länger dauern."
+          }
+        }
+      }
+    },
     "Set sleep timer": {
       "extractionState": "manual",
       "localizations": {
