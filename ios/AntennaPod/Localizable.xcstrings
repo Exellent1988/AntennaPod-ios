@@ -28947,6 +28947,142 @@
         }
       }
     },
+    "There is no episode description to read.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There is no episode description to read."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es gibt keine Episodenbeschreibung zum Lesen."
+          }
+        }
+      }
+    },
+    "Share shownotes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share shownotes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shownotes teilen"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the full shownotes as plain text, with HTML stripped; ignores search filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the full shownotes as plain text, with HTML stripped; ignores search filters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit den vollständigen Shownotes als Klartext, HTML-Tags entfernt; ignoriert Suchfilter"
+          }
+        }
+      }
+    },
+    "Change or clear the shownotes search to see other text.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the shownotes search to see other text."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Shownotes-Suche, um anderen Text zu sehen."
+          }
+        }
+      }
+    },
+    "There is no podcast description to read.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There is no podcast description to read."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es gibt keine Podcast-Beschreibung zum Lesen."
+          }
+        }
+      }
+    },
+    "Share podcast description": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share podcast description"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Beschreibung teilen"
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the full podcast description as plain text, with HTML stripped; ignores search filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the full podcast description as plain text, with HTML stripped; ignores search filters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Menü mit der vollständigen Podcast-Beschreibung als Klartext, HTML-Tags entfernt; ignoriert Suchfilter"
+          }
+        }
+      }
+    },
+    "Change or clear the podcast description search to see other text.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the podcast description search to see other text."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Suche in der Podcast-Beschreibung, um anderen Text zu sehen."
+          }
+        }
+      }
+    },
     "Set sleep timer": {
       "extractionState": "manual",
       "localizations": {
