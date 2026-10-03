@@ -2805,6 +2805,24 @@
         }
       }
     },
+    "Inbox only": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inbox only"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Posteingang"
+          }
+        }
+      },
+      "comment": "Settings → New episodes option. Same Posteingang term as Inbox. No existing short German label on that screen."
+    },
     "Include downloaded episode files": {
       "extractionState": "manual",
       "localizations": {
