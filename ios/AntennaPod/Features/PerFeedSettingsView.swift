@@ -751,18 +751,32 @@ struct PerFeedSettingsView: View {
         let global = AppSettings.skipIntroOutroLabel(appSettings.skipIntroSeconds)
         if let override = current.skipIntroSeconds {
             let label = AppSettings.skipIntroOutroLabel(override)
-            return "This podcast uses \(label) instead of Settings → Skip intro (currently \(global))."
+            return String(
+                format: String(localized: "This podcast uses %@ instead of Settings → Skip intro (currently %@)."),
+                label,
+                global
+            )
         }
-        return "Follows Settings → Skip intro (currently \(global)). Applied on a fresh start (position ≈ 0)."
+        return String(
+            format: String(localized: "Follows Settings → Skip intro (currently %@). Applied on a fresh start (position ≈ 0)."),
+            global
+        )
     }
 
     private var skipOutroHelp: String {
         let global = AppSettings.skipIntroOutroLabel(appSettings.skipOutroSeconds)
         if let override = current.skipOutroSeconds {
             let label = AppSettings.skipIntroOutroLabel(override)
-            return "This podcast uses \(label) instead of Settings → Skip outro (currently \(global))."
+            return String(
+                format: String(localized: "This podcast uses %@ instead of Settings → Skip outro (currently %@)."),
+                label,
+                global
+            )
         }
-        return "Follows Settings → Skip outro (currently \(global)). Near end, remaining ≤ value finishes the episode."
+        return String(
+            format: String(localized: "Follows Settings → Skip outro (currently %@). Near end, remaining ≤ value finishes the episode."),
+            global
+        )
     }
 
     private var playbackSpeedHelp: String {

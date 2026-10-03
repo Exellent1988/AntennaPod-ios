@@ -46889,6 +46889,74 @@
           }
         }
       }
+    },
+    "Follows Settings → Skip intro (currently %@). Applied on a fresh start (position ≈ 0).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follows Settings → Skip intro (currently %@). Applied on a fresh start (position ≈ 0)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folgt Einstellungen → Intro überspringen (aktuell %@). Wird bei einem frischen Start angewendet (Position ≈ 0)."
+          }
+        }
+      }
+    },
+    "Follows Settings → Skip outro (currently %@). Near end, remaining ≤ value finishes the episode.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Follows Settings → Skip outro (currently %@). Near end, remaining ≤ value finishes the episode."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folgt Einstellungen → Outro überspringen (aktuell %@). Nahe dem Ende beendet die Episode, wenn die Restzeit ≤ dem Wert ist."
+          }
+        }
+      }
+    },
+    "This podcast uses %@ instead of Settings → Skip intro (currently %@).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast uses %@ instead of Settings → Skip intro (currently %@)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Podcast nutzt %@ statt Einstellungen → Intro überspringen (aktuell %@)."
+          }
+        }
+      }
+    },
+    "This podcast uses %@ instead of Settings → Skip outro (currently %@).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This podcast uses %@ instead of Settings → Skip outro (currently %@)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieser Podcast nutzt %@ statt Einstellungen → Outro überspringen (aktuell %@)."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
