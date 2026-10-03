@@ -788,6 +788,57 @@
         }
       }
     },
+    "Backup archive is empty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup archive is empty"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Sicherungsarchiv ist leer"
+          }
+        }
+      }
+    },
+    "Invalid or corrupt backup ZIP": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid or corrupt backup ZIP"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungültige oder beschädigte Sicherungs-ZIP"
+          }
+        }
+      }
+    },
+    "Unsupported ZIP compression (%lld). Use an AntennaPod iOS backup (STORE) or re-export from Settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsupported ZIP compression (%lld). Use an AntennaPod iOS backup (STORE) or re-export from Settings."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht unterstützte ZIP-Kompression (%lld). Verwende eine AntennaPod-iOS-Sicherung (STORE) oder exportiere in den Einstellungen erneut."
+          }
+        }
+      }
+    },
     "Cancel": {
       "extractionState": "manual",
       "localizations": {

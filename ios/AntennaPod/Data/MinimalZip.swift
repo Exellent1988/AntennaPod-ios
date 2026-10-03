@@ -11,11 +11,11 @@ enum MinimalZip {
         var errorDescription: String? {
             switch self {
             case .emptyArchive:
-                return "Backup archive is empty"
+                return String(localized: "Backup archive is empty")
             case .invalidArchive:
-                return "Invalid or corrupt backup ZIP"
+                return String(localized: "Invalid or corrupt backup ZIP")
             case .unsupportedCompression(let method):
-                return "Unsupported ZIP compression (\(method)). Use an AntennaPod iOS backup (STORE) or re-export from Settings."
+                return String(localized: "Unsupported ZIP compression (\(Int(method))). Use an AntennaPod iOS backup (STORE) or re-export from Settings.")
             }
         }
     }
