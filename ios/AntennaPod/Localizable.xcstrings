@@ -7126,6 +7126,23 @@
         }
       }
     },
+    "Streaming is Wi‑Fi only. Connect to Wi‑Fi or Ethernet, play a downloaded episode, or turn off Stream Wi‑Fi only in Settings → Network / Downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Streaming is Wi‑Fi only. Connect to Wi‑Fi or Ethernet, play a downloaded episode, or turn off Stream Wi‑Fi only in Settings → Network / Downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Streaming ist nur über Wi‑Fi. Verbinde dich mit Wi‑Fi oder Ethernet, spiele eine heruntergeladene Episode ab oder schalte „Stream nur Wi‑Fi“ unter Einstellungen → Netzwerk / Downloads aus."
+          }
+        }
+      }
+    },
     "Subscribe": {
       "extractionState": "manual",
       "localizations": {

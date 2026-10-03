@@ -77,8 +77,9 @@ final class PlaybackService: ObservableObject {
     /// Honest error for stream Wi‑Fi-only refusal (UI alert); cleared on successful play.
     @Published var lastError: String?
 
-    static let streamCellularBlockedMessage =
-        "Streaming is Wi‑Fi only. Connect to Wi‑Fi or Ethernet, play a downloaded episode, or turn off Stream Wi‑Fi only in Settings → Network / Downloads."
+    static var streamCellularBlockedMessage: String {
+        String(localized: "Streaming is Wi‑Fi only. Connect to Wi‑Fi or Ethernet, play a downloaded episode, or turn off Stream Wi‑Fi only in Settings → Network / Downloads.")
+    }
 
     /// Bound from the app for progress / played / continuous advance (Queue or Same podcast).
     weak var store: PodcastStore?
