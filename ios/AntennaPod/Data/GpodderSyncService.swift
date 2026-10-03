@@ -179,13 +179,16 @@ final class GpodderSyncService: ObservableObject {
         let user = username.trimmingCharacters(in: .whitespacesAndNewlines)
         let pass = passwordDraft
         guard !user.isEmpty, !pass.isEmpty else {
-            recordFailure(error: "Enter username and password", status: "Login failed")
+            recordFailure(
+                error: String(localized: "Enter username and password"),
+                status: String(localized: "Login failed")
+            )
             return
         }
         if provider == .nextcloud, host.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             recordFailure(
-                error: "Enter Nextcloud base URL (e.g. https://cloud.example.com/index.php/apps/gpoddersync/)",
-                status: "Login failed"
+                error: String(localized: "Enter Nextcloud base URL (e.g. https://cloud.example.com/index.php/apps/gpoddersync/)"),
+                status: String(localized: "Login failed")
             )
             return
         }
@@ -202,7 +205,7 @@ final class GpodderSyncService: ObservableObject {
             lastSyncStatus = "Logged in — subscriptions only (not full sync)"
         } catch {
             isLoggedIn = false
-            recordFailure(error: error.localizedDescription, status: "Login failed")
+            recordFailure(error: error.localizedDescription, status: String(localized: "Login failed"))
         }
     }
 
@@ -226,12 +229,18 @@ final class GpodderSyncService: ObservableObject {
     func syncNow(store: PodcastStore) async {
         guard !isBusy else { return }
         guard isLoggedIn else {
-            recordFailure(error: GpodderError.notLoggedIn.localizedDescription, status: "Not logged in")
+            recordFailure(
+                error: GpodderError.notLoggedIn.localizedDescription,
+                status: String(localized: "Not logged in")
+            )
             return
         }
         guard let password = GpodderKeychain.loadPassword() else {
             isLoggedIn = false
-            recordFailure(error: "Password missing from Keychain — log in again", status: "Not logged in")
+            recordFailure(
+                error: String(localized: "Password missing from Keychain — log in again"),
+                status: String(localized: "Not logged in")
+            )
             return
         }
 

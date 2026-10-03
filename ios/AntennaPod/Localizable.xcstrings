@@ -28463,6 +28463,91 @@
         }
       }
     },
+    "Enter Nextcloud base URL (e.g. https://cloud.example.com/index.php/apps/gpoddersync/)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter Nextcloud base URL (e.g. https://cloud.example.com/index.php/apps/gpoddersync/)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib die Nextcloud-Basis-URL ein (z. B. https://cloud.example.com/index.php/apps/gpoddersync/)."
+          }
+        }
+      }
+    },
+    "Enter username and password": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter username and password"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib einen Benutzernamen und ein Passwort ein."
+          }
+        }
+      }
+    },
+    "Login failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Login failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anmeldung fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "Not logged in": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not logged in"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht angemeldet"
+          }
+        }
+      }
+    },
+    "Password missing from Keychain — log in again": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password missing from Keychain — log in again"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Passwort fehlt im Schlüsselbund — melde dich erneut an."
+          }
+        }
+      }
+    },
     "Sync coverage help": {
       "extractionState": "manual",
       "localizations": {
