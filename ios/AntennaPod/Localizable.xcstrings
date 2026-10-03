@@ -2519,6 +2519,23 @@
         }
       }
     },
+    "Feed URL %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed URL %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-URL %@"
+          }
+        }
+      }
+    },
     "Feeds / Keep updated": {
       "extractionState": "manual",
       "localizations": {
@@ -39631,6 +39648,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Veröffentlichungsdatum %@"
+          }
+        }
+      }
+    },
+    "Published %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Published %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Veröffentlicht %@"
           }
         }
       }
