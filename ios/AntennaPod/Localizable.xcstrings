@@ -8912,6 +8912,23 @@
         }
       }
     },
+    "Adjusts the custom skip interval in one-second steps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjusts the custom skip interval in one-second steps"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passt das benutzerdefinierte Sprungintervall in Ein-Sekunden-Schritten an"
+          }
+        }
+      }
+    },
     "Adjusts the jump minutes. Seconds stay separate; the position is clamped to the episode duration.": {
       "extractionState": "manual",
       "localizations": {
@@ -8942,6 +8959,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Passt die Sprung-Sekunden von 0 bis 59 an. Zusammen mit Minuten wird die Position auf die Episodendauer begrenzt."
+          }
+        }
+      }
+    },
+    "Invalid — enter 5 to 60 seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid — enter 5 to 60 seconds"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ungültig — gib 5 bis 60 Sekunden ein"
           }
         }
       }
@@ -24478,6 +24512,23 @@
         }
       }
     },
+    "Saves this custom interval for the selected rewind or fast-forward action": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saves this custom interval for the selected rewind or fast-forward action"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert dieses benutzerdefinierte Intervall für die gewählte Zurückspul- oder Vorspulaktion"
+          }
+        }
+      }
+    },
     "Saves this threshold for smart mark as played.": {
       "extractionState": "manual",
       "localizations": {
@@ -25870,6 +25921,23 @@
         }
       },
       "comment": "DiscoveryResultRow hint before subscribe"
+    },
+    "Enter a whole number from 5 to 60 seconds": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a whole number from 5 to 60 seconds"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine ganze Zahl von 5 bis 60 Sekunden ein"
+          }
+        }
+      }
     },
     "Enter both API key and secret": {
       "extractionState": "manual",
@@ -28229,6 +28297,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zusammenfassung teilen oder Statistik-Basislinie zurücksetzen"
+          }
+        }
+      }
+    },
+    "Set skip interval": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set skip interval"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprungintervall festlegen"
           }
         }
       }
