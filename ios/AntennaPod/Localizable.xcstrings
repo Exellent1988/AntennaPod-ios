@@ -28896,6 +28896,57 @@
         }
       }
     },
+    "Copy Echo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy Echo"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Echo kopieren"
+          }
+        }
+      }
+    },
+    "Shares the same plain-text Echo summary using the selected Statistics time range and Reset baseline.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same plain-text Echo summary using the selected Statistics time range and Reset baseline."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe Klartext-Echo-Zusammenfassung mit dem gewählten Statistik-Zeitraum und der Zurücksetzen-Basislinie."
+          }
+        }
+      }
+    },
+    "Echo summary copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Echo summary copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Echo-Zusammenfassung in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
     "Set sleep timer": {
       "extractionState": "manual",
       "localizations": {
