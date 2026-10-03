@@ -4497,6 +4497,24 @@
         }
       }
     },
+    "Parental controls": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parental controls"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elternschutz"
+          }
+        }
+      },
+      "comment": "Settings → Privacy row, section header, and navigation title. Same term as Elternschutz on this screen."
+    },
     "Parental controls enabled. PIN stored in Keychain.": {
       "extractionState": "manual",
       "localizations": {
