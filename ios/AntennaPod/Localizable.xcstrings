@@ -2706,6 +2706,57 @@
         }
       }
     },
+    "fyyd search failed (HTTP %lld)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fyyd search failed (HTTP %lld)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fyyd-Suche fehlgeschlagen (HTTP %lld)"
+          }
+        }
+      }
+    },
+    "Could not read fyyd search results": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not read fyyd search results"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fyyd-Suchergebnisse konnten nicht gelesen werden"
+          }
+        }
+      }
+    },
+    "Empty response from fyyd": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empty response from fyyd"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leere Antwort von fyyd"
+          }
+        }
+      }
+    },
     "Go to podcast": {
       "extractionState": "manual",
       "localizations": {

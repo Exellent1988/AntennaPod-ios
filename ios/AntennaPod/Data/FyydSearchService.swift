@@ -14,13 +14,13 @@ struct FyydSearchService {
         var errorDescription: String? {
             switch self {
             case .invalidQuery:
-                return "Enter a search term"
+                return String(localized: "Enter a search term")
             case .httpStatus(let code):
-                return "fyyd search failed (HTTP \(code))"
+                return String(localized: "fyyd search failed (HTTP \(code))")
             case .decoding:
-                return "Could not read fyyd search results"
+                return String(localized: "Could not read fyyd search results")
             case .emptyResponse:
-                return "Empty response from fyyd"
+                return String(localized: "Empty response from fyyd")
             }
         }
     }
