@@ -2672,7 +2672,7 @@ final class AppSettings: ObservableObject {
 
     /// Label for Settings pickers (`Off` when 0).
     static func skipIntroOutroLabel(_ seconds: Int) -> String {
-        seconds == 0 ? "Off" : "\(seconds) seconds"
+        seconds == 0 ? String(localized: "Off") : "\(seconds) seconds"
     }
 
     /// Label for smart-mark Settings picker (`Off` when 0); uses String Catalog.
