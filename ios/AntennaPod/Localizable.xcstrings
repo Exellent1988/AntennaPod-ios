@@ -69,6 +69,91 @@
         }
       }
     },
+    "%lld subscription · exported %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld subscription · exported %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Abonnement · exportiert %@"
+          }
+        }
+      }
+    },
+    "%lld subscriptions · exported %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld subscriptions · exported %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Abonnements · exportiert %@"
+          }
+        }
+      }
+    },
+    "AntennaPod Subscriptions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Subscriptions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod Abonnements"
+          }
+        }
+      }
+    },
+    "Exported from AntennaPod iOS · local folder podcasts omitted · metadata only when provided by each feed · ": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exported from AntennaPod iOS · local folder podcasts omitted · metadata only when provided by each feed · "
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exportiert aus AntennaPod iOS · lokale Ordner-Podcasts ausgelassen · Metadaten nur wenn vom Feed geliefert · "
+          }
+        }
+      }
+    },
+    "Subscription list exported from AntennaPod iOS. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscription list exported from AntennaPod iOS. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonnementliste aus AntennaPod iOS exportiert. Lokale Ordner-Podcasts sind ausgelassen. Autor, Sprache, Kategorien und Unterstützung erscheinen nur, wenn der Feed sie liefert."
+          }
+        }
+      }
+    },
     "%lld new episodes": {
       "extractionState": "manual",
       "localizations": {

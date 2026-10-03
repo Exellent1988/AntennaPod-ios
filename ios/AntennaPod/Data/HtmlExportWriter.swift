@@ -5,7 +5,7 @@ import Foundation
 /// Metadata (author, language, categories, funding) is included only when the feed provides it — never invented.
 /// Local folder podcasts are omitted (same as OPML).
 enum HtmlExportWriter {
-    private static let documentTitle = "AntennaPod Subscriptions"
+    private static var documentTitle: String { String(localized: "AntennaPod Subscriptions") }
     /// Fallback document `lang` when feeds disagree or lack a shared language code.
     private static let fallbackDocumentLang = "en"
 
@@ -35,7 +35,8 @@ enum HtmlExportWriter {
         body += "  <meta charset=\"UTF-8\" />\n"
         body += "  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n"
         body += "  <meta name=\"generator\" content=\"AntennaPod iOS\" />\n"
-        body += "  <meta name=\"description\" content=\"Subscription list exported from AntennaPod iOS. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed.\" />\n"
+        let metaDescription = String(localized: "Subscription list exported from AntennaPod iOS. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed.")
+        body += "  <meta name=\"description\" content=\"\(escapeAttr(metaDescription))\" />\n"
         body += "  <title>\(escape(documentTitle))</title>\n"
         body += "  <style>\n"
         body += css
@@ -44,8 +45,12 @@ enum HtmlExportWriter {
         body += "<body>\n"
         body += "  <header>\n"
         body += "    <h1>\(escape(documentTitle))</h1>\n"
-        body += "    <p class=\"meta\">\(exportable.count) subscription\(exportable.count == 1 ? "" : "s")"
-        body += " · exported \(escape(displayDate(Date())))</p>\n"
+        let exportedAt = displayDate(Date())
+        let count = exportable.count
+        let summary = count == 1
+            ? String(localized: "\(count) subscription · exported \(exportedAt)")
+            : String(localized: "\(count) subscriptions · exported \(exportedAt)")
+        body += "    <p class=\"meta\">\(escape(summary))</p>\n"
         body += "  </header>\n"
         body += "  <ul class=\"feeds\">\n"
         for feed in exportable {
@@ -53,8 +58,8 @@ enum HtmlExportWriter {
         }
         body += "  </ul>\n"
         body += "  <footer>\n"
-        body += "    <p>Exported from AntennaPod iOS · local folder podcasts omitted · "
-        body += "metadata only when provided by each feed · "
+        let footer = String(localized: "Exported from AntennaPod iOS · local folder podcasts omitted · metadata only when provided by each feed · ")
+        body += "    <p>\(escape(footer))"
         body += "<a href=\"https://antennapod.org\">antennapod.org</a></p>\n"
         body += "  </footer>\n"
         body += "</body>\n"
@@ -120,10 +125,13 @@ enum HtmlExportWriter {
         }
         if includeEpisodeCount {
             let n = feed.episodes.count
-            metaParts.append("\(n) episode\(n == 1 ? "" : "s")")
+            let episodeCount = n == 1
+                ? "\(n) \(String(localized: "Episode"))"
+                : String(localized: "\(n) episodes")
+            metaParts.append(escape(episodeCount))
         }
         if let funding = feed.fundingURL {
-            let label = feed.displayFundingLabel ?? "Support"
+            let label = feed.displayFundingLabel ?? String(localized: "Support")
             metaParts.append(
                 "<a class=\"funding\" href=\"\(escapeAttr(funding.absoluteString))\">\(escape(label))</a>"
             )
@@ -179,7 +187,7 @@ enum HtmlExportWriter {
 
     private static func displayDate(_ date: Date) -> String {
         let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
+        f.locale = .autoupdatingCurrent
         f.dateStyle = .medium
         f.timeStyle = .short
         return f.string(from: date)
