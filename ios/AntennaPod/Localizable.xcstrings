@@ -1060,6 +1060,23 @@
         }
       }
     },
+    "Copy download errors": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy download errors"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-Fehler kopieren"
+          }
+        }
+      }
+    },
     "Current PIN": {
       "extractionState": "manual",
       "localizations": {
@@ -1311,6 +1328,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Download-Fehler"
+          }
+        }
+      }
+    },
+    "Download errors actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download errors actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-Fehler-Aktionen"
           }
         }
       }
@@ -6051,6 +6085,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Teilen"
+          }
+        }
+      }
+    },
+    "Share download errors": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share download errors"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-Fehler teilen"
           }
         }
       }
