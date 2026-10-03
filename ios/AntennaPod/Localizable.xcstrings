@@ -4839,6 +4839,24 @@
         }
       }
     },
+    "Playback source": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Playback source"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedergabequelle"
+          }
+        }
+      },
+      "comment": "Settings → Playback picker title. No existing German term on this screen; plain Wiedergabequelle."
+    },
     "Playback speed": {
       "extractionState": "manual",
       "localizations": {
