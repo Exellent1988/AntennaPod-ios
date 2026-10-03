@@ -42004,6 +42004,24 @@
         }
       }
     },
+    "Active · %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Active · %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktiv · %@"
+          }
+        }
+      },
+      "comment": "Mini and full player sleep-timer menu status. Same word as Active / Aktiv."
+    },
     "Unavailable until Picture in Picture is ready": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for a disabled Picture in Picture toolbar button.",

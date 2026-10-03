@@ -598,7 +598,7 @@ struct MiniPlayerView: View {
         Menu {
             if playback.isSleepTimerActive {
                 if let label = playback.sleepTimerStatusLabel {
-                    Text("Active · \(label)")
+                    Text(String(format: String(localized: "Active · %@"), label))
                 }
                 Button("Extend +5 min") {
                     playback.extendSleepTimer(byMinutes: 5)
