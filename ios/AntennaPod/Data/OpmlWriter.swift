@@ -1,7 +1,7 @@
 import Foundation
 
 enum OpmlWriter {
-    private static let title = "AntennaPod Subscriptions"
+    private static var title: String { String(localized: "AntennaPod Subscriptions") }
 
     /// Build OPML 2.0 XML matching Android `OpmlWriter` field names.
     /// `titleForFeed` supplies the outline text/title (display nickname when set).
