@@ -24359,6 +24359,23 @@
         }
       }
     },
+    "Appends %lld Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full current-Inbox catalog (same as Mark all as played / Archive all), not library search or the podcast filter. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full current-Inbox catalog (same as Mark all as played / Archive all), not library search or the podcast filter. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld Posteingangs-Episoden am Ende der Warteschlange ein (neueste zuerst). Bereits eingereihte Episoden werden übersprungen. Nutzt den vollen aktuellen Posteingangs-Katalog (wie Alle als gehört markieren / Alle archivieren), nicht die Bibliothekssuche und nicht den Podcast-Filter. Die Warteschlangen-Sperre blockiert das Einreihen nicht."
+          }
+        }
+      }
+    },
     "Marks %lld Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog (not only the current podcast filter).": {
       "extractionState": "manual",
       "comment": "Inbox Mark all as played confirmation — full catalog, not podcast filter.",
