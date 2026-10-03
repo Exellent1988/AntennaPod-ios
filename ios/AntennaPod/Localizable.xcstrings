@@ -29202,6 +29202,57 @@
         }
       }
     },
+    "Marks unplayed, non-archived episodes in the newest-500 All Episodes catalog as played": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks unplayed, non-archived episodes in the newest-500 All Episodes catalog as played"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert ungehörte, nicht archivierte Episoden im Soft-Cap-Katalog (neueste 500) aller Episoden als gehört"
+          }
+        }
+      }
+    },
+    "Marks played episodes in the newest-500 All Episodes catalog as unplayed, including archived episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks played episodes in the newest-500 All Episodes catalog as unplayed, including archived episodes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert gehörte Episoden im Soft-Cap-Katalog (neueste 500) aller Episoden als ungehört, einschließlich archivierter Episoden"
+          }
+        }
+      }
+    },
+    "Archives non-archived episodes in the newest-500 All Episodes catalog; archived does not mean played": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archives non-archived episodes in the newest-500 All Episodes catalog; archived does not mean played"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert nicht archivierte Episoden im Soft-Cap-Katalog (neueste 500) aller Episoden; archiviert bedeutet nicht gehört"
+          }
+        }
+      }
+    },
     "Set sleep timer": {
       "extractionState": "manual",
       "localizations": {
