@@ -24489,6 +24489,24 @@
         }
       }
     },
+    "Reset rating prompt state": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset rating prompt state"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewertungsabfrage zurücksetzen"
+          }
+        }
+      },
+      "comment": "Settings → App Store button. Same term as Bewertungsabfrage in the rating accessibility hint."
+    },
     "When on, mark played clears saved position to 0. When off, keeps position for resume after Mark unplayed. Default on.": {
       "extractionState": "manual",
       "localizations": {
