@@ -328,7 +328,7 @@ struct HomeView: View {
     /// `max(0, duration − position)` when duration known; unplayed with duration contributes full
     /// duration; **played** (not current) → 0; **unknown duration skipped** (tilde when any
     /// skipped). Currently playing uses live `PlaybackService` position/duration. Wall-clock only
-    /// (no playback-speed divide).
+    /// (no playback-speed divide by default; optional Remaining time respects speed).
     /// **Preview soft-cap honesty:** never claims remaining beyond the visible preview rows
     /// (first `previewLimit` after search filter) — not the full `favoriteEpisodes` catalog /
     /// Favorites screen sort+search filter / Clear favorites count.
@@ -355,6 +355,19 @@ struct HomeView: View {
             )
         }
         return parts.joined(separator: ". ")
+    }
+
+    /// VoiceOver hint for the Home Favorites remaining bar. The visible label
+    /// stays the count and time. This says whether that time is wall-clock or
+    /// divided by podcast/default speed, and that the bar sums the visible
+    /// Favorites preview only — not the full Favorites list, the Clear favorites count,
+    /// the other Home previews, or the full-screen remaining bars.
+    private var favoritesRemainingAccessibilityHint: String {
+        let limit = previewLimit
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. The Home Favorites bar sums the visible preview rows only. Those rows are starred episodes, newest favorited first (favorited time, title A–Z when the time matches). A queue-only copy is included when it is starred and not already listed on a subscribed feed. It does not follow the Favorites sort or the Favorites podcast filter, and it is not the Favorites list. Home search, when set, keeps episodes whose title, description, episode private note, or bookmark note matches, or whose feed title matches. It does not search chapters or transcripts. Then it keeps at most the first \(limit) rows. When more episodes match, this is not the full Favorites list and not the Clear favorites count. Played episodes that are not currently playing count as zero. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Home Continue listening preview, the Home New or Inbox preview, the Home Queue preview, the Home History preview, the Home Archived preview, the Home Downloads preview, the Library search remaining bar, the Feed remaining bar, the Archived remaining bar, the Downloads remaining bar, the History remaining bar, the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+        }
+        return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The Home Favorites bar sums the visible preview rows only. Those rows are starred episodes, newest favorited first (favorited time, title A–Z when the time matches). A queue-only copy is included when it is starred and not already listed on a subscribed feed. It does not follow the Favorites sort or the Favorites podcast filter, and it is not the Favorites list. Home search, when set, keeps episodes whose title, description, episode private note, or bookmark note matches, or whose feed title matches. It does not search chapters or transcripts. Then it keeps at most the first \(limit) rows. When more episodes match, this is not the full Favorites list and not the Clear favorites count. Played episodes that are not currently playing count as zero. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Home Continue listening preview, the Home New or Inbox preview, the Home Queue preview, the Home History preview, the Home Archived preview, the Home Downloads preview, the Library search remaining bar, the Feed remaining bar, the Archived remaining bar, the Downloads remaining bar, the History remaining bar, the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
     }
 
     private var favoritesRemainingSummary: EpisodeRemainingTime.Summary {
@@ -1002,6 +1015,7 @@ struct HomeView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(favoritesRemainingAccessibilityLabel)
+                    .accessibilityHint(favoritesRemainingAccessibilityHint)
                     .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
             }
             ForEach(favoriteItems) { item in
