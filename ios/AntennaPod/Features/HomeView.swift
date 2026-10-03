@@ -821,7 +821,7 @@ struct HomeView: View {
             NavigationLink {
                 HistoryView()
             } label: {
-                Text(store.continueListeningEpisodes.count > previewLimit ? "See all in History" : "Open History")
+                Text(store.continueListeningEpisodes.count > previewLimit ? String(localized: "See all in History") : String(localized: "Open History"))
                     .font(.footnote)
             }
         }
@@ -973,7 +973,7 @@ struct HomeView: View {
             NavigationLink {
                 HistoryView()
             } label: {
-                Text(store.historyEpisodes.count > previewLimit ? "See all in History" : "Open History")
+                Text(store.historyEpisodes.count > previewLimit ? String(localized: "See all in History") : String(localized: "Open History"))
                     .font(.footnote)
             }
         }
@@ -1009,7 +1009,7 @@ struct HomeView: View {
             NavigationLink {
                 ArchivedView()
             } label: {
-                Text(store.archivedEpisodes.count > previewLimit ? "See all in Archived" : "Open Archived")
+                Text(store.archivedEpisodes.count > previewLimit ? String(localized: "See all in Archived") : String(localized: "Open Archived"))
                     .font(.footnote)
             }
         }
@@ -1045,7 +1045,7 @@ struct HomeView: View {
             NavigationLink {
                 FavoritesView()
             } label: {
-                Text(store.favoriteEpisodes.count > previewLimit ? "See all Favorites" : "Open Favorites")
+                Text(store.favoriteEpisodes.count > previewLimit ? String(localized: "See all Favorites") : String(localized: "Open Favorites"))
                     .font(.footnote)
             }
         }
@@ -1088,7 +1088,7 @@ struct HomeView: View {
             Button {
                 selectedTab = .downloads
             } label: {
-                Text(downloads.downloads.count > previewLimit ? "See all in Downloads" : "Open Downloads")
+                Text(downloads.downloads.count > previewLimit ? String(localized: "See all in Downloads") : String(localized: "Open Downloads"))
                     .font(.footnote)
             }
         }
