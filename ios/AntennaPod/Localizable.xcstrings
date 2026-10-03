@@ -28484,6 +28484,25 @@
         }
       }
     },
+
+    "Volume adaptation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volume adaptation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lautstärkeanpassung"
+          }
+        }
+      },
+      "comment": "Settings → Playback toggle. Same term as Lautstärkeanpassung in the Volume boost beta notes."
+    },
     "Volume boost": {
       "extractionState": "manual",
       "localizations": {
