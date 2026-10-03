@@ -133,7 +133,7 @@ final class GpodderSyncService: ObservableObject {
             lastSyncAt = nil
         }
         lastSyncError = UserDefaults.standard.string(forKey: Keys.lastSyncError)
-        lastSyncStatus = UserDefaults.standard.string(forKey: Keys.lastSyncStatus) ?? "Never synced"
+        lastSyncStatus = UserDefaults.standard.string(forKey: Keys.lastSyncStatus) ?? String(localized: "Never synced")
         // Do not echo Keychain password into the draft field.
         passwordDraft = ""
     }
@@ -165,7 +165,7 @@ final class GpodderSyncService: ObservableObject {
         }
         subscriptionTimestamp = 0
         knownRemoteURLs = []
-        lastSyncStatus = "Provider: \(newProvider.label)"
+        lastSyncStatus = String(localized: "Provider: \(newProvider.label)")
     }
 
     // MARK: - Login / Logout
@@ -202,7 +202,7 @@ final class GpodderSyncService: ObservableObject {
             isLoggedIn = true
             passwordDraft = ""
             lastSyncError = nil
-            lastSyncStatus = "Logged in — subscriptions only (not full sync)"
+            lastSyncStatus = String(localized: "Logged in — subscriptions only (not full sync)")
         } catch {
             isLoggedIn = false
             recordFailure(error: error.localizedDescription, status: String(localized: "Login failed"))
@@ -216,7 +216,7 @@ final class GpodderSyncService: ObservableObject {
         subscriptionTimestamp = 0
         knownRemoteURLs = []
         lastSyncError = nil
-        lastSyncStatus = "Logged out"
+        lastSyncStatus = String(localized: "Logged out")
         // Keep host / username / device id+name so re-login is easy.
     }
 
@@ -246,7 +246,7 @@ final class GpodderSyncService: ObservableObject {
 
         isBusy = true
         lastSyncError = nil
-        lastSyncStatus = "Syncing…"
+        lastSyncStatus = String(localized: "Syncing…")
         defer { isBusy = false }
 
         do {
@@ -352,7 +352,7 @@ final class GpodderSyncService: ObservableObject {
                 lastSyncError = nil
             }
         } catch {
-            recordFailure(error: error.localizedDescription, status: "Sync failed")
+            recordFailure(error: error.localizedDescription, status: String(localized: "Sync failed"))
         }
     }
 
@@ -447,7 +447,7 @@ final class GpodderSyncService: ObservableObject {
         // Never claim logged-in without a Keychain password (cross-device restore).
         isLoggedIn = snap.isLoggedIn && hasPassword
         if snap.isLoggedIn && !hasPassword {
-            lastSyncStatus = "Restored from backup — re-enter password to login (Keychain secret not in backup)"
+            lastSyncStatus = String(localized: "Restored from backup — re-enter password to login (Keychain secret not in backup)")
         }
     }
 }

@@ -28548,6 +28548,108 @@
         }
       }
     },
+    "Logged in — subscriptions only (not full sync)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logged in — subscriptions only (not full sync)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angemeldet — nur Abonnements (kein vollständiger Sync)"
+          }
+        }
+      }
+    },
+    "Logged out": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logged out"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abgemeldet"
+          }
+        }
+      }
+    },
+    "Never synced": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never synced"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nie synchronisiert"
+          }
+        }
+      }
+    },
+    "Provider: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provider: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anbieter: %@"
+          }
+        }
+      }
+    },
+    "Restored from backup — re-enter password to login (Keychain secret not in backup)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restored from backup — re-enter password to login (Keychain secret not in backup)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus Sicherung wiederhergestellt — gib das Passwort erneut ein, um dich anzumelden (Schlüsselbund-Geheimnis nicht in der Sicherung)"
+          }
+        }
+      }
+    },
+    "Syncing…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Syncing…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisiere…"
+          }
+        }
+      }
+    },
     "Sync coverage help": {
       "extractionState": "manual",
       "localizations": {
