@@ -28487,6 +28487,24 @@
         }
       }
     },
+    "Custom (MB)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom (MB)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Benutzerdefiniert (MB)"
+          }
+        }
+      },
+      "comment": "Settings → Downloads / Storage Max storage picker custom option. Matches Custom… → Benutzerdefiniert…; MB unit left untranslated."
+    },
     "Custom User-Agent": {
       "extractionState": "manual",
       "localizations": {

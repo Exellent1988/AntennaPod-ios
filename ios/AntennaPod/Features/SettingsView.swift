@@ -17,7 +17,7 @@ private enum StorageLimitPickerChoice: String, CaseIterable, Identifiable {
         case .gb1: return "1 GB"
         case .gb5: return "5 GB"
         case .gb10: return "10 GB"
-        case .custom: return "Custom (MB)"
+        case .custom: return String(localized: "Custom (MB)")
         }
     }
 
