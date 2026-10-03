@@ -637,11 +637,11 @@ struct PerFeedSettingsView: View {
         let global = appSettings.newEpisodeAction.label
         switch current.newEpisodeAction {
         case .useGlobal:
-            return "Follows Settings → New episodes (currently \(global)). Queue+download is only available as the global choice."
+            return String(localized: "Follows Settings → New episodes (currently \(global)). Queue+download is only available as the global choice.")
         case .inboxOnly:
-            return "New episodes for this podcast stay in Inbox only — not added to Queue, even when global adds to Queue."
+            return String(localized: "New episodes for this podcast stay in Inbox only — not added to Queue, even when global adds to Queue.")
         case .addToQueue:
-            return "Newly appeared episodes for this podcast are added to Queue (no auto-download from this override). Inbox still lists them while unplayed."
+            return String(localized: "Newly appeared episodes for this podcast are added to Queue (no auto-download from this override). Inbox still lists them while unplayed.")
         }
     }
 
