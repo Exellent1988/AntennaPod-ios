@@ -848,7 +848,7 @@ struct HomeView: View {
             }
         } header: {
             homeSectionLink(
-                title: "New / Inbox",
+                title: String(localized: "New / Inbox"),
                 systemImage: "tray.fill",
                 tab: .inbox,
                 total: store.inboxEpisodes.count
