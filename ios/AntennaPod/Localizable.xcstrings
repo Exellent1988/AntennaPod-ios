@@ -28811,6 +28811,91 @@
         }
       }
     },
+    "Copy statistics": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy statistics"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistiken kopieren"
+          }
+        }
+      }
+    },
+    "Copies the same plain-text summary as Share, using the selected Statistics time range and Reset baseline.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the same plain-text summary as Share, using the selected Statistics time range and Reset baseline."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert dieselbe Klartext-Zusammenfassung wie Teilen, mit dem gewählten Statistik-Zeitraum und der Zurücksetzen-Basislinie."
+          }
+        }
+      }
+    },
+    "Shares the same plain-text summary using the selected Statistics time range and Reset baseline.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shares the same plain-text summary using the selected Statistics time range and Reset baseline."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teilt dieselbe Klartext-Zusammenfassung mit dem gewählten Statistik-Zeitraum und der Zurücksetzen-Basislinie."
+          }
+        }
+      }
+    },
+    "Copy or share the same plain-text summary, or reset Statistics baseline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy or share the same plain-text summary, or reset Statistics baseline"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieselbe Klartext-Zusammenfassung kopieren oder teilen, oder die Statistik-Basislinie zurücksetzen"
+          }
+        }
+      }
+    },
+    "Statistics copied to the pasteboard.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistics copied to the pasteboard."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistiken in die Zwischenablage kopiert."
+          }
+        }
+      }
+    },
     "Set sleep timer": {
       "extractionState": "manual",
       "localizations": {
