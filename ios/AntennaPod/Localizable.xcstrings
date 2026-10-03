@@ -27516,6 +27516,24 @@
       },
       "comment": "FeedDetail local folder empty body"
     },
+    "This folder has no %@ files yet. Add files in Files, then rescan the folder or refresh Subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder has no %@ files yet. Add files in Files, then rescan the folder or refresh Subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In diesem Ordner gibt es noch keine %@-Dateien. Füge Dateien in Dateien hinzu und scanne den Ordner neu, oder aktualisiere unter Abos."
+          }
+        }
+      },
+      "comment": "FeedDetail local folder empty accessibility value"
+    },
     "Re-reads audio files in the folder. Does not fetch an RSS feed.": {
       "extractionState": "manual",
       "localizations": {
