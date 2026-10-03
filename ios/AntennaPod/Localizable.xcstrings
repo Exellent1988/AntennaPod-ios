@@ -24569,6 +24569,24 @@
         }
       }
     },
+    "Max storage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max storage"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max. Speicher"
+          }
+        }
+      },
+      "comment": "Settings → Downloads / Storage picker. Same Max. Speicher wording as the German Max.-Speicher-Byte-Budget help on this screen."
+    },
     "Max downloaded episodes": {
       "extractionState": "manual",
       "localizations": {
