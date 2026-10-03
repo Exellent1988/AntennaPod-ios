@@ -1621,6 +1621,74 @@
         }
       }
     },
+    "Download failed (HTTP %lld)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download failed (HTTP %lld)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download fehlgeschlagen (HTTP %lld)"
+          }
+        }
+      }
+    },
+    "Episode has no media URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode has no media URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode hat keine Medien-URL"
+          }
+        }
+      }
+    },
+    "Local file missing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local file missing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Datei fehlt"
+          }
+        }
+      }
+    },
+    "Manual downloads are Wi‑Fi only. Connect to Wi‑Fi or Ethernet, or turn off Manual download Wi‑Fi only in Settings → Network / Downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual downloads are Wi‑Fi only. Connect to Wi‑Fi or Ethernet, or turn off Manual download Wi‑Fi only in Settings → Network / Downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manuelle Downloads sind nur über Wi‑Fi. Verbinde dich mit Wi‑Fi oder Ethernet oder schalte „Manueller Download nur Wi‑Fi“ unter Einstellungen → Netzwerk / Downloads aus."
+          }
+        }
+      }
+    },
     "Download failures → Downloads (title = episode, body = error)": {
       "extractionState": "manual",
       "localizations": {

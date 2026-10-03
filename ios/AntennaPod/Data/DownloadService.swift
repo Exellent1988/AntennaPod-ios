@@ -293,8 +293,9 @@ final class DownloadService: ObservableObject {
         localURL(for: episode) != nil
     }
 
-    static let manualCellularBlockedMessage =
-        "Manual downloads are Wi‑Fi only. Connect to Wi‑Fi or Ethernet, or turn off Manual download Wi‑Fi only in Settings → Network / Downloads."
+    static let manualCellularBlockedMessage = String(
+        localized: "Manual downloads are Wi‑Fi only. Connect to Wi‑Fi or Ethernet, or turn off Manual download Wi‑Fi only in Settings → Network / Downloads."
+    )
 
     /// Default soft cap for Feed detail **Download all unplayed** when no setting is passed
     /// (matches `FeedDownloadUnplayedSoftCap.fifty` / prior hard soft-cap of 50).
@@ -367,7 +368,7 @@ final class DownloadService: ObservableObject {
     ///   skips that gate (auto-download uses `autoDownloadWifiOnly` in `AutoDownloadCoordinator`).
     func download(_ episode: PodcastEpisode, source: DownloadEnqueueSource = .manual) async {
         guard let remote = episode.downloadUrl, let url = URL(string: remote) else {
-            recordFailure(episode: episode, message: "Episode has no media URL")
+            recordFailure(episode: episode, message: String(localized: "Episode has no media URL"))
             return
         }
         // Already-local folder files — treat as present; do not start a network transfer.
@@ -375,7 +376,7 @@ final class DownloadService: ObservableObject {
             if FileManager.default.fileExists(atPath: url.path) {
                 lastError = nil
             } else {
-                recordFailure(episode: episode, message: "Local file missing")
+                recordFailure(episode: episode, message: String(localized: "Local file missing"))
             }
             return
         }
@@ -421,7 +422,7 @@ final class DownloadService: ObservableObject {
     private func startActiveDownload(episode: PodcastEpisode) {
         guard let remote = episode.downloadUrl, let url = URL(string: remote), !url.isFileURL else {
             inProgress.remove(episode.id)
-            recordFailure(episode: episode, message: "Episode has no media URL")
+            recordFailure(episode: episode, message: String(localized: "Episode has no media URL"))
             return
         }
 
@@ -1079,7 +1080,7 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
                 if http.statusCode == 401 {
                     message = FeedHttpBasicAuth.unauthorizedDownloadMessage
                 } else {
-                    message = "Download failed (HTTP \(http.statusCode))"
+                    message = String(localized: "Download failed (HTTP \(http.statusCode))")
                 }
                 self.owner?.reportError(
                     message,
