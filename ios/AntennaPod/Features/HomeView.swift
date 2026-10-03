@@ -678,7 +678,7 @@ struct HomeView: View {
             .sheet(isPresented: $showDiscoverPINGate) {
                 ParentalPINPromptSheet(
                     title: String(localized: "Parental controls"),
-                    message: "Enter your PIN to open Discover.",
+                    message: String(localized: "Enter your PIN to open Discover."),
                     onCancel: { showDiscoverPINGate = false },
                     onSuccess: { pin in
                         if parental.unlockSession(with: pin) {

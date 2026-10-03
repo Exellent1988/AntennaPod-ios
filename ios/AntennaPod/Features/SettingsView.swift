@@ -1910,7 +1910,7 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showNetworkPINGate) {
             ParentalPINPromptSheet(
-                title: "Parental controls",
+                title: String(localized: "Parental controls"),
                 message: String(localized: "Enter your PIN to change Network / Downloads settings."),
                 onCancel: {
                     showNetworkPINGate = false

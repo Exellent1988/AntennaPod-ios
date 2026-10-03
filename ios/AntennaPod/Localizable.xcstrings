@@ -1503,6 +1503,23 @@
         }
       }
     },
+    "Enter your PIN to add or discover podcasts.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your PIN to add or discover podcasts."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib deine PIN ein, um Podcasts hinzuzufügen oder zu entdecken."
+          }
+        }
+      }
+    },
     "Enter your PIN to change Network / Downloads settings.": {
       "extractionState": "manual",
       "localizations": {
@@ -1516,6 +1533,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Gib deine PIN ein, um Netzwerk-/Download-Einstellungen zu ändern."
+          }
+        }
+      }
+    },
+    "Enter your PIN to open Discover.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your PIN to open Discover."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib deine PIN ein, um Entdecken zu öffnen."
           }
         }
       }

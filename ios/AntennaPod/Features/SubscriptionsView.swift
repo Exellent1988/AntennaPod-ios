@@ -677,8 +677,8 @@ struct SubscriptionsView: View {
             }
             .sheet(isPresented: $showAddPINGate) {
                 ParentalPINPromptSheet(
-                    title: "Parental controls",
-                    message: "Enter your PIN to add or discover podcasts.",
+                    title: String(localized: "Parental controls"),
+                    message: String(localized: "Enter your PIN to add or discover podcasts."),
                     onCancel: { showAddPINGate = false },
                     onSuccess: { pin in
                         if parental.unlockSession(with: pin) {
@@ -692,8 +692,8 @@ struct SubscriptionsView: View {
             }
             .sheet(isPresented: $showDiscoverPINGate) {
                 ParentalPINPromptSheet(
-                    title: "Parental controls",
-                    message: "Enter your PIN to open Discover.",
+                    title: String(localized: "Parental controls"),
+                    message: String(localized: "Enter your PIN to open Discover."),
                     onCancel: { showDiscoverPINGate = false },
                     onSuccess: { pin in
                         if parental.unlockSession(with: pin) {
