@@ -34889,6 +34889,24 @@
       },
       "comment": "Settings → Discovery picker for full Discover / TopListsView Apple charts soft-cap."
     },
+    "Charts country": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charts country"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charts-Land"
+          }
+        }
+      },
+      "comment": "Settings → Discovery picker title for the Apple iTunes charts country. Same term as the German help caption Charts-Land."
+    },
     "10 podcasts": {
       "extractionState": "manual",
       "localizations": {
