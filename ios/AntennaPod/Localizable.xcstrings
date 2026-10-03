@@ -29270,6 +29270,23 @@
         }
       }
     },
+    "Marks %lld unplayed, non-archived episodes as played. Uses the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Auto-delete after playing still applies when enabled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld unplayed, non-archived episodes as played. Uses the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Auto-delete after playing still applies when enabled."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld ungehörte, nicht archivierte Episoden als gehört. Nutzt den Soft-Cap-Katalog (neueste 500) aller Episoden nach Veröffentlichungsdatum, nicht Status-, Podcast-, Typ-, Sortier- oder Suchfilter; ältere Episoden außerhalb des Soft-Caps sind nicht enthalten. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
+          }
+        }
+      }
+    },
     "Marks played episodes in the newest-500 All Episodes catalog as unplayed, including archived episodes": {
       "extractionState": "manual",
       "localizations": {
@@ -29287,6 +29304,23 @@
         }
       }
     },
+    "Marks %lld played episodes as unplayed, including archived episodes. Uses the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Does not delete downloads, remove episodes from the queue, stop playback, or unarchive.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld played episodes as unplayed, including archived episodes. Uses the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Does not delete downloads, remove episodes from the queue, stop playback, or unarchive."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld gehörte Episoden als ungehört, einschließlich archivierter Episoden. Nutzt den Soft-Cap-Katalog (neueste 500) aller Episoden nach Veröffentlichungsdatum, nicht Status-, Podcast-, Typ-, Sortier- oder Suchfilter; ältere Episoden außerhalb des Soft-Caps sind nicht enthalten. Löscht keine Downloads, entfernt keine Episoden aus der Warteschlange, stoppt die Wiedergabe nicht und hebt die Archivierung nicht auf."
+          }
+        }
+      }
+    },
     "Archives non-archived episodes in the newest-500 All Episodes catalog; archived does not mean played": {
       "extractionState": "manual",
       "localizations": {
@@ -29300,6 +29334,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Archiviert nicht archivierte Episoden im Soft-Cap-Katalog (neueste 500) aller Episoden; archiviert bedeutet nicht gehört"
+          }
+        }
+      }
+    },
+    "Archives %lld non-archived episodes in the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archives %lld non-archived episodes in the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Archived does not mean played. Does not mark played, delete downloads, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert %lld nicht archivierte Episoden im Soft-Cap-Katalog (neueste 500) aller Episoden nach Veröffentlichungsdatum, nicht nach Status-, Podcast-, Typ-, Sortier- oder Suchfilter; ältere Episoden außerhalb des Soft-Caps sind nicht enthalten. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange."
           }
         }
       }
@@ -30311,6 +30362,23 @@
         }
       },
       "comment": "All Episodes Add all to queue confirmation message (soft-cap honesty; not chip/podcast/search)."
+    },
+    "Appends %lld episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the status, podcast, type, or search filter. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appends %lld episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the status, podcast, type, or search filter. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht %lld Episoden am Ende der Warteschlange ein (neueste zuerst innerhalb des Soft-Caps der neuesten 500). Bereits eingereihte Episoden werden übersprungen. Nutzt den Soft-Cap-Katalog aller Episoden (neueste 500 nach Veröffentlichungsdatum), nicht Status-, Podcast-, Typ- oder Suchfilter. Die Warteschlangen-Sperre blockiert das Einreihen nicht."
+          }
+        }
+      }
     },
     "Filters the Archived list by podcast": {
       "extractionState": "manual",
