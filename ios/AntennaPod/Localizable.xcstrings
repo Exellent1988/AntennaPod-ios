@@ -3394,6 +3394,24 @@
         }
       }
     },
+    "Mark-played count": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark-played count"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zähler „als gehört markiert“"
+          }
+        }
+      },
+      "comment": "Settings → App Store status label. Successful mark-played events toward the rating prompt. Same wording as „als gehört markiert“ in the rating footnote (Mark played is Als gehört markieren)."
+    },
     "Marks %lld Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled.": {
       "extractionState": "manual",
       "localizations": {
@@ -9726,6 +9744,24 @@
           }
         }
       }
+    },
+    "Not yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not yet"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nicht"
+          }
+        }
+      },
+      "comment": "Settings → App Store status value when the one-shot rating prompt has not been requested."
     },
     "Removes this episode from the queue": {
       "extractionState": "manual",
@@ -26934,6 +26970,24 @@
         }
       }
     },
+    "Yes (once)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yes (once)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ja (einmal)"
+          }
+        }
+      },
+      "comment": "Settings → App Store status value when the rating prompt has already been requested once this install."
+    },
     "Green": {
       "extractionState": "manual",
       "localizations": {
@@ -32818,6 +32872,24 @@
           }
         }
       }
+    },
+    "Prompt attempted": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prompt attempted"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abfrage versucht"
+          }
+        }
+      },
+      "comment": "Settings → App Store status label. Whether the one-shot rating prompt has been requested."
     },
     "Optional local-only note for this episode. Not synced and not from the feed. Maximum 1000 characters.": {
       "extractionState": "manual",

@@ -2480,7 +2480,7 @@ struct SettingsView: View {
             }
             .id("rating-count-\(ratingPromptUITick)")
             LabeledContent("Prompt attempted") {
-                Text(RatingPromptCoordinator.hasRequestedReview ? "Yes (once)" : "Not yet")
+                Text(RatingPromptCoordinator.hasRequestedReview ? String(localized: "Yes (once)") : String(localized: "Not yet"))
                     .foregroundStyle(.secondary)
             }
             .id("rating-attempted-\(ratingPromptUITick)")
