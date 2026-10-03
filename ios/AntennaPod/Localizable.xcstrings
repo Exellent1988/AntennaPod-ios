@@ -635,6 +635,23 @@
         }
       }
     },
+    "Cannot stream": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cannot stream"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Streaming nicht möglich"
+          }
+        }
+      }
+    },
     "CarPlay": {
       "extractionState": "manual",
       "localizations": {
