@@ -22544,6 +22544,42 @@
         }
       }
     },
+    "Estimate. Remaining time respects speed is on, so each of this podcast’s unplayed stored episodes is divided by this podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. This caption is only this podcast’s unplayed stored episodes, not the Subscriptions list bar, not Group by tag, and not a Home preview. Unplayed means not played and not archived, over this podcast’s stored episodes, not the All Episodes newest-500 cap. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays this podcast’s speed or Default speed. It does not play, download, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimate. Remaining time respects speed is on, so each of this podcast’s unplayed stored episodes is divided by this podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. This caption is only this podcast’s unplayed stored episodes, not the Subscriptions list bar, not Group by tag, and not a Home preview. Unplayed means not played and not archived, over this podcast’s stored episodes, not the All Episodes newest-500 cap. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays this podcast’s speed or Default speed. It does not play, download, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schätzung. Verbleibende Zeit berücksichtigt Tempo ist an, daher wird jede ungehörte gespeicherte Episode dieses Podcasts durch die Wiedergabegeschwindigkeit dieses Podcasts geteilt, oder durch die Standardgeschwindigkeit, nie unter 0,5. Das ist nicht die Live-Sitzungsrate und nicht die Lautstärke-Verstärkung. Diese Beschriftung gilt nur für die ungehörten gespeicherten Episoden dieses Podcasts, nicht für die Abonnements-Leiste, nicht für Nach Tag gruppieren und nicht für eine Home-Vorschau. Ungehört heißt nicht gehört und nicht archiviert, über die gespeicherten Episoden dieses Podcasts, nicht den Soft-Cap der neuesten 500 von Alle Episoden. Unbekannte Dauern bleiben außen vor und es wird keine Zeit erfunden. Die gerade spielende Episode nutzt die Live-Position, der Teiler bleibt aber die Geschwindigkeit dieses Podcasts oder die Standardgeschwindigkeit. Die Zeile spielt nicht ab, lädt nicht herunter und markiert nichts als gehört."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for a Subscriptions per-feed remaining caption when Remaining time respects speed is on. Visible time is unchanged. Scope is that one podcast’s unplayed stored episodes."
+    },
+    "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this caption. This caption is only this podcast’s unplayed stored episodes, not the Subscriptions list bar, not Group by tag, and not a Home preview. Unplayed means not played and not archived, over this podcast’s stored episodes, not the All Episodes newest-500 cap. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. It does not play, download, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this caption. This caption is only this podcast’s unplayed stored episodes, not the Subscriptions list bar, not Group by tag, and not a Home preview. Unplayed means not played and not archived, over this podcast’s stored episodes, not the All Episodes newest-500 cap. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. It does not play, download, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wanduhr-Restzeit. Verbleibende Zeit berücksichtigt Tempo ist aus, daher ändert die Wiedergabegeschwindigkeit diese Beschriftung nicht. Diese Beschriftung gilt nur für die ungehörten gespeicherten Episoden dieses Podcasts, nicht für die Abonnements-Leiste, nicht für Nach Tag gruppieren und nicht für eine Home-Vorschau. Ungehört heißt nicht gehört und nicht archiviert, über die gespeicherten Episoden dieses Podcasts, nicht den Soft-Cap der neuesten 500 von Alle Episoden. Unbekannte Dauern bleiben außen vor und es wird keine Zeit erfunden. Die gerade spielende Episode nutzt die Live-Position. Die Zeile spielt nicht ab, lädt nicht herunter und markiert nichts als gehört."
+          }
+        }
+      },
+      "comment": "VoiceOver hint for a Subscriptions per-feed remaining caption when Remaining time respects speed is off. Visible time is unchanged. Scope is that one podcast’s unplayed stored episodes."
+    },
     "Languages": {
       "extractionState": "manual",
       "localizations": {

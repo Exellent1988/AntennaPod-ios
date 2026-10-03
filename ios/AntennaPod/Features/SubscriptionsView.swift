@@ -1118,6 +1118,7 @@ struct SubscriptionsView: View {
                 unplayed: unplayed,
                 remainingLabel: remainingLabel
             ))
+            .modifier(AccessibilityHintIfPresent(hint: feedRowRemainingAccessibilityHint(shown: remainingLabel != nil)))
         }
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button(role: .destructive) {
@@ -1195,6 +1196,19 @@ struct SubscriptionsView: View {
         )
     }
 
+    /// VoiceOver hint for the per-feed remaining caption only. Nil when that caption is
+    /// hidden. The visible time string is unchanged. Speed off = wall-clock. Speed on =
+    /// estimate ÷ this podcast’s speed or Default speed (never below 0.5), not the live
+    /// session rate and not Volume boost. Scope is this podcast’s unplayed stored episodes,
+    /// not the Subscriptions list bar, Group by tag, or a Home preview.
+    private func feedRowRemainingAccessibilityHint(shown: Bool) -> String? {
+        guard shown else { return nil }
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "Estimate. Remaining time respects speed is on, so each of this podcast’s unplayed stored episodes is divided by this podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. This caption is only this podcast’s unplayed stored episodes, not the Subscriptions list bar, not Group by tag, and not a Home preview. Unplayed means not played and not archived, over this podcast’s stored episodes, not the All Episodes newest-500 cap. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays this podcast’s speed or Default speed. It does not play, download, or mark episodes played.")
+        }
+        return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this caption. This caption is only this podcast’s unplayed stored episodes, not the Subscriptions list bar, not Group by tag, and not a Home preview. Unplayed means not played and not archived, over this podcast’s stored episodes, not the All Episodes newest-500 cap. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. It does not play, download, or mark episodes played.")
+    }
+
     private func unplayedCountLabel(_ count: Int) -> String {
         if count == 1 {
             return String(localized: "1 unplayed")
@@ -1261,6 +1275,20 @@ struct SubscriptionsView: View {
     }
 }
 
+
+/// Applies a VoiceOver hint only when one is present (rows without a remaining caption stay unchanged).
+private struct AccessibilityHintIfPresent: ViewModifier {
+    let hint: String?
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if let hint, !hint.isEmpty {
+            content.accessibilityHint(hint)
+        } else {
+            content
+        }
+    }
+}
 
 /// Subscriptions row context menu: Keep at top toggle + optional Open podcast website.
 private struct SubscriptionRowContextMenu: ViewModifier {
