@@ -37740,6 +37740,40 @@
         }
       }
     },
+    "Marks %lld unplayed, non-archived downloaded episode(s) as played. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not itself clear downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld unplayed, non-archived downloaded episode(s) as played. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not itself clear downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld ungehörte, nicht archivierte heruntergeladene Episode(n) als gehört. Nutzt den vollständigen Katalog abgeschlossener Downloads — nicht Chip-, Podcast-, Such- oder Sortierfilter. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert; diese Aktion leert die Downloads nicht selbst."
+          }
+        }
+      }
+    },
+    "Marks %lld played downloaded episode(s), including archived episodes, as unplayed. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Does not delete download files, clear the queue, stop playback, or unarchive episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld played downloaded episode(s), including archived episodes, as unplayed. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Does not delete download files, clear the queue, stop playback, or unarchive episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld gehörte heruntergeladene Episode(n), einschließlich archivierter Episoden, als ungehört. Nutzt den vollständigen Katalog abgeschlossener Downloads — nicht Chip-, Podcast-, Such- oder Sortierfilter. Löscht keine Download-Dateien, leert nicht die Warteschlange, stoppt die Wiedergabe nicht und hebt die Archivierung nicht auf."
+          }
+        }
+      }
+    },
     "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, mark all as played, mark all as unplayed, remove played, or clear the entire queue": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Queue actions menu.",
