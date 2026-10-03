@@ -3251,6 +3251,57 @@
         }
       }
     },
+    "iTunes search failed (HTTP %lld)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iTunes search failed (HTTP %lld)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iTunes-Suche fehlgeschlagen (HTTP %lld)"
+          }
+        }
+      }
+    },
+    "Could not read iTunes search results": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not read iTunes search results"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iTunes-Suchergebnisse konnten nicht gelesen werden"
+          }
+        }
+      }
+    },
+    "Empty response from iTunes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empty response from iTunes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leere Antwort von iTunes"
+          }
+        }
+      }
+    },
     "iTunes returned no podcasts for this country, or feed URLs could not be resolved. Try another country in Settings.": {
       "extractionState": "manual",
       "localizations": {

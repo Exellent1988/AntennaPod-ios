@@ -14,13 +14,13 @@ struct ItunesSearchService {
         var errorDescription: String? {
             switch self {
             case .invalidQuery:
-                return "Enter a search term"
+                return String(localized: "Enter a search term")
             case .httpStatus(let code):
-                return "iTunes search failed (HTTP \(code))"
+                return String(localized: "iTunes search failed (HTTP \(code))")
             case .decoding:
-                return "Could not read iTunes search results"
+                return String(localized: "Could not read iTunes search results")
             case .emptyResponse:
-                return "Empty response from iTunes"
+                return String(localized: "Empty response from iTunes")
             }
         }
     }
