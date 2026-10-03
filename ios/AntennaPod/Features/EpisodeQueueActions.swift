@@ -91,7 +91,7 @@ enum EpisodeQueueActions {
                 }
             } label: {
                 Label(
-                    inQueue ? "Remove from queue" : "Add to queue",
+                    inQueue ? String(localized: "Remove from queue") : String(localized: "Add to queue"),
                     systemImage: inQueue ? "minus.circle" : "text.append"
                 )
             }
@@ -147,7 +147,7 @@ enum EpisodeQueueActions {
             }
         } label: {
             Label(
-                inQueue ? "In queue" : "Queue",
+                inQueue ? String(localized: "In queue") : String(localized: "Queue"),
                 systemImage: inQueue ? "text.badge.checkmark" : "text.append"
             )
         }
