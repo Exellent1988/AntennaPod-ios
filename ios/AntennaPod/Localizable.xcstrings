@@ -3329,6 +3329,40 @@
         }
       }
     },
+    "Loading feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed wird geladen"
+          }
+        }
+      }
+    },
+    "Loading feed…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading feed…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed wird geladen…"
+          }
+        }
+      }
+    },
     "Loading transcript…": {
       "extractionState": "manual",
       "localizations": {
@@ -3994,6 +4028,23 @@
         }
       }
     },
+    "No episodes found in this feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No episodes found in this feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Episoden in diesem Feed gefunden"
+          }
+        }
+      }
+    },
     "No episodes found in this feed.": {
       "extractionState": "manual",
       "localizations": {
@@ -4585,6 +4636,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnen"
+          }
+        }
+      }
+    },
+    "Open feed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open feed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed öffnen"
           }
         }
       }
