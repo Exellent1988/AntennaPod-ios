@@ -3149,6 +3149,23 @@
         }
       }
     },
+    "iTunes charts failed (HTTP %lld)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iTunes charts failed (HTTP %lld)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iTunes-Charts fehlgeschlagen (HTTP %lld)"
+          }
+        }
+      }
+    },
     "iTunes returned no podcasts for this country, or feed URLs could not be resolved. Try another country in Settings.": {
       "extractionState": "manual",
       "localizations": {

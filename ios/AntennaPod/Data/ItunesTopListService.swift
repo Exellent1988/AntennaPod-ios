@@ -25,7 +25,7 @@ struct ItunesTopListService {
             case .invalidCountry:
                 return "Invalid country code for charts"
             case .httpStatus(let code):
-                return "iTunes charts failed (HTTP \(code))"
+                return String(localized: "iTunes charts failed (HTTP \(code))")
             case .countryUnavailable:
                 return "iTunes does not have chart data for the selected country"
             case .decoding:
