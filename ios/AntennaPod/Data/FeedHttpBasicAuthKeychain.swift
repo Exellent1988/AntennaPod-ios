@@ -100,7 +100,7 @@ enum FeedHttpBasicAuthKeychain {
             case .emptyUsername:
                 return String(localized: "Username is required for HTTP authentication")
             case .unhandled(let status):
-                return "Keychain error (\(status))"
+                return String(localized: "Keychain error (\(Int(status)))")
             }
         }
     }
