@@ -23984,6 +23984,108 @@
         }
       }
     },
+    "There are no new or unplayed episodes in Inbox. New and unplayed episodes from your subscriptions appear here. Use Search library to find any episode or podcast in your library.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There are no new or unplayed episodes in Inbox. New and unplayed episodes from your subscriptions appear here. Use Search library to find any episode or podcast in your library."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es gibt keine neuen oder ungehörten Episoden im Posteingang. Neue und ungehörte Episoden aus deinen Abonnements erscheinen hier. Nutze Bibliothek durchsuchen, um eine Episode oder einen Podcast in deiner Bibliothek zu finden."
+          }
+        }
+      }
+    },
+    "No Inbox episodes match your search. Clear or change the search to see Inbox.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Inbox episodes match your search. Clear or change the search to see Inbox."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Posteingangs-Episoden passen zu deiner Suche. Lösche oder ändere die Suche, um den Posteingang zu sehen."
+          }
+        }
+      }
+    },
+    "No Inbox episodes match the selected podcast and episode type filters. Choose All for the podcast or episode type to see more episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Inbox episodes match the selected podcast and episode type filters. Choose All for the podcast or episode type to see more episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Posteingangs-Episoden passen zu den gewählten Podcast- und Episodentyp-Filtern. Wähle Alle für den Podcast oder den Episodentyp, um mehr Episoden zu sehen."
+          }
+        }
+      }
+    },
+    "The selected podcast has no matching Inbox episodes. Choose All or another podcast filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected podcast has no matching Inbox episodes. Choose All or another podcast filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der gewählte Podcast hat keine passenden Posteingangs-Episoden. Wähle Alle oder einen anderen Podcast-Filter."
+          }
+        }
+      }
+    },
+    "No Inbox episodes match the selected episode type. Choose All or another episode type.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Inbox episodes match the selected episode type. Choose All or another episode type."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Posteingangs-Episoden passen zum gewählten Episodentyp. Wähle Alle oder einen anderen Episodentyp."
+          }
+        }
+      }
+    },
+    "No Inbox episodes match the active filters. Choose All or another filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Inbox episodes match the active filters. Choose All or another filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Posteingangs-Episoden passen zu den aktiven Filtern. Wähle Alle oder einen anderen Filter."
+          }
+        }
+      }
+    },
     "Appends %lld Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full Inbox catalog (same as Mark all / Archive all), not library search or the podcast filter. Queue lock does not block enqueue.": {
       "extractionState": "manual",
       "comment": "Inbox Add all to queue confirmation — full catalog, not podcast filter or library search.",
