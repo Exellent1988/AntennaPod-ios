@@ -29321,6 +29321,91 @@
         }
       }
     },
+    "Orders the Archived list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Restore all stays full catalog.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders the Archived list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Restore all stays full catalog."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert die Archivliste. Kürzeste und Längste nutzen bekannte Dauer; Titel A–Z / Z–A nach Titel; leere oder unbekannte zuletzt. Alle wiederherstellen bleibt der volle Katalog."
+          }
+        }
+      }
+    },
+    "Clear the search field or try another settings term.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear the search field or try another settings term."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leere das Suchfeld oder probiere einen anderen Begriff aus den Einstellungen."
+          }
+        }
+      }
+    },
+    "Reset to global defaults": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset to global defaults"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf globale Standards zurücksetzen"
+          }
+        }
+      }
+    },
+    "No episodes match the selected filters.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No episodes match the selected filters."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Episoden passen zu den gewählten Filtern."
+          }
+        }
+      }
+    },
+    "Version comes from the app bundle when set (CFBundleShortVersionString); otherwise a beta placeholder is shown.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version comes from the app bundle when set (CFBundleShortVersionString); otherwise a beta placeholder is shown."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Version kommt aus dem App-Bundle, wenn sie gesetzt ist (CFBundleShortVersionString); sonst wird ein Beta-Platzhalter angezeigt."
+          }
+        }
+      }
+    },
     "Set sleep timer": {
       "extractionState": "manual",
       "localizations": {
