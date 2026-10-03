@@ -2706,6 +2706,23 @@
         }
       }
     },
+    "Starts a clock sleep timer for %lld minutes and remembers this value for the next Custom sleep timer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts a clock sleep timer for %lld minutes and remembers this value for the next Custom sleep timer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet einen Uhr-Schlaf-Timer für %lld Minuten und merkt sich diesen Wert für den nächsten benutzerdefinierten Schlaf-Timer"
+          }
+        }
+      }
+    },
     "Starts on for this visit only. Not saved in Settings or backup, and not synced. Shown only while the tag filter is All. Pinned, a named tag, and Untagged hide this toggle and stay a flat list. On groups by existing tags and does not hide podcasts. Off is one flat list. It does not rename tags or change sort.": {
       "extractionState": "manual",
       "localizations": {
@@ -8929,6 +8946,23 @@
         }
       }
     },
+    "Adjusts the clock sleep timer duration; the value is remembered for the next Custom sleep timer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adjusts the clock sleep timer duration; the value is remembered for the next Custom sleep timer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passt die Dauer des Uhr-Schlaf-Timers an; der Wert wird für den nächsten benutzerdefinierten Schlaf-Timer gemerkt"
+          }
+        }
+      }
+    },
     "Adjusts the jump minutes. Seconds stay separate; the position is clamped to the episode duration.": {
       "extractionState": "manual",
       "localizations": {
@@ -10000,6 +10034,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Schlaf"
+          }
+        }
+      }
+    },
+    "Sleep timer duration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep timer duration"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlaf-Timer-Dauer"
+          }
+        }
+      }
+    },
+    "Sleep timer minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sleep timer minutes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlaf-Timer-Minuten"
           }
         }
       }
@@ -25922,6 +25990,40 @@
       },
       "comment": "DiscoveryResultRow hint before subscribe"
     },
+    "Enter a whole number from 1 to 180 minutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a whole number from 1 to 180 minutes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine ganze Zahl von 1 bis 180 Minuten ein"
+          }
+        }
+      }
+    },
+    "Enter a whole number from 1 to 180 minutes before setting the timer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a whole number from 1 to 180 minutes before setting the timer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gib eine ganze Zahl von 1 bis 180 Minuten ein, bevor du den Timer einstellst"
+          }
+        }
+      }
+    },
     "Enter a whole number from 5 to 60 seconds": {
       "extractionState": "manual",
       "localizations": {
@@ -28297,6 +28399,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zusammenfassung teilen oder Statistik-Basislinie zurücksetzen"
+          }
+        }
+      }
+    },
+    "Set sleep timer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set sleep timer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schlaf-Timer einstellen"
           }
         }
       }
