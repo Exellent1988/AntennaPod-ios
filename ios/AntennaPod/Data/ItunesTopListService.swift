@@ -239,13 +239,13 @@ private struct ChartEntry: Decodable {
         if let name = try? c.decode(LabeledValue.self, forKey: .imName) {
             title = name.label
         } else {
-            title = "Unknown"
+            title = String(localized: "Unknown")
         }
 
         if let artistObj = try? c.decode(LabeledValue.self, forKey: .imArtist) {
             artist = artistObj.label
         } else {
-            artist = "Unknown"
+            artist = String(localized: "Unknown")
         }
 
         let idObj = try c.decode(ChartId.self, forKey: .id)

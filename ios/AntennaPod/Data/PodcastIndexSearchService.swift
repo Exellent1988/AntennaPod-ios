@@ -148,8 +148,8 @@ struct PodcastIndexPodcastResult: Identifiable, Hashable, Decodable {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         feedId = try c.decodeIfPresent(Int.self, forKey: .feedId)
-        title = try c.decodeIfPresent(String.self, forKey: .title) ?? "Unknown"
-        author = try c.decodeIfPresent(String.self, forKey: .author) ?? "Unknown"
+        title = try c.decodeIfPresent(String.self, forKey: .title) ?? String(localized: "Unknown")
+        author = try c.decodeIfPresent(String.self, forKey: .author) ?? String(localized: "Unknown")
         feedUrl = try c.decodeIfPresent(String.self, forKey: .feedUrl) ?? ""
         image = try c.decodeIfPresent(String.self, forKey: .image)
     }

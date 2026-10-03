@@ -108,8 +108,8 @@ struct FyydPodcastResult: Identifiable, Hashable, Decodable {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         fyydId = try c.decodeIfPresent(Int.self, forKey: .fyydId)
-        title = try c.decodeIfPresent(String.self, forKey: .title) ?? "Unknown"
-        author = try c.decodeIfPresent(String.self, forKey: .author) ?? "Unknown"
+        title = try c.decodeIfPresent(String.self, forKey: .title) ?? String(localized: "Unknown")
+        author = try c.decodeIfPresent(String.self, forKey: .author) ?? String(localized: "Unknown")
         feedUrl = try c.decodeIfPresent(String.self, forKey: .feedUrl) ?? ""
         imgURL = try c.decodeIfPresent(String.self, forKey: .imgURL)
         thumbImageURL = try c.decodeIfPresent(String.self, forKey: .thumbImageURL)

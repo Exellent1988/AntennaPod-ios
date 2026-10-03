@@ -124,8 +124,8 @@ struct ItunesPodcastResult: Identifiable, Hashable, Decodable {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         collectionId = try c.decodeIfPresent(Int.self, forKey: .collectionId)
-        collectionName = try c.decodeIfPresent(String.self, forKey: .collectionName) ?? "Unknown"
-        artistName = try c.decodeIfPresent(String.self, forKey: .artistName) ?? "Unknown"
+        collectionName = try c.decodeIfPresent(String.self, forKey: .collectionName) ?? String(localized: "Unknown")
+        artistName = try c.decodeIfPresent(String.self, forKey: .artistName) ?? String(localized: "Unknown")
         feedUrl = try c.decodeIfPresent(String.self, forKey: .feedUrl) ?? ""
         artworkUrl100 = try c.decodeIfPresent(String.self, forKey: .artworkUrl100)
         artworkUrl600 = try c.decodeIfPresent(String.self, forKey: .artworkUrl600)
