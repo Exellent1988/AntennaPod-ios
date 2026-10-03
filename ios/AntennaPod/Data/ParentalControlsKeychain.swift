@@ -75,9 +75,9 @@ enum ParentalControlsKeychain {
         var errorDescription: String? {
             switch self {
             case .unhandled(let status):
-                return "Keychain error (\(status))"
+                return String(localized: "Keychain error (\(Int(status)))")
             case .invalidPIN:
-                return "PIN must be 4–6 digits"
+                return String(localized: "PIN must be 4–6 digits")
             }
         }
     }
