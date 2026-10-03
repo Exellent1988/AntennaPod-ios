@@ -677,7 +677,7 @@ struct HomeView: View {
             }
             .sheet(isPresented: $showDiscoverPINGate) {
                 ParentalPINPromptSheet(
-                    title: "Parental controls",
+                    title: String(localized: "Parental controls"),
                     message: "Enter your PIN to open Discover.",
                     onCancel: { showDiscoverPINGate = false },
                     onSuccess: { pin in
@@ -887,7 +887,7 @@ struct HomeView: View {
             }
         } header: {
             homeSectionLink(
-                title: "Queue",
+                title: String(localized: "Queue"),
                 systemImage: "list.bullet",
                 tab: .queue,
                 total: store.queue.count
@@ -1079,7 +1079,7 @@ struct HomeView: View {
             }
         } header: {
             homeSectionLink(
-                title: "Downloads",
+                title: String(localized: "Downloads"),
                 systemImage: "arrow.down.circle",
                 tab: .downloads,
                 total: downloads.downloads.count
