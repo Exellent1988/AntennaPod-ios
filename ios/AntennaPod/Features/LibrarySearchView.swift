@@ -45,6 +45,19 @@ struct LibrarySearchResultsView: View {
         return parts.joined(separator: ". ")
     }
 
+    /// VoiceOver hint for the Library search remaining bar. The visible label
+    /// stays the count and time. This says whether that time is wall-clock or
+    /// divided by podcast/default speed, and that the bar sums matching episode
+    /// hits only — not podcast hits, the full library, the Inbox list, or other
+    /// remaining bars. Search fields are episode title, description, episode
+    /// private note, or bookmark note. Chapters and transcripts are not searched.
+    private var librarySearchRemainingAccessibilityHint: String {
+        if settings.remainingTimeRespectsSpeed {
+            return String(localized: "Estimate. Remaining time respects speed is on, so each episode is divided by that podcast’s playback speed, or Default speed, never below 0.5. This is not the live session rate and not Volume boost. The Library search bar sums matching episode hits only: episodes across subscriptions whose title, description, episode private note, or bookmark note matches the query. Podcast hits are not included, and this is not the full library or the Inbox list. It does not search chapters or transcripts. Played episodes that are not currently playing count as zero. Unknown durations are left out and no time is invented. The episode that is playing uses the live position, but the divisor stays the podcast or default speed. This is not the Feed remaining bar, the Archived remaining bar, the Downloads remaining bar, the History remaining bar, the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+        }
+        return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The Library search bar sums matching episode hits only: episodes across subscriptions whose title, description, episode private note, or bookmark note matches the query. Podcast hits are not included, and this is not the full library or the Inbox list. It does not search chapters or transcripts. Played episodes that are not currently playing count as zero. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Feed remaining bar, the Archived remaining bar, the Downloads remaining bar, the History remaining bar, the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
+    }
+
     private var librarySearchRemainingSummary: EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
             episodes: episodes.map(\.episode),
@@ -87,6 +100,7 @@ struct LibrarySearchResultsView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(librarySearchRemainingAccessibilityLabel)
+                        .accessibilityHint(librarySearchRemainingAccessibilityHint)
                 }
                 .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
             }
