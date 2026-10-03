@@ -24239,6 +24239,57 @@
         }
       }
     },
+    "There are no archived episodes. Archive hides episodes from Inbox without marking them played. Restore them here or from a feed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There are no archived episodes. Archive hides episodes from Inbox without marking them played. Restore them here or from a feed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es gibt keine archivierten Episoden. Archivieren blendet Episoden aus dem Posteingang aus, ohne sie als gehört zu markieren. Stelle sie hier oder aus einem Feed wieder her."
+          }
+        }
+      }
+    },
+    "The selected podcast has no archived episodes. Choose All or another podcast filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected podcast has no archived episodes. Choose All or another podcast filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der gewählte Podcast hat keine archivierten Episoden. Wähle Alle oder einen anderen Podcast-Filter."
+          }
+        }
+      }
+    },
+    "No archived episodes match your search. Clear or change the search to see Archived.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No archived episodes match your search. Clear or change the search to see Archived."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine archivierten Episoden passen zu deiner Suche. Lösche oder ändere die Suche, um das Archiv zu sehen."
+          }
+        }
+      }
+    },
     "Appends %lld Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full Inbox catalog (same as Mark all / Archive all), not library search or the podcast filter. Queue lock does not block enqueue.": {
       "extractionState": "manual",
       "comment": "Inbox Add all to queue confirmation — full catalog, not podcast filter or library search.",
