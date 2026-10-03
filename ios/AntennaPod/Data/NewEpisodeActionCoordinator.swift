@@ -17,8 +17,8 @@ enum NewEpisodeAction: String, CaseIterable, Identifiable, Codable, Hashable {
     var label: String {
         switch self {
         case .inboxOnly: return String(localized: "Inbox only")
-        case .addToQueue: return "Add to Queue"
-        case .addToQueueAndDownload: return "Add to Queue and download"
+        case .addToQueue: return String(localized: "Add to Queue")
+        case .addToQueueAndDownload: return String(localized: "Add to Queue and download")
         }
     }
 
@@ -45,9 +45,9 @@ enum PerFeedNewEpisodeAction: String, CaseIterable, Identifiable, Codable, Hasha
 
     var label: String {
         switch self {
-        case .useGlobal: return "Use global"
+        case .useGlobal: return String(localized: "Use global")
         case .inboxOnly: return String(localized: "Inbox only")
-        case .addToQueue: return "Add to Queue"
+        case .addToQueue: return String(localized: "Add to Queue")
         }
     }
 

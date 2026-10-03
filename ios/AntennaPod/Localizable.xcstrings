@@ -120,6 +120,42 @@
         }
       }
     },
+    "Add to Queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to Queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zur Warteschlange hinzufügen"
+          }
+        }
+      },
+      "comment": "Settings → New episodes option. Same German as Add to queue."
+    },
+    "Add to Queue and download": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to Queue and download"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zur Warteschlange hinzufügen und herunterladen"
+          }
+        }
+      },
+      "comment": "Settings → New episodes option. No existing short label for the full phrase; reuses Zur Warteschlange hinzufügen and herunterladen."
+    },
     "Add to queue": {
       "extractionState": "manual",
       "localizations": {
