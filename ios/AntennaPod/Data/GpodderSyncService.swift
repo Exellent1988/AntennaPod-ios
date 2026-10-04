@@ -276,22 +276,20 @@ final class GpodderSyncService: ObservableObject {
             }
 
             // Pull: subscribe missing (reuse subscribeQuietly / FeedRepository pipeline).
+            // Equality uses the lowercased key; the request URL keeps path/query case.
             var subscribed = 0
             var subscribeFailures: [String] = []
             let localNormalized = Set(store.feeds.map { Self.normalizeFeedURL($0.feedUrl) }.filter { !$0.isEmpty })
             for raw in changes.add {
-                let url = Self.normalizeFeedURL(raw)
-                guard url.hasPrefix("http") else { continue }
-                if localNormalized.contains(url) { continue }
-                // Also skip if any local feed matches case-insensitively / trailing slash already normalized.
-                if store.feeds.contains(where: { Self.normalizeFeedURL($0.feedUrl) == url }) {
-                    continue
-                }
+                let fetchURL = Self.syncFeedURL(raw)
+                let key = Self.normalizeFeedURL(fetchURL)
+                guard key.hasPrefix("http") else { continue }
+                if localNormalized.contains(key) { continue }
                 do {
-                    try await store.subscribeQuietly(feedUrl: url)
+                    try await store.subscribeQuietly(feedUrl: fetchURL)
                     subscribed += 1
                 } catch {
-                    subscribeFailures.append("\(url): \(error.localizedDescription)")
+                    subscribeFailures.append("\(fetchURL): \(error.localizedDescription)")
                 }
             }
 
@@ -301,11 +299,18 @@ final class GpodderSyncService: ObservableObject {
                 return !n.isEmpty && localNormalized.contains(n)
             }
 
-            // Push: local feed URLs not known on server.
-            let refreshedLocal = store.feeds.map { Self.normalizeFeedURL($0.feedUrl) }.filter {
-                !$0.isEmpty && $0.hasPrefix("http")
+            // Push: local http(s) URLs not known on server. Upload the original
+            // path/query case (`syncFeedURL`); `remote` stays a lowercased equality set.
+            var toUpload: [String] = []
+            var seenUploadKeys = Set<String>()
+            for feed in store.feeds {
+                let fetchURL = Self.syncFeedURL(feed.feedUrl)
+                let key = Self.normalizeFeedURL(fetchURL)
+                guard !key.isEmpty, key.hasPrefix("http") else { continue }
+                guard !remote.contains(key) else { continue }
+                guard seenUploadKeys.insert(key).inserted else { continue }
+                toUpload.append(fetchURL)
             }
-            let toUpload = refreshedLocal.filter { !remote.contains($0) }
             var uploadTimestamp = changes.timestamp
             if !toUpload.isEmpty {
                 let upload = try await client.uploadSubscriptionChanges(add: toUpload, remove: [])
@@ -321,7 +326,7 @@ final class GpodderSyncService: ObservableObject {
                         if !to.isEmpty { remote.insert(to) }
                     }
                 }
-                for u in toUpload { remote.insert(u) }
+                for u in toUpload { remote.insert(Self.normalizeFeedURL(u)) }
             }
 
             knownRemoteURLs = remote
@@ -396,11 +401,22 @@ final class GpodderSyncService: ObservableObject {
         return "\(base)_\(suffix)"
     }
 
-    /// Lowercase + trim trailing slash for crude URL equality (MVP).
-    static func normalizeFeedURL(_ raw: String) -> String {
+    /// Feed URL to fetch or upload: trim, drop trailing slashes, lowercase the scheme only.
+    /// Path, host, and query keep their original case so case-sensitive paths and tokens survive sync.
+    static func syncFeedURL(_ raw: String) -> String {
         var s = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         while s.hasSuffix("/") { s.removeLast() }
-        return s.lowercased()
+        if let schemeSep = s.range(of: "://") {
+            let scheme = s[..<schemeSep.lowerBound].lowercased()
+            s = scheme + s[schemeSep.lowerBound...]
+        }
+        return s
+    }
+
+    /// Equality key only (trim, strip trailing slashes, lowercase the whole URL).
+    /// Never pass this to subscribe or upload — use `syncFeedURL` for the real request.
+    static func normalizeFeedURL(_ raw: String) -> String {
+        syncFeedURL(raw).lowercased()
     }
 
     // MARK: - Data backup
