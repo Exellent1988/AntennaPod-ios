@@ -144,8 +144,9 @@ final class PlaybackService: ObservableObject {
     /// Episode id whose mark-played reset must survive later progress ticks.
     /// `markPlayed` zeros `playback.json` without moving the live playhead; the
     /// periodic observer and pause would otherwise write that playhead back.
-    /// Cleared when this episode is started again, marked unplayed, marked
-    /// played with reset off, or the listener seeks. Automatic rewind does not clear it.
+    /// Cleared when this episode is started again, marked played with reset
+    /// off, or the listener seeks. Mark unplayed leaves it, so the next
+    /// progress tick cannot restore the live playhead. Automatic rewind does not clear it.
     private var markPlayedResetHoldEpisodeId: String?
 
     /// Wall-clock end (seconds) for feed `podcast:soundbite` play-until-end.
@@ -1143,7 +1144,7 @@ final class PlaybackService: ObservableObject {
         markPlayedResetHoldEpisodeId = episodeId
     }
 
-    /// Drop the reset hold after mark unplayed or mark played with reset off.
+    /// Drop the reset hold after mark played with reset off.
     func releaseMarkPlayedPositionReset(for episodeId: String) {
         guard markPlayedResetHoldEpisodeId == episodeId else { return }
         markPlayedResetHoldEpisodeId = nil
