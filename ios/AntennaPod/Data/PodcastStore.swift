@@ -2400,6 +2400,34 @@ final class PodcastStore: ObservableObject {
             }
         }
 
+        // Channel podcast:trailer progress is stored under a synthetic id and is not
+        // in feed.episodes. History already shows it. Count the same playback.json row
+        // when that trailer still exists; a removed trailer is not invented.
+        var countedEpisodeIds = knownEpisodeIds
+        for episode in queue {
+            countedEpisodeIds.insert(episode.id)
+        }
+        for (episodeId, state) in playbackStates where !countedEpisodeIds.contains(episodeId) {
+            guard include(state) else { continue }
+            guard trailerEpisodeForHistory(id: episodeId) != nil else { continue }
+            guard let feed = feed(containingEpisodeId: episodeId) else { continue }
+            let secs = ListeningTimeEstimate.seconds(for: state)
+            if state.isPlayed {
+                played += 1
+            } else {
+                inProgress += 1
+            }
+            totalSeconds += secs
+            var entry = perFeed[feed.id] ?? (displayTitle(for: feed), 0, 0, 0)
+            if state.isPlayed {
+                entry.played += 1
+            } else {
+                entry.inProgress += 1
+            }
+            entry.seconds += secs
+            perFeed[feed.id] = entry
+        }
+
         let top = perFeed.map { (id, v) in
             FeedListeningStats(
                 id: id,
@@ -2482,6 +2510,19 @@ final class PodcastStore: ObservableObject {
                 episodeId: episode.id,
                 feedId: feed?.id,
                 feedTitle: feed.map { displayTitle(for: $0) } ?? ""
+            )
+        }
+        var countedEpisodeIds = knownEpisodeIds
+        for episode in queue {
+            countedEpisodeIds.insert(episode.id)
+        }
+        for episodeId in playbackStates.keys where !countedEpisodeIds.contains(episodeId) {
+            guard trailerEpisodeForHistory(id: episodeId) != nil else { continue }
+            guard let feed = feed(containingEpisodeId: episodeId) else { continue }
+            consider(
+                episodeId: episodeId,
+                feedId: feed.id,
+                feedTitle: displayTitle(for: feed)
             )
         }
 
