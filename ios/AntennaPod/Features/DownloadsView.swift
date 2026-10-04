@@ -179,10 +179,19 @@ struct DownloadsView: View {
         }
     }
 
-    private var isFiltering: Bool {
-        settings.downloadsFilter != .all
-            || isPodcastFiltering
-            || !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    /// Played-status or podcast chip only. Search is not a chip: the empty copy must
+    /// not call a search miss a filter miss.
+    private var hasDownloadsChipOrPodcastFilter: Bool {
+        settings.downloadsFilter != .all || isPodcastFiltering
+    }
+
+    /// Visible empty copy when the catalog is non-empty but no row matches.
+    /// Chip or podcast filter wins when one is set; otherwise this is a search miss.
+    private var downloadsNoMatchMessage: String {
+        if hasDownloadsChipOrPodcastFilter {
+            return String(localized: "No downloads match your filter.")
+        }
+        return String(localized: "No downloads match your search.")
     }
 
     /// Played offline files eligible for bulk delete (skips favorites — matches auto-delete).
@@ -439,19 +448,11 @@ struct DownloadsView: View {
                     ContentUnavailableView(
                         "No matching downloads",
                         systemImage: "magnifyingglass",
-                        description: Text(
-                            isFiltering
-                                ? String(localized: "No downloads match your filter.")
-                                : String(localized: "No downloads match your search.")
-                        )
+                        description: Text(downloadsNoMatchMessage)
                     )
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(String(localized: "No matching downloads"))
-                    .accessibilityValue(
-                        isFiltering
-                            ? String(localized: "No downloads match your filter.")
-                            : String(localized: "No downloads match your search.")
-                    )
+                    .accessibilityValue(downloadsNoMatchMessage)
                     .accessibilityHint(
                         String(localized: "Change or clear the Downloads filters or search to see other downloads.")
                     )
