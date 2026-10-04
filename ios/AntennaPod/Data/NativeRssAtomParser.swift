@@ -412,7 +412,18 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         case "enclosure":
             // Live stream enclosure is intentionally not stored for playback (display-only liveItem).
             if inLiveItem { break }
-            enclosureUrl = attributeDict["url"] ?? attributeDict["href"]
+            // Android Rss20: image MIME is artwork, never the playable file; only set media when
+            // none exists yet. An image enclosure first would otherwise stick after the
+            // media:content isDefault guard and drop a later playable audio/video URL.
+            let rawEncUrl = (attributeDict["url"] ?? attributeDict["href"])?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            guard let rawEncUrl, !rawEncUrl.isEmpty else { break }
+            let encMime = attributeDict["type"]?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .lowercased()
+            if encMime?.hasPrefix("image/") == true { break }
+            guard enclosureUrl == nil else { break }
+            enclosureUrl = rawEncUrl
             enclosureType = attributeDict["type"]
             enclosureLength = Int64(attributeDict["length"] ?? attributeDict["fileSize"] ?? "0") ?? 0
         case "content":
@@ -457,7 +468,16 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 }
             } else if inItem {
                 if rel == "enclosure" {
-                    enclosureUrl = href
+                    // Same Android Atom rules as RSS enclosure: non-empty URL, skip image/*,
+                    // do not replace an already-chosen playable media URL.
+                    let rawHref = href?.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard let rawHref, !rawHref.isEmpty else { break }
+                    let linkMime = attributeDict["type"]?
+                        .trimmingCharacters(in: .whitespacesAndNewlines)
+                        .lowercased()
+                    if linkMime?.hasPrefix("image/") == true { break }
+                    guard enclosureUrl == nil else { break }
+                    enclosureUrl = rawHref
                     enclosureType = attributeDict["type"]
                     enclosureLength = Int64(attributeDict["length"] ?? "0") ?? 0
                 } else if rel.isEmpty || rel == "alternate" {
