@@ -950,13 +950,6 @@ final class PodcastStore: ObservableObject {
         return queue.first { $0.id == episodeId }
     }
 
-    /// Owning subscription for an episode id (first match in `feeds`).
-    func feed(containingEpisodeId episodeId: String) -> PodcastFeed? {
-        feeds.first { feed in
-            feed.episodes.contains { $0.id == episodeId }
-        }
-    }
-
     /// HTTP Basic credentials from Keychain for an already-subscribed feed URL (if any).
     func httpBasicCredentials(forFeedUrl feedUrl: String) -> FeedHttpBasicCredentials? {
         guard let feed = FeedURLNormalization.subscribedFeed(matching: feedUrl, in: feeds) else {
