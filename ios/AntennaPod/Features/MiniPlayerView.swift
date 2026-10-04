@@ -411,6 +411,10 @@ struct MiniPlayerView: View {
                     .environmentObject(playback)
                     .environmentObject(store)
             }
+            .onChange(of: episode.id) { _, _ in
+                // Same as Full Player: do not keep this sheet across an episode change.
+                showBookmarks = false
+            }
             .sheet(isPresented: $showEpisodePrivateNote) {
                 EpisodePrivateNoteSheet(episodeId: episode.id)
                     .environmentObject(store)

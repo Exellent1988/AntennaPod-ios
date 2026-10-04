@@ -273,6 +273,9 @@ struct FullPlayerView: View {
             isScrubbing = false
             showTranscript = false
             showDescription = false
+            // Bookmarks sheet reads the live episode. Leaving it open after auto-next
+            // retargets the list, note, and delete onto the next episode.
+            showBookmarks = false
             resetChapterSearch()
             scheduleChapterLoad()
         }
