@@ -99,8 +99,11 @@ enum NewEpisodeActionCoordinator {
         guard !downloadCandidates.isEmpty, let downloads else { return }
 
         AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
-        guard NetworkPathGate.shared.allowsAutoDownload(wifiOnly: settings.autoDownloadWifiOnly) else {
-            return
+        // Same hold as auto-download: Wi‑Fi-only still enqueues `.automatic` downloads.
+        // Dropping them here loses the batch — the next refresh does not treat these IDs as new.
+        // Non-Wi‑Fi-only still skips a known-offline path.
+        if !settings.autoDownloadWifiOnly {
+            guard NetworkPathGate.shared.allowsTransfer(wifiOnly: false) else { return }
         }
 
         for episode in downloadCandidates {

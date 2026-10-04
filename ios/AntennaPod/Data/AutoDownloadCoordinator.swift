@@ -10,6 +10,8 @@ import Network
 /// 3. Among those newcomers: newest unplayed with a remote media URL, not already downloaded / in-flight,
 ///    capped by `autoDownloadEpisodesPerFeed` (1/2/3/5) **per feed**.
 /// 4. Optional Wi‑Fi / Ethernet-only gate via `NWPathMonitor` (`autoDownloadWifiOnly`).
+///    When that gate is on, newcomers are still enqueued; `DownloadService` holds them
+///    until Wi‑Fi/Ethernet. The batch is not dropped (a later refresh will not see them as new).
 /// 5. Skips `local-folder://` / `file://` feeds and local file enclosures.
 /// 6. Actual transfers go through `DownloadService.download` (`.automatic`) — storage-limit eviction unchanged.
 ///
@@ -44,8 +46,13 @@ enum AutoDownloadCoordinator {
 
         let globalOn = settings.autoDownloadEnabled
         startNetworkMonitoringIfNeeded()
-        guard NetworkPathGate.shared.allowsAutoDownload(wifiOnly: settings.autoDownloadWifiOnly) else {
-            return
+        // Wi‑Fi-only must not drop the batch. These IDs are newcomers only for this
+        // refresh; DownloadService keeps automatic items in the waiting FIFO until a
+        // real Wi‑Fi/Ethernet path (cellular, offline, or before the first sample).
+        // Non-Wi‑Fi-only still skips a known-offline path so URLSession does not fail
+        // the transfer immediately.
+        if !settings.autoDownloadWifiOnly {
+            guard NetworkPathGate.shared.allowsTransfer(wifiOnly: false) else { return }
         }
 
         let cap = settings.autoDownloadEpisodesPerFeed.rawValue
