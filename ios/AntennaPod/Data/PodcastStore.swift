@@ -2524,6 +2524,7 @@ final class PodcastStore: ObservableObject {
     // MARK: - Library search (local only)
 
     /// Matching subscriptions by display title (customTitle ?? RSS), optional descriptionText, author, language, categories, or local private note (case-insensitive).
+    /// Description uses shownote plain text (same strip as the description sheet), not raw HTML tags/entities.
     /// Does **not** search bookmark notes / chapters / transcripts.
     func matchingFeeds(query: String) -> [PodcastFeed] {
         let q = Self.normalizedQuery(query)
@@ -2532,7 +2533,7 @@ final class PodcastStore: ObservableObject {
             let shown = displayTitle(for: feed)
             return Self.matches(shown, query: q)
                 || Self.matches(feed.title, query: q)
-                || Self.matches(feed.descriptionText, query: q)
+                || Self.matchesDescription(feed.descriptionText, query: q)
                 || Self.matches(feed.author, query: q)
                 || Self.matches(feed.language, query: q)
                 || Self.matches(feed.displayLanguage, query: q)
@@ -2545,12 +2546,13 @@ final class PodcastStore: ObservableObject {
     }
 
     /// Whether an episode matches local library / Feed detail search (title, optional descriptionText, private note, any bookmark note).
+    /// Description uses shownote plain text so `Rock & Roll` matches stored `Rock &amp; Roll` and tag-only tokens do not.
     /// Empty / whitespace-only query → false. Does **not** search chapters / transcripts. Empty bookmark notes ignored.
     func episodeMatchesLibraryQuery(_ episode: PodcastEpisode, query: String) -> Bool {
         let q = Self.normalizedQuery(query)
         guard !q.isEmpty else { return false }
         return Self.matches(episode.title, query: q)
-            || Self.matches(episode.descriptionText, query: q)
+            || Self.matchesDescription(episode.descriptionText, query: q)
             || Self.matches(episodePrivateNote(for: episode.id), query: q)
             || bookmarks(for: episode.id).contains(where: { Self.matches($0.note, query: q) })
     }
@@ -2587,6 +2589,15 @@ final class PodcastStore: ObservableObject {
     private static func matches(_ value: String?, query: String) -> Bool {
         guard let value, !value.isEmpty else { return false }
         return value.localizedCaseInsensitiveContains(query)
+    }
+
+    /// Shownotes / feed description are stored as HTML. Match the same plain text the sheets show
+    /// (`HTMLTextStripping`) so entities decode and tags are not searchable.
+    private static func matchesDescription(_ value: String?, query: String) -> Bool {
+        guard let value, !value.isEmpty else { return false }
+        let plain = HTMLTextStripping.plainText(from: value)
+        guard !plain.isEmpty else { return false }
+        return plain.localizedCaseInsensitiveContains(query)
     }
 
     // MARK: - Local folder feeds (beta)
