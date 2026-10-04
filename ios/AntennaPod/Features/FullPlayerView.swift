@@ -276,6 +276,9 @@ struct FullPlayerView: View {
             // Bookmarks sheet reads the live episode. Leaving it open after auto-next
             // retargets the list, note, and delete onto the next episode.
             showBookmarks = false
+            // Private note sheet writes to the episode id it was given. Leaving it
+            // open after auto-next saves the draft or a clear onto the next episode.
+            showEpisodePrivateNote = false
             resetChapterSearch()
             scheduleChapterLoad()
         }
