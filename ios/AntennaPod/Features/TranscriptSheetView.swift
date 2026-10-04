@@ -391,13 +391,36 @@ struct TranscriptSheetView: View {
                     .padding(.horizontal)
                     .padding(.vertical, 8)
                 }
-                .onChange(of: currentCueId) { _, newId in
-                    guard let newId,
-                          filteredCues.contains(where: { $0.id == newId }) else { return }
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        proxy.scrollTo(newId, anchor: .center)
-                    }
+                .onAppear {
+                    // The cue list is created only after the transcript loads, with the
+                    // playback cue already current. onChange does not run for that value,
+                    // so the sheet would stay at the top until the next cue boundary.
+                    scrollTranscriptCueIntoView(proxy, cueId: currentCueId, afterLayout: true)
                 }
+                .onChange(of: currentCueId) { _, newId in
+                    scrollTranscriptCueIntoView(proxy, cueId: newId, afterLayout: false)
+                }
+            }
+        }
+    }
+
+    /// Scroll the current cue into view. Deferred on first appearance so LazyVStack
+    /// has mounted the row; immediate when playback crosses a cue boundary.
+    private func scrollTranscriptCueIntoView(
+        _ proxy: ScrollViewProxy,
+        cueId: String?,
+        afterLayout: Bool
+    ) {
+        guard let cueId, filteredCues.contains(where: { $0.id == cueId }) else { return }
+        if afterLayout {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    proxy.scrollTo(cueId, anchor: .center)
+                }
+            }
+        } else {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                proxy.scrollTo(cueId, anchor: .center)
             }
         }
     }
