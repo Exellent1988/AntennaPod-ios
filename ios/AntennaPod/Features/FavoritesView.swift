@@ -117,6 +117,15 @@ struct FavoritesView: View {
         return chips
     }
 
+    /// Drop a podcast chip whose feed is no longer subscribed. Otherwise the UUID
+    /// stays selected with no chip, and every later Favorites row looks filtered out.
+    /// A still-subscribed feed with zero Favorites episodes keeps its chip.
+    private func releaseFavoritesPodcastFilterIfFeedGone() {
+        guard case .feed(let id) = FavoritesPodcastFilter.fromStorage(settings.favoritesPodcastFilter) else { return }
+        guard !store.feeds.contains(where: { $0.id == id }) else { return }
+        settings.favoritesPodcastFilter = ""
+    }
+
     private func podcastChipTitle(_ chip: FavoritesPodcastFilter) -> String {
         switch chip {
         case .all:
@@ -417,6 +426,12 @@ struct FavoritesView: View {
         .searchable(text: $searchText, prompt: "Search favorites")
         .onChange(of: searchText) { _, newValue in
             scheduleFilter(for: newValue)
+        }
+        .onAppear {
+            releaseFavoritesPodcastFilterIfFeedGone()
+        }
+        .onChange(of: store.feeds.map(\.id)) { _, _ in
+            releaseFavoritesPodcastFilterIfFeedGone()
         }
         .onDisappear {
             debounceTask?.cancel()
