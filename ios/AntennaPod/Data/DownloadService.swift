@@ -558,30 +558,77 @@ final class DownloadService: ObservableObject {
     }
 
     /// Replace catalog episode metadata for ids present in `freshById` (feed refresh / rescan).
-    /// Keeps `fileName` and `downloadedAtEpochMs`. Does not delete or re-download the file.
-    /// Empty refreshed chapters keep a non-empty catalog chapter list (lazy fetch not in RSS).
+    /// Updates completed Downloads rows, the waiting FIFO, and in-flight pending mappings
+    /// (including the session-delegate copy used at finish). Keeps `fileName` and
+    /// `downloadedAtEpochMs`. Does not cancel, delete, or restart an active transfer —
+    /// an already-started task keeps its request URL; waiting items start with the
+    /// refreshed enclosure. Empty refreshed chapters keep a non-empty local list
+    /// (lazy fetch not in RSS).
     func replaceEpisodeSnapshots(with freshById: [String: PodcastEpisode]) {
-        guard !freshById.isEmpty, !downloads.isEmpty else { return }
-        var next = downloads
-        var changed = false
-        for index in next.indices {
-            let item = next[index]
-            guard let fresh = freshById[item.id] else { continue }
-            var merged = fresh
-            if merged.chapters.isEmpty, !item.episode.chapters.isEmpty {
-                merged.chapters = item.episode.chapters
-            }
-            guard merged != item.episode else { continue }
-            next[index] = DownloadedEpisode(
-                episode: merged,
-                fileName: item.fileName,
-                downloadedAtEpochMs: item.downloadedAtEpochMs
-            )
-            changed = true
+        guard !freshById.isEmpty else { return }
+        guard !downloads.isEmpty || !waitingQueue.isEmpty || !pendingByTaskId.isEmpty else {
+            return
         }
-        guard changed else { return }
-        downloads = next
-        persistCompleted()
+
+        if !downloads.isEmpty {
+            var next = downloads
+            var changed = false
+            for index in next.indices {
+                let item = next[index]
+                guard let fresh = freshById[item.id] else { continue }
+                let merged = Self.refreshedDownloadEpisode(fresh, replacing: item.episode)
+                guard merged != item.episode else { continue }
+                next[index] = DownloadedEpisode(
+                    episode: merged,
+                    fileName: item.fileName,
+                    downloadedAtEpochMs: item.downloadedAtEpochMs
+                )
+                changed = true
+            }
+            if changed {
+                downloads = next
+                persistCompleted()
+            }
+        }
+
+        for index in waitingQueue.indices {
+            let old = waitingQueue[index].episode
+            guard let fresh = freshById[old.id] else { continue }
+            let merged = Self.refreshedDownloadEpisode(fresh, replacing: old)
+            guard merged != old else { continue }
+            waitingQueue[index].episode = merged
+        }
+
+        var pendingChanged = false
+        for (taskId, mapping) in pendingByTaskId {
+            guard let fresh = freshById[mapping.episode.id] else { continue }
+            let merged = Self.refreshedDownloadEpisode(fresh, replacing: mapping.episode)
+            guard merged != mapping.episode else { continue }
+            let updated = PendingDownloadMapping(
+                taskIdentifier: mapping.taskIdentifier,
+                episode: merged,
+                fileName: mapping.fileName,
+                feedId: mapping.feedId
+            )
+            pendingByTaskId[taskId] = updated
+            sessionDelegate.setPending(updated, for: taskId)
+            pendingChanged = true
+        }
+        if pendingChanged {
+            persistPending()
+        }
+    }
+
+    /// Feed copy wins, except empty chapters keep a non-empty local list (lazy fetch).
+    private static func refreshedDownloadEpisode(
+        _ fresh: PodcastEpisode,
+        replacing old: PodcastEpisode
+    ) -> PodcastEpisode {
+        var merged = fresh
+        if merged.chapters.isEmpty, !old.chapters.isEmpty {
+            merged.chapters = old.chapters
+        }
+        return merged
     }
 
     func delete(_ episode: PodcastEpisode) {

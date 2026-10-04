@@ -2991,15 +2991,17 @@ final class PodcastStore: ObservableObject {
         }
         // Serial → Oldest first once when per-feed episodeSort still nil (subscribe + refresh).
         applySerialOldestFirstHeuristicIfNeeded(for: feed)
-        // Queue / Downloads catalog / loaded player keep pre-refresh structs. Copy refreshed
-        // fields onto matching ids so Queue search, play, and download see the new title and URL.
+        // Queue / Downloads (completed, waiting, in-flight) / loaded player keep pre-refresh
+        // structs. Copy refreshed fields onto matching ids so Queue search, play, waiting
+        // starts, and finished Downloads rows see the new title and URL.
         syncStoredEpisodeCopies(with: feed)
     }
 
     /// After a successful refresh or local-folder rescan, copy refreshed episode fields onto
     /// stored copies that still use the same id. Does not reorder the queue, delete downloads,
-    /// seek, or rebuild the player item. Keeps already-loaded chapters when the new feed copy
-    /// has none (lazy Podcast Index / media chapters are not in the RSS parse).
+    /// cancel in-flight transfers, seek, or rebuild the player item. Keeps already-loaded
+    /// chapters when the new feed copy has none (lazy Podcast Index / media chapters are not
+    /// in the RSS parse).
     private func syncStoredEpisodeCopies(with feed: PodcastFeed) {
         var byId: [String: PodcastEpisode] = [:]
         byId.reserveCapacity(feed.episodes.count)
