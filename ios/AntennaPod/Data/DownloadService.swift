@@ -212,6 +212,15 @@ final class DownloadService: ObservableObject {
     private var proxyChangeObserver: NSObjectProtocol?
     /// Live task id → episode (+ destination file name).
     private var pendingByTaskId: [Int: PendingDownloadMapping] = [:]
+    /// Task ids omitted by `getTasks`. A finished background transfer is absent from
+    /// that list until `didFinishDownloadingTo`, so it must stay mapped but must not
+    /// keep a parallel slot or a spinner.
+    private var reconciledAbsentTaskIds: Set<Int> = []
+
+    private var activeDownloadSlotCount: Int {
+        pendingByTaskId.keys.filter { !reconciledAbsentTaskIds.contains($0) }.count
+    }
+
     /// Episodes accepted but not yet started as URLSession tasks (FIFO). In-memory only —
     /// survives while the service is alive / session completion handlers fire; not written to disk.
     private var waitingQueue: [WaitingDownload] = []
@@ -221,13 +230,21 @@ final class DownloadService: ObservableObject {
     private static var pendingBackgroundCompletionHandler: (() -> Void)?
 
     init() {
+        // Recreating a background session can deliver `didFinishDownloadingTo` on the
+        // delegate queue before `reloadFromDisk`. The temp file is deleted if that
+        // callback returns without a task→episode mapping, so a finished download
+        // never shows up in Downloads and is not recorded as an error.
+        sessionDelegate.owner = self
+        for mapping in PodcastPersistence.loadPendingDownloads() {
+            sessionDelegate.setPending(mapping, for: mapping.taskIdentifier)
+        }
+
         let config = URLSessionConfiguration.background(withIdentifier: Self.backgroundSessionIdentifier)
         config.sessionSendsLaunchEvents = true
         config.isDiscretionary = false
         config.allowsCellularAccess = true
         AppURLSession.applyProxy(to: config)
         session = URLSession(configuration: config, delegate: sessionDelegate, delegateQueue: nil)
-        sessionDelegate.owner = self
 
         Self.activeInstance = self
         if let pending = Self.pendingBackgroundCompletionHandler {
@@ -406,7 +423,7 @@ final class DownloadService: ObservableObject {
     func pumpWaitingQueue() {
         let limit = settings?.maxParallelDownloads.rawValue ?? MaxParallelDownloads.three.rawValue
         var heldForWifi: [WaitingDownload] = []
-        while !waitingQueue.isEmpty && pendingByTaskId.count < limit {
+        while !waitingQueue.isEmpty && activeDownloadSlotCount < limit {
             let next = waitingQueue.removeFirst()
             // Re-check manual Wi‑Fi gate when a waiting item finally starts (path may have changed).
             if next.source == .manual, settings?.manualDownloadWifiOnly == true {
@@ -480,6 +497,7 @@ final class DownloadService: ObservableObject {
 
         let owningFeedId = store?.feed(containingEpisodeId: episode.id)?.id
         let task = session.downloadTask(with: request)
+        reconciledAbsentTaskIds.remove(task.taskIdentifier)
         let mapping = PendingDownloadMapping(
             taskIdentifier: task.taskIdentifier,
             episode: episode,
@@ -860,6 +878,7 @@ final class DownloadService: ObservableObject {
     }
 
     fileprivate func handleTaskCompleted(taskIdentifier: Int, error: Error?) {
+        reconciledAbsentTaskIds.remove(taskIdentifier)
         let mapping = pendingByTaskId.removeValue(forKey: taskIdentifier)
         sessionDelegate.removePending(for: taskIdentifier)
         persistPending()
@@ -1081,19 +1100,43 @@ final class DownloadService: ObservableObject {
             Task { @MainActor in
                 guard let self else { return }
                 let liveIds = Set(downloadTasks.map(\.taskIdentifier))
-                let stale = self.pendingByTaskId.keys.filter { !liveIds.contains($0) }
-                for id in stale {
-                    if let mapping = self.pendingByTaskId.removeValue(forKey: id) {
+                var adoptedFinishedFile = false
+                let absentIds = self.pendingByTaskId.keys.filter { !liveIds.contains($0) }
+                for id in absentIds {
+                    guard let mapping = self.pendingByTaskId[id] else { continue }
+                    self.inProgress.remove(mapping.episode.id)
+                    let destination = Self.downloadsDirectory.appendingPathComponent(mapping.fileName)
+                    let fileReady = FileManager.default.fileExists(atPath: destination.path)
+                    let alreadyCataloged = self.downloads.contains(where: { $0.id == mapping.episode.id })
+                    if fileReady && !alreadyCataloged {
+                        // Moved on a previous launch after the temp file was saved but
+                        // before the Downloads catalog was written.
+                        self.handleMovedDownload(
+                            taskIdentifier: id,
+                            fileName: mapping.fileName,
+                            episode: mapping.episode
+                        )
+                        self.pendingByTaskId.removeValue(forKey: id)
                         self.sessionDelegate.removePending(for: id)
-                        self.inProgress.remove(mapping.episode.id)
+                        self.reconciledAbsentTaskIds.remove(id)
+                        adoptedFinishedFile = true
+                    } else {
+                        // Do not drop the mapping. `getTasks` omits a transfer that
+                        // already finished, and `didFinishDownloadingTo` still has to
+                        // move the temp file. Persisting the removal here deletes that
+                        // file and the episode never appears in Downloads.
+                        self.reconciledAbsentTaskIds.insert(id)
                     }
                 }
-                for task in downloadTasks {
-                    if let mapping = self.pendingByTaskId[task.taskIdentifier] {
+                for id in liveIds {
+                    self.reconciledAbsentTaskIds.remove(id)
+                    if let mapping = self.pendingByTaskId[id] {
                         self.inProgress.insert(mapping.episode.id)
                     }
                 }
-                self.persistPending()
+                if adoptedFinishedFile {
+                    self.persistPending()
+                }
             }
         }
     }
