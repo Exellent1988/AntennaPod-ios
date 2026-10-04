@@ -858,12 +858,22 @@ final class PlaybackService: ObservableObject {
     private func handlePlaybackEnded() {
         // Natural episode end — drop any pending soundbite window (queue advance is separate).
         clearSoundbiteEndMarker()
-        // End-of-episode / end-of-chapter (last chapter): mark finished, stop — do not auto-advance.
+        // End-of-episode: mark finished, stop — do not auto-advance.
+        // End-of-chapter: pause + notify, including when the chapter end is the episode
+        // end. The 0.5s observer only pauses inside 50ms of the boundary, so the last
+        // chapter usually arrives here via didPlayToEndTime. Do not mark played or
+        // dismiss the player — same result as a mid-chapter expiry.
         // End-of-queue: advance via `nextQueueEpisode` only (keep EOQ active while queue continues);
         // when no next / play fails → same teardown as EOE (no Same-podcast / Off fallback).
         if isSleepTimerActive, let mode = sleepTimerMode {
             switch mode {
-            case .endOfEpisode, .endOfChapter:
+            case .endOfChapter:
+                if let seconds = player?.currentTime().seconds, seconds.isFinite {
+                    positionSeconds = max(0, seconds)
+                }
+                expireSleepTimer()
+                return
+            case .endOfEpisode:
                 let finishedId = currentEpisode?.id
                 finishCurrentEpisode(ended: true)
                 expireSleepTimer()
