@@ -111,10 +111,10 @@ struct PodcastTrailer: Identifiable, Hashable, Codable {
     }
 
     /// http(s) media URL from feed `url` only. Nil when missing / non-http(s).
+    /// A space in the feed URL is percent-encoded (`EpisodeMediaURL`) so Play, Open,
+    /// Copy, and Share still appear. `URL(string:)` alone drops that URL.
     var mediaURL: URL? {
-        guard let url else { return nil }
-        let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, let parsed = URL(string: trimmed) else { return nil }
+        guard let parsed = EpisodeMediaURL.url(from: url) else { return nil }
         let scheme = parsed.scheme?.lowercased()
         guard scheme == "http" || scheme == "https" else { return nil }
         return parsed
