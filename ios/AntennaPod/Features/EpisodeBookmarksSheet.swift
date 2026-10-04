@@ -1,8 +1,9 @@
 import SwiftUI
 import UIKit
 
-/// List / add / delete / edit-note / clear-all user bookmarks for the current episode.
-/// Tap a row → `PlaybackService.seek(toSeconds:)`. Swipe delete → remove.
+/// List / add / delete / edit-note / clear-all user bookmarks for one episode.
+/// Tap a row → seek to that mark (when already current) or `play(..., fromBeginning: true)` then seek
+/// (Library → Bookmarks catalog when another / no episode is loaded). Swipe delete → remove.
 /// Swipe / context menu **Edit note** → alert TextField (position unchanged).
 /// Local-only (`bookmarks.json`); not gpodder; wall-clock positions; cap 50/episode.
 /// Toolbar **Copy bookmarks** + **Share bookmarks** export a plain-text list matching
@@ -300,7 +301,17 @@ struct EpisodeBookmarksSheet: View {
     }
 
     private func seek(to bookmark: EpisodeBookmark) {
-        guard playback.currentEpisode?.id == episodeId else { return }
+        // Player sheet: already current → seek in place.
+        if playback.currentEpisode?.id == episodeId {
+            playback.seek(toSeconds: bookmark.positionSeconds)
+            dismiss()
+            return
+        }
+        // Library → Bookmarks catalog opens this sheet for any episode. Without a play
+        // path, tap was a silent no-op when that episode was not already loaded.
+        // Match playSoundbite: load at 0 so skip-intro / resume do not steal the mark, then seek.
+        guard let episode = store.episode(id: episodeId) else { return }
+        guard playback.play(episode: episode, fromBeginning: true) else { return }
         playback.seek(toSeconds: bookmark.positionSeconds)
         dismiss()
     }
