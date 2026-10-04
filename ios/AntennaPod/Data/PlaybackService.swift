@@ -111,6 +111,12 @@ final class PlaybackService: ObservableObject {
     private var videoTrackPolicyCancellable: AnyCancellable?
     private var endObserver: NSObjectProtocol?
     private var lastPersistedAt: Date = .distantPast
+    /// Monotonic seek id. Not reset on teardown, so a late completion cannot
+    /// release a newer episode's hold (tokens would otherwise collide at 1).
+    private var seekHoldToken = 0
+    /// Non-nil while the latest `AVPlayer.seek` has not finished. Periodic samples
+    /// must not persist that pre-seek playhead (often ~0 on resume) over `playback.json`.
+    private var activeSeekHold: Int?
 
     private var sleepTimerEndDate: Date?
     private var sleepTimerPausedRemaining: Double?
@@ -227,10 +233,14 @@ final class PlaybackService: ObservableObject {
         let resumeAt = fromBeginning ? 0 : resumePosition(for: episode.id)
         if resumeAt > 1 {
             let time = CMTime(seconds: resumeAt, preferredTimescale: 600)
+            let hold = beginSeekHold()
             newPlayer.seek(to: time) { [weak self] finished in
                 Task { @MainActor in
-                    guard let self, finished else { return }
+                    guard let self else { return }
+                    self.endSeekHold(hold)
+                    guard finished, self.player === newPlayer else { return }
                     self.positionSeconds = resumeAt
+                    self.persistProgress(force: true)
                     self.updateNowPlayingInfo(force: true)
                 }
             }
@@ -246,11 +256,15 @@ final class PlaybackService: ObservableObject {
             let intro = Double(resolvedSkipIntroSeconds(for: episode))
             if intro > 0, skipIntroSeekFits(episode: episode, intro: intro) {
                 let time = CMTime(seconds: intro, preferredTimescale: 600)
+                let hold = beginSeekHold()
                 newPlayer.seek(to: time) { [weak self] finished in
                     Task { @MainActor in
-                        guard let self, finished else { return }
+                        guard let self else { return }
+                        self.endSeekHold(hold)
+                        guard finished, self.player === newPlayer else { return }
                         self.positionSeconds = intro
                         self.didApplySkipIntroForSession = true
+                        self.persistProgress(force: true)
                         self.updateNowPlayingInfo(force: true)
                     }
                 }
@@ -406,7 +420,13 @@ final class PlaybackService: ObservableObject {
             capped = target
         }
         let time = CMTime(seconds: capped, preferredTimescale: 600)
-        player.seek(to: time)
+        let hold = beginSeekHold()
+        let seekingPlayer = player
+        seekingPlayer.seek(to: time) { [weak self] _ in
+            Task { @MainActor in
+                self?.endSeekHold(hold)
+            }
+        }
         positionSeconds = capped
         persistProgress(force: true)
         updateNowPlayingInfo(force: true)
@@ -782,9 +802,15 @@ final class PlaybackService: ObservableObject {
             forInterval: CMTime(seconds: 0.5, preferredTimescale: 600),
             queue: .main
         ) { [weak self] time in
+            let seconds = time.seconds
             Task { @MainActor in
                 guard let self else { return }
-                self.positionSeconds = time.seconds
+                // Drop samples from a torn-down player and from the playhead that
+                // still sits before an in-flight seek (resume / scrub / intro).
+                guard self.player === player else { return }
+                guard !self.isSeekHoldActive else { return }
+                guard seconds.isFinite else { return }
+                self.positionSeconds = max(0, seconds)
                 if let duration = player.currentItem?.duration.seconds, duration.isFinite {
                     self.durationSeconds = duration
                 }
@@ -974,7 +1000,13 @@ final class PlaybackService: ObservableObject {
             target = max(0, end)
         }
         let time = CMTime(seconds: target, preferredTimescale: 600)
-        player.seek(to: time)
+        let hold = beginSeekHold()
+        let seekingPlayer = player
+        seekingPlayer.seek(to: time) { [weak self] _ in
+            Task { @MainActor in
+                self?.endSeekHold(hold)
+            }
+        }
         positionSeconds = target
         persistProgress(force: true)
         pauseSleepTimerCountdown()
@@ -998,10 +1030,27 @@ final class PlaybackService: ObservableObject {
         return position >= duration - threshold
     }
 
+    /// Ignore periodic samples until `token` (the latest seek) completes.
+    private var isSeekHoldActive: Bool { activeSeekHold != nil }
+
+    private func beginSeekHold() -> Int {
+        seekHoldToken += 1
+        activeSeekHold = seekHoldToken
+        return seekHoldToken
+    }
+
+    /// Release the hold only if no newer seek has started.
+    private func endSeekHold(_ token: Int) {
+        guard activeSeekHold == token else { return }
+        activeSeekHold = nil
+    }
+
     private func persistProgress(force: Bool) {
         guard let episode = currentEpisode, let store else {
             return
         }
+        // NaN/infinite would make JSONEncoder throw and skip the whole playback.json write.
+        guard positionSeconds.isFinite else { return }
         let now = Date()
         if !force, now.timeIntervalSince(lastPersistedAt) < Self.persistIntervalSeconds {
             return
@@ -1125,7 +1174,14 @@ final class PlaybackService: ObservableObject {
             let rewind = Self.fadeThresholdSeconds / 2
             let target = max(0, positionSeconds - rewind)
             let time = CMTime(seconds: target, preferredTimescale: 600)
-            player?.seek(to: time)
+            if let seekingPlayer = player {
+                let hold = beginSeekHold()
+                seekingPlayer.seek(to: time) { [weak self] _ in
+                    Task { @MainActor in
+                        self?.endSeekHold(hold)
+                    }
+                }
+            }
             positionSeconds = target
         }
         persistProgress(force: true)
@@ -1184,6 +1240,7 @@ final class PlaybackService: ObservableObject {
             player.removeTimeObserver(timeObserver)
         }
         timeObserver = nil
+        activeSeekHold = nil
         statusCancellable = nil
         videoTrackPolicyCancellable?.cancel()
         videoTrackPolicyCancellable = nil

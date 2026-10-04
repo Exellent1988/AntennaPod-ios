@@ -728,6 +728,8 @@ final class PodcastStore: ObservableObject {
 
     /// Persist continuous progress while listening (does not flip played).
     func saveProgress(episodeId: String, positionSeconds: Double, durationSeconds: Double) {
+        // Non-finite position makes JSONEncoder throw; encode then skips the whole playback.json write.
+        guard positionSeconds.isFinite else { return }
         var state = playbackState(for: episodeId)
         state.positionSeconds = max(0, positionSeconds)
         if durationSeconds.isFinite, durationSeconds > 0 {
