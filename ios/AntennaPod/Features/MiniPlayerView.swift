@@ -416,6 +416,10 @@ struct MiniPlayerView: View {
                 showBookmarks = false
                 showEpisodePrivateNote = false
                 showJumpToPosition = false
+                // Chapters sheet lists the live episode and tap seeks the player.
+                // Leaving it open after auto-next shows the next episode's chapters
+                // and a tap seeks that episode.
+                showChapters = false
             }
             .sheet(isPresented: $showEpisodePrivateNote) {
                 EpisodePrivateNoteSheet(episodeId: episode.id)
