@@ -275,7 +275,9 @@ final class PlaybackService: ObservableObject {
             }
         }
 
+        // AVPlayer.play() is equivalent to rate = 1.0 and would drop feed/default/session speed.
         newPlayer.play()
+        newPlayer.rate = rate
         isPlaying = true
         activateSession()
         setupRemoteCommandsIfNeeded()
@@ -838,6 +840,11 @@ final class PlaybackService: ObservableObject {
                     // resumeSleepTimerIfNeeded returns immediately unless isPlaying is already true.
                     self.isPlaying = true
                     self.resumeSleepTimerIfNeeded()
+                }
+                // play() is documented to set rate to 1.0. Re-apply the session/feed
+                // speed once the item is actually playing, or a 1.5× label still plays at 1×.
+                if playing, abs(player.rate - self.rate) > 0.01 {
+                    player.rate = self.rate
                 }
                 self.isPlaying = playing
                 self.updateNowPlayingInfo(force: true)
