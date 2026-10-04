@@ -945,7 +945,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             case "item", "entry":
                 let sorted = itemChapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
                 let episode = PodcastEpisode(
-                    id: itemGuid ?? itemLink ?? UUID().uuidString,
+                    id: stableEpisodeIdentity(),
                     title: itemTitle ?? "Episode",
                     link: itemLink,
                     pubDateEpochMs: FeedDateParsing.epochMs(from: itemPubDate),
@@ -1625,6 +1625,22 @@ extension XMLFeedParser {
             return !audioOrVideoMime
         }
         return mime?.hasPrefix("image/") == true
+    }
+
+    /// Identity that survives the next refresh.
+    /// A fresh UUID made items with no guid and no link look new on every parse
+    /// (new-episode banner, Inbox, add-to-queue). Empty guid/link is not an id.
+    /// Enclosure URL, else title and publish date; UUID only when nothing else exists.
+    private func stableEpisodeIdentity() -> String {
+        if let id = Self.nonEmptyAttr(itemGuid) { return id }
+        if let id = Self.nonEmptyAttr(itemLink) { return id }
+        if let id = Self.nonEmptyAttr(enclosureUrl) { return id }
+        let title = (itemTitle ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let date = (itemPubDate ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        if !title.isEmpty || !date.isEmpty {
+            return "\(title)|\(date)"
+        }
+        return UUID().uuidString
     }
 
     /// Trimmed non-empty attribute value, or nil.
