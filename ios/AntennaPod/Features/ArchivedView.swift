@@ -95,6 +95,15 @@ struct ArchivedView: View {
         return chips
     }
 
+    /// Drop a podcast chip whose feed is no longer subscribed. Otherwise the UUID
+    /// stays selected with no chip, and every later Archived row looks filtered out.
+    /// A still-subscribed feed with zero Archived episodes keeps its chip.
+    private func releaseArchivedPodcastFilterIfFeedGone() {
+        guard case .feed(let id) = ArchivedPodcastFilter.fromStorage(settings.archivedPodcastFilter) else { return }
+        guard !store.feeds.contains(where: { $0.id == id }) else { return }
+        settings.archivedPodcastFilter = ""
+    }
+
     private func podcastChipTitle(_ chip: ArchivedPodcastFilter) -> String {
         switch chip {
         case .all:
@@ -375,6 +384,12 @@ struct ArchivedView: View {
         .searchable(text: $searchText, prompt: "Search archived")
         .onChange(of: searchText) { _, newValue in
             scheduleFilter(for: newValue)
+        }
+        .onAppear {
+            releaseArchivedPodcastFilterIfFeedGone()
+        }
+        .onChange(of: store.feeds.map(\.id)) { _, _ in
+            releaseArchivedPodcastFilterIfFeedGone()
         }
         .onDisappear {
             debounceTask?.cancel()
