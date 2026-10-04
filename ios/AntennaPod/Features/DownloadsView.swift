@@ -159,6 +159,15 @@ struct DownloadsView: View {
         return chips
     }
 
+    /// Drop a podcast chip whose feed is no longer subscribed. Otherwise the UUID
+    /// stays selected with no chip, and every later Downloads row looks filtered out.
+    /// A still-subscribed feed with zero Downloads episodes keeps its chip.
+    private func releaseDownloadsPodcastFilterIfFeedGone() {
+        guard case .feed(let id) = DownloadsPodcastFilter.fromStorage(settings.downloadsPodcastFilter) else { return }
+        guard !store.feeds.contains(where: { $0.id == id }) else { return }
+        settings.downloadsPodcastFilter = ""
+    }
+
     private func podcastChipTitle(_ chip: DownloadsPodcastFilter) -> String {
         switch chip {
         case .all:
@@ -525,6 +534,12 @@ struct DownloadsView: View {
             .searchable(text: $searchText, prompt: "Search downloads")
             .onChange(of: searchText) { _, newValue in
                 scheduleFilter(for: newValue)
+            }
+            .onAppear {
+                releaseDownloadsPodcastFilterIfFeedGone()
+            }
+            .onChange(of: store.feeds.map(\.id)) { _, _ in
+                releaseDownloadsPodcastFilterIfFeedGone()
             }
             .onDisappear {
                 debounceTask?.cancel()
