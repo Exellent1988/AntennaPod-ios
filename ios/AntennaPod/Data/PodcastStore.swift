@@ -2038,6 +2038,8 @@ final class PodcastStore: ObservableObject {
     }
 
     /// Starred episodes across feeds, newest favorited first.
+    /// Also includes a starred channel trailer (synthetic id, not in `feed.episodes`)
+    /// and queue-only copies.
     var favoriteEpisodes: [FavoriteEpisode] {
         var items: [FavoriteEpisode] = []
         for feed in feeds {
@@ -2053,7 +2055,7 @@ final class PodcastStore: ObservableObject {
             }
         }
         // Queue-only copies that were starred (rare).
-        let knownIds = Set(items.map(\.id))
+        var knownIds = Set(items.map(\.id))
         for episode in queue where !knownIds.contains(episode.id) {
             guard let at = favoriteAtById[episode.id] else { continue }
             let title = displayTitle(containingEpisodeId: episode.id)
@@ -2061,6 +2063,20 @@ final class PodcastStore: ObservableObject {
                 FavoriteEpisode(
                     episode: episode,
                     feedTitle: title,
+                    favoritedAtEpochMs: at
+                )
+            )
+            knownIds.insert(episode.id)
+        }
+        // Channel podcast:trailer starred from the player. Same synthetic id as
+        // playback; not stored in feed.episodes, so the loops above miss it and
+        // Favorites stays empty while the player star stays on.
+        for (episodeId, at) in favoriteAtById where !knownIds.contains(episodeId) {
+            guard let resolved = trailerEpisodeForHistory(id: episodeId) else { continue }
+            items.append(
+                FavoriteEpisode(
+                    episode: resolved.episode,
+                    feedTitle: resolved.feedTitle,
                     favoritedAtEpochMs: at
                 )
             )
