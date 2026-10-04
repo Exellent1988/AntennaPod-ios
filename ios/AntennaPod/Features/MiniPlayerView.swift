@@ -415,6 +415,7 @@ struct MiniPlayerView: View {
                 // Same as Full Player: do not keep these sheets across an episode change.
                 showBookmarks = false
                 showEpisodePrivateNote = false
+                showJumpToPosition = false
             }
             .sheet(isPresented: $showEpisodePrivateNote) {
                 EpisodePrivateNoteSheet(episodeId: episode.id)

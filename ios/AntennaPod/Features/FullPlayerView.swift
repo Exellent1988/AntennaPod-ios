@@ -279,6 +279,9 @@ struct FullPlayerView: View {
             // Private note sheet writes to the episode id it was given. Leaving it
             // open after auto-next saves the draft or a clear onto the next episode.
             showEpisodePrivateNote = false
+            // Jump sheet keeps the typed time in local state and seeks the live item.
+            // Leaving it open after auto-next seeks that time on the next episode.
+            showJumpToPosition = false
             resetChapterSearch()
             scheduleChapterLoad()
         }
