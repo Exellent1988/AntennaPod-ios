@@ -829,14 +829,18 @@ final class DownloadService: ObservableObject {
             inProgress.remove(episodeId)
         }
         if let error, (error as NSError).code != NSURLErrorCancelled {
+            // HTTP Basic 401s arrive as a challenge. No matching Keychain password, a
+            // rejected password, or a media host that is not the feed host cancels that
+            // challenge (NSURLError -1012) before didFinishDownloadingTo can see status 401.
+            let message = Self.userFacingTransportFailureMessage(error)
             if let mapping {
-                recordFailure(episode: mapping.episode, message: error.localizedDescription)
+                recordFailure(episode: mapping.episode, message: message)
                 let destination = Self.downloadsDirectory.appendingPathComponent(mapping.fileName)
                 if !downloads.contains(where: { $0.id == mapping.episode.id }) {
                     try? FileManager.default.removeItem(at: destination)
                 }
             } else {
-                lastError = error.localizedDescription
+                lastError = message
             }
         }
         // Free slot → start next waiting download (if any).
@@ -903,6 +907,22 @@ final class DownloadService: ObservableObject {
     }
 
     // MARK: - Error log
+
+    /// Challenge cancellation (-1012 / -1013) is how URLSession reports HTTP Basic 401
+    /// when this app does not supply credentials. Show the same authentication hint as a
+    /// literal HTTP 401 response (Podcast settings → Authentication), not the system
+    /// "connection was cancelled" text.
+    private static func userFacingTransportFailureMessage(_ error: Error) -> String {
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .userCancelledAuthentication, .userAuthenticationRequired:
+                return FeedHttpBasicAuth.unauthorizedDownloadMessage
+            default:
+                break
+            }
+        }
+        return error.localizedDescription
+    }
 
     private func recordFailure(episode: PodcastEpisode, message: String) {
         let feedTitle = store?.displayTitle(containingEpisodeId: episode.id) ?? ""
