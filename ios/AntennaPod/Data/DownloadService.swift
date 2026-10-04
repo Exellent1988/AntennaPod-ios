@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 
 struct DownloadedEpisode: Identifiable, Hashable, Codable {
@@ -433,6 +434,30 @@ final class DownloadService: ObservableObject {
         }
     }
 
+
+    /// Documents filename for a finished download.
+    /// Percent-encoding the episode id keeps the historical name when it fits.
+    /// A long permalink guid expands past the 255-byte name limit, and the
+    /// temp→Documents move then fails after a successful transfer. Those ids
+    /// use a SHA-256 name instead (same id always maps to the same file).
+    private static func storageFileName(episodeId: String, pathExtension ext: String) -> String {
+        let encoded = episodeId.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? ""
+        if !encoded.isEmpty {
+            let candidate = "\(encoded).\(ext)"
+            if candidate.lengthOfBytes(using: .utf8) <= 255 {
+                return candidate
+            }
+        }
+        let digest = SHA256.hash(data: Data(episodeId.utf8))
+        let hex = digest.map { String(format: "%02x", $0) }.joined()
+        var suffix = ""
+        for scalar in ext.unicodeScalars where CharacterSet.alphanumerics.contains(scalar) {
+            suffix.unicodeScalars.append(scalar)
+            if suffix.count == 8 { break }
+        }
+        return "\(hex).\(suffix.isEmpty ? "mp3" : suffix)"
+    }
+
     /// Hands one episode to the background `URLSession` (caller already reserved an `inProgress` slot).
     /// When the owning feed has HTTP Basic credentials in Keychain **and** the media URL host
     /// matches the feed URL host, attaches `Authorization` (never logged). Other CDN hosts are
@@ -445,9 +470,7 @@ final class DownloadService: ObservableObject {
         }
 
         let ext = url.pathExtension.isEmpty ? "mp3" : url.pathExtension
-        let safeName = episode.id
-            .addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? UUID().uuidString
-        let fileName = "\(safeName).\(ext)"
+        let fileName = Self.storageFileName(episodeId: episode.id, pathExtension: ext)
 
         var request = URLRequest(url: url)
         AppUserAgent.apply(to: &request)
