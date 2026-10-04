@@ -948,13 +948,19 @@ final class PodcastStore: ObservableObject {
     }
 
     /// Episode from subscriptions (preferred over a stale queue / player copy for chapters).
+    /// Channel `podcast:trailer` playback uses a synthetic id that is not stored in
+    /// `feed.episodes`; resolve it the same way History does so Library → Bookmarks
+    /// can start that trailer at a saved mark when it is not already loaded.
     func episode(id episodeId: String) -> PodcastEpisode? {
         for feed in feeds {
             if let episode = feed.episodes.first(where: { $0.id == episodeId }) {
                 return episode
             }
         }
-        return queue.first { $0.id == episodeId }
+        if let queued = queue.first(where: { $0.id == episodeId }) {
+            return queued
+        }
+        return trailerEpisodeForHistory(id: episodeId)?.episode
     }
 
     /// HTTP Basic credentials from Keychain for an already-subscribed feed URL (if any).
