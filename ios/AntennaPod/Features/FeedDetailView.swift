@@ -367,12 +367,14 @@ struct FeedDetailView: View {
     }
 
     /// Type chips for this feed’s episode catalog (before status/type/search). Hide zero-match.
+    /// Use `liveFeed`, not the navigation snapshot: a refresh while this page stays open
+    /// updates the episode rows, and the Full / Trailer / Bonus / Other chips must follow.
     private var feedEpisodeTypeFilterChips: [EpisodeTypeFilter] {
-        EpisodeTypeFilter.chips(presentIn: feed.episodes, selected: settings.feedEpisodeTypeFilter)
+        EpisodeTypeFilter.chips(presentIn: liveFeed.episodes, selected: settings.feedEpisodeTypeFilter)
     }
 
     private var showFeedEpisodeTypeFilterChips: Bool {
-        EpisodeTypeFilter.shouldShowChipRow(presentIn: feed.episodes, selected: settings.feedEpisodeTypeFilter)
+        EpisodeTypeFilter.shouldShowChipRow(presentIn: liveFeed.episodes, selected: settings.feedEpisodeTypeFilter)
     }
 
     private var isFiltering: Bool {
