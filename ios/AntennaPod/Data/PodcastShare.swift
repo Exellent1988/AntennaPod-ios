@@ -91,13 +91,13 @@ extension PodcastEpisode {
     /// Episode webpage from feed `link` only (`http` / `https`).
     /// Does **not** fall back to enclosure/`downloadUrl` (that is media, not a website)
     /// or to feed `siteLink` / RSS. Never invents a URL — nil when missing or non-http(s).
+    /// A space in the feed link is percent-encoded (`EpisodeMediaURL`) so Open episode website still appears.
+    /// `URL(string:)` alone drops that link.
     var websiteURL: URL? {
-        guard let link else { return nil }
-        let trimmed = link.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
-        let scheme = url.scheme?.lowercased()
+        guard let parsed = EpisodeMediaURL.url(from: link) else { return nil }
+        let scheme = parsed.scheme?.lowercased()
         guard scheme == "http" || scheme == "https" else { return nil }
-        return url
+        return parsed
     }
 
     /// Trimmed feed-provided enclosure / media URL when it has an `http(s)` scheme.
