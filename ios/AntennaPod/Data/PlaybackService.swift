@@ -872,14 +872,18 @@ final class PlaybackService: ObservableObject {
         }
     }
 
-    /// When remaining ≤ skipOutroSeconds (duration known), finish once like natural end.
+    /// When remaining ≤ skipOutroSeconds (duration known and longer than the outro),
+    /// finish once like natural end. Outro ≥ duration must not auto-finish: remaining
+    /// would always be ≤ outro, so a short episode would be marked played after ~1s.
     private func checkSkipOutro() {
         guard !didTriggerSkipOutroForSession else { return }
         guard let episode = currentEpisode else { return }
         let outro = Double(resolvedSkipOutroSeconds(for: episode))
         guard outro > 0 else { return }
         guard durationSeconds.isFinite, durationSeconds > 0 else { return }
-        // Avoid firing at t≈0 before any real progress (short media + large outro).
+        // Android SkipUtils: skip ending only when skipEnd < duration.
+        guard outro < durationSeconds else { return }
+        // Avoid firing at t≈0 before any real progress.
         guard positionSeconds > 1 else { return }
         let remaining = durationSeconds - positionSeconds
         guard remaining.isFinite, remaining <= outro else { return }
