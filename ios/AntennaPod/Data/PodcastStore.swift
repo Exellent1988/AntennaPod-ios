@@ -2120,6 +2120,9 @@ final class PodcastStore: ObservableObject {
     func removeFromHistory(_ episodeId: String) {
         playbackStates.removeValue(forKey: episodeId)
         pendingAutoDeleteIds.remove(episodeId)
+        // Continue listening is derived from this playback entry. Queue didSet is not
+        // involved, so the homescreen widget / Watch snapshot must be republished here.
+        publishWidgetSnapshot()
     }
 
     /// Remove every history-listed episode's playback state (same as per-row Remove).
@@ -2135,6 +2138,9 @@ final class PodcastStore: ObservableObject {
             pendingAutoDeleteIds.remove(id)
         }
         playbackStates = next
+        // Same as per-row Remove: playback.json changed without a queue write, so
+        // Continue listening (widget / Watch) would otherwise keep the cleared episode.
+        publishWidgetSnapshot()
     }
 
     /// Mark every unplayed, non-archived episode in the History catalog as played.
