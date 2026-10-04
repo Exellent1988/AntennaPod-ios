@@ -240,8 +240,11 @@ final class PlaybackService: ObservableObject {
             positionSeconds = 0
         } else {
             // Fresh start (position ≈ 0): skip intro once when configured (feed override else global).
+            // Do not seek when that target is at/past a known duration or inside skip outro:
+            // playback would sit at the end and checkSkipOutro / DidPlayToEndTime would mark
+            // the episode played before any of it was heard.
             let intro = Double(resolvedSkipIntroSeconds(for: episode))
-            if intro > 0 {
+            if intro > 0, skipIntroSeekFits(episode: episode, intro: intro) {
                 let time = CMTime(seconds: intro, preferredTimescale: 600)
                 newPlayer.seek(to: time) { [weak self] finished in
                     Task { @MainActor in
@@ -646,6 +649,32 @@ final class PlaybackService: ObservableObject {
             return global
         }
         return store.feedSettings(for: feed.id).resolvedPlaybackSpeed(global: global)
+    }
+
+    /// Feed duration when the RSS/Atom item has one; else a previously saved playback duration.
+    /// `0` means unknown — skip intro may still seek (same as Android when duration is unknown).
+    private func knownDurationSeconds(for episode: PodcastEpisode) -> Double {
+        if episode.durationSeconds.isFinite, episode.durationSeconds > 0 {
+            return episode.durationSeconds
+        }
+        let saved = store?.playbackState(for: episode.id).durationSeconds ?? 0
+        if saved.isFinite, saved > 0 {
+            return saved
+        }
+        return 0
+    }
+
+    /// False when a fresh-start intro seek would land at the end or inside the outro window.
+    /// Unknown duration still allows the seek.
+    private func skipIntroSeekFits(episode: PodcastEpisode, intro: Double) -> Bool {
+        let duration = knownDurationSeconds(for: episode)
+        guard duration > 0 else { return true }
+        if intro >= duration { return false }
+        let outro = Double(resolvedSkipOutroSeconds(for: episode))
+        if outro > 0, outro < duration, duration - intro <= outro {
+            return false
+        }
+        return true
     }
 
     /// Feed override skip-intro when set; otherwise AppSettings global.
