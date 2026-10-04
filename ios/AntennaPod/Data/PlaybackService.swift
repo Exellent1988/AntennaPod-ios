@@ -883,6 +883,11 @@ final class PlaybackService: ObservableObject {
                 // Snapshot next before markPlayed removes the finished item from the queue.
                 let next = finishedId.flatMap { store?.nextQueueEpisode(after: $0) }
                 finishCurrentEpisode(ended: true)
+                // play(next) persists the live playhead for the episode it leaves.
+                // That would put the skip/end position back after markPlayed cleared it.
+                if let finishedId {
+                    adoptSavedPlaybackPosition(episodeId: finishedId)
+                }
                 var startedNext = false
                 if let next {
                     // play() keeps an active sleep timer across episode changes (clearSleepTimer: false).
@@ -926,6 +931,10 @@ final class PlaybackService: ObservableObject {
             next = finishedId.flatMap { store?.nextSamePodcastEpisode(after: $0) }
         }
         finishCurrentEpisode(ended: true)
+        // Same handoff as end-of-queue: do not let play(next) restore the pre-reset playhead.
+        if let finishedId {
+            adoptSavedPlaybackPosition(episodeId: finishedId)
+        }
         var startedNext = false
         if let next {
             // play() switches away and flushes deferred auto-delete for the finished episode.
@@ -949,6 +958,19 @@ final class PlaybackService: ObservableObject {
             // Continuous next started — play() already called applyIdleTimerPolicy.
             applyIdleTimerPolicy()
         }
+    }
+
+    /// `markPlayed` may zero `positionSeconds` (Reset position when marked played).
+    /// `play(next)` then calls `finishCurrentEpisode(ended: false)`, which persists the
+    /// in-memory playhead and would undo that reset whenever smart-mark does not
+    /// cover the stop point (smart mark off, or skip outro longer than the window).
+    /// Copy the saved position so the follow-up persist keeps 0, or the kept position
+    /// when reset is off.
+    private func adoptSavedPlaybackPosition(episodeId: String) {
+        guard let store else { return }
+        let saved = store.playbackState(for: episodeId).positionSeconds
+        guard saved.isFinite else { return }
+        positionSeconds = max(0, saved)
     }
 
     /// Save progress; mark played when ended or within configurable smart-mark window.
