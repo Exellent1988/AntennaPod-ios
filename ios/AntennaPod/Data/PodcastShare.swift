@@ -138,13 +138,13 @@ extension PodcastFeed {
     /// Does **not** fall back to feed RSS / `feedUrl` (that is the subscription URL, not a website).
     /// Never invents a URL — nil when missing or non-http(s). Distinct from `PodcastEpisode.websiteURL`
     /// (episode page) and from in-app **Open podcast** (Subscriptions → Feed detail).
+    /// A space in the feed website is percent-encoded (`EpisodeMediaURL`) so Open podcast website still appears.
+    /// `URL(string:)` alone drops that link.
     var websiteURL: URL? {
-        guard let siteLink else { return nil }
-        let trimmed = siteLink.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
-        let scheme = url.scheme?.lowercased()
+        guard let parsed = EpisodeMediaURL.url(from: siteLink) else { return nil }
+        let scheme = parsed.scheme?.lowercased()
         guard scheme == "http" || scheme == "https" else { return nil }
-        return url
+        return parsed
     }
 
     /// Funding / Support page from feed `fundingUrl` only (`http` / `https`).
