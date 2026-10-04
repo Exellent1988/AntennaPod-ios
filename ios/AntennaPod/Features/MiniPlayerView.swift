@@ -420,6 +420,10 @@ struct MiniPlayerView: View {
                 // Leaving it open after auto-next shows the next episode's chapters
                 // and a tap seeks that episode.
                 showChapters = false
+                // Transcript sheet lists the live episode and a cue tap seeks the player.
+                // Leaving it open after auto-next reloads the next episode's cues
+                // and a tap seeks that episode.
+                showTranscript = false
             }
             .sheet(isPresented: $showEpisodePrivateNote) {
                 EpisodePrivateNoteSheet(episodeId: episode.id)
