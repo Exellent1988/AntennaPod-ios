@@ -491,9 +491,10 @@ struct PodcastSocialInteract: Identifiable, Hashable, Codable {
     }
 
     /// http(s) discussion URL from feed `uri` only. Nil when missing / non-http(s) — never invent.
+    /// A space in the feed discussion URI is percent-encoded (`EpisodeMediaURL`) so Discuss still appears.
+    /// `URL(string:)` alone drops that link.
     var discussionURL: URL? {
-        let trimmed = uri.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, let parsed = URL(string: trimmed) else { return nil }
+        guard let parsed = EpisodeMediaURL.url(from: uri) else { return nil }
         let scheme = parsed.scheme?.lowercased()
         guard scheme == "http" || scheme == "https" else { return nil }
         return parsed
