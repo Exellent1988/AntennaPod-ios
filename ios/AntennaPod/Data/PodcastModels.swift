@@ -768,11 +768,13 @@ struct PodcastAlternateSource: Identifiable, Hashable, Codable {
 
     /// http(s) openable URL from feed `uri` only. Nil for ipfs / magnet / other schemes — Copy / Share instead.
     /// Never invent URLs — openURL only when the URI itself is http(s).
+    /// A space in the feed URI is percent-encoded (`EpisodeMediaURL`) so Play and Open URL still appear.
+    /// `URL(string:)` alone drops that URI.
     var browserURL: URL? {
-        guard let trimmed = displayURI, let url = URL(string: trimmed) else { return nil }
-        let scheme = url.scheme?.lowercased()
+        guard let parsed = EpisodeMediaURL.url(from: displayURI) else { return nil }
+        let scheme = parsed.scheme?.lowercased()
         guard scheme == "http" || scheme == "https" else { return nil }
-        return url
+        return parsed
     }
 
     /// http(s) URI suitable for in-app `PlaybackService` / AVPlayer. Same as `browserURL`.
