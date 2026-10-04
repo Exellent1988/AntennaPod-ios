@@ -41,6 +41,21 @@ struct QueueView: View {
             || !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    /// Played-status or podcast chip only. Search is not a chip: the empty copy must
+    /// not call a search miss a filter miss (`isFiltering` includes the query).
+    private var hasQueueChipOrPodcastFilter: Bool {
+        settings.queueFilter != .all || isPodcastFiltering
+    }
+
+    /// Visible empty copy when the persisted queue is non-empty but no row matches.
+    /// Chip or podcast filter wins when one is set; otherwise this is a search miss.
+    private var queueNoMatchMessage: String {
+        if hasQueueChipOrPodcastFilter {
+            return String(localized: "No queue episodes match your filter.")
+        }
+        return String(localized: "No queue episodes match your search.")
+    }
+
     /// Drag / Edit reorder allowed only when unlocked and not filtering.
     private var canReorder: Bool {
         !settings.queueLocked && !isFiltering
@@ -275,9 +290,7 @@ struct QueueView: View {
                 ? String(localized: "Add episodes from a podcast feed. Queue is locked — unlock to drag reorder.")
                 : String(localized: "Add episodes from a podcast feed. Edit mode lets you drag to reorder.")
         }
-        return isFiltering
-            ? String(localized: "No queue episodes match your filter.")
-            : String(localized: "No queue episodes match your search.")
+        return queueNoMatchMessage
     }
 
     private var queueRemainingSummary: EpisodeRemainingTime.Summary {
@@ -392,11 +405,7 @@ struct QueueView: View {
                     ContentUnavailableView(
                         "No matching queue episodes",
                         systemImage: "magnifyingglass",
-                        description: Text(
-                            isFiltering
-                                ? String(localized: "No queue episodes match your filter.")
-                                : String(localized: "No queue episodes match your search.")
-                        )
+                        description: Text(queueNoMatchMessage)
                     )
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel(String(localized: "No matching queue episodes"))
