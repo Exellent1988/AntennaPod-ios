@@ -151,6 +151,16 @@ struct AllEpisodesView: View {
         return chips
     }
 
+    /// Drop a podcast chip whose feed is no longer subscribed. Otherwise the UUID
+    /// stays selected with no chip, and every later All Episodes row in the
+    /// newest-500 catalog looks filtered out. A still-subscribed feed with zero
+    /// rows in that catalog keeps its chip.
+    private func releaseAllEpisodesPodcastFilterIfFeedGone() {
+        guard case .feed(let id) = AllEpisodesPodcastFilter.fromStorage(settings.allEpisodesPodcastFilter) else { return }
+        guard !store.feeds.contains(where: { $0.id == id }) else { return }
+        settings.allEpisodesPodcastFilter = ""
+    }
+
     private func podcastChipTitle(_ chip: AllEpisodesPodcastFilter) -> String {
         switch chip {
         case .all:
@@ -619,6 +629,12 @@ struct AllEpisodesView: View {
             }
         }
         .searchable(text: $searchText, prompt: "Search all episodes")
+        .onAppear {
+            releaseAllEpisodesPodcastFilterIfFeedGone()
+        }
+        .onChange(of: store.feeds.map(\.id)) { _, _ in
+            releaseAllEpisodesPodcastFilterIfFeedGone()
+        }
         .alert(
             String(localized: "Copied"),
             isPresented: $showCopiedAlert
