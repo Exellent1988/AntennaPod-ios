@@ -1711,6 +1711,8 @@ final class PodcastStore: ObservableObject {
     }
 
     /// Archived episodes across feeds, newest archived first.
+    /// Also includes an archived channel trailer (synthetic id, not in `feed.episodes`)
+    /// and queue-only copies.
     var archivedEpisodes: [ArchivedEpisode] {
         var items: [ArchivedEpisode] = []
         for feed in feeds {
@@ -1725,7 +1727,7 @@ final class PodcastStore: ObservableObject {
                 )
             }
         }
-        let knownIds = Set(items.map(\.id))
+        var knownIds = Set(items.map(\.id))
         for episode in queue where !knownIds.contains(episode.id) {
             guard let at = archivedAtById[episode.id] else { continue }
             let title = displayTitle(containingEpisodeId: episode.id)
@@ -1733,6 +1735,20 @@ final class PodcastStore: ObservableObject {
                 ArchivedEpisode(
                     episode: episode,
                     feedTitle: title,
+                    archivedAtEpochMs: at
+                )
+            )
+            knownIds.insert(episode.id)
+        }
+        // Channel podcast:trailer archived from the player. Same synthetic id as
+        // playback; not stored in feed.episodes, so the loops above miss it and
+        // Archived stays empty while the player shows Restore.
+        for (episodeId, at) in archivedAtById where !knownIds.contains(episodeId) {
+            guard let resolved = trailerEpisodeForHistory(id: episodeId) else { continue }
+            items.append(
+                ArchivedEpisode(
+                    episode: resolved.episode,
+                    feedTitle: resolved.feedTitle,
                     archivedAtEpochMs: at
                 )
             )
