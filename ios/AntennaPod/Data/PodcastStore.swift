@@ -2315,6 +2315,9 @@ final class PodcastStore: ObservableObject {
         }
         if changed {
             playbackStates = next
+            // History size trim deletes playback state without a queue write.
+            // Continue listening (widget / Watch) would otherwise keep the dropped episode.
+            publishWidgetSnapshot()
         }
     }
 
