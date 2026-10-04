@@ -32,7 +32,7 @@ enum EpisodePlayRandom {
         guard requirement == .localOrStreamable else { return false }
         guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
               !raw.isEmpty,
-              let url = URL(string: raw) else { return false }
+              let url = EpisodeMediaURL.url(from: raw) else { return false }
         let scheme = url.scheme?.lowercased()
         return scheme == "http" || scheme == "https"
     }
