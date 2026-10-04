@@ -26,8 +26,10 @@ struct PodcastSoundbitesListView: View {
     }
 
     /// Play when enclosure or local file can resolve (PlaybackService gates Wi‑Fi / errors).
+    /// `URL(string:)` rejects a space in the enclosure, which hides Play soundbite for an
+    /// undownloaded episode even though `PlaybackService.play` accepts that address.
     private var canPlaySoundbite: Bool {
-        if episode.downloadUrl.flatMap({ URL(string: $0) }) != nil {
+        if EpisodeMediaURL.url(from: episode.downloadUrl) != nil {
             return true
         }
         if playback.downloads?.localURL(for: episode) != nil {
