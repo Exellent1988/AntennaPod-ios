@@ -78,7 +78,10 @@ final class PodcastStore: ObservableObject {
     }
 
     /// Reload all Application Support maps after a data backup import (didSet re-persists).
+    /// Drops any loaded player first so the pre-import episode cannot stay on screen
+    /// or overwrite the restored playback map on the next progress tick.
     func reloadFromPersistence() {
+        playback?.discardLoadedEpisodeForBackupImport()
         feeds = PodcastPersistence.loadFeeds()
         queue = PodcastPersistence.loadQueue()
         playbackStates = PodcastPersistence.loadPlaybackStates()

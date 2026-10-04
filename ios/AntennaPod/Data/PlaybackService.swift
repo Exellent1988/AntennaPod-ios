@@ -330,6 +330,25 @@ final class PlaybackService: ObservableObject {
         applyIdleTimerPolicy()
     }
 
+    /// Unload the current episode without persisting progress, marking played,
+    /// removing it from the queue, or deleting its download.
+    /// Backup import replaces `playback.json`; a later progress tick must not
+    /// write the pre-import position back, and the mini player / Lock Screen
+    /// must not keep an episode from the previous catalog.
+    func discardLoadedEpisodeForBackupImport() {
+        resumeAfterInterruption = false
+        pausedAt = nil
+        clearSoundbiteEndMarker()
+        tearDownPlayer(clearSleepTimer: true)
+        currentEpisode = nil
+        isPlayingFromLocalFile = false
+        isPlaying = false
+        positionSeconds = 0
+        durationSeconds = 0
+        clearNowPlayingInfo()
+        applyIdleTimerPolicy()
+    }
+
     func setRate(_ newRate: Float) {
         let clamped = Self.clampPlaybackSpeed(newRate)
         rate = clamped
