@@ -824,12 +824,19 @@ final class PlaybackService: ObservableObject {
         }
         statusCancellable = player.publisher(for: \.timeControlStatus)
             .receive(on: RunLoop.main)
-            .sink { [weak self] status in
+            .sink { [weak self] _ in
                 guard let self else { return }
-                let playing = status == .playing
+                // A queued callback from the player play() just replaced must not
+                // pause the new item's clock sleep timer (that countdown never restarts).
+                guard self.player === player else { return }
+                // Live status: receive(on:) can deliver an earlier .paused after
+                // playback has already started, which would freeze the clock timer.
+                let playing = player.timeControlStatus == .playing
                 if self.isPlaying && !playing {
                     self.pauseSleepTimerCountdown()
                 } else if !self.isPlaying && playing {
+                    // resumeSleepTimerIfNeeded returns immediately unless isPlaying is already true.
+                    self.isPlaying = true
                     self.resumeSleepTimerIfNeeded()
                 }
                 self.isPlaying = playing
