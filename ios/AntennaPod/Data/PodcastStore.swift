@@ -2729,29 +2729,34 @@ final class PodcastStore: ObservableObject {
 
     /// Parse OPML and subscribe each feed URL via the existing fetch/parse pipeline.
     /// Skips URLs already in `feeds`. Records per-URL errors without aborting the batch.
+    ///
+    /// Already-subscribed uses `FeedURLNormalization.canonicalKey` (http↔https, trailing slash)
+    /// plus a full lowercase, so `https://host/feed` and `http://host/feed/` are one subscription.
+    /// The stored feed URL is not rewritten when an outline is skipped.
     func importOpml(data: Data, sourceFileName: String? = nil) async {
         lastError = nil
         var state = OpmlImportState(isImporting: true, sourceFileName: sourceFileName)
         opmlImport = state
         do {
             let outlines = try OpmlReader.parse(data: data)
-            // Deduplicate by xmlUrl (first wins)
+            // Deduplicate by canonical feed URL (first wins). Lowercase keeps path/query
+            // case-insensitive, matching the previous full-string compare.
             var seen = Set<String>()
             var unique: [OpmlOutline] = []
             for o in outlines {
-                let key = o.xmlUrl.lowercased()
+                let key = Self.opmlSubscriptionKey(o.xmlUrl)
                 if seen.insert(key).inserted {
                     unique.append(o)
                 }
             }
             state.total = unique.count
             opmlImport = state
-            var subscribed = Set(feeds.map { $0.feedUrl.lowercased() })
+            var subscribed = Set(feeds.map { Self.opmlSubscriptionKey($0.feedUrl) })
 
             for outline in unique {
                 state.currentTitle = outline.text
                 opmlImport = state
-                let urlKey = outline.xmlUrl.lowercased()
+                let urlKey = Self.opmlSubscriptionKey(outline.xmlUrl)
                 if subscribed.contains(urlKey) {
                     state.skipped += 1
                     state.completed += 1
@@ -2780,6 +2785,11 @@ final class PodcastStore: ObservableObject {
         state.currentTitle = nil
         state.isImporting = false
         opmlImport = state
+    }
+
+    /// OPML duplicate key: Add-sheet canonical URL (scheme and trailing slash) and case.
+    private static func opmlSubscriptionKey(_ feedUrl: String) -> String {
+        FeedURLNormalization.canonicalKey(feedUrl).lowercased()
     }
 
     /// Subscribe without flipping the global `isLoading` overlay (used by OPML batch / refresh).
