@@ -16,6 +16,10 @@ final class NotificationDeepLinkRouter: ObservableObject {
     @Published private(set) var inboxOpenToken: UUID?
     @Published private(set) var downloadsOpenToken: UUID?
     @Published private(set) var settingsSyncOpenToken: UUID?
+    /// Last token Settings already scrolled for. Lives on the router so a recreated
+    /// Settings tab does not scroll again, and so consuming does not nil the token
+    /// before the root tab switch observes it.
+    private var consumedSettingsSyncOpenToken: UUID?
     /// Token + feed id for in-app “Open podcast” (full/mini player → Subscriptions → Feed detail).
     @Published private(set) var feedOpenToken: UUID?
     @Published private(set) var pendingFeedId: UUID?
@@ -31,6 +35,15 @@ final class NotificationDeepLinkRouter: ObservableObject {
     /// Open Settings tab and scroll to Sync (gpodder / Nextcloud).
     func openSettingsSync() {
         settingsSyncOpenToken = UUID()
+    }
+
+    /// True once per sync-error open. Does not clear the published token (RootTabView
+    /// switches tabs from that change).
+    func consumeSettingsSyncOpenToken() -> Bool {
+        guard let token = settingsSyncOpenToken else { return false }
+        guard token != consumedSettingsSyncOpenToken else { return false }
+        consumedSettingsSyncOpenToken = token
+        return true
     }
 
     /// Switch to Subscriptions and push Feed detail for `id` (best-effort).

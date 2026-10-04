@@ -110,6 +110,23 @@ struct SettingsView: View {
         privateNotesCopyFeedbackTick += 1
     }
 
+    /// Sync-error notification tap: reveal Sync even when this tab is first created by the
+    /// tap, or when a settings search has removed the `settings-sync` anchor from the tree.
+    private func scrollToSyncSectionIfPending(_ proxy: ScrollViewProxy) {
+        guard notificationDeepLink.consumeSettingsSyncOpenToken() else { return }
+        debounceTask?.cancel()
+        if !searchText.isEmpty || isSearchFiltering {
+            searchText = ""
+            debouncedQuery = ""
+        }
+        // Defer slightly so the Settings tab is visible and the Sync section is mounted.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            withAnimation {
+                proxy.scrollTo("settings-sync", anchor: .top)
+            }
+        }
+    }
+
     /// Case-insensitive match on source keys and their localized catalog values (EN/DE).
     private func matchesSearch(_ keys: String...) -> Bool {
         matchesSearch(Array(keys))
@@ -430,6 +447,9 @@ struct SettingsView: View {
                     podcastIndexAPIKeyDraft = PodcastIndexKeychain.loadAPIKey() ?? ""
                 }
                 // Secret is not pre-filled once saved (Keychain holds it); leave draft empty when already saved.
+                // Tab content is created on first selection, so a sync-error tap that
+                // switches here never delivers onChange for the token already set.
+                scrollToSyncSectionIfPending(proxy)
             }
             .onChange(of: settings.notifyOnNewEpisodes) { _, enabled in
                 guard enabled else { return }
@@ -471,14 +491,8 @@ struct SettingsView: View {
                 guard phase == .active else { return }
                 Task { await refreshNotificationAuthLabel() }
             }
-            .onChange(of: notificationDeepLink.settingsSyncOpenToken) { _, token in
-                guard token != nil else { return }
-                // Defer slightly so the Settings tab is visible before scrolling.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                    withAnimation {
-                        proxy.scrollTo("settings-sync", anchor: .top)
-                    }
-                }
+            .onChange(of: notificationDeepLink.settingsSyncOpenToken) { _, _ in
+                scrollToSyncSectionIfPending(proxy)
             }
             } // ScrollViewReader
             .confirmationDialog(
