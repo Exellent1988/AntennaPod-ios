@@ -15,6 +15,9 @@ struct FullPlayerView: View {
     @State private var scrubSeconds: Double = 0
     /// Chapters loaded from Podcast Index JSON when the feed only had a URL.
     @State private var remoteChapters: [PodcastChapter] = []
+    /// In-flight Full Player chapter load. Cancelled when the episode changes so a
+    /// late Podcast Index / media read cannot replace the new episode's chapter list.
+    @State private var chapterLoadTask: Task<Void, Never>?
     /// Chapters read from a local media file (QuickTime/MP4) when feed has none.
     @State private var mediaChapters: [PodcastChapter] = []
     @State private var isLoadingRemoteChapters = false
@@ -249,25 +252,29 @@ struct FullPlayerView: View {
         }
         .onAppear {
             scrubSeconds = playback.positionSeconds
-            Task { await loadChaptersIfNeeded() }
+            scheduleChapterLoad()
         }
         .onDisappear {
             chapterDebounceTask?.cancel()
+            chapterLoadTask?.cancel()
         }
         .onChange(of: playback.currentEpisode?.id) { _, newId in
             playback.pictureInPicture.tearDown()
+            chapterLoadTask?.cancel()
+            remoteChapters = []
+            mediaChapters = []
+            isLoadingRemoteChapters = false
+            isLoadingMediaChapters = false
             if newId == nil {
                 dismiss()
                 return
             }
             scrubSeconds = playback.positionSeconds
             isScrubbing = false
-            remoteChapters = []
-            mediaChapters = []
             showTranscript = false
             showDescription = false
             resetChapterSearch()
-            Task { await loadChaptersIfNeeded() }
+            scheduleChapterLoad()
         }
         .onChange(of: settings.playVideoAsAudioOnly) { _, audioOnly in
             if audioOnly {
@@ -1622,9 +1629,25 @@ struct FullPlayerView: View {
         .controlSize(.small)
     }
 
+    /// Start a chapter load for the episode now playing. Cancels any previous load so
+    /// its completion cannot write chapters onto a later episode.
+    private func scheduleChapterLoad() {
+        chapterLoadTask?.cancel()
+        chapterLoadTask = Task { @MainActor in
+            await loadChaptersIfNeeded()
+        }
+    }
+
+    /// True while this load still belongs to the episode that started it.
+    private func chapterLoadStillCurrent(episodeId: String) -> Bool {
+        !Task.isCancelled && playback.currentEpisode?.id == episodeId
+    }
+
     @MainActor
     private func loadChaptersIfNeeded() async {
         guard let resolved = resolvedEpisode else { return }
+        let episodeId = resolved.id
+        guard chapterLoadStillCurrent(episodeId: episodeId) else { return }
 
         // 1) Inline feed chapters (PSC) — prefer; skip remote + media.
         if !resolved.chapters.isEmpty {
@@ -1636,14 +1659,24 @@ struct FullPlayerView: View {
         // 2) Podcast Index remote JSON when the feed only had a URL.
         if let url = resolved.podcastIndexChapterUrl, !url.isEmpty {
             isLoadingRemoteChapters = true
-            defer { isLoadingRemoteChapters = false }
+            defer {
+                // A newer episode's load owns the spinner after this task is cancelled.
+                if chapterLoadStillCurrent(episodeId: episodeId) {
+                    isLoadingRemoteChapters = false
+                }
+            }
             do {
                 let fetched = try await PodcastIndexChapterParser.fetch(urlString: url)
                 if !fetched.isEmpty {
+                    store.updateChapters(episodeId: episodeId, chapters: fetched)
+                }
+                // Episode changed or this load was cancelled while the request was in flight.
+                // Keep the persisted chapters, but do not point Previous/Next at the old list.
+                guard chapterLoadStillCurrent(episodeId: episodeId) else { return }
+                if !fetched.isEmpty {
                     remoteChapters = fetched
                     mediaChapters = []
-                    store.updateChapters(episodeId: resolved.id, chapters: fetched)
-                    if var current = playback.currentEpisode, current.id == resolved.id {
+                    if var current = playback.currentEpisode, current.id == episodeId {
                         current.chapters = fetched
                         playback.currentEpisode = current
                     }
@@ -1651,25 +1684,34 @@ struct FullPlayerView: View {
                 }
                 remoteChapters = []
             } catch {
-                // Fall through to media-file chapters when local.
+                // Fall through to media-file chapters when local — only if still this episode.
+                guard chapterLoadStillCurrent(episodeId: episodeId) else { return }
                 remoteChapters = []
             }
         }
 
+        guard chapterLoadStillCurrent(episodeId: episodeId) else { return }
         // 3) Local media-file tags (QuickTime/MP4 via AVFoundation) when feed has none.
         await loadMediaChaptersIfNeeded(for: resolved)
     }
 
     @MainActor
     private func loadMediaChaptersIfNeeded(for episode: PodcastEpisode) async {
+        let episodeId = episode.id
+        guard chapterLoadStillCurrent(episodeId: episodeId) else { return }
         guard playback.isPlayingFromLocalFile,
               let fileURL = downloads.localURL(for: episode) else {
             mediaChapters = []
             return
         }
         isLoadingMediaChapters = true
-        defer { isLoadingMediaChapters = false }
+        defer {
+            if chapterLoadStillCurrent(episodeId: episodeId) {
+                isLoadingMediaChapters = false
+            }
+        }
         let loaded = await MediaFileChapterReader.chapters(fromFileURL: fileURL)
+        guard chapterLoadStillCurrent(episodeId: episodeId) else { return }
         // Prefer feed if it appeared meanwhile (e.g. store refresh).
         if !(resolvedEpisode?.chapters.isEmpty ?? true) || !remoteChapters.isEmpty {
             mediaChapters = []
@@ -1677,8 +1719,8 @@ struct FullPlayerView: View {
         }
         mediaChapters = loaded
         if !loaded.isEmpty {
-            store.updateChapters(episodeId: episode.id, chapters: loaded)
-            if var current = playback.currentEpisode, current.id == episode.id {
+            store.updateChapters(episodeId: episodeId, chapters: loaded)
+            if var current = playback.currentEpisode, current.id == episodeId {
                 current.chapters = loaded
                 playback.currentEpisode = current
             }
