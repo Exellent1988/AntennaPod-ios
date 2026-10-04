@@ -174,7 +174,12 @@ final class NetworkPathGate: ObservableObject {
         } else {
             kind = .other
         }
+        onPathApplied?()
     }
+
+    /// Invoked on the main actor after each real path sample. DownloadService uses this
+    /// to start automatic downloads that were held for Wi‑Fi-only.
+    var onPathApplied: (@MainActor () -> Void)?
 
     /// When `wifiOnly` is true, requires a satisfied Wi‑Fi or Ethernet path.
     /// When false, only requires a satisfied path (cellular OK).

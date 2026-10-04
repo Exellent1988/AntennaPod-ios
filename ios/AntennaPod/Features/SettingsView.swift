@@ -1781,6 +1781,9 @@ struct SettingsView: View {
                 .accessibilityLabel(String(localized: "Auto-download Wi‑Fi only"))
                 .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.autoDownloadWifiOnly, role: .autoDownload))
                 .accessibilityHint(String(localized: "When on (default), auto-download after refresh skips cellular. Does not block manual downloads."))
+                .onChange(of: settings.autoDownloadWifiOnly) { _, _ in
+                    downloads.pumpWaitingQueue()
+                }
             Toggle(String(localized: "Manual download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.manualDownloadWifiOnly))
                 .accessibilityLabel(String(localized: "Manual download Wi‑Fi only"))
                 .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.manualDownloadWifiOnly, role: .manualDownload))

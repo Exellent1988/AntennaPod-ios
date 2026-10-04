@@ -246,6 +246,9 @@ final class DownloadService: ObservableObject {
         reconnectOutstandingTasks()
         refreshStorageUsage()
         recentErrors = PodcastPersistence.loadDownloadErrors()
+        NetworkPathGate.shared.onPathApplied = { [weak self] in
+            self?.pumpWaitingQueue()
+        }
     }
 
     /// Background sessions cannot mutate `connectionProxyDictionary` in place.
@@ -365,7 +368,8 @@ final class DownloadService: ObservableObject {
     /// persisted for relaunch. Waiting (not-yet-started) items are **not** persisted —
     /// they are dropped if the process dies before a slot opens.
     /// - Parameter source: `.manual` (default) honors `manualDownloadWifiOnly`; `.automatic`
-    ///   skips that gate (auto-download uses `autoDownloadWifiOnly` in `AutoDownloadCoordinator`).
+    ///   skips that manual gate. With `autoDownloadWifiOnly`, automatic items stay in the
+    ///   waiting FIFO until a real Wi‑Fi/Ethernet path is reported (not the optimistic default).
     func download(_ episode: PodcastEpisode, source: DownloadEnqueueSource = .manual) async {
         guard let remote = episode.downloadUrl, let url = URL(string: remote) else {
             recordFailure(episode: episode, message: String(localized: "Episode has no media URL"))
@@ -400,6 +404,7 @@ final class DownloadService: ObservableObject {
     /// Call after enqueue, task completion/cancel, and when the Settings cap changes.
     func pumpWaitingQueue() {
         let limit = settings?.maxParallelDownloads.rawValue ?? MaxParallelDownloads.three.rawValue
+        var heldForWifi: [WaitingDownload] = []
         while !waitingQueue.isEmpty && pendingByTaskId.count < limit {
             let next = waitingQueue.removeFirst()
             // Re-check manual Wi‑Fi gate when a waiting item finally starts (path may have changed).
@@ -411,7 +416,20 @@ final class DownloadService: ObservableObject {
                     continue
                 }
             }
+            // Auto-download Wi‑Fi-only is not the optimistic pre-callback default, and it is
+            // rechecked when a parallel slot opens. Held items stay in progress so Cancel works.
+            if next.source == .automatic, settings?.autoDownloadWifiOnly == true {
+                AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
+                let gate = NetworkPathGate.shared
+                if !gate.hasReportedPath || !gate.allowsTransfer(wifiOnly: true) {
+                    heldForWifi.append(next)
+                    continue
+                }
+            }
             startActiveDownload(episode: next.episode)
+        }
+        if !heldForWifi.isEmpty {
+            waitingQueue.insert(contentsOf: heldForWifi, at: 0)
         }
     }
 
