@@ -159,6 +159,9 @@ final class PodcastStore: ObservableObject {
             episodePrivateNotesById.removeValue(forKey: id)
             pendingAutoDeleteIds.remove(id)
         }
+        // Queue didSet publishes before these playback rows are gone. Refresh again
+        // so Continue listening on the widget and Watch does not keep the trailer.
+        publishWidgetSnapshot()
     }
 
     // MARK: - Remaining time (list / Home speed estimate)
