@@ -467,6 +467,33 @@ final class DownloadService: ObservableObject {
         return creds
     }
 
+    /// Replace catalog episode metadata for ids present in `freshById` (feed refresh / rescan).
+    /// Keeps `fileName` and `downloadedAtEpochMs`. Does not delete or re-download the file.
+    /// Empty refreshed chapters keep a non-empty catalog chapter list (lazy fetch not in RSS).
+    func replaceEpisodeSnapshots(with freshById: [String: PodcastEpisode]) {
+        guard !freshById.isEmpty, !downloads.isEmpty else { return }
+        var next = downloads
+        var changed = false
+        for index in next.indices {
+            let item = next[index]
+            guard let fresh = freshById[item.id] else { continue }
+            var merged = fresh
+            if merged.chapters.isEmpty, !item.episode.chapters.isEmpty {
+                merged.chapters = item.episode.chapters
+            }
+            guard merged != item.episode else { continue }
+            next[index] = DownloadedEpisode(
+                episode: merged,
+                fileName: item.fileName,
+                downloadedAtEpochMs: item.downloadedAtEpochMs
+            )
+            changed = true
+        }
+        guard changed else { return }
+        downloads = next
+        persistCompleted()
+    }
+
     func delete(_ episode: PodcastEpisode) {
         cancelTask(for: episode.id)
         if let existing = downloads.first(where: { $0.id == episode.id }) {

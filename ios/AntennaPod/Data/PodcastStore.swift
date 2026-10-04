@@ -2690,6 +2690,7 @@ final class PodcastStore: ObservableObject {
         } else {
             feeds.append(updated)
         }
+        syncStoredEpisodeCopies(with: updated)
         return updated
     }
 
@@ -2812,6 +2813,52 @@ final class PodcastStore: ObservableObject {
         }
         // Serial → Oldest first once when per-feed episodeSort still nil (subscribe + refresh).
         applySerialOldestFirstHeuristicIfNeeded(for: feed)
+        // Queue / Downloads catalog / loaded player keep pre-refresh structs. Copy refreshed
+        // fields onto matching ids so Queue search, play, and download see the new title and URL.
+        syncStoredEpisodeCopies(with: feed)
+    }
+
+    /// After a successful refresh or local-folder rescan, copy refreshed episode fields onto
+    /// stored copies that still use the same id. Does not reorder the queue, delete downloads,
+    /// seek, or rebuild the player item. Keeps already-loaded chapters when the new feed copy
+    /// has none (lazy Podcast Index / media chapters are not in the RSS parse).
+    private func syncStoredEpisodeCopies(with feed: PodcastFeed) {
+        var byId: [String: PodcastEpisode] = [:]
+        byId.reserveCapacity(feed.episodes.count)
+        for episode in feed.episodes {
+            byId[episode.id] = episode
+        }
+        guard !byId.isEmpty else { return }
+
+        var nextQueue = queue
+        var queueChanged = false
+        for index in nextQueue.indices {
+            let old = nextQueue[index]
+            guard let fresh = byId[old.id] else { continue }
+            let merged = Self.refreshedEpisode(fresh, replacing: old)
+            guard merged != old else { continue }
+            nextQueue[index] = merged
+            queueChanged = true
+        }
+        if queueChanged {
+            queue = nextQueue
+        }
+
+        downloads?.replaceEpisodeSnapshots(with: byId)
+
+        if let current = playback?.currentEpisode, let fresh = byId[current.id] {
+            let merged = Self.refreshedEpisode(fresh, replacing: current)
+            playback?.replaceCurrentEpisodeMetadata(with: merged)
+        }
+    }
+
+    /// Feed copy wins, except empty chapters keep a non-empty local list (lazy fetch).
+    private static func refreshedEpisode(_ fresh: PodcastEpisode, replacing old: PodcastEpisode) -> PodcastEpisode {
+        var merged = fresh
+        if merged.chapters.isEmpty, !old.chapters.isEmpty {
+            merged.chapters = old.chapters
+        }
+        return merged
     }
 
 }

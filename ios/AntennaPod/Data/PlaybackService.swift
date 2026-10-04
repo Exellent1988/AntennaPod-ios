@@ -301,6 +301,15 @@ final class PlaybackService: ObservableObject {
         applyIdleTimerPolicy()
     }
 
+    /// Swap in refreshed episode metadata (title, enclosure, shownotes) for the loaded item.
+    /// Same id only. Does not seek, change rate, or rebuild the `AVPlayer` item.
+    func replaceCurrentEpisodeMetadata(with episode: PodcastEpisode) {
+        guard currentEpisode?.id == episode.id, currentEpisode != episode else { return }
+        currentEpisode = episode
+        updateNowPlayingInfo(force: true)
+        store?.publishWidgetSnapshot()
+    }
+
     func stop() {
         resumeAfterInterruption = false
         pausedAt = nil
