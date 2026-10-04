@@ -267,6 +267,25 @@ struct AllEpisodesView: View {
         )
     }
 
+    /// Status, podcast, or episode-type chip only. Search is not a chip.
+    private var hasAllEpisodesChipFilter: Bool {
+        settings.allEpisodesFilter != .all
+            || isPodcastFiltering
+            || settings.allEpisodesEpisodeTypeFilter != .all
+    }
+
+    /// Visible no-match copy. A status, podcast, or episode-type chip keeps the filter
+    /// sentence even when search is also set. Search-only uses the same trimmed
+    /// `searchText` the list filters on (no debounce), so the sentence does not
+    /// appear before the list is filtered.
+    private var allEpisodesNoMatchDescription: String {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if hasAllEpisodesChipFilter || query.isEmpty {
+            return String(localized: "No episodes match your filter.")
+        }
+        return String(localized: "No All Episodes match your search. Clear or change the search to see episodes.")
+    }
+
     /// VoiceOver value distinguishes an empty soft-capped catalog from a view-only filter/search
     /// mismatch. Keep the visible ContentUnavailableView copy concise while naming active scopes.
     private var allEpisodesEmptyStateAccessibilityValue: String {
@@ -470,7 +489,7 @@ struct AllEpisodesView: View {
                 ContentUnavailableView(
                     "No matching episodes",
                     systemImage: "magnifyingglass",
-                    description: Text("No episodes match your filter.")
+                    description: Text(allEpisodesNoMatchDescription)
                 )
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(String(localized: "No matching episodes"))
