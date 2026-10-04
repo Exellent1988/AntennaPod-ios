@@ -417,10 +417,23 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             enclosureLength = Int64(attributeDict["length"] ?? attributeDict["fileSize"] ?? "0") ?? 0
         case "content":
             if inLiveItem { break }
-            if attributeDict["url"] != nil {
-                enclosureUrl = attributeDict["url"]
+            // media:content / Atom content with a url. Image art must not become the
+            // playable file, and a later non-default media:content must not replace
+            // the RSS enclosure (or an earlier playable media URL). Same rule as
+            // Android Media namespace: medium=image (unless MIME is audio/video) and
+            // type=image/* are episode art; isDefault="true" may replace media.
+            if let rawUrl = attributeDict["url"]?.trimmingCharacters(in: .whitespacesAndNewlines),
+               !rawUrl.isEmpty {
+                if Self.isImageMediaContent(attributeDict) {
+                    break
+                }
+                let isDefault = attributeDict["isDefault"]?
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .lowercased() == "true"
+                guard enclosureUrl == nil || isDefault else { break }
+                enclosureUrl = rawUrl
                 enclosureType = attributeDict["type"]
-                if enclosureType == nil, attributeDict["medium"] == "video" {
+                if enclosureType == nil, attributeDict["medium"]?.lowercased() == "video" {
                     enclosureType = "video/*"
                 }
                 enclosureLength = Int64(attributeDict["fileSize"] ?? attributeDict["length"] ?? "0") ?? 0
@@ -1574,16 +1587,36 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
 
 extension XMLFeedParser {
 
+    /// MRSS `media:content` that is episode art, not a playable enclosure.
+    /// `medium=image` is art unless the MIME is audio/video (some feeds mislabel the
+    /// audio file as an image). `type=image/*` is art unless medium is audio or video.
+    fileprivate static func isImageMediaContent(_ attributeDict: [String: String]) -> Bool {
+        let medium = attributeDict["medium"]?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        let mime = attributeDict["type"]?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+        if medium == "audio" || medium == "video" {
+            return false
+        }
+        let audioOrVideoMime = mime?.hasPrefix("audio/") == true || mime?.hasPrefix("video/") == true
+        if medium == "image" {
+            return !audioOrVideoMime
+        }
+        return mime?.hasPrefix("image/") == true
+    }
+
     /// Trimmed non-empty attribute value, or nil.
     fileprivate static func nonEmptyAttr(_ raw: String?) -> String? {
         guard let raw else { return nil }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
 
     fileprivate static func positiveIntAttr(_ raw: String?) -> Int? {
         guard let raw = nonEmptyAttr(raw), let n = Int(raw), n > 0 else { return nil }
         return n
-    }
-        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? nil : trimmed
     }
 
     /// Non-empty author preference: itunes/RSS author text → Atom name → managingEditor.
