@@ -209,6 +209,14 @@ struct QueueView: View {
         return chips
     }
 
+    /// Drop a podcast chip whose feed is no longer subscribed. Otherwise the UUID
+    /// stays selected with no chip, and every later queue row looks filtered out.
+    private func releaseQueuePodcastFilterIfFeedGone() {
+        guard case .feed(let id) = QueuePodcastFilter.fromStorage(settings.queuePodcastFilter) else { return }
+        guard !store.feeds.contains(where: { $0.id == id }) else { return }
+        settings.queuePodcastFilter = ""
+    }
+
     private func podcastChipTitle(_ chip: QueuePodcastFilter) -> String {
         switch chip {
         case .all:
@@ -474,6 +482,12 @@ struct QueueView: View {
                 if locked {
                     editMode?.wrappedValue = .inactive
                 }
+            }
+            .onAppear {
+                releaseQueuePodcastFilterIfFeedGone()
+            }
+            .onChange(of: store.feeds.map(\.id)) { _, _ in
+                releaseQueuePodcastFilterIfFeedGone()
             }
             .onDisappear {
                 debounceTask?.cancel()
