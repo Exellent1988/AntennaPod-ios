@@ -18,6 +18,8 @@ enum EpisodeQueueActions {
         currentlyPlayingId: String?
     ) -> Bool {
         guard store.isInQueue(episode.id) else { return false }
+        // Already the playing queued item: Play Next leaves that slot (does not jump to head).
+        if episode.id == currentlyPlayingId { return true }
         var simulated = store.queue
         simulated.removeAll { $0.id == episode.id }
         let insertIndex: Int

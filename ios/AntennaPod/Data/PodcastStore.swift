@@ -429,7 +429,15 @@ final class PodcastStore: ObservableObject {
     /// Continuous playback uses `nextQueueEpisode(after:)`: when current *is* in the queue,
     /// Play Next becomes the auto-next item; when current is *not* queued, head-of-queue is
     /// already what auto-next uses after finish (same honesty as append when current not queued).
+    /// Play Next on the episode that is already playing and queued does not move it.
     func playNext(_ episode: PodcastEpisode, currentlyPlayingId: String?) {
+        // This episode is already the playing queue item. "After current" is its own
+        // slot. Removing it first would make the playing id look unqueued and jump it
+        // to the head, so the previous item becomes auto-next.
+        if episode.id == currentlyPlayingId,
+           queue.contains(where: { $0.id == episode.id }) {
+            return
+        }
         queue.removeAll { $0.id == episode.id }
         let insertIndex: Int
         if let playingId = currentlyPlayingId,
