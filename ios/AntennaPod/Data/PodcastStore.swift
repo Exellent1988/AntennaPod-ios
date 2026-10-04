@@ -2094,7 +2094,7 @@ final class PodcastStore: ObservableObject {
             }
         }
         // Include queue-only copies that still have playback state (rare but possible).
-        let knownIds = Set(items.map(\.id))
+        var knownIds = Set(items.map(\.id))
         for episode in queue where !knownIds.contains(episode.id) {
             let state = playbackState(for: episode.id)
             guard state.belongsInHistory else { continue }
@@ -2107,6 +2107,23 @@ final class PodcastStore: ObservableObject {
                     lastPlayedAtEpochMs: lastPlayed
                 )
             )
+            knownIds.insert(episode.id)
+        }
+        // Channel podcast:trailer playback uses a synthetic id and is not stored in
+        // feed.episodes. Without this, playing a trailer never shows up in History
+        // even though playback.json has the progress. Rebuild from the feed trailer
+        // list (same id PlaybackService.play used).
+        for (episodeId, state) in playbackStates where !knownIds.contains(episodeId) {
+            guard state.belongsInHistory else { continue }
+            guard let resolved = trailerEpisodeForHistory(id: episodeId) else { continue }
+            let lastPlayed = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
+            items.append(
+                HistoryEpisode(
+                    episode: resolved.episode,
+                    feedTitle: resolved.feedTitle,
+                    lastPlayedAtEpochMs: lastPlayed
+                )
+            )
         }
         items.sort { lhs, rhs in
             if lhs.lastPlayedAtEpochMs != rhs.lastPlayedAtEpochMs {
@@ -2115,6 +2132,22 @@ final class PodcastStore: ObservableObject {
             return lhs.episode.title.localizedCaseInsensitiveCompare(rhs.episode.title) == .orderedAscending
         }
         return items
+    }
+
+
+    /// Rebuild a channel `podcast:trailer` episode from its synthetic playback id.
+    /// Id shape matches `PodcastTrailer.asPlaybackEpisode`: `podcast-trailer:<feedUUID>:<mediaURL>`.
+    /// Returns nil when the feed or trailer is gone — no invented episode.
+    private func trailerEpisodeForHistory(id: String) -> (episode: PodcastEpisode, feedTitle: String)? {
+        guard id.hasPrefix("podcast-trailer:") else { return nil }
+        let parts = id.split(separator: ":", maxSplits: 2, omittingEmptySubsequences: false)
+        guard parts.count >= 2, let feedId = UUID(uuidString: String(parts[1])) else { return nil }
+        guard let feed = feeds.first(where: { $0.id == feedId }) else { return nil }
+        for trailer in feed.trailers {
+            guard let episode = trailer.asPlaybackEpisode(feedId: feedId), episode.id == id else { continue }
+            return (episode, displayTitle(for: feed))
+        }
+        return nil
     }
 
     /// Drop progress / played flags so the episode leaves History (episode row itself stays).
