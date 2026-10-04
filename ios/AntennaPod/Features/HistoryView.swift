@@ -114,6 +114,15 @@ struct HistoryView: View {
         return chips
     }
 
+    /// Drop a podcast chip whose feed is no longer subscribed. Otherwise the UUID
+    /// stays selected with no chip, and every later History row looks filtered out.
+    /// A still-subscribed feed with zero History episodes keeps its chip.
+    private func releaseHistoryPodcastFilterIfFeedGone() {
+        guard case .feed(let id) = HistoryPodcastFilter.fromStorage(settings.historyPodcastFilter) else { return }
+        guard !store.feeds.contains(where: { $0.id == id }) else { return }
+        settings.historyPodcastFilter = ""
+    }
+
     private func podcastChipTitle(_ chip: HistoryPodcastFilter) -> String {
         switch chip {
         case .all:
@@ -428,6 +437,12 @@ struct HistoryView: View {
         .searchable(text: $searchText, prompt: "Search history")
         .onChange(of: searchText) { _, newValue in
             scheduleFilter(for: newValue)
+        }
+        .onAppear {
+            releaseHistoryPodcastFilterIfFeedGone()
+        }
+        .onChange(of: store.feeds.map(\.id)) { _, _ in
+            releaseHistoryPodcastFilterIfFeedGone()
         }
         .onDisappear {
             debounceTask?.cancel()
