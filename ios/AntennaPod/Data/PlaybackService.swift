@@ -141,6 +141,13 @@ final class PlaybackService: ObservableObject {
     /// When the current item was paused (user / audio-session / sleep-timer). `nil` means no rewind-after-pause.
     private var pausedAt: Date?
 
+    /// Episode id whose mark-played reset must survive later progress ticks.
+    /// `markPlayed` zeros `playback.json` without moving the live playhead; the
+    /// periodic observer and pause would otherwise write that playhead back.
+    /// Cleared when this episode is started again, marked unplayed, marked
+    /// played with reset off, or the listener seeks. Automatic rewind does not clear it.
+    private var markPlayedResetHoldEpisodeId: String?
+
     /// Wall-clock end (seconds) for feed `podcast:soundbite` play-until-end.
     /// When set and playing, auto-pause at this position (like user pause — no queue advance).
     /// Cleared on user seek/skip/pause, episode change, sleep-timer fire, or when the end is reached.
@@ -196,6 +203,9 @@ final class PlaybackService: ObservableObject {
             leavingEpisodeId = current.id
             finishCurrentEpisode(ended: false)
         }
+        // New play session. finishCurrentEpisode already persisted a mark-played
+        // reset for the episode we left; this start may save its own progress.
+        markPlayedResetHoldEpisodeId = nil
 
         // Fresh episode (or first play): effective speed = feed override ?? Settings default.
         // Session rate from player tap/Custom… is intentionally replaced on episode change
@@ -410,12 +420,15 @@ final class PlaybackService: ObservableObject {
     /// - Parameter clearSoundbiteEndMarker: When `true` (default), cancels a pending soundbite
     ///   play-until-end window (user scrub / skip / chapter). Pass `false` when `playSoundbite`
     ///   seeks to the clip start before arming the end marker.
-    func seek(toSeconds seconds: Double, clearSoundbiteEndMarker clearEnd: Bool = true) {
+    func seek(toSeconds seconds: Double, clearSoundbiteEndMarker clearEnd: Bool = true, releasesMarkPlayedResetHold: Bool = true) {
         guard let player else {
             return
         }
         // User seek cancels an in-progress sleep fade and restores pre-fade volume.
         cancelSleepTimerFade(restoreVolume: true)
+        if releasesMarkPlayedResetHold {
+            markPlayedResetHoldEpisodeId = nil
+        }
         if clearEnd {
             clearSoundbiteEndMarker()
         }
@@ -1107,11 +1120,33 @@ final class PlaybackService: ObservableObject {
             return
         }
         lastPersistedAt = now
+        // Keep a mark-played reset (0) while this episode stays loaded.
+        // The live playhead is unchanged; only the saved position is held.
+        let positionToSave: Double
+        if markPlayedResetHoldEpisodeId == episode.id {
+            let stored = store.playbackState(for: episode.id).positionSeconds
+            positionToSave = stored.isFinite ? max(0, stored) : 0
+        } else {
+            positionToSave = positionSeconds
+        }
         store.saveProgress(
             episodeId: episode.id,
-            positionSeconds: positionSeconds,
+            positionSeconds: positionToSave,
             durationSeconds: durationSeconds
         )
+    }
+
+    /// Remember that `markPlayed` just zeroed this loaded episode.
+    /// No-op when it is not the current item (nothing will persist over it).
+    func holdMarkPlayedPositionReset(for episodeId: String) {
+        guard currentEpisode?.id == episodeId else { return }
+        markPlayedResetHoldEpisodeId = episodeId
+    }
+
+    /// Drop the reset hold after mark unplayed or mark played with reset off.
+    func releaseMarkPlayedPositionReset(for episodeId: String) {
+        guard markPlayedResetHoldEpisodeId == episodeId else { return }
+        markPlayedResetHoldEpisodeId = nil
     }
 
     private func tickSleepTimer() {
@@ -1650,7 +1685,8 @@ final class PlaybackService: ObservableObject {
         if abs(target - positionSeconds) < 0.05 {
             return
         }
-        seek(toSeconds: target)
+        // Automatic rewind is not a listener seek; keep a mark-played reset.
+        seek(toSeconds: target, releasesMarkPlayedResetHold: false)
     }
 
     // MARK: - Now Playing / remote commands

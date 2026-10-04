@@ -771,6 +771,11 @@ final class PodcastStore: ObservableObject {
         state.updatedAtEpochMs = nowMs
         state.lastPlayedAtEpochMs = nowMs
         playbackStates[episodeId] = state
+        if resetPosition {
+            playback?.holdMarkPlayedPositionReset(for: episodeId)
+        } else {
+            playback?.releaseMarkPlayedPositionReset(for: episodeId)
+        }
         if removeFromQueue {
             queue.removeAll { $0.id == episodeId }
         }
@@ -788,6 +793,7 @@ final class PodcastStore: ObservableObject {
         state.updatedAtEpochMs = Int64(Date().timeIntervalSince1970 * 1000)
         playbackStates[episodeId] = state
         pendingAutoDeleteIds.remove(episodeId)
+        playback?.releaseMarkPlayedPositionReset(for: episodeId)
         publishWidgetSnapshot()
     }
 
