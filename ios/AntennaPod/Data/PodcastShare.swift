@@ -150,13 +150,13 @@ extension PodcastFeed {
     /// Funding / Support page from feed `fundingUrl` only (`http` / `https`).
     /// From Podcast Index `podcast:funding` or Atom `link rel="payment"` — never invents Patreon/etc.
     /// Distinct from `websiteURL` (homepage) and feed RSS/`feedUrl`. Nil when missing or non-http(s).
+    /// A space in the feed funding address is percent-encoded (`EpisodeMediaURL`) so Support still appears.
+    /// `URL(string:)` alone drops that link.
     var fundingURL: URL? {
-        guard let fundingUrl else { return nil }
-        let trimmed = fundingUrl.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
-        let scheme = url.scheme?.lowercased()
+        guard let parsed = EpisodeMediaURL.url(from: fundingUrl) else { return nil }
+        let scheme = parsed.scheme?.lowercased()
         guard scheme == "http" || scheme == "https" else { return nil }
-        return url
+        return parsed
     }
 
     /// Menu title for Support / Funding: feed-provided label when present, else localized **Support**.
