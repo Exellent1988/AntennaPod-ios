@@ -137,6 +137,15 @@ struct InboxView: View {
         return chips
     }
 
+    /// Drop a podcast chip whose feed is no longer subscribed. Otherwise the UUID
+    /// stays selected with no chip, and every later Inbox row looks filtered out.
+    /// A still-subscribed feed with zero Inbox episodes keeps its chip.
+    private func releaseInboxPodcastFilterIfFeedGone() {
+        guard case .feed(let id) = InboxPodcastFilter.fromStorage(settings.inboxPodcastFilter) else { return }
+        guard !store.feeds.contains(where: { $0.id == id }) else { return }
+        settings.inboxPodcastFilter = ""
+    }
+
     private func podcastChipTitle(_ chip: InboxPodcastFilter) -> String {
         switch chip {
         case .all:
@@ -658,6 +667,12 @@ struct InboxView: View {
             .searchable(text: $searchText, prompt: "Search library")
             .onChange(of: searchText) { _, newValue in
                 scheduleFilter(for: newValue)
+            }
+            .onAppear {
+                releaseInboxPodcastFilterIfFeedGone()
+            }
+            .onChange(of: store.feeds.map(\.id)) { _, _ in
+                releaseInboxPodcastFilterIfFeedGone()
             }
             .onDisappear {
                 debounceTask?.cancel()
