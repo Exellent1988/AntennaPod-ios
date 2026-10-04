@@ -643,13 +643,14 @@ final class DownloadService: ObservableObject {
         return victims.count
     }
 
-    /// Completed downloads whose episode id appears in `feed.episodes` (this feed’s current catalog).
+    /// Completed downloads whose episode id appears in `feed.episodes` (this feed’s current catalog)
+    /// or is a channel trailer for this feed (`podcast-trailer:<feedUUID>:`).
     /// Does not include other podcasts’ files. Local-folder `file://` episodes are usually not in the
     /// Downloads catalog (already on disk outside `Documents/downloads`).
     func downloads(forFeed feed: PodcastFeed) -> [DownloadedEpisode] {
         let ids = Set(feed.episodes.map(\.id))
-        guard !ids.isEmpty else { return [] }
-        return downloads.filter { ids.contains($0.id) }
+        let trailerPrefix = PodcastTrailer.playbackEpisodeIdPrefix(feedId: feed.id)
+        return downloads.filter { ids.contains($0.id) || $0.id.hasPrefix(trailerPrefix) }
     }
 
     /// Approximate total byte size of files that `deleteDownloads(forFeed:)` would remove.
@@ -671,12 +672,26 @@ final class DownloadService: ObservableObject {
     /// catalog files were deleted.
     @discardableResult
     func deleteDownloads(forFeed feed: PodcastFeed) -> Int {
-        let ids = Set(feed.episodes.map(\.id))
+        let episodeIds = Set(feed.episodes.map(\.id))
+        let trailerPrefix = PodcastTrailer.playbackEpisodeIdPrefix(feedId: feed.id)
+        func belongs(_ episodeId: String) -> Bool {
+            episodeIds.contains(episodeId) || episodeId.hasPrefix(trailerPrefix)
+        }
+        var ids = episodeIds
+        for item in downloads where belongs(item.id) {
+            ids.insert(item.id)
+        }
+        for id in inProgress where belongs(id) {
+            ids.insert(id)
+        }
+        for waiting in waitingQueue where belongs(waiting.episode.id) {
+            ids.insert(waiting.episode.id)
+        }
         guard !ids.isEmpty else { return 0 }
         for id in ids {
             cancelTask(for: id)
         }
-        let victims = downloads.filter { ids.contains($0.id) }
+        let victims = downloads.filter { belongs($0.id) }
         for item in victims {
             delete(item.episode)
         }

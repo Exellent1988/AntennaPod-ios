@@ -116,7 +116,8 @@ final class PodcastStore: ObservableObject {
 
     /// Remove a subscription.
     /// Clears the feed from the list, per-feed settings, tags, queue items from this feed,
-    /// and favorites / archive / bookmarks / episode private notes / playback-history entries for its episodes.
+    /// and favorites / archive / bookmarks / episode private notes / playback-history entries for its episodes
+    /// and for channel trailers (synthetic ids, not stored in `feed.episodes`).
     /// Also deletes per-feed HTTP Basic credentials from the Keychain (never in JSON).
     /// Local-folder feeds also release the security-scoped bookmark.
     /// Does **not** delete downloaded episode files by itself — UI may call
@@ -131,13 +132,32 @@ final class PodcastStore: ObservableObject {
         feedSettingsById.removeValue(forKey: feed.id)
         tagsByFeedId.removeValue(forKey: feed.id)
         let ids = Set(feed.episodes.map(\.id))
-        queue.removeAll { ids.contains($0.id) }
-        for id in ids {
+        // Channel trailers are not in `feed.episodes`. Their playback id is
+        // `podcast-trailer:<feedUUID>:<mediaURL>`, so a queued, starred, archived,
+        // bookmarked, or noted trailer would otherwise survive unsubscribe.
+        let trailerPrefix = PodcastTrailer.playbackEpisodeIdPrefix(feedId: feed.id)
+        func belongs(_ episodeId: String) -> Bool {
+            ids.contains(episodeId) || episodeId.hasPrefix(trailerPrefix)
+        }
+        queue.removeAll { belongs($0.id) }
+        let trailerStateIds = playbackStates.keys.filter { $0.hasPrefix(trailerPrefix) }
+        let favoriteTrailerIds = favoriteAtById.keys.filter { $0.hasPrefix(trailerPrefix) }
+        let archivedTrailerIds = archivedAtById.keys.filter { $0.hasPrefix(trailerPrefix) }
+        let bookmarkTrailerIds = bookmarksByEpisodeId.keys.filter { $0.hasPrefix(trailerPrefix) }
+        let noteTrailerIds = episodePrivateNotesById.keys.filter { $0.hasPrefix(trailerPrefix) }
+        let clearIds = ids
+            .union(trailerStateIds)
+            .union(favoriteTrailerIds)
+            .union(archivedTrailerIds)
+            .union(bookmarkTrailerIds)
+            .union(noteTrailerIds)
+        for id in clearIds {
             playbackStates.removeValue(forKey: id)
             favoriteAtById.removeValue(forKey: id)
             archivedAtById.removeValue(forKey: id)
             bookmarksByEpisodeId.removeValue(forKey: id)
             episodePrivateNotesById.removeValue(forKey: id)
+            pendingAutoDeleteIds.remove(id)
         }
     }
 

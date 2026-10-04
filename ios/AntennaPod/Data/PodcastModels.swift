@@ -152,13 +152,19 @@ struct PodcastTrailer: Identifiable, Hashable, Codable {
         return mediaExtensions.contains(ext) ? ext : nil
     }
 
+    /// Prefix of `asPlaybackEpisode` ids: `podcast-trailer:<feedUUID>:`.
+    /// Unsubscribe and feed-scoped download deletion match this even when the media URL changed.
+    static func playbackEpisodeIdPrefix(feedId: UUID) -> String {
+        "podcast-trailer:\(feedId.uuidString):"
+    }
+
     /// Synthetic episode for `PlaybackService.play` — not added to `PodcastFeed.episodes`.
     /// Id embeds feed UUID so Now Playing can resolve artwork/title via `feed(containingEpisodeId:)`.
     func asPlaybackEpisode(feedId: UUID) -> PodcastEpisode? {
         guard let media = mediaURL else { return nil }
         let titleText = displayTitle ?? title
         return PodcastEpisode(
-            id: "podcast-trailer:\(feedId.uuidString):\(media.absoluteString)",
+            id: "\(Self.playbackEpisodeIdPrefix(feedId: feedId))\(media.absoluteString)",
             title: titleText,
             link: nil,
             pubDateEpochMs: pubDateEpochMs,
