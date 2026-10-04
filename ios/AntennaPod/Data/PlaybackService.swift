@@ -781,7 +781,7 @@ final class PlaybackService: ObservableObject {
         if let preferred = preferredMediaURL {
             let scheme = preferred.scheme?.lowercased()
             guard scheme == "http" || scheme == "https" else { return nil }
-            let primaryRemote = episode.downloadUrl.flatMap { URL(string: $0) }
+            let primaryRemote = episode.downloadUrl.flatMap { EpisodeMediaURL.url(from: $0) }
             let urlsMatch = primaryRemote.map {
                 $0.absoluteString == preferred.absoluteString
             } ?? false
@@ -794,7 +794,7 @@ final class PlaybackService: ObservableObject {
             }
         }
 
-        let remote = episode.downloadUrl.flatMap { URL(string: $0) }
+        let remote = episode.downloadUrl.flatMap { EpisodeMediaURL.url(from: $0) }
 
         switch preference {
         case .preferStream:

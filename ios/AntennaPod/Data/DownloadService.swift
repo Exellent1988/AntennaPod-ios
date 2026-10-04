@@ -168,6 +168,38 @@ struct DownloadStorageUsage: Equatable {
     }
 }
 
+
+/// `URL(string:)` rejects an enclosure that contains a space, which RSS feeds do include.
+/// Download then recorded "Episode has no media URL" and never started the transfer.
+/// A string `URL(string:)` already accepts is returned unchanged so existing escapes are not doubled.
+enum EpisodeMediaURL {
+    static func url(from raw: String?) -> URL? {
+        guard let trimmed = raw?.trimmingCharacters(in: .whitespacesAndNewlines), !trimmed.isEmpty else {
+            return nil
+        }
+        if let url = URL(string: trimmed) {
+            return url
+        }
+        // RFC 3986 unreserved + reserved + '%'. A path space is escaped; ? & = and existing %XX stay.
+        let allowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-._~:/?#[]@!$&'()*+,;=%"))
+        var encoded = ""
+        encoded.reserveCapacity(trimmed.utf8.count)
+        for scalar in trimmed.unicodeScalars {
+            if allowed.contains(scalar) {
+                encoded.unicodeScalars.append(scalar)
+            } else {
+                for byte in String(scalar).utf8 {
+                    encoded.append(String(format: "%%%02X", byte))
+                }
+            }
+        }
+        guard encoded != trimmed, let url = URL(string: encoded) else {
+            return nil
+        }
+        return url
+    }
+}
+
 /// Distinguishes user-tapped downloads from auto-download enqueue (separate Wi‑Fi policies).
 enum DownloadEnqueueSource {
     case manual
@@ -301,8 +333,7 @@ final class DownloadService: ObservableObject {
             }
         }
         // Local folder feeds: enclosure is already a file:// URL on disk.
-        if let raw = episode.downloadUrl,
-           let url = URL(string: raw),
+        if let url = EpisodeMediaURL.url(from: episode.downloadUrl),
            url.isFileURL,
            FileManager.default.fileExists(atPath: url.path) {
             return url
@@ -345,7 +376,7 @@ final class DownloadService: ObservableObject {
             guard picked.count < effectiveCap else { break }
             guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
                   !raw.isEmpty,
-                  let url = URL(string: raw) else { continue }
+                  let url = EpisodeMediaURL.url(from: raw) else { continue }
             let scheme = url.scheme?.lowercased()
             guard scheme == "http" || scheme == "https" else { continue }
             guard !LocalFolderFeed.isLocalFileDownloadURL(raw) else { continue }
@@ -389,7 +420,7 @@ final class DownloadService: ObservableObject {
     ///   skips that manual gate. With `autoDownloadWifiOnly`, automatic items stay in the
     ///   waiting FIFO until a real Wi‑Fi/Ethernet path is reported (not the optimistic default).
     func download(_ episode: PodcastEpisode, source: DownloadEnqueueSource = .manual) async {
-        guard let remote = episode.downloadUrl, let url = URL(string: remote) else {
+        guard let url = EpisodeMediaURL.url(from: episode.downloadUrl) else {
             recordFailure(episode: episode, message: String(localized: "Episode has no media URL"))
             return
         }
@@ -480,7 +511,7 @@ final class DownloadService: ObservableObject {
     /// matches the feed URL host, attaches `Authorization` (never logged). Other CDN hosts are
     /// left unauthenticated (honest). Local-folder `file://` never uses HTTP auth.
     private func startActiveDownload(episode: PodcastEpisode) {
-        guard let remote = episode.downloadUrl, let url = URL(string: remote), !url.isFileURL else {
+        guard let url = EpisodeMediaURL.url(from: episode.downloadUrl), !url.isFileURL else {
             inProgress.remove(episode.id)
             recordFailure(episode: episode, message: String(localized: "Episode has no media URL"))
             return
@@ -1313,7 +1344,7 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
                 return nil
             }
             // Prefer matching challenge host to the media URL host (same-host policy).
-            if let media = mapping.episode.downloadUrl, let mediaURL = URL(string: media),
+            if let mediaURL = EpisodeMediaURL.url(from: mapping.episode.downloadUrl),
                let mediaHost = mediaURL.host?.lowercased(),
                mediaHost != challengeHost {
                 return nil
