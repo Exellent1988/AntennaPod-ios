@@ -1363,7 +1363,9 @@ struct SettingsView: View {
             }
             if matchesPlaybackResetPosition {
                 Toggle("Reset position when marked played", isOn: $settings.resetPositionWhenMarkedPlayed)
-                    .accessibilityHint(String(localized: "When on, mark played clears saved position to 0. When off, keeps position for resume after Mark unplayed. Default on."))
+                    .accessibilityLabel(String(localized: "Reset position when marked played"))
+                    .accessibilityValue(resetPositionWhenMarkedPlayedAccessibilityValue)
+                    .accessibilityHint(resetPositionWhenMarkedPlayedAccessibilityHint)
                 Text("When on, marking an episode played clears its saved playback position to 0 (resume from start later). When off, the position is kept so Mark unplayed can resume. Applies to manual mark, mark-all, smart mark, and natural end. Default on.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -1592,6 +1594,19 @@ struct SettingsView: View {
 
     private var smartMarkAsPlayedAccessibilityHint: String {
         String(localized: "Presets are Off, 15, 30, 60, 120, 300, and 600 seconds, plus Custom from 1 to 600. The default is 30 seconds. Off marks only on natural end or explicit Mark played. Any other value smart-marks on leave or stop within that remaining window. Near-end scrub alone does not mark played. Changing the picker does not mark an episode now. Not Skip outro or Rewind after pause.")
+    }
+
+    /// VoiceOver for Settings → Reset position when marked played.
+    /// On clears saved position to 0 on mark played; Off keeps it for Mark unplayed resume.
+    private var resetPositionWhenMarkedPlayedAccessibilityValue: String {
+        if settings.resetPositionWhenMarkedPlayed {
+            return String(localized: "On. This is the default. When an episode is marked played — manually, by Mark all, by smart mark on leave or stop, or at natural end — its saved playback position is cleared to 0 so a later Mark unplayed starts from the beginning. Changing this does not seek the loaded episode now, start playback, download, or mark played. It is not Smart mark as played, Continuous playback, or Rewind after pause.")
+        }
+        return String(localized: "Off. This is not the default. When an episode is marked played — manually, by Mark all, by smart mark on leave or stop, or at natural end — the saved playback position is kept so Mark unplayed can resume there. Changing this does not seek the loaded episode now, start playback, download, or mark played. It is not Smart mark as played, Continuous playback, or Rewind after pause.")
+    }
+
+    private var resetPositionWhenMarkedPlayedAccessibilityHint: String {
+        String(localized: "On clears the saved position to 0 when marked played. Off keeps the position for resume after Mark unplayed. Applies to manual mark, Mark all, smart mark, and natural end. Default on. The switch does not seek now, start playback, or download.")
     }
 
     /// Spoken preset for Settings Skip intro / Skip outro. The visible picker

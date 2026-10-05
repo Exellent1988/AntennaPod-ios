@@ -25868,23 +25868,6 @@
       },
       "comment": "Settings → App Store button. Same term as Bewertungsabfrage in the rating accessibility hint."
     },
-    "When on, mark played clears saved position to 0. When off, keeps position for resume after Mark unplayed. Default on.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When on, mark played clears saved position to 0. When off, keeps position for resume after Mark unplayed. Default on."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn aktiv, löscht „Als gehört markieren“ die gespeicherte Position auf 0. Wenn aus, bleibt die Position für Fortsetzen nach „Als ungehört“. Standard an."
-          }
-        }
-      }
-    },
     "When on, marking an episode played clears its saved playback position to 0 (resume from start later). When off, the position is kept so Mark unplayed can resume. Applies to manual mark, mark-all, smart mark, and natural end. Default on.": {
       "extractionState": "manual",
       "localizations": {
@@ -48101,6 +48084,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet den Dateien-Speicherpicker und schreibt AntennaPod-kompatibles OPML 2.0. Lokale Ordner-Podcasts fehlen. Abonniert nicht ab, importiert nicht und ändert keine Tags. Unterschiedlich vom OPML-Teilen-Blatt und HTML-Export."
+          }
+        }
+      }
+    },
+    "On. This is the default. When an episode is marked played — manually, by Mark all, by smart mark on leave or stop, or at natural end — its saved playback position is cleared to 0 so a later Mark unplayed starts from the beginning. Changing this does not seek the loaded episode now, start playback, download, or mark played. It is not Smart mark as played, Continuous playback, or Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On. This is the default. When an episode is marked played — manually, by Mark all, by smart mark on leave or stop, or at natural end — its saved playback position is cleared to 0 so a later Mark unplayed starts from the beginning. Changing this does not seek the loaded episode now, start playback, download, or mark played. It is not Smart mark as played, Continuous playback, or Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An. Das ist die Voreinstellung. Wenn eine Episode als gehört markiert wird — manuell, per Alle markieren, per Smart Mark beim Verlassen oder Stoppen oder am natürlichen Ende — wird die gespeicherte Position auf 0 gesetzt, damit ein späteres Als ungespielt markieren am Anfang startet. Umschalten sucht die geladene Episode jetzt nicht, startet keine Wiedergabe, lädt nichts herunter und markiert nicht. Nicht Intelligent als gehört markieren, Fortlaufende Wiedergabe oder Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "Off. This is not the default. When an episode is marked played — manually, by Mark all, by smart mark on leave or stop, or at natural end — the saved playback position is kept so Mark unplayed can resume there. Changing this does not seek the loaded episode now, start playback, download, or mark played. It is not Smart mark as played, Continuous playback, or Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. This is not the default. When an episode is marked played — manually, by Mark all, by smart mark on leave or stop, or at natural end — the saved playback position is kept so Mark unplayed can resume there. Changing this does not seek the loaded episode now, start playback, download, or mark played. It is not Smart mark as played, Continuous playback, or Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. Das ist nicht die Voreinstellung. Wenn eine Episode als gehört markiert wird — manuell, per Alle markieren, per Smart Mark beim Verlassen oder Stoppen oder am natürlichen Ende — bleibt die gespeicherte Position erhalten, damit Als ungespielt markieren dort fortsetzen kann. Umschalten sucht die geladene Episode jetzt nicht, startet keine Wiedergabe, lädt nichts herunter und markiert nicht. Nicht Intelligent als gehört markieren, Fortlaufende Wiedergabe oder Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "On clears the saved position to 0 when marked played. Off keeps the position for resume after Mark unplayed. Applies to manual mark, Mark all, smart mark, and natural end. Default on. The switch does not seek now, start playback, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On clears the saved position to 0 when marked played. Off keeps the position for resume after Mark unplayed. Applies to manual mark, Mark all, smart mark, and natural end. Default on. The switch does not seek now, start playback, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An setzt die gespeicherte Position beim Als gehört markieren auf 0. Aus behält die Position für Fortsetzen nach Als ungespielt markieren. Gilt für manuelles Markieren, Alle markieren, Smart Mark und natürliches Ende. Standard an. Der Schalter sucht jetzt nicht, startet keine Wiedergabe und lädt nichts herunter."
           }
         }
       }
