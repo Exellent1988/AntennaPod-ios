@@ -1584,7 +1584,7 @@ struct FeedDetailView: View {
                         }
                         .disabled(playRandomCandidates.isEmpty)
                         .accessibilityLabel(String(localized: "Play random"))
-                        .accessibilityHint(String(localized: "Plays a random non-archived episode from this podcast. Prefers unplayed when any remain."))
+                        .accessibilityHint(String(localized: "Plays a random non-archived episode from this podcast’s full catalog with playable media. Prefers unplayed when any remain. Ignores status, episode type, and search filters. Does not reorder the feed list. No confirmation."))
 
                         Button {
                             store.togglePinned(feedId: liveFeed.id)

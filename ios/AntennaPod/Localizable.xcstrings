@@ -33108,24 +33108,6 @@
         }
       }
     },
-    "Plays a random non-archived episode from this podcast. Prefers unplayed when any remain.": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Feed detail Play random.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plays a random non-archived episode from this podcast. Prefers unplayed when any remain."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spielt eine zufällige nicht archivierte Episode dieses Podcasts. Bevorzugt ungehörte, wenn vorhanden."
-          }
-        }
-      }
-    },
     "Plays a random favorited episode with playable media. Prefers unplayed when any remain.": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Favorites toolbar Play random.",
@@ -48847,6 +48829,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spielt eine zufällige Episode aus dem vollständigen Posteingangs-Katalog mit abspielbaren Medien. Bevorzugt ungehörte, wenn welche übrig sind. Ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter. Ordnet den Posteingang nicht neu. Keine Bestätigung."
+          }
+        }
+      }
+    },
+    "Plays a random non-archived episode from this podcast’s full catalog with playable media. Prefers unplayed when any remain. Ignores status, episode type, and search filters. Does not reorder the feed list. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random non-archived episode from this podcast’s full catalog with playable media. Prefers unplayed when any remain. Ignores status, episode type, and search filters. Does not reorder the feed list. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine zufällige nicht archivierte Episode aus dem vollständigen Katalog dieses Podcasts mit abspielbaren Medien. Bevorzugt ungehörte, wenn welche übrig sind. Ignoriert Status-, Episodentyp- und Suchfilter. Ordnet die Feed-Liste nicht neu. Keine Bestätigung."
           }
         }
       }
