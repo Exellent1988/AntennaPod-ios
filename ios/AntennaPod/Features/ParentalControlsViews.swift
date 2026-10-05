@@ -9,6 +9,9 @@ struct ParentalControlsSettingsView: View {
     @State private var showSetPIN = false
     @State private var showChangePIN = false
     @State private var showDisablePIN = false
+    /// Option toggles change what the PIN protects, so a locked session must enter it first.
+    @State private var showOptionsPINGate = false
+    @State private var pendingOptionChange: (() -> Void)?
     @State private var statusMessage: String?
     @State private var statusIsError = false
 
@@ -38,11 +41,11 @@ struct ParentalControlsSettingsView: View {
 
             if parental.isEnabled {
                 Section {
-                    Toggle("Lock Add / Discover", isOn: $parental.lockAddDiscover)
+                    Toggle("Lock Add / Discover", isOn: gatedOptionToggle(\.lockAddDiscover))
                         .accessibilityHint(optionsHelpText)
-                    Toggle("Lock Network / Downloads settings", isOn: $parental.lockNetworkDownloadsSettings)
+                    Toggle("Lock Network / Downloads settings", isOn: gatedOptionToggle(\.lockNetworkDownloadsSettings))
                         .accessibilityHint(optionsHelpText)
-                    Toggle("Hide explicit top charts", isOn: $parental.hideExplicitCharts)
+                    Toggle("Hide explicit top charts", isOn: gatedOptionToggle(\.hideExplicitCharts))
                         .accessibilityHint(optionsHelpText)
                     Text(optionsHelpText)
                         .font(.caption)
@@ -114,6 +117,39 @@ struct ParentalControlsSettingsView: View {
                 }
             )
         }
+        .sheet(isPresented: $showOptionsPINGate) {
+            ParentalPINPromptSheet(
+                title: String(localized: "Parental controls"),
+                onCancel: {
+                    showOptionsPINGate = false
+                    pendingOptionChange = nil
+                },
+                onSuccess: { pin in
+                    if parental.unlockSession(with: pin) {
+                        showOptionsPINGate = false
+                        pendingOptionChange?()
+                        pendingOptionChange = nil
+                        return true
+                    }
+                    return false
+                }
+            )
+        }
+    }
+
+    /// Binding that asks for the PIN before a locked session changes a parental option.
+    private func gatedOptionToggle(_ keyPath: ReferenceWritableKeyPath<ParentalControls, Bool>) -> Binding<Bool> {
+        Binding(
+            get: { parental[keyPath: keyPath] },
+            set: { newValue in
+                if parental.isLocked {
+                    pendingOptionChange = { parental[keyPath: keyPath] = newValue }
+                    showOptionsPINGate = true
+                } else {
+                    parental[keyPath: keyPath] = newValue
+                }
+            }
+        )
     }
 
     private var enableBinding: Binding<Bool> {
