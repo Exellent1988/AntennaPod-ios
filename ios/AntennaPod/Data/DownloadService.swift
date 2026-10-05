@@ -1098,6 +1098,8 @@ final class DownloadService: ObservableObject {
     private func nextEvictionCandidate(keeping keepEpisodeId: String?) -> DownloadedEpisode? {
         let candidates = downloads.filter { item in
             if let keepEpisodeId, item.id == keepEpisodeId { return false }
+            // The player has this file open; same deferral as auto-delete after playing.
+            if store?.playback?.shouldBlockAutoDelete(for: item.id) == true { return false }
             return FileManager.default.fileExists(atPath: item.localFileURL.path)
         }
         guard !candidates.isEmpty else { return nil }
@@ -1118,6 +1120,7 @@ final class DownloadService: ObservableObject {
     private func nextEpisodeCacheEvictionCandidate(keeping keepEpisodeId: String?) -> DownloadedEpisode? {
         let candidates = downloads.filter { item in
             if let keepEpisodeId, item.id == keepEpisodeId { return false }
+            if store?.playback?.shouldBlockAutoDelete(for: item.id) == true { return false }
             guard FileManager.default.fileExists(atPath: item.localFileURL.path) else { return false }
             // Never auto-delete favorited / starred offline files via the count cache.
             if store?.isFavorite(item.id) == true { return false }
