@@ -29772,23 +29772,6 @@
         }
       }
     },
-    "Optional. Password is stored in the Keychain only.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optional. Password is stored in the Keychain only."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optional. Passwort nur im Schlüsselbund."
-          }
-        }
-      }
-    },
     "Optional. Saved to Keychain only — never in backup JSON. Leave blank to keep the stored password.": {
       "extractionState": "manual",
       "localizations": {
@@ -49261,6 +49244,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet ein Sheet, um ein eigenes Vorspul-Intervall von 5 bis 60 Sekunden festzulegen. Das Intervall gilt erst nach Bestätigung mit Festlegen. Das nächste Vorspulen nutzt den gespeicherten Wert. Ändern verschiebt die aktuelle Position nicht. Unterschiedlich von Zurückspulen Benutzerdefiniert…. Nicht Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "Optional proxy username for HTTP Basic. Saved in Settings and backup — not the Keychain. Leave empty for no proxy authentication. Pair with Proxy password; the password stays Keychain-only and never in backup.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional proxy username for HTTP Basic. Saved in Settings and backup — not the Keychain. Leave empty for no proxy authentication. Pair with Proxy password; the password stays Keychain-only and never in backup."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optionaler Proxy-Benutzername für HTTP Basic. In Einstellungen und Backup gespeichert — nicht im Schlüsselbund. Leer lassen für keine Proxy-Anmeldung. Zusammen mit Proxy-Passwort; das Passwort bleibt nur im Schlüsselbund und nie im Backup."
           }
         }
       }

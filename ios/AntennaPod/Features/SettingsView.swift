@@ -1971,7 +1971,7 @@ struct SettingsView: View {
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .accessibilityLabel(String(localized: "Proxy username"))
-                .accessibilityHint(String(localized: "Optional. Password is stored in the Keychain only."))
+                .accessibilityHint(String(localized: "Optional proxy username for HTTP Basic. Saved in Settings and backup — not the Keychain. Leave empty for no proxy authentication. Pair with Proxy password; the password stays Keychain-only and never in backup."))
 
                 SecureField(
                     String(localized: "Proxy password"),
