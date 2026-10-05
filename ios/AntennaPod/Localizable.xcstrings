@@ -14218,23 +14218,6 @@
         }
       }
     },
-    "Asks for confirmation, then randomly reorders the entire queue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks for confirmation, then randomly reorders the entire queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragt nach Bestätigung und ordnet dann die gesamte Warteschlange zufällig neu"
-          }
-        }
-      }
-    },
     "Shuffle, reverse, or clear the entire queue after confirmation": {
       "extractionState": "manual",
       "localizations": {
@@ -14316,23 +14299,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Warteschlange mischen (aktuell spielende zuerst)?"
-          }
-        }
-      }
-    },
-    "Asks for confirmation, then shuffles the entire queue and keeps the currently playing episode first when it is in the queue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks for confirmation, then shuffles the entire queue and keeps the currently playing episode first when it is in the queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragt nach Bestätigung, mischt dann die gesamte Warteschlange und behält die aktuell spielende Episode zuerst, wenn sie in der Warteschlange ist"
           }
         }
       }
@@ -14503,23 +14469,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Warteschlange umkehren?"
-          }
-        }
-      }
-    },
-    "Asks for confirmation, then reverses the entire queue order": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks for confirmation, then reverses the entire queue order"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragt nach Bestätigung und kehrt dann die gesamte Warteschlangenreihenfolge um"
           }
         }
       }
@@ -33213,24 +33162,6 @@
         }
       }
     },
-    "Plays a random queued episode with playable media. Prefers unplayed when any remain.": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Queue toolbar Play random. Distinct from Shuffle (reorder).",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plays a random queued episode with playable media. Prefers unplayed when any remain."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spielt eine zufällige Episode aus der Warteschlange mit abspielbarem Medium. Bevorzugt ungehörte, wenn vorhanden."
-          }
-        }
-      }
-    },
     "Remaining time respects speed": {
       "extractionState": "manual",
       "localizations": {
@@ -48849,6 +48780,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Setzt diese Episode an das Ende der Warteschlange. Springt nicht in der Episode und stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads. Keine Bestätigung."
+          }
+        }
+      }
+    },
+    "Plays a random episode from the full queue with playable media. Prefers unplayed when any remain. Does not reorder the queue — that is Shuffle. Queue lock does not block this. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random episode from the full queue with playable media. Prefers unplayed when any remain. Does not reorder the queue — that is Shuffle. Queue lock does not block this. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine zufällige Episode aus der gesamten Warteschlange mit abspielbaren Medien. Bevorzugt ungehörte, wenn welche übrig sind. Ordnet die Warteschlange nicht neu — das macht Mischen. Warteschlangen-Sperre blockiert das nicht. Keine Bestätigung."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then randomly reorders the entire queue, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then randomly reorders the entire queue, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und ordnet dann die gesamte Warteschlange zufällig neu, nicht nur den aktuellen Filter. Stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads. Die gerade spielende Episode bleibt dieselbe und wandert mit ihrer neuen Listenposition."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then shuffles the entire queue and keeps the currently playing episode first when it is in the queue. If nothing is playing or that episode is not queued, behaves like Shuffle. Does not stop playback, change progress, mark played, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then shuffles the entire queue and keeps the currently playing episode first when it is in the queue. If nothing is playing or that episode is not queued, behaves like Shuffle. Does not stop playback, change progress, mark played, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung, mischt dann die gesamte Warteschlange und behält die gerade spielende Episode vorn, wenn sie in der Warteschlange ist. Wenn nichts spielt oder diese Episode nicht eingereiht ist, verhält es sich wie Mischen. Stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then reverses the entire queue order, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then reverses the entire queue order, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und kehrt dann die gesamte Warteschlangen-Reihenfolge um, nicht nur den aktuellen Filter. Stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads. Die gerade spielende Episode bleibt dieselbe und wandert mit ihrer neuen Listenposition."
           }
         }
       }

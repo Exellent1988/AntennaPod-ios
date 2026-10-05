@@ -623,7 +623,7 @@ struct QueueView: View {
                         // Distinct from Shuffle (reorder). Queue lock does **not** disable.
                         .disabled(playRandomCandidates.isEmpty)
                         .accessibilityLabel(String(localized: "Play random"))
-                        .accessibilityHint(String(localized: "Plays a random queued episode with playable media. Prefers unplayed when any remain."))
+                        .accessibilityHint(String(localized: "Plays a random episode from the full queue with playable media. Prefers unplayed when any remain. Does not reorder the queue — that is Shuffle. Queue lock does not block this. No confirmation."))
 
                         Button {
                             // Always confirm before shuffleQueue() — reorders the full list.
@@ -635,7 +635,7 @@ struct QueueView: View {
                         // Blocked when Queue locked (reorder-only) or fewer than 2 items.
                         .disabled(!canShuffle)
                         .accessibilityHint(
-                            String(localized: "Asks for confirmation, then randomly reorders the entire queue")
+                            String(localized: "Asks for confirmation, then randomly reorders the entire queue, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.")
                         )
                         Button {
                             // Always confirm before shuffleQueueKeepingPlayingFirst — full-list shuffle + pin playing.
@@ -648,7 +648,7 @@ struct QueueView: View {
                         .disabled(!canShuffle)
                         .accessibilityLabel(String(localized: "Shuffle keep playing first"))
                         .accessibilityHint(
-                            String(localized: "Asks for confirmation, then shuffles the entire queue and keeps the currently playing episode first when it is in the queue")
+                            String(localized: "Asks for confirmation, then shuffles the entire queue and keeps the currently playing episode first when it is in the queue. If nothing is playing or that episode is not queued, behaves like Shuffle. Does not stop playback, change progress, mark played, or delete downloads.")
                         )
                         Button {
                             // Always confirm before reverseQueue() — reorders the full list.
@@ -660,7 +660,7 @@ struct QueueView: View {
                         // Blocked when Queue locked (reorder-only) or fewer than 2 items.
                         .disabled(!canReverse)
                         .accessibilityHint(
-                            String(localized: "Asks for confirmation, then reverses the entire queue order")
+                            String(localized: "Asks for confirmation, then reverses the entire queue order, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.")
                         )
                         Button {
                             // Always confirm before sortQueueByPublishDate — reorders the full list.
