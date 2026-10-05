@@ -106,6 +106,8 @@ final class PlaybackService: ObservableObject {
     let pictureInPicture = PictureInPictureSession()
     private var timeObserver: Any?
     private var statusCancellable: AnyCancellable?
+    /// First finite item duration only. Later jitter stays on the throttled tick.
+    private var durationCancellable: AnyCancellable?
     private var pipCancellable: AnyCancellable?
     /// Re-applies video-track enable/disable when `AVPlayerItem.tracks` populates after ready.
     private var videoTrackPolicyCancellable: AnyCancellable?
@@ -961,6 +963,22 @@ final class PlaybackService: ObservableObject {
                 self.applyIdleTimerPolicy()
             }
 
+        // play() publishes Now Playing and the widget before AVPlayerItem.duration
+        // is known. The 0.5s tick is throttled to 5s and stops while paused, so the
+        // first finite duration must be written once, including while paused.
+        durationCancellable = item.publisher(for: \.duration)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] duration in
+                guard let self else { return }
+                guard self.player === player else { return }
+                let seconds = duration.seconds
+                guard seconds.isFinite, seconds > 0 else { return }
+                guard !(self.durationSeconds.isFinite && self.durationSeconds > 0) else { return }
+                self.durationSeconds = seconds
+                self.updateNowPlayingInfo(force: true)
+                self.store?.publishWidgetSnapshot()
+            }
+
         endObserver = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
             object: item,
@@ -1429,6 +1447,7 @@ final class PlaybackService: ObservableObject {
         timeObserver = nil
         activeSeekHold = nil
         statusCancellable = nil
+        durationCancellable = nil
         videoTrackPolicyCancellable?.cancel()
         videoTrackPolicyCancellable = nil
         if let endObserver {
