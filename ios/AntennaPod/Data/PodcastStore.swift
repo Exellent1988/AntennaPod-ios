@@ -73,6 +73,9 @@ final class PodcastStore: ObservableObject {
         didSet { PodcastPersistence.saveFeedTags(tagsByFeedId) }
     }
     @Published var isLoading = false
+    private var isRefreshingAllFeeds = false
+    private var refreshAllFeedsWaiters: [CheckedContinuation<Void, Never>] = []
+
     /// Feeds finished (success or failure) during the in-flight `refreshAllFeeds()`.
     /// Honest completion count only — not a byte/percent estimate. Zero when idle.
     @Published var refreshCompletedCount = 0
@@ -2781,6 +2784,23 @@ final class PodcastStore: ObservableObject {
     /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
     /// Publishes honest per-feed completion counts (`refreshCompletedCount` / `refreshTotalCount`) for UI.
     func refreshAllFeeds() async {
+        // Second call while one runs (toolbar Refresh tapped twice, pull-to-refresh during the
+        // launch auto-refresh) waits for it instead of starting another pass: both passes
+        // snapshotted the same old episode ids, so new episodes were announced, queued, and
+        // auto-downloaded twice.
+        if isRefreshingAllFeeds {
+            await withCheckedContinuation { continuation in
+                refreshAllFeedsWaiters.append(continuation)
+            }
+            return
+        }
+        isRefreshingAllFeeds = true
+        defer {
+            isRefreshingAllFeeds = false
+            let waiters = refreshAllFeedsWaiters
+            refreshAllFeedsWaiters = []
+            waiters.forEach { $0.resume() }
+        }
         lastError = nil
         isLoading = true
         beginDeferringFeedsSave()
