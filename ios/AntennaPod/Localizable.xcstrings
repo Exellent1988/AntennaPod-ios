@@ -12981,23 +12981,6 @@
         }
       }
     },
-    "No played episodes with a last-played timestamp in this range. Try All time or another period. Echo uses the same approximate playback data as Statistics.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No played episodes with a last-played timestamp in this range. Try All time or another period. Echo uses the same approximate playback data as Statistics."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine gehörten Episoden mit Last-Played-Zeitstempel in diesem Zeitraum. Versuche „Gesamte Zeit“ oder einen anderen Zeitraum. Echo nutzt dieselben Näherungsdaten wie Statistiken."
-          }
-        }
-      }
-    },
     "Approximate: played episodes use lastPlayedAt (else updatedAt) and saved duration from playback.json — same limits as Statistics. Does not count rewinds, playback speed, or re-listens. Time range follows the device calendar; stamps are episode-level, not per-session.": {
       "extractionState": "manual",
       "localizations": {
@@ -30760,23 +30743,6 @@
         }
       }
     },
-    "All saved played episodes and favorites still counted after any Statistics Reset. Calendar follows the device. Shared with Statistics.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All saved played episodes and favorites still counted after any Statistics Reset. Calendar follows the device. Shared with Statistics."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle gespeicherten gehörten Episoden und Favoriten, die nach einem Statistik-Zurücksetzen noch zählen. Kalender folgt dem Gerät. Gemeinsam mit Statistik."
-          }
-        }
-      }
-    },
     "(Approximate wall-clock — same limits as AntennaPod Statistics, including Reset baseline.)": {
       "extractionState": "manual",
       "localizations": {
@@ -47743,6 +47709,72 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiviert: neue Folgen nach Aktualisierung (ein aggregierter lokaler Banner → Eingang; Titel Podcast oder Neue Episode(n); Body Episode oder Anzahl), Download-Fehler → Downloads, Download fertig (optional, standardmäßig aus) → Downloads, gpodder-/Nextcloud-Login- oder Sync-Fehler → Einstellungen Sync (Banner-Titel Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen) und/oder Sleep-Timer-Ende (Banner + Vordergrund-Haptik; Tippen öffnet keinen Bildschirm). Nur lokal — kein Push / APNs; iOS-Benachrichtigungsberechtigung erforderlich."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "No Echo since reset": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Echo since reset"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Echo seit dem Zurücksetzen"
+          }
+        }
+      }
+    },
+    "History still has older playback, but Echo only counts stamps after the last Statistics Reset. Play again or choose a wider time range. Reset does not clear History.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "History still has older playback, but Echo only counts stamps after the last Statistics Reset. Play again or choose a wider time range. Reset does not clear History."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Verlauf hat noch ältere Wiedergaben, aber Echo zählt nur Zeitstempel nach dem letzten Statistik-Reset. Spiele erneut oder wähle einen größeren Zeitraum. Reset löscht den Verlauf nicht."
+          }
+        }
+      }
+    },
+    "No played episodes with a last-played timestamp in this range (and after any Reset baseline). Try All time or another period. Echo uses the same approximate playback data as Statistics.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No played episodes with a last-played timestamp in this range (and after any Reset baseline). Try All time or another period. Echo uses the same approximate playback data as Statistics."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine gehörten Episoden mit Zuletzt-gespielt-Zeitstempel in diesem Zeitraum (und nach einer Reset-Basislinie). Versuche Gesamt oder einen anderen Zeitraum. Echo nutzt dieselben ungefähren Wiedergabedaten wie Statistik."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "All saved played episodes and favorites in playback.json / favorites.json since first progress or last Statistics Reset. Calendar follows the device. Shared with Statistics.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All saved played episodes and favorites in playback.json / favorites.json since first progress or last Statistics Reset. Calendar follows the device. Shared with Statistics."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle gespeicherten gehörten Episoden und Favoriten in playback.json / favorites.json seit dem ersten Fortschritt oder dem letzten Statistik-Reset. Kalender folgt dem Gerät. Geteilt mit Statistik."
           }
         }
       },

@@ -13,9 +13,18 @@ struct EchoView: View {
         store.echoYearSummary(in: settings.statisticsTimeRange)
     }
 
-    /// Unfiltered year-style check for empty-vs-out-of-range messaging uses all-time played.
+    /// All-time Echo after any Reset baseline — empty after Reset even when History has older plays.
     private var allTimeSummary: EchoYearSummary {
         store.echoYearSummary(in: .allTime)
+    }
+
+    /// Raw History catalog — distinguishes “never listened” from “empty only because of Reset”.
+    private var hasAnyPlaybackHistory: Bool {
+        !store.historyEpisodes.isEmpty
+    }
+
+    private var hasActiveReset: Bool {
+        settings.statisticsResetAtEpochMs > 0
     }
 
     var body: some View {
@@ -33,7 +42,12 @@ struct EchoView: View {
                 .accessibilityValue(settings.statisticsTimeRange.label)
                 .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             } footer: {
-                Text(Self.rangeFootnote(for: settings.statisticsTimeRange))
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(Self.rangeFootnote(for: settings.statisticsTimeRange))
+                    if let since = StatisticsView.resetSinceFootnote(epochMs: settings.statisticsResetAtEpochMs) {
+                        Text(since)
+                    }
+                }
             }
 
             if summary.isEmpty {
@@ -214,20 +228,26 @@ struct EchoView: View {
     }
 
     private var emptyTitle: String {
-        if allTimeSummary.isEmpty {
+        if !hasAnyPlaybackHistory {
             if settings.statisticsTimeRange == .thisYear {
                 return String(localized: "No Echo for \(summary.year) yet")
             }
             return String(localized: "No Echo yet")
         }
+        if hasActiveReset && allTimeSummary.isEmpty {
+            return String(localized: "No Echo since reset")
+        }
         return String(localized: "No Echo in this range")
     }
 
     private var emptyDescription: String {
-        if allTimeSummary.isEmpty {
+        if !hasAnyPlaybackHistory {
             return String(localized: "Play episodes and mark them played. Echo uses the same approximate playback data as Statistics.")
         }
-        return String(localized: "No played episodes with a last-played timestamp in this range. Try All time or another period. Echo uses the same approximate playback data as Statistics.")
+        if hasActiveReset && allTimeSummary.isEmpty {
+            return String(localized: "History still has older playback, but Echo only counts stamps after the last Statistics Reset. Play again or choose a wider time range. Reset does not clear History.")
+        }
+        return String(localized: "No played episodes with a last-played timestamp in this range (and after any Reset baseline). Try All time or another period. Echo uses the same approximate playback data as Statistics.")
     }
 
     private static var approximationFootnote: String {
@@ -237,7 +257,7 @@ struct EchoView: View {
     private static func rangeFootnote(for range: StatisticsTimeRange) -> String {
         switch range {
         case .allTime:
-            return String(localized: "All saved played episodes and favorites still counted after any Statistics Reset. Calendar follows the device. Shared with Statistics.")
+            return String(localized: "All saved played episodes and favorites in playback.json / favorites.json since first progress or last Statistics Reset. Calendar follows the device. Shared with Statistics.")
         case .thisWeek, .thisMonth, .thisYear:
             return String(localized: "Filtered by lastPlayedAt (else updatedAt) / favoritedAt in the selected device-calendar period, and after any Statistics Reset baseline. Shared with Statistics.")
         }

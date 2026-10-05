@@ -238,7 +238,8 @@ struct StatisticsView: View {
         }
     }
 
-    private static func resetSinceFootnote(epochMs: Int64) -> String? {
+    /// Shared with Echo empty/footer honesty after Statistics Reset.
+    static func resetSinceFootnote(epochMs: Int64) -> String? {
         guard epochMs > 0 else { return nil }
         let date = Date(timeIntervalSince1970: Double(epochMs) / 1000.0)
         let formatted = date.formatted(date: .abbreviated, time: .shortened)
