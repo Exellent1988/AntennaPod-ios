@@ -129,6 +129,7 @@ struct EpisodeChaptersSheet: View {
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(String(localized: "No matching chapters"))
                     .accessibilityValue(String(localized: "No chapters match your search."))
+                    .accessibilityHint(String(localized: "Change or clear the chapters search to see other chapters."))
                 } else {
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 0) {

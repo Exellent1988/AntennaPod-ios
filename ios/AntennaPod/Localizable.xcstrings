@@ -47779,6 +47779,40 @@
           }
         }
       }
+    },
+    "Change or clear the chapters search to see other chapters.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the chapters search to see other chapters."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Kapitelsuche, um andere Kapitel zu sehen."
+          }
+        }
+      }
+    },
+    "Change or clear the transcript search to see other cues.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the transcript search to see other cues."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Transkriptsuche, um andere Textstellen zu sehen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

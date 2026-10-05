@@ -733,7 +733,10 @@ struct FullPlayerView: View {
                         description: Text("No chapters match your search.")
                     )
                     .frame(maxWidth: .infinity, minHeight: 120)
-                    .accessibilityElement(children: .combine)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "No matching chapters"))
+                    .accessibilityValue(String(localized: "No chapters match your search."))
+                    .accessibilityHint(String(localized: "Change or clear the chapters search to see other chapters."))
                 } else {
                     ForEach(filteredChapterIndices, id: \.self) { index in
                         let chapter = chapters[index]

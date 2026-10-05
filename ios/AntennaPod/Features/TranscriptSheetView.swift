@@ -347,6 +347,7 @@ struct TranscriptSheetView: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(String(localized: "No matching cues"))
             .accessibilityValue(String(localized: "No cues match your search."))
+            .accessibilityHint(String(localized: "Change or clear the transcript search to see other cues."))
         } else {
             ScrollViewReader { proxy in
                 ScrollView {
