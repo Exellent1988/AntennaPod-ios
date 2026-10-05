@@ -721,20 +721,34 @@ struct MiniPlayerView: View {
         return format(playback.durationSeconds)
     }
 
+    /// Same clock as the full player. Minutes-only (`125:05`) hid the hour,
+    /// so a two-hour episode did not match the full-player `2:05:05`.
     private func format(_ seconds: Double) -> String {
-        guard seconds.isFinite else {
+        guard seconds.isFinite, seconds >= 0 else {
             return "--:--"
         }
-        let total = max(0, Int(seconds))
-        return String(format: "%d:%02d", total / 60, total % 60)
+        let total = Int(seconds)
+        let h = total / 3600
+        let m = (total % 3600) / 60
+        let s = total % 60
+        if h > 0 {
+            return String(format: "%d:%02d:%02d", h, m, s)
+        }
+        return String(format: "%d:%02d", m, s)
     }
 
-    /// Remaining time with a leading minus (−m:ss).
+    /// Remaining time with a leading minus (−m:ss or −h:mm:ss).
     private func formatRemaining(_ seconds: Double) -> String {
         guard seconds.isFinite else {
             return "--:--"
         }
         let total = max(0, Int(seconds.rounded(.down)))
-        return String(format: "-%d:%02d", total / 60, total % 60)
+        let h = total / 3600
+        let m = (total % 3600) / 60
+        let s = total % 60
+        if h > 0 {
+            return String(format: "-%d:%02d:%02d", h, m, s)
+        }
+        return String(format: "-%d:%02d", m, s)
     }
 }
