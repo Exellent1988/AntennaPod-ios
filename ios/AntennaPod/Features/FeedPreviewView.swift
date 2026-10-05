@@ -25,6 +25,7 @@ struct FeedPreviewRequest: Identifiable, Hashable {
 /// Reused by discovery rows and Add → URL (including clipboard). Honest timeout / network / not-a-feed errors.
 struct FeedPreviewView: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var parental: ParentalControls
     @Environment(\.dismiss) private var dismiss
 
     let request: FeedPreviewRequest
@@ -40,6 +41,8 @@ struct FeedPreviewView: View {
     @State private var needsHttpAuth = false
     @State private var authUsername = ""
     @State private var authPassword = ""
+    /// Podroll / publisher rows open this preview without the Add sheet PIN gate.
+    @State private var showSubscribePINGate = false
 
     private let repository = FeedRepository()
     private let previewEpisodeLimit = 10
@@ -240,7 +243,11 @@ struct FeedPreviewView: View {
                     .accessibilityHint(String(localized: "Opens the existing subscription instead of subscribing again"))
                 } else {
                     Button {
-                        Task { await confirmSubscribe() }
+                        if parental.needsPINForAddDiscover {
+                            showSubscribePINGate = true
+                        } else {
+                            Task { await confirmSubscribe() }
+                        }
                     } label: {
                         if isSubscribing || store.isLoading {
                             ProgressView()
@@ -277,6 +284,21 @@ struct FeedPreviewView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(item: $openFeed) { feed in
             FeedDetailView(feed: feed)
+        }
+        .sheet(isPresented: $showSubscribePINGate) {
+            ParentalPINPromptSheet(
+                title: String(localized: "Parental controls"),
+                message: String(localized: "Enter your PIN to add or discover podcasts."),
+                onCancel: { showSubscribePINGate = false },
+                onSuccess: { pin in
+                    if parental.unlockSession(with: pin) {
+                        showSubscribePINGate = false
+                        Task { await confirmSubscribe() }
+                        return true
+                    }
+                    return false
+                }
+            )
         }
         .task {
             await loadPreview()
