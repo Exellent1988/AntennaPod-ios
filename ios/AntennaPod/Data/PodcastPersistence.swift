@@ -194,11 +194,51 @@ enum PodcastPersistence {
         encode(cleaned, to: episodeNotesURL)
     }
 
+    /// Missing, unreadable, or zero-byte file → nil (empty, as before). A file with bytes that
+    /// fail to decode is moved aside first, so the caller's empty fallback cannot overwrite it on
+    /// the next save. Called from loaders only, never from `playbackWriteQueue`.
     private static func decode<T: Decodable>(_ url: URL) -> T? {
-        guard let data = try? Data(contentsOf: url) else {
+        guard let data = try? Data(contentsOf: url), !data.isEmpty else {
             return nil
         }
-        return try? JSONDecoder().decode(T.self, from: data)
+        do {
+            return try JSONDecoder().decode(T.self, from: data)
+        } catch {
+            moveUndecodableFileAside(url)
+            return nil
+        }
+    }
+
+    /// Newest corrupt copies kept per data file name (older ones are deleted when moving).
+    private static let maxCorruptCopiesPerFile = 3
+
+    /// Rename `<name>.json` to `<name>.corrupt-<yyyyMMdd-HHmmss>.json` in the same directory.
+    private static func moveUndecodableFileAside(_ url: URL) {
+        let fm = FileManager.default
+        let dir = url.deletingLastPathComponent()
+        let base = url.deletingPathExtension().lastPathComponent
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        let stamp = formatter.string(from: Date())
+        var target = dir.appendingPathComponent("\(base).corrupt-\(stamp).json")
+        var suffix = 1
+        while fm.fileExists(atPath: target.path), suffix < 100 {
+            target = dir.appendingPathComponent("\(base).corrupt-\(stamp)-\(suffix).json")
+            suffix += 1
+        }
+        guard (try? fm.moveItem(at: url, to: target)) != nil else { return }
+
+        let prefix = "\(base).corrupt-"
+        guard let names = try? fm.contentsOfDirectory(atPath: dir.path) else { return }
+        // Stamps sort chronologically by name; newest first.
+        let copies = names
+            .filter { $0.hasPrefix(prefix) && $0.hasSuffix(".json") }
+            .sorted(by: >)
+        for name in copies.dropFirst(maxCorruptCopiesPerFile) {
+            try? fm.removeItem(at: dir.appendingPathComponent(name))
+        }
     }
 
     private static func encode<T: Encodable>(_ value: T, to url: URL) {
