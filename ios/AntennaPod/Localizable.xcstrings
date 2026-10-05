@@ -10475,40 +10475,6 @@
         }
       }
     },
-    "Hides this episode from Inbox without marking it played": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hides this episode from Inbox without marking it played"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Blendet diese Episode aus dem Posteingang aus, ohne sie als gehört zu markieren"
-          }
-        }
-      }
-    },
-    "Restores this episode from the archive": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restores this episode from the archive"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stellt diese Episode aus dem Archiv wieder her"
-          }
-        }
-      }
-    },
     "Cancel download": {
       "extractionState": "manual",
       "localizations": {
@@ -49029,6 +48995,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fügt diese Episode zu den Favoriten hinzu. Keine Bestätigung. Lädt nicht herunter, archiviert nicht, markiert nicht als gehört und ändert nicht die Warteschlange."
+          }
+        }
+      }
+    },
+    "Restores this episode from the archive. No confirmation. Does not delete downloads, remove from queue, unfavorite, or mark played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restores this episode from the archive. No confirmation. Does not delete downloads, remove from queue, unfavorite, or mark played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stellt diese Episode aus dem Archiv wieder her. Keine Bestätigung. Löscht keine Downloads, entfernt nichts aus der Warteschlange, entfernt keine Favoriten und markiert nicht als gehört."
+          }
+        }
+      }
+    },
+    "Archives this episode and hides it from Inbox without marking it played. No confirmation. Does not delete downloads, remove from queue, or unfavorite.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archives this episode and hides it from Inbox without marking it played. No confirmation. Does not delete downloads, remove from queue, or unfavorite."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert diese Episode und blendet sie im Posteingang aus, ohne sie als gehört zu markieren. Keine Bestätigung. Löscht keine Downloads, entfernt nichts aus der Warteschlange und entfernt keine Favoriten."
           }
         }
       }

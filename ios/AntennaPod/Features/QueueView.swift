@@ -521,8 +521,8 @@ struct QueueView: View {
                             .tint(store.isArchived(episode.id) ? .green : .orange)
                             .accessibilityHint(
                                 store.isArchived(episode.id)
-                                    ? String(localized: "Restores this episode from the archive")
-                                    : String(localized: "Hides this episode from Inbox without marking it played")
+                                    ? String(localized: "Restores this episode from the archive. No confirmation. Does not delete downloads, remove from queue, unfavorite, or mark played.")
+                                    : String(localized: "Archives this episode and hides it from Inbox without marking it played. No confirmation. Does not delete downloads, remove from queue, or unfavorite.")
                             )
                         }
                     }
