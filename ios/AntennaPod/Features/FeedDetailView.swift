@@ -1371,7 +1371,7 @@ struct FeedDetailView: View {
                             }
                             .accessibilityLabel(String(localized: "Share podcast website"))
                             .accessibilityHint(
-                                String(localized: "Shares the feed-provided podcast website URL; distinct from the feed RSS URL and funding URL")
+                                String(localized: "Opens the system share sheet with the feed-provided podcast website URL. Never uses the feed RSS URL, an episode webpage, funding URL, or discussion link. Distinct from Open podcast website, Copy podcast website, and Share feed URL. Sharing is your choice and does not subscribe or download.")
                             )
                         }
 
