@@ -566,7 +566,7 @@ struct FavoritesView: View {
                     }
                     .disabled(archiveAllFavoritesCandidatesCount == 0)
                     .accessibilityHint(
-                        String(localized: "Archives non-archived episodes in the full Favorites catalog; ignores podcast, search, and sort filters")
+                        String(localized: "Asks for confirmation, then archives non-archived episodes in the full Favorites catalog, newest favorited first. Ignores podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
                     )
 
                     Button(role: .destructive) {

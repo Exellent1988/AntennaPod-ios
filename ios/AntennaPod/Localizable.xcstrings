@@ -36775,24 +36775,6 @@
         }
       }
     },
-    "Archives non-archived episodes in the full Favorites catalog; ignores podcast, search, and sort filters": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archives non-archived episodes in the full Favorites catalog; ignores podcast, search, and sort filters"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archiviert nicht archivierte Episoden im vollständigen Favoriten-Katalog; ignoriert Podcast-, Such- und Sortierfilter"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Favorites Archive all."
-    },
     "Archives %lld non-archived favorite episode(s) in the full Favorites catalog (newest favorited first), not the podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.": {
       "extractionState": "manual",
       "localizations": {
@@ -48889,6 +48871,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden im vollständigen Verlaufs-Katalog, neueste zuletzt gehörte zuerst. Ignoriert Podcast-, Such- und Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then archives non-archived episodes in the full Favorites catalog, newest favorited first. Ignores podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then archives non-archived episodes in the full Favorites catalog, newest favorited first. Ignores podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden im vollständigen Favoriten-Katalog, neueste favorisierte zuerst. Ignoriert Podcast-, Such- und Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange."
           }
         }
       }
