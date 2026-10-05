@@ -430,7 +430,7 @@ struct DownloadsView: View {
                                     DownloadsFilterChip(
                                         title: podcastChipTitle(chip),
                                         selected: podcastFilter == chip,
-                                        accessibilityHint: String(localized: "Filters the Downloads list by podcast")
+                                        accessibilityHint: String(localized: "Filters completed downloads in this list to All or one podcast that currently has downloads. Does not delete files, change sort, start downloads, or alter the All/Unplayed/Played status chips. Search still applies on top of this filter.")
                                     ) {
                                         settings.downloadsPodcastFilter = chip.storageValue
                                     }
