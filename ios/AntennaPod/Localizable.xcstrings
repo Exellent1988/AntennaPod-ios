@@ -36955,24 +36955,6 @@
         }
       }
     },
-    "Appends unplayed, non-archived Inbox episodes not already queued; ignores podcast, episode type, search, and sort filters": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Inbox Add all unplayed to queue.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends unplayed, non-archived Inbox episodes not already queued; ignores podcast, episode type, search, and sort filters"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht ungehörte, nicht archivierte Inbox-Episoden ein, die noch nicht in der Warteschlange sind; ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter"
-          }
-        }
-      }
-    },
     "Copy inbox, share inbox, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, or archive all": {
       "extractionState": "manual",
       "comment": "Inbox actions accessibility hint including Add all unplayed to queue.",
@@ -48886,6 +48868,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden im vollständigen Posteingangs-Katalog, neueste zuerst. Ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then appends unplayed, non-archived episodes from the full current Inbox catalog that are not already queued, newest first. Ignores podcast, episode type, search, and sort filters. Inbox is already unplayed-only in normal operation, so this may match Add all to queue. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then appends unplayed, non-archived episodes from the full current Inbox catalog that are not already queued, newest first. Ignores podcast, episode type, search, and sort filters. Inbox is already unplayed-only in normal operation, so this may match Add all to queue. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und reiht dann ungehörte, nicht archivierte Episoden aus dem vollständigen aktuellen Posteingangs-Katalog ein, die noch nicht in der Warteschlange sind, neueste zuerst. Ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter. Der Posteingang enthält im Normalbetrieb bereits nur Ungehörte, daher kann dies Alle zur Warteschlange hinzufügen entsprechen. Warteschlangen-Sperre blockiert das Einreihen nicht."
           }
         }
       }
