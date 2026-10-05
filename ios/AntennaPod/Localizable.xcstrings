@@ -33660,22 +33660,6 @@
         }
       }
     },
-    "Stops after the last episode in the queue": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stops after the last episode in the queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stoppt nach der letzten Episode in der Warteschlange"
-          }
-        }
-      }
-    },
     "Queue is empty": {
       "localizations": {
         "en": {
@@ -49063,6 +49047,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pausiert, wenn das aktuelle Kapitel endet. Keine Bestätigung. Ersetzt jeden aktiven Uhr-, Ende-der-Episode- oder Ende-der-Queue-Sleep-Timer. Pausiert die Wiedergabe jetzt nicht."
+          }
+        }
+      }
+    },
+    "Stops after the last episode in the queue. No confirmation. Replaces any active clock, End of episode, or End of chapter sleep timer. Does not pause or stop playback now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stops after the last episode in the queue. No confirmation. Replaces any active clock, End of episode, or End of chapter sleep timer. Does not pause or stop playback now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stoppt nach der letzten Episode in der Queue. Keine Bestätigung. Ersetzt jeden aktiven Uhr-, Ende-der-Episode- oder Ende-des-Kapitels-Sleep-Timer. Pausiert oder stoppt die Wiedergabe jetzt nicht."
           }
         }
       }

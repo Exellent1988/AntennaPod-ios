@@ -688,7 +688,7 @@ struct MiniPlayerView: View {
             .disabled(!canSleepTimerEndOfQueue)
             .accessibilityHint(
                 canSleepTimerEndOfQueue
-                    ? String(localized: "Stops after the last episode in the queue")
+                    ? String(localized: "Stops after the last episode in the queue. No confirmation. Replaces any active clock, End of episode, or End of chapter sleep timer. Does not pause or stop playback now.")
                     : sleepTimerEndOfQueueDisabledHint
             )
             Button(String(localized: "Custom…")) {
