@@ -42,6 +42,7 @@ enum FeedParsing {
                 feed.liveItems[index].contentLinks[link].href = absoluteLink(href, base: base) ?? href
             }
         }
+        feed.licenses = resolvingLicenses(feed.licenses, base: base)
         for index in feed.podrollItems.indices {
             feed.podrollItems[index].feedUrl = absoluteLink(feed.podrollItems[index].feedUrl, base: base)
         }
@@ -61,6 +62,14 @@ enum FeedParsing {
                 feed.episodes[index].socialInteracts,
                 base: base
             )
+            feed.episodes[index].licenses = resolvingLicenses(feed.episodes[index].licenses, base: base)
+            // Chapter list id is start time + title, so resolving `href` keeps it.
+            for chapter in feed.episodes[index].chapters.indices {
+                feed.episodes[index].chapters[chapter].href = absoluteLink(
+                    feed.episodes[index].chapters[chapter].href,
+                    base: base
+                )
+            }
             for enclosure in feed.episodes[index].alternateEnclosures.indices {
                 for source in feed.episodes[index].alternateEnclosures[enclosure].sources.indices {
                     let uri = feed.episodes[index].alternateEnclosures[enclosure].sources[source].uri
@@ -77,6 +86,14 @@ enum FeedParsing {
             var person = person
             person.href = absoluteLink(person.href, base: base)
             return person
+        }
+    }
+
+    private static func resolvingLicenses(_ licenses: [PodcastLicense], base: URL) -> [PodcastLicense] {
+        licenses.map { license in
+            var license = license
+            license.url = absoluteLink(license.url, base: base)
+            return license
         }
     }
 
