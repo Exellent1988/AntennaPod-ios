@@ -823,7 +823,7 @@ struct QueueView: View {
                         .disabled(!canRemovePlayed)
                         .accessibilityLabel(String(localized: "Remove played"))
                         .accessibilityHint(
-                            String(localized: "Asks for confirmation, then removes played episodes from the queue")
+                            String(localized: "Asks for confirmation, then removes played episodes from the entire queue, not only the current filter. Does not stop playback, change progress, unmark played, or delete downloads.")
                         )
                         Button(role: .destructive) {
                             // Always confirm before clearQueue() — never clear from the menu alone.
