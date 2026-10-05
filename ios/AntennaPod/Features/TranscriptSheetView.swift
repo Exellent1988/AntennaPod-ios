@@ -214,7 +214,7 @@ struct TranscriptSheetView: View {
                     .disabled(!canShareCurrentCue)
                     .accessibilityLabel(String(localized: "Share current cue"))
                     .accessibilityHint(
-                        String(localized: "Opens the system share sheet with the episode title and current transcript cue")
+                        String(localized: "Opens the system share sheet with the episode title and the current transcript cue at the playback position. Uses the full cue list and ignores the transcript search filter. Does not fetch or generate a transcript.")
                     )
 
                     ShareLink(

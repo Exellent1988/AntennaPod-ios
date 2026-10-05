@@ -33188,23 +33188,6 @@
         }
       }
     },
-    "Opens the system share sheet with the episode title and current transcript cue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens the system share sheet with the episode title and current transcript cue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet das System-Teilen-Menü mit Episodentitel und aktueller Transkript-Textstelle"
-          }
-        }
-      }
-    },
     "Share current chapter": {
       "extractionState": "manual",
       "localizations": {
@@ -49132,6 +49115,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert den aktuellen Transkript-Cue an der Wiedergabeposition in die Zwischenablage. Nutzt die volle Cue-Liste und ignoriert den Transkript-Suchfilter. Lädt oder erzeugt kein Transkript."
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the episode title and the current transcript cue at the playback position. Uses the full cue list and ignores the transcript search filter. Does not fetch or generate a transcript.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title and the current transcript cue at the playback position. Uses the full cue list and ignores the transcript search filter. Does not fetch or generate a transcript."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Sheet mit Episodentitel und dem aktuellen Transkript-Cue an der Wiedergabeposition. Nutzt die volle Cue-Liste und ignoriert den Transkript-Suchfilter. Lädt oder erzeugt kein Transkript."
           }
         }
       }
