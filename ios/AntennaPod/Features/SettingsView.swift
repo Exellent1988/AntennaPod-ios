@@ -1091,7 +1091,7 @@ struct SettingsView: View {
                 )
                 .accessibilityHint(
                     String(
-                        localized: "Removes every local episode private note after confirmation. Does not clear feed notes, bookmarks, favorites, downloads, queue, or history."
+                        localized: "Asks for confirmation, then removes every local episode private note from episode-notes.json. Does not clear feed private notes, bookmarks, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
                     )
                 )
                 Text(
