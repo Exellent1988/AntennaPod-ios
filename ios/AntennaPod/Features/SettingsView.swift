@@ -2475,7 +2475,7 @@ struct SettingsView: View {
     }
 
     private var parallelDownloadsAccessibilityHint: String {
-        String(localized: "Choices are 1 at a time through 5 parallel. The default is 3 parallel. Caps active download transfers only. Waiting downloads stay in memory and are lost if the app is killed. Already-started background tasks continue. Not Max storage, Max downloaded episodes, or Download all unplayed soft cap. Changing the picker does not invent downloads.")
+        String(localized: "Choices are 1 at a time through 5 parallel. The default is 3 parallel. Caps active download transfers only. Waiting downloads stay in memory and are lost if the app is killed. Already-started background tasks continue; lowering this does not cancel them. Not Max storage, Max downloaded episodes, or Download all unplayed soft cap. Changing the picker does not invent downloads, start a new download, or delete files.")
     }
 
     private var parallelDownloadsHelpText: String {

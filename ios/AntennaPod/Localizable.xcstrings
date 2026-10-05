@@ -44644,23 +44644,6 @@
         }
       }
     },
-    "Choices are 1 at a time through 5 parallel. The default is 3 parallel. Caps active download transfers only. Waiting downloads stay in memory and are lost if the app is killed. Already-started background tasks continue. Not Max storage, Max downloaded episodes, or Download all unplayed soft cap. Changing the picker does not invent downloads.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choices are 1 at a time through 5 parallel. The default is 3 parallel. Caps active download transfers only. Waiting downloads stay in memory and are lost if the app is killed. Already-started background tasks continue. Not Max storage, Max downloaded episodes, or Download all unplayed soft cap. Changing the picker does not invent downloads."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auswahl von 1 gleichzeitig bis 5 parallel. Die Voreinstellung ist 3 parallel. Begrenzt nur aktive Download-Übertragungen. Wartende Downloads bleiben im Speicher und gehen verloren, wenn die App beendet wird. Bereits gestartete Hintergrundaufgaben laufen weiter. Nicht Max. Speicher, Max. heruntergeladene Episoden oder Soft-Limit für Alle ungehörten herunterladen. Der Picker erfindet keine Downloads."
-          }
-        }
-      }
-    },
     "%@. This is not the default of 3 parallel.": {
       "extractionState": "manual",
       "localizations": {
@@ -49366,6 +49349,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nur sichtbar, solange globaler Auto-Download an ist. Begrenzt neu erschienene ungehörte Episoden nach erfolgreicher Aktualisierung — nicht den ungehörten Rückstand. Dieselbe Obergrenze gilt, wenn ein Podcast auf Immer steht. Pro-Podcast Nie überspringt diesen Podcast weiterhin. Ändert die Nur-Wi‑Fi-Sperre unter Netzwerk / Downloads nicht. Lokale Ordner-Feeds werden übersprungen. Kein stiller Hintergrund-Download. Ändern erfindet keine Downloads."
+          }
+        }
+      }
+    },
+    "Choices are 1 at a time through 5 parallel. The default is 3 parallel. Caps active download transfers only. Waiting downloads stay in memory and are lost if the app is killed. Already-started background tasks continue; lowering this does not cancel them. Not Max storage, Max downloaded episodes, or Download all unplayed soft cap. Changing the picker does not invent downloads, start a new download, or delete files.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choices are 1 at a time through 5 parallel. The default is 3 parallel. Caps active download transfers only. Waiting downloads stay in memory and are lost if the app is killed. Already-started background tasks continue; lowering this does not cancel them. Not Max storage, Max downloaded episodes, or Download all unplayed soft cap. Changing the picker does not invent downloads, start a new download, or delete files."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswahl von 1 gleichzeitig bis 5 parallel. Die Voreinstellung ist 3 parallel. Begrenzt nur aktive Download-Übertragungen. Wartende Downloads bleiben im Speicher und gehen verloren, wenn die App beendet wird. Bereits gestartete Hintergrundaufgaben laufen weiter; Heruntersetzen bricht sie nicht ab. Nicht Max. Speicher, Max. heruntergeladene Episoden oder Soft-Limit für Alle ungehörten herunterladen. Der Picker erfindet keine Downloads, startet keinen neuen Download und löscht keine Dateien."
           }
         }
       }
