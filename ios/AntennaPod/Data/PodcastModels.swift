@@ -993,9 +993,13 @@ struct PodcastSoundbite: Identifiable, Hashable, Codable {
     }
 
     /// True when startTime is finite and ≥ 0 and duration is finite and > 0 (Podcast Index required attrs).
+    /// Values over a year are rejected too: `99999999999999999999` parsed to 1e20 seconds, and
+    /// `formatSeconds` traps converting that to `Int`, so opening the soundbites list crashed.
     var isValid: Bool {
         startTimeSeconds.isFinite && startTimeSeconds >= 0
+            && startTimeSeconds <= EpisodeDurationParsing.maxSeconds
             && durationSeconds.isFinite && durationSeconds > 0
+            && durationSeconds <= EpisodeDurationParsing.maxSeconds
     }
 }
 

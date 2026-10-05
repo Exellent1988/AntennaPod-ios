@@ -1238,13 +1238,13 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         guard let start = pendingSoundbiteStart, start.isFinite, start >= 0 else { return }
         guard let duration = pendingSoundbiteDuration, duration.isFinite, duration > 0 else { return }
         let title = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        itemSoundbites.append(
-            PodcastSoundbite(
-                startTimeSeconds: start,
-                durationSeconds: duration,
-                title: title.isEmpty ? nil : title
-            )
+        let soundbite = PodcastSoundbite(
+            startTimeSeconds: start,
+            durationSeconds: duration,
+            title: title.isEmpty ? nil : title
         )
+        guard soundbite.isValid else { return }
+        itemSoundbites.append(soundbite)
     }
 
     /// Finish podcast:remoteItem under podroll — append when feedGuid and/or feedUrl present; never invent.
