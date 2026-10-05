@@ -49516,6 +49516,40 @@
           }
         }
       }
+    },
+    "Honest partial. Continue listening shows episode title, podcast, and remaining time from an App Group snapshot — wall-clock when duration is known, tilde when unknown. Tap opens antennapod://play. The snapshot may be stale; there is no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension. Not live playback, not the Queue, and not Apple Watch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Honest partial. Continue listening shows episode title, podcast, and remaining time from an App Group snapshot — wall-clock when duration is known, tilde when unknown. Tap opens antennapod://play. The snapshot may be stale; there is no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension. Not live playback, not the Queue, and not Apple Watch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ehrlicher Teilumfang. Weiterhören zeigt Episodentitel, Podcast und Restzeit aus einem App-Group-Snapshot — Wanduhr, wenn die Dauer bekannt ist, Tilde wenn unbekannt. Tippen öffnet antennapod://play. Der Snapshot kann veraltet sein; es gibt keinen Live-Scrubber. Füge das Widget vom iOS-Homescreen hinzu, nachdem du die AntennaPodWidget-Erweiterung gebaut hast. Nicht Live-Wiedergabe, nicht die Warteschlange und nicht Apple Watch."
+          }
+        }
+      }
+    },
+    "Read-only note. This screen does not add the widget, start playback, or refresh the snapshot. Tap on the home-screen widget opens antennapod://play for the loaded episode or a cold-launch restored one. Not CarPlay templates, Siri Shortcuts, or independent Watch playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read-only note. This screen does not add the widget, start playback, or refresh the snapshot. Tap on the home-screen widget opens antennapod://play for the loaded episode or a cold-launch restored one. Not CarPlay templates, Siri Shortcuts, or independent Watch playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Hinweis zum Lesen. Dieser Bildschirm fügt das Widget nicht hinzu, startet keine Wiedergabe und aktualisiert den Snapshot nicht. Tippen auf dem Homescreen-Widget öffnet antennapod://play für die geladene Episode oder eine beim Kaltstart wiederhergestellte. Nicht CarPlay-Vorlagen, Siri Shortcuts oder unabhängige Watch-Wiedergabe."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

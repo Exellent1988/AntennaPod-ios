@@ -2736,6 +2736,9 @@ struct SettingsView: View {
             Text("Homescreen widget (beta lite): Continue listening shows episode title + podcast + remaining time (wall-clock max(0, duration − position) when duration known; ~ when unknown) from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .accessibilityLabel(String(localized: "Homescreen widget"))
+                .accessibilityValue(homescreenWidgetAccessibilityValue)
+                .accessibilityHint(homescreenWidgetAccessibilityHint)
         } header: {
             Text("Homescreen widget")
         }
@@ -2765,6 +2768,15 @@ struct SettingsView: View {
         } header: {
             Text("CarPlay")
         }
+    }
+
+    /// VoiceOver for Settings → Homescreen widget. Caption-only honesty note: App Group snapshot, not live.
+    private var homescreenWidgetAccessibilityValue: String {
+        String(localized: "Honest partial. Continue listening shows episode title, podcast, and remaining time from an App Group snapshot — wall-clock when duration is known, tilde when unknown. Tap opens antennapod://play. The snapshot may be stale; there is no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension. Not live playback, not the Queue, and not Apple Watch.")
+    }
+
+    private var homescreenWidgetAccessibilityHint: String {
+        String(localized: "Read-only note. This screen does not add the widget, start playback, or refresh the snapshot. Tap on the home-screen widget opens antennapod://play for the loaded episode or a cold-launch restored one. Not CarPlay templates, Siri Shortcuts, or independent Watch playback.")
     }
 
     /// VoiceOver for Settings → CarPlay. Caption-only honesty note: Now Playing remotes, no templates.
