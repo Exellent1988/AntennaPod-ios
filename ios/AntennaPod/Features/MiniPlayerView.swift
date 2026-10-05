@@ -686,7 +686,7 @@ struct MiniPlayerView: View {
             .accessibilityHint(
                 canSleepTimerEndOfQueue
                     ? String(localized: "Stops after the last episode in the queue")
-                    : String(localized: "Queue is empty")
+                    : sleepTimerEndOfQueueDisabledHint
             )
             Button(String(localized: "Custom…")) {
                 showCustomSleepTimer = true
@@ -711,11 +711,19 @@ struct MiniPlayerView: View {
         !chapters.isEmpty
     }
 
-    /// Queue non-empty — EOQ uses `nextQueueEpisode` (head when current not queued).
-    /// Disabled when empty even if something is playing (cannot drain a queue).
+    /// EOQ needs a following Queue item via `nextQueueEpisode` (head when current not queued).
+    /// Disabled when the Queue is empty or the playing episode is already last (nothing left to drain).
     private var canSleepTimerEndOfQueue: Bool {
-        !store.queue.isEmpty
+        guard let id = playback.currentEpisode?.id else { return false }
+        return store.nextQueueEpisode(after: id) != nil
     }
+    private var sleepTimerEndOfQueueDisabledHint: String {
+        if store.queue.isEmpty {
+            return String(localized: "Queue is empty")
+        }
+        return String(localized: "No further episodes in the queue")
+    }
+
 
     private var sourceIndicator: some View {
         Label(

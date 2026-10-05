@@ -47409,6 +47409,23 @@
           }
         }
       }
+    },
+    "No further episodes in the queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No further episodes in the queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine weiteren Episoden in der Warteschlange"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
