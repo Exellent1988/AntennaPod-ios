@@ -36395,23 +36395,6 @@
         }
       }
     },
-    "Marks played episodes, including archived episodes, in the full Favorites catalog as unplayed; ignores podcast, search, and sort filters and does not delete files": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks played episodes, including archived episodes, in the full Favorites catalog as unplayed; ignores podcast, search, and sort filters and does not delete files"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert gehörte Episoden einschließlich archivierter Episoden im vollständigen Favoriten-Katalog als ungehört; ignoriert Podcast-, Such- und Sortierfilter und löscht keine Dateien"
-          }
-        }
-      }
-    },
     "Copy favorites, share favorites, play random, add all to queue, mark all as played, mark all as unplayed, or clear favorites": {
       "extractionState": "manual",
       "localizations": {
@@ -48961,6 +48944,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und löscht dann die Offline-Dateien dieses Podcasts, überspringt Favoriten. Nur lokale Dateien — behält Gehört-Status, Warteschlange, Favoriten und Archiv. Unterschiedlich von Abo beenden, Gehörte Downloads löschen und Alle Downloads löschen."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then marks played episodes, including archived, in the full Favorites catalog as unplayed. Ignores podcast, search, and sort filters. Does not delete download files, clear the queue, stop playback, or unarchive episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then marks played episodes, including archived, in the full Favorites catalog as unplayed. Ignores podcast, search, and sort filters. Does not delete download files, clear the queue, stop playback, or unarchive episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und markiert dann gehörte Episoden, einschließlich archivierter, im vollständigen Favoriten-Katalog als ungehört. Ignoriert Podcast-, Such- und Sortierfilter. Löscht keine Download-Dateien, leert nicht die Warteschlange, stoppt keine Wiedergabe und hebt die Archivierung nicht auf."
           }
         }
       }
