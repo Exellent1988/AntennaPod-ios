@@ -36856,24 +36856,6 @@
         }
       }
     },
-    "Archives non-archived episodes in the full queue; ignores filters": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Queue Archive all.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archives non-archived episodes in the full queue; ignores filters"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archiviert nicht archivierte Episoden aus der vollständigen Warteschlange und ignoriert Filter"
-          }
-        }
-      }
-    },
     "Archives %lld non-archived episode(s) in the full queue (not only the current played/podcast/search filters). Archived does not mean played. Does not remove episodes from the queue, mark played, delete downloads, or stop playback.": {
       "extractionState": "manual",
       "comment": "Queue Archive all confirmation — full queue, non-archived eligibility, not played/podcast/search filters.",
@@ -48966,6 +48948,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und markiert dann gehörte Episoden in der gesamten Warteschlange als ungehört, einschließlich archivierter. Ignoriert Gehört-, Podcast- und Suchfilter. Löscht keine Downloads, entfernt keine Episoden aus der Warteschlange, stoppt keine Wiedergabe und hebt die Archivierung nicht auf."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then archives non-archived episodes in the full queue, not only the current played, podcast, or search filters. Archived does not mean played. Does not remove episodes from the queue, mark played, delete downloads, or stop playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then archives non-archived episodes in the full queue, not only the current played, podcast, or search filters. Archived does not mean played. Does not remove episodes from the queue, mark played, delete downloads, or stop playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden in der gesamten Warteschlange, nicht nur dem aktuellen Gehört-, Podcast- oder Suchfilter. Archiviert bedeutet nicht gehört. Entfernt keine Episoden aus der Warteschlange, markiert nicht als gehört, löscht keine Downloads und stoppt keine Wiedergabe."
           }
         }
       }

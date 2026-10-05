@@ -809,7 +809,7 @@ struct QueueView: View {
                         .disabled(archiveAllQueueCandidatesCount == 0)
                         .accessibilityLabel(String(localized: "Archive all"))
                         .accessibilityHint(
-                            String(localized: "Archives non-archived episodes in the full queue; ignores filters")
+                            String(localized: "Asks for confirmation, then archives non-archived episodes in the full queue, not only the current played, podcast, or search filters. Archived does not mean played. Does not remove episodes from the queue, mark played, delete downloads, or stop playback.")
                         )
 
                         Button(role: .destructive) {
