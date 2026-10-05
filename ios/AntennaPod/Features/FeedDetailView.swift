@@ -385,6 +385,12 @@ struct FeedDetailView: View {
             || !debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    /// Status or type chip only. Search is not a chip: a search miss with both chips on All
+    /// must say search, not filter (`isFiltering` includes the query).
+    private var hasFeedChipFilter: Bool {
+        settings.feedEpisodeFilter != .all || settings.feedEpisodeTypeFilter != .all
+    }
+
     /// AntennaPod-like info bar: episode count + remaining over the **visible** Feed detail list
     /// (sort → status → type → searchable). Remaining per episode = `max(0, duration − position)` when
     /// duration known; unplayed with duration contributes full duration; **played** (not current)
@@ -406,7 +412,7 @@ struct FeedDetailView: View {
             }
             return String(localized: "This podcast has no episodes yet. Pull to refresh on Subscriptions.")
         }
-        return isFiltering
+        return hasFeedChipFilter
             ? String(localized: "No episodes match the selected filters.")
             : String(localized: "No episodes match your search.")
     }
@@ -1154,7 +1160,7 @@ struct FeedDetailView: View {
                         "No matching episodes",
                         systemImage: "magnifyingglass",
                         description: Text(
-                            isFiltering
+                            hasFeedChipFilter
                                 ? String(localized: "No episodes match your filter.")
                                 : String(localized: "No episodes match your search.")
                         )
