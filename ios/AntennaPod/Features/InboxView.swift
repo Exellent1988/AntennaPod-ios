@@ -588,8 +588,11 @@ struct InboxView: View {
                         } label: {
                             Label("Mark all as played", systemImage: "checkmark.circle")
                         }
-                        // Full Inbox catalog — not the podcast-chip filtered subset.
+                        // Full Inbox catalog — not the podcast/type/search/sort filtered subset.
                         .disabled(store.inboxEpisodes.isEmpty)
+                        .accessibilityHint(
+                            String(localized: "Marks Inbox episodes as played using the full Inbox catalog; ignores podcast, episode type, search, and sort filters")
+                        )
 
                         Button {
                             showMarkAllUnplayedConfirm = true
@@ -668,7 +671,7 @@ struct InboxView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Marks \(store.inboxEpisodes.count) Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog (not only the current podcast filter).")
+                Text("Marks \(store.inboxEpisodes.count) Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog, not the podcast, episode type, search, or sort filter.")
             }
             .confirmationDialog(
                 "Mark all as unplayed?",

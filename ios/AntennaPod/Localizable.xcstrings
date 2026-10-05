@@ -25205,24 +25205,6 @@
         }
       }
     },
-    "Marks %lld Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog (not only the current podcast filter).": {
-      "extractionState": "manual",
-      "comment": "Inbox Mark all as played confirmation — full catalog, not podcast filter.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks %lld Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog (not only the current podcast filter)."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert %lld Posteingangs-Episoden als gehört. Episoden verlassen den Posteingang; Auto-Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert. Nutzt den gesamten Posteingangs-Katalog (nicht nur den aktuellen Podcast-Filter)."
-          }
-        }
-      }
-    },
     "Archives non-archived episodes in the full Inbox catalog; ignores podcast, episode type, search, and sort filters": {
       "extractionState": "manual",
       "localizations": {
@@ -47507,6 +47489,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Markiert gehörte Episoden im vollständigen Feed-Katalog dieses Podcasts als ungehört, einschließlich archivierter; nicht Status-, Episodentyp-, Such- oder Sortierfilter"
+          }
+        }
+      }
+    },
+    "Marks %lld Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog, not the podcast, episode type, search, or sort filter.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog, not the podcast, episode type, search, or sort filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld Posteingangs-Episoden als gehört. Episoden verlassen den Posteingang; Auto-Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert. Nutzt den gesamten Posteingangs-Katalog, nicht den Podcast-, Episodentyp-, Such- oder Sortierfilter."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Marks Inbox episodes as played using the full Inbox catalog; ignores podcast, episode type, search, and sort filters": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks Inbox episodes as played using the full Inbox catalog; ignores podcast, episode type, search, and sort filters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert Posteingangs-Episoden als gehört anhand des vollständigen Posteingangs-Katalogs; ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter"
           }
         }
       }
