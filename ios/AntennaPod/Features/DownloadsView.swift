@@ -543,6 +543,9 @@ struct DownloadsView: View {
                                     Label("Play Next", systemImage: "text.insert")
                                 }
                                 .tint(.teal)
+                                .accessibilityHint(
+                                    String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
+                                )
                                 if store.isInQueue(item.episode.id) {
                                     Button(role: .destructive) {
                                         episodePendingRemoveFromQueue = item.episode

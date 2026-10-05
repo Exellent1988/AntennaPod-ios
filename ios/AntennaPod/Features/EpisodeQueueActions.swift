@@ -119,7 +119,7 @@ enum EpisodeQueueActions {
                     Label("Play Next", systemImage: "text.insert")
                 }
                 .accessibilityLabel(String(localized: "Play Next"))
-                .accessibilityHint(String(localized: "Places this episode to play next in the queue"))
+                .accessibilityHint(String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played."))
             }
 
             // Hidden when not queued / already first / locked — same reorder-only gate as EpisodeRow.

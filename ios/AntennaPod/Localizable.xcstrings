@@ -10782,23 +10782,6 @@
         }
       }
     },
-    "Places this episode to play next in the queue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Places this episode to play next in the queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Setzt diese Episode als Nächstes in der Warteschlange"
-          }
-        }
-      }
-    },
     "Opens add, remove, and Play Next queue actions": {
       "extractionState": "manual",
       "localizations": {
@@ -49029,6 +49012,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entfernt die HTTP-Basic-Zugangsdaten für diesen Podcast sofort aus dem Keychain. Keine Bestätigung. Private Feed-Aktualisierung und Downloads vom gleichen Host authentifizieren sich für diesen Podcast erst wieder, wenn du sie speicherst. Betrifft nicht andere Podcasts, Podcast-Index-Schlüssel, Abos oder Offline-Dateien."
+          }
+        }
+      }
+    },
+    "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Platziert diese Episode direkt hinter dem aktuell spielenden Queue-Eintrag, oder an den Anfang, wenn nichts spielt oder das aktuelle nicht in der Queue ist. Verschiebt sie, wenn sie schon in der Queue ist — kein Duplikat. Keine Bestätigung. Die Queue-Sperre blockiert Play Next nicht. Startet weder Wiedergabe noch Download und markiert nicht als gehört."
           }
         }
       }
