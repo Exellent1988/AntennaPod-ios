@@ -10237,23 +10237,6 @@
         }
       }
     },
-    "Loads this episode from the start and plays": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Loads this episode from the start and plays"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lädt diese Episode vom Anfang und spielt ab"
-          }
-        }
-      }
-    },
     "Add to favorites": {
       "extractionState": "manual",
       "localizations": {
