@@ -49237,6 +49237,23 @@
           }
         }
       }
+    },
+    "Resets this podcast’s overrides to Use global immediately — Auto-download, Delete after playing, Keep updated, New episodes, Notify, Skip intro, Skip outro, Playback speed, Episode sort, Display name, Private note, and Keep at top. No confirmation. Does not remove tags, clear HTTP Basic authentication, unsubscribe, delete downloads, or change the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resets this podcast’s overrides to Use global immediately — Auto-download, Delete after playing, Keep updated, New episodes, Notify, Skip intro, Skip outro, Playback speed, Episode sort, Display name, Private note, and Keep at top. No confirmation. Does not remove tags, clear HTTP Basic authentication, unsubscribe, delete downloads, or change the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt die Ausnahmen dieses Podcasts sofort auf Global zurück — Automatischer Download, Nach dem Abspielen löschen, Aktualisiert halten, Neue Episoden, Benachrichtigen, Intro überspringen, Outro überspringen, Wiedergabegeschwindigkeit, Episodensortierung, Anzeigename, Private Notiz und Oben halten. Keine Bestätigung. Entfernt keine Tags, löscht keine HTTP-Basic-Authentifizierung, kündigt nicht ab, löscht keine Downloads und ändert die Warteschlange nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

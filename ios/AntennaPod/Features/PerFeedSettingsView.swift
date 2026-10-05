@@ -445,6 +445,8 @@ struct PerFeedSettingsView: View {
                         privateNoteDraft = ""
                         displayNameDraft = ""
                     }
+                    .accessibilityLabel(String(localized: "Reset to global defaults"))
+                    .accessibilityHint(String(localized: "Resets this podcast’s overrides to Use global immediately — Auto-download, Delete after playing, Keep updated, New episodes, Notify, Skip intro, Skip outro, Playback speed, Episode sort, Display name, Private note, and Keep at top. No confirmation. Does not remove tags, clear HTTP Basic authentication, unsubscribe, delete downloads, or change the queue."))
                 }
             }
         }
