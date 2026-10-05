@@ -14791,23 +14791,6 @@
         }
       }
     },
-    "Prevents idle lock while audio or video is actively playing. Default off.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Prevents idle lock while audio or video is actively playing. Default off."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verhindert die Idle-Sperre, während Audio oder Video aktiv spielt. Standard aus."
-          }
-        }
-      }
-    },
     "Removes the offline file when marked played; favorites are kept.": {
       "extractionState": "manual",
       "localizations": {
@@ -49228,6 +49211,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert diese Feed-bereitgestellte podcast:trailer-Medien-URL in die Zwischenablage. Keine Bestätigung. Unterschiedlich von Trailer abspielen, Trailer öffnen und Trailer-URL teilen. Spielt den Trailer nicht ab, markiert nicht als gehört, ändert nicht die Warteschlange, löscht keine Downloads und ändert keine Abonnements."
+          }
+        }
+      }
+    },
+    "When on, disables the idle timer while audio or video is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged. Changing this does not start or stop playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, disables the idle timer while audio or video is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged. Changing this does not start or stop playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, deaktiviert den Idle-Timer während aktiver Wiedergabe, damit der Bildschirm wach bleibt. Wiederhergestellt bei Pause, Stopp oder ohne Episode. Standard aus (akkufreundlich). Überschreibt den Energiesparmodus nur beim Idle-Timer; keine Helligkeitsänderung; PiP und Hintergrund-Audio unverändert. Ändern startet oder stoppt die Wiedergabe nicht."
           }
         }
       }

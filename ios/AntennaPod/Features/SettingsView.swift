@@ -1343,7 +1343,7 @@ struct SettingsView: View {
             }
             if matchesPlaybackKeepScreen {
                 Toggle("Keep screen on", isOn: $settings.keepScreenOnWhilePlaying)
-                    .accessibilityHint(String(localized: "Prevents idle lock while audio or video is actively playing. Default off."))
+                    .accessibilityHint(String(localized: "When on, disables the idle timer while audio or video is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged. Changing this does not start or stop playback."))
                 Text("When on, disables the idle timer while playback is actively playing so the screen stays awake. Restored when paused, stopped, or no episode. Default off (battery-friendly). Does not override Low Power Mode beyond the idle timer; no brightness changes; Picture in Picture and background audio are unchanged.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
