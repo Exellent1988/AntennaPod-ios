@@ -33,7 +33,8 @@ enum AntennaPodURLAction: String, CaseIterable {
 
 /// Routes `antennapod://` URLs and App Intent actions to `PlaybackService`.
 ///
-/// Intents open the app (`openAppWhenRun`); playback runs when an episode is already loaded.
+/// Intents open the app (`openAppWhenRun`); playback runs when an episode is loaded, or Play /
+/// Toggle start the episode restored paused at a cold launch (`PlaybackService.restoredEpisode`).
 /// No App Group / background audio control from Shortcuts when the process is cold without a
 /// current item. Playback schemes only — not episode/feed deep links, not CarPlay templates.
 /// Documented honestly in FEATURE-MATRIX / Settings / README.
@@ -83,6 +84,9 @@ final class PlaybackDeepLinkRouter: ObservableObject {
         case .play:
             if playback.currentEpisode != nil, !playback.isPlaying {
                 playback.togglePlayPause()
+            } else if playback.currentEpisode == nil {
+                // Cold launch: episode restored paused from the previous run (if any).
+                playback.playRestoredEpisode()
             }
         case .pause:
             if playback.isPlaying {
@@ -91,6 +95,8 @@ final class PlaybackDeepLinkRouter: ObservableObject {
         case .toggle:
             if playback.currentEpisode != nil {
                 playback.togglePlayPause()
+            } else {
+                playback.playRestoredEpisode()
             }
         case .skipForward:
             if playback.currentEpisode != nil {

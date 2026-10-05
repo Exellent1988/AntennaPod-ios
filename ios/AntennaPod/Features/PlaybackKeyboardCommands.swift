@@ -14,7 +14,8 @@ struct PlaybackKeyboardCommands: Commands {
     var body: some Commands {
         CommandMenu("Playback") {
             Button("Play/Pause") {
-                guard playback.currentEpisode != nil else { return }
+                // togglePlayPause also starts an episode restored paused at launch.
+                guard playback.currentEpisode != nil || playback.restoredEpisode != nil else { return }
                 playback.togglePlayPause()
             }
             .keyboardShortcut("p", modifiers: .command)

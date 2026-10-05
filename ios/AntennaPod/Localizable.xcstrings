@@ -6633,6 +6633,23 @@
         }
       }
     },
+    "Resumes this episode from the saved position": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resumes this episode from the saved position"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt diese Episode an der gespeicherten Position fort"
+          }
+        }
+      }
+    },
     "Resume the current episode in AntennaPod (opens the app).": {
       "extractionState": "manual",
       "localizations": {

@@ -26,6 +26,9 @@ struct AntennaPodApp: App {
         store.settings = settings
         store.downloads = downloads
         store.playback = playback
+        // Previous run's episode, paused in the mini player (no player / audio session yet).
+        // Before the deep-link attach so a queued cold-start Play can start it.
+        playback.restoreLastEpisodeIfPossible()
         // Launch maintenance once weak refs are wired (limit + played status available).
         downloads.runStorageMaintenance()
         // History size cap (needs settings); no-op when Unlimited.

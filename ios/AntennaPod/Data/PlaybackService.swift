@@ -62,7 +62,29 @@ final class PlaybackService: ObservableObject {
     /// Throttle lock-screen elapsed updates (system interpolates via rate + timestamp).
     private static let nowPlayingUpdateIntervalSeconds: Double = 5
 
-    @Published var currentEpisode: PodcastEpisode?
+    @Published var currentEpisode: PodcastEpisode? {
+        didSet {
+            if let id = currentEpisode?.id {
+                // A loaded episode replaces the cold-launch placeholder.
+                restoredEpisode = nil
+                if oldValue?.id != id {
+                    UserDefaults.standard.set(id, forKey: Self.lastEpisodeIdKey)
+                }
+            } else if oldValue != nil {
+                // Player unloaded (ended with nothing next, stop, backup import): nothing to restore.
+                UserDefaults.standard.removeObject(forKey: Self.lastEpisodeIdKey)
+            }
+        }
+    }
+
+    /// UserDefaults key: id of the loaded episode, kept across launches for a paused restore.
+    static let lastEpisodeIdKey = "playback.lastEpisodeId"
+
+    /// Episode loaded when the previous run ended, shown paused in the mini player after a cold
+    /// launch. Only a placeholder: no AVPlayer, no audio session, no Now Playing. `currentEpisode`
+    /// stays nil until Play, which goes through `play(episode:)`.
+    @Published private(set) var restoredEpisode: PodcastEpisode?
+
     @Published var isPlaying = false
     @Published var positionSeconds: Double = 0
     @Published var durationSeconds: Double = 0
@@ -399,6 +421,10 @@ final class PlaybackService: ObservableObject {
 
     func togglePlayPause() {
         guard let player else {
+            // Cold launch: the restored placeholder starts through the normal play path.
+            if currentEpisode == nil, restoredEpisode != nil {
+                playRestoredEpisode()
+            }
             return
         }
         if isPlaying {
@@ -427,6 +453,37 @@ final class PlaybackService: ObservableObject {
         }
         updateNowPlayingInfo(force: true)
         applyIdleTimerPolicy()
+    }
+
+    /// Launch only, after feeds and playback states are loaded: show the previous run's episode
+    /// paused when it still exists and is unplayed. Does not create a player or touch the session.
+    func restoreLastEpisodeIfPossible() {
+        guard currentEpisode == nil, restoredEpisode == nil else { return }
+        guard let id = UserDefaults.standard.string(forKey: Self.lastEpisodeIdKey) else { return }
+        guard let store, let episode = store.episode(id: id), !store.isPlayed(id) else {
+            UserDefaults.standard.removeObject(forKey: Self.lastEpisodeIdKey)
+            return
+        }
+        restoredEpisode = episode
+    }
+
+    /// Restored placeholder while it still exists and is unplayed (mark played, unsubscribe,
+    /// or a refresh that drops it hide it). Uses the store copy so refreshed metadata applies.
+    var restoredEpisodeIfStillValid: PodcastEpisode? {
+        guard currentEpisode == nil, let restored = restoredEpisode, let store else { return nil }
+        guard let live = store.episode(id: restored.id), !store.isPlayed(live.id) else { return nil }
+        return live
+    }
+
+    /// Play the restored placeholder via `play(episode:)` (saved position, stream fallback for a
+    /// deleted download, Stream Wi‑Fi only refusal). A refusal keeps the placeholder.
+    @discardableResult
+    func playRestoredEpisode() -> Bool {
+        guard let episode = restoredEpisodeIfStillValid else {
+            restoredEpisode = nil
+            return false
+        }
+        return play(episode: episode)
     }
 
     /// Swap in refreshed episode metadata (title, enclosure, shownotes) for the loaded item.

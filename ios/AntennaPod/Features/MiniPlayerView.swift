@@ -472,6 +472,33 @@ struct MiniPlayerView: View {
                 TranscriptSheetView(episode: store.episode(id: episode.id) ?? episode)
                     .environmentObject(playback)
             }
+        } else if let restored = playback.restoredEpisodeIfStillValid {
+            // Cold launch: previous episode shown paused. Play loads it via play(episode:).
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(restored.title)
+                        .font(.subheadline.weight(.semibold))
+                        .lineLimit(1)
+                    Text(verbatim: "\(String(localized: "Continue listening")) · \(format(store.positionSeconds(for: restored.id)))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityElement(children: .combine)
+                Button {
+                    playback.playRestoredEpisode()
+                } label: {
+                    Image(systemName: "play.fill")
+                        .font(.title3)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(String(localized: "Play"))
+                .accessibilityHint(String(localized: "Resumes this episode from the saved position"))
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+            .background(.bar)
         } else {
             Button {
                 showFullPlayer = true
