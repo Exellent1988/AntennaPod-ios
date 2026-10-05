@@ -1244,7 +1244,7 @@ struct SettingsView: View {
                 Button(String(localized: "Custom…")) {
                     customSkipIntervalMode = .fastForward
                 }
-                .accessibilityHint(String(localized: "Set a custom fast-forward interval between 5 and 60 seconds."))
+                .accessibilityHint(String(localized: "Opens a sheet to set a custom Fast-forward interval from 5 to 60 seconds. Interval applies only after you confirm Set. The next fast-forward uses the saved value. Changing this does not move the current position. Distinct from Rewind Custom…. Not Rewind after pause."))
                 Text(String(localized: "Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward). Presets 5/10/15/20/30/60 plus Custom… (5–60 seconds)."))
                     .font(.caption)
                     .foregroundStyle(.secondary)

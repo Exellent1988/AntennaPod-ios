@@ -23837,23 +23837,6 @@
         }
       }
     },
-    "Set a custom fast-forward interval between 5 and 60 seconds.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Set a custom fast-forward interval between 5 and 60 seconds."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Benutzerdefiniertes Vorspul-Intervall zwischen 5 und 60 Sekunden festlegen."
-          }
-        }
-      }
-    },
     "Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward). Presets 5/10/15/20/30/60 plus Custom… (5–60 seconds).": {
       "extractionState": "manual",
       "localizations": {
@@ -49261,6 +49244,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert die vollständigen Episoden-Shownotes als Klartext ohne HTML in die Zwischenablage. Ignoriert den Shownotes-Suchfilter. Keine Bestätigung. Unterschiedlich von Shownotes teilen. Öffnet keinen Browser, lädt nicht herunter, spielt nicht ab, markiert nicht als gehört und ändert nicht die Warteschlange."
+          }
+        }
+      }
+    },
+    "Opens a sheet to set a custom Fast-forward interval from 5 to 60 seconds. Interval applies only after you confirm Set. The next fast-forward uses the saved value. Changing this does not move the current position. Distinct from Rewind Custom…. Not Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a sheet to set a custom Fast-forward interval from 5 to 60 seconds. Interval applies only after you confirm Set. The next fast-forward uses the saved value. Changing this does not move the current position. Distinct from Rewind Custom…. Not Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet ein Sheet, um ein eigenes Vorspul-Intervall von 5 bis 60 Sekunden festzulegen. Das Intervall gilt erst nach Bestätigung mit Festlegen. Das nächste Vorspulen nutzt den gespeicherten Wert. Ändern verschiebt die aktuelle Position nicht. Unterschiedlich von Zurückspulen Benutzerdefiniert…. Nicht Zurückspulen nach Pause."
           }
         }
       }
