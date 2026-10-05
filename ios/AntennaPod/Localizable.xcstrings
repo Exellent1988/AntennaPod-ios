@@ -18103,24 +18103,6 @@
       },
       "comment": "Feed detail button: share the same feed-provided http(s) podcast:trailer URL used by Play/Open. Hidden when absent or non-http(s)."
     },
-    "Copies the feed-provided trailer URL to the pasteboard": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the feed-provided trailer URL to the pasteboard"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert die vom Feed gelieferte Trailer-URL in die Zwischenablage"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Copy trailer URL on Feed detail."
-    },
     "Podcast trailer URL from the feed.": {
       "extractionState": "manual",
       "localizations": {
@@ -49229,6 +49211,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Teilen-Sheet mit dieser Feed-bereitgestellten podcast:trailer-Medien-URL. Keine Bestätigung. Unterschiedlich von Trailer abspielen, Trailer öffnen und Trailer-URL kopieren. Spielt den Trailer nicht ab, markiert nicht als gehört, ändert nicht die Warteschlange, löscht keine Downloads und ändert keine Abonnements."
+          }
+        }
+      }
+    },
+    "Copies this feed-provided podcast:trailer media URL to the pasteboard. No confirmation. Distinct from Play trailer, Open trailer, and Share trailer URL. Does not play the trailer, mark played, change the queue, delete downloads, or alter subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies this feed-provided podcast:trailer media URL to the pasteboard. No confirmation. Distinct from Play trailer, Open trailer, and Share trailer URL. Does not play the trailer, mark played, change the queue, delete downloads, or alter subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert diese Feed-bereitgestellte podcast:trailer-Medien-URL in die Zwischenablage. Keine Bestätigung. Unterschiedlich von Trailer abspielen, Trailer öffnen und Trailer-URL teilen. Spielt den Trailer nicht ab, markiert nicht als gehört, ändert nicht die Warteschlange, löscht keine Downloads und ändert keine Abonnements."
           }
         }
       }

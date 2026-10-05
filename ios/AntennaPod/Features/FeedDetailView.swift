@@ -2797,7 +2797,7 @@ struct FeedDetailView: View {
                             .font(.subheadline)
                     }
                     .accessibilityLabel(String(localized: "Copy trailer URL"))
-                    .accessibilityHint(String(localized: "Copies the feed-provided trailer URL to the pasteboard"))
+                    .accessibilityHint(String(localized: "Copies this feed-provided podcast:trailer media URL to the pasteboard. No confirmation. Distinct from Play trailer, Open trailer, and Share trailer URL. Does not play the trailer, mark played, change the queue, delete downloads, or alter subscriptions."))
 
                     ShareLink(
                         item: url,
