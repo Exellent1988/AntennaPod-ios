@@ -267,6 +267,15 @@ enum DataBackupService {
             return entries.first(where: { $0.key.hasSuffix("/\(fileName)") })?.value
         }
 
+        // Decode settings first: a truncated or corrupt app-settings.json / gpodder-prefs.json
+        // must fail the import before any data file is replaced.
+        let settingsSnapshot = try data(for: appSettingsFileName).map {
+            try JSONDecoder().decode(AppSettingsBackupSnapshot.self, from: $0)
+        }
+        let gpodderSnapshot = try data(for: gpodderPrefsFileName).map {
+            try JSONDecoder().decode(GpodderBackupSnapshot.self, from: $0)
+        }
+
         var wrotePersistence = false
         for name in persistenceFileNames {
             guard let payload = data(for: name) else { continue }
@@ -276,14 +285,12 @@ enum DataBackupService {
         // Clear in-flight download map — not meaningful across restore.
         PodcastPersistence.savePendingDownloads([])
 
-        if let settingsPayload = data(for: appSettingsFileName) {
-            let snap = try JSONDecoder().decode(AppSettingsBackupSnapshot.self, from: settingsPayload)
-            settings.applyBackupSnapshot(snap)
+        if let settingsSnapshot {
+            settings.applyBackupSnapshot(settingsSnapshot)
         }
 
-        if let gpodderPayload = data(for: gpodderPrefsFileName) {
-            let snap = try JSONDecoder().decode(GpodderBackupSnapshot.self, from: gpodderPayload)
-            gpodder.applyBackupSnapshot(snap)
+        if let gpodderSnapshot {
+            gpodder.applyBackupSnapshot(gpodderSnapshot)
         }
 
         // Optional media: write ZIP downloads/* into Documents/downloads (merge: overwrite, never wipe folder).
