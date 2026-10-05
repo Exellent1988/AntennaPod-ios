@@ -45295,22 +45295,6 @@
       },
       "extractionState": "manual"
     },
-    "Deletes played offline files in the full Downloads catalog, skipping favorites; queued played episodes can lose their file while staying in the queue": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deletes played offline files in the full Downloads catalog, skipping favorites; queued played episodes can lose their file while staying in the queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Löscht gehörte Offline-Dateien im vollständigen Downloads-Katalog und überspringt Favoriten; gehörte Episoden in der Warteschlange können ihre Datei verlieren und bleiben trotzdem in der Warteschlange"
-          }
-        }
-      }
-    },
     "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Queued episodes and the episode playing from a download can lose their offline file (queue membership stays; playback continues from the stream). Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue.": {
       "localizations": {
         "en": {
@@ -48967,6 +48951,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und löscht dann jede abgeschlossene Offline-Datei im vollständigen Downloads-Katalog, einschließlich Favoriten. Ignoriert Chip- und Suchfilter. Eingereihte Episoden und der spielende Download können ihre Datei verlieren, während die Warteschlangen-Mitgliedschaft bleibt und die Wiedergabe vom Stream weiterläuft. Nur lokale Dateien — behält Gehört-Status, Warteschlange, Favoriten, Archivstatus und Verlauf. Unterschiedlich von Gehörte Downloads löschen und von Warteschlange leeren."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then deletes played offline files in the full Downloads catalog. Keeps unplayed downloads and favorites. Queued played episodes can lose their file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then deletes played offline files in the full Downloads catalog. Keeps unplayed downloads and favorites. Queued played episodes can lose their file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und löscht dann gehörte Offline-Dateien im vollständigen Downloads-Katalog. Behält ungehörte Downloads und Favoriten. Eingereihte gehörte Episoden können ihre Datei verlieren und bleiben in der Warteschlange. Markiert nicht als ungehört, leert nicht die Warteschlange und löscht nicht alle Downloads."
           }
         }
       }

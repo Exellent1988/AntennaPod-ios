@@ -721,7 +721,7 @@ struct DownloadsView: View {
                         .disabled(playedDownloadsForDelete.isEmpty)
                         .accessibilityLabel(String(localized: "Delete played downloads"))
                         .accessibilityHint(
-                            String(localized: "Deletes played offline files in the full Downloads catalog, skipping favorites; queued played episodes can lose their file while staying in the queue")
+                            String(localized: "Asks for confirmation, then deletes played offline files in the full Downloads catalog. Keeps unplayed downloads and favorites. Queued played episodes can lose their file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads.")
                         )
 
                         Button(role: .destructive) {
