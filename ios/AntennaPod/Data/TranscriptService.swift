@@ -156,7 +156,8 @@ enum TranscriptService {
 
         var asParsed: ParsedTranscript {
             ParsedTranscript(
-                cues: cues.map {
+                // A transcript cached before the start-time check could still hold such a cue.
+                cues: cues.filter { TranscriptParser.isUsableCueStart($0.startTimeSeconds) }.map {
                     TranscriptCue(
                         startTimeSeconds: $0.startTimeSeconds,
                         endTimeSeconds: $0.endTimeSeconds,
@@ -255,6 +256,7 @@ enum TranscriptParser {
             } else {
                 end = nil
             }
+            guard isUsableCueStart(start) else { continue }
             let body = (obj["body"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             guard !body.isEmpty else { continue }
             let speaker = (obj["speaker"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -268,6 +270,13 @@ enum TranscriptParser {
             )
         }
         return cues
+    }
+
+    /// A JSON `startTime` such as `99999999999999999999` parsed to 1e20 seconds, and the
+    /// transcript sheet's `m:ss` / `h:mm:ss` formatter traps converting that to `Int`.
+    /// SRT / VTT timestamps allow at most two hour digits, so they cannot get this large.
+    static func isUsableCueStart(_ seconds: Double) -> Bool {
+        seconds.isFinite && seconds <= EpisodeDurationParsing.maxSeconds
     }
 
     // MARK: - WebVTT
