@@ -41758,23 +41758,6 @@
         }
       }
     },
-    "Also saves this value as the global default playback speed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Also saves this value as the global default playback speed"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Speichert diesen Wert zusätzlich als globale Standard-Wiedergabegeschwindigkeit"
-          }
-        }
-      }
-    },
     "Set playback speed": {
       "extractionState": "manual",
       "localizations": {
@@ -49166,6 +49149,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Setzt diesen voreingestellten Wert sofort als Sitzungs-Wiedergabegeschwindigkeit. Keine Bestätigung. Ändert weder Standardgeschwindigkeit noch den Podcast-Geschwindigkeits-Override. Nicht Lautstärke-Boost oder Tonhöhe beibehalten."
+          }
+        }
+      }
+    },
+    "When on, Set also saves this value as the global Default speed for new episodes. Does not change a per-podcast speed override. Session rate still applies only when you tap Set. Not Volume boost or Preserve pitch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, Set also saves this value as the global Default speed for new episodes. Does not change a per-podcast speed override. Session rate still applies only when you tap Set. Not Volume boost or Preserve pitch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, speichert Setzen diesen Wert auch als globale Standardgeschwindigkeit für neue Episoden. Ändert keinen Podcast-Geschwindigkeits-Override. Die Sitzungsrate gilt weiterhin erst, wenn du auf Setzen tippst. Nicht Lautstärke-Boost oder Tonhöhe beibehalten."
           }
         }
       }

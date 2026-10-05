@@ -70,7 +70,7 @@ struct CustomPlaybackSpeedSheet: View {
 
                     if mode == .session {
                         Toggle(String(localized: "Also set as default"), isOn: $alsoSetAsDefault)
-                            .accessibilityHint(String(localized: "Also saves this value as the global default playback speed"))
+                            .accessibilityHint(String(localized: "When on, Set also saves this value as the global Default speed for new episodes. Does not change a per-podcast speed override. Session rate still applies only when you tap Set. Not Volume boost or Preserve pitch."))
                     }
                 } footer: {
                     Text(footerText)
