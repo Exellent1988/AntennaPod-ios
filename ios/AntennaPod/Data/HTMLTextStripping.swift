@@ -27,6 +27,11 @@ enum HTMLTextStripping {
             .replacingOccurrences(of: "&gt;", with: ">")
             .replacingOccurrences(of: "&quot;", with: "\"")
             .replacingOccurrences(of: "&apos;", with: "'")
+        // Typography and umlaut entities common in shownotes were shown raw
+        // ("It&rsquo;s live &mdash; finally&hellip;", "F&uuml;r").
+        for (entity, character) in namedEntities {
+            out = out.replacingOccurrences(of: entity, with: character)
+        }
         // WordPress-style shownotes use numeric entities (&#8217; &#8211; &#x2019;),
         // which were shown raw. &amp; goes last so "&amp;lt;" stays the text "&lt;".
         out = decodeNumericEntities(out)
@@ -49,6 +54,21 @@ enum HTMLTextStripping {
         }
         return out.trimmingCharacters(in: .whitespacesAndNewlines)
     }
+
+    /// Named entities beyond the XML five. `&amp;` is not here; it is decoded last.
+    private static let namedEntities: [(String, String)] = [
+        ("&hellip;", "\u{2026}"), ("&mdash;", "\u{2014}"), ("&ndash;", "\u{2013}"),
+        ("&lsquo;", "\u{2018}"), ("&rsquo;", "\u{2019}"), ("&ldquo;", "\u{201C}"),
+        ("&rdquo;", "\u{201D}"), ("&sbquo;", "\u{201A}"), ("&bdquo;", "\u{201E}"),
+        ("&laquo;", "\u{00AB}"), ("&raquo;", "\u{00BB}"), ("&bull;", "\u{2022}"),
+        ("&middot;", "\u{00B7}"), ("&euro;", "\u{20AC}"), ("&pound;", "\u{00A3}"),
+        ("&copy;", "\u{00A9}"), ("&reg;", "\u{00AE}"), ("&trade;", "\u{2122}"),
+        ("&deg;", "\u{00B0}"), ("&times;", "\u{00D7}"),
+        ("&auml;", "\u{00E4}"), ("&ouml;", "\u{00F6}"), ("&uuml;", "\u{00FC}"),
+        ("&Auml;", "\u{00C4}"), ("&Ouml;", "\u{00D6}"), ("&Uuml;", "\u{00DC}"),
+        ("&szlig;", "\u{00DF}"), ("&eacute;", "\u{00E9}"), ("&egrave;", "\u{00E8}"),
+        ("&agrave;", "\u{00E0}"), ("&ccedil;", "\u{00E7}"),
+    ]
 
     /// `&#NNNN;` and `&#xHHHH;` → the character. Invalid code points stay as written.
     private static func decodeNumericEntities(_ text: String) -> String {
