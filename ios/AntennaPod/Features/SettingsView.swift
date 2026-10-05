@@ -2600,7 +2600,7 @@ struct SettingsView: View {
                     podcastIndexAPISecretDraft = ""
                     podcastIndexKeyError = nil
                 }
-                .accessibilityHint(String(localized: "Shows fields to paste a new Podcast Index API key and secret"))
+                .accessibilityHint(String(localized: "Shows fields to paste a new Podcast Index API key and secret. No confirmation. Does not remove the saved Keychain credentials until you Save new keys or Clear keys. Podcast Index search keeps working until then."))
                 Button("Clear keys", role: .destructive) {
                     PodcastIndexKeychain.deleteCredentials()
                     podcastIndexKeysSaved = false

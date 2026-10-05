@@ -25782,23 +25782,6 @@
         }
       }
     },
-    "Shows fields to paste a new Podcast Index API key and secret": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shows fields to paste a new Podcast Index API key and secret"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zeigt Felder zum Einfügen eines neuen Podcast-Index-API-Schlüssels und Secrets"
-          }
-        }
-      }
-    },
     "Paste your free Podcast Index API key from podcastindex.org": {
       "extractionState": "manual",
       "localizations": {
@@ -49166,6 +49149,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Speichert Benutzername und Passwort sofort im Keychain für diesen Podcast. Keine Bestätigung. Aktiviert private Feed-Aktualisierung und Downloads vom gleichen Host für diesen Podcast. Betrifft nicht andere Podcasts, Podcast-Index-Schlüssel, Abos oder Offline-Dateien."
+          }
+        }
+      }
+    },
+    "Shows fields to paste a new Podcast Index API key and secret. No confirmation. Does not remove the saved Keychain credentials until you Save new keys or Clear keys. Podcast Index search keeps working until then.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shows fields to paste a new Podcast Index API key and secret. No confirmation. Does not remove the saved Keychain credentials until you Save new keys or Clear keys. Podcast Index search keeps working until then."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeigt Felder zum Einfügen eines neuen Podcast-Index-API-Schlüssels und -Geheimnisses. Keine Bestätigung. Entfernt die gespeicherten Keychain-Zugangsdaten erst, wenn du neue Schlüssel speicherst oder Schlüssel löschen nutzt. Die Podcast-Index-Suche funktioniert bis dahin weiter."
           }
         }
       }
