@@ -125,7 +125,10 @@ struct ItunesPodcastResult: Identifiable, Hashable, Decodable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         collectionId = try c.decodeIfPresent(Int.self, forKey: .collectionId)
         collectionName = try c.decodeIfPresent(String.self, forKey: .collectionName) ?? String(localized: "Unknown")
-        artistName = try c.decodeIfPresent(String.self, forKey: .artistName) ?? String(localized: "Unknown")
+        // A blank or whitespace-only name gets the same fallback as a missing one.
+        let rawAuthor = try c.decodeIfPresent(String.self, forKey: .artistName)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        artistName = rawAuthor.isEmpty ? String(localized: "Unknown") : rawAuthor
         feedUrl = try c.decodeIfPresent(String.self, forKey: .feedUrl) ?? ""
         artworkUrl100 = try c.decodeIfPresent(String.self, forKey: .artworkUrl100)
         artworkUrl600 = try c.decodeIfPresent(String.self, forKey: .artworkUrl600)

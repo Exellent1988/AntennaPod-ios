@@ -149,7 +149,10 @@ struct PodcastIndexPodcastResult: Identifiable, Hashable, Decodable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         feedId = try c.decodeIfPresent(Int.self, forKey: .feedId)
         title = try c.decodeIfPresent(String.self, forKey: .title) ?? String(localized: "Unknown")
-        author = try c.decodeIfPresent(String.self, forKey: .author) ?? String(localized: "Unknown")
+        // A blank or whitespace-only name gets the same fallback as a missing one.
+        let rawAuthor = try c.decodeIfPresent(String.self, forKey: .author)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        author = rawAuthor.isEmpty ? String(localized: "Unknown") : rawAuthor
         feedUrl = try c.decodeIfPresent(String.self, forKey: .feedUrl) ?? ""
         image = try c.decodeIfPresent(String.self, forKey: .image)
     }
