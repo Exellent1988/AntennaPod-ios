@@ -2860,7 +2860,7 @@ struct SettingsView: View {
                     }
                 }
                 .disabled(gpodder.isBusy)
-                .accessibilityHint(String(localized: "Syncs http(s) subscription feed URLs only. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders."))
+                .accessibilityHint(String(localized: "Syncs http(s) subscription feed URLs only: pulls missing remotes and pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders. Writes Last sync when finished; Login alone does not. Does not invent a full sync."))
                 Button("Logout", role: .destructive) {
                     gpodder.logout()
                 }

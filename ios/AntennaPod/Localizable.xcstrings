@@ -26656,24 +26656,6 @@
       },
       "comment": "Regenerate device id VoiceOver hint"
     },
-    "Syncs http(s) subscription feed URLs only. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Syncs http(s) subscription feed URLs only. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synchronisiert nur http(s)-Abo-Feed-URLs. Keine Episodenaktionen, Warteschlange, Lesezeichen, Tags, Downloads oder lokale Ordner."
-          }
-        }
-      },
-      "comment": "Sync now VoiceOver hint"
-    },
     "Logs in and stores the password in the Keychain. Sync remains subscriptions-only.": {
       "extractionState": "manual",
       "localizations": {
@@ -49485,6 +49467,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nur Abonnements: additive http(s)-Feed-URLs. Kein vollständiger Sync — nicht Episodenaktionen, Warteschlange oder Lesezeichen. Der Stempel wird geschrieben, wenn Jetzt synchronisieren beendet; alleiniges Anmelden schreibt ihn nicht, und es wird kein Zeitpunkt erfunden. Ein Sync, der vor dem Abschluss fehlschlägt, behält die vorherige Zeit. Abmelden löscht diese Zeit nicht. Lokale Ordner werden nicht hochgeladen. Das ist nicht die Zeit „Zuletzt aktualisiert“ jedes Podcasts."
+          }
+        }
+      }
+    },
+    "Syncs http(s) subscription feed URLs only: pulls missing remotes and pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders. Writes Last sync when finished; Login alone does not. Does not invent a full sync.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Syncs http(s) subscription feed URLs only: pulls missing remotes and pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders. Writes Last sync when finished; Login alone does not. Does not invent a full sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisiert nur http(s)-Abo-Feed-URLs: holt fehlende Remotes und pusht lokale URLs, die nicht auf dem Server sind. Merge ist additiv — Remote-Entfernungen deabonnieren lokale Feeds nicht. Keine Episodenaktionen, Warteschlange, Lesezeichen, Tags, Downloads oder lokale Ordner. Schreibt Letzter Sync bei Abschluss; alleiniges Anmelden nicht. Erfindet keinen vollständigen Sync."
           }
         }
       }
