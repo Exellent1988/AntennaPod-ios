@@ -2355,6 +2355,9 @@ struct SettingsView: View {
                     Text(choice.label).tag(choice)
                 }
             }
+            .accessibilityLabel(String(localized: "Max storage"))
+            .accessibilityValue(maxStorageAccessibilityValue)
+            .accessibilityHint(maxStorageAccessibilityHint)
             if StorageLimitPickerChoice.from(settings.downloadStorageLimit) == .custom {
                 Stepper(value: $customMB, in: AppSettings.customStorageMBRange, step: 50) {
                     Text("\(customMB) MB")
@@ -2461,6 +2464,32 @@ struct SettingsView: View {
             return "\(used) / \(limit)"
         }
         return String(localized: "\(used) (unlimited)")
+    }
+
+    /// VoiceOver for Settings → Max storage. Byte budget eviction; not the episode-count cache.
+    /// Favorites, queued, and the loaded player file are never auto-deleted by this budget.
+    private var maxStorageAccessibilityValue: String {
+        switch settings.downloadStorageLimit {
+        case .unlimited:
+            return String(localized: "Unlimited. This is the default. There is no byte budget, so size alone does not auto-delete offline files. Max downloaded episodes can still evict by count. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by either limit. Changing this does not delete files now, start a download, or change Parallel downloads.")
+        case .gigabytes, .customMegabytes:
+            let label = settings.downloadStorageLimit.label
+            let isPresetGB: Bool
+            if case .gigabytes(let gb) = settings.downloadStorageLimit, [1, 5, 10].contains(gb) {
+                isPresetGB = true
+            } else {
+                isPresetGB = false
+            }
+            let headFormat = isPresetGB
+                ? String(localized: "%@. This is not the default of Unlimited.")
+                : String(localized: "%@. This is a custom megabyte limit, not Unlimited, and not a 1, 5, or 10 GB preset.")
+            let head = String(format: headFormat, locale: .current, label)
+            return head + " " + String(localized: "When used storage is over this byte budget, played downloads that are not favorited and not queued are deleted first, oldest file first, then unplayed non-favorite non-queued by least recently used file date. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by this budget. Maintenance runs after each successful download, when opening Settings, and on launch, and may run when you change this. Separate from Max downloaded episodes. Changing this does not invent downloads or change Parallel downloads.")
+        }
+    }
+
+    private var maxStorageAccessibilityHint: String {
+        String(localized: "Presets are Unlimited, 1 GB, 5 GB, 10 GB, and Custom megabytes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max downloaded episodes or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new budget.")
     }
 
     private var evictionHelpText: String {

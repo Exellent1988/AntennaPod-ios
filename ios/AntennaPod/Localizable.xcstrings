@@ -48173,6 +48173,91 @@
           }
         }
       }
+    },
+    "Unlimited. This is the default. There is no byte budget, so size alone does not auto-delete offline files. Max downloaded episodes can still evict by count. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by either limit. Changing this does not delete files now, start a download, or change Parallel downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited. This is the default. There is no byte budget, so size alone does not auto-delete offline files. Max downloaded episodes can still evict by count. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by either limit. Changing this does not delete files now, start a download, or change Parallel downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbegrenzt. Das ist die Voreinstellung. Es gibt kein Byte-Budget, daher löscht die Größe allein keine Offline-Dateien. Max. heruntergeladene Episoden kann weiterhin nach Anzahl entfernen. Favoriten, Episoden in der Warteschlange und die im Player geladene Datei werden von keinem der beiden Limits automatisch gelöscht. Umschalten löscht jetzt keine Dateien, startet keinen Download und ändert nicht Parallele Downloads."
+          }
+        }
+      }
+    },
+    "%@. This is not the default of Unlimited.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is not the default of Unlimited."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist nicht die Voreinstellung Unbegrenzt."
+          }
+        }
+      }
+    },
+    "%@. This is a custom megabyte limit, not Unlimited, and not a 1, 5, or 10 GB preset.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is a custom megabyte limit, not Unlimited, and not a 1, 5, or 10 GB preset."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist ein benutzerdefiniertes Megabyte-Limit, nicht Unbegrenzt und nicht die Vorgabe 1, 5 oder 10 GB."
+          }
+        }
+      }
+    },
+    "When used storage is over this byte budget, played downloads that are not favorited and not queued are deleted first, oldest file first, then unplayed non-favorite non-queued by least recently used file date. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by this budget. Maintenance runs after each successful download, when opening Settings, and on launch, and may run when you change this. Separate from Max downloaded episodes. Changing this does not invent downloads or change Parallel downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When used storage is over this byte budget, played downloads that are not favorited and not queued are deleted first, oldest file first, then unplayed non-favorite non-queued by least recently used file date. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by this budget. Maintenance runs after each successful download, when opening Settings, and on launch, and may run when you change this. Separate from Max downloaded episodes. Changing this does not invent downloads or change Parallel downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn der belegte Speicher über diesem Byte-Budget liegt, werden zuerst gehörte Downloads gelöscht, die nicht favorisiert und nicht in der Warteschlange sind, älteste Datei zuerst, dann ungehörte nicht favorisierte nicht in der Warteschlange nach zuletzt genutztem Dateidatum. Favoriten, Episoden in der Warteschlange und die im Player geladene Datei werden von diesem Budget nie automatisch gelöscht. Wartung läuft nach jedem erfolgreichen Download, beim Öffnen der Einstellungen und beim Start, und kann beim Ändern laufen. Getrennt von Max. heruntergeladene Episoden. Umschalten erfindet keine Downloads und ändert nicht Parallele Downloads."
+          }
+        }
+      }
+    },
+    "Presets are Unlimited, 1 GB, 5 GB, 10 GB, and Custom megabytes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max downloaded episodes or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new budget.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are Unlimited, 1 GB, 5 GB, 10 GB, and Custom megabytes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max downloaded episodes or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new budget."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voreinstellungen sind Unbegrenzt, 1 GB, 5 GB, 10 GB und Benutzerdefinierte Megabytes. Die Voreinstellung ist Unbegrenzt. Über-Limit-Bereinigung überspringt Favoriten, Episoden in der Warteschlange und den spielenden Download. Nicht Max. heruntergeladene Episoden oder Parallele Downloads. Der Picker kann ungeschützte Offline-Dateien löschen, die über dem neuen Budget liegen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
