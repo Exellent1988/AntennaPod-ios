@@ -30423,23 +30423,6 @@
         }
       }
     },
-    "Hides the video surface, disables video tracks, and shows artwork. Lockscreen stays audio. Does not strip video from the file.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hides the video surface, disables video tracks, and shows artwork. Lockscreen stays audio. Does not strip video from the file."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Blendet die Videofläche aus, deaktiviert Video-Spuren und zeigt das Cover. Sperrbildschirm bleibt Audio. Entfernt Video nicht aus der Datei."
-          }
-        }
-      }
-    },
     "http(s) alternate sources can play this episode in the app. Progress and mark-as-played stay on the episode. Chapters or transcripts may not match an alternate bitrate. Downloads use the primary enclosure — playing an alternate streams unless the URLs match. ipfs and magnet stay Copy or Open only. Video-as-audio, proxy, and Wi‑Fi stream settings still apply.": {
       "extractionState": "manual",
       "comment": "Honesty footnote: alternateEnclosure http(s) Play same episode; limits on chapters/download/ipfs.",
@@ -49228,6 +49211,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn an, senkt der Uhr-Schlaf-Timer die Player-Lautstärke über die letzten ~10 Sekunden vor der Pause. Ende der Episode oder des Kapitels fadet nicht. Nur weiche Player-Lautstärke — keine Equal-Loudness oder ReplayGain. Lautstärke-Verstärkung bleibt getrennt. Pause, Seek oder Timer abbrechen stellt die Lautstärke vor dem Fade wieder her. Standard an. Ändern startet keinen Schlaf-Timer und ändert die Wiedergabe jetzt nicht."
+          }
+        }
+      }
+    },
+    "When on, video episodes hide the video surface (artwork instead), disable video tracks, and skip Picture in Picture. Does not remux or strip video from the file; background audio continues; streaming or HLS may still download a video stream. Lockscreen and Now Playing stay audio. Default off. Changing this does not start or stop playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, video episodes hide the video surface (artwork instead), disable video tracks, and skip Picture in Picture. Does not remux or strip video from the file; background audio continues; streaming or HLS may still download a video stream. Lockscreen and Now Playing stay audio. Default off. Changing this does not start or stop playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an, blenden Video-Episoden die Videofläche aus (stattdessen Artwork), deaktivieren Videospuren und überspringen Bild-in-Bild. Remuxt oder entfernt Video nicht aus der Datei; Hintergrund-Audio läuft weiter; Streaming oder HLS kann weiterhin einen Videostream laden. Sperrbildschirm und Jetzt läuft bleiben Audio. Standard aus. Ändern startet oder stoppt die Wiedergabe nicht."
           }
         }
       }
