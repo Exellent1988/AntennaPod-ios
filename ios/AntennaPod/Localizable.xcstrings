@@ -48478,6 +48478,74 @@
           }
         }
       }
+    },
+    "No episodes match the selected status or episode type filters. Episodes remain in this podcast’s full catalog. Download all unplayed, Mark all, Add all to queue, and Play random still use the full feed, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No episodes match the selected status or episode type filters. Episodes remain in this podcast’s full catalog. Download all unplayed, Mark all, Add all to queue, and Play random still use the full feed, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Episoden passen zu den gewählten Status- oder Episodentyp-Filtern. Episoden bleiben im vollständigen Katalog dieses Podcasts. Alle ungehörten herunterladen, Alle markieren, Alle zur Warteschlange und Zufällig abspielen nutzen weiter den ganzen Feed, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No episodes match your search. Episodes remain in this podcast’s full catalog. Download all unplayed, Mark all, Add all to queue, and Play random still use the full feed, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No episodes match your search. Episodes remain in this podcast’s full catalog. Download all unplayed, Mark all, Add all to queue, and Play random still use the full feed, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Episoden passen zu deiner Suche. Episoden bleiben im vollständigen Katalog dieses Podcasts. Alle ungehörten herunterladen, Alle markieren, Alle zur Warteschlange und Zufällig abspielen nutzen weiter den ganzen Feed, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "Change or clear the status or episode type filter to see other episodes in this podcast. This does not delete or unsubscribe.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the status or episode type filter to see other episodes in this podcast. This does not delete or unsubscribe."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche den Status- oder Episodentyp-Filter, um andere Episoden in diesem Podcast zu sehen. Das löscht nichts und kündigt kein Abonnement."
+          }
+        }
+      }
+    },
+    "Change or clear search to see other episodes in this podcast. This does not delete or unsubscribe.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear search to see other episodes in this podcast. This does not delete or unsubscribe."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Suche, um andere Episoden in diesem Podcast zu sehen. Das löscht nichts und kündigt kein Abonnement."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -415,9 +415,18 @@ struct FeedDetailView: View {
             }
             return String(localized: "This podcast has no episodes yet. Pull to refresh on Subscriptions.")
         }
-        return hasFeedChipFilter
-            ? String(localized: "No episodes match the selected filters.")
-            : String(localized: "No episodes match your search.")
+        if hasFeedChipFilter {
+            return String(localized: "No episodes match the selected status or episode type filters. Episodes remain in this podcast’s full catalog. Download all unplayed, Mark all, Add all to queue, and Play random still use the full feed, not this empty view.")
+        }
+        return String(localized: "No episodes match your search. Episodes remain in this podcast’s full catalog. Download all unplayed, Mark all, Add all to queue, and Play random still use the full feed, not this empty view.")
+    }
+
+    /// VoiceOver recovery hint for the filter/search mismatch empty state only.
+    private var feedNoMatchAccessibilityHint: String {
+        if hasFeedChipFilter {
+            return String(localized: "Change or clear the status or episode type filter to see other episodes in this podcast. This does not delete or unsubscribe.")
+        }
+        return String(localized: "Change or clear search to see other episodes in this podcast. This does not delete or unsubscribe.")
     }
 
     private func feedRemainingAccessibilityLabel(
@@ -1209,6 +1218,7 @@ struct FeedDetailView: View {
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel(String(localized: "No matching episodes"))
                     .accessibilityValue(feedEpisodesEmptyStateAccessibilityValue)
+                    .accessibilityHint(feedNoMatchAccessibilityHint)
                 } else {
                     ForEach(visibleEpisodes) { episode in
                         EpisodeRow(episode: episode, feedTitle: feedDisplayTitle)
