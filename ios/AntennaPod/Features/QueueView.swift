@@ -781,7 +781,7 @@ struct QueueView: View {
                         .disabled(markAllQueuePlayedCandidatesCount == 0)
                         .accessibilityLabel(String(localized: "Mark all as played"))
                         .accessibilityHint(
-                            String(localized: "Marks unplayed, non-archived episodes in the full queue as played, ignoring filters")
+                            String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the full queue as played. They leave the queue. Ignores played, podcast, and search filters. Auto-delete after playing still applies when enabled.")
                         )
 
                         Button {
