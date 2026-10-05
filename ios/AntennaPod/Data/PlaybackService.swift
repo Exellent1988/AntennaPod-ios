@@ -1661,7 +1661,9 @@ final class PlaybackService: ObservableObject {
     /// (volume adaptation / video→audio-only / stereo→mono) while a player item is loaded.
     /// No-op when nothing is playing or loaded.
     func applyAudioSessionConfiguration() {
-        guard player != nil else { return }
+        // While paused, activating the non-mixable session interrupted audio the user started
+        // in another app (Music). The next play / resume calls activateSession with these settings.
+        guard player != nil, isPlaying else { return }
         activateSession()
     }
 
