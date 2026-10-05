@@ -26620,24 +26620,6 @@
       },
       "comment": "gpodder.net host field VoiceOver hint"
     },
-    "Stored in the Keychain on Login — never in Settings backup.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stored in the Keychain on Login — never in Settings backup."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wird beim Login im Keychain gespeichert — nie im Settings-Backup."
-          }
-        }
-      },
-      "comment": "Password field VoiceOver hint"
-    },
     "Creates a new device id from the device name and forces a full subscription pull next sync.": {
       "extractionState": "manual",
       "localizations": {
@@ -49500,6 +49482,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Konto-Benutzername für gpodder.net oder Nextcloud. In Einstellungen und Backup gespeichert — nicht im Keychain. Erforderlich für Anmelden. Bearbeiten allein meldet nicht an und synchronisiert nicht. Deaktiviert solange angemeldet."
+          }
+        }
+      }
+    },
+    "Password draft for Login. Stored in the Keychain only when you tap Login — never in Settings backup. Required for Login. Editing alone does not log in or sync. Cleared from this field after a successful Login.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password draft for Login. Stored in the Keychain only when you tap Login — never in Settings backup. Required for Login. Editing alone does not log in or sync. Cleared from this field after a successful Login."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passwort-Entwurf für Anmelden. Wird erst beim Tippen auf Anmelden nur im Keychain gespeichert — nie im Settings-Backup. Erforderlich für Anmelden. Bearbeiten allein meldet nicht an und synchronisiert nicht. Nach erfolgreichem Anmelden wird dieses Feld geleert."
           }
         }
       }

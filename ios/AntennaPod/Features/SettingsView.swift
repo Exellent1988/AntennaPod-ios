@@ -2823,7 +2823,7 @@ struct SettingsView: View {
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
                     .accessibilityLabel(String(localized: "Password"))
-                    .accessibilityHint(String(localized: "Stored in the Keychain on Login — never in Settings backup."))
+                    .accessibilityHint(String(localized: "Password draft for Login. Stored in the Keychain only when you tap Login — never in Settings backup. Required for Login. Editing alone does not log in or sync. Cleared from this field after a successful Login."))
             } else {
                 LabeledContent("Password") {
                     Text("Stored in Keychain")
