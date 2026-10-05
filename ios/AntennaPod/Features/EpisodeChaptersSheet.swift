@@ -230,7 +230,7 @@ struct EpisodeChaptersSheet: View {
             isCurrent: index == currentChapterIndex,
             accessibilityBaseLabel: chapterAccessibilityLabel(index: index, chapter: chapter),
             onSeek: {
-                playback.seek(toSeconds: chapter.startTimeSeconds)
+                playback.jumpToPosition(seconds: chapter.startTimeSeconds)
             }
         )
     }

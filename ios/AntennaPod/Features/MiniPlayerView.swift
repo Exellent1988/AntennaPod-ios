@@ -155,7 +155,7 @@ struct MiniPlayerView: View {
                         if canSkipChapters {
                             Button {
                                 if let target = previousChapterTarget {
-                                    playback.seek(toSeconds: target)
+                                    playback.jumpToPosition(seconds: target)
                                 }
                             } label: {
                                 Label("Previous chapter", systemImage: "backward.end.fill")
@@ -165,7 +165,7 @@ struct MiniPlayerView: View {
                             .accessibilityHint(String(localized: "Seeks to the previous chapter, or restarts the current chapter if more than 2 seconds in"))
                             Button {
                                 if let target = nextChapterTarget {
-                                    playback.seek(toSeconds: target)
+                                    playback.jumpToPosition(seconds: target)
                                 }
                             } label: {
                                 Label("Next chapter", systemImage: "forward.end.fill")

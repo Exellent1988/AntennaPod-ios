@@ -737,8 +737,7 @@ struct FullPlayerView: View {
                             isCurrent: index == currentChapterIndex,
                             accessibilityBaseLabel: chapterAccessibilityLabel(index: index, chapter: chapter),
                             onSeek: {
-                                playback.seek(toSeconds: chapter.startTimeSeconds)
-                                scrubSeconds = chapter.startTimeSeconds
+                                seekToChapter(chapter.startTimeSeconds)
                             }
                         )
                     }
@@ -1282,9 +1281,15 @@ struct FullPlayerView: View {
 
     private func seekToChapter(_ seconds: Double?) {
         guard let seconds else { return }
-        playback.seek(toSeconds: seconds)
-        scrubSeconds = seconds
+        // A chapter start at or past a known duration used to seek to the last
+        // second and leave the episode unplayed. Same finish path as Jump to position.
+        let duration = playback.durationSeconds
+        let finishes = duration.isFinite && duration > 0 && seconds >= duration
+        playback.jumpToPosition(seconds: seconds)
         isScrubbing = false
+        if !finishes {
+            scrubSeconds = seconds
+        }
     }
 
     private var transportControls: some View {
