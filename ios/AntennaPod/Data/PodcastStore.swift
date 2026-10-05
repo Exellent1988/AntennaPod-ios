@@ -559,7 +559,15 @@ final class PodcastStore: ObservableObject {
     }
 
     func enqueue(_ episode: PodcastEpisode) {
-        if !queue.contains(where: { $0.id == episode.id }) {
+        guard !queue.contains(where: { $0.id == episode.id }) else { return }
+        // Currently playing and not yet queued: append would put it at the tail, so
+        // `nextQueueEpisode(after:)` returns nil and Continuous Queue mode stops even
+        // though episodes were already queued (before add, next was the head). Insert at
+        // the head — same slot Play Next uses when current is not queued — so B, C, …
+        // still follow. Other episodes stay append-at-end.
+        if episode.id == playback?.currentEpisode?.id {
+            queue.insert(episode, at: 0)
+        } else {
             queue.append(episode)
         }
     }
@@ -570,7 +578,8 @@ final class PodcastStore: ObservableObject {
     ///
     /// Continuous playback uses `nextQueueEpisode(after:)`: when current *is* in the queue,
     /// Play Next becomes the auto-next item; when current is *not* queued, head-of-queue is
-    /// already what auto-next uses after finish (same honesty as append when current not queued).
+    /// already what auto-next uses after finish. (`enqueue` of the playing episode also uses
+    /// the head so Continuous Queue mode is not broken by an append at the tail.)
     /// Play Next on the episode that is already playing and queued does not move it.
     func playNext(_ episode: PodcastEpisode, currentlyPlayingId: String?) {
         // This episode is already the playing queue item. "After current" is its own
