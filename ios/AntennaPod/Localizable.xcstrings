@@ -20118,40 +20118,6 @@
         }
       }
     },
-    "%lld of 50 bookmarks. Limit reached — delete one to add another. Local only; not synced via gpodder. Distinct from chapters and Share with position.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld of 50 bookmarks. Limit reached — delete one to add another. Local only; not synced via gpodder. Distinct from chapters and Share with position."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld von 50 Lesezeichen. Limit erreicht — lösche eines, um ein weiteres hinzuzufügen. Nur lokal; nicht über gpodder synchronisiert. Anders als Kapitel und Mit Position teilen."
-          }
-        }
-      }
-    },
-    "%lld of 50 bookmarks. Local only; wall-clock positions; not synced via gpodder. Distinct from chapters and Share with position.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld of 50 bookmarks. Local only; wall-clock positions; not synced via gpodder. Distinct from chapters and Share with position."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld von 50 Lesezeichen. Nur lokal; Wanduhr-Positionen; nicht über gpodder synchronisiert. Anders als Kapitel und Mit Position teilen."
-          }
-        }
-      }
-    },
     "Saves the current position (%@) with an optional short note.": {
       "extractionState": "manual",
       "localizations": {
@@ -34590,40 +34556,6 @@
         }
       }
     },
-    "Removes %lld bookmarks for this episode. Does not affect other episodes, chapters, playback, favorites, or the queue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes %lld bookmarks for this episode. Does not affect other episodes, chapters, playback, favorites, or the queue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt %lld Lesezeichen für diese Episode. Betrifft keine anderen Episoden, Kapitel, Wiedergabe, Favoriten oder die Warteschlange."
-          }
-        }
-      }
-    },
-    "Removes all bookmarks for this episode after confirmation. Does not affect other episodes, chapters, playback, favorites, or the queue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes all bookmarks for this episode after confirmation. Does not affect other episodes, chapters, playback, favorites, or the queue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt nach Bestätigung alle Lesezeichen für diese Episode. Betrifft keine anderen Episoden, Kapitel, Wiedergabe, Favoriten oder die Warteschlange."
-          }
-        }
-      }
-    },
     "Home History remaining time %@": {
       "extractionState": "manual",
       "localizations": {
@@ -47776,6 +47708,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Listet Kapitel für diese Episode; Tippen sucht zum Kapitel. Ein Kapitelbeginn bei oder nach bekannter Episodendauer beendet die Episode genauso wie Vorspulen."
+          }
+        }
+      }
+    },
+    "Removes all bookmarks for this episode after confirmation. Does not affect other episodes, chapters, Share with position, this episode’s private note, playback, favorites, or the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes all bookmarks for this episode after confirmation. Does not affect other episodes, chapters, Share with position, this episode’s private note, playback, favorites, or the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt nach Bestätigung alle Lesezeichen für diese Episode. Betrifft keine anderen Episoden, Kapitel, Mit Position teilen, die private Notiz dieser Episode, Wiedergabe, Favoriten oder die Warteschlange."
+          }
+        }
+      }
+    },
+    "Removes %lld bookmarks for this episode. Does not affect other episodes, chapters, Share with position, this episode’s private note, playback, favorites, or the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld bookmarks for this episode. Does not affect other episodes, chapters, Share with position, this episode’s private note, playback, favorites, or the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld Lesezeichen für diese Episode. Betrifft keine anderen Episoden, Kapitel, Mit Position teilen, die private Notiz dieser Episode, Wiedergabe, Favoriten oder die Warteschlange."
+          }
+        }
+      }
+    },
+    "%lld of 50 bookmarks. Limit reached — delete one to add another. Local only; not synced via gpodder. Distinct from chapters, Share with position, and private notes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of 50 bookmarks. Limit reached — delete one to add another. Local only; not synced via gpodder. Distinct from chapters, Share with position, and private notes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld von 50 Lesezeichen. Limit erreicht — lösche eines, um ein weiteres hinzuzufügen. Nur lokal; nicht über gpodder synchronisiert. Anders als Kapitel, Mit Position teilen und private Notizen."
+          }
+        }
+      }
+    },
+    "%lld of 50 bookmarks. Local only; wall-clock positions; not synced via gpodder. Distinct from chapters, Share with position, and private notes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of 50 bookmarks. Local only; wall-clock positions; not synced via gpodder. Distinct from chapters, Share with position, and private notes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld von 50 Lesezeichen. Nur lokal; Wanduhr-Positionen; nicht über gpodder synchronisiert. Anders als Kapitel, Mit Position teilen und private Notizen."
           }
         }
       }

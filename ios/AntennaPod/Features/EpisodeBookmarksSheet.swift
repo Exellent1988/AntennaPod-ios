@@ -178,7 +178,7 @@ struct EpisodeBookmarksSheet: View {
                     .disabled(bookmarks.isEmpty)
                     .accessibilityLabel(String(localized: "Clear bookmarks"))
                     .accessibilityHint(
-                        String(localized: "Removes all bookmarks for this episode after confirmation. Does not affect other episodes, chapters, playback, favorites, or the queue.")
+                        String(localized: "Removes all bookmarks for this episode after confirmation. Does not affect other episodes, chapters, Share with position, this episode’s private note, playback, favorites, or the queue.")
                     )
                 }
             }
@@ -229,7 +229,7 @@ struct EpisodeBookmarksSheet: View {
             } message: {
                 Text(
                     String(
-                        localized: "Removes \(bookmarks.count) bookmarks for this episode. Does not affect other episodes, chapters, playback, favorites, or the queue."
+                        localized: "Removes \(bookmarks.count) bookmarks for this episode. Does not affect other episodes, chapters, Share with position, this episode’s private note, playback, favorites, or the queue."
                     )
                 )
             }
@@ -242,11 +242,11 @@ struct EpisodeBookmarksSheet: View {
         let count = bookmarks.count
         if atCap {
             return String(
-                localized: "\(count) of 50 bookmarks. Limit reached — delete one to add another. Local only; not synced via gpodder. Distinct from chapters and Share with position."
+                localized: "\(count) of 50 bookmarks. Limit reached — delete one to add another. Local only; not synced via gpodder. Distinct from chapters, Share with position, and private notes."
             )
         }
         return String(
-            localized: "\(count) of 50 bookmarks. Local only; wall-clock positions; not synced via gpodder. Distinct from chapters and Share with position."
+            localized: "\(count) of 50 bookmarks. Local only; wall-clock positions; not synced via gpodder. Distinct from chapters, Share with position, and private notes."
         )
     }
 
