@@ -49437,6 +49437,57 @@
           }
         }
       }
+    },
+    "Toggles play or pause for the loaded episode, or starts a cold-launch restored episode. Does nothing when nothing is loaded or restored. Same path as Lock Screen and Now Playing remotes. Not bare Space, so typing in search fields stays unaffected.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toggles play or pause for the loaded episode, or starts a cold-launch restored episode. Does nothing when nothing is loaded or restored. Same path as Lock Screen and Now Playing remotes. Not bare Space, so typing in search fields stays unaffected."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schaltet Wiedergabe oder Pause für die geladene Episode um, oder startet eine beim Kaltstart wiederhergestellte Episode. Tut nichts, wenn nichts geladen oder wiederhergestellt ist. Gleicher Pfad wie Sperrbildschirm- und Now-Playing-Fernbedienung. Nicht die reine Leertaste, damit Tippen in Suchfeldern unberührt bleibt."
+          }
+        }
+      }
+    },
+    "Seeks backward by the Settings Rewind interval. Does nothing when no episode is loaded. Same path as Lock Screen and Now Playing remotes. Not Continuous playback, and it does not invent a previous episode.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks backward by the Settings Rewind interval. Does nothing when no episode is loaded. Same path as Lock Screen and Now Playing remotes. Not Continuous playback, and it does not invent a previous episode."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt um das Einstellungen-Zurückspulen-Intervall zurück. Tut nichts, wenn keine Episode geladen ist. Gleicher Pfad wie Sperrbildschirm- und Now-Playing-Fernbedienung. Nicht Fortlaufende Wiedergabe, und erfindet keine vorherige Episode."
+          }
+        }
+      }
+    },
+    "Seeks forward by the Settings Fast-forward interval. Does nothing when no episode is loaded. Same path as Lock Screen and Now Playing remotes. A seek that reaches a known duration finishes playback like playing to the end.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks forward by the Settings Fast-forward interval. Does nothing when no episode is loaded. Same path as Lock Screen and Now Playing remotes. A seek that reaches a known duration finishes playback like playing to the end."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt um das Einstellungen-Vorspulen-Intervall vor. Tut nichts, wenn keine Episode geladen ist. Gleicher Pfad wie Sperrbildschirm- und Now-Playing-Fernbedienung. Ein Sprung, der eine bekannte Dauer erreicht, beendet die Wiedergabe wie bis zum Ende abspielen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -19,18 +19,21 @@ struct PlaybackKeyboardCommands: Commands {
                 playback.togglePlayPause()
             }
             .keyboardShortcut("p", modifiers: .command)
+            .accessibilityHint(String(localized: "Toggles play or pause for the loaded episode, or starts a cold-launch restored episode. Does nothing when nothing is loaded or restored. Same path as Lock Screen and Now Playing remotes. Not bare Space, so typing in search fields stays unaffected."))
 
             Button("Skip Back") {
                 guard playback.currentEpisode != nil else { return }
                 playback.seek(bySeconds: -playback.rewindSeconds)
             }
             .keyboardShortcut(.leftArrow, modifiers: .command)
+            .accessibilityHint(String(localized: "Seeks backward by the Settings Rewind interval. Does nothing when no episode is loaded. Same path as Lock Screen and Now Playing remotes. Not Continuous playback, and it does not invent a previous episode."))
 
             Button("Skip Forward") {
                 guard playback.currentEpisode != nil else { return }
                 playback.seek(bySeconds: playback.fastForwardSeconds)
             }
             .keyboardShortcut(.rightArrow, modifiers: .command)
+            .accessibilityHint(String(localized: "Seeks forward by the Settings Fast-forward interval. Does nothing when no episode is loaded. Same path as Lock Screen and Now Playing remotes. A seek that reaches a known duration finishes playback like playing to the end."))
         }
     }
 }
