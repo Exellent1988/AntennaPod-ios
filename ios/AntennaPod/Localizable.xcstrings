@@ -49352,6 +49352,23 @@
           }
         }
       }
+    },
+    "Optional tint for buttons and highlights. System named SwiftUI colors only — no custom assets or Android themes. Default follows the app accent. Does not change Theme, restart playback, download, or alter per-podcast settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional tint for buttons and highlights. System named SwiftUI colors only — no custom assets or Android themes. Default follows the app accent. Does not change Theme, restart playback, download, or alter per-podcast settings."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optionaler Farbton für Schaltflächen und Hervorhebungen. Nur systemeigene SwiftUI-Farben — keine eigenen Assets oder Android-Themes. Standard folgt dem App-Akzent. Ändert nicht Design, startet die Wiedergabe nicht neu, lädt nicht herunter und ändert keine Podcast-Einstellungen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

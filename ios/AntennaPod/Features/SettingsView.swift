@@ -902,7 +902,7 @@ struct SettingsView: View {
                 }
                 .accessibilityLabel(String(localized: "Accent"))
                 .accessibilityValue(settings.accentColor.label)
-                .accessibilityHint(String(localized: "Optional tint for buttons and highlights. System named SwiftUI colors only — no custom assets or Android themes. Default follows the app accent."))
+                .accessibilityHint(String(localized: "Optional tint for buttons and highlights. System named SwiftUI colors only — no custom assets or Android themes. Default follows the app accent. Does not change Theme, restart playback, download, or alter per-podcast settings."))
                 Text(String(localized: "Optional tint for buttons and highlights. System named SwiftUI colors only — no custom assets or Android themes. Default follows the app accent."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
