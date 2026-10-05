@@ -1545,7 +1545,7 @@ struct FeedDetailView: View {
                             .disabled(!canCopyFeedURL)
                             .accessibilityLabel(String(localized: "Share feed URL"))
                             .accessibilityHint(
-                                String(localized: "Shares the feed RSS or Atom URL; distinct from the podcast website, funding, and discussion links")
+                                String(localized: "Opens the system share sheet with the feed RSS or Atom URL. Disabled for local-folder podcasts and empty URLs. Distinct from the podcast website, funding, and discussion links, and from Copy feed URL. Sharing is your choice and does not subscribe, refresh, or open a browser.")
                             )
                         } else {
                             ShareLink(
@@ -1558,7 +1558,7 @@ struct FeedDetailView: View {
                             .disabled(!canCopyFeedURL)
                             .accessibilityLabel(String(localized: "Share feed URL"))
                             .accessibilityHint(
-                                String(localized: "Shares the raw feed URL; distinct from the podcast website, funding, and discussion links")
+                                String(localized: "Opens the system share sheet with the raw feed URL string when it is not available as a URL object. Disabled for local-folder podcasts and empty URLs. Distinct from the podcast website, funding, and discussion links, and from Copy feed URL. Sharing is your choice and does not subscribe, refresh, or open a browser.")
                             )
                         }
 
