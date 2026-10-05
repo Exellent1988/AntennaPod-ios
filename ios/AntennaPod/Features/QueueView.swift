@@ -673,7 +673,7 @@ struct QueueView: View {
                         .disabled(!canSortByDate)
                         .accessibilityLabel(String(localized: "Sort newest first"))
                         .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by publish date, newest first")
+                            String(localized: "Asks for confirmation, then sorts the entire queue by publish date, newest first. Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads.")
                         )
                         Button {
                             // Always confirm before sortQueueByPublishDate — reorders the full list.
@@ -686,7 +686,7 @@ struct QueueView: View {
                         .disabled(!canSortByDate)
                         .accessibilityLabel(String(localized: "Sort oldest first"))
                         .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by publish date, oldest first")
+                            String(localized: "Asks for confirmation, then sorts the entire queue by publish date, oldest first. Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads.")
                         )
                         Button {
                             // Always confirm before sortQueueByDuration — reorders the full list.
@@ -699,7 +699,7 @@ struct QueueView: View {
                         .disabled(!canSortByDuration)
                         .accessibilityLabel(String(localized: "Sort shortest first"))
                         .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by known duration, shortest first")
+                            String(localized: "Asks for confirmation, then sorts the entire queue by known duration, shortest first. Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads.")
                         )
                         Button {
                             // Always confirm before sortQueueByDuration — reorders the full list.
@@ -712,7 +712,7 @@ struct QueueView: View {
                         .disabled(!canSortByDuration)
                         .accessibilityLabel(String(localized: "Sort longest first"))
                         .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by known duration, longest first")
+                            String(localized: "Asks for confirmation, then sorts the entire queue by known duration, longest first. Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads.")
                         )
                         Button {
                             // Always confirm before sortQueueByTitle — reorders the full list.
@@ -725,7 +725,7 @@ struct QueueView: View {
                         .disabled(!canSortByTitle)
                         .accessibilityLabel(String(localized: "Sort title A–Z"))
                         .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by title, A to Z")
+                            String(localized: "Asks for confirmation, then sorts the entire queue by title, A to Z. Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads.")
                         )
                         Button {
                             // Always confirm before sortQueueByTitle — reorders the full list.
@@ -738,7 +738,7 @@ struct QueueView: View {
                         .disabled(!canSortByTitle)
                         .accessibilityLabel(String(localized: "Sort title Z–A"))
                         .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by title, Z to A")
+                            String(localized: "Asks for confirmation, then sorts the entire queue by title, Z to A. Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads.")
                         )
                         Button {
                             // Reuse moveQueueItemToTop — no seek/stop; no confirm (single-item reorder).

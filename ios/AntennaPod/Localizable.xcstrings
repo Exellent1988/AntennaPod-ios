@@ -14677,40 +14677,6 @@
         }
       }
     },
-    "Asks for confirmation, then sorts the entire queue by publish date, newest first": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks for confirmation, then sorts the entire queue by publish date, newest first"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach Veröffentlichungsdatum, neueste zuerst"
-          }
-        }
-      }
-    },
-    "Asks for confirmation, then sorts the entire queue by publish date, oldest first": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks for confirmation, then sorts the entire queue by publish date, oldest first"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach Veröffentlichungsdatum, älteste zuerst"
-          }
-        }
-      }
-    },
     "Sorts all %lld episodes in the entire queue by publish date, newest first (not only the current filter). Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.": {
       "extractionState": "manual",
       "localizations": {
@@ -14915,40 +14881,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Warteschlange längste zuerst sortieren?"
-          }
-        }
-      }
-    },
-    "Asks for confirmation, then sorts the entire queue by known duration, shortest first": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks for confirmation, then sorts the entire queue by known duration, shortest first"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach bekannter Dauer, kürzeste zuerst"
-          }
-        }
-      }
-    },
-    "Asks for confirmation, then sorts the entire queue by known duration, longest first": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks for confirmation, then sorts the entire queue by known duration, longest first"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach bekannter Dauer, längste zuerst"
           }
         }
       }
@@ -31581,40 +31513,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Warteschlange Titel Z–A sortieren?"
-          }
-        }
-      }
-    },
-    "Asks for confirmation, then sorts the entire queue by title, A to Z": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks for confirmation, then sorts the entire queue by title, A to Z"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach Titel, A bis Z"
-          }
-        }
-      }
-    },
-    "Asks for confirmation, then sorts the entire queue by title, Z to A": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks for confirmation, then sorts the entire queue by title, Z to A"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach Titel, Z bis A"
           }
         }
       }
@@ -48849,6 +48747,108 @@
           "stringUnit": {
             "state": "translated",
             "value": "Automatischer Download ist nicht auf Wi‑Fi oder Ethernet beschränkt. Er läuft weiterhin nur nach erfolgreicher Aktualisierung und braucht einen erfüllten Pfad. Das startet keinen Download. Die Feed-Aktualisierung wird von diesem Schalter ebenfalls nicht begrenzt."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then sorts the entire queue by publish date, newest first. Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then sorts the entire queue by publish date, newest first. Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach Veröffentlichungsdatum, neueste zuerst. Episoden ohne Datum kommen zuletzt. Stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then sorts the entire queue by publish date, oldest first. Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then sorts the entire queue by publish date, oldest first. Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach Veröffentlichungsdatum, älteste zuerst. Episoden ohne Datum kommen zuletzt. Stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then sorts the entire queue by known duration, shortest first. Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then sorts the entire queue by known duration, shortest first. Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach bekannter Dauer, kürzeste zuerst. Dauer aus dem Feed oder gespeicherter Wiedergabe, wenn bekannt; Episoden mit unbekannter Dauer kommen zuletzt. Stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then sorts the entire queue by known duration, longest first. Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then sorts the entire queue by known duration, longest first. Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach bekannter Dauer, längste zuerst. Dauer aus dem Feed oder gespeicherter Wiedergabe, wenn bekannt; Episoden mit unbekannter Dauer kommen zuletzt. Stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then sorts the entire queue by title, A to Z. Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then sorts the entire queue by title, A to Z. Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach Titel, A bis Z. Leere Titel kommen zuletzt. Stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then sorts the entire queue by title, Z to A. Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then sorts the entire queue by title, Z to A. Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach Titel, Z bis A. Leere Titel kommen zuletzt. Stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads."
           }
         }
       }
