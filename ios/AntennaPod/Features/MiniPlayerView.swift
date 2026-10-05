@@ -672,6 +672,7 @@ struct MiniPlayerView: View {
             Button("End of episode") {
                 playback.setSleepTimerEndOfEpisode()
             }
+            .accessibilityHint(String(localized: "Pauses when the current episode ends. No confirmation. Replaces any active clock, End of chapter, or End of queue sleep timer. Does not pause playback now."))
             Button(String(localized: "End of chapter")) {
                 playback.setSleepTimerEndOfChapter()
             }

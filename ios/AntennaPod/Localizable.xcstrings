@@ -49049,6 +49049,23 @@
           }
         }
       }
+    },
+    "Pauses when the current episode ends. No confirmation. Replaces any active clock, End of chapter, or End of queue sleep timer. Does not pause playback now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pauses when the current episode ends. No confirmation. Replaces any active clock, End of chapter, or End of queue sleep timer. Does not pause playback now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausiert, wenn die aktuelle Episode endet. Keine Bestätigung. Ersetzt jeden aktiven Uhr-, Ende-des-Kapitels- oder Ende-der-Queue-Sleep-Timer. Pausiert die Wiedergabe jetzt nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
