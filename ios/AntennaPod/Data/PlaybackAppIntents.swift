@@ -13,7 +13,7 @@ struct TogglePlaybackAppIntent: AppIntent {
     static var title: LocalizedStringResource = "Play/Pause"
     static var description: IntentDescription {
         IntentDescription(
-            "Play or pause the current episode in AntennaPod (opens the app)."
+            "Play or pause the loaded episode in AntennaPod, or after a cold launch start the previous run’s unplayed mini-player episode (opens the app)."
         )
     }
     static var openAppWhenRun: Bool = true
@@ -30,7 +30,7 @@ struct PlayCurrentAppIntent: AppIntent {
     static var title: LocalizedStringResource = "Play"
     static var description: IntentDescription {
         IntentDescription(
-            "Resume the current episode in AntennaPod (opens the app)."
+            "Resume the loaded episode in AntennaPod, or after a cold launch the previous run’s unplayed mini-player episode (opens the app)."
         )
     }
     static var openAppWhenRun: Bool = true

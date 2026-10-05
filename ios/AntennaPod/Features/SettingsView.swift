@@ -373,7 +373,7 @@ struct SettingsView: View {
                 ) {
                     appStoreRatingSection
                 }
-                if matchesSearch("Siri / Shortcuts", "Siri / Shortcuts (lite): App Intents — Play, Pause, Play/Pause (toggle), Skip Forward, Skip Back — donated via AppShortcutsProvider for Siri / Shortcuts discoverability. Same actions via URL schemes antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents use openAppWhenRun (open the app) and control playback only when a current episode is already loaded. Not background-only / no App Group shared store. Not episode or feed deep links. Not CarPlay templates (see CarPlay note).") {
+                if matchesSearch("Siri / Shortcuts", "Siri / Shortcuts (lite): App Intents — Play, Pause, Play/Pause (toggle), Skip Forward, Skip Back — donated via AppShortcutsProvider for Siri / Shortcuts discoverability. Same actions via URL schemes antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents use openAppWhenRun (open the app). Play and Play/Pause play the loaded episode, or after a cold launch the previous run’s unplayed episode shown paused in the mini player. Skip Forward and Skip Back need a loaded episode. Not background-only / no App Group shared store. Not episode or feed deep links. Not CarPlay templates (see CarPlay note).") {
                     siriShortcutsSection
                 }
                 if matchesSearch("Homescreen widget", "Homescreen widget (beta lite): Continue listening shows episode title + podcast + remaining time (wall-clock max(0, duration − position) when duration known; ~ when unknown) from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).") {
@@ -2543,11 +2543,11 @@ struct SettingsView: View {
     @ViewBuilder
     private var siriShortcutsSection: some View {
         Section {
-            Text("Siri / Shortcuts (lite): App Intents — Play, Pause, Play/Pause (toggle), Skip Forward, Skip Back — donated via AppShortcutsProvider for Siri / Shortcuts discoverability. Same actions via URL schemes antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents use openAppWhenRun (open the app) and control playback only when a current episode is already loaded. Not background-only / no App Group shared store. Not episode or feed deep links. Not CarPlay templates (see CarPlay note).")
+            Text("Siri / Shortcuts (lite): App Intents — Play, Pause, Play/Pause (toggle), Skip Forward, Skip Back — donated via AppShortcutsProvider for Siri / Shortcuts discoverability. Same actions via URL schemes antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents use openAppWhenRun (open the app). Play and Play/Pause play the loaded episode, or after a cold launch the previous run’s unplayed episode shown paused in the mini player. Skip Forward and Skip Back need a loaded episode. Not background-only / no App Group shared store. Not episode or feed deep links. Not CarPlay templates (see CarPlay note).")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(String(localized: "Siri / Shortcuts"))
-                .accessibilityHint(String(localized: "Lite App Intents Play Pause Skip; opens app; needs current episode; not CarPlay templates."))
+                .accessibilityHint(String(localized: "Lite App Intents Play Pause Skip; opens app; Play can start a cold-launch restored episode; Skip needs a loaded episode; not CarPlay templates."))
         } header: {
             Text("Siri / Shortcuts")
         }
