@@ -2705,6 +2705,8 @@ struct SettingsView: View {
                 RatingPromptCoordinator.resetState()
                 ratingPromptUITick += 1
             }
+            .accessibilityLabel(String(localized: "Reset rating prompt state"))
+            .accessibilityHint(String(localized: "Clears the mark-played count and Prompt attempted flag immediately. No confirmation. For testing — does not show an App Store rating sheet now, and does not change the Ask for App Store rating toggle."))
             Text("After \(RatingPromptCoordinator.threshold) newly marked-played episodes (manual or finished playback), AntennaPod may ask iOS to show a rating sheet once per install. iOS decides whether to show it and may suppress the dialog under system limits — we never spam.")
                 .font(.caption)
                 .foregroundStyle(.secondary)

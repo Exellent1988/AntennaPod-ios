@@ -49230,6 +49230,23 @@
           }
         }
       }
+    },
+    "Clears the mark-played count and Prompt attempted flag immediately. No confirmation. For testing — does not show an App Store rating sheet now, and does not change the Ask for App Store rating toggle.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clears the mark-played count and Prompt attempted flag immediately. No confirmation. For testing — does not show an App Store rating sheet now, and does not change the Ask for App Store rating toggle."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht „Zähler „als gehört markiert““ und „Abfrage versucht“ sofort. Keine Bestätigung. Zum Testen — zeigt jetzt kein App-Store-Bewertungsblatt und ändert nicht „Um App-Store-Bewertung bitten“."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
