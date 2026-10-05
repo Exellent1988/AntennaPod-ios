@@ -103,6 +103,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var itemLink: String?
     private var itemGuid: String?
     private var itemPubDate: String?
+    /// `itemPubDate` came from Atom `updated`, so a `pubDate` / `published` may still replace it.
+    private var itemPubDateIsUpdated = false
     private var itemDescription: String?
     private var enclosureUrl: String?
     private var enclosureType: String?
@@ -303,6 +305,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             itemLink = nil
             itemGuid = nil
             itemPubDate = nil
+            itemPubDateIsUpdated = false
             itemDescription = nil
             enclosureUrl = nil
             enclosureType = nil
@@ -880,8 +883,16 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 }
             case "guid", "id":
                 itemGuid = text
-            case "pubdate", "published", "updated":
+            case "pubdate", "published":
                 itemPubDate = text
+                itemPubDateIsUpdated = false
+            case "updated":
+                // Atom lists <updated> after <published> and bumps it on every edit.
+                // Use it only when the entry has no publish date of its own.
+                if itemPubDate == nil || itemPubDateIsUpdated {
+                    itemPubDate = text
+                    itemPubDateIsUpdated = true
+                }
             case "description", "summary", "content", "subtitle":
                 // Prefer longer text so content:encoded / Atom content wins over short description.
                 if !text.isEmpty {
