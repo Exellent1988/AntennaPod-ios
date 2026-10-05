@@ -1005,7 +1005,7 @@ struct SettingsView: View {
                 }
                 .accessibilityLabel(String(localized: "History size"))
                 .accessibilityValue(settings.historySizeLimit.label)
-                .accessibilityHint(String(localized: "Maximum episodes kept in History. Oldest last-played entries are removed first."))
+                .accessibilityHint(String(localized: "Caps History-listed episodes in playback.json (played / in-progress). Oldest by lastPlayedAt (else updatedAt) are removed first — same as Remove from history (progress and played flags gone). Unlimited keeps the full list. Does not touch favorites, archive, downloads, or queue. Statistics and Continue listening may lose trimmed episodes. Default Unlimited. Changing this does not delete downloads or clear the queue now."))
                 Text("Caps History-listed episodes in playback.json (played / in-progress). Oldest by lastPlayedAt (else updatedAt) are removed first — same as Remove from history (progress and played flags gone). Unlimited keeps the full list. Does not touch favorites, archive, downloads, or queue. Statistics and Continue listening may lose trimmed episodes. Default Unlimited.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
