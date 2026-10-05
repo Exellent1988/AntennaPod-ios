@@ -386,7 +386,11 @@ struct TranscriptSheetView: View {
                             .accessibilityLabel(
                                 "\(cue.speaker.map { $0 + ", " } ?? "")\(cue.text), \(format(cue.startTimeSeconds))"
                             )
-                            .accessibilityHint(String(localized: "Seeks playback to this time"))
+                            .accessibilityHint(
+                                cueSeekFinishesEpisode(cue)
+                                    ? String(localized: "Finishes the episode the same way as a forward skip.")
+                                    : String(localized: "Seeks playback to this time")
+                            )
                             .accessibilityAddTraits(isCurrent ? .isSelected : [])
                         }
                     }
@@ -425,6 +429,27 @@ struct TranscriptSheetView: View {
                 proxy.scrollTo(cueId, anchor: .center)
             }
         }
+    }
+
+
+    /// Same gate as Jump to position / chapter seek: cue start at or past a known duration
+    /// finishes instead of seeking to the last second.
+    private var cueSeekEpisodeDurationSeconds: Double? {
+        let live = playback.durationSeconds
+        if live.isFinite, live > 0 { return live }
+        if episode.hasKnownDuration {
+            return episode.durationSeconds
+        }
+        return nil
+    }
+
+    private func cueSeekFinishesEpisode(_ cue: TranscriptCue) -> Bool {
+        guard let duration = cueSeekEpisodeDurationSeconds,
+              duration.isFinite,
+              duration > 0 else {
+            return false
+        }
+        return cue.startTimeSeconds >= duration
     }
 
     private func scheduleFilter(for term: String) {
