@@ -247,15 +247,21 @@ struct HistoryView: View {
     /// playing uses live `PlaybackService` position/duration. Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate).
     /// Distinct from Clear history / Add all to queue / Mark all as played / Mark all as unplayed / Archive all / Play random / Copy / Share (always full stored catalog). Respects history size
     /// limit catalog as-is — never invents beyond the store-trimmed set.
-    private var historyRemainingInfoLabel: String? {
-        guard !filteredItems.isEmpty else { return nil }
-        return EpisodeRemainingTime.episodesInfoBarLabel(for: historyRemainingSummary)
+    private func historyRemainingInfoLabel(
+        visibleItems: [HistoryEpisode],
+        summary: EpisodeRemainingTime.Summary
+    ) -> String? {
+        guard !visibleItems.isEmpty else { return nil }
+        return EpisodeRemainingTime.episodesInfoBarLabel(for: summary)
     }
 
-    private var historyRemainingAccessibilityLabel: String {
-        guard let label = historyRemainingInfoLabel else { return "" }
+    private func historyRemainingAccessibilityLabel(
+        visibleItems: [HistoryEpisode],
+        summary: EpisodeRemainingTime.Summary
+    ) -> String {
+        guard let label = historyRemainingInfoLabel(visibleItems: visibleItems, summary: summary) else { return "" }
         var parts = [String(localized: "History remaining time \(label)")]
-        let unknown = historyRemainingSummary.unknownCount
+        let unknown = summary.unknownCount
         if unknown > 0 {
             parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
         }
@@ -285,9 +291,9 @@ struct HistoryView: View {
         return String(localized: "No history episodes match your search. Clear or change the search to see History.")
     }
 
-    private var historyRemainingSummary: EpisodeRemainingTime.Summary {
+    private func historyRemainingSummary(for visibleItems: [HistoryEpisode]) -> EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
-            episodes: filteredItems.map(\.episode),
+            episodes: visibleItems.map(\.episode),
             currentEpisodeId: playback.currentEpisode?.id,
             liveDurationSeconds: playback.durationSeconds,
             livePositionSeconds: playback.positionSeconds,
@@ -326,6 +332,11 @@ struct HistoryView: View {
 
     var body: some View {
         List {
+            // Filter, search, and sort the history once per body (it is unlimited by default and
+            // the body reruns on every 0.5s playback tick); the bar, its VoiceOver label, and
+            // the rows share it.
+            let visibleItems = filteredItems
+            let remainingSummary = historyRemainingSummary(for: visibleItems)
             if !items.isEmpty, !historyPodcastFeeds.isEmpty || isPodcastFiltering {
                 Section {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -351,7 +362,7 @@ struct HistoryView: View {
             // AntennaPod-like history info bar (visible sorted+podcast+search filtered list remaining time).
             // Hidden when catalog empty or filters match nothing — not full-catalog Clear count.
             // Played (not current) → 0; totals may often be low — still useful for in-progress.
-            if let remainingLabel = historyRemainingInfoLabel {
+            if let remainingLabel = historyRemainingInfoLabel(visibleItems: visibleItems, summary: remainingSummary) {
                 Section {
                     Text(remainingLabel)
                         .font(.footnote)
@@ -359,7 +370,7 @@ struct HistoryView: View {
                         .monospacedDigit()
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(historyRemainingAccessibilityLabel)
+                        .accessibilityLabel(historyRemainingAccessibilityLabel(visibleItems: visibleItems, summary: remainingSummary))
                         .accessibilityHint(historyRemainingAccessibilityHint)
                 }
                 .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
@@ -374,7 +385,7 @@ struct HistoryView: View {
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(String(localized: "No history yet"))
                 .accessibilityValue(historyEmptyStateAccessibilityValue)
-            } else if filteredItems.isEmpty {
+            } else if visibleItems.isEmpty {
                 ContentUnavailableView(
                     "No matching history",
                     systemImage: "magnifyingglass",
@@ -388,7 +399,7 @@ struct HistoryView: View {
                 .accessibilityLabel(String(localized: "No matching history"))
                 .accessibilityValue(historyEmptyStateAccessibilityValue)
             } else {
-                ForEach(filteredItems) { item in
+                ForEach(visibleItems) { item in
                     EpisodeRow(
                         episode: item.episode,
                         feedTitle: item.feedTitle,
