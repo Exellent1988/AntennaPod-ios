@@ -565,6 +565,10 @@ struct DownloadsView: View {
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
+                                .accessibilityLabel(String(localized: "Delete download"))
+                                .accessibilityHint(
+                                    String(localized: "Asks for confirmation, then deletes the local offline file for this episode; keeps played status, queue membership, favorites, and archive state")
+                                )
                             }
                         }
                     }
