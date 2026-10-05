@@ -2808,7 +2808,7 @@ struct FeedDetailView: View {
                             .font(.subheadline)
                     }
                     .accessibilityLabel(String(localized: "Share trailer URL"))
-                    .accessibilityHint(String(localized: "Shares the feed-provided trailer URL"))
+                    .accessibilityHint(String(localized: "Opens the system share sheet with this feed-provided podcast:trailer media URL. No confirmation. Distinct from Play trailer, Open trailer, and Copy trailer URL. Does not play the trailer, mark played, change the queue, delete downloads, or alter subscriptions."))
                 }
             }
         }

@@ -18121,24 +18121,6 @@
       },
       "comment": "VoiceOver hint for Copy trailer URL on Feed detail."
     },
-    "Shares the feed-provided trailer URL": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shares the feed-provided trailer URL"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Teilt die vom Feed gelieferte Trailer-URL"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Share trailer URL on Feed detail."
-    },
     "Podcast trailer URL from the feed.": {
       "extractionState": "manual",
       "localizations": {
@@ -49230,6 +49212,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Heftet diesen Podcast über nicht angeheftete in Abonnements für jede Sortierung an oder löst ihn (Zuletzt aktualisiert, Alphabetisch und andere). Keine eigene Sortierart. Nur lokale Einstellung — nicht mit gpodder synchronisiert. Im iOS-JSON-Backup mit anderen Feed-Einstellungen enthalten. Wird beim Abbestellen gelöscht. Kündigt nicht ab, ändert keine Tags und keine Abonnement-Sortierung. Schaltet sofort um. Keine Bestätigung."
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with this feed-provided podcast:trailer media URL. No confirmation. Distinct from Play trailer, Open trailer, and Copy trailer URL. Does not play the trailer, mark played, change the queue, delete downloads, or alter subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with this feed-provided podcast:trailer media URL. No confirmation. Distinct from Play trailer, Open trailer, and Copy trailer URL. Does not play the trailer, mark played, change the queue, delete downloads, or alter subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Sheet mit dieser Feed-bereitgestellten podcast:trailer-Medien-URL. Keine Bestätigung. Unterschiedlich von Trailer abspielen, Trailer öffnen und Trailer-URL kopieren. Spielt den Trailer nicht ab, markiert nicht als gehört, ändert nicht die Warteschlange, löscht keine Downloads und ändert keine Abonnements."
           }
         }
       }
