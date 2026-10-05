@@ -2513,7 +2513,7 @@ struct SettingsView: View {
     }
 
     private var autoDeleteAfterPlayingAccessibilityHint: String {
-        String(localized: "On deletes the offline file when marked played. Off keeps files. Favorites are always kept. Deletion waits while the episode is still playing from that local file. Per-podcast Feed settings can Use global, Always, or Never. Default off. The switch does not delete files now.")
+        String(localized: "On deletes the offline file when marked played — manually or when playback finishes — while the episode row and played status stay. Off keeps files (default). Favorites are always kept. Deletion waits while that local file is the active player item. Per-podcast Always or Never can override this global choice. Does not delete files now, start playback, or download.")
     }
 
     private var autoDeleteHelpText: String {

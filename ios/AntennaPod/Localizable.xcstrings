@@ -44797,23 +44797,6 @@
         }
       }
     },
-    "On deletes the offline file when marked played. Off keeps files. Favorites are always kept. Deletion waits while the episode is still playing from that local file. Per-podcast Feed settings can Use global, Always, or Never. Default off. The switch does not delete files now.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "On deletes the offline file when marked played. Off keeps files. Favorites are always kept. Deletion waits while the episode is still playing from that local file. Per-podcast Feed settings can Use global, Always, or Never. Default off. The switch does not delete files now."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "An löscht die Offline-Datei beim Als gehört markieren. Aus behält Dateien. Favoriten bleiben immer. Löschen wartet, solange die Episode noch aus dieser lokalen Datei spielt. Pro Podcast in den Feed-Einstellungen: Global, Immer oder Nie. Standard aus. Der Schalter löscht jetzt keine Dateien."
-          }
-        }
-      }
-    },
     "Manual only. This is the default. Subscriptions refresh when you pull to refresh on Subscriptions, Home, or Inbox, use Refresh all, or refresh one podcast. There is no timed check when you open the app. Keep updated Never podcasts are skipped on Refresh all and pull-to-refresh; a single-podcast refresh still works. iOS Background App Refresh is not enabled in this beta. Changing this does not refresh now, download, or invent new episodes.": {
       "extractionState": "manual",
       "localizations": {
@@ -49434,6 +49417,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Auswahl sind 10, 25, 50, 100 und 200 Episoden. Die Voreinstellung ist 50. Immer soft-begrenzt — kein Unbegrenzt. Gilt nur für Feed-Detail Alle ungehörten herunterladen, neueste zuerst. Status-, Episodentyp- und Suchfilter verkleinern die volle Feed-Berechtigung nicht. Lokale Ordner-Podcasts werden übersprungen. Manueller Download nur Wi‑Fi, Parallele Downloads und Speicherlimits gelten weiterhin, wenn Übertragungen starten. Nicht Automatischer Download, Max. Speicher oder Max. heruntergeladene Episoden. Der Picker erfindet keine Downloads und startet jetzt keine."
+          }
+        }
+      }
+    },
+    "On deletes the offline file when marked played — manually or when playback finishes — while the episode row and played status stay. Off keeps files (default). Favorites are always kept. Deletion waits while that local file is the active player item. Per-podcast Always or Never can override this global choice. Does not delete files now, start playback, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On deletes the offline file when marked played — manually or when playback finishes — while the episode row and played status stay. Off keeps files (default). Favorites are always kept. Deletion waits while that local file is the active player item. Per-podcast Always or Never can override this global choice. Does not delete files now, start playback, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An löscht die Offline-Datei beim Als gehört markieren — manuell oder wenn die Wiedergabe endet — während Episodenzeile und Gehört-Status bleiben. Aus behält Dateien (Standard). Favoriten bleiben immer. Löschen wartet, solange diese lokale Datei das aktive Player-Element ist. Pro-Podcast Immer oder Nie kann diese globale Wahl überschreiben. Löscht jetzt keine Dateien, startet keine Wiedergabe und lädt nicht herunter."
           }
         }
       }
