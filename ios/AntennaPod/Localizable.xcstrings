@@ -44763,23 +44763,6 @@
         }
       }
     },
-    "Choices are Unlimited, 25, 50, 100, 200, and 500 episodes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max storage or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new count.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choices are Unlimited, 25, 50, 100, 200, and 500 episodes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max storage or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new count."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auswahl sind Unbegrenzt, 25, 50, 100, 200 und 500 Episoden. Die Voreinstellung ist Unbegrenzt. Über-Limit-Bereinigung überspringt Favoriten, Episoden in der Warteschlange und den spielenden Download. Nicht Max. Speicher oder Parallele Downloads. Der Picker kann ungeschützte Offline-Dateien löschen, die über der neuen Anzahl liegen."
-          }
-        }
-      }
-    },
     "On. This is not the default. When an episode is marked played — manually or when playback finishes — its offline file is deleted. The episode row and played status stay. Favorited episodes are never deleted by this. Deletion waits while that local file is still the active player item. A per-podcast Always or Never override can replace this global choice. Changing this does not delete files now, start playback, or download.": {
       "extractionState": "manual",
       "localizations": {
@@ -49434,6 +49417,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Voreinstellungen sind Unbegrenzt, 1 GB, 5 GB, 10 GB und Benutzerdefinierte Megabytes. Die Voreinstellung ist Unbegrenzt — Unbegrenzt löscht keine Dateien allein nach Größe. Über-Limit-Bereinigung überspringt Favoriten, Episoden in der Warteschlange und den spielenden Download; gehörte Nicht-Favoriten ohne Warteschlange zuerst. Nicht Max. heruntergeladene Episoden oder Parallele Downloads. Wechsel auf ein niedrigeres Budget kann ungeschützte Offline-Dateien löschen; Unbegrenzt löscht jetzt keine Dateien."
+          }
+        }
+      }
+    },
+    "Choices are Unlimited, 25, 50, 100, 200, and 500 episodes. The default is Unlimited — Unlimited does not delete files by count alone. Over-limit eviction skips favorites, queued episodes, and the playing download; played non-favorite non-queued go first. Not Max storage or Parallel downloads. Changing to a lower count may delete unprotected offline files; choosing Unlimited does not delete files now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choices are Unlimited, 25, 50, 100, 200, and 500 episodes. The default is Unlimited — Unlimited does not delete files by count alone. Over-limit eviction skips favorites, queued episodes, and the playing download; played non-favorite non-queued go first. Not Max storage or Parallel downloads. Changing to a lower count may delete unprotected offline files; choosing Unlimited does not delete files now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswahl sind Unbegrenzt, 25, 50, 100, 200 und 500 Episoden. Die Voreinstellung ist Unbegrenzt — Unbegrenzt löscht keine Dateien allein nach Anzahl. Über-Limit-Bereinigung überspringt Favoriten, Episoden in der Warteschlange und den spielenden Download; gehörte Nicht-Favoriten ohne Warteschlange zuerst. Nicht Max. Speicher oder Parallele Downloads. Wechsel auf eine niedrigere Anzahl kann ungeschützte Offline-Dateien löschen; Unbegrenzt löscht jetzt keine Dateien."
           }
         }
       }

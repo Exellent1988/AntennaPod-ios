@@ -2455,7 +2455,7 @@ struct SettingsView: View {
     }
 
     private var maxDownloadedEpisodesAccessibilityHint: String {
-        String(localized: "Choices are Unlimited, 25, 50, 100, 200, and 500 episodes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max storage or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new count.")
+        String(localized: "Choices are Unlimited, 25, 50, 100, 200, and 500 episodes. The default is Unlimited — Unlimited does not delete files by count alone. Over-limit eviction skips favorites, queued episodes, and the playing download; played non-favorite non-queued go first. Not Max storage or Parallel downloads. Changing to a lower count may delete unprotected offline files; choosing Unlimited does not delete files now.")
     }
 
     private var episodeCacheHelpText: String {
