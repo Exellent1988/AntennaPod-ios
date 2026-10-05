@@ -73,6 +73,9 @@ final class PodcastStore: ObservableObject {
         didSet { PodcastPersistence.saveFeedTags(tagsByFeedId) }
     }
     @Published var isLoading = false
+    /// Refresh all, single refresh, and local rescan can overlap (Subscriptions swipe Refresh
+    /// during Refresh all); `isLoading` turns off only when the last of them ends.
+    private var loadingOperationCount = 0
     private var isRefreshingAllFeeds = false
     private var refreshAllFeedsWaiters: [CheckedContinuation<Void, Never>] = []
 
@@ -476,29 +479,33 @@ final class PodcastStore: ObservableObject {
         feeds.filter { tags(for: $0.id).isEmpty }
     }
 
-    func refresh(_ feed: PodcastFeed) async {
+    /// Returns this refresh's own error (nil on success), so a caller does not read a Refresh all
+    /// error that the shared `lastError` may hold while both run.
+    @discardableResult
+    func refresh(_ feed: PodcastFeed) async -> String? {
         guard !feed.feedUrl.isEmpty else {
-            return
+            return nil
         }
         if LocalFolderFeed.isLocalFolderFeed(feed) {
-            await refreshLocalFolderFeed(feed)
-            return
+            return await refreshLocalFolderFeed(feed)
         }
         let wasSubscribed = feeds.contains(where: { $0.feedUrl == feed.feedUrl })
         var newcomers: [PodcastEpisode] = []
+        var ownError: String?
         if wasSubscribed {
             // Same as subscribe(), except a podcast unsubscribed while this fetch runs
             // (Subscriptions swipe Refresh, then Unsubscribe) is not added back.
-            lastError = nil
-            isLoading = true
+            if !isRefreshingAllFeeds { lastError = nil }
+            beginLoadingOperation()
             do {
                 newcomers = try await subscribeQuietly(feedUrl: feed.feedUrl, onlyIfSubscribed: true)
             } catch {
-                lastError = error.localizedDescription
+                ownError = error.localizedDescription
+                lastError = ownError
             }
-            isLoading = false
+            endLoadingOperation()
         } else {
-            await subscribe(feedUrl: feed.feedUrl)
+            ownError = await subscribe(feedUrl: feed.feedUrl)
         }
         var newBatches: [NewEpisodeBatch] = []
         if wasSubscribed, let updated = feeds.first(where: { $0.feedUrl == feed.feedUrl }) {
@@ -530,6 +537,7 @@ final class PodcastStore: ObservableObject {
             settings: settings,
             newBatches: newBatches
         )
+        return ownError
     }
 
     func isInQueue(_ episodeId: String) -> Bool {
@@ -2770,6 +2778,18 @@ final class PodcastStore: ObservableObject {
         return String(localized: "Refreshing feeds…")
     }
 
+    private func beginLoadingOperation() {
+        loadingOperationCount += 1
+        isLoading = true
+    }
+
+    private func endLoadingOperation() {
+        loadingOperationCount = max(0, loadingOperationCount - 1)
+        if loadingOperationCount == 0 {
+            isLoading = false
+        }
+    }
+
     private func beginDeferringFeedsSave() {
         feedsSaveDeferralDepth += 1
     }
@@ -2809,10 +2829,10 @@ final class PodcastStore: ObservableObject {
             waiters.forEach { $0.resume() }
         }
         lastError = nil
-        isLoading = true
+        beginLoadingOperation()
         beginDeferringFeedsSave()
         defer {
-            isLoading = false
+            endLoadingOperation()
             refreshCompletedCount = 0
             refreshTotalCount = 0
             endDeferringFeedsSave()
@@ -3007,10 +3027,11 @@ final class PodcastStore: ObservableObject {
     }
 
     /// Re-scan one local folder feed (manual Refresh swipe / Feed detail Rescan).
-    func refreshLocalFolderFeed(_ feed: PodcastFeed) async {
-        lastError = nil
-        isLoading = true
-        defer { isLoading = false }
+    @discardableResult
+    func refreshLocalFolderFeed(_ feed: PodcastFeed) async -> String? {
+        if !isRefreshingAllFeeds { lastError = nil }
+        beginLoadingOperation()
+        defer { endLoadingOperation() }
         let existingIds = Set(feed.episodes.map(\.id))
         do {
             let updated = try rescanLocalFolderFeed(feed)
@@ -3046,7 +3067,9 @@ final class PodcastStore: ObservableObject {
             )
         } catch {
             lastError = error.localizedDescription
+            return lastError
         }
+        return nil
     }
 
     /// Best-effort re-scan of all local folder feeds (launch / backup import) so file:// paths stay current.

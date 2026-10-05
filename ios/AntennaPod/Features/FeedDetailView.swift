@@ -2075,9 +2075,8 @@ struct FeedDetailView: View {
         isRescanningLocalFolder = true
         defer { isRescanningLocalFolder = false }
         localFolderRescanError = nil
-        await store.refresh(liveFeed)
-        // refreshLocalFolderFeed clears lastError first, then sets it only on a rescan failure.
-        localFolderRescanError = store.lastError
+        // The rescan's own error, not a Refresh all error in the shared store message.
+        localFolderRescanError = await store.refresh(liveFeed)
     }
 
     /// Network RSS/Atom feeds only — local-folder feeds use a synthetic `local-folder://` id, not a pasteable feed URL.
