@@ -811,7 +811,10 @@ final class DownloadService: ObservableObject {
     /// or is a channel trailer for this feed (`podcast-trailer:<feedUUID>:`).
     /// Does not include other podcasts’ files. Local-folder `file://` episodes are usually not in the
     /// Downloads catalog (already on disk outside `Documents/downloads`).
-    func downloads(forFeed feed: PodcastFeed) -> [DownloadedEpisode] {
+    func downloads(forFeed staleFeed: PodcastFeed) -> [DownloadedEpisode] {
+        // Live episode list (as `deleteDownloads(forFeed:)`): the Subscriptions Unsubscribe dialog
+        // keeps the swiped copy, so a download a refresh added meanwhile was not counted.
+        let feed = store?.feeds.first(where: { $0.id == staleFeed.id }) ?? staleFeed
         let ids = Set(feed.episodes.map(\.id))
         let trailerPrefix = PodcastTrailer.playbackEpisodeIdPrefix(feedId: feed.id)
         return downloads.filter { ids.contains($0.id) || $0.id.hasPrefix(trailerPrefix) }
