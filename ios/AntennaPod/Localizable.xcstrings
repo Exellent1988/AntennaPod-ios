@@ -15863,23 +15863,6 @@
         }
       }
     },
-    "Cycles to the next speed. Long-press for full list and Custom…": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cycles to the next speed. Long-press for full list and Custom…"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wechselt zur nächsten Geschwindigkeit. Lange drücken für volle Liste und Benutzerdefiniert…"
-          }
-        }
-      }
-    },
     "New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list and Custom…. Custom… also available in Settings (0.50×–3.00×).": {
       "extractionState": "manual",
       "localizations": {
@@ -47965,6 +47948,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ändere oder lösche die Entdecken-Suche, oder wechsle zu Apple, Index oder Feed-URL."
+          }
+        }
+      }
+    },
+    "Cycles the session playback speed through presets. Does not change Default speed or this podcast’s speed override. Long-press for the full list and Custom…. Not Volume boost or Preserve pitch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cycles the session playback speed through presets. Does not change Default speed or this podcast’s speed override. Long-press for the full list and Custom…. Not Volume boost or Preserve pitch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wechselt die Sitzungsgeschwindigkeit durch die Vorgabeliste. Ändert nicht die Standardgeschwindigkeit und nicht die Podcast-Geschwindigkeitsüberschreibung. Lange drücken für die volle Liste und Benutzerdefiniert…. Nicht Lautstärke-Boost und nicht Tonhöhe beibehalten."
           }
         }
       }

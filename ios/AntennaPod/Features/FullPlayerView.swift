@@ -1430,7 +1430,7 @@ struct FullPlayerView: View {
                 .frame(minWidth: 44)
         }
         .accessibilityLabel("\(String(localized: "Playback speed")) \(PlaybackService.formatPlaybackSpeed(playback.rate))")
-        .accessibilityHint(String(localized: "Cycles to the next speed. Long-press for full list and Custom…"))
+        .accessibilityHint(String(localized: "Cycles the session playback speed through presets. Does not change Default speed or this podcast’s speed override. Long-press for the full list and Custom…. Not Volume boost or Preserve pitch."))
     }
 
     private var sleepTimerMenu: some View {
