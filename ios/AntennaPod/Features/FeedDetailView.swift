@@ -947,7 +947,7 @@ struct FeedDetailView: View {
                                     .font(.subheadline)
                             }
                             .accessibilityLabel(String(localized: "Copy podcast GUID"))
-                            .accessibilityHint(String(localized: "Copies the podcast GUID from the feed to the pasteboard"))
+                            .accessibilityHint(String(localized: "Copies the feed-provided podcast GUID to the pasteboard as plain text. No confirmation. Distinct from the podcast, feed URL, website, funding, and discussion copies, and from Share podcast GUID. Does not open a link, change subscriptions, or invent a GUID when missing."))
 
                             ShareLink(
                                 item: guid,
@@ -1568,7 +1568,7 @@ struct FeedDetailView: View {
                                 Label("Copy podcast GUID", systemImage: "number")
                             }
                             .accessibilityLabel(String(localized: "Copy podcast GUID"))
-                            .accessibilityHint(String(localized: "Copies the podcast GUID from the feed to the pasteboard"))
+                            .accessibilityHint(String(localized: "Copies the feed-provided podcast GUID to the pasteboard as plain text. No confirmation. Distinct from the podcast, feed URL, website, funding, and discussion copies, and from Share podcast GUID. Does not open a link, change subscriptions, or invent a GUID when missing."))
 
                             ShareLink(
                                 item: guid,

@@ -17296,24 +17296,6 @@
       },
       "comment": "VoiceOver hint for Share podcast GUID."
     },
-    "Copies the podcast GUID from the feed to the pasteboard": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the podcast GUID from the feed to the pasteboard"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert die Podcast-GUID aus dem Feed in die Zwischenablage"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Copy podcast GUID."
-    },
     "Podcast GUID copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {
@@ -49228,6 +49210,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn an, blenden Video-Episoden die Videofläche aus (stattdessen Artwork), deaktivieren Videospuren und überspringen Bild-in-Bild. Remuxt oder entfernt Video nicht aus der Datei; Hintergrund-Audio läuft weiter; Streaming oder HLS kann weiterhin einen Videostream laden. Sperrbildschirm und Jetzt läuft bleiben Audio. Standard aus. Ändern startet oder stoppt die Wiedergabe nicht."
+          }
+        }
+      }
+    },
+    "Copies the feed-provided podcast GUID to the pasteboard as plain text. No confirmation. Distinct from the podcast, feed URL, website, funding, and discussion copies, and from Share podcast GUID. Does not open a link, change subscriptions, or invent a GUID when missing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided podcast GUID to the pasteboard as plain text. No confirmation. Distinct from the podcast, feed URL, website, funding, and discussion copies, and from Share podcast GUID. Does not open a link, change subscriptions, or invent a GUID when missing."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die feedseitige Podcast-GUID als reinen Text in die Zwischenablage. Keine Bestätigung. Unterschiedlich vom Kopieren des Podcasts, der Feed-URL, Website, Unterstützung und Diskussion und von Podcast-GUID teilen. Öffnet keinen Link, ändert keine Abonnements und erfindet keine GUID, wenn sie fehlt."
           }
         }
       }
