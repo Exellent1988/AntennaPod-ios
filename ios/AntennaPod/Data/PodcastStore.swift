@@ -2990,6 +2990,17 @@ final class PodcastStore: ObservableObject {
         feed.lastRefreshedAtEpochMs = Int64(Date().timeIntervalSince1970 * 1000)
         if let index = feeds.firstIndex(where: { $0.feedUrl == feedUrl }) {
             feed.id = feeds[index].id // keep stable identity across refresh
+            // Many feeds only list their newest items. An episode that left the RSS
+            // would also leave Favorites, Archived, and History, which list feed.episodes.
+            let freshIds = Set(feed.episodes.map(\.id))
+            let kept = feeds[index].episodes.filter { episode in
+                !freshIds.contains(episode.id) && (
+                    isFavorite(episode.id)
+                        || isArchived(episode.id)
+                        || playbackState(for: episode.id).belongsInHistory
+                )
+            }
+            feed.episodes.append(contentsOf: kept)
             feeds[index] = feed
         } else {
             feeds.append(feed)
