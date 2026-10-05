@@ -29619,23 +29619,6 @@
         }
       }
     },
-    "When on and host plus port are valid, URLSession clients use this HTTP(S) proxy. AVPlayer streaming may bypass it.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When on and host plus port are valid, URLSession clients use this HTTP(S) proxy. AVPlayer streaming may bypass it."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn aktiv und Host sowie Port gültig sind, nutzen URLSession-Clients diesen HTTP(S)-Proxy. AVPlayer-Streaming kann ihn umgehen."
-          }
-        }
-      }
-    },
     "Hostname without http or https. Empty host disables the proxy.": {
       "extractionState": "manual",
       "localizations": {
@@ -49295,6 +49278,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entfernt das gespeicherte Proxy-Passwort aus dem Schlüsselbund und leert das Entwurfsfeld. Nur sichtbar, wenn ein Passwort gespeichert ist. Schaltet HTTP-Proxy nicht aus, testet die Verbindung nicht und ändert Host, Port oder Benutzername nicht. Das Passwort liegt nie im Einstellungen-Backup."
+          }
+        }
+      }
+    },
+    "When on and host plus port are valid, URLSession clients (feeds, downloads, search, and similar) use this HTTP(S) proxy. AVPlayer streaming may bypass it. Does not test the connection by itself. Not VPN detection, certificate pinning, or SOCKS. Username and password stay optional.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on and host plus port are valid, URLSession clients (feeds, downloads, search, and similar) use this HTTP(S) proxy. AVPlayer streaming may bypass it. Does not test the connection by itself. Not VPN detection, certificate pinning, or SOCKS. Username and password stay optional."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv und Host sowie Port gültig sind, nutzen URLSession-Clients (Feeds, Downloads, Suche und Ähnliches) diesen HTTP(S)-Proxy. AVPlayer-Streaming kann ihn umgehen. Testet die Verbindung nicht von selbst. Keine VPN-Erkennung, kein Zertifikats-Pinning, kein SOCKS. Benutzername und Passwort bleiben optional."
           }
         }
       }

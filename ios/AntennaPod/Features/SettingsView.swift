@@ -1930,7 +1930,7 @@ struct SettingsView: View {
 
             Toggle(String(localized: "HTTP proxy"), isOn: $settings.httpProxyEnabled)
                 .accessibilityLabel(String(localized: "HTTP proxy"))
-                .accessibilityHint(String(localized: "When on and host plus port are valid, URLSession clients use this HTTP(S) proxy. AVPlayer streaming may bypass it."))
+                .accessibilityHint(String(localized: "When on and host plus port are valid, URLSession clients (feeds, downloads, search, and similar) use this HTTP(S) proxy. AVPlayer streaming may bypass it. Does not test the connection by itself. Not VPN detection, certificate pinning, or SOCKS. Username and password stay optional."))
 
             if settings.httpProxyEnabled {
                 TextField(
