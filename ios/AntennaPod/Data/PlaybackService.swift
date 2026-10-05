@@ -216,11 +216,16 @@ final class PlaybackService: ObservableObject {
                 }
             }
             lastError = nil
-            if !isPlaying {
-                togglePlayPause()
-                store?.touchLastPlayed(episode.id)
-                store?.publishWidgetSnapshot()
+            // Rebuild used to drop a pending soundbite end window. Do that here
+            // only after a Wi-Fi refusal (a blocked resume must not clear it or
+            // stop audio) and before resume, without seeking or rebuilding.
+            clearSoundbiteEndMarker()
+            if isPlaying {
+                return true
             }
+            togglePlayPause()
+            store?.touchLastPlayed(episode.id)
+            store?.publishWidgetSnapshot()
             return true
         }
         guard let url = resolvePlaybackURL(
