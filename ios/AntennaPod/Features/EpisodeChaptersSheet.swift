@@ -171,7 +171,7 @@ struct EpisodeChaptersSheet: View {
                     .disabled(!canCopyCurrentChapter)
                     .accessibilityLabel(String(localized: "Copy current chapter"))
                     .accessibilityHint(
-                        String(localized: "Copies the current chapter to the pasteboard")
+                        String(localized: "Copies the current chapter at the playback position to the pasteboard. Uses the full chapter list and ignores the chapters search filter. Does not fetch remote or media chapters.")
                     )
 
                     ShareLink(

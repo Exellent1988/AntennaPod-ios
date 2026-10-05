@@ -32272,23 +32272,6 @@
         }
       }
     },
-    "Copies the current chapter to the pasteboard": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the current chapter to the pasteboard"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert das aktuelle Kapitel in die Zwischenablage"
-          }
-        }
-      }
-    },
     "Current chapter copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {
@@ -49115,6 +49098,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Teilen-Sheet mit Episodentitel und vollständigem Kapitelinhaltsverzeichnis. Ignoriert den Kapitel-Suchfilter. Lädt keine Remote- oder Medien-Kapitel nach."
+          }
+        }
+      }
+    },
+    "Copies the current chapter at the playback position to the pasteboard. Uses the full chapter list and ignores the chapters search filter. Does not fetch remote or media chapters.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the current chapter at the playback position to the pasteboard. Uses the full chapter list and ignores the chapters search filter. Does not fetch remote or media chapters."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert das aktuelle Kapitel an der Wiedergabeposition in die Zwischenablage. Nutzt die volle Kapitelliste und ignoriert den Kapitel-Suchfilter. Lädt keine Remote- oder Medien-Kapitel nach."
           }
         }
       }
