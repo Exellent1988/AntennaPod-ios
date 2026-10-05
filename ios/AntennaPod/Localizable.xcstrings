@@ -16197,23 +16197,6 @@
         }
       }
     },
-    "Copies the transcript to the pasteboard": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the transcript to the pasteboard"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert das Transkript in die Zwischenablage"
-          }
-        }
-      }
-    },
     "Shownotes copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {
@@ -49132,6 +49115,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Springt sofort zum Start dieses Transkript-Cues. Keine Bestätigung. Markiert weder gehört noch ändert die Queue oder löscht Downloads."
+          }
+        }
+      }
+    },
+    "Copies the full already-loaded transcript to the pasteboard. Ignores the transcript search filter. Does not fetch or generate a transcript.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full already-loaded transcript to the pasteboard. Ignores the transcript search filter. Does not fetch or generate a transcript."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert das vollständig bereits geladene Transkript in die Zwischenablage. Ignoriert den Transkript-Suchfilter. Lädt oder erzeugt kein Transkript."
           }
         }
       }

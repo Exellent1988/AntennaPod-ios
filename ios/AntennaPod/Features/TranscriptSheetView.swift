@@ -192,7 +192,7 @@ struct TranscriptSheetView: View {
                     }
                     .disabled(!canCopyTranscript)
                     .accessibilityLabel(String(localized: "Copy transcript"))
-                    .accessibilityHint(String(localized: "Copies the transcript to the pasteboard"))
+                    .accessibilityHint(String(localized: "Copies the full already-loaded transcript to the pasteboard. Ignores the transcript search filter. Does not fetch or generate a transcript."))
 
                     Button {
                         copyCurrentCue()
