@@ -5,6 +5,16 @@ import Foundation
 enum HTMLTextStripping {
     static func plainText(from html: String) -> String {
         var out = html
+        // Tag stripping alone left the CSS or JavaScript of embedded <style> / <script>
+        // blocks in the shownotes as text. Drop those elements with their contents.
+        let hiddenPattern = #"(?is)<(script|style)\b[^>]*>.*?</\1\s*>"#
+        if let regex = try? NSRegularExpression(pattern: hiddenPattern) {
+            out = regex.stringByReplacingMatches(
+                in: out,
+                range: NSRange(out.startIndex..., in: out),
+                withTemplate: ""
+            )
+        }
         // Block-ish tags → paragraph breaks before stripping.
         let blockPattern = #"(?i)</?(p|div|br|li|h[1-6]|tr|blockquote)[^>]*>"#
         if let regex = try? NSRegularExpression(pattern: blockPattern) {
