@@ -108,7 +108,7 @@ struct TopListsView: View {
                             author: item.author,
                             artworkURL: item.artworkURL,
                             feedUrl: item.feedUrl,
-                            isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl },
+                            isSubscribed: FeedURLNormalization.subscribedFeed(matching: item.feedUrl, in: store.feeds) != nil,
                             onSelect: {
                                 previewRequest = FeedPreviewRequest(
                                     feedUrl: item.feedUrl,
@@ -254,7 +254,7 @@ struct HomeTopListsPreview: View {
                                 .lineLimit(1)
                         }
                         Spacer(minLength: 8)
-                        if store.feeds.contains(where: { $0.feedUrl == item.feedUrl }) {
+                        if FeedURLNormalization.subscribedFeed(matching: item.feedUrl, in: store.feeds) != nil {
                             Text("Subscribed")
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
@@ -266,7 +266,7 @@ struct HomeTopListsPreview: View {
                         previewAccessibilityLabel(
                             index: index,
                             item: item,
-                            isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl }
+                            isSubscribed: FeedURLNormalization.subscribedFeed(matching: item.feedUrl, in: store.feeds) != nil
                         )
                     )
                 }

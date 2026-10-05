@@ -242,7 +242,7 @@ struct AddFeedView: View {
                             author: item.author,
                             artworkURL: item.artworkURL,
                             feedUrl: item.feedUrl,
-                            isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl },
+                            isSubscribed: FeedURLNormalization.subscribedFeed(matching: item.feedUrl, in: store.feeds) != nil,
                             onSelect: {
                                 previewRequest = FeedPreviewRequest(
                                     feedUrl: item.feedUrl,
@@ -359,7 +359,7 @@ struct AddFeedView: View {
                                 author: item.author,
                                 artworkURL: item.artworkURL,
                                 feedUrl: item.feedUrl,
-                                isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl },
+                                isSubscribed: FeedURLNormalization.subscribedFeed(matching: item.feedUrl, in: store.feeds) != nil,
                                 onSelect: {
                                     previewRequest = FeedPreviewRequest(
                                         feedUrl: item.feedUrl,
@@ -880,7 +880,7 @@ struct AddFeedView: View {
                             author: item.author,
                             artworkURL: item.artworkURL,
                             feedUrl: item.feedUrl,
-                            isSubscribed: store.feeds.contains { $0.feedUrl == item.feedUrl },
+                            isSubscribed: FeedURLNormalization.subscribedFeed(matching: item.feedUrl, in: store.feeds) != nil,
                             onSelect: {
                                 previewRequest = FeedPreviewRequest(
                                     feedUrl: item.feedUrl,
