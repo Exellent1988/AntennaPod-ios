@@ -732,7 +732,7 @@ struct DownloadsView: View {
                         .disabled(downloads.downloads.isEmpty)
                         .accessibilityLabel(String(localized: "Delete all downloads"))
                         .accessibilityHint(
-                            String(localized: "Deletes every completed offline file in the full Downloads catalog, including favorites; queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream")
+                            String(localized: "Asks for confirmation, then deletes every completed offline file in the full Downloads catalog, including favorites. Ignores chip and search filters. Queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream. Local files only — keeps played status, queue, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue.")
                         )
                     } label: {
                         Label("Downloads actions", systemImage: "ellipsis.circle")

@@ -45345,23 +45345,6 @@
       },
       "extractionState": "manual"
     },
-    "Deletes every completed offline file in the full Downloads catalog, including favorites; queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deletes every completed offline file in the full Downloads catalog, including favorites; queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Löscht jede fertige Offline-Datei im vollständigen Downloads-Katalog, einschließlich Favoriten; Episoden in der Warteschlange und der spielende Download können ihre Datei verlieren, während die Warteschlangen-Mitgliedschaft bleibt und die Wiedergabe vom Stream weiterläuft"
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "Feeds refresh when you pull to refresh (Subscriptions, Home, or Inbox), use Refresh all, or refresh a podcast alone. Bulk refresh skips Keep updated Never; swipe or Feed detail refresh still works for those podcasts. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).": {
       "localizations": {
         "en": {
@@ -48967,6 +48950,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und markiert dann gehörte Episoden, einschließlich archivierter, im vollständigen Katalog abgeschlossener Downloads als ungehört. Ignoriert Chip-, Podcast-, Such- und Sortierfilter. Löscht keine Download-Dateien, leert nicht die Warteschlange, stoppt keine Wiedergabe und hebt die Archivierung nicht auf."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then deletes every completed offline file in the full Downloads catalog, including favorites. Ignores chip and search filters. Queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream. Local files only — keeps played status, queue, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then deletes every completed offline file in the full Downloads catalog, including favorites. Ignores chip and search filters. Queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream. Local files only — keeps played status, queue, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und löscht dann jede abgeschlossene Offline-Datei im vollständigen Downloads-Katalog, einschließlich Favoriten. Ignoriert Chip- und Suchfilter. Eingereihte Episoden und der spielende Download können ihre Datei verlieren, während die Warteschlangen-Mitgliedschaft bleibt und die Wiedergabe vom Stream weiterläuft. Nur lokale Dateien — behält Gehört-Status, Warteschlange, Favoriten, Archivstatus und Verlauf. Unterschiedlich von Gehörte Downloads löschen und von Warteschlange leeren."
           }
         }
       }
