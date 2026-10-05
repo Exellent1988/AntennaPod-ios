@@ -48903,6 +48903,23 @@
           }
         }
       }
+    },
+    "Chooses which period Statistics and Echo show together. Shared setting. Uses the device calendar. Optional Reset baseline still applies.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chooses which period Statistics and Echo show together. Shared setting. Uses the device calendar. Optional Reset baseline still applies."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wählt, welchen Zeitraum Statistik und Echo gemeinsam anzeigen. Geteilte Einstellung. Nutzt den Gerätekalender. Optionale Zurücksetzen-Basislinie gilt weiterhin."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

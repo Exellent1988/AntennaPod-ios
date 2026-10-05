@@ -40,6 +40,7 @@ struct EchoView: View {
                 .pickerStyle(.segmented)
                 .accessibilityLabel(String(localized: "Statistics time range"))
                 .accessibilityValue(settings.statisticsTimeRange.label)
+                .accessibilityHint(String(localized: "Chooses which period Statistics and Echo show together. Shared setting. Uses the device calendar. Optional Reset baseline still applies."))
                 .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
             } footer: {
                 VStack(alignment: .leading, spacing: 4) {
