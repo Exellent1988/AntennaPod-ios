@@ -1359,7 +1359,7 @@ struct FeedDetailView: View {
                             }
                             .accessibilityLabel(String(localized: "Copy podcast website"))
                             .accessibilityHint(
-                                String(localized: "Copies the feed-provided podcast website URL to the pasteboard; distinct from the feed RSS URL and funding URL")
+                                String(localized: "Copies the feed-provided podcast website URL to the pasteboard. No confirmation. Never uses the feed RSS URL, an episode webpage, funding URL, or discussion link. Distinct from Open podcast website, Share podcast website, and Copy feed URL. Does not open a browser, subscribe, or download.")
                             )
 
                             ShareLink(

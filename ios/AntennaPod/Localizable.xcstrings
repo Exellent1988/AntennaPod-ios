@@ -11157,24 +11157,6 @@
       },
       "comment": "Feed detail ⋯: share the feed-provided podcast website URL. Hidden when websiteURL is missing. Distinct from the feed RSS and funding URLs."
     },
-    "Copies the feed-provided podcast website URL to the pasteboard; distinct from the feed RSS URL and funding URL": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the feed-provided podcast website URL to the pasteboard; distinct from the feed RSS URL and funding URL"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert die vom Feed bereitgestellte Podcast-Website-URL in die Zwischenablage; unterscheidet sich von der RSS- und Funding-URL des Feeds"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Copy podcast website. Display/copy only; use the feed website URL, not the feed RSS or funding URL."
-    },
     "Shares the feed-provided podcast website URL; distinct from the feed RSS URL and funding URL": {
       "extractionState": "manual",
       "localizations": {
@@ -49321,6 +49303,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Share-Sheet mit der rohen Feed-URL als Text, wenn keine URL-Objekt-Form verfügbar ist. Deaktiviert für lokale Ordner-Podcasts und leere URLs. Unterschiedlich von Podcast-Website, Funding- und Diskussionslinks sowie von Feed-URL kopieren. Teilen ist deine Entscheidung und abonniert nicht, aktualisiert nicht und öffnet keinen Browser."
+          }
+        }
+      }
+    },
+    "Copies the feed-provided podcast website URL to the pasteboard. No confirmation. Never uses the feed RSS URL, an episode webpage, funding URL, or discussion link. Distinct from Open podcast website, Share podcast website, and Copy feed URL. Does not open a browser, subscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided podcast website URL to the pasteboard. No confirmation. Never uses the feed RSS URL, an episode webpage, funding URL, or discussion link. Distinct from Open podcast website, Share podcast website, and Copy feed URL. Does not open a browser, subscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vom Feed gelieferte Podcast-Website-URL in die Zwischenablage. Keine Bestätigung. Nutzt nie die Feed-RSS-URL, eine Episoden-Webseite, Funding-URL oder den Diskussionslink. Unterschiedlich von Podcast-Website öffnen, Podcast-Website teilen und Feed-URL kopieren. Öffnet keinen Browser, abonniert nicht und lädt nicht herunter."
           }
         }
       }
