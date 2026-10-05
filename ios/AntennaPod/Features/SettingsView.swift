@@ -2851,7 +2851,7 @@ struct SettingsView: View {
                 gpodder.regenerateDeviceIdFromName()
             }
             .disabled(gpodder.isBusy || gpodder.deviceName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            .accessibilityHint(String(localized: "Creates a new device id from the device name and forces a full subscription pull next sync."))
+            .accessibilityHint(String(localized: "Creates a new Device id from the current Device name and clears sync cursors so the next Sync now does a full subscription pull. Does not change Device name, does not Sync now immediately, does not log out, and does not unsubscribe local feeds. Disabled while busy or when Device name is empty."))
             if gpodder.isLoggedIn {
                 Button {
                     Task { await gpodder.syncNow(store: store) }

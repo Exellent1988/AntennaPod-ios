@@ -26566,24 +26566,6 @@
       },
       "comment": "VoiceOver label for help caption"
     },
-    "Creates a new device id from the device name and forces a full subscription pull next sync.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Creates a new device id from the device name and forces a full subscription pull next sync."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Erzeugt eine neue Geräte-ID aus dem Gerätenamen und erzwingt beim nächsten Sync einen vollen Abo-Abruf."
-          }
-        }
-      },
-      "comment": "Regenerate device id VoiceOver hint"
-    },
     "System follows the iOS appearance. Light and Dark force light or dark mode.": {
       "extractionState": "manual",
       "localizations": {
@@ -49513,6 +49495,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Schreibgeschützte Sync-Geräte-ID. In Einstellungen und Backup gespeichert — nicht im Keychain. Bleibt bei Abmelden. Alleiniges Bearbeiten von Gerätename ändert sie nicht; nutze Geräte-ID aus Name neu erzeugen. Meldet nicht an und synchronisiert nicht von selbst."
+          }
+        }
+      }
+    },
+    "Creates a new Device id from the current Device name and clears sync cursors so the next Sync now does a full subscription pull. Does not change Device name, does not Sync now immediately, does not log out, and does not unsubscribe local feeds. Disabled while busy or when Device name is empty.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creates a new Device id from the current Device name and clears sync cursors so the next Sync now does a full subscription pull. Does not change Device name, does not Sync now immediately, does not log out, and does not unsubscribe local feeds. Disabled while busy or when Device name is empty."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erzeugt eine neue Geräte-ID aus dem aktuellen Gerätenamen und löscht Sync-Cursor, damit das nächste Jetzt synchronisieren einen vollen Abo-Abruf macht. Ändert nicht den Gerätenamen, startet kein Jetzt synchronisieren sofort, meldet nicht ab und deabonniert keine lokalen Feeds. Deaktiviert bei laufender Aktion oder wenn Gerätename leer ist."
           }
         }
       }
