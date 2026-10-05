@@ -44421,23 +44421,6 @@
         }
       }
     },
-    "When Never, Refresh all, pull-to-refresh, and timed refresh skip this podcast. Manual single-podcast refresh still works.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When Never, Refresh all, pull-to-refresh, and timed refresh skip this podcast. Manual single-podcast refresh still works."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bei „Nie“ überspringen „Alle aktualisieren“, Pull-to-Refresh und Zeitintervall diesen Podcast. Manuelle Einzelaktualisierung funktioniert weiterhin."
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh skip Never. Manual single-podcast refresh (swipe or Feed detail) still works.": {
       "localizations": {
         "en": {
@@ -49251,6 +49234,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Setzt die Ausnahmen dieses Podcasts sofort auf Global zurück — Automatischer Download, Nach dem Abspielen löschen, Aktualisiert halten, Neue Episoden, Benachrichtigen, Intro überspringen, Outro überspringen, Wiedergabegeschwindigkeit, Episodensortierung, Anzeigename, Private Notiz und Oben halten. Keine Bestätigung. Entfernt keine Tags, löscht keine HTTP-Basic-Authentifizierung, kündigt nicht ab, löscht keine Downloads und ändert die Warteschlange nicht."
+          }
+        }
+      }
+    },
+    "Use global, Always, or Never. Never skips Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh (Subscriptions toolbar, launch/foreground interval). Always matches Use global until a global exclude exists. Manual single-podcast refresh from Subscriptions swipe or Feed detail still works. Changing this does not refresh now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, Always, or Never. Never skips Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh (Subscriptions toolbar, launch/foreground interval). Always matches Use global until a global exclude exists. Manual single-podcast refresh from Subscriptions swipe or Feed detail still works. Changing this does not refresh now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global, Immer oder Nie. Nie überspringt Alle aktualisieren, Pull-to-Refresh (Abonnements, Start, Posteingang) und zeitgesteuertes Aktualisiert-halten (Abonnements-Toolbar, Start-/Vordergrundintervall). Immer entspricht Global, bis es eine globale Ausnahme gibt. Manuelles Aktualisieren einzelner Podcasts per Abonnements-Wisch oder Feed-Detail funktioniert weiter. Ändern aktualisiert jetzt nicht."
           }
         }
       }

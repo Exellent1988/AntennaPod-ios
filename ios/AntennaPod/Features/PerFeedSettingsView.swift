@@ -174,7 +174,7 @@ struct PerFeedSettingsView: View {
                     }
                 }
                 .accessibilityLabel(String(localized: "Keep updated"))
-                .accessibilityHint(String(localized: "When Never, Refresh all, pull-to-refresh, and timed refresh skip this podcast. Manual single-podcast refresh still works."))
+                .accessibilityHint(String(localized: "Use global, Always, or Never. Never skips Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh (Subscriptions toolbar, launch/foreground interval). Always matches Use global until a global exclude exists. Manual single-podcast refresh from Subscriptions swipe or Feed detail still works. Changing this does not refresh now."))
                 .accessibilityValue(current.keepUpdated.label)
                 Text(keepUpdatedHelp)
                     .font(.caption)
