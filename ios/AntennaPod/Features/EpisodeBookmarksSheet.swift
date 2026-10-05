@@ -301,9 +301,11 @@ struct EpisodeBookmarksSheet: View {
     }
 
     private func seek(to bookmark: EpisodeBookmark) {
-        // Player sheet: already current → seek in place.
+        // A stored position at or past a known duration used to seek to the last
+        // second and leave the episode unplayed. jumpToPosition finishes that case
+        // and still seeks when the mark is inside the episode.
         if playback.currentEpisode?.id == episodeId {
-            playback.seek(toSeconds: bookmark.positionSeconds)
+            playback.jumpToPosition(seconds: bookmark.positionSeconds)
             dismiss()
             return
         }
@@ -312,7 +314,7 @@ struct EpisodeBookmarksSheet: View {
         // Match playSoundbite: load at 0 so skip-intro / resume do not steal the mark, then seek.
         guard let episode = store.episode(id: episodeId) else { return }
         guard playback.play(episode: episode, fromBeginning: true) else { return }
-        playback.seek(toSeconds: bookmark.positionSeconds)
+        playback.jumpToPosition(seconds: bookmark.positionSeconds)
         dismiss()
     }
 
