@@ -48877,6 +48877,23 @@
           }
         }
       }
+    },
+    "Asks for confirmation, then removes every episode from the full History catalog and clears their played status and saved playback positions so they count as unplayed again. Ignores podcast, search, and sort filters. Does not unsubscribe, delete downloads, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then removes every episode from the full History catalog and clears their played status and saved playback positions so they count as unplayed again. Ignores podcast, search, and sort filters. Does not unsubscribe, delete downloads, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und entfernt dann jede Episode aus dem vollständigen Verlaufs-Katalog und löscht ihren Gehört-Status sowie gespeicherte Wiedergabepositionen, sodass sie wieder als ungehört zählen. Ignoriert Podcast-, Such- und Sortierfilter. Kündigt keine Abos, löscht keine Downloads und leert nicht die Warteschlange."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -570,6 +570,9 @@ struct HistoryView: View {
                     }
                     // Clear always targets the full history list (not the filtered subset).
                     .disabled(items.isEmpty)
+                    .accessibilityHint(
+                        String(localized: "Asks for confirmation, then removes every episode from the full History catalog and clears their played status and saved playback positions so they count as unplayed again. Ignores podcast, search, and sort filters. Does not unsubscribe, delete downloads, or clear the queue.")
+                    )
                 } label: {
                     Label("History actions", systemImage: "ellipsis.circle")
                 }
