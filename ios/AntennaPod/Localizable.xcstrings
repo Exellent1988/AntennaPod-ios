@@ -4123,23 +4123,6 @@
         }
       }
     },
-    "Lock Add / Discover asks for the PIN before the Add sheet or Discover charts. Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lock Add / Discover asks for the PIN before the Add sheet or Discover charts. Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hinzufügen / Entdecken sperren fragt vor dem Hinzufügen-Sheet oder Entdecken-Charts nach der PIN. Netzwerk / Downloads sperren blockiert Nur-Wi‑Fi-Schalter bis zur Entsperrung. Explizite Top-Charts ausblenden fordert iTunes-Charts mit explicit=false an, solange der Elternschutz aktiv ist."
-          }
-        }
-      }
-    },
     "Lock Network / Downloads settings": {
       "extractionState": "manual",
       "localizations": {
@@ -6879,23 +6862,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alle Abonnements"
-          }
-        }
-      }
-    },
-    "Set a 4–6 digit PIN to restrict Add / Discover and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Set a 4–6 digit PIN to restrict Add / Discover and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lege eine 4–6-stellige PIN fest, um Hinzufügen / Entdecken und optional Netzwerk-/Download-Einstellungen oder explizite Charts einzuschränken. Beta-MVP — kein vollständiger Geräte-Elternschutz."
           }
         }
       }
@@ -47525,6 +47491,72 @@
         }
       },
       "extractionState": "manual"
+    },
+    "Lock Add / Discover asks for the PIN before the Add sheet, Discover charts, or Import OPML (Settings and Subscriptions). Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled. Export OPML stays unlocked.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock Add / Discover asks for the PIN before the Add sheet, Discover charts, or Import OPML (Settings and Subscriptions). Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled. Export OPML stays unlocked."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hinzufügen / Entdecken sperren fragt vor dem Hinzufügen-Sheet, Entdecken-Charts oder OPML-Import (Einstellungen und Abonnements) nach der PIN. Netzwerk / Downloads sperren blockiert Nur-Wi‑Fi-Schalter bis zur Entsperrung. Explizite Top-Charts ausblenden fordert iTunes-Charts mit explicit=false an, solange der Elternschutz aktiv ist. OPML-Export bleibt entsperrt."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Set a 4–6 digit PIN to restrict Add / Discover (including Import OPML) and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set a 4–6 digit PIN to restrict Add / Discover (including Import OPML) and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lege eine 4–6-stellige PIN fest, um Hinzufügen / Entdecken (einschließlich OPML-Import) und optional Netzwerk-/Download-Einstellungen oder explizite Charts einzuschränken. Beta-MVP — kein vollständiger Geräte-Elternschutz."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Import OPML (PIN required)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import OPML (PIN required)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OPML importieren (PIN erforderlich)"
+          }
+        }
+      }
+    },
+    "Asks for the parental PIN, then opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Export OPML stays unlocked.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for the parental PIN, then opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Export OPML stays unlocked."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach der Elternschutz-PIN und öffnet danach Dateien, um eine .opml- oder .xml-Abonnementliste auszuwählen. Bereits abonnierte Feeds werden übersprungen; jeder neue Feed wird über das Netzwerk geladen. OPML-Export bleibt entsperrt."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

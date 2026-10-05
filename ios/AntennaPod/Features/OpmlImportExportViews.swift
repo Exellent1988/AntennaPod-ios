@@ -35,7 +35,7 @@ struct OpmlImportExportSection: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var parental: ParentalControls
     @State private var showImporter = false
-    /// Settings and the Subscriptions OPML sheet are not behind the Add sheet PIN gate.
+    /// Settings and the Subscriptions OPML sheet gate Import OPML with the same Add/Discover PIN when locked.
     @State private var showImportPINGate = false
     @State private var shareURL: URL?
     @State private var showShare = false
@@ -88,8 +88,16 @@ struct OpmlImportExportSection: View {
                 Label("Import OPML", systemImage: "square.and.arrow.down")
             }
             .disabled(store.opmlImport.isImporting)
-            .accessibilityLabel(String(localized: "Import OPML"))
-            .accessibilityHint(String(localized: "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network."))
+            .accessibilityLabel(
+                parental.needsPINForAddDiscover
+                    ? String(localized: "Import OPML (PIN required)")
+                    : String(localized: "Import OPML")
+            )
+            .accessibilityHint(
+                parental.needsPINForAddDiscover
+                    ? String(localized: "Asks for the parental PIN, then opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Export OPML stays unlocked.")
+                    : String(localized: "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network.")
+            )
 
             if store.opmlImport.isImporting {
                 VStack(alignment: .leading, spacing: 6) {
