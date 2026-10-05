@@ -470,7 +470,7 @@ struct PerFeedSettingsView: View {
                 }
                 tagPendingDelete = nil
             }
-            .accessibilityHint(String(localized: "Removes the tag from all podcasts; does not unsubscribe"))
+            .accessibilityHint(String(localized: "Removes this tag from all podcasts. Does not unsubscribe or delete downloads."))
             Button("Cancel", role: .cancel) {
                 tagPendingDelete = nil
             }

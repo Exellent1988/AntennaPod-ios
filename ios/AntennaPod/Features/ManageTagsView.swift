@@ -155,7 +155,7 @@ struct ManageTagsView: View {
                 }
                 tagPendingDelete = nil
             }
-            .accessibilityHint(String(localized: "Removes the tag from all podcasts; does not unsubscribe"))
+            .accessibilityHint(String(localized: "Removes this tag from all podcasts. Does not unsubscribe or delete downloads."))
             Button("Cancel", role: .cancel) {
                 tagPendingDelete = nil
             }
@@ -194,6 +194,9 @@ struct ManageTagsView: View {
                 Label("Delete", systemImage: "trash")
             }
             .accessibilityLabel(String(localized: "Delete tag"))
+            .accessibilityHint(
+                String(localized: "Asks for confirmation, then removes this tag from all podcasts. Does not unsubscribe or delete downloads.")
+            )
             Button {
                 beginRename(tag)
             } label: {
@@ -213,6 +216,9 @@ struct ManageTagsView: View {
             } label: {
                 Label("Delete tag", systemImage: "trash")
             }
+            .accessibilityHint(
+                String(localized: "Asks for confirmation, then removes this tag from all podcasts. Does not unsubscribe or delete downloads.")
+            )
         }
     }
 

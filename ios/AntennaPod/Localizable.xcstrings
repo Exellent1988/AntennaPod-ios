@@ -12148,23 +12148,6 @@
         }
       }
     },
-    "Removes the tag from all podcasts; does not unsubscribe": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes the tag from all podcasts; does not unsubscribe"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt den Tag von allen Podcasts; beendet keine Abos"
-          }
-        }
-      }
-    },
     "Removes “%@” from %lld podcasts. Does not unsubscribe or delete downloads.": {
       "extractionState": "manual",
       "localizations": {
@@ -49029,6 +49012,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entfernt diese Episode aus den Favoriten. Keine Bestätigung. Löscht keine Downloads, archiviert nicht, markiert nicht als gehört und leert nicht die Warteschlange."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then removes this tag from all podcasts. Does not unsubscribe or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then removes this tag from all podcasts. Does not unsubscribe or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und entfernt dann dieses Tag von allen Podcasts. Kündigt keine Abos und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Removes this tag from all podcasts. Does not unsubscribe or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes this tag from all podcasts. Does not unsubscribe or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt dieses Tag von allen Podcasts. Kündigt keine Abos und löscht keine Downloads."
           }
         }
       }
