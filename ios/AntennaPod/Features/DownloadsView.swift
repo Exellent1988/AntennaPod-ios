@@ -489,7 +489,10 @@ struct DownloadsView: View {
                                 .accessibilityLabel(downloadsRowAccessibilityLabel(for: item))
                                 Spacer()
                                 Button {
-                                    playback.play(episode: item.episode)
+                                    playback.play(
+                                        episode: item.episode,
+                                        fileURL: downloads.localURL(for: item.episode)
+                                    )
                                 } label: {
                                     Image(systemName: "play.fill")
                                 }
