@@ -2823,7 +2823,8 @@ final class AppSettings: ObservableObject {
             let gb = [1, 5, 10].contains(value) ? value : 5
             return .gigabytes(gb)
         case .customMegabytes:
-            let mb = value > 0 ? value : 500
+            // Cap a value saved by an earlier unclamped restore so launch does not crash.
+            let mb = value > 0 ? min(value, customStorageMBRange.upperBound) : 500
             return .customMegabytes(mb)
         }
     }
@@ -2951,7 +2952,9 @@ final class AppSettings: ObservableObject {
             let gb = snap.storageLimitValue ?? 5
             downloadStorageLimit = .gigabytes([1, 5, 10].contains(gb) ? gb : 5)
         case .customMegabytes:
-            let mb = snap.storageLimitValue ?? 500
+            // A backup value above the Settings range, such as 9000000000000 MB, overflowed
+            // `byteLimit` (MB × 1024 × 1024) and crashed storage maintenance right after restore.
+            let mb = min(snap.storageLimitValue ?? 500, Self.customStorageMBRange.upperBound)
             downloadStorageLimit = .customMegabytes(mb)
         }
         refreshInterval = FeedRefreshInterval(rawValue: snap.refreshInterval) ?? .manual
