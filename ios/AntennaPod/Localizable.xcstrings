@@ -14014,23 +14014,6 @@
         }
       }
     },
-    "Appends archived episodes not already queued": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends archived episodes not already queued"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht archivierte Episoden ein, die noch nicht in der Warteschlange sind"
-          }
-        }
-      }
-    },
     "Episodes actions": {
       "extractionState": "manual",
       "localizations": {
@@ -48840,6 +48823,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und reiht dann Episoden aus dem weich begrenzten Alle-Episoden-Katalog (neueste 500 nach Veröffentlichungsdatum) ein, die noch nicht in der Warteschlange sind, neueste zuerst innerhalb dieser Grenze, einschließlich gehörter und archivierter. Ignoriert Status-, Podcast-, Typ- und Suchfilter. Warteschlangen-Sperre blockiert das Einreihen nicht."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then appends archived episodes from the full Archived catalog that are not already queued, newest archived first. Ignores podcast, search, and sort filters. Does not restore or unarchive. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then appends archived episodes from the full Archived catalog that are not already queued, newest archived first. Ignores podcast, search, and sort filters. Does not restore or unarchive. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und reiht dann archivierte Episoden aus dem vollständigen Archiv-Katalog ein, die noch nicht in der Warteschlange sind, neueste archivierte zuerst. Ignoriert Podcast-, Such- und Sortierfilter. Stellt nicht wieder her und hebt die Archivierung nicht auf. Warteschlangen-Sperre blockiert das Einreihen nicht."
           }
         }
       }

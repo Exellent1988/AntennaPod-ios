@@ -469,7 +469,7 @@ struct ArchivedView: View {
                         Label("Add all to queue", systemImage: "text.append")
                     }
                     .disabled(enqueueAllArchivedCandidatesCount == 0)
-                    .accessibilityHint(String(localized: "Appends archived episodes not already queued"))
+                    .accessibilityHint(String(localized: "Asks for confirmation, then appends archived episodes from the full Archived catalog that are not already queued, newest archived first. Ignores podcast, search, and sort filters. Does not restore or unarchive. Queue lock does not block enqueue."))
 
                     Button {
                         showRestoreAllConfirm = true
