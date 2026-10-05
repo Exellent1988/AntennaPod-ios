@@ -884,7 +884,7 @@ struct SettingsView: View {
                 }
                 .accessibilityLabel(String(localized: "Theme"))
                 .accessibilityValue(settings.theme.label)
-                .accessibilityHint(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode."))
+                .accessibilityHint(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode. Does not change Accent, restart playback, download, or alter per-podcast settings."))
                 Text(String(localized: "System follows the iOS appearance. Light and Dark force light or dark mode."))
                     .font(.caption)
                     .foregroundStyle(.secondary)

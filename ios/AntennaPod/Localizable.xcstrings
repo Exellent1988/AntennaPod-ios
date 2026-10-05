@@ -49335,6 +49335,23 @@
           }
         }
       }
+    },
+    "System follows the iOS appearance. Light and Dark force light or dark mode. Does not change Accent, restart playback, download, or alter per-podcast settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System follows the iOS appearance. Light and Dark force light or dark mode. Does not change Accent, restart playback, download, or alter per-podcast settings."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System folgt dem iOS-Erscheinungsbild. Hell und Dunkel erzwingen hellen oder dunklen Modus. Ändert nicht Akzent, startet die Wiedergabe nicht neu, lädt nicht herunter und ändert keine Podcast-Einstellungen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
