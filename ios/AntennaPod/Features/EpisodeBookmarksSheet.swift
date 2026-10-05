@@ -108,6 +108,7 @@ struct EpisodeBookmarksSheet: View {
                                 } label: {
                                     Label(String(localized: "Delete"), systemImage: "trash")
                                 }
+                                .accessibilityHint(String(localized: "Deletes this bookmark immediately. No confirmation. Does not change playback position, other bookmarks, chapters, Share with position, private notes, favorites, or the queue."))
                             }
                         }
                         .onDelete(perform: deleteBookmarks)

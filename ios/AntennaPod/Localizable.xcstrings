@@ -49101,6 +49101,23 @@
           }
         }
       }
+    },
+    "Deletes this bookmark immediately. No confirmation. Does not change playback position, other bookmarks, chapters, Share with position, private notes, favorites, or the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes this bookmark immediately. No confirmation. Does not change playback position, other bookmarks, chapters, Share with position, private notes, favorites, or the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht dieses Lesezeichen sofort. Keine Bestätigung. Ändert weder Wiedergabeposition noch andere Lesezeichen, Kapitel, Teilen mit Position, private Notizen, Favoriten oder die Queue."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
