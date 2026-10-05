@@ -2154,7 +2154,7 @@ struct SettingsView: View {
         Section {
             Toggle("Notify on new episodes", isOn: $settings.notifyOnNewEpisodes)
                 .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnNewEpisodes, role: .newEpisodes))
-                .accessibilityHint(String(localized: "Master switch for local new-episode notifications after refresh. Per-podcast Off silences that feed; per-podcast On is ignored while this is off. No push server."))
+                .accessibilityHint(String(localized: "Local banners after a successful refresh may open Inbox for newly appeared episodes. Title is the podcast name, or New episode / New episodes when empty. Body is the episode title or a count. Per-podcast Off still silences that feed; per-podcast On is ignored while this is off. Does not post a banner by itself and does not download. Not push."))
             Toggle("Notify on download errors", isOn: $settings.notifyOnDownloadErrors)
                 .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnDownloadErrors, role: .downloadErrors))
                 .accessibilityHint(String(localized: "Local banners when a download fails — may open Downloads. Title is the episode title, the podcast title when the episode title is empty, or Download failed. Body is a short error. Does not post a banner by itself. Not push. Successful downloads use Notify on download complete. Failures can still appear in Download errors when this is off."))

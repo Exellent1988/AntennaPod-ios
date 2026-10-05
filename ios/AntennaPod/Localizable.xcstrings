@@ -30607,23 +30607,6 @@
         }
       }
     },
-    "Master switch for local new-episode notifications after refresh. Per-podcast Off silences that feed; per-podcast On is ignored while this is off. No push server.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Master switch for local new-episode notifications after refresh. Per-podcast Off silences that feed; per-podcast On is ignored while this is off. No push server."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Master-Schalter für lokale Benachrichtigungen bei neuen Folgen nach dem Refresh. Pro-Podcast Aus stummelt diesen Feed; Pro-Podcast An wird ignoriert solange dieser Schalter aus ist. Kein Push-Server."
-          }
-        }
-      }
-    },
     "Same podcast": {
       "extractionState": "manual",
       "localizations": {
@@ -49319,6 +49302,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aktualisiert jeden abonnierten Podcast, der an Aktualisiert halten teilnimmt. Podcasts mit Aktualisiert halten Nie werden übersprungen; Wischen-Aktualisieren an einer Zeile aktualisiert diesen Podcast weiterhin allein. Nutzt die volle Abonnement-Bibliothek, nicht Suche oder Filter. Feed-Aktualisierung wird von den Nur-Wi‑Fi-Schaltern nicht begrenzt und darf Mobilfunk nutzen. Erfindet keine Episoden; Automatischer Download kann nach erfolgreichen Aktualisierungen neu erschienene einreihen. Unterschiedlich von Ordner neu scannen."
+          }
+        }
+      }
+    },
+    "Local banners after a successful refresh may open Inbox for newly appeared episodes. Title is the podcast name, or New episode / New episodes when empty. Body is the episode title or a count. Per-podcast Off still silences that feed; per-podcast On is ignored while this is off. Does not post a banner by itself and does not download. Not push.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local banners after a successful refresh may open Inbox for newly appeared episodes. Title is the podcast name, or New episode / New episodes when empty. Body is the episode title or a count. Per-podcast Off still silences that feed; per-podcast On is ignored while this is off. Does not post a banner by itself and does not download. Not push."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Banner nach erfolgreicher Aktualisierung können Posteingang für neu erschienene Episoden öffnen. Titel ist der Podcastname, oder Neue Episode / Neue Episoden wenn leer. Text ist der Episodentitel oder eine Anzahl. Pro-Podcast Aus stummelt diesen Feed weiterhin; Pro-Podcast An wird ignoriert, solange dieser Schalter aus ist. Löst selbst keinen Banner aus und lädt nicht herunter. Kein Push."
           }
         }
       }
