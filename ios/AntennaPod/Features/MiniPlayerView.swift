@@ -164,7 +164,7 @@ struct MiniPlayerView: View {
                             }
                             .disabled(previousChapterTarget == nil)
                             .accessibilityLabel(String(localized: "Previous chapter"))
-                            .accessibilityHint(String(localized: "Seeks to the previous chapter, or restarts the current chapter if more than 2 seconds in"))
+                            .accessibilityHint(String(localized: "Seeks to the previous chapter, or restarts the current chapter if more than 2 seconds in. No confirmation. Does not mark played, change the queue, or delete downloads."))
                             Button {
                                 if let target = nextChapterTarget {
                                     playback.jumpToPosition(seconds: target)
@@ -604,7 +604,7 @@ struct MiniPlayerView: View {
                 return String(localized: "Finishes the episode the same way as a forward skip. No confirmation.")
             }
         }
-        return String(localized: "Seeks to the next chapter")
+        return String(localized: "Seeks to the next chapter’s start immediately. No confirmation. Does not mark played, change the queue, or delete downloads.")
     }
 
 
