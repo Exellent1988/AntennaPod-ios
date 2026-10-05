@@ -276,11 +276,34 @@ enum DataBackupService {
             try JSONDecoder().decode(GpodderBackupSnapshot.self, from: $0)
         }
 
+        // Optional media: write ZIP downloads/* into Documents/downloads (merge: overwrite, never wipe folder).
+        // Runs before any data file is replaced: large media is what fills the disk, and a
+        // throw after the JSON writes would skip `reloadFromPersistence`, so the app kept the old
+        // library in memory while the next launch loaded the half-restored files.
+        let restoredMediaCount = try restoreMediaFiles(from: entries)
+
         var wrotePersistence = false
-        for name in persistenceFileNames {
-            guard let payload = data(for: name) else { continue }
-            try PodcastPersistence.writeFile(name: name, data: payload)
-            wrotePersistence = true
+        // Original bytes of each file replaced so far (nil = file did not exist), for rollback.
+        var replacedOriginals: [(name: String, data: Data?)] = []
+        do {
+            for name in persistenceFileNames {
+                guard let payload = data(for: name) else { continue }
+                let original = try? Data(contentsOf: PodcastPersistence.fileURL(name))
+                try PodcastPersistence.writeFile(name: name, data: payload)
+                replacedOriginals.append((name, original))
+                wrotePersistence = true
+            }
+        } catch {
+            // A failed write (disk full) must not leave a mix of backup and current files that
+            // the next launch would load although the import reported failure.
+            for entry in replacedOriginals.reversed() {
+                if let original = entry.data {
+                    try? PodcastPersistence.writeFile(name: entry.name, data: original)
+                } else {
+                    try? FileManager.default.removeItem(at: PodcastPersistence.fileURL(entry.name))
+                }
+            }
+            throw error
         }
         // Clear in-flight download map — not meaningful across restore.
         PodcastPersistence.savePendingDownloads([])
@@ -292,9 +315,6 @@ enum DataBackupService {
         if let gpodderSnapshot {
             gpodder.applyBackupSnapshot(gpodderSnapshot)
         }
-
-        // Optional media: write ZIP downloads/* into Documents/downloads (merge: overwrite, never wipe folder).
-        let restoredMediaCount = try restoreMediaFiles(from: entries)
 
         guard wrotePersistence
             || data(for: appSettingsFileName) != nil
