@@ -3125,7 +3125,8 @@ final class PodcastStore: ObservableObject {
                     continue
                 }
                 do {
-                    try await subscribeQuietly(feedUrl: outline.xmlUrl)
+                    // An `itpc://` outline is stored (and exported) as https; others unchanged.
+                    try await subscribeQuietly(feedUrl: FeedURLNormalization.storedFeedURL(outline.xmlUrl))
                     subscribed.insert(urlKey)
                     state.succeeded += 1
                 } catch {

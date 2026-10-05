@@ -106,6 +106,18 @@ enum FeedURLNormalization {
         return credentials.isUsable ? credentials : nil
     }
 
+    /// URL to store for a new subscription: a subscribe-scheme link (`itpc://`, `podcast://`,
+    /// `feed:` …) becomes its normalized http(s) URL; any other string is returned exactly as given.
+    static func storedFeedURL(_ raw: String) -> String {
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard SubscribeLinkRouter.feedURLString(fromSubscribeLink: trimmed) != nil,
+              case .ok(let url) = normalize(trimmed)
+        else {
+            return raw
+        }
+        return url
+    }
+
     /// First library feed whose canonical URL matches `feedUrl`, if any.
     static func subscribedFeed(matching feedUrl: String, in feeds: [PodcastFeed]) -> PodcastFeed? {
         let key = canonicalKey(feedUrl)
