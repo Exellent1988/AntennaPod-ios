@@ -31598,23 +31598,6 @@
         }
       }
     },
-    "Shares a self-contained HTML subscription list via the system share sheet. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shares a self-contained HTML subscription list via the system share sheet. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Teilt eine eigenständige HTML-Abonnementliste über das System-Share-Sheet. Lokale Ordner-Podcasts fehlen. Autor, Sprache, Kategorien und Funding erscheinen nur, wenn der Feed sie liefert."
-          }
-        }
-      }
-    },
     "Recently refreshed": {
       "extractionState": "manual",
       "localizations": {
@@ -48101,6 +48084,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Teilen-Blatt mit AntennaPod-kompatiblem OPML 2.0. Lokale Ordner-Podcasts fehlen. Du kannst von dort in Dateien speichern. Abonniert nicht ab, importiert nicht und ändert keine Tags. Unterschiedlich von OPML in Dateien speichern… und HTML-Export."
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with a self-contained HTML subscription list. Each row lists title, feed URL, and episode count; author, language, categories, and funding appear only when the feed provides them. Local folder podcasts are omitted. You can Save to Files from the share sheet. Does not unsubscribe, import, change tags, or write OPML. Not gpodder sync. Distinct from Export OPML and Save OPML to Files….": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with a self-contained HTML subscription list. Each row lists title, feed URL, and episode count; author, language, categories, and funding appear only when the feed provides them. Local folder podcasts are omitted. You can Save to Files from the share sheet. Does not unsubscribe, import, change tags, or write OPML. Not gpodder sync. Distinct from Export OPML and Save OPML to Files…."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Blatt mit einer eigenständigen HTML-Abonnementliste. Jede Zeile listet Titel, Feed-URL und Episodenanzahl; Autor, Sprache, Kategorien und Finanzierung nur, wenn der Feed sie liefert. Lokale Ordner-Podcasts fehlen. Du kannst von dort in Dateien speichern. Abonniert nicht ab, importiert nicht, ändert keine Tags und schreibt kein OPML. Kein gpodder-Sync. Unterschiedlich von OPML exportieren und OPML in Dateien speichern…."
           }
         }
       }

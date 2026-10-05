@@ -76,7 +76,7 @@ struct OpmlImportExportSection: View {
             }
             .disabled(!canExport)
             .accessibilityLabel(String(localized: "Export subscriptions as HTML"))
-            .accessibilityHint(String(localized: "Shares a self-contained HTML subscription list via the system share sheet. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed."))
+            .accessibilityHint(String(localized: "Opens the system share sheet with a self-contained HTML subscription list. Each row lists title, feed URL, and episode count; author, language, categories, and funding appear only when the feed provides them. Local folder podcasts are omitted. You can Save to Files from the share sheet. Does not unsubscribe, import, change tags, or write OPML. Not gpodder sync. Distinct from Export OPML and Save OPML to Files…."))
 
             Button {
                 if parental.needsPINForAddDiscover {
