@@ -49247,6 +49247,23 @@
           }
         }
       }
+    },
+    "Copies the feed RSS or Atom URL to the pasteboard. No confirmation. Disabled for local-folder podcasts and empty URLs. Distinct from the podcast website, funding, and discussion links, and from Share feed URL. Does not subscribe, refresh, or open a browser.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed RSS or Atom URL to the pasteboard. No confirmation. Disabled for local-folder podcasts and empty URLs. Distinct from the podcast website, funding, and discussion links, and from Share feed URL. Does not subscribe, refresh, or open a browser."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die Feed-RSS- oder Atom-URL in die Zwischenablage. Keine Bestätigung. Deaktiviert für Lokalordner-Podcasts und leere URLs. Unterschiedlich von Podcast-Website, Funding- und Diskussionslinks und von Feed-URL teilen. Abonniert nicht, aktualisiert nicht und öffnet keinen Browser."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

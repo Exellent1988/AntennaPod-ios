@@ -1532,6 +1532,7 @@ struct FeedDetailView: View {
                         }
                         .disabled(!canCopyFeedURL)
                         .accessibilityLabel(String(localized: "Copy feed URL"))
+                        .accessibilityHint(String(localized: "Copies the feed RSS or Atom URL to the pasteboard. No confirmation. Disabled for local-folder podcasts and empty URLs. Distinct from the podcast website, funding, and discussion links, and from Share feed URL. Does not subscribe, refresh, or open a browser."))
 
                         if let url = feedURLShareURL {
                             ShareLink(
