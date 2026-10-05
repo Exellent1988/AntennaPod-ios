@@ -140,7 +140,7 @@ enum EpisodeCopyLinks {
                 Label("Copy episode link", systemImage: "doc.on.doc")
             }
             .accessibilityLabel(String(localized: "Copy episode link"))
-            .accessibilityHint(String(localized: "Copies the episode webpage URL to the pasteboard"))
+            .accessibilityHint(String(localized: "Copies the feed-provided episode webpage http(s) link to the pasteboard. No confirmation. Never silently copies the enclosure as the episode link. Distinct from Copy media URL and Share episode. Does not open the browser, download, play, mark played, or change the queue."))
 
             // Keep the webpage ShareLink directly beside its Copy twin in every caller.
             EpisodeShareLinks.episodeLinkLabelStyle(episode: episode)

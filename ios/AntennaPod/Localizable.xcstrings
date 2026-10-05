@@ -10783,23 +10783,6 @@
         }
       }
     },
-    "Copies the episode webpage URL to the pasteboard": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the episode webpage URL to the pasteboard"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert die Episoden-Webseiten-URL in die Zwischenablage"
-          }
-        }
-      }
-    },
     "Episode link copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {
@@ -49244,6 +49227,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert die feedseitige Episoden-Medien-/Enclosure-http(s)-URL in die Zwischenablage. Keine Bestätigung. Verborgen für lokale Datei- oder Lokalordner-URLs. Unterschiedlich von Episodenlink kopieren und Episode teilen. Lädt nicht herunter, spielt nicht ab, markiert nicht als gehört und ändert nicht die Warteschlange."
+          }
+        }
+      }
+    },
+    "Copies the feed-provided episode webpage http(s) link to the pasteboard. No confirmation. Never silently copies the enclosure as the episode link. Distinct from Copy media URL and Share episode. Does not open the browser, download, play, mark played, or change the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided episode webpage http(s) link to the pasteboard. No confirmation. Never silently copies the enclosure as the episode link. Distinct from Copy media URL and Share episode. Does not open the browser, download, play, mark played, or change the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den feedseitigen Episoden-Webseiten-http(s)-Link in die Zwischenablage. Keine Bestätigung. Kopiert nie stillschweigend die Enclosure als Episodenlink. Unterschiedlich von Medien-URL kopieren und Episode teilen. Öffnet nicht den Browser, lädt nicht herunter, spielt nicht ab, markiert nicht als gehört und ändert nicht die Warteschlange."
           }
         }
       }
