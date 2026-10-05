@@ -47492,23 +47492,6 @@
       },
       "extractionState": "manual"
     },
-    "Lock Add / Discover asks for the PIN before the Add sheet, Discover charts, or Import OPML (Settings and Subscriptions). Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled. Export OPML stays unlocked.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lock Add / Discover asks for the PIN before the Add sheet, Discover charts, or Import OPML (Settings and Subscriptions). Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled. Export OPML stays unlocked."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hinzufügen / Entdecken sperren fragt vor dem Hinzufügen-Sheet, Entdecken-Charts oder OPML-Import (Einstellungen und Abonnements) nach der PIN. Netzwerk / Downloads sperren blockiert Nur-Wi‑Fi-Schalter bis zur Entsperrung. Explizite Top-Charts ausblenden fordert iTunes-Charts mit explicit=false an, solange der Elternschutz aktiv ist. OPML-Export bleibt entsperrt."
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "Set a 4–6 digit PIN to restrict Add / Discover (including Import OPML) and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock.": {
       "localizations": {
         "en": {
@@ -47557,6 +47540,23 @@
           }
         }
       }
+    },
+    "Lock Add / Discover asks for the PIN before the Add sheet, Discover charts, or Import OPML (Settings and Subscriptions). Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled — unlocking the session does not turn this filter off; turn the toggle off or disable parental controls. Export OPML stays unlocked.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lock Add / Discover asks for the PIN before the Add sheet, Discover charts, or Import OPML (Settings and Subscriptions). Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled — unlocking the session does not turn this filter off; turn the toggle off or disable parental controls. Export OPML stays unlocked."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hinzufügen / Entdecken sperren fragt vor dem Hinzufügen-Sheet, Entdecken-Charts oder OPML-Import (Einstellungen und Abonnements) nach der PIN. Netzwerk / Downloads sperren blockiert Nur-Wi‑Fi-Schalter bis zur Entsperrung. Explizite Top-Charts ausblenden fordert iTunes-Charts mit explicit=false an, solange der Elternschutz aktiv ist — Entsperren der Sitzung schaltet diesen Filter nicht aus; Schalter aus oder Elternschutz deaktivieren. OPML-Export bleibt entsperrt."
+          }
+        }
+      },
+      "extractionState": "manual"
     }
   },
   "version": "1.0"

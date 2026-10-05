@@ -175,7 +175,7 @@ struct ParentalControlsSettingsView: View {
     }
 
     private var optionsHelpText: String {
-        String(localized: "Lock Add / Discover asks for the PIN before the Add sheet, Discover charts, or Import OPML (Settings and Subscriptions). Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled. Export OPML stays unlocked.")
+        String(localized: "Lock Add / Discover asks for the PIN before the Add sheet, Discover charts, or Import OPML (Settings and Subscriptions). Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled — unlocking the session does not turn this filter off; turn the toggle off or disable parental controls. Export OPML stays unlocked.")
     }
 }
 
