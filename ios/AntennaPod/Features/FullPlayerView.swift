@@ -1422,6 +1422,7 @@ struct FullPlayerView: View {
             Button(String(localized: "Custom…")) {
                 showCustomPlaybackSpeed = true
             }
+            .accessibilityHint(String(localized: "Opens a sheet to set a custom session playback speed from 0.50× to 3.00×. Speed applies only after you confirm. Optional Also set as default. Does not change a per-podcast speed override by itself. Not Volume boost or Preserve pitch."))
         } primaryAction: {
             playback.cycleToNextSpeedPreset()
         } label: {

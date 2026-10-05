@@ -49135,6 +49135,23 @@
           }
         }
       }
+    },
+    "Opens a sheet to set a custom session playback speed from 0.50× to 3.00×. Speed applies only after you confirm. Optional Also set as default. Does not change a per-podcast speed override by itself. Not Volume boost or Preserve pitch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a sheet to set a custom session playback speed from 0.50× to 3.00×. Speed applies only after you confirm. Optional Also set as default. Does not change a per-podcast speed override by itself. Not Volume boost or Preserve pitch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet ein Sheet, um eine eigene Sitzungs-Wiedergabegeschwindigkeit von 0,50× bis 3,00× festzulegen. Die Geschwindigkeit gilt erst nach Bestätigung. Optional Auch als Standard setzen. Ändert allein keinen Podcast-Geschwindigkeits-Override. Nicht Lautstärke-Boost oder Tonhöhe beibehalten."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
