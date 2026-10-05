@@ -118,7 +118,7 @@ struct OpmlImportExportSection: View {
                     .font(.caption)
                     .foregroundStyle(.red)
             }
-            if let err = store.lastError, !store.opmlImport.isImporting {
+            if let err = store.opmlImportError, !store.opmlImport.isImporting {
                 Text(err)
                     .font(.caption)
                     .foregroundStyle(.red)
@@ -249,7 +249,7 @@ struct OpmlImportExportSection: View {
     private func handleImport(_ result: Result<[URL], Error>) {
         switch result {
         case .failure(let error):
-            store.lastError = error.localizedDescription
+            store.opmlImportError = error.localizedDescription
         case .success(let urls):
             guard let url = urls.first else { return }
             Task {
@@ -261,7 +261,7 @@ struct OpmlImportExportSection: View {
                     let data = try Data(contentsOf: url)
                     await store.importOpml(data: data, sourceFileName: url.lastPathComponent)
                 } catch {
-                    store.lastError = error.localizedDescription
+                    store.opmlImportError = error.localizedDescription
                 }
             }
         }

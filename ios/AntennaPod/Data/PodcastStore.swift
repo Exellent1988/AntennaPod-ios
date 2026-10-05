@@ -83,6 +83,9 @@ final class PodcastStore: ObservableObject {
     /// Zero when idle or for non-bulk `isLoading` work (subscribe / single-feed refresh).
     @Published var refreshTotalCount = 0
     @Published var lastError: String?
+    /// OPML import file/parse error, shown only on the OPML import rows. Kept apart from
+    /// `lastError` (Refresh all / single refresh / local rescan) so neither shows or clears the other.
+    @Published var opmlImportError: String?
     @Published var opmlImport = OpmlImportState()
 
     /// Optional settings for stamping last feed-refresh time after `refreshAllFeeds()`.
@@ -3115,7 +3118,7 @@ final class PodcastStore: ObservableObject {
     /// plus a full lowercase, so `https://host/feed` and `http://host/feed/` are one subscription.
     /// The stored feed URL is not rewritten when an outline is skipped.
     func importOpml(data: Data, sourceFileName: String? = nil) async {
-        lastError = nil
+        opmlImportError = nil
         beginDeferringFeedsSave()
         defer { endDeferringFeedsSave() }
         var state = OpmlImportState(isImporting: true, sourceFileName: sourceFileName)
@@ -3164,7 +3167,7 @@ final class PodcastStore: ObservableObject {
                 opmlImport = state
             }
         } catch {
-            lastError = error.localizedDescription
+            opmlImportError = error.localizedDescription
         }
         state.currentTitle = nil
         state.isImporting = false

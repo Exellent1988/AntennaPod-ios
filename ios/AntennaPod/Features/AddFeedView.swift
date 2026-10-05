@@ -649,7 +649,7 @@ struct AddFeedView: View {
                         .font(.caption)
                         .foregroundStyle(.red)
                 }
-                if let err = store.lastError, !store.opmlImport.isImporting {
+                if let err = store.opmlImportError, !store.opmlImport.isImporting {
                     Text(err)
                         .font(.caption)
                         .foregroundStyle(.red)
