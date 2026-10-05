@@ -421,6 +421,10 @@ struct MiniPlayerView: View {
                 showBookmarks = false
                 showEpisodePrivateNote = false
                 showJumpToPosition = false
+                // Shownotes (and Play soundbite inside) follow the live episode id.
+                // Leaving the sheet open after auto-next retargets copy/share/soundbite
+                // onto the next episode — Full Player already dismisses Description.
+                showDescription = false
                 // Speed sheet keeps the typed speed and Set applies it to whatever is now playing.
                 showCustomPlaybackSpeed = false
                 // Custom sleep sheet keeps the typed minutes and Set arms whatever is now playing.
