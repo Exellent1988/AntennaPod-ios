@@ -689,7 +689,7 @@ struct FullPlayerView: View {
                     }
                     .disabled(!canExportChaptersTOC)
                     .accessibilityLabel(String(localized: "Copy chapters"))
-                    .accessibilityHint(String(localized: "Copies the chapter table of contents to the pasteboard"))
+                    .accessibilityHint(String(localized: "Copies the full chapter table of contents to the pasteboard. Ignores the chapters search filter. Does not fetch remote or media chapters."))
 
                     Button {
                         copyCurrentChapter()

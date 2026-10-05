@@ -32238,23 +32238,6 @@
       },
       "extractionState": "manual"
     },
-    "Copies the chapter table of contents to the pasteboard": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the chapter table of contents to the pasteboard"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert das Kapitel-Inhaltsverzeichnis in die Zwischenablage"
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "Opens the system share sheet with the episode title and chapter table of contents": {
       "localizations": {
         "en": {
@@ -49115,6 +49098,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet ein Feld, um die Notiz dieses Lesezeichens zu ändern oder zu löschen. Keine Bestätigung zum Öffnen. Die Position bleibt gleich. Nur lokal — nicht über gpodder synchronisiert. Ändert weder Wiedergabe, andere Lesezeichen, Kapitel, Teilen mit Position, private Notizen, Favoriten noch die Queue."
+          }
+        }
+      }
+    },
+    "Copies the full chapter table of contents to the pasteboard. Ignores the chapters search filter. Does not fetch remote or media chapters.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full chapter table of contents to the pasteboard. Ignores the chapters search filter. Does not fetch remote or media chapters."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert das vollständige Kapitelinhaltsverzeichnis in die Zwischenablage. Ignoriert den Kapitel-Suchfilter. Lädt keine Remote- oder Medien-Kapitel nach."
           }
         }
       }
