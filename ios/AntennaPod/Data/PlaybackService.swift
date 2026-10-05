@@ -208,6 +208,12 @@ final class PlaybackService: ObservableObject {
         return true
     }
 
+    /// The loaded `AVPlayerItem` failed (stream could not load or lost the network). AVPlayer
+    /// never plays such an item again; callers rebuild through `play(episode:)` instead.
+    private var hasFailedItem: Bool {
+        player?.currentItem?.status == .failed
+    }
+
     /// Starts or switches playback. Returns `false` when streaming is blocked by Wi‑Fi-only policy
     /// (current player left unchanged; `lastError` set for UI).
     /// - Parameter fromBeginning: When `true`, start at position 0 (ignore saved resume) and do **not**
@@ -610,7 +616,13 @@ final class PlaybackService: ObservableObject {
     /// If already playing → seek to 0 and keep playing. If paused → seek to 0 and play.
     /// Progress is persisted via `seek` / `saveProgress` only — does **not** flip played/unplayed.
     func playFromBeginning() {
-        guard currentEpisode != nil, player != nil else { return }
+        guard let episode = currentEpisode, player != nil else { return }
+        // Seek + play on a failed item (stream lost the network) is silent and showed Pause
+        // with no audio. Rebuild at 0 instead (`fromBeginning` skips resume / skip-intro).
+        if hasFailedItem {
+            play(episode: episode, fromBeginning: true)
+            return
+        }
         seek(toSeconds: 0)
         // Intentional restart — do not apply rewind-after-pause on the ensuing play.
         pausedAt = nil
@@ -656,7 +668,8 @@ final class PlaybackService: ObservableObject {
             return false
         }
 
-        let isCurrent = currentEpisode?.id == episode.id && player != nil
+        // A failed item cannot seek or play; load it fresh like a non-current episode.
+        let isCurrent = currentEpisode?.id == episode.id && player != nil && !hasFailedItem
         if !isCurrent {
             // Fresh load at 0 so skip-intro / resume do not steal the soundbite start; seek next.
             guard play(episode: episode, fileURL: fileURL, fromBeginning: true) else {
@@ -1891,6 +1904,9 @@ final class PlaybackService: ObservableObject {
 
     private func resumeAfterAudioSessionEvent() {
         guard let player, currentEpisode != nil else { return }
+        // Interruption end / route change must not claim playing on a dead item; the failure
+        // alert is already up and the next Play rebuilds the stream.
+        guard !hasFailedItem else { return }
         applyRewindAfterPauseIfNeeded()
         activateSession()
         player.play()
