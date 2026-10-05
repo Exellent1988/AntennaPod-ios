@@ -54,12 +54,13 @@ struct EpisodeVideoSurface: UIViewRepresentable {
 
     final class PlayerContainerView: UIView {
         weak var pictureInPictureSession: PictureInPictureSession?
-        /// Player taken off the layer while the app is in the background (see below).
+        /// Player taken off the layer while the app is in the background (see below). Weak:
+        /// a player torn down by auto-advance must not be kept alive or re-attached.
         private weak var backgroundDetachedPlayer: AVPlayer?
-
-        var isPlayerDetachedForBackground: Bool {
-            backgroundDetachedPlayer != nil
-        }
+        /// True from a real background detach until foreground. Explicit, not derived from the
+        /// weak player: after auto-advance released the old player, a derived flag turned false
+        /// and the next progress re-render attached the new player in the background.
+        private(set) var isPlayerDetachedForBackground = false
 
         func replaceBackgroundDetachedPlayer(with player: AVPlayer) {
             backgroundDetachedPlayer = player
@@ -105,13 +106,17 @@ struct EpisodeVideoSurface: UIViewRepresentable {
                 return
             }
             backgroundDetachedPlayer = player
+            isPlayerDetachedForBackground = true
             playerLayer.player = nil
         }
 
         private func reattachPlayerAfterBackground() {
-            guard let player = backgroundDetachedPlayer else { return }
+            guard isPlayerDetachedForBackground else { return }
+            isPlayerDetachedForBackground = false
+            let player = backgroundDetachedPlayer
             backgroundDetachedPlayer = nil
-            if playerLayer.player == nil {
+            // Released meanwhile: leave nil; the next updateUIView attaches the current player.
+            if let player, playerLayer.player == nil {
                 playerLayer.player = player
             }
         }
