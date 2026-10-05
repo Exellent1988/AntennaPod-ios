@@ -1105,6 +1105,8 @@ struct DownloadErrorsView: View {
                 }
                 // Clear always targets the full persisted log (not the filtered subset).
                 .disabled(allErrors.isEmpty && downloads.lastError == nil)
+                .accessibilityLabel(String(localized: "Clear download errors"))
+                .accessibilityHint(String(localized: "Asks for confirmation, then clears the full persisted download error log and the Downloads banner — ignores the search filter. Offline downloaded files are kept. Does not cancel active downloads or delete episode media."))
             }
             ToolbarItem(placement: .primaryAction) {
                 Menu {

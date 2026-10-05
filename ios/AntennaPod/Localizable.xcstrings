@@ -49298,6 +49298,40 @@
           }
         }
       }
+    },
+    "Clear download errors": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear download errors"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-Fehler löschen"
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then clears the full persisted download error log and the Downloads banner — ignores the search filter. Offline downloaded files are kept. Does not cancel active downloads or delete episode media.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then clears the full persisted download error log and the Downloads banner — ignores the search filter. Offline downloaded files are kept. Does not cancel active downloads or delete episode media."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und löscht dann das gesamte gespeicherte Download-Fehlerprotokoll und das Downloads-Banner — ignoriert den Suchfilter. Offline heruntergeladene Dateien bleiben. Bricht keine laufenden Downloads ab und löscht keine Episoden-Medien."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
