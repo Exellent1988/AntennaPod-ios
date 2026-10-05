@@ -23803,23 +23803,6 @@
         }
       }
     },
-    "Set a custom rewind interval between 5 and 60 seconds.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Set a custom rewind interval between 5 and 60 seconds."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Benutzerdefiniertes Zurückspul-Intervall zwischen 5 und 60 Sekunden festlegen."
-          }
-        }
-      }
-    },
     "Used by mini player, full player, and Lockscreen / Now Playing skip buttons. Defaults match AntennaPod (10s back / 30s forward). Presets 5/10/15/20/30/60 plus Custom… (5–60 seconds).": {
       "extractionState": "manual",
       "localizations": {
@@ -49261,6 +49244,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lokale Banner bei fehlgeschlagenem Download — können Downloads öffnen. Titel ist der Episodentitel, der Podcasttitel wenn der Episodentitel leer ist, oder Download fehlgeschlagen. Text ist ein kurzer Fehler. Löst selbst keinen Banner aus. Kein Push. Erfolgreiche Downloads nutzen Bei Download-Abschluss benachrichtigen. Fehler können bei Aus weiterhin unter Download-Fehler erscheinen."
+          }
+        }
+      }
+    },
+    "Opens a sheet to set a custom Rewind interval from 5 to 60 seconds. Interval applies only after you confirm Set. The next rewind uses the saved value. Changing this does not move the current position. Distinct from Fast-forward Custom…. Not Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a sheet to set a custom Rewind interval from 5 to 60 seconds. Interval applies only after you confirm Set. The next rewind uses the saved value. Changing this does not move the current position. Distinct from Fast-forward Custom…. Not Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet ein Sheet, um ein eigenes Zurückspul-Intervall von 5 bis 60 Sekunden festzulegen. Das Intervall gilt erst nach Bestätigung mit Festlegen. Das nächste Zurückspulen nutzt den gespeicherten Wert. Ändern verschiebt die aktuelle Position nicht. Unterschiedlich von Vorspulen Benutzerdefiniert…. Nicht Zurückspulen nach Pause."
           }
         }
       }

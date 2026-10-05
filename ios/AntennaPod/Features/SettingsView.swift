@@ -1228,7 +1228,7 @@ struct SettingsView: View {
                 Button(String(localized: "Custom…")) {
                     customSkipIntervalMode = .rewind
                 }
-                .accessibilityHint(String(localized: "Set a custom rewind interval between 5 and 60 seconds."))
+                .accessibilityHint(String(localized: "Opens a sheet to set a custom Rewind interval from 5 to 60 seconds. Interval applies only after you confirm Set. The next rewind uses the saved value. Changing this does not move the current position. Distinct from Fast-forward Custom…. Not Rewind after pause."))
                 Picker("Fast-forward", selection: $settings.fastForwardSeconds) {
                     ForEach(AppSettings.skipIntervalPresets, id: \.self) { secs in
                         Text(AppSettings.skipIntervalLabel(secs)).tag(secs)
