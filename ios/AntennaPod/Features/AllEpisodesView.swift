@@ -610,7 +610,7 @@ struct AllEpisodesView: View {
                     .disabled(enqueueAllUnplayedEpisodesCandidatesCount == 0)
                     .accessibilityLabel(String(localized: "Add all unplayed to queue"))
                     .accessibilityHint(
-                        String(localized: "Appends unplayed, non-archived All Episodes not already queued (newest 500 soft cap); distinct from Add all to queue, which includes played and archived")
+                        String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from the soft-capped All Episodes catalog (newest 500 by publish date) that are not already queued, newest first within that cap. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived.")
                     )
 
                     Button {

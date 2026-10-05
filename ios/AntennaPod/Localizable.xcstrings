@@ -33077,24 +33077,6 @@
         }
       }
     },
-    "Appends unplayed, non-archived All Episodes not already queued (newest 500 soft cap); distinct from Add all to queue, which includes played and archived": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for All Episodes Add all unplayed to queue.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends unplayed, non-archived All Episodes not already queued (newest 500 soft cap); distinct from Add all to queue, which includes played and archived"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht ungehörte, nicht archivierte Episoden aller Episoden ein, die noch nicht in der Warteschlange sind (Soft-Cap: neueste 500); unterschiedlich von Alle zur Warteschlange, das auch gehörte und archivierte Episoden einschließt"
-          }
-        }
-      }
-    },
     "Appends unplayed episodes in this podcast that are not archived and not already queued, in episode sort order": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Feed detail Add all unplayed to queue.",
@@ -48885,6 +48867,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden im Alle-Episoden-Katalog der neuesten 500. Ignoriert Status-, Podcast-, Typ-, Sortier- und Suchfilter; ältere Episoden jenseits der Soft-Obergrenze sind nicht enthalten. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then appends unplayed, non-archived episodes from the soft-capped All Episodes catalog (newest 500 by publish date) that are not already queued, newest first within that cap. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then appends unplayed, non-archived episodes from the soft-capped All Episodes catalog (newest 500 by publish date) that are not already queued, newest first within that cap. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und reiht dann ungehörte, nicht archivierte Episoden aus dem weich begrenzten Alle-Episoden-Katalog (neueste 500 nach Veröffentlichungsdatum) ein, die noch nicht in der Warteschlange sind, neueste zuerst innerhalb dieser Grenze. Ignoriert Status-, Podcast-, Typ-, Sortier- und Suchfilter; ältere Episoden jenseits der Soft-Obergrenze sind nicht enthalten. Warteschlangen-Sperre blockiert das Einreihen nicht. Unterschiedlich von Alle zur Warteschlange hinzufügen, das auch gehörte und archivierte einschließt."
           }
         }
       }
