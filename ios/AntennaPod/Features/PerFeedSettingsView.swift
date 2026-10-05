@@ -336,7 +336,7 @@ struct PerFeedSettingsView: View {
                         Button("Clear authentication", role: .destructive) {
                             clearHttpBasicAuth()
                         }
-                        .accessibilityHint(String(localized: "Removes HTTP Basic credentials for this podcast from the Keychain"))
+                        .accessibilityHint(String(localized: "Removes HTTP Basic credentials for this podcast from the Keychain immediately. No confirmation. Private feed refresh and matching-host downloads for this podcast stop authenticating until you save again. Does not affect other podcasts, Podcast Index keys, subscriptions, or offline files."))
                     }
                 } header: {
                     Text("Authentication")
