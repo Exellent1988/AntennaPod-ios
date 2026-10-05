@@ -71,6 +71,9 @@ struct AntennaPodApp: App {
                     PlaybackDeepLinkRouter.shared.attach(playback: playback)
                 }
         }
+        .commands {
+            PlaybackKeyboardCommands(playback: playback)
+        }
     }
 }
 
