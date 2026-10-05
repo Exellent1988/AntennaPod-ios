@@ -640,7 +640,7 @@ struct AllEpisodesView: View {
                     }
                     .disabled(archiveAllEpisodesCandidatesCount == 0)
                     .accessibilityHint(
-                        String(localized: "Archives non-archived episodes in the newest-500 All Episodes catalog; archived does not mean played")
+                        String(localized: "Asks for confirmation, then archives non-archived episodes in the newest-500 All Episodes catalog. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
                     )
                 } label: {
                     Label("Episodes actions", systemImage: "ellipsis.circle")

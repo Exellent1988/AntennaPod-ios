@@ -29432,23 +29432,6 @@
         }
       }
     },
-    "Archives non-archived episodes in the newest-500 All Episodes catalog; archived does not mean played": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archives non-archived episodes in the newest-500 All Episodes catalog; archived does not mean played"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archiviert nicht archivierte Episoden im Soft-Cap-Katalog (neueste 500) aller Episoden; archiviert bedeutet nicht gehört"
-          }
-        }
-      }
-    },
     "Archives %lld non-archived episodes in the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.": {
       "extractionState": "manual",
       "localizations": {
@@ -48885,6 +48868,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und markiert dann gehörte Episoden im Alle-Episoden-Katalog der neuesten 500 als ungehört, einschließlich archivierter Episoden. Ignoriert Status-, Podcast-, Typ-, Sortier- und Suchfilter; ältere Episoden jenseits der Soft-Obergrenze sind nicht enthalten. Löscht keine Downloads, entfernt keine Episoden aus der Warteschlange, stoppt keine Wiedergabe und hebt die Archivierung nicht auf."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then archives non-archived episodes in the newest-500 All Episodes catalog. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then archives non-archived episodes in the newest-500 All Episodes catalog. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Archived does not mean played. Does not mark played, delete downloads, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden im Alle-Episoden-Katalog der neuesten 500. Ignoriert Status-, Podcast-, Typ-, Sortier- und Suchfilter; ältere Episoden jenseits der Soft-Obergrenze sind nicht enthalten. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange."
           }
         }
       }
