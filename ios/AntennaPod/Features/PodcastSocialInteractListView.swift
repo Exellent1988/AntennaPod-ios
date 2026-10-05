@@ -171,7 +171,7 @@ struct PodcastSocialInteractListView: View {
                         }
                         .accessibilityLabel(String(localized: "Share discuss URL"))
                         .accessibilityHint(
-                            String(localized: "Shares the feed-provided discussion URL; opens only and does not post as you")
+                            String(localized: "Opens the system share sheet with the feed-provided discussion URL. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Discuss, Copy discuss URL, and Share feed URL. Sharing is your choice and does not subscribe or download.")
                         )
 
                         Button {

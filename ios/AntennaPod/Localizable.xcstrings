@@ -18275,24 +18275,6 @@
       },
       "comment": "Feed detail ⋯ and socialInteract list row: share the feed-provided podcast:socialInteract discussion URL. Hidden when no openable URL exists; does not post as the user."
     },
-    "Shares the feed-provided discussion URL; opens only and does not post as you": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shares the feed-provided discussion URL; opens only and does not post as you"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Teilt die vom Feed bereitgestellte Diskussions-URL; öffnet nur und veröffentlicht nicht in deinem Namen"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Share discuss URL in the feed detail menu or socialInteract list. Share only; no posting."
-    },
     "Copy discuss protocol": {
       "extractionState": "manual",
       "localizations": {
@@ -49327,6 +49309,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert die vom Feed gelieferte Diskussions-URL in die Zwischenablage. Keine Bestätigung. Postet nicht in deinem Namen. Nutzt nie die Feed-RSS-URL oder die Podcast-Website. Unterschiedlich von Diskutieren, Diskussions-URL teilen und Feed-URL kopieren. Öffnet keinen Browser, abonniert nicht und lädt nicht herunter."
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the feed-provided discussion URL. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Discuss, Copy discuss URL, and Share feed URL. Sharing is your choice and does not subscribe or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the feed-provided discussion URL. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Discuss, Copy discuss URL, and Share feed URL. Sharing is your choice and does not subscribe or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Share-Sheet mit der vom Feed gelieferten Diskussions-URL. Postet nicht in deinem Namen. Nutzt nie die Feed-RSS-URL oder die Podcast-Website. Unterschiedlich von Diskutieren, Diskussions-URL kopieren und Feed-URL teilen. Teilen ist deine Entscheidung und abonniert nicht und lädt nicht herunter."
           }
         }
       }
