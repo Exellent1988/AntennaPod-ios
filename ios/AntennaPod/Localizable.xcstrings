@@ -41919,23 +41919,6 @@
         }
       }
     },
-    "Saved preference only. This beta does not skip silence on stock AVPlayer, because a custom audio engine would break the video surface, Now Playing, and playback rate. The switch does not start playback. Not Preserve pitch. Default off.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Saved preference only. This beta does not skip silence on stock AVPlayer, because a custom audio engine would break the video surface, Now Playing, and playback rate. The switch does not start playback. Not Preserve pitch. Default off."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur gespeicherte Einstellung. Diese Beta überspringt Stille auf dem Standard-AVPlayer nicht, weil eine eigene Audio-Engine die Videofläche, Now Playing und das Wiedergabetempo stören würde. Der Schalter startet keine Wiedergabe. Nicht Tonhöhe beibehalten. Standard aus."
-          }
-        }
-      }
-    },
     "On. When playback speed is not 1×, stock AVPlayer keeps a natural pitch. This is the default. At 1× the pitch stays the same either way. If an item is already loaded, the change applies to that item; otherwise it is saved for the next one. This does not start playback, skip silence, seek, or download. Not Android ExoPlayer or Sonic.": {
       "extractionState": "manual",
       "localizations": {
@@ -49485,6 +49468,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "An setzt den Spoken-Audio-Sitzungsmodus für Sprache, oder Voice-Chat, wenn Spoken-Audio abgelehnt wird — keine Lautstärkeverstärkung, kein ReplayGain, kein Lautstärke-Boost, kein Stille überspringen und kein Tonhöhe beibehalten. Aus nutzt den Standard-Sitzungsmodus, und Video mit sichtbarer Fläche nutzt Film-Wiedergabe. Standard aus. Wenn pausiert, aktiviert das Umschalten die Sitzung nicht und unterbricht keine anderen Apps; es gilt beim nächsten Abspielen. Der Schalter startet keine Wiedergabe, sucht nicht und lädt nichts herunter. Nicht Android LoudnessEnhancer."
+          }
+        }
+      }
+    },
+    "Saved preference only. This beta does not skip silence on stock AVPlayer, because a custom audio engine would break the video surface, Now Playing, and playback rate. Turning the switch does not change playback, speed, or downloads, and no skipped-silence time is invented. Not Preserve pitch. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved preference only. This beta does not skip silence on stock AVPlayer, because a custom audio engine would break the video surface, Now Playing, and playback rate. Turning the switch does not change playback, speed, or downloads, and no skipped-silence time is invented. Not Preserve pitch. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur gespeicherte Einstellung. Diese Beta überspringt Stille auf dem Standard-AVPlayer nicht, weil eine eigene Audio-Engine die Videofläche, Now Playing und das Wiedergabetempo stören würde. Umschalten ändert weder Wiedergabe noch Tempo noch Downloads, und es wird keine übersprungene Stille erfunden. Nicht Tonhöhe beibehalten. Standard aus."
           }
         }
       }

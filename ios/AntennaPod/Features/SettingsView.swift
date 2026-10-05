@@ -1478,7 +1478,7 @@ struct SettingsView: View {
     }
 
     private var skipSilenceAccessibilityHint: String {
-        String(localized: "Saved preference only. This beta does not skip silence on stock AVPlayer, because a custom audio engine would break the video surface, Now Playing, and playback rate. The switch does not start playback. Not Preserve pitch. Default off.")
+        String(localized: "Saved preference only. This beta does not skip silence on stock AVPlayer, because a custom audio engine would break the video surface, Now Playing, and playback rate. Turning the switch does not change playback, speed, or downloads, and no skipped-silence time is invented. Not Preserve pitch. Default off.")
     }
 
     /// VoiceOver for Settings → Preserve pitch. On is stock AVPlayer time-domain
