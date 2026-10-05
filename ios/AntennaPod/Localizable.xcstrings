@@ -18545,24 +18545,6 @@
       },
       "comment": "Honesty footnote when podcast:socialInteract list is truncated to the first 20."
     },
-    "Opens the discussion link from the feed in the system browser": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens the discussion link from the feed in the system browser"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet den Diskussionslink aus dem Feed im Systembrowser"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Discuss / podcast:socialInteract openURL action."
-    },
     "Protocol %@": {
       "extractionState": "manual",
       "localizations": {
@@ -49329,6 +49311,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und löscht dann das gesamte gespeicherte Download-Fehlerprotokoll und das Downloads-Banner — ignoriert den Suchfilter. Offline heruntergeladene Dateien bleiben. Bricht keine laufenden Downloads ab und löscht keine Episoden-Medien."
+          }
+        }
+      }
+    },
+    "Opens the feed-provided discussion http(s) link in the system browser — not an in-app WebView. No confirmation. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Copy discuss URL, Share discuss URL, and Open podcast website. Does not subscribe, download, or change playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the feed-provided discussion http(s) link in the system browser — not an in-app WebView. No confirmation. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Copy discuss URL, Share discuss URL, and Open podcast website. Does not subscribe, download, or change playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den vom Feed gelieferten Diskussions-http(s)-Link im Systembrowser — kein In-App-WebView. Keine Bestätigung. Postet nicht in deinem Namen. Nutzt nie die Feed-RSS-URL oder die Podcast-Website. Unterschiedlich von Diskussions-URL kopieren, Diskussions-URL teilen und Podcast-Website öffnen. Abonniert nicht, lädt nicht herunter und ändert die Wiedergabe nicht."
           }
         }
       }

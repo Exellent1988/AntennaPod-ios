@@ -1484,7 +1484,7 @@ struct FeedDetailView: View {
                                 Label("Discuss", systemImage: "bubble.left.and.bubble.right")
                             }
                             .accessibilityLabel(String(localized: "Discuss"))
-                            .accessibilityHint(String(localized: "Opens the discussion link from the feed in the system browser"))
+                            .accessibilityHint(String(localized: "Opens the feed-provided discussion http(s) link in the system browser — not an in-app WebView. No confirmation. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Copy discuss URL, Share discuss URL, and Open podcast website. Does not subscribe, download, or change playback."))
 
                             Button {
                                 copyDiscussURL(url)
