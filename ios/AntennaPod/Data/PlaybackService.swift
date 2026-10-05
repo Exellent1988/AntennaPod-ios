@@ -153,6 +153,11 @@ final class PlaybackService: ObservableObject {
     /// progress tick cannot restore the live playhead. Automatic rewind does not clear it.
     private var markPlayedResetHoldEpisodeId: String?
 
+    /// Loaded episode the listener explicitly marked unplayed. Leaving it inside the
+    /// smart-mark window must not mark it played again. Cleared when a new play
+    /// session starts; playing to the actual end still marks played.
+    private var smartMarkSuppressedEpisodeId: String?
+
     /// Wall-clock end (seconds) for feed `podcast:soundbite` play-until-end.
     /// When set and playing, auto-pause at this position (like user pause — no queue advance).
     /// Cleared on user seek/skip/pause, episode change, sleep-timer fire, or when the end is reached.
@@ -268,6 +273,7 @@ final class PlaybackService: ObservableObject {
         // New play session. finishCurrentEpisode already persisted a mark-played
         // reset for the episode we left; this start may save its own progress.
         markPlayedResetHoldEpisodeId = nil
+        smartMarkSuppressedEpisodeId = nil
 
         // Fresh episode (or first play): effective speed = feed override ?? Settings default.
         // Session rate from player tap/Custom… is intentionally replaced on episode change
@@ -1154,9 +1160,19 @@ final class PlaybackService: ObservableObject {
             return
         }
         persistProgress(force: true)
-        if ended || almostEnded(position: positionSeconds, duration: durationSeconds) {
+        if ended {
+            store.markPlayed(episode.id, removeFromQueue: true)
+        } else if smartMarkSuppressedEpisodeId != episode.id,
+                  almostEnded(position: positionSeconds, duration: durationSeconds) {
             store.markPlayed(episode.id, removeFromQueue: true)
         }
+    }
+
+    /// Explicit Mark unplayed on the loaded episode: skip smart mark when leaving it
+    /// in this play session. No-op for other episodes.
+    func suppressSmartMarkAfterMarkUnplayed(for episodeId: String) {
+        guard currentEpisode?.id == episodeId else { return }
+        smartMarkSuppressedEpisodeId = episodeId
     }
 
     /// When remaining ≤ skipOutroSeconds (duration known and longer than the outro),

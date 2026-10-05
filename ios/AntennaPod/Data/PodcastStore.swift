@@ -837,6 +837,8 @@ final class PodcastStore: ObservableObject {
         state.updatedAtEpochMs = Int64(Date().timeIntervalSince1970 * 1000)
         playbackStates[episodeId] = state
         pendingAutoDeleteIds.remove(episodeId)
+        // Switching away near the end would otherwise smart-mark it played again.
+        playback?.suppressSmartMarkAfterMarkUnplayed(for: episodeId)
         // Leave the reset hold. Releasing it here lets the next progress
         // tick write the live playhead back, so a later play resumes mid-episode.
         publishWidgetSnapshot()
