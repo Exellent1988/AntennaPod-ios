@@ -1871,7 +1871,7 @@ struct SettingsView: View {
             Toggle(String(localized: "Auto-download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.autoDownloadWifiOnly))
                 .accessibilityLabel(String(localized: "Auto-download Wi‑Fi only"))
                 .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.autoDownloadWifiOnly, role: .autoDownload))
-                .accessibilityHint(String(localized: "When on (default), auto-download after refresh skips cellular. Does not block manual downloads."))
+                .accessibilityHint(String(localized: "When on (default), auto-download after a successful refresh needs Wi‑Fi or Ethernet. Does not start a download by itself. Manual downloads and streaming stay on their own toggles. Feed refresh is not limited by this toggle and may use cellular. Not Manual download or Stream Wi‑Fi only. No VPN or proxy detection."))
                 .onChange(of: settings.autoDownloadWifiOnly) { _, _ in
                     downloads.pumpWaitingQueue()
                 }
