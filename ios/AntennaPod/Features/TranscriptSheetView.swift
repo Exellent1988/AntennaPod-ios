@@ -390,7 +390,7 @@ struct TranscriptSheetView: View {
                             .accessibilityHint(
                                 cueSeekFinishesEpisode(cue)
                                     ? String(localized: "Finishes the episode the same way as a forward skip. No confirmation.")
-                                    : String(localized: "Seeks playback to this time")
+                                    : String(localized: "Seeks playback to this cue’s start immediately. No confirmation. Does not mark played, change the queue, or delete downloads.")
                             )
                             .accessibilityAddTraits(isCurrent ? .isSelected : [])
                         }

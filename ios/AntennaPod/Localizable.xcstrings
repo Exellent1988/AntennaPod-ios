@@ -14944,23 +14944,6 @@
         }
       }
     },
-    "Seeks playback to this time": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seeks playback to this time"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Springt die Wiedergabe zu dieser Zeit"
-          }
-        }
-      }
-    },
     "When on, auto-download skips cellular networks.": {
       "extractionState": "manual",
       "localizations": {
@@ -49132,6 +49115,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Springt sofort zur eingegebenen Position in der Episode. Keine Bestätigung. Markiert weder gehört noch ändert die Queue oder löscht Downloads."
+          }
+        }
+      }
+    },
+    "Seeks playback to this cue’s start immediately. No confirmation. Does not mark played, change the queue, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks playback to this cue’s start immediately. No confirmation. Does not mark played, change the queue, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt sofort zum Start dieses Transkript-Cues. Keine Bestätigung. Markiert weder gehört noch ändert die Queue oder löscht Downloads."
           }
         }
       }
