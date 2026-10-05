@@ -592,7 +592,7 @@ struct AllEpisodesView: View {
                     }
                     .disabled(playRandomCandidates.isEmpty)
                     .accessibilityLabel(String(localized: "Play random"))
-                    .accessibilityHint(String(localized: "Plays a random All Episodes catalog episode with playable media within the newest-500 soft cap. Prefers unplayed when any remain."))
+                    .accessibilityHint(String(localized: "Plays a random episode from the newest-500 All Episodes catalog with playable media. Prefers unplayed when any remain. Ignores status, podcast, episode type, search, and sort filters. Does not pull older episodes beyond the soft cap. Does not reorder All Episodes. No confirmation."))
 
                     Button {
                         showEnqueueAllConfirm = true
