@@ -24437,23 +24437,6 @@
         }
       }
     },
-    "Use global, Always, or Never for deleting this podcast’s offline file when an episode is marked played. Favorites are always kept.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Use global, Always, or Never for deleting this podcast’s offline file when an episode is marked played. Favorites are always kept."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Global verwenden, Immer oder Nie: Offline-Datei dieses Podcasts löschen, wenn eine Episode als gehört markiert wird. Favoriten bleiben immer erhalten."
-          }
-        }
-      }
-    },
     "Follows Settings → Delete episode after playing (currently %@). Favorites still keep their offline files. Defers while that local file is the active player item.": {
       "extractionState": "manual",
       "localizations": {
@@ -49234,6 +49217,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Global, eine Vorgabe oder Benutzerdefiniert… für die Wiedergabegeschwindigkeit dieses Podcasts. Gilt bei frischem Episodenstart und sofort, wenn Sie dies ändern, während eine Episode dieses Podcasts spielt. Player-Geschwindigkeitsregler bleiben nur für die Sitzung und schreiben diese Ausnahme nicht um. Schreibt die globale Standardgeschwindigkeit nicht allein um. Nicht Lautstärke-Verstärkung oder Tonhöhe beibehalten. Eine Vorgabe ändern sucht nicht und markiert nicht als gehört."
+          }
+        }
+      }
+    },
+    "Use global, Always, or Never for deleting this podcast’s offline file when an episode is marked played. Always deletes even when the global toggle is off; Never never auto-deletes even when global is on. Favorites still keep their offline files. Defers while that local file is the active player item. Manual Delete download still works. Changing this does not delete files now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, Always, or Never for deleting this podcast’s offline file when an episode is marked played. Always deletes even when the global toggle is off; Never never auto-deletes even when global is on. Favorites still keep their offline files. Defers while that local file is the active player item. Manual Delete download still works. Changing this does not delete files now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global, Immer oder Nie: Offline-Datei dieses Podcasts löschen, wenn eine Episode als gehört markiert wird. Immer löscht auch, wenn der globale Schalter aus ist; Nie löscht nie automatisch, auch wenn global an ist. Favoriten behalten ihre Offline-Dateien. Verschiebt das Löschen, solange diese lokale Datei das aktive Player-Element ist. Manuelles Download löschen funktioniert weiter. Ändern löscht jetzt keine Dateien."
           }
         }
       }

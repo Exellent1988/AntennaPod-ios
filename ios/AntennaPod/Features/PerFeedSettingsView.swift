@@ -157,7 +157,7 @@ struct PerFeedSettingsView: View {
                     }
                 }
                 .accessibilityLabel(String(localized: "Delete after playing"))
-                .accessibilityHint(String(localized: "Use global, Always, or Never for deleting this podcast’s offline file when an episode is marked played. Favorites are always kept."))
+                .accessibilityHint(String(localized: "Use global, Always, or Never for deleting this podcast’s offline file when an episode is marked played. Always deletes even when the global toggle is off; Never never auto-deletes even when global is on. Favorites still keep their offline files. Defers while that local file is the active player item. Manual Delete download still works. Changing this does not delete files now."))
                 .accessibilityValue(current.autoDeleteAfterPlaying.label)
                 Text(autoDeleteHelp)
                     .font(.caption)
