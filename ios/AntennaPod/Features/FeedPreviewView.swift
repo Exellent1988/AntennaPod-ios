@@ -36,8 +36,8 @@ struct FeedPreviewView: View {
     @State private var isLoading = false
     @State private var loadError: String?
     @State private var isSubscribing = false
-    /// Error from this preview's own Confirm Subscribe. `store.lastError` is shared with
-    /// Refresh all / OPML / local rescan and can hold an unrelated failure.
+    /// Error from this preview's own Confirm Subscribe (`PodcastStore.subscribe` result).
+    /// `store.lastError` is shared with Refresh all / OPML / local rescan.
     @State private var subscribeError: String?
     @State private var openFeed: PodcastFeed?
     /// Shown after HTTP 401 so a private feed can be previewed before subscribe.
@@ -260,7 +260,7 @@ struct FeedPreviewView: View {
                             Task { await confirmSubscribe() }
                         }
                     } label: {
-                        if isSubscribing || store.isLoading {
+                        if isSubscribing {
                             ProgressView()
                                 .frame(maxWidth: .infinity)
                                 .accessibilityLabel(String(localized: "Subscribing"))
@@ -270,7 +270,7 @@ struct FeedPreviewView: View {
                         }
                     }
                     .buttonStyle(.borderedProminent)
-                    .disabled(isSubscribing || store.isLoading || parsed == nil || request.feedUrl.isEmpty)
+                    .disabled(isSubscribing || parsed == nil || request.feedUrl.isEmpty)
                     .accessibilityHint(String(localized: "Adds this podcast to your library after preview"))
                 }
 
@@ -496,16 +496,16 @@ struct FeedPreviewView: View {
         defer { isSubscribing = false }
         subscribeError = nil
         let creds = previewCredentials
-        await store.subscribe(feedUrl: resolved, credentials: creds)
-        if store.lastError == nil {
+        // Own result, not the shared store.lastError (Refresh all may run at the same time).
+        if let error = await store.subscribe(feedUrl: resolved, credentials: creds) {
+            subscribeError = error
+            if error.contains("401") {
+                needsHttpAuth = true
+                loadError = error
+            }
+        } else {
             onSubscribed?()
             dismiss()
-        } else {
-            subscribeError = store.lastError
-            if store.lastError?.contains("401") == true {
-                needsHttpAuth = true
-                loadError = store.lastError
-            }
         }
     }
 

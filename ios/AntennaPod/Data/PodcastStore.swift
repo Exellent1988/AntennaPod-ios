@@ -134,10 +134,11 @@ final class PodcastStore: ObservableObject {
         publishWidgetSnapshot()
     }
 
-    func subscribe(feedUrl: String, credentials: FeedHttpBasicCredentials? = nil) async {
-        lastError = nil
-        isLoading = true
-        defer { isLoading = false }
+    /// Feed preview Confirm Subscribe. Returns the error message, or nil on success.
+    /// Leaves the shared `isLoading` / `lastError` alone: a subscribe during Refresh all must not
+    /// end the refresh spinner early or wipe its error (the preview shows its own state).
+    @discardableResult
+    func subscribe(feedUrl: String, credentials: FeedHttpBasicCredentials? = nil) async -> String? {
         // New subscription to https://user:pass@host/feed: keep the password in the Keychain
         // (sent as HTTP Basic on refresh and downloads), not in feeds.json. Entered credentials
         // win. Existing subscriptions keep their stored URL (refresh matches it exactly).
@@ -156,8 +157,9 @@ final class PodcastStore: ObservableObject {
                 credentials: resolvedCredentials,
                 persistCredentials: resolvedCredentials?.isUsable == true
             )
+            return nil
         } catch {
-            lastError = error.localizedDescription
+            return error.localizedDescription
         }
     }
 
