@@ -44899,23 +44899,6 @@
         }
       }
     },
-    "Choices are 10, 25, 50, 100, and 200 episodes. The default is 50. Always soft-capped — no unlimited. Applies only to Feed detail Download all unplayed, newest first. Not Auto-download, Max storage, Max downloaded episodes, or Parallel downloads. Changing the picker does not invent downloads.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choices are 10, 25, 50, 100, and 200 episodes. The default is 50. Always soft-capped — no unlimited. Applies only to Feed detail Download all unplayed, newest first. Not Auto-download, Max storage, Max downloaded episodes, or Parallel downloads. Changing the picker does not invent downloads."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auswahl sind 10, 25, 50, 100 und 200 Episoden. Die Voreinstellung ist 50. Immer soft-begrenzt — kein Unbegrenzt. Gilt nur für Feed-Detail Alle ungehörten herunterladen, neueste zuerst. Nicht Auto-Download, Max. Speicher, Max. heruntergeladene Episoden oder Parallele Downloads. Der Picker erfindet keine Downloads."
-          }
-        }
-      }
-    },
     "%@. This is not the default of 50 episodes.": {
       "extractionState": "manual",
       "localizations": {
@@ -49434,6 +49417,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Auswahl sind Unbegrenzt, 25, 50, 100, 200 und 500 Episoden. Die Voreinstellung ist Unbegrenzt — Unbegrenzt löscht keine Dateien allein nach Anzahl. Über-Limit-Bereinigung überspringt Favoriten, Episoden in der Warteschlange und den spielenden Download; gehörte Nicht-Favoriten ohne Warteschlange zuerst. Nicht Max. Speicher oder Parallele Downloads. Wechsel auf eine niedrigere Anzahl kann ungeschützte Offline-Dateien löschen; Unbegrenzt löscht jetzt keine Dateien."
+          }
+        }
+      }
+    },
+    "Choices are 10, 25, 50, 100, and 200 episodes. The default is 50. Always soft-capped — no Unlimited. Applies only to Feed detail Download all unplayed, newest first. Status, episode type, and search filters do not shrink full-feed eligibility. Local-folder podcasts are skipped. Manual Wi‑Fi-only, Parallel downloads, and storage limits still apply when transfers start. Not Auto-download, Max storage, or Max downloaded episodes. Changing the picker does not invent or start downloads now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choices are 10, 25, 50, 100, and 200 episodes. The default is 50. Always soft-capped — no Unlimited. Applies only to Feed detail Download all unplayed, newest first. Status, episode type, and search filters do not shrink full-feed eligibility. Local-folder podcasts are skipped. Manual Wi‑Fi-only, Parallel downloads, and storage limits still apply when transfers start. Not Auto-download, Max storage, or Max downloaded episodes. Changing the picker does not invent or start downloads now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswahl sind 10, 25, 50, 100 und 200 Episoden. Die Voreinstellung ist 50. Immer soft-begrenzt — kein Unbegrenzt. Gilt nur für Feed-Detail Alle ungehörten herunterladen, neueste zuerst. Status-, Episodentyp- und Suchfilter verkleinern die volle Feed-Berechtigung nicht. Lokale Ordner-Podcasts werden übersprungen. Manueller Download nur Wi‑Fi, Parallele Downloads und Speicherlimits gelten weiterhin, wenn Übertragungen starten. Nicht Automatischer Download, Max. Speicher oder Max. heruntergeladene Episoden. Der Picker erfindet keine Downloads und startet jetzt keine."
           }
         }
       }

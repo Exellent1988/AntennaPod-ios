@@ -2496,7 +2496,7 @@ struct SettingsView: View {
     }
 
     private var downloadAllUnplayedSoftCapAccessibilityHint: String {
-        String(localized: "Choices are 10, 25, 50, 100, and 200 episodes. The default is 50. Always soft-capped — no unlimited. Applies only to Feed detail Download all unplayed, newest first. Not Auto-download, Max storage, Max downloaded episodes, or Parallel downloads. Changing the picker does not invent downloads.")
+        String(localized: "Choices are 10, 25, 50, 100, and 200 episodes. The default is 50. Always soft-capped — no Unlimited. Applies only to Feed detail Download all unplayed, newest first. Status, episode type, and search filters do not shrink full-feed eligibility. Local-folder podcasts are skipped. Manual Wi‑Fi-only, Parallel downloads, and storage limits still apply when transfers start. Not Auto-download, Max storage, or Max downloaded episodes. Changing the picker does not invent or start downloads now.")
     }
 
     private var feedDownloadUnplayedSoftCapHelpText: String {
