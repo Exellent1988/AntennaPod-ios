@@ -12,6 +12,7 @@ final class PodcastStore: ObservableObject {
                 PodcastPersistence.saveFeeds(feeds)
             }
             allEpisodesCache = nil
+            inboxEpisodesCache = nil
         }
     }
     /// > 0 while a batch loop runs; `feeds` changes then only mark `feedsSaveIsPending`.
@@ -26,14 +27,19 @@ final class PodcastStore: ObservableObject {
     }
     /// Episode id → position / played. Published so episode rows refresh.
     @Published var playbackStates: [String: EpisodePlaybackState] = [:] {
-        didSet { PodcastPersistence.savePlaybackStates(playbackStates) }
+        didSet {
+            PodcastPersistence.savePlaybackStates(playbackStates)
+            // Played state decides `inboxEpisodes` membership.
+            inboxEpisodesCache = nil
+        }
     }
     /// Per-subscription overrides keyed by feed id (`feed-settings.json`).
     @Published var feedSettingsById: [UUID: FeedSettings] = [:] {
         didSet {
             PodcastPersistence.saveFeedSettings(feedSettingsById)
-            // Custom titles feed `allEpisodes` row titles.
+            // Custom titles feed `allEpisodes` and `inboxEpisodes` row titles.
             allEpisodesCache = nil
+            inboxEpisodesCache = nil
         }
     }
     /// Episode id → favorited-at epoch ms (`favorites.json` side map).
@@ -42,7 +48,11 @@ final class PodcastStore: ObservableObject {
     }
     /// Episode id → archived-at epoch ms (`archived.json` side map). Archived ≠ played.
     @Published var archivedAtById: [String: Int64] = [:] {
-        didSet { PodcastPersistence.saveArchived(archivedAtById) }
+        didSet {
+            PodcastPersistence.saveArchived(archivedAtById)
+            // Archived episodes leave `inboxEpisodes`.
+            inboxEpisodesCache = nil
+        }
     }
     /// Episode id → user bookmarks (`bookmarks.json`). Local-only wall-clock positions; not gpodder.
     @Published var bookmarksByEpisodeId: [String: [EpisodeBookmark]] = [:] {
@@ -1107,6 +1117,22 @@ final class PodcastStore: ObservableObject {
     /// "New" matches playback state: not `isPlayed` (in-progress still counts as inbox). Archived are hidden from Inbox (and thus Home New preview).
     /// Inbox tab may re-sort client-side via `AppSettings.inboxSort`; Home New uses this newest-first order.
     var inboxEpisodes: [InboxEpisode] {
+        // Read by the Inbox tab badge (RootTabView) and ~15 times per InboxView body, all of
+        // which rerun on every 0.5s playback tick. Rebuild only when an input below changes.
+        if let cached = inboxEpisodesCache {
+            return cached
+        }
+        let built = buildInboxEpisodes()
+        inboxEpisodesCache = built
+        return built
+    }
+
+    /// Last `inboxEpisodes` result. Inputs: `feeds`, `playbackStates` (`isPlayed`),
+    /// `archivedAtById` (`isArchived`), `feedSettingsById` (`displayTitle`). Each one's
+    /// observer clears this.
+    private var inboxEpisodesCache: [InboxEpisode]?
+
+    private func buildInboxEpisodes() -> [InboxEpisode] {
         var items: [InboxEpisode] = []
         for feed in feeds {
             for episode in feed.episodes where !isPlayed(episode.id) && !isArchived(episode.id) {
