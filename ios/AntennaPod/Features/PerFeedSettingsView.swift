@@ -429,7 +429,7 @@ struct PerFeedSettingsView: View {
                         .accessibilityHint(
                             FeedTags.normalize(newTagDraft) == nil
                                 ? String(localized: "Enter a non-empty tag name to enable Add.")
-                                : String(localized: "Assigns the new tag name to this podcast.")
+                                : String(localized: "Assigns this new tag name to this podcast immediately. No confirmation. Creates the tag in the local vocabulary if it is new. Tags are local labels that filter Subscriptions — not folders synced to gpodder. A podcast can have several tags. Does not unsubscribe, rename other tags, delete downloads, or change other podcasts’ tags.")
                         )
                 }
             } header: {

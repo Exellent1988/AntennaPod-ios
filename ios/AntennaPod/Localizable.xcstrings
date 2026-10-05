@@ -5060,23 +5060,6 @@
         }
       }
     },
-    "Assigns the new tag name to this podcast.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Assigns the new tag name to this podcast."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Weist den neuen Tag-Namen diesem Podcast zu."
-          }
-        }
-      }
-    },
     "No transcript text": {
       "extractionState": "manual",
       "localizations": {
@@ -49251,6 +49234,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wisch-Entfernen oder Kontextmenü „Von Podcast entfernen“ hebt diesen Tag für diesen Podcast sofort auf. Keine Bestätigung. Die letzte Nutzung löscht den Tag. Kontextmenü Umbenennen gilt für alle Podcasts mit diesem Namen; Tag überall löschen fragt nach Bestätigung. Tags sind lokale Abonnement-Filter — keine gpodder-Ordner. Kündigt nicht ab und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Assigns this new tag name to this podcast immediately. No confirmation. Creates the tag in the local vocabulary if it is new. Tags are local labels that filter Subscriptions — not folders synced to gpodder. A podcast can have several tags. Does not unsubscribe, rename other tags, delete downloads, or change other podcasts’ tags.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assigns this new tag name to this podcast immediately. No confirmation. Creates the tag in the local vocabulary if it is new. Tags are local labels that filter Subscriptions — not folders synced to gpodder. A podcast can have several tags. Does not unsubscribe, rename other tags, delete downloads, or change other podcasts’ tags."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weist diesen neuen Tag-Namen diesem Podcast sofort zu. Keine Bestätigung. Legt den Tag in der lokalen Wortliste an, falls er neu ist. Tags sind lokale Bezeichnungen, die Abonnements filtern — keine mit gpodder synchronisierten Ordner. Ein Podcast kann mehrere Tags haben. Kündigt nicht ab, benennt andere Tags nicht um, löscht keine Downloads und ändert keine Tags anderer Podcasts."
           }
         }
       }
