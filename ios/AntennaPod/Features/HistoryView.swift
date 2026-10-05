@@ -286,9 +286,17 @@ struct HistoryView: View {
             return String(localized: "There are no history episodes. Episodes you play or mark as played appear here, ordered by last played.")
         }
         if isPodcastFiltering && !isSearching {
-            return String(localized: "The selected podcast has no history episodes. Choose All or another podcast filter.")
+            return String(localized: "The selected podcast has no history episodes. Episodes remain in the full History catalog. Clear history, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full History, not this empty view.")
         }
-        return String(localized: "No history episodes match your search. Clear or change the search to see History.")
+        return String(localized: "No history episodes match your search. Episodes remain in the full History catalog. Clear history, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full History, not this empty view.")
+    }
+
+    /// VoiceOver recovery hint for the podcast/search mismatch empty state only.
+    private var historyNoMatchAccessibilityHint: String {
+        if isPodcastFiltering && !isSearching {
+            return String(localized: "Choose All or another podcast filter to see other History episodes. This does not clear History or mark episodes played.")
+        }
+        return String(localized: "Change or clear search to see other History episodes. This does not clear History or mark episodes played.")
     }
 
     private func historyRemainingSummary(for visibleItems: [HistoryEpisode]) -> EpisodeRemainingTime.Summary {
@@ -398,6 +406,7 @@ struct HistoryView: View {
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(String(localized: "No matching history"))
                 .accessibilityValue(historyEmptyStateAccessibilityValue)
+                .accessibilityHint(historyNoMatchAccessibilityHint)
             } else {
                 ForEach(visibleItems) { item in
                     EpisodeRow(

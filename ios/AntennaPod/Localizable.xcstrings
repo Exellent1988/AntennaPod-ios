@@ -24575,40 +24575,6 @@
         }
       }
     },
-    "The selected podcast has no history episodes. Choose All or another podcast filter.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The selected podcast has no history episodes. Choose All or another podcast filter."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Der gewählte Podcast hat keine Verlaufs-Episoden. Wähle Alle oder einen anderen Podcast-Filter."
-          }
-        }
-      }
-    },
-    "No history episodes match your search. Clear or change the search to see History.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No history episodes match your search. Clear or change the search to see History."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Verlaufs-Episoden passen zu deiner Suche. Lösche oder ändere die Suche, um den Verlauf zu sehen."
-          }
-        }
-      }
-    },
     "There are no archived episodes. Archive hides episodes from Inbox without marking them played. Restore them here or from a feed.": {
       "extractionState": "manual",
       "localizations": {
@@ -48662,6 +48628,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ändere oder lösche die Suche, um andere Downloads zu sehen. Das löscht keine Offline-Dateien."
+          }
+        }
+      }
+    },
+    "The selected podcast has no history episodes. Episodes remain in the full History catalog. Clear history, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full History, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected podcast has no history episodes. Episodes remain in the full History catalog. Clear history, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full History, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der gewählte Podcast hat keine Verlaufs-Episoden. Episoden bleiben im vollständigen Verlaufs-Katalog. Verlauf löschen, Alle zur Warteschlange, Alle markieren, Alle archivieren, Zufällig abspielen, Kopieren und Teilen nutzen weiter den ganzen Verlauf, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No history episodes match your search. Episodes remain in the full History catalog. Clear history, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full History, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No history episodes match your search. Episodes remain in the full History catalog. Clear history, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full History, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Verlaufs-Episoden passen zu deiner Suche. Episoden bleiben im vollständigen Verlaufs-Katalog. Verlauf löschen, Alle zur Warteschlange, Alle markieren, Alle archivieren, Zufällig abspielen, Kopieren und Teilen nutzen weiter den ganzen Verlauf, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "Choose All or another podcast filter to see other History episodes. This does not clear History or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose All or another podcast filter to see other History episodes. This does not clear History or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle Alle oder einen anderen Podcast-Filter, um andere Verlaufs-Episoden zu sehen. Das löscht den Verlauf nicht und markiert keine Episoden als gehört."
+          }
+        }
+      }
+    },
+    "Change or clear search to see other History episodes. This does not clear History or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear search to see other History episodes. This does not clear History or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Suche, um andere Verlaufs-Episoden zu sehen. Das löscht den Verlauf nicht und markiert keine Episoden als gehört."
           }
         }
       }
