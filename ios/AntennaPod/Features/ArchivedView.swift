@@ -152,7 +152,7 @@ struct ArchivedView: View {
         } else {
             filtered = afterPodcast.filter { item in
                 if store.episodeMatchesLibraryQuery(item.episode, query: q) { return true }
-                return item.feedTitle.localizedCaseInsensitiveContains(q)
+                return item.feedTitle.localizedSearchContains(q)
             }
         }
         return filtered.sorted { lhs, rhs in

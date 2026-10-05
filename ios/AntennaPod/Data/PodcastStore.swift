@@ -2999,7 +2999,7 @@ final class PodcastStore: ObservableObject {
 
     private static func matches(_ value: String?, query: String) -> Bool {
         guard let value, !value.isEmpty else { return false }
-        return value.localizedCaseInsensitiveContains(query)
+        return value.localizedSearchContains(query)
     }
 
     /// Shownotes / feed description are stored as HTML. Match the same plain text the sheets show
@@ -3008,7 +3008,7 @@ final class PodcastStore: ObservableObject {
         guard let value, !value.isEmpty else { return false }
         let plain = HTMLTextStripping.plainText(from: value)
         guard !plain.isEmpty else { return false }
-        return plain.localizedCaseInsensitiveContains(query)
+        return plain.localizedSearchContains(query)
     }
 
     // MARK: - Local folder feeds (beta)

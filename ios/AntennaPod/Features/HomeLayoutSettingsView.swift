@@ -38,7 +38,7 @@ struct HomeLayoutSettingsView: View {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base = allSections
         if q.isEmpty { return base }
-        return base.filter { $0.label.localizedCaseInsensitiveContains(q) }
+        return base.filter { $0.label.localizedSearchContains(q) }
     }
 
     var body: some View {

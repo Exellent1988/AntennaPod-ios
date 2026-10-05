@@ -45,7 +45,7 @@ struct ManageTagsView: View {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let base = allTags
         if q.isEmpty { return base }
-        return base.filter { $0.localizedCaseInsensitiveContains(q) }
+        return base.filter { $0.localizedSearchContains(q) }
     }
 
     var body: some View {

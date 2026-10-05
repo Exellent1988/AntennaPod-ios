@@ -205,7 +205,7 @@ struct FeedDescriptionSheetView: View {
     private var filteredParagraphs: [String] {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !q.isEmpty else { return paragraphs }
-        return paragraphs.filter { $0.localizedCaseInsensitiveContains(q) }
+        return paragraphs.filter { $0.localizedSearchContains(q) }
     }
 
     private var isFiltering: Bool {

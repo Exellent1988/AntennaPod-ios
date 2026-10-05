@@ -132,8 +132,8 @@ struct TranscriptSheetView: View {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !q.isEmpty else { return cues }
         return cues.filter { cue in
-            if cue.text.localizedCaseInsensitiveContains(q) { return true }
-            if let speaker = cue.speaker, speaker.localizedCaseInsensitiveContains(q) { return true }
+            if cue.text.localizedSearchContains(q) { return true }
+            if let speaker = cue.speaker, speaker.localizedSearchContains(q) { return true }
             return false
         }
     }

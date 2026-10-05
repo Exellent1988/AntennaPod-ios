@@ -254,7 +254,7 @@ struct AllEpisodesView: View {
         if q.isEmpty { return base }
         return base.filter { item in
             store.episodeMatchesLibraryQuery(item.episode, query: q)
-                || item.feedTitle.localizedCaseInsensitiveContains(q)
+                || item.feedTitle.localizedSearchContains(q)
         }
     }
 

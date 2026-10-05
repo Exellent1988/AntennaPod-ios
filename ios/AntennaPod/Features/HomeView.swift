@@ -63,7 +63,7 @@ struct HomeView: View {
         return base.filter { episode in
             if store.episodeMatchesLibraryQuery(episode, query: q) { return true }
             let feedTitle = store.displayTitle(containingEpisodeId: episode.id)
-            return feedTitle.localizedCaseInsensitiveContains(q)
+            return feedTitle.localizedSearchContains(q)
         }
     }
 
@@ -78,7 +78,7 @@ struct HomeView: View {
         if q.isEmpty {
             filtered = base
         } else {
-            filtered = base.filter { store.displayTitle(for: $0).localizedCaseInsensitiveContains(q) }
+            filtered = base.filter { store.displayTitle(for: $0).localizedSearchContains(q) }
         }
         return Array(filtered.prefix(feedsLimit))
     }
@@ -122,7 +122,7 @@ struct HomeView: View {
         return base.filter { item in
             if store.episodeMatchesLibraryQuery(item.episode, query: q) { return true }
             let feedTitle = store.downloadDisplayTitle(for: item)
-            return feedTitle.localizedCaseInsensitiveContains(q)
+            return feedTitle.localizedSearchContains(q)
         }
     }
 
@@ -1152,7 +1152,7 @@ struct HomeView: View {
         guard !q.isEmpty else { return items }
         return items.filter { item in
             store.episodeMatchesLibraryQuery(item.episode, query: q)
-                || item.feedTitle.localizedCaseInsensitiveContains(q)
+                || item.feedTitle.localizedSearchContains(q)
         }
     }
 

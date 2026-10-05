@@ -294,7 +294,7 @@ struct QueueView: View {
             if store.episodeMatchesLibraryQuery(episode, query: q) { return true }
             let feedTitle = queueFeed(for: episode.id, in: feedsByEpisodeId)
                 .map { store.displayTitle(for: $0) } ?? ""
-            return feedTitle.localizedCaseInsensitiveContains(q)
+            return feedTitle.localizedSearchContains(q)
         }
     }
 

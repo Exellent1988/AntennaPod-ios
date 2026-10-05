@@ -89,7 +89,7 @@ struct FullPlayerView: View {
     private var filteredChapterIndices: [Int] {
         let q = chapterDebouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !q.isEmpty else { return Array(chapters.indices) }
-        return chapters.indices.filter { chapters[$0].title.localizedCaseInsensitiveContains(q) }
+        return chapters.indices.filter { chapters[$0].title.localizedSearchContains(q) }
     }
 
     private var isFilteringChapters: Bool {

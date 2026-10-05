@@ -41,11 +41,11 @@ struct BookmarksView: View {
         let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !query.isEmpty else { return catalogItems }
         return catalogItems.filter { item in
-            item.episodeTitle.localizedCaseInsensitiveContains(query)
-                || item.feedTitle.localizedCaseInsensitiveContains(query)
-                || item.bookmark.note.localizedCaseInsensitiveContains(query)
+            item.episodeTitle.localizedSearchContains(query)
+                || item.feedTitle.localizedSearchContains(query)
+                || item.bookmark.note.localizedSearchContains(query)
                 || BookmarksExport.positionText(item.bookmark.positionSeconds)
-                    .localizedCaseInsensitiveContains(query)
+                    .localizedSearchContains(query)
         }
     }
 

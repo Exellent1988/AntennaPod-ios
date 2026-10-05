@@ -140,9 +140,9 @@ struct SettingsView: View {
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         if q.isEmpty { return true }
         return keys.contains { key in
-            if key.localizedCaseInsensitiveContains(q) { return true }
+            if key.localizedSearchContains(q) { return true }
             let localized = String(localized: String.LocalizationValue(key))
-            return localized.localizedCaseInsensitiveContains(q)
+            return localized.localizedSearchContains(q)
         }
     }
 

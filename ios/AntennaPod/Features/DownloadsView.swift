@@ -62,7 +62,7 @@ struct DownloadsView: View {
             filtered = base.filter { item in
                 if store.episodeMatchesLibraryQuery(item.episode, query: q) { return true }
                 let feedTitle = store.downloadDisplayTitle(for: item)
-                return feedTitle.localizedCaseInsensitiveContains(q)
+                return feedTitle.localizedSearchContains(q)
             }
         }
         return filtered.sorted { lhs, rhs in
@@ -1023,9 +1023,9 @@ struct DownloadErrorsView: View {
         let base = allErrors
         if q.isEmpty { return base }
         return base.filter { entry in
-            if entry.episodeTitle.localizedCaseInsensitiveContains(q) { return true }
-            if entry.feedTitle.localizedCaseInsensitiveContains(q) { return true }
-            return entry.message.localizedCaseInsensitiveContains(q)
+            if entry.episodeTitle.localizedSearchContains(q) { return true }
+            if entry.feedTitle.localizedSearchContains(q) { return true }
+            return entry.message.localizedSearchContains(q)
         }
     }
 
