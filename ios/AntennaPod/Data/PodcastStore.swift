@@ -198,7 +198,9 @@ final class PodcastStore: ObservableObject {
     }
 
     func setFeedSettings(_ settings: FeedSettings, for feedId: UUID) {
-        let previousSpeed = feedSettings(for: feedId).playbackSpeed
+        let previous = feedSettings(for: feedId)
+        let previousSpeed = previous.playbackSpeed
+        let previousTitle = previous.customTitle
         if settings.isDefault {
             feedSettingsById.removeValue(forKey: feedId)
         } else {
@@ -208,6 +210,12 @@ final class PodcastStore: ObservableObject {
         // Other feed prefs must not clobber a temporary player session rate.
         if previousSpeed != settings.playbackSpeed {
             playback?.applyEffectivePlaybackSpeedIfCurrent(feedId: feedId)
+        }
+        // Lock screen / Control Center and the Continue widget read the display title,
+        // but they do not refresh while paused. Pin, skip intro, and other prefs do not.
+        if previousTitle != settings.customTitle {
+            playback?.refreshNowPlayingTitleIfCurrent(feedId: feedId)
+            publishWidgetSnapshot()
         }
     }
 

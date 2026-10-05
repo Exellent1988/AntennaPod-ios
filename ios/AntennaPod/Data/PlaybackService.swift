@@ -445,6 +445,17 @@ final class PlaybackService: ObservableObject {
         setRate(resolvedPlaybackSpeed(for: episode))
     }
 
+    /// Custom title is the Now Playing artist. The progress tick is throttled and
+    /// does not run while paused, so a rename must refresh the loaded episode now.
+    /// Does not change the rate, seek, or publish the widget snapshot.
+    func refreshNowPlayingTitleIfCurrent(feedId: UUID) {
+        guard let episode = currentEpisode,
+              let store,
+              let feed = store.feed(containingEpisodeId: episode.id),
+              feed.id == feedId else { return }
+        updateNowPlayingInfo(force: true)
+    }
+
     /// AntennaPod-style: advance session rate to the next `AppSettings.speedPresets` value (wraps).
     /// If the current rate is not a preset, jumps to the first preset (same as Android `setNextPlaybackSpeed`).
     /// Match with a small tolerance: `clampPlaybackSpeed` snaps 1.3 in Float so
