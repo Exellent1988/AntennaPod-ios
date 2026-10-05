@@ -2628,6 +2628,11 @@ final class PodcastStore: ObservableObject {
         refreshCompletedCount = 0
         var newBatches: [NewEpisodeBatch] = []
         for feed in targets {
+            // Unsubscribed while this refresh was running: do not fetch it back in.
+            guard feeds.contains(where: { $0.id == feed.id }) else {
+                refreshCompletedCount += 1
+                continue
+            }
             if LocalFolderFeed.isLocalFolderFeed(feed) {
                 let existingIds = Set(feed.episodes.map(\.id))
                 do {
@@ -2651,7 +2656,7 @@ final class PodcastStore: ObservableObject {
             }
             let existingIds = Set(feed.episodes.map(\.id))
             do {
-                try await subscribeQuietly(feedUrl: feed.feedUrl)
+                try await subscribeQuietly(feedUrl: feed.feedUrl, onlyIfSubscribed: true)
                 if let updated = feeds.first(where: { $0.feedUrl == feed.feedUrl }) {
                     let newcomers = updated.episodes.filter { !existingIds.contains($0.id) }
                     if !newcomers.isEmpty {
@@ -2979,7 +2984,8 @@ final class PodcastStore: ObservableObject {
     func subscribeQuietly(
         feedUrl: String,
         credentials: FeedHttpBasicCredentials? = nil,
-        persistCredentials: Bool = false
+        persistCredentials: Bool = false,
+        onlyIfSubscribed: Bool = false
     ) async throws {
         let resolvedCreds = credentials ?? httpBasicCredentials(forFeedUrl: feedUrl)
         var feed = try await repository.fetchAndParse(feedUrl: feedUrl, credentials: resolvedCreds)
@@ -3002,6 +3008,9 @@ final class PodcastStore: ObservableObject {
             }
             feed.episodes.append(contentsOf: kept)
             feeds[index] = feed
+        } else if onlyIfSubscribed {
+            // Refresh all: the podcast was unsubscribed during the network fetch.
+            return
         } else {
             feeds.append(feed)
         }
