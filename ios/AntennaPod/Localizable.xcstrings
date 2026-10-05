@@ -26362,23 +26362,6 @@
         }
       }
     },
-    "Shares an OPML file via the system share sheet. You can Save to Files from there.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shares an OPML file via the system share sheet. You can Save to Files from there."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Teilt eine OPML-Datei über das System-Share-Sheet. Von dort kannst du in Dateien speichern."
-          }
-        }
-      }
-    },
     "Opens the Files save picker and writes AntennaPod-compatible OPML. Local folder podcasts are omitted.": {
       "extractionState": "manual",
       "localizations": {
@@ -48101,6 +48084,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@. Das ist ein benutzerdefinierter Schwellenwert, keiner der Vorgaben und nicht die Voreinstellung von 30 Sekunden."
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with AntennaPod-compatible OPML 2.0. Local folder podcasts are omitted. You can Save to Files from the share sheet. Does not unsubscribe, import, or change tags. Distinct from Save OPML to Files… and HTML export.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with AntennaPod-compatible OPML 2.0. Local folder podcasts are omitted. You can Save to Files from the share sheet. Does not unsubscribe, import, or change tags. Distinct from Save OPML to Files… and HTML export."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Blatt mit AntennaPod-kompatiblem OPML 2.0. Lokale Ordner-Podcasts fehlen. Du kannst von dort in Dateien speichern. Abonniert nicht ab, importiert nicht und ändert keine Tags. Unterschiedlich von OPML in Dateien speichern… und HTML-Export."
           }
         }
       }
