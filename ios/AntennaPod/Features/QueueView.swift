@@ -835,7 +835,7 @@ struct QueueView: View {
                         // Queue lock does **not** disable Clear — reorder-only lock (Android parity).
                         .disabled(store.queue.isEmpty)
                         .accessibilityHint(
-                            String(localized: "Asks for confirmation, then removes every episode from the queue")
+                            String(localized: "Asks for confirmation, then removes every episode from the entire queue, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads.")
                         )
                     } label: {
                         Label("Queue actions", systemImage: "ellipsis.circle")
