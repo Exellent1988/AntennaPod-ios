@@ -25,7 +25,7 @@ enum OpmlWriter {
                 "text=\"\(escapeAttr(outlineTitle))\"",
                 "title=\"\(escapeAttr(outlineTitle))\"",
                 "type=\"rss\"",
-                "xmlUrl=\"\(escapeAttr(feed.feedUrl))\""
+                "xmlUrl=\"\(escapeAttr(FeedURLNormalization.strippingCredentials(feed.feedUrl)))\""
             ]
             if let site = feed.siteLink, !site.isEmpty {
                 attrs.append("htmlUrl=\"\(escapeAttr(site))\"")

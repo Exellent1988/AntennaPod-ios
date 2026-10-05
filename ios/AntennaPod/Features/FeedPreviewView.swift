@@ -119,7 +119,7 @@ struct FeedPreviewView: View {
             parts.append(String(localized: "Already subscribed"))
         }
         if !request.feedUrl.isEmpty {
-            parts.append(String(localized: "Feed URL \(request.feedUrl)"))
+            parts.append(String(localized: "Feed URL \(FeedURLNormalization.strippingCredentials(request.feedUrl))"))
         }
         return parts.joined(separator: ", ")
     }
@@ -375,7 +375,7 @@ struct FeedPreviewView: View {
                         .background(Color.secondary.opacity(0.2), in: Capsule())
                         .accessibilityLabel(String(localized: "Explicit"))
                 }
-                Text(request.feedUrl)
+                Text(FeedURLNormalization.strippingCredentials(request.feedUrl))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
                     .lineLimit(2)

@@ -2075,8 +2075,10 @@ struct FeedDetailView: View {
         return !LocalFolderFeed.isLocalFolderFeed(liveFeed)
     }
 
+    /// Without `user:password@` (`FeedURLNormalization.strippingCredentials`).
     private var feedURLShareString: String {
-        liveFeed.feedUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        FeedURLNormalization.strippingCredentials(liveFeed.feedUrl)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     /// Share as a URL only for parseable HTTP(S); preserve other feed strings as raw text.
@@ -2089,8 +2091,7 @@ struct FeedDetailView: View {
 
     private func copyFeedURL() {
         guard canCopyFeedURL else { return }
-        let trimmed = liveFeed.feedUrl.trimmingCharacters(in: .whitespacesAndNewlines)
-        UIPasteboard.general.string = trimmed
+        UIPasteboard.general.string = feedURLShareString
         copyFeedURLFeedbackTick += 1
         showFeedURLCopied = true
     }

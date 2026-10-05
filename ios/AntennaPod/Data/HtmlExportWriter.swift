@@ -111,8 +111,9 @@ enum HtmlExportWriter {
         }
 
         var metaParts: [String] = []
+        let shownFeedUrl = FeedURLNormalization.strippingCredentials(feed.feedUrl)
         metaParts.append(
-            "<a class=\"feed-url\" href=\"\(escapeAttr(feed.feedUrl))\">\(escape(feed.feedUrl))</a>"
+            "<a class=\"feed-url\" href=\"\(escapeAttr(shownFeedUrl))\">\(escape(shownFeedUrl))</a>"
         )
         if let author = feed.displayAuthor {
             metaParts.append(escape(author))

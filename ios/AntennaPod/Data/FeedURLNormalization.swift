@@ -79,6 +79,21 @@ enum FeedURLNormalization {
         return "\(host)\(path)\(query)"
     }
 
+    /// Removes `user:password@` from a feed URL for anything shown, copied, shared, or exported
+    /// (OPML, HTML, plain text). Other strings are returned unchanged. The stored feed URL keeps
+    /// its userinfo because refresh may rely on it.
+    static func strippingCredentials(_ feedUrl: String) -> String {
+        guard feedUrl.contains("@"),
+              var components = URLComponents(string: feedUrl.trimmingCharacters(in: .whitespacesAndNewlines)),
+              components.user != nil || components.password != nil
+        else {
+            return feedUrl
+        }
+        components.user = nil
+        components.password = nil
+        return components.string ?? feedUrl
+    }
+
     /// First library feed whose canonical URL matches `feedUrl`, if any.
     static func subscribedFeed(matching feedUrl: String, in feeds: [PodcastFeed]) -> PodcastFeed? {
         let key = canonicalKey(feedUrl)

@@ -60,7 +60,8 @@ enum SubscriptionsExport {
         if display.isEmpty {
             display = String(localized: "Podcast")
         }
-        let url = feedUrl.trimmingCharacters(in: .whitespacesAndNewlines)
+        let url = FeedURLNormalization.strippingCredentials(feedUrl)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
         return "\(index). \(display) — \(url)"
     }
 }
