@@ -44060,23 +44060,6 @@
         }
       }
     },
-    "Read-only note. This screen does not turn CarPlay on or off, start playback, or install templates. Use system Now Playing while audio is playing. Not Siri Shortcuts, the homescreen widget, or Apple Watch.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Read-only note. This screen does not turn CarPlay on or off, start playback, or install templates. Use system Now Playing while audio is playing. Not Siri Shortcuts, the homescreen widget, or Apple Watch."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur Hinweis zum Lesen. Dieser Bildschirm schaltet CarPlay nicht ein oder aus, startet keine Wiedergabe und installiert keine Vorlagen. Nutze die System-Jetzt-läuft-Ansicht, während Audio spielt. Nicht Siri Shortcuts, das Homescreen-Widget oder Apple Watch."
-          }
-        }
-      }
-    },
     "On. This is not the default. The audio session uses spoken-audio mode for speech, or voice-chat if spoken-audio is refused. It does not raise loudness, apply ReplayGain, or change Volume boost. When an episode is paused, changing this does not activate the session or interrupt other apps; it applies on the next play. Video with a visible surface still uses movie playback when this is off. Not Volume boost, Skip silence, or Preserve pitch.": {
       "extractionState": "manual",
       "localizations": {
@@ -49513,6 +49496,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bezeichnung für dieses Sync-Gerät. In Einstellungen und Backup gespeichert — nicht im Keychain. Anmelden und Jetzt synchronisieren senden sie an den Server, wenn angemeldet; leer nutzt AntennaPod iOS beim Anmelden. Alleiniges Bearbeiten synchronisiert nicht und ändert nicht die Geräte-ID — dafür Geräte-ID aus Name neu erzeugen. Bleibt bei Abmelden."
+          }
+        }
+      }
+    },
+    "Read-only note. This screen does not turn CarPlay on or off, start playback, or install templates. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings Rewind and Fast-forward intervals — next and previous skip by those intervals. No custom CarPlay templates, scene, or entitlement in this beta. Background audio is already set. Not Siri Shortcuts, the homescreen widget, or Apple Watch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read-only note. This screen does not turn CarPlay on or off, start playback, or install templates. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings Rewind and Fast-forward intervals — next and previous skip by those intervals. No custom CarPlay templates, scene, or entitlement in this beta. Background audio is already set. Not Siri Shortcuts, the homescreen widget, or Apple Watch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Hinweis zum Lesen. Dieser Bildschirm schaltet CarPlay nicht ein oder aus, startet keine Wiedergabe und installiert keine Vorlagen. Wenn Audio läuft, zeigt CarPlay die System-Jetzt-läuft-Ansicht mit Wiedergabe, Pause, Springen und Suchen anhand der Einstellungen-Zurückspulen- und Vorspulen-Intervalle — Weiter und Zurück springen um diese Intervalle. In dieser Beta keine eigenen CarPlay-Vorlagen, keine CarPlay-Szene und keine CarPlay-Berechtigung. Hintergrundaudio ist bereits gesetzt. Nicht Siri Shortcuts, das Homescreen-Widget oder Apple Watch."
           }
         }
       }
