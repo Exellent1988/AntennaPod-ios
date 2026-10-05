@@ -1966,7 +1966,10 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         transcriptUrl = try c.decodeIfPresent(String.self, forKey: .transcriptUrl)
         transcriptType = try c.decodeIfPresent(String.self, forKey: .transcriptType)
         transcriptLanguage = try c.decodeIfPresent(String.self, forKey: .transcriptLanguage)
-        chapters = try c.decodeIfPresent([PodcastChapter].self, forKey: .chapters) ?? []
+        // Saved chapters skip the feed parser's start check; `feeds.json` is replaced by a backup
+        // import, and a start such as 1e20 crashed the chapter list's `m:ss` / `h:mm:ss` formatter.
+        chapters = (try c.decodeIfPresent([PodcastChapter].self, forKey: .chapters) ?? [])
+            .filter { ChapterTimeParsing.isUsableChapterStart($0.startTimeSeconds) }
         podcastIndexChapterUrl = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterUrl)
         podcastIndexChapterType = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterType)
         descriptionText = try c.decodeIfPresent(String.self, forKey: .descriptionText)
