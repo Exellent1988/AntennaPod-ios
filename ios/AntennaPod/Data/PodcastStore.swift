@@ -13,6 +13,7 @@ final class PodcastStore: ObservableObject {
             }
             allEpisodesCache = nil
             inboxEpisodesCache = nil
+            historyEpisodesCache = nil
         }
     }
     /// > 0 while a batch loop runs; `feeds` changes then only mark `feedsSaveIsPending`.
@@ -21,6 +22,8 @@ final class PodcastStore: ObservableObject {
     @Published var queue: [PodcastEpisode] = [] {
         didSet {
             PodcastPersistence.saveQueue(queue)
+            // Queue-only copies join `historyEpisodes`; clear before the widget snapshot reads it.
+            historyEpisodesCache = nil
             // Queue changes can affect Continue listening / widget context.
             publishWidgetSnapshot()
         }
@@ -29,17 +32,19 @@ final class PodcastStore: ObservableObject {
     @Published var playbackStates: [String: EpisodePlaybackState] = [:] {
         didSet {
             PodcastPersistence.savePlaybackStates(playbackStates)
-            // Played state decides `inboxEpisodes` membership.
+            // Played state decides `inboxEpisodes` membership; `historyEpisodes` is built from it.
             inboxEpisodesCache = nil
+            historyEpisodesCache = nil
         }
     }
     /// Per-subscription overrides keyed by feed id (`feed-settings.json`).
     @Published var feedSettingsById: [UUID: FeedSettings] = [:] {
         didSet {
             PodcastPersistence.saveFeedSettings(feedSettingsById)
-            // Custom titles feed `allEpisodes` and `inboxEpisodes` row titles.
+            // Custom titles feed `allEpisodes`, `inboxEpisodes`, and `historyEpisodes` row titles.
             allEpisodesCache = nil
             inboxEpisodesCache = nil
+            historyEpisodesCache = nil
         }
     }
     /// Episode id → favorited-at epoch ms (`favorites.json` side map).
@@ -2233,6 +2238,22 @@ final class PodcastStore: ObservableObject {
 
     /// Episodes marked played or with meaningful progress, newest `lastPlayedAt` first.
     var historyEpisodes: [HistoryEpisode] {
+        // Home reads this six times per body (directly and via `continueListeningEpisodes`),
+        // and Home reruns on every 0.5s playback tick. Rebuild only when an input below changes.
+        if let cached = historyEpisodesCache {
+            return cached
+        }
+        let built = buildHistoryEpisodes()
+        historyEpisodesCache = built
+        return built
+    }
+
+    /// Last `historyEpisodes` result. Inputs: `feeds` (episodes, trailers, containing feed),
+    /// `queue` (queue-only copies), `playbackStates`, `feedSettingsById` (`displayTitle`).
+    /// Each one's observer clears this.
+    private var historyEpisodesCache: [HistoryEpisode]?
+
+    private func buildHistoryEpisodes() -> [HistoryEpisode] {
         var items: [HistoryEpisode] = []
         for feed in feeds {
             for episode in feed.episodes {
