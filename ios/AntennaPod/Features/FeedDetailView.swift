@@ -1405,7 +1405,7 @@ struct FeedDetailView: View {
                             }
                             .accessibilityLabel(String(localized: "Share funding URL"))
                             .accessibilityHint(
-                                String(localized: "Shares the feed-provided funding/support page URL; does not process payments")
+                                String(localized: "Opens the system share sheet with the feed-provided funding or support page URL. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from opening the funding page, Copy funding URL, and Share feed URL. Sharing is your choice and does not subscribe or download.")
                             )
 
                             if let label = liveFeed.displayFundingLabel {
