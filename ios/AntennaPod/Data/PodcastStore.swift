@@ -1053,10 +1053,11 @@ final class PodcastStore: ObservableObject {
     /// `feed.episodes`; resolve it the same way History does so Library → Bookmarks
     /// can start that trailer at a saved mark when it is not already loaded.
     func episode(id episodeId: String) -> PodcastEpisode? {
-        for feed in feeds {
-            if let episode = feed.episodes.first(where: { $0.id == episodeId }) {
-                return episode
-            }
+        // Same first feed the old per-feed scan stopped at (`feedIndexByEpisodeId`); the mini
+        // player alone calls this about ten times per 0.5s playback tick.
+        if let index = feedIndexByEpisodeId[episodeId],
+           let episode = feeds[index].episodes.first(where: { $0.id == episodeId }) {
+            return episode
         }
         if let queued = queue.first(where: { $0.id == episodeId }) {
             return queued
