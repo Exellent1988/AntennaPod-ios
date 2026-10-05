@@ -15972,23 +15972,6 @@
         }
       }
     },
-    "Enqueues this episode again via the normal download path": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enqueues this episode again via the normal download path"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht diese Episode erneut über den normalen Download-Pfad ein"
-          }
-        }
-      }
-    },
     "Download already in progress": {
       "extractionState": "manual",
       "localizations": {
@@ -49319,6 +49302,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lokaler Banner und Vordergrund-Haptik, wenn der Schlaf-Timer die Wiedergabe pausiert oder stoppt — nur wenn iOS Banner erlaubt. Tippen auf den Banner öffnet keinen Bildschirm — nicht Posteingang, Downloads oder Einstellungen. Startet oder beendet keinen Timer von selbst. Kein Push. Der Schlaf-Timer selbst bleibt unverändert, wenn dies aus ist."
+          }
+        }
+      }
+    },
+    "Removes this error row, then enqueues the episode again via the normal manual download path. Manual download Wi‑Fi only, Parallel downloads, and storage limits still apply. A later failure adds a new log entry. Does not invent an episode or a separate retry queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes this error row, then enqueues the episode again via the normal manual download path. Manual download Wi‑Fi only, Parallel downloads, and storage limits still apply. A later failure adds a new log entry. Does not invent an episode or a separate retry queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt diese Fehlerzeile und stellt die Episode danach erneut über den normalen manuellen Download-Pfad in die Warteschlange. Manueller Download nur Wi‑Fi, Parallele Downloads und Speicherlimits gelten weiter. Ein späterer Fehler fügt einen neuen Protokolleintrag hinzu. Erfindet keine Episode und keine separate Retry-Warteschlange."
           }
         }
       }

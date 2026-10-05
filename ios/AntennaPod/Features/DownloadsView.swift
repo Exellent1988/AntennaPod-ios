@@ -1237,7 +1237,7 @@ private struct DownloadErrorRow: View {
     /// VoiceOver hint — enabled vs disabled (missing / local-folder / in-flight).
     private var retryAccessibilityHint: String {
         if canRetry {
-            return String(localized: "Enqueues this episode again via the normal download path")
+            return String(localized: "Removes this error row, then enqueues the episode again via the normal manual download path. Manual download Wi‑Fi only, Parallel downloads, and storage limits still apply. A later failure adds a new log entry. Does not invent an episode or a separate retry queue.")
         }
         if downloads.isWaitingDownload(episodeId: entry.episodeId) {
             return String(localized: "Download already waiting")
