@@ -33,7 +33,10 @@ struct OpmlExportDocument: FileDocument {
 /// OPML import/export plus AntennaPod-style HTML export lite (subscriptions).
 struct OpmlImportExportSection: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var parental: ParentalControls
     @State private var showImporter = false
+    /// Settings and the Subscriptions OPML sheet are not behind the Add sheet PIN gate.
+    @State private var showImportPINGate = false
     @State private var shareURL: URL?
     @State private var showShare = false
     @State private var showImportResult = false
@@ -76,7 +79,11 @@ struct OpmlImportExportSection: View {
             .accessibilityHint(String(localized: "Shares a self-contained HTML subscription list via the system share sheet. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed."))
 
             Button {
-                showImporter = true
+                if parental.needsPINForAddDiscover {
+                    showImportPINGate = true
+                } else {
+                    showImporter = true
+                }
             } label: {
                 Label("Import OPML", systemImage: "square.and.arrow.down")
             }
@@ -144,6 +151,21 @@ struct OpmlImportExportSection: View {
         }
         .sheet(isPresented: $showImportResult) {
             OpmlImportResultView()
+        }
+        .sheet(isPresented: $showImportPINGate) {
+            ParentalPINPromptSheet(
+                title: String(localized: "Parental controls"),
+                message: String(localized: "Enter your PIN to add or discover podcasts."),
+                onCancel: { showImportPINGate = false },
+                onSuccess: { pin in
+                    if parental.unlockSession(with: pin) {
+                        showImportPINGate = false
+                        showImporter = true
+                        return true
+                    }
+                    return false
+                }
+            )
         }
         .onChange(of: store.opmlImport.isImporting) { _, importing in
             if !importing, store.opmlImport.total > 0 {
