@@ -68,6 +68,7 @@ struct RootTabView: View {
             if phase != .active {
                 // Relock parental controls when leaving foreground (inactive/background).
                 playback.persistProgressBeforeBackground()
+                store.flushDeferredFeedsSave()
                 parental.lockSession()
                 return
             }

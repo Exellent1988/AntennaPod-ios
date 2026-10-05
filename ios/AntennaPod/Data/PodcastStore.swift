@@ -3,8 +3,19 @@ import Foundation
 @MainActor
 final class PodcastStore: ObservableObject {
     @Published var feeds: [PodcastFeed] = [] {
-        didSet { PodcastPersistence.saveFeeds(feeds) }
+        didSet {
+            // feeds.json holds every episode of every feed. Batch loops (Refresh all,
+            // OPML import) change one feed at a time, so they defer and write once.
+            if feedsSaveDeferralDepth > 0 {
+                feedsSaveIsPending = true
+            } else {
+                PodcastPersistence.saveFeeds(feeds)
+            }
+        }
     }
+    /// > 0 while a batch loop runs; `feeds` changes then only mark `feedsSaveIsPending`.
+    private var feedsSaveDeferralDepth = 0
+    private var feedsSaveIsPending = false
     @Published var queue: [PodcastEpisode] = [] {
         didSet {
             PodcastPersistence.saveQueue(queue)
@@ -2634,13 +2645,33 @@ final class PodcastStore: ObservableObject {
 
     /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
     /// Publishes honest per-feed completion counts (`refreshCompletedCount` / `refreshTotalCount`) for UI.
+    private func beginDeferringFeedsSave() {
+        feedsSaveDeferralDepth += 1
+    }
+
+    private func endDeferringFeedsSave() {
+        feedsSaveDeferralDepth = max(0, feedsSaveDeferralDepth - 1)
+        if feedsSaveDeferralDepth == 0 {
+            flushDeferredFeedsSave()
+        }
+    }
+
+    /// Write feeds.json now if a batch deferred it (also called when the app leaves the foreground).
+    func flushDeferredFeedsSave() {
+        guard feedsSaveIsPending else { return }
+        feedsSaveIsPending = false
+        PodcastPersistence.saveFeeds(feeds)
+    }
+
     func refreshAllFeeds() async {
         lastError = nil
         isLoading = true
+        beginDeferringFeedsSave()
         defer {
             isLoading = false
             refreshCompletedCount = 0
             refreshTotalCount = 0
+            endDeferringFeedsSave()
         }
         let snapshot = feeds
         let targets = snapshot.filter {
@@ -2946,6 +2977,8 @@ final class PodcastStore: ObservableObject {
     /// The stored feed URL is not rewritten when an outline is skipped.
     func importOpml(data: Data, sourceFileName: String? = nil) async {
         lastError = nil
+        beginDeferringFeedsSave()
+        defer { endDeferringFeedsSave() }
         var state = OpmlImportState(isImporting: true, sourceFileName: sourceFileName)
         opmlImport = state
         do {
