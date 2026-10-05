@@ -33231,23 +33231,6 @@
         }
       }
     },
-    "Pins or unpins this podcast at the top of the Subscriptions list": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pins or unpins this podcast at the top of the Subscriptions list"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Heftet diesen Podcast oben in der Abonnementliste an oder löst ihn"
-          }
-        }
-      }
-    },
     "Subscriptions list": {
       "extractionState": "manual",
       "localizations": {
@@ -49230,6 +49213,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet diese Feed-bereitgestellte podcast:trailer-URL im Systembrowser. Wird gezeigt, wenn In-App-Wiedergabe für diese Medien-URL nicht angeboten wird. Keine Bestätigung. Unterschiedlich von Trailer abspielen. Markiert nicht als gehört, ändert nicht die Warteschlange, löscht keine Downloads und ändert keine Abonnements."
+          }
+        }
+      }
+    },
+    "Pins or unpins this podcast above unpinned ones on Subscriptions for every sort (Recently updated, Alphabetical, and others). Not a separate sort mode. Local preference only — not synced to gpodder. Included in iOS JSON backup with other feed settings. Cleared when you unsubscribe. Does not unsubscribe, change tags, or change the Subscriptions sort preference. Toggles immediately. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pins or unpins this podcast above unpinned ones on Subscriptions for every sort (Recently updated, Alphabetical, and others). Not a separate sort mode. Local preference only — not synced to gpodder. Included in iOS JSON backup with other feed settings. Cleared when you unsubscribe. Does not unsubscribe, change tags, or change the Subscriptions sort preference. Toggles immediately. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heftet diesen Podcast über nicht angeheftete in Abonnements für jede Sortierung an oder löst ihn (Zuletzt aktualisiert, Alphabetisch und andere). Keine eigene Sortierart. Nur lokale Einstellung — nicht mit gpodder synchronisiert. Im iOS-JSON-Backup mit anderen Feed-Einstellungen enthalten. Wird beim Abbestellen gelöscht. Kündigt nicht ab, ändert keine Tags und keine Abonnement-Sortierung. Schaltet sofort um. Keine Bestätigung."
           }
         }
       }

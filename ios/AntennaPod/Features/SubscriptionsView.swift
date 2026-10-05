@@ -1174,7 +1174,7 @@ struct SubscriptionsView: View {
                     ? String(localized: "Don’t keep at top")
                     : String(localized: "Keep at top")
             )
-            .accessibilityHint(String(localized: "Pins or unpins this podcast at the top of the Subscriptions list"))
+            .accessibilityHint(String(localized: "Pins or unpins this podcast above unpinned ones on Subscriptions for every sort (Recently updated, Alphabetical, and others). Not a separate sort mode. Local preference only — not synced to gpodder. Included in iOS JSON backup with other feed settings. Cleared when you unsubscribe. Does not unsubscribe, change tags, or change the Subscriptions sort preference. Toggles immediately. No confirmation."))
             Button {
                 Task { await store.refresh(feed) }
             } label: {
@@ -1346,7 +1346,7 @@ private struct SubscriptionRowContextMenu: ViewModifier {
                     ? String(localized: "Don’t keep at top")
                     : String(localized: "Keep at top")
             )
-            .accessibilityHint(String(localized: "Pins or unpins this podcast at the top of the Subscriptions list"))
+            .accessibilityHint(String(localized: "Pins or unpins this podcast above unpinned ones on Subscriptions for every sort (Recently updated, Alphabetical, and others). Not a separate sort mode. Local preference only — not synced to gpodder. Included in iOS JSON backup with other feed settings. Cleared when you unsubscribe. Does not unsubscribe, change tags, or change the Subscriptions sort preference. Toggles immediately. No confirmation."))
 
             if let podcastTitle {
                 Button {
