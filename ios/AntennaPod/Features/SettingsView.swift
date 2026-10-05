@@ -2554,7 +2554,7 @@ struct SettingsView: View {
     }
 
     private var maxStorageAccessibilityHint: String {
-        String(localized: "Presets are Unlimited, 1 GB, 5 GB, 10 GB, and Custom megabytes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max downloaded episodes or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new budget.")
+        String(localized: "Presets are Unlimited, 1 GB, 5 GB, 10 GB, and Custom megabytes. The default is Unlimited — Unlimited does not delete files by size alone. Over-limit eviction skips favorites, queued episodes, and the playing download; played non-favorite non-queued go first. Not Max downloaded episodes or Parallel downloads. Changing to a lower budget may delete unprotected offline files; choosing Unlimited does not delete files now.")
     }
 
     private var evictionHelpText: String {

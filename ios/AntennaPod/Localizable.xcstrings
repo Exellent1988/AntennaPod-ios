@@ -44729,23 +44729,6 @@
         }
       }
     },
-    "Presets are Unlimited, 1 GB, 5 GB, 10 GB, and Custom megabytes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max downloaded episodes or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new budget.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Presets are Unlimited, 1 GB, 5 GB, 10 GB, and Custom megabytes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max downloaded episodes or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new budget."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Voreinstellungen sind Unbegrenzt, 1 GB, 5 GB, 10 GB und Benutzerdefinierte Megabytes. Die Voreinstellung ist Unbegrenzt. Über-Limit-Bereinigung überspringt Favoriten, Episoden in der Warteschlange und den spielenden Download. Nicht Max. heruntergeladene Episoden oder Parallele Downloads. Der Picker kann ungeschützte Offline-Dateien löschen, die über dem neuen Budget liegen."
-          }
-        }
-      }
-    },
     "Unlimited. This is the default. There is no episode-count cache, so count alone does not auto-delete offline files. Max storage can still evict by byte budget. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by either limit. Changing this does not delete files now, start a download, or change Parallel downloads.": {
       "extractionState": "manual",
       "localizations": {
@@ -49434,6 +49417,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet ein Sheet, das nach der PIN fragt, um Elternschutz auszuschalten und die Schlüsselbund-PIN zu löschen. Entsperren gilt bis die App in den Hintergrund geht. Die PIN liegt nie im Einstellungen-Backup. Ändert Options-Sperren nicht von selbst."
+          }
+        }
+      }
+    },
+    "Presets are Unlimited, 1 GB, 5 GB, 10 GB, and Custom megabytes. The default is Unlimited — Unlimited does not delete files by size alone. Over-limit eviction skips favorites, queued episodes, and the playing download; played non-favorite non-queued go first. Not Max downloaded episodes or Parallel downloads. Changing to a lower budget may delete unprotected offline files; choosing Unlimited does not delete files now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are Unlimited, 1 GB, 5 GB, 10 GB, and Custom megabytes. The default is Unlimited — Unlimited does not delete files by size alone. Over-limit eviction skips favorites, queued episodes, and the playing download; played non-favorite non-queued go first. Not Max downloaded episodes or Parallel downloads. Changing to a lower budget may delete unprotected offline files; choosing Unlimited does not delete files now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voreinstellungen sind Unbegrenzt, 1 GB, 5 GB, 10 GB und Benutzerdefinierte Megabytes. Die Voreinstellung ist Unbegrenzt — Unbegrenzt löscht keine Dateien allein nach Größe. Über-Limit-Bereinigung überspringt Favoriten, Episoden in der Warteschlange und den spielenden Download; gehörte Nicht-Favoriten ohne Warteschlange zuerst. Nicht Max. heruntergeladene Episoden oder Parallele Downloads. Wechsel auf ein niedrigeres Budget kann ungeschützte Offline-Dateien löschen; Unbegrenzt löscht jetzt keine Dateien."
           }
         }
       }
