@@ -83,10 +83,13 @@ struct LibrarySearchResultsView: View {
                 systemImage: "magnifyingglass",
                 description: Text("No subscriptions or episodes match “\(displayQuery)”.")
             )
-            .accessibilityElement(children: .combine)
+            .accessibilityElement(children: .ignore)
             .accessibilityLabel(String(localized: "No library search results"))
             .accessibilityValue(
                 String(localized: "No subscriptions or episodes match “\(displayQuery)”.")
+            )
+            .accessibilityHint(
+                String(localized: "Change or clear the library search to see other subscriptions or episodes.")
             )
         } else {
             // AntennaPod-like library search info bar (visible episode hits only remaining time).

@@ -47900,6 +47900,23 @@
           }
         }
       }
+    },
+    "Change or clear the library search to see other subscriptions or episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the library search to see other subscriptions or episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Bibliothekssuche, um andere Abonnements oder Episoden zu sehen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
