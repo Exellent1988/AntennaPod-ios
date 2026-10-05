@@ -32905,23 +32905,6 @@
         }
       }
     },
-    "Cancels in-progress and waiting downloads without deleting completed files": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancels in-progress and waiting downloads without deleting completed files"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bricht laufende und wartende Downloads ab, ohne abgeschlossene Dateien zu löschen"
-          }
-        }
-      }
-    },
     "Cancels %lld in-progress or waiting download(s). Stops active transfers and clears the waiting queue. Does not delete completed offline files.": {
       "extractionState": "manual",
       "localizations": {
@@ -48968,6 +48951,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und entfernt dann diesen Podcast aus Abos, seine Feed-Einstellungen und Tags, Warteschlangen-Einträge dieses Feeds sowie Favoriten, Archiv, Wiedergabeverlauf, Lesezeichen und private Notizen seiner Episoden. Wenn dieser Feed Offline-Downloads hat, kannst du sie behalten oder nur die Dateien dieses Feeds einschließlich Favoriten löschen. Löscht nicht die Downloads anderer Podcasts."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then cancels in-progress and waiting downloads. Stops active transfers and clears the waiting queue. Does not delete completed offline files.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then cancels in-progress and waiting downloads. Stops active transfers and clears the waiting queue. Does not delete completed offline files."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und bricht dann laufende und wartende Downloads ab. Stoppt aktive Übertragungen und leert die Warteschlange. Löscht keine abgeschlossenen Offline-Dateien."
           }
         }
       }

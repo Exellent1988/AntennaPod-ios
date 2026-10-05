@@ -711,7 +711,7 @@ struct DownloadsView: View {
                             Label("Cancel all downloads", systemImage: "xmark.circle")
                         }
                         .disabled(downloads.cancelAllInFlightCount == 0)
-                        .accessibilityHint(String(localized: "Cancels in-progress and waiting downloads without deleting completed files"))
+                        .accessibilityHint(String(localized: "Asks for confirmation, then cancels in-progress and waiting downloads. Stops active transfers and clears the waiting queue. Does not delete completed offline files."))
 
                         Button(role: .destructive) {
                             showDeletePlayedConfirm = true
