@@ -1864,6 +1864,13 @@ enum EpisodeDurationParsing {
         }
         return seconds
     }
+
+    /// Saved durations and positions come back from `feeds.json` / `playback.json`, which a
+    /// backup import replaces. A value such as 1e20 crashed the `m:ss` / `h:mm:ss` and
+    /// Statistics formatters converting it to `Int`; treat non-finite or over-a-year as 0.
+    static func storedSeconds(_ seconds: Double) -> Double {
+        seconds.isFinite && seconds <= maxSeconds ? seconds : 0
+    }
 }
 
 /// iTunes season / episode numbers and episodeType from feed text nodes.

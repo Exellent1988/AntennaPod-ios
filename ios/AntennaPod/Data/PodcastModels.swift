@@ -1970,7 +1970,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         podcastIndexChapterUrl = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterUrl)
         podcastIndexChapterType = try c.decodeIfPresent(String.self, forKey: .podcastIndexChapterType)
         descriptionText = try c.decodeIfPresent(String.self, forKey: .descriptionText)
-        durationSeconds = try c.decodeIfPresent(Double.self, forKey: .durationSeconds) ?? 0
+        durationSeconds = EpisodeDurationParsing.storedSeconds(
+            try c.decodeIfPresent(Double.self, forKey: .durationSeconds) ?? 0
+        )
         seasonNumber = try c.decodeIfPresent(Int.self, forKey: .seasonNumber)
         episodeNumber = try c.decodeIfPresent(Int.self, forKey: .episodeNumber)
         episodeType = try c.decodeIfPresent(String.self, forKey: .episodeType)
@@ -2761,8 +2763,12 @@ struct EpisodePlaybackState: Hashable, Codable {
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
-        positionSeconds = try c.decodeIfPresent(Double.self, forKey: .positionSeconds) ?? 0
-        durationSeconds = try c.decodeIfPresent(Double.self, forKey: .durationSeconds) ?? 0
+        positionSeconds = EpisodeDurationParsing.storedSeconds(
+            try c.decodeIfPresent(Double.self, forKey: .positionSeconds) ?? 0
+        )
+        durationSeconds = EpisodeDurationParsing.storedSeconds(
+            try c.decodeIfPresent(Double.self, forKey: .durationSeconds) ?? 0
+        )
         isPlayed = try c.decodeIfPresent(Bool.self, forKey: .isPlayed) ?? false
         updatedAtEpochMs = try c.decodeIfPresent(Int64.self, forKey: .updatedAtEpochMs)
             ?? Int64(Date().timeIntervalSince1970 * 1000)

@@ -375,7 +375,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 | ☐ Sync-Fehler-Notification (lokal) | ☐ Sync error notification (local) |
 | ☐ Backup export ZIP (ohne Keychain-Secrets; default ohne Media; VoiceOver für Toggle, Aktion, Fortschritt/Status/Fehler) | ☐ Backup export ZIP (no Keychain secrets; default no media; VoiceOver for toggle, action, progress/status/errors) |
 | ☐ Backup: Include downloaded episode files (Warnung Größe/Zeit) | ☐ Backup: Include downloaded episode files (size/time warning) |
-| ☐ Backup import (Warnung + Reload; Media-Merge wenn vorhanden; VoiceOver für Dateiauswahl-/Replace-Hinweis) | ☐ Backup import (warn + reload; media merge when present; VoiceOver for file-picker/replace guidance) |
+| ☐ Backup import (Warnung + Reload; Media-Merge wenn vorhanden; VoiceOver für Dateiauswahl-/Replace-Hinweis. Eine gespeicherte Position oder Dauer über einem Jahr wird als 0 gelesen, statt die App abstürzen zu lassen.) | ☐ Backup import (warn + reload; media merge when present; VoiceOver for file-picker/replace guidance. A saved position or duration longer than a year is read as 0 instead of crashing the app.) |
 | ☐ OPML export (Share + Save to Files…; lokale Ordner ausgelassen) / HTML export (Metadaten nur wenn vorhanden; lokale Ordner fehlen) | ☐ OPML export (Share + Save to Files…; local folders omitted) / HTML export (metadata only when present; local folders omitted) |
 
 ---
