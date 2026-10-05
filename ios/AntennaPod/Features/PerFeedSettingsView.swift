@@ -663,7 +663,7 @@ struct PerFeedSettingsView: View {
         case .always:
             return String(localized: "Always enqueue newly appeared episodes after refresh for this podcast, even when global Auto-download is off. Cap and Wi‑Fi-only still apply.")
         case .never:
-            return String(localized: "Never auto-download this podcast, even when global Auto-download is on. Manual Download still works.")
+            return String(localized: "Never auto-download this podcast, even when global Auto-download is on. New episodes Add to Queue and download still enqueues but does not download. Manual Download still works.")
         }
     }
 

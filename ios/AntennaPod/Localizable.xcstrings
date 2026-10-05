@@ -12335,23 +12335,6 @@
         }
       }
     },
-    "Never auto-download this podcast, even when global Auto-download is on. Manual Download still works.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Never auto-download this podcast, even when global Auto-download is on. Manual Download still works."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lädt diesen Podcast nie automatisch herunter, auch wenn globaler Auto-Download an ist. Manueller Download funktioniert weiter."
-          }
-        }
-      }
-    },
     "After refresh, newly appeared episodes are enqueued on Queue and downloaded (respects Auto-download Wi‑Fi only). Separate Auto-download rules may also enqueue newly appeared IDs (capped per feed).": {
       "extractionState": "manual",
       "localizations": {
@@ -47423,6 +47406,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine weiteren Episoden in der Warteschlange"
+          }
+        }
+      }
+    },
+    "Never auto-download this podcast, even when global Auto-download is on. New episodes Add to Queue and download still enqueues but does not download. Manual Download still works.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Never auto-download this podcast, even when global Auto-download is on. New episodes Add to Queue and download still enqueues but does not download. Manual Download still works."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt diesen Podcast nie automatisch herunter, auch wenn globales Auto-Download an ist. Neue Episoden „Zur Warteschlange hinzufügen und herunterladen“ reiht weiterhin ein, lädt aber nicht herunter. Manueller Download funktioniert weiterhin."
           }
         }
       }

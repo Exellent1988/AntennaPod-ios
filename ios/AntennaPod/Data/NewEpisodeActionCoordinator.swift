@@ -83,14 +83,17 @@ enum NewEpisodeActionCoordinator {
         var downloadCandidates: [PodcastEpisode] = []
 
         for batch in flat {
-            let action = store.feedSettings(for: batch.feedId)
-                .newEpisodeAction
+            let feedSettings = store.feedSettings(for: batch.feedId)
+            let action = feedSettings.newEpisodeAction
                 .resolved(global: settings.newEpisodeAction)
             guard action != .inboxOnly else { continue }
+            // Per-feed Auto-download Never blocks automatic downloads from this path too.
+            // Queue enqueue still runs; Manual Download is unchanged.
+            let allowAutomaticDownload = feedSettings.autoDownload != .never
 
             for episode in batch.episodes {
                 store.enqueue(episode)
-                if action == .addToQueueAndDownload {
+                if action == .addToQueueAndDownload, allowAutomaticDownload {
                     downloadCandidates.append(episode)
                 }
             }
