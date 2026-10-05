@@ -11,6 +11,7 @@ final class PodcastStore: ObservableObject {
             } else {
                 PodcastPersistence.saveFeeds(feeds)
             }
+            allEpisodesCache = nil
         }
     }
     /// > 0 while a batch loop runs; `feeds` changes then only mark `feedsSaveIsPending`.
@@ -29,7 +30,11 @@ final class PodcastStore: ObservableObject {
     }
     /// Per-subscription overrides keyed by feed id (`feed-settings.json`).
     @Published var feedSettingsById: [UUID: FeedSettings] = [:] {
-        didSet { PodcastPersistence.saveFeedSettings(feedSettingsById) }
+        didSet {
+            PodcastPersistence.saveFeedSettings(feedSettingsById)
+            // Custom titles feed `allEpisodes` row titles.
+            allEpisodesCache = nil
+        }
     }
     /// Episode id → favorited-at epoch ms (`favorites.json` side map).
     @Published var favoriteAtById: [String: Int64] = [:] {
@@ -1187,6 +1192,20 @@ final class PodcastStore: ObservableObject {
     /// Distinct from Inbox (unplayed only): played / in-progress are included.
     /// Store order stays newest-first; AllEpisodesView applies `allEpisodesSort` client-side.
     var allEpisodes: [InboxEpisode] {
+        // AllEpisodesView reads this ~20 times per body, and the body reruns on every
+        // 0.5s playback tick. Rebuild only when `feeds` or `feedSettingsById` change.
+        if let cached = allEpisodesCache {
+            return cached
+        }
+        let built = buildAllEpisodes()
+        allEpisodesCache = built
+        return built
+    }
+
+    /// Last `allEpisodes` result; cleared by the `feeds` and `feedSettingsById` observers.
+    private var allEpisodesCache: [InboxEpisode]?
+
+    private func buildAllEpisodes() -> [InboxEpisode] {
         var items: [InboxEpisode] = []
         for feed in feeds {
             for episode in feed.episodes {
@@ -2643,8 +2662,6 @@ final class PodcastStore: ObservableObject {
         return String(localized: "Refreshing feeds…")
     }
 
-    /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
-    /// Publishes honest per-feed completion counts (`refreshCompletedCount` / `refreshTotalCount`) for UI.
     private func beginDeferringFeedsSave() {
         feedsSaveDeferralDepth += 1
     }
@@ -2663,6 +2680,8 @@ final class PodcastStore: ObservableObject {
         PodcastPersistence.saveFeeds(feeds)
     }
 
+    /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
+    /// Publishes honest per-feed completion counts (`refreshCompletedCount` / `refreshTotalCount`) for UI.
     func refreshAllFeeds() async {
         lastError = nil
         isLoading = true
