@@ -41396,23 +41396,6 @@
         }
       }
     },
-    "Only newly appeared episode IDs after a successful refresh are candidates. Local-folder and file feeds are skipped. There is no separate Background App Refresh download. Wi‑Fi-only for auto-download is under Network / Downloads. Per-podcast Never skips that podcast. Manual downloads are unchanged.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Only newly appeared episode IDs after a successful refresh are candidates. Local-folder and file feeds are skipped. There is no separate Background App Refresh download. Wi‑Fi-only for auto-download is under Network / Downloads. Per-podcast Never skips that podcast. Manual downloads are unchanged."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur neu erschienene Episoden-IDs nach einer erfolgreichen Aktualisierung kommen infrage. Lokale Ordner- und Datei-Feeds werden übersprungen. Es gibt keinen separaten Download per Hintergrundaktualisierung. Nur-Wi‑Fi für automatischen Download steht unter Netzwerk / Downloads. Nie pro Podcast überspringt diesen Podcast. Manuelle Downloads bleiben unverändert."
-          }
-        }
-      }
-    },
     "%@. This cap counts only newly appeared unplayed episodes after a successful feed refresh, not the unplayed backlog.": {
       "extractionState": "manual",
       "localizations": {
@@ -49319,6 +49302,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lokale Banner nach erfolgreicher Aktualisierung können Posteingang für neu erschienene Episoden öffnen. Titel ist der Podcastname, oder Neue Episode / Neue Episoden wenn leer. Text ist der Episodentitel oder eine Anzahl. Pro-Podcast Aus stummelt diesen Feed weiterhin; Pro-Podcast An wird ignoriert, solange dieser Schalter aus ist. Löst selbst keinen Banner aus und lädt nicht herunter. Kein Push."
+          }
+        }
+      }
+    },
+    "Only newly appeared episode IDs after a successful refresh are candidates — not the unplayed backlog. Local-folder and file feeds are skipped. There is no separate Background App Refresh download. Wi‑Fi-only for auto-download is under Network / Downloads. Per-podcast Never skips that podcast; Always can still enqueue for that podcast while this global switch is off. Storage-limit eviction still applies. Manual downloads are unchanged.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only newly appeared episode IDs after a successful refresh are candidates — not the unplayed backlog. Local-folder and file feeds are skipped. There is no separate Background App Refresh download. Wi‑Fi-only for auto-download is under Network / Downloads. Per-podcast Never skips that podcast; Always can still enqueue for that podcast while this global switch is off. Storage-limit eviction still applies. Manual downloads are unchanged."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur neu erschienene Episoden-IDs nach erfolgreicher Aktualisierung sind Kandidaten — nicht der ungespielte Rückstand. Lokale Ordner- und Datei-Feeds werden übersprungen. Es gibt keinen separaten Background-App-Refresh-Download. Nur-Wi‑Fi für Auto-Download liegt unter Netzwerk / Downloads. Pro-Podcast Nie überspringt diesen Podcast; Immer kann für diesen Podcast weiterhin einreihen, während dieser globale Schalter aus ist. Speicherlimit-Bereinigung gilt weiterhin. Manuelle Downloads bleiben unverändert."
           }
         }
       }

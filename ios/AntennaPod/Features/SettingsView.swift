@@ -1837,7 +1837,7 @@ struct SettingsView: View {
     }
 
     private var autoDownloadToggleAccessibilityHint: String {
-        String(localized: "Only newly appeared episode IDs after a successful refresh are candidates. Local-folder and file feeds are skipped. There is no separate Background App Refresh download. Wi‑Fi-only for auto-download is under Network / Downloads. Per-podcast Never skips that podcast. Manual downloads are unchanged.")
+        String(localized: "Only newly appeared episode IDs after a successful refresh are candidates — not the unplayed backlog. Local-folder and file feeds are skipped. There is no separate Background App Refresh download. Wi‑Fi-only for auto-download is under Network / Downloads. Per-podcast Never skips that podcast; Always can still enqueue for that podcast while this global switch is off. Storage-limit eviction still applies. Manual downloads are unchanged.")
     }
 
     /// VoiceOver for Episodes per feed. The visible preset stays; the value states the cap is not a backlog download.
