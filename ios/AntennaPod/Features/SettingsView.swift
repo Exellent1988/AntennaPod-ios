@@ -2690,7 +2690,7 @@ struct SettingsView: View {
     private var appStoreRatingSection: some View {
         Section {
             Toggle("Ask for App Store rating", isOn: $settings.askForAppStoreRating)
-                .accessibilityHint(String(localized: "May show a review prompt after ten mark-played events once per install."))
+                .accessibilityHint(String(localized: "When on, after ten newly marked-played episodes (manual or finished playback), AntennaPod may ask iOS to show a rating sheet once per install. iOS decides whether to show it and may suppress it under system limits — we never spam. Off stops counting toward a prompt. Changing this does not show a rating sheet now."))
             LabeledContent("Mark-played count") {
                 Text("\(RatingPromptCoordinator.successfulMarkPlayedCount)/\(RatingPromptCoordinator.threshold)")
                     .foregroundStyle(.secondary)

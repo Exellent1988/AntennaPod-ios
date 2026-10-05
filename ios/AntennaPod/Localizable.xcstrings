@@ -14740,23 +14740,6 @@
         }
       }
     },
-    "May show a review prompt after ten mark-played events once per install.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "May show a review prompt after ten mark-played events once per install."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kann nach zehn Als-gespielt-Ereignissen einmal pro Installation eine Bewertungsabfrage zeigen."
-          }
-        }
-      }
-    },
     "Preference only; not applied on stock AVPlayer in this beta.": {
       "extractionState": "manual",
       "localizations": {
@@ -49244,6 +49227,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Löscht „Zähler „als gehört markiert““ und „Abfrage versucht“ sofort. Keine Bestätigung. Zum Testen — zeigt jetzt kein App-Store-Bewertungsblatt und ändert nicht „Um App-Store-Bewertung bitten“."
+          }
+        }
+      }
+    },
+    "When on, after ten newly marked-played episodes (manual or finished playback), AntennaPod may ask iOS to show a rating sheet once per install. iOS decides whether to show it and may suppress it under system limits — we never spam. Off stops counting toward a prompt. Changing this does not show a rating sheet now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, after ten newly marked-played episodes (manual or finished playback), AntennaPod may ask iOS to show a rating sheet once per install. iOS decides whether to show it and may suppress it under system limits — we never spam. Off stops counting toward a prompt. Changing this does not show a rating sheet now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an, kann AntennaPod nach zehn neu als gehört markierten Episoden (manuell oder nach Ende der Wiedergabe) iOS einmal pro Installation um ein Bewertungsblatt bitten. iOS entscheidet, ob es erscheint, und kann es unter Systemgrenzen unterdrücken — wir spammen nie. Aus stoppt das Zählen für eine Abfrage. Ändern zeigt jetzt kein Bewertungsblatt."
           }
         }
       }
