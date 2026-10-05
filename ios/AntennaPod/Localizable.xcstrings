@@ -33495,24 +33495,6 @@
       },
       "comment": "Help caption under Download all unplayed soft cap picker."
     },
-    "Plays a random archived episode with playable media. Prefers unplayed when any remain.": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Archived toolbar Play random. Does not restore/unarchive.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plays a random archived episode with playable media. Prefers unplayed when any remain."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spielt eine zufällige archivierte Episode mit abspielbarem Medium. Bevorzugt ungehörte, wenn vorhanden."
-          }
-        }
-      }
-    },
     "Plays a random All Episodes catalog episode with playable media within the newest-500 soft cap. Prefers unplayed when any remain.": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for All Episodes toolbar Play random. Soft-cap honesty: newest-500 catalog only — same set as Add all.",
@@ -48843,6 +48825,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spielt eine zufällige Episode aus dem vollständigen Favoriten-Katalog mit abspielbaren Medien. Bevorzugt ungehörte, wenn welche übrig sind. Ignoriert Podcast-, Such- und Sortierfilter. Ordnet die Favoriten nicht neu. Keine Bestätigung."
+          }
+        }
+      }
+    },
+    "Plays a random episode from the full Archived catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not restore or unarchive. Does not reorder Archived. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random episode from the full Archived catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not restore or unarchive. Does not reorder Archived. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine zufällige Episode aus dem vollständigen Archiv-Katalog mit abspielbaren Medien. Bevorzugt ungehörte, wenn welche übrig sind. Ignoriert Podcast-, Such- und Sortierfilter. Stellt nichts wieder her und hebt keine Archivierung auf. Ordnet das Archiv nicht neu. Keine Bestätigung."
           }
         }
       }

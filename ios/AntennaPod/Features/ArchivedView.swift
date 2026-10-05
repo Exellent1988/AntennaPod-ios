@@ -461,7 +461,7 @@ struct ArchivedView: View {
                     }
                     .disabled(playRandomCandidates.isEmpty)
                     .accessibilityLabel(String(localized: "Play random"))
-                    .accessibilityHint(String(localized: "Plays a random archived episode with playable media. Prefers unplayed when any remain."))
+                    .accessibilityHint(String(localized: "Plays a random episode from the full Archived catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not restore or unarchive. Does not reorder Archived. No confirmation."))
 
                     Button {
                         showEnqueueAllConfirm = true
