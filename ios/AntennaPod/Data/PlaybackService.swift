@@ -463,6 +463,21 @@ final class PlaybackService: ObservableObject {
     }
 
     func seek(bySeconds delta: Double) {
+        // Android seekForward: a skip that would land at or past a known duration
+        // finishes the episode (mark played, continuous next, sleep-timer end).
+        // Seeking only to the last second never posts DidPlayToEndTime, so the
+        // playhead sits on the end, the episode stays unplayed, and the queue
+        // does not advance. Rewind and the scrubber still use seek(toSeconds:).
+        if delta > 0,
+           player != nil,
+           durationSeconds.isFinite,
+           durationSeconds > 0,
+           positionSeconds + delta >= durationSeconds {
+            activeSeekHold = nil
+            positionSeconds = durationSeconds
+            handlePlaybackEnded()
+            return
+        }
         seek(toSeconds: positionSeconds + delta)
     }
 
