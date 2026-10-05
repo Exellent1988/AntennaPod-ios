@@ -1666,7 +1666,7 @@ struct FeedDetailView: View {
                         } label: {
                             Label("Unsubscribe", systemImage: "trash")
                         }
-                        .accessibilityHint(String(localized: "Opens unsubscribe confirmation; optional delete this feed’s downloads"))
+                        .accessibilityHint(String(localized: "Asks for confirmation, then removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. When this feed has offline downloads, you can keep them or delete only this feed’s files including favorites. Does not clear other podcasts’ downloads."))
                     } label: {
                         Label("Feed actions", systemImage: "ellipsis.circle")
                     }

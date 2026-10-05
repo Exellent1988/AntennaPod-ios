@@ -15607,23 +15607,6 @@
         }
       }
     },
-    "Opens unsubscribe confirmation; optional delete this feed’s downloads": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens unsubscribe confirmation; optional delete this feed’s downloads"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet die Abo-beenden-Bestätigung; optional Downloads dieses Feeds löschen"
-          }
-        }
-      }
-    },
     "AntennaPod Statistics — This week": {
       "extractionState": "manual",
       "localizations": {
@@ -48968,6 +48951,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und entfernt dann gehörte Episoden aus der gesamten Warteschlange, nicht nur dem aktuellen Filter. Stoppt keine Wiedergabe, ändert keinen Fortschritt, hebt Gehört nicht auf und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. When this feed has offline downloads, you can keep them or delete only this feed’s files including favorites. Does not clear other podcasts’ downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. When this feed has offline downloads, you can keep them or delete only this feed’s files including favorites. Does not clear other podcasts’ downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und entfernt dann diesen Podcast aus Abos, seine Feed-Einstellungen und Tags, Warteschlangen-Einträge dieses Feeds sowie Favoriten, Archiv, Wiedergabeverlauf, Lesezeichen und private Notizen seiner Episoden. Wenn dieser Feed Offline-Downloads hat, kannst du sie behalten oder nur die Dateien dieses Feeds einschließlich Favoriten löschen. Löscht nicht die Downloads anderer Podcasts."
           }
         }
       }
