@@ -1984,7 +1984,7 @@ struct SettingsView: View {
                 )
                 .textContentType(.password)
                 .accessibilityLabel(String(localized: "Proxy password"))
-                .accessibilityHint(String(localized: "Optional. Saved to Keychain only — never in backup JSON. Leave blank to keep the stored password."))
+                .accessibilityHint(String(localized: "Optional Proxy password for HTTP Basic. Saved to Keychain only — never in Settings backup. Leave blank to keep the stored password. Use Save password to commit the draft, or Clear password to remove it. Does not enable HTTP proxy, test the connection, or change host, port, or username."))
                 .onSubmit {
                     commitHTTPProxyPasswordDraft()
                 }

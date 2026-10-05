@@ -29299,23 +29299,6 @@
         }
       }
     },
-    "Optional. Saved to Keychain only — never in backup JSON. Leave blank to keep the stored password.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optional. Saved to Keychain only — never in backup JSON. Leave blank to keep the stored password."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optional. Nur im Schlüsselbund — nie im Backup-JSON. Leer lassen, um das gespeicherte Passwort zu behalten."
-          }
-        }
-      }
-    },
     "Optional HTTP(S) proxy for URLSession clients (feeds, downloads, search, …). AVPlayer streaming may bypass the app proxy. Not VPN detection; not certificate pinning; not SOCKS.": {
       "extractionState": "manual",
       "localizations": {
@@ -49434,6 +49417,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "An löscht die Offline-Datei beim Als gehört markieren — manuell oder wenn die Wiedergabe endet — während Episodenzeile und Gehört-Status bleiben. Aus behält Dateien (Standard). Favoriten bleiben immer. Löschen wartet, solange diese lokale Datei das aktive Player-Element ist. Pro-Podcast Immer oder Nie kann diese globale Wahl überschreiben. Löscht jetzt keine Dateien, startet keine Wiedergabe und lädt nicht herunter."
+          }
+        }
+      }
+    },
+    "Optional Proxy password for HTTP Basic. Saved to Keychain only — never in Settings backup. Leave blank to keep the stored password. Use Save password to commit the draft, or Clear password to remove it. Does not enable HTTP proxy, test the connection, or change host, port, or username.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional Proxy password for HTTP Basic. Saved to Keychain only — never in Settings backup. Leave blank to keep the stored password. Use Save password to commit the draft, or Clear password to remove it. Does not enable HTTP proxy, test the connection, or change host, port, or username."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optionaler Proxy-Passwort für HTTP Basic. Nur im Schlüsselbund — nie im Einstellungen-Backup. Leer lassen, um das gespeicherte Passwort zu behalten. Mit Passwort speichern den Entwurf speichern oder mit Passwort löschen entfernen. Schaltet HTTP-Proxy nicht ein, testet die Verbindung nicht und ändert Host, Port oder Benutzername nicht."
           }
         }
       }
