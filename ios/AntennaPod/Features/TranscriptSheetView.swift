@@ -238,7 +238,7 @@ struct TranscriptSheetView: View {
                         .accessibilityLabel(String(localized: "Copy transcript URL"))
                         .accessibilityHint(
                             String(
-                                localized: "Copies the feed-provided transcript URL to the pasteboard, not the loaded transcript text"
+                                localized: "Copies the feed-provided transcript URL to the pasteboard, not the loaded transcript text. No confirmation. Does not fetch, download, or open the transcript body."
                             )
                         )
 
@@ -253,7 +253,7 @@ struct TranscriptSheetView: View {
                             .disabled(!canCopyOrShareTranscriptURL)
                             .accessibilityLabel(String(localized: "Share transcript URL"))
                             .accessibilityHint(
-                                String(localized: "Shares the feed-provided transcript URL, not the loaded transcript text")
+                                String(localized: "Opens the system share sheet with the feed-provided transcript URL, not the loaded transcript text. Does not fetch, download, or open the transcript body.")
                             )
                         } else {
                             ShareLink(
@@ -266,7 +266,7 @@ struct TranscriptSheetView: View {
                             .disabled(!canCopyOrShareTranscriptURL)
                             .accessibilityLabel(String(localized: "Share transcript URL"))
                             .accessibilityHint(
-                                String(localized: "Shares the feed-provided transcript URL, not the loaded transcript text")
+                                String(localized: "Opens the system share sheet with the feed-provided transcript URL, not the loaded transcript text. Does not fetch, download, or open the transcript body.")
                             )
                         }
                     }

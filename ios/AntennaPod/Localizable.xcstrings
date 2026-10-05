@@ -16299,40 +16299,6 @@
         }
       }
     },
-    "Copies the feed-provided transcript URL to the pasteboard, not the loaded transcript text": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the feed-provided transcript URL to the pasteboard, not the loaded transcript text"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert die Transkript-URL aus dem Feed in die Zwischenablage, nicht den geladenen Transkripttext"
-          }
-        }
-      }
-    },
-    "Shares the feed-provided transcript URL, not the loaded transcript text": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shares the feed-provided transcript URL, not the loaded transcript text"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Teilt die Transkript-URL aus dem Feed, nicht den geladenen Transkripttext"
-          }
-        }
-      }
-    },
     "Copy podcast description": {
       "extractionState": "manual",
       "localizations": {
@@ -49132,6 +49098,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Teilen-Sheet mit Episodentitel und dem aktuellen Transkript-Cue an der Wiedergabeposition. Nutzt die volle Cue-Liste und ignoriert den Transkript-Suchfilter. Lädt oder erzeugt kein Transkript."
+          }
+        }
+      }
+    },
+    "Copies the feed-provided transcript URL to the pasteboard, not the loaded transcript text. No confirmation. Does not fetch, download, or open the transcript body.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided transcript URL to the pasteboard, not the loaded transcript text. No confirmation. Does not fetch, download, or open the transcript body."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die feed-bereitgestellte Transkript-URL in die Zwischenablage, nicht den geladenen Transkripttext. Keine Bestätigung. Lädt, lädt herunter oder öffnet den Transkriptinhalt nicht."
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the feed-provided transcript URL, not the loaded transcript text. Does not fetch, download, or open the transcript body.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the feed-provided transcript URL, not the loaded transcript text. Does not fetch, download, or open the transcript body."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Sheet mit der feed-bereitgestellten Transkript-URL, nicht dem geladenen Transkripttext. Lädt, lädt herunter oder öffnet den Transkriptinhalt nicht."
           }
         }
       }
