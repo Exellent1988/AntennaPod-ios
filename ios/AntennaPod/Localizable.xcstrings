@@ -31269,24 +31269,6 @@
       },
       "comment": "Feed detail Sort menu accessibilityHint — Serial nil-only heuristic honesty."
     },
-    "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list. Serial may auto-set Oldest first once when unset; capsule stays display-only.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list. Serial may auto-set Oldest first once when unset; capsule stays display-only."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Global verwenden, Neueste zuerst, Älteste zuerst, Kürzeste zuerst, Längste zuerst, Titel A–Z oder Titel Z–A für die Episodenliste dieses Podcasts. Bei Seriell kann einmal „Älteste zuerst“ gesetzt werden, wenn noch ungesetzt; Kapsel bleibt nur Anzeige."
-          }
-        }
-      },
-      "comment": "Per-feed Episode sort accessibilityHint — Serial nil-only heuristic honesty."
-    },
     "This podcast: %@. Feed detail Sort menu saves per podcast. Serial may auto-set Oldest first once when unset; capsule stays display-only.": {
       "extractionState": "manual",
       "localizations": {
@@ -49251,6 +49233,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Weist diesen neuen Tag-Namen diesem Podcast sofort zu. Keine Bestätigung. Legt den Tag in der lokalen Wortliste an, falls er neu ist. Tags sind lokale Bezeichnungen, die Abonnements filtern — keine mit gpodder synchronisierten Ordner. Ein Podcast kann mehrere Tags haben. Kündigt nicht ab, benennt andere Tags nicht um, löscht keine Downloads und ändert keine Tags anderer Podcasts."
+          }
+        }
+      }
+    },
+    "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list only. Feed detail Sort menu saves the same per-podcast override. Serial may auto-set Oldest first once when unset; itunes:type capsule stays display-only. Does not rewrite the global Feed episode sort alone. Changing this does not reorder other podcasts or start a refresh.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list only. Feed detail Sort menu saves the same per-podcast override. Serial may auto-set Oldest first once when unset; itunes:type capsule stays display-only. Does not rewrite the global Feed episode sort alone. Changing this does not reorder other podcasts or start a refresh."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global, Neueste zuerst, Älteste zuerst, Kürzeste zuerst, Längste zuerst, Titel A–Z oder Titel Z–A nur für die Episodenliste dieses Podcasts. Das Sortieren-Menü im Feed-Detail speichert dieselbe Ausnahme pro Podcast. Bei Seriell kann einmal „Älteste zuerst“ gesetzt werden, wenn noch ungesetzt; die itunes:type-Kapsel bleibt nur Anzeige. Schreibt die globale Feed-Episoden-Sortierung nicht allein um. Ändern ordnet andere Podcasts nicht neu und startet keine Aktualisierung."
           }
         }
       }

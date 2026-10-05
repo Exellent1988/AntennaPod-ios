@@ -280,7 +280,7 @@ struct PerFeedSettingsView: View {
                     }
                 }
                 .accessibilityLabel(String(localized: "Episode sort"))
-                .accessibilityHint(String(localized: "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list. Serial may auto-set Oldest first once when unset; capsule stays display-only."))
+                .accessibilityHint(String(localized: "Use global, Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A for this podcast’s episode list only. Feed detail Sort menu saves the same per-podcast override. Serial may auto-set Oldest first once when unset; itunes:type capsule stays display-only. Does not rewrite the global Feed episode sort alone. Changing this does not reorder other podcasts or start a refresh."))
                 .accessibilityValue(episodeSortAccessibilityValue)
                 Text(episodeSortHelp)
                     .font(.caption)
