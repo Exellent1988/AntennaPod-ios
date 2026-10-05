@@ -13979,24 +13979,6 @@
         }
       }
     },
-    "Appends unplayed, non-archived favorite episodes not already queued; ignores podcast, search, and sort filters": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Favorites Add all unplayed to queue.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends unplayed, non-archived favorite episodes not already queued; ignores podcast, search, and sort filters"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht ungehörte, nicht archivierte Favoriten-Episoden ein, die noch nicht in der Warteschlange sind; ignoriert Podcast-, Such- und Sortierfilter"
-          }
-        }
-      }
-    },
     "Appends %lld downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue.": {
       "extractionState": "manual",
       "localizations": {
@@ -48891,6 +48873,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und entfernt dann jede Episode aus dem vollständigen Verlaufs-Katalog und löscht ihren Gehört-Status sowie gespeicherte Wiedergabepositionen, sodass sie wieder als ungehört zählen. Ignoriert Podcast-, Such- und Sortierfilter. Kündigt keine Abos, löscht keine Downloads und leert nicht die Warteschlange."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then appends unplayed, non-archived episodes from the full Favorites catalog that are not already queued, newest favorited first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then appends unplayed, non-archived episodes from the full Favorites catalog that are not already queued, newest favorited first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und reiht dann ungehörte, nicht archivierte Episoden aus dem vollständigen Favoriten-Katalog ein, die noch nicht in der Warteschlange sind, neueste favorisierte zuerst. Ignoriert Podcast-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht. Unterschiedlich von Alle zur Warteschlange hinzufügen, das auch gehörte und archivierte einschließt."
           }
         }
       }

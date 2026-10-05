@@ -536,7 +536,7 @@ struct FavoritesView: View {
                     .disabled(enqueueAllUnplayedFavoritesCandidatesCount == 0)
                     .accessibilityLabel(String(localized: "Add all unplayed to queue"))
                     .accessibilityHint(
-                        String(localized: "Appends unplayed, non-archived favorite episodes not already queued; ignores podcast, search, and sort filters")
+                        String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from the full Favorites catalog that are not already queued, newest favorited first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived.")
                     )
 
                     Button {
