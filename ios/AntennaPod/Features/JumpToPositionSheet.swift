@@ -107,15 +107,21 @@ struct JumpToPositionSheet: View {
         return true
     }
 
+    /// True when the entered time is at or past a known duration, matching
+    /// `PlaybackService.jumpToPosition` (that path finishes; it does not clamp).
+    private var enteredTimeFinishesEpisode: Bool {
+        guard maxDurationSeconds > 0, let total = parsedTotalSeconds else { return false }
+        return max(0, Double(total)) >= maxDurationSeconds
+    }
+
     private var footerText: String {
         guard maxDurationSeconds > 0 else {
             return String(localized: "Duration unknown — jump unavailable.")
         }
-        let end = Self.formatTime(
-            minutes: Int(maxDurationSeconds) / 60,
-            seconds: Int(maxDurationSeconds) % 60
-        )
-        return String(localized: "Clamped to 0…\(end) (episode duration).")
+        if enteredTimeFinishesEpisode {
+            return String(localized: "A time at or past the episode duration finishes the episode the same way as a forward skip.")
+        }
+        return String(localized: "Seeks to the entered position inside the episode.")
     }
 
     private var positionFieldAccessibilityValue: String {
@@ -123,14 +129,26 @@ struct JumpToPositionSheet: View {
             return String(localized: "Duration unknown — jump unavailable.")
         }
         if let fromText = Self.parseTime(timeText) {
-            let capped = min(max(0, fromText), Int(maxDurationSeconds.rounded(.down)))
-            return Self.formatTime(minutes: capped / 60, seconds: capped % 60)
+            return announcedPosition(total: fromText)
         }
         let trimmed = timeText.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty {
-            return Self.formatTime(minutes: minutes, seconds: seconds)
+            return announcedPosition(total: minutes * 60 + seconds)
         }
         return String(localized: "Invalid — enter mm:ss or minutes and seconds")
+    }
+
+    /// Inside the episode, speak the entered clock. At or past the end, do not
+    /// announce a time clamped down to the duration.
+    private func announcedPosition(total: Int) -> String {
+        let shown = Self.formatTime(minutes: total / 60, seconds: total % 60)
+        if max(0, Double(total)) >= maxDurationSeconds {
+            return String(
+                format: String(localized: "Finishes the episode at %@, the same way as a forward skip."),
+                shown
+            )
+        }
+        return shown
     }
 
     private var minutesAccessibilityValue: String {
@@ -148,7 +166,10 @@ struct JumpToPositionSheet: View {
         guard isValid else {
             return String(localized: "Enter a valid time as mm:ss or use the minutes and seconds steppers.")
         }
-        return String(localized: "Seeks to the entered position, clamped to the episode duration.")
+        if enteredTimeFinishesEpisode {
+            return String(localized: "Finishes the episode the same way as a forward skip.")
+        }
+        return String(localized: "Seeks to the entered position inside the episode.")
     }
 
     private func syncTextFromSteppers() {

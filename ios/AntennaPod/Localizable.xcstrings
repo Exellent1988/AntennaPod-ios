@@ -9915,6 +9915,74 @@
         }
       }
     },
+    "Seeks to the entered position inside the episode.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks to the entered position inside the episode."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt zur eingegebenen Position innerhalb der Episode."
+          }
+        }
+      }
+    },
+    "A time at or past the episode duration finishes the episode the same way as a forward skip.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A time at or past the episode duration finishes the episode the same way as a forward skip."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eine Zeit am oder hinter der Episodendauer beendet die Episode genauso wie Vorspulen."
+          }
+        }
+      }
+    },
+    "Finishes the episode the same way as a forward skip.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finishes the episode the same way as a forward skip."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beendet die Episode genauso wie Vorspulen."
+          }
+        }
+      }
+    },
+    "Finishes the episode at %@, the same way as a forward skip.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finishes the episode at %@, the same way as a forward skip."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beendet die Episode bei %@ genauso wie Vorspulen."
+          }
+        }
+      }
+    },
     "Enter a time to seek": {
       "extractionState": "manual",
       "localizations": {
