@@ -2817,6 +2817,7 @@ struct SettingsView: View {
                 .autocorrectionDisabled()
                 .disabled(gpodder.isLoggedIn)
                 .accessibilityLabel(String(localized: "Username"))
+                .accessibilityHint(String(localized: "Account username for gpodder.net or Nextcloud. Saved in Settings and backup — not the Keychain. Required for Login. Editing alone does not log in or sync. Disabled while logged in."))
             if !gpodder.isLoggedIn {
                 SecureField("Password", text: $gpodder.passwordDraft)
                     .textInputAutocapitalization(.never)

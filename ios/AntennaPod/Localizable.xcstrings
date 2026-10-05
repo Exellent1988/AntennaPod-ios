@@ -49486,6 +49486,23 @@
           }
         }
       }
+    },
+    "Account username for gpodder.net or Nextcloud. Saved in Settings and backup — not the Keychain. Required for Login. Editing alone does not log in or sync. Disabled while logged in.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account username for gpodder.net or Nextcloud. Saved in Settings and backup — not the Keychain. Required for Login. Editing alone does not log in or sync. Disabled while logged in."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konto-Benutzername für gpodder.net oder Nextcloud. In Einstellungen und Backup gespeichert — nicht im Keychain. Erforderlich für Anmelden. Bearbeiten allein meldet nicht an und synchronisiert nicht. Deaktiviert solange angemeldet."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
