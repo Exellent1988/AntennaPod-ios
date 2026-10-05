@@ -481,6 +481,22 @@ final class PlaybackService: ObservableObject {
         seek(toSeconds: positionSeconds + delta)
     }
 
+    /// Typed Jump to position. A target at or past a known duration finishes
+    /// like a forward skip. A time inside the episode still seeks. Unknown or
+    /// zero duration does not finish. The scrubber stays on `seek(toSeconds:)`.
+    func jumpToPosition(seconds: Double) {
+        if player != nil,
+           durationSeconds.isFinite,
+           durationSeconds > 0,
+           seconds >= durationSeconds {
+            activeSeekHold = nil
+            positionSeconds = durationSeconds
+            handlePlaybackEnded()
+            return
+        }
+        seek(toSeconds: max(0, seconds))
+    }
+
     /// Absolute seek for scrubber / Now Playing / chapter / soundbite start.
     /// - Parameter clearSoundbiteEndMarker: When `true` (default), cancels a pending soundbite
     ///   play-until-end window (user scrub / skip / chapter). Pass `false` when `playSoundbite`

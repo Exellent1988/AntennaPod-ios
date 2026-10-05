@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// Compact sheet: enter a playback position (mm:ss text or minutes + seconds
-/// steppers), clamp to `[0, duration]`, then `PlaybackService.seek(toSeconds:)`.
+/// steppers). A time inside a known duration seeks. A time at or past that
+/// duration finishes the episode. Unknown duration stays disabled.
 struct JumpToPositionSheet: View {
     @EnvironmentObject private var playback: PlaybackService
     @Environment(\.dismiss) private var dismiss
@@ -159,8 +160,9 @@ struct JumpToPositionSheet: View {
 
     private func confirm() {
         guard let total = parsedTotalSeconds else { return }
-        let clamped = min(max(0, Double(total)), maxDurationSeconds)
-        playback.seek(toSeconds: clamped)
+        // Do not clamp a past-the-end time down to the last second first.
+        // jumpToPosition finishes when the target is at or past a known duration.
+        playback.jumpToPosition(seconds: max(0, Double(total)))
         dismiss()
     }
 
