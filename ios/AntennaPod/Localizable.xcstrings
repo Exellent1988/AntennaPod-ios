@@ -44814,23 +44814,6 @@
         }
       }
     },
-    "Choices are Manual only, Every 1 hour, Every 4 hours, Every 12 hours, and Every 24 hours. The default is Manual only. Timed intervals check only when you open the app or return to the foreground — not as iOS Background App Refresh. Keep updated Never skips Refresh all, pull-to-refresh, and timed refresh; single-podcast refresh still works. Changing the picker does not refresh now.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choices are Manual only, Every 1 hour, Every 4 hours, Every 12 hours, and Every 24 hours. The default is Manual only. Timed intervals check only when you open the app or return to the foreground — not as iOS Background App Refresh. Keep updated Never skips Refresh all, pull-to-refresh, and timed refresh; single-podcast refresh still works. Changing the picker does not refresh now."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auswahl sind Nur manuell, Alle 1 Stunde, Alle 4 Stunden, Alle 12 Stunden und Alle 24 Stunden. Die Voreinstellung ist Nur manuell. Zeitgesteuerte Intervalle prüfen nur beim Öffnen der App oder bei Rückkehr in den Vordergrund — nicht als iOS Hintergrundaktualisierung. Aktualisiert halten Nie überspringt Alle aktualisieren, Ziehen zum Aktualisieren und zeitgesteuerten Refresh; Einzelaktualisierung funktioniert weiter. Der Picker aktualisiert jetzt nicht."
-          }
-        }
-      }
-    },
     "%@. This is not the default of Manual only.": {
       "extractionState": "manual",
       "localizations": {
@@ -49434,6 +49417,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Optionaler Proxy-Passwort für HTTP Basic. Nur im Schlüsselbund — nie im Einstellungen-Backup. Leer lassen, um das gespeicherte Passwort zu behalten. Mit Passwort speichern den Entwurf speichern oder mit Passwort löschen entfernen. Schaltet HTTP-Proxy nicht ein, testet die Verbindung nicht und ändert Host, Port oder Benutzername nicht."
+          }
+        }
+      }
+    },
+    "Choices are Manual only, Every 1 hour, Every 4 hours, Every 12 hours, and Every 24 hours. The default is Manual only. Timed intervals check only when you open the app or return to the foreground — not as iOS Background App Refresh, and nothing runs while the app is fully quit. Same bulk path as Refresh all and pull-to-refresh. Keep updated Never skips those bulk paths; single-podcast refresh still works. Changing the picker does not refresh now, download, or invent new episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choices are Manual only, Every 1 hour, Every 4 hours, Every 12 hours, and Every 24 hours. The default is Manual only. Timed intervals check only when you open the app or return to the foreground — not as iOS Background App Refresh, and nothing runs while the app is fully quit. Same bulk path as Refresh all and pull-to-refresh. Keep updated Never skips those bulk paths; single-podcast refresh still works. Changing the picker does not refresh now, download, or invent new episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswahl sind Nur manuell, Alle 1 Stunde, Alle 4 Stunden, Alle 12 Stunden und Alle 24 Stunden. Die Voreinstellung ist Nur manuell. Zeitgesteuerte Intervalle prüfen nur beim Öffnen der App oder bei Rückkehr in den Vordergrund — nicht als iOS Hintergrundaktualisierung, und nichts läuft bei vollständig beendeter App. Gleicher Sammelpfad wie Alle aktualisieren und Ziehen zum Aktualisieren. Aktualisiert halten Nie überspringt diese Sammelpfade; Einzelaktualisierung funktioniert weiter. Der Picker aktualisiert jetzt nicht, lädt nicht herunter und erfindet keine neuen Episoden."
           }
         }
       }

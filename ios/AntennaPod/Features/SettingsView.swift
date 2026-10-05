@@ -1796,7 +1796,7 @@ struct SettingsView: View {
     }
 
     private var refreshIntervalAccessibilityHint: String {
-        String(localized: "Choices are Manual only, Every 1 hour, Every 4 hours, Every 12 hours, and Every 24 hours. The default is Manual only. Timed intervals check only when you open the app or return to the foreground — not as iOS Background App Refresh. Keep updated Never skips Refresh all, pull-to-refresh, and timed refresh; single-podcast refresh still works. Changing the picker does not refresh now.")
+        String(localized: "Choices are Manual only, Every 1 hour, Every 4 hours, Every 12 hours, and Every 24 hours. The default is Manual only. Timed intervals check only when you open the app or return to the foreground — not as iOS Background App Refresh, and nothing runs while the app is fully quit. Same bulk path as Refresh all and pull-to-refresh. Keep updated Never skips those bulk paths; single-podcast refresh still works. Changing the picker does not refresh now, download, or invent new episodes.")
     }
 
 
