@@ -85,7 +85,13 @@ final class PodcastStore: ObservableObject {
     /// Feeds that will run in the in-flight `refreshAllFeeds()` (non-empty URL + Keep updated participates).
     /// Zero when idle or for non-bulk `isLoading` work (subscribe / single-feed refresh).
     @Published var refreshTotalCount = 0
-    @Published var lastError: String?
+    @Published var lastError: String? {
+        didSet {
+            if lastError == nil { lastErrorFeedId = nil }
+        }
+    }
+    /// Podcast whose refresh failure `lastError` shows, so unsubscribing it clears the banner.
+    private var lastErrorFeedId: UUID?
     /// OPML import file/parse error, shown only on the OPML import rows. Kept apart from
     /// `lastError` (Refresh all / single refresh / local rescan) so neither shows or clears the other.
     @Published var opmlImportError: String?
@@ -187,6 +193,10 @@ final class PodcastStore: ObservableObject {
         }
         FeedHttpBasicAuthKeychain.delete(for: feed.id)
         feeds.removeAll { $0.id == feed.id }
+        // Its refresh error has nothing left to act on.
+        if lastErrorFeedId == feed.id {
+            lastError = nil
+        }
         feedSettingsById.removeValue(forKey: feed.id)
         tagsByFeedId.removeValue(forKey: feed.id)
         let ids = Set(feed.episodes.map(\.id))
@@ -501,7 +511,7 @@ final class PodcastStore: ObservableObject {
                 newcomers = try await subscribeQuietly(feedUrl: feed.feedUrl, onlyIfSubscribed: true)
             } catch {
                 ownError = error.localizedDescription
-                lastError = ownError
+                setRefreshError(error.localizedDescription, feed: feeds.first(where: { $0.feedUrl == feed.feedUrl }) ?? feed)
             }
             endLoadingOperation()
         } else {
@@ -2778,6 +2788,17 @@ final class PodcastStore: ObservableObject {
         return String(localized: "Refreshing feeds…")
     }
 
+    /// Home / Inbox banner text for one podcast's refresh failure: names the podcast, since
+    /// Refresh all keeps only the last failure and the system message does not say which feed.
+    private func setRefreshError(_ message: String, feed: PodcastFeed) {
+        lastError = String(
+            format: String(localized: "Could not refresh %1$@: %2$@"),
+            nonEmptyDisplayTitle(for: feed) ?? String(localized: "Unknown podcast"),
+            message
+        )
+        lastErrorFeedId = feed.id
+    }
+
     private func beginLoadingOperation() {
         loadingOperationCount += 1
         isLoading = true
@@ -2866,7 +2887,7 @@ final class PodcastStore: ObservableObject {
                         )
                     }
                 } catch {
-                    lastError = error.localizedDescription
+                    setRefreshError(error.localizedDescription, feed: feed)
                 }
                 refreshCompletedCount += 1
                 continue
@@ -2886,7 +2907,7 @@ final class PodcastStore: ObservableObject {
                     }
                 }
             } catch {
-                lastError = error.localizedDescription
+                setRefreshError(error.localizedDescription, feed: feed)
             }
             refreshCompletedCount += 1
         }
@@ -3066,8 +3087,8 @@ final class PodcastStore: ObservableObject {
                 newBatches: newBatches
             )
         } catch {
-            lastError = error.localizedDescription
-            return lastError
+            setRefreshError(error.localizedDescription, feed: feed)
+            return error.localizedDescription
         }
         return nil
     }

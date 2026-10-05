@@ -27679,6 +27679,23 @@
       },
       "comment": "FeedRepository timeout"
     },
+    "Could not refresh %1$@: %2$@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not refresh %1$@: %2$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ konnte nicht aktualisiert werden: %2$@"
+          }
+        }
+      }
+    },
     "Could not reach the feed: %@": {
       "extractionState": "manual",
       "localizations": {
