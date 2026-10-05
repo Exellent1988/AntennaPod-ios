@@ -22,6 +22,14 @@ enum FeedParsing {
         try NativeRssAtomParser.parse(xml: xml)
     }
 
+    /// Decode a body that is not valid UTF-8. Many feeds labeled ISO-8859-1 are really
+    /// windows-1252, whose 0x80–0x9F bytes are €, curly quotes, and dashes; Latin-1 turns
+    /// them into invisible C1 controls. 0xA0–0xFF map the same in both. Latin-1 stays the
+    /// last fallback because windows-1252 leaves five bytes undefined.
+    static func decodeLegacy8Bit(_ data: Data) -> String? {
+        String(data: data, encoding: .windowsCP1252) ?? String(data: data, encoding: .isoLatin1)
+    }
+
     /// `parse(xml:)` hands XMLParser the string as UTF-8 bytes, but XMLParser still honors
     /// an `encoding="ISO-8859-1"` / `windows-1252` declaration and would read those bytes
     /// as Latin-1 (`é` → `Ã©`). Use only after decoding a non-UTF-8 body as Latin-1:
