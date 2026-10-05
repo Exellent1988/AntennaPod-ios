@@ -48886,6 +48886,23 @@
           }
         }
       }
+    },
+    "Reset Statistics baseline. Copy and Share appear when this time range has totals to export.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset Statistics baseline. Copy and Share appear when this time range has totals to export."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistik-Basislinie zurücksetzen. Kopieren und Teilen erscheinen, wenn dieser Zeitraum Summen zum Exportieren hat."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -162,7 +162,11 @@ struct StatisticsView: View {
                     Label("Statistics actions", systemImage: "ellipsis.circle")
                 }
                 .accessibilityLabel(String(localized: "Statistics actions"))
-                .accessibilityHint(String(localized: "Copy or share the same plain-text summary, or reset Statistics baseline"))
+                .accessibilityHint(
+                    stats.isEmpty
+                        ? String(localized: "Reset Statistics baseline. Copy and Share appear when this time range has totals to export.")
+                        : String(localized: "Copy or share the same plain-text summary, or reset Statistics baseline")
+                )
             }
         }
         .alert(
