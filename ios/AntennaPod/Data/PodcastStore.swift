@@ -2690,6 +2690,10 @@ final class PodcastStore: ObservableObject {
         }
         // Stamp even if some feeds failed — avoids hammering on every foreground.
         settings?.markFeedRefreshCompleted()
+        // A podcast unsubscribed after its turn must not get a banner, queue items, or downloads.
+        newBatches = newBatches.filter { batch in
+            feeds.contains(where: { $0.id == batch.feedId })
+        }
         await NewEpisodeNotificationCoordinator.handleNewEpisodes(newBatches, settings: settings, store: self)
         await NewEpisodeActionCoordinator.apply(
             newBatches,
