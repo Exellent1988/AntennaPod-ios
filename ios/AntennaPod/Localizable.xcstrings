@@ -32241,23 +32241,6 @@
         }
       }
     },
-    "Marks played History episodes as unplayed; leaves History when no progress remains": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks played History episodes as unplayed; leaves History when no progress remains"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert gehörte Verlaufs-Episoden als ungehört; verlässt den Verlauf, wenn kein Fortschritt bleibt"
-          }
-        }
-      }
-    },
     "Marks %lld unplayed, non-archived History episode(s) as played. Uses the full History catalog (newest last-played first), not the podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not clear History, remove episodes from the catalog, or delete downloads itself.": {
       "extractionState": "manual",
       "localizations": {
@@ -48890,6 +48873,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und reiht dann ungehörte, nicht archivierte Episoden aus dem vollständigen Favoriten-Katalog ein, die noch nicht in der Warteschlange sind, neueste favorisierte zuerst. Ignoriert Podcast-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht. Unterschiedlich von Alle zur Warteschlange hinzufügen, das auch gehörte und archivierte einschließt."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then marks played episodes in the full History catalog as unplayed. Ignores podcast, search, and sort filters. Episodes leave History when no progress remains — same as per-row Mark unplayed. Does not delete downloads, clear the queue, or stop playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then marks played episodes in the full History catalog as unplayed. Ignores podcast, search, and sort filters. Episodes leave History when no progress remains — same as per-row Mark unplayed. Does not delete downloads, clear the queue, or stop playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und markiert dann gehörte Episoden im vollständigen Verlaufs-Katalog als ungehört. Ignoriert Podcast-, Such- und Sortierfilter. Episoden verlassen den Verlauf, wenn kein Fortschritt mehr bleibt — wie bei Markierung ungehört pro Zeile. Löscht keine Downloads, leert nicht die Warteschlange und stoppt keine Wiedergabe."
           }
         }
       }

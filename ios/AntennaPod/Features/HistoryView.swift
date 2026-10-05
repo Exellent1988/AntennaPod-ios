@@ -551,7 +551,7 @@ struct HistoryView: View {
                         Label("Mark all as unplayed", systemImage: "circle")
                     }
                     .disabled(markAllHistoryUnplayedCandidatesCount == 0)
-                    .accessibilityHint(String(localized: "Marks played History episodes as unplayed; leaves History when no progress remains"))
+                    .accessibilityHint(String(localized: "Asks for confirmation, then marks played episodes in the full History catalog as unplayed. Ignores podcast, search, and sort filters. Episodes leave History when no progress remains — same as per-row Mark unplayed. Does not delete downloads, clear the queue, or stop playback."))
 
                     Button {
                         showArchiveAllConfirm = true
