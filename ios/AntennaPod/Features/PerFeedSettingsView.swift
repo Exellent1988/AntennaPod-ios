@@ -407,7 +407,7 @@ struct PerFeedSettingsView: View {
                             Label(tag, systemImage: "plus.circle")
                         }
                         .accessibilityLabel(tag)
-                        .accessibilityHint(String(localized: "Adds this existing tag to this podcast."))
+                        .accessibilityHint(String(localized: "Assigns this existing tag to this podcast immediately. No confirmation. Tags are local labels that filter Subscriptions — not folders synced to gpodder. A podcast can have several tags. Does not unsubscribe, rename the tag everywhere, delete downloads, or change other podcasts’ tags."))
                     }
                 }
 
