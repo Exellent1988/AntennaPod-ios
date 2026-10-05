@@ -2155,7 +2155,7 @@ struct SettingsView: View {
                 .accessibilityHint(String(localized: "Master switch for local new-episode notifications after refresh. Per-podcast Off silences that feed; per-podcast On is ignored while this is off. No push server."))
             Toggle("Notify on download errors", isOn: $settings.notifyOnDownloadErrors)
                 .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnDownloadErrors, role: .downloadErrors))
-                .accessibilityHint(String(localized: "Local notifications when a download fails — not when a download completes successfully."))
+                .accessibilityHint(String(localized: "Local banners when a download fails — may open Downloads. Title is the episode title, the podcast title when the episode title is empty, or Download failed. Body is a short error. Does not post a banner by itself. Not push. Successful downloads use Notify on download complete. Failures can still appear in Download errors when this is off."))
             Toggle("Notify on download complete", isOn: $settings.notifyOnDownloadComplete)
                 .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnDownloadComplete, role: .downloadComplete))
                 .accessibilityHint(String(localized: "Optional local notifications when a download finishes successfully. Default off — quieter than download errors."))

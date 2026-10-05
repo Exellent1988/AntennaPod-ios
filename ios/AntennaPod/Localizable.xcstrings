@@ -27523,23 +27523,6 @@
         }
       }
     },
-    "Local notifications when a download fails — not when a download completes successfully.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Local notifications when a download fails — not when a download completes successfully."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lokale Benachrichtigungen bei fehlgeschlagenem Download — nicht bei erfolgreichem Abschluss."
-          }
-        }
-      }
-    },
     "Opens the system Settings app so you can allow Notifications for AntennaPod. App toggles stay on; banners stay off until iOS allows them.": {
       "extractionState": "manual",
       "localizations": {
@@ -49261,6 +49244,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lokale Banner bei fehlgeschlagenem gpodder- oder Nextcloud-Login oder -Sync — können Einstellungen Sync öffnen. Titel kann Anmeldung fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen sein. Löst selbst keinen Banner aus und startet keinen Sync. Kein Push. Erfolgreicher Sync bleibt still."
+          }
+        }
+      }
+    },
+    "Local banners when a download fails — may open Downloads. Title is the episode title, the podcast title when the episode title is empty, or Download failed. Body is a short error. Does not post a banner by itself. Not push. Successful downloads use Notify on download complete. Failures can still appear in Download errors when this is off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local banners when a download fails — may open Downloads. Title is the episode title, the podcast title when the episode title is empty, or Download failed. Body is a short error. Does not post a banner by itself. Not push. Successful downloads use Notify on download complete. Failures can still appear in Download errors when this is off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Banner bei fehlgeschlagenem Download — können Downloads öffnen. Titel ist der Episodentitel, der Podcasttitel wenn der Episodentitel leer ist, oder Download fehlgeschlagen. Text ist ein kurzer Fehler. Löst selbst keinen Banner aus. Kein Push. Erfolgreiche Downloads nutzen Bei Download-Abschluss benachrichtigen. Fehler können bei Aus weiterhin unter Download-Fehler erscheinen."
           }
         }
       }
