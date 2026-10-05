@@ -409,7 +409,20 @@ final class PodcastStore: ObservableObject {
         }
         let existingIds = Set(feed.episodes.map(\.id))
         let wasSubscribed = feeds.contains(where: { $0.feedUrl == feed.feedUrl })
-        await subscribe(feedUrl: feed.feedUrl)
+        if wasSubscribed {
+            // Same as subscribe(), except a podcast unsubscribed while this fetch runs
+            // (Subscriptions swipe Refresh, then Unsubscribe) is not added back.
+            lastError = nil
+            isLoading = true
+            do {
+                try await subscribeQuietly(feedUrl: feed.feedUrl, onlyIfSubscribed: true)
+            } catch {
+                lastError = error.localizedDescription
+            }
+            isLoading = false
+        } else {
+            await subscribe(feedUrl: feed.feedUrl)
+        }
         var newBatches: [NewEpisodeBatch] = []
         if wasSubscribed, let updated = feeds.first(where: { $0.feedUrl == feed.feedUrl }) {
             let newcomers = updated.episodes.filter { !existingIds.contains($0.id) }
