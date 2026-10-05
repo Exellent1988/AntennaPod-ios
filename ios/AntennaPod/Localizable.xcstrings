@@ -30717,23 +30717,6 @@
         }
       }
     },
-    "Lowers volume over the last ~10 seconds of a clock sleep timer. End of episode or chapter do not fade. Default on.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lowers volume over the last ~10 seconds of a clock sleep timer. End of episode or chapter do not fade. Default on."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Senkt die Lautstärke in den letzten ~10 Sekunden eines Uhr-Schlaf-Timers. Ende der Episode oder des Kapitels faden nicht. Standard an."
-          }
-        }
-      }
-    },
     "When on, clock sleep timer linearly lowers `AVPlayer.volume` over the last ~10 seconds before pause (Android `NOTIFICATION_THRESHOLD`). End-of-episode / end-of-chapter do **not** fade. Soft player volume only — **not** equal-loudness / ReplayGain; may be coarse with stock `AVPlayer`. Volume boost stays on `AVAudioMix`. Pause / seek / cancel timer restores pre-fade volume. Default **on** (Android always fades; no Android off-toggle).": {
       "extractionState": "manual",
       "localizations": {
@@ -49228,6 +49211,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn an, fordert Mono-Ausgabe an (stellt Stereo wieder her, wenn aus). Wird bei Wiedergabe, Einstellungsänderung und Audio-Routenwechsel erneut angewendet. Best effort — das System kann dies auf manchen Routen ignorieren (Lautsprecher, Bluetooth, CarPlay). Kein echtes L+R-Remix; behält stock AVPlayer. Nicht Android-ExoPlayer Stereo→Mono. Standard aus. Ändern startet oder stoppt die Wiedergabe nicht."
+          }
+        }
+      }
+    },
+    "When on, clock sleep timer lowers player volume over the last ~10 seconds before pause. End of episode or chapter do not fade. Soft player volume only — not equal-loudness or ReplayGain. Volume boost stays separate. Pause, seek, or cancel timer restores pre-fade volume. Default on. Changing this does not start a sleep timer or change playback now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, clock sleep timer lowers player volume over the last ~10 seconds before pause. End of episode or chapter do not fade. Soft player volume only — not equal-loudness or ReplayGain. Volume boost stays separate. Pause, seek, or cancel timer restores pre-fade volume. Default on. Changing this does not start a sleep timer or change playback now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an, senkt der Uhr-Schlaf-Timer die Player-Lautstärke über die letzten ~10 Sekunden vor der Pause. Ende der Episode oder des Kapitels fadet nicht. Nur weiche Player-Lautstärke — keine Equal-Loudness oder ReplayGain. Lautstärke-Verstärkung bleibt getrennt. Pause, Seek oder Timer abbrechen stellt die Lautstärke vor dem Fade wieder her. Standard an. Ändern startet keinen Schlaf-Timer und ändert die Wiedergabe jetzt nicht."
           }
         }
       }

@@ -1311,7 +1311,7 @@ struct SettingsView: View {
             }
             if matchesPlaybackSleepTimerFade {
                 Toggle("Sleep timer volume fade", isOn: $settings.sleepTimerFadeEnabled)
-                    .accessibilityHint(String(localized: "Lowers volume over the last ~10 seconds of a clock sleep timer. End of episode or chapter do not fade. Default on."))
+                    .accessibilityHint(String(localized: "When on, clock sleep timer lowers player volume over the last ~10 seconds before pause. End of episode or chapter do not fade. Soft player volume only — not equal-loudness or ReplayGain. Volume boost stays separate. Pause, seek, or cancel timer restores pre-fade volume. Default on. Changing this does not start a sleep timer or change playback now."))
                 Text("When on, clock sleep timer linearly lowers `AVPlayer.volume` over the last ~10 seconds before pause (Android `NOTIFICATION_THRESHOLD`). End-of-episode / end-of-chapter do **not** fade. Soft player volume only — **not** equal-loudness / ReplayGain; may be coarse with stock `AVPlayer`. Volume boost stays on `AVAudioMix`. Pause / seek / cancel timer restores pre-fade volume. Default **on** (Android always fades; no Android off-toggle).")
                     .font(.caption)
                     .foregroundStyle(.secondary)
