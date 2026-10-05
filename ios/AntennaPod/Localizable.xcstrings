@@ -35929,24 +35929,6 @@
       },
       "comment": "VoiceOver accessibilityValue with bookmark count and episode count for Settings Clear all bookmarks."
     },
-    "Removes every local bookmark after confirmation. Does not clear chapters, Share with position, private notes, favorites, downloads, queue, or history.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes every local bookmark after confirmation. Does not clear chapters, Share with position, private notes, favorites, downloads, queue, or history."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt nach Bestätigung jedes lokale Lesezeichen. Löscht keine Kapitel, Mit Position teilen, privaten Notizen, Favoriten, Downloads, Warteschlange oder Verlauf."
-          }
-        }
-      },
-      "comment": "VoiceOver accessibilityHint for Settings Clear all bookmarks."
-    },
     "Removes %lld local bookmarks across %lld episodes from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.": {
       "extractionState": "manual",
       "localizations": {
@@ -48965,6 +48947,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden in der gesamten Warteschlange, nicht nur dem aktuellen Gehört-, Podcast- oder Suchfilter. Archiviert bedeutet nicht gehört. Entfernt keine Episoden aus der Warteschlange, markiert nicht als gehört, löscht keine Downloads und stoppt keine Wiedergabe."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then removes every local bookmark from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then removes every local bookmark from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und entfernt dann jedes lokale Lesezeichen aus bookmarks.json. Löscht keine Kapitel, Teilen mit Position, Episoden- oder Feed-Privatnotizen, Favoriten, Archiv, Downloads, Warteschlange oder Verlauf. Nur lokal — nicht RSS / gpodder / OPML."
           }
         }
       }

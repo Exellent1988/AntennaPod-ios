@@ -1170,7 +1170,7 @@ struct SettingsView: View {
                 )
                 .accessibilityHint(
                     String(
-                        localized: "Removes every local bookmark after confirmation. Does not clear chapters, Share with position, private notes, favorites, downloads, queue, or history."
+                        localized: "Asks for confirmation, then removes every local bookmark from bookmarks.json. Does not clear chapters, Share with position, episode or feed private notes, favorites, archive, downloads, queue, or history. Local only — not RSS / gpodder / OPML."
                     )
                 )
                 Text(
