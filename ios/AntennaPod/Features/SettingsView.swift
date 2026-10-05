@@ -2789,7 +2789,7 @@ struct SettingsView: View {
             }
             .disabled(gpodder.isBusy)
             .accessibilityLabel(String(localized: "Provider"))
-            .accessibilityHint(String(localized: "gpodder.net or Nextcloud Gpodder Sync. Switching logs out and clears sync cursors."))
+            .accessibilityHint(String(localized: "gpodder.net or Nextcloud Gpodder Sync. Switching logs out if logged in, clears sync cursors, and may reset Host to the gpodder.net default or clear it for Nextcloud. Does not unsubscribe local feeds, delete downloads, or invent a sync."))
 
             if gpodder.provider == .nextcloud {
                 TextField(

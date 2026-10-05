@@ -26566,24 +26566,6 @@
       },
       "comment": "VoiceOver label for help caption"
     },
-    "gpodder.net or Nextcloud Gpodder Sync. Switching logs out and clears sync cursors.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "gpodder.net or Nextcloud Gpodder Sync. Switching logs out and clears sync cursors."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "gpodder.net oder Nextcloud Gpodder Sync. Wechsel meldet ab und löscht Sync-Cursor."
-          }
-        }
-      },
-      "comment": "Provider picker VoiceOver hint"
-    },
     "Creates a new device id from the device name and forces a full subscription pull next sync.": {
       "extractionState": "manual",
       "localizations": {
@@ -49497,6 +49479,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nextcloud-Server-Root oder voller Gpodder-Sync-API-Pfad. In Einstellungen und Backup gespeichert. Erforderlich für Nextcloud-Anmelden. Bearbeiten allein meldet nicht an und synchronisiert nicht. Deaktiviert solange angemeldet."
+          }
+        }
+      }
+    },
+    "gpodder.net or Nextcloud Gpodder Sync. Switching logs out if logged in, clears sync cursors, and may reset Host to the gpodder.net default or clear it for Nextcloud. Does not unsubscribe local feeds, delete downloads, or invent a sync.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gpodder.net or Nextcloud Gpodder Sync. Switching logs out if logged in, clears sync cursors, and may reset Host to the gpodder.net default or clear it for Nextcloud. Does not unsubscribe local feeds, delete downloads, or invent a sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gpodder.net oder Nextcloud Gpodder Sync. Wechsel meldet ab, wenn angemeldet, löscht Sync-Cursor und kann den Host auf den gpodder.net-Standard zurücksetzen oder für Nextcloud leeren. Deabonniert keine lokalen Feeds, löscht keine Downloads und erfindet keinen Sync."
           }
         }
       }
