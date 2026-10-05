@@ -14655,23 +14655,6 @@
         }
       }
     },
-    "Local notifications when gpodder or Nextcloud sync fails.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Local notifications when gpodder or Nextcloud sync fails."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lokale Benachrichtigungen, wenn die gpodder- oder Nextcloud-Sync fehlschlägt."
-          }
-        }
-      }
-    },
     "Preference only; not applied on stock AVPlayer in this beta.": {
       "extractionState": "manual",
       "localizations": {
@@ -49261,6 +49244,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Optionaler Proxy-Benutzername für HTTP Basic. In Einstellungen und Backup gespeichert — nicht im Schlüsselbund. Leer lassen für keine Proxy-Anmeldung. Zusammen mit Proxy-Passwort; das Passwort bleibt nur im Schlüsselbund und nie im Backup."
+          }
+        }
+      }
+    },
+    "Local banners when gpodder or Nextcloud login or sync fails — may open Settings Sync. Title may be Login failed, Not logged in, or Sync failed. Does not post a banner by itself and does not start a sync. Not push. Successful sync stays silent.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local banners when gpodder or Nextcloud login or sync fails — may open Settings Sync. Title may be Login failed, Not logged in, or Sync failed. Does not post a banner by itself and does not start a sync. Not push. Successful sync stays silent."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Banner bei fehlgeschlagenem gpodder- oder Nextcloud-Login oder -Sync — können Einstellungen Sync öffnen. Titel kann Anmeldung fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen sein. Löst selbst keinen Banner aus und startet keinen Sync. Kein Push. Erfolgreicher Sync bleibt still."
           }
         }
       }
