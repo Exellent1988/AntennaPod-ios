@@ -628,7 +628,7 @@ struct HistoryView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Removes \(items.count) episodes from history. Does not unsubscribe, delete downloads, or clear the queue.")
+            Text("Removes \(items.count) episodes from history. Their played status and saved playback positions are cleared too, so they count as unplayed again. Does not unsubscribe, delete downloads, or clear the queue.")
         }
     }
 

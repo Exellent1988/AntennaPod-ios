@@ -6463,6 +6463,23 @@
         }
       }
     },
+    "Removes %lld episodes from history. Their played status and saved playback positions are cleared too, so they count as unplayed again. Does not unsubscribe, delete downloads, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes %lld episodes from history. Their played status and saved playback positions are cleared too, so they count as unplayed again. Does not unsubscribe, delete downloads, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt %lld Episoden aus dem Verlauf. Ihr Gehört-Status und ihre gespeicherten Wiedergabepositionen werden ebenfalls gelöscht, sodass sie wieder als ungehört gelten. Deabonniert nicht, löscht keine Downloads und leert die Warteschlange nicht."
+          }
+        }
+      }
+    },
     "Removes %lld offline episode file(s). Playback history is kept.": {
       "extractionState": "manual",
       "localizations": {
