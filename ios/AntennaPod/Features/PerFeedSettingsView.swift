@@ -144,6 +144,9 @@ struct PerFeedSettingsView: View {
                         Text(option.label).tag(option)
                     }
                 }
+                .accessibilityLabel(String(localized: "Auto-download"))
+                .accessibilityHint(String(localized: "Use global, Always, or Never for newly appeared episodes after refresh for this podcast. Cap and Wi‑Fi-only still apply globally. Always enqueues even when global Auto-download is off; Never never auto-downloads even when global is on. New episodes Add to Queue and download still enqueues but does not download when Never. Manual Download still works. Changing this does not download or delete now."))
+                .accessibilityValue(current.autoDownload.label)
                 Text(autoDownloadHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)

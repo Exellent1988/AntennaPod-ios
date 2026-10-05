@@ -49203,6 +49203,23 @@
           }
         }
       }
+    },
+    "Use global, Always, or Never for newly appeared episodes after refresh for this podcast. Cap and Wi‑Fi-only still apply globally. Always enqueues even when global Auto-download is off; Never never auto-downloads even when global is on. New episodes Add to Queue and download still enqueues but does not download when Never. Manual Download still works. Changing this does not download or delete now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, Always, or Never for newly appeared episodes after refresh for this podcast. Cap and Wi‑Fi-only still apply globally. Always enqueues even when global Auto-download is off; Never never auto-downloads even when global is on. New episodes Add to Queue and download still enqueues but does not download when Never. Manual Download still works. Changing this does not download or delete now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global, Immer oder Nie für neu erschienene Episoden nach dem Refresh für diesen Podcast. Cap und Nur-Wi‑Fi gelten weiter global. Immer reiht auch ein, wenn globaler Auto-Download aus ist; Nie lädt nie automatisch, auch wenn global an ist. Neue Episoden „Zur Warteschlange hinzufügen und herunterladen“ reiht bei Nie weiterhin ein, lädt aber nicht herunter. Manueller Download funktioniert weiter. Ändern lädt oder löscht jetzt nichts."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
