@@ -29,7 +29,7 @@ struct ParentalControlsSettingsView: View {
                     Button("Change PIN") {
                         showChangePIN = true
                     }
-                    .accessibilityHint(enableHelpText)
+                    .accessibilityHint(String(localized: "Opens a sheet to set a new 4–6 digit PIN after entering the current one. PIN stays in the Keychain only — never in Settings backup. Does not unlock Add / Discover or Network / Downloads locks by itself, and does not disable parental controls."))
                 }
                 Text(enableHelpText)
                     .font(.caption)
