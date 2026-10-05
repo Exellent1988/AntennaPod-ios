@@ -1611,7 +1611,7 @@ struct FullPlayerView: View {
                 Label("Play from beginning", systemImage: "backward.end.fill")
             }
             .accessibilityLabel(String(localized: "Play from beginning"))
-            .accessibilityHint(String(localized: "Seeks to the start of this episode and plays"))
+            .accessibilityHint(String(localized: "Seeks to the start of this episode and plays immediately. No confirmation. Does not skip intro, mark unplayed, change the queue, or delete downloads."))
 
             Button {
                 showBookmarks = true

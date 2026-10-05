@@ -151,7 +151,7 @@ struct MiniPlayerView: View {
                             Label("Play from beginning", systemImage: "backward.end.fill")
                         }
                         .accessibilityLabel(String(localized: "Play from beginning"))
-                        .accessibilityHint(String(localized: "Seeks to the start of this episode and plays"))
+                        .accessibilityHint(String(localized: "Seeks to the start of this episode and plays immediately. No confirmation. Does not skip intro, mark unplayed, change the queue, or delete downloads."))
                         // Previous / Next chapter — same ChapterIndexing + seek as Full transport.
                         // Only when chapters already on store/player episode (no mini lazy fetch).
                         if canSkipChapters {

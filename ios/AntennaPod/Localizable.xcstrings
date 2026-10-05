@@ -10339,23 +10339,6 @@
         }
       }
     },
-    "Seeks to the start of this episode and plays": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seeks to the start of this episode and plays"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Springt zum Anfang dieser Episode und spielt ab"
-          }
-        }
-      }
-    },
     "Loads this episode from the start and plays": {
       "extractionState": "manual",
       "localizations": {
@@ -49098,6 +49081,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entfernt die lokale private Notiz für diesen Podcast sofort. Keine Bestätigung. Nur lokal — nicht RSS / gpodder / OPML. Betrifft nicht Episode-Notizen, Lesezeichen, Pin, Tags, Favoriten oder die Queue."
+          }
+        }
+      }
+    },
+    "Seeks to the start of this episode and plays immediately. No confirmation. Does not skip intro, mark unplayed, change the queue, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks to the start of this episode and plays immediately. No confirmation. Does not skip intro, mark unplayed, change the queue, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt zum Anfang dieser Episode und spielt sofort. Keine Bestätigung. Überspringt weder Intro noch markiert ungehört, ändert nicht die Queue und löscht keine Downloads."
           }
         }
       }
