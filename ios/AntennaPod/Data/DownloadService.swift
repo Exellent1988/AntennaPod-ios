@@ -511,6 +511,40 @@ final class DownloadService: ObservableObject {
         return "\(hex).\(suffix.isEmpty ? "mp3" : suffix)"
     }
 
+    /// AVPlayer picks the container from a local file's extension. Enclosures like
+    /// `download.php?id=42` or `/media/42` were saved as `.php` / `.mp3` even when the
+    /// feed said `video/mp4` or `audio/mp4`, so the downloaded file would not play.
+    /// A known media extension in the URL still wins; otherwise use the enclosure type.
+    /// Existing downloads keep their stored file name.
+    static func downloadFileExtension(url: URL, mimeType: String?) -> String {
+        let fromURL = url.pathExtension.lowercased()
+        if mediaExtensions.contains(fromURL) {
+            return url.pathExtension
+        }
+        let mime = (mimeType ?? "")
+            .split(separator: ";").first.map(String.init)?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased() ?? ""
+        if let mapped = extensionByMimeType[mime] {
+            return mapped
+        }
+        return url.pathExtension.isEmpty ? "mp3" : url.pathExtension
+    }
+
+    private static let mediaExtensions: Set<String> = [
+        "mp3", "m4a", "m4b", "aac", "mp4", "m4v", "mov", "ogg", "oga", "opus",
+        "wav", "flac", "webm", "mp2", "3gp",
+    ]
+
+    private static let extensionByMimeType: [String: String] = [
+        "audio/mpeg": "mp3", "audio/mp3": "mp3", "audio/x-mpeg": "mp3",
+        "audio/mp4": "m4a", "audio/x-m4a": "m4a", "audio/m4a": "m4a", "audio/aac": "aac",
+        "audio/x-m4b": "m4b", "video/mp4": "mp4", "video/x-m4v": "m4v",
+        "video/quicktime": "mov", "audio/ogg": "ogg", "audio/opus": "opus",
+        "audio/wav": "wav", "audio/x-wav": "wav", "audio/flac": "flac",
+        "video/webm": "webm", "audio/webm": "webm",
+    ]
+
     /// Hands one episode to the background `URLSession` (caller already reserved an `inProgress` slot).
     /// When the owning feed has HTTP Basic credentials in Keychain **and** the media URL host
     /// matches the feed URL host, attaches `Authorization` (never logged). Other CDN hosts are
@@ -522,7 +556,7 @@ final class DownloadService: ObservableObject {
             return
         }
 
-        let ext = url.pathExtension.isEmpty ? "mp3" : url.pathExtension
+        let ext = Self.downloadFileExtension(url: url, mimeType: episode.mimeType)
         let fileName = Self.storageFileName(episodeId: episode.id, pathExtension: ext)
 
         var request = URLRequest(url: url)

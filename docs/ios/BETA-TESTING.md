@@ -168,7 +168,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 
 | DE | EN |
 |----|----|
-| ☐ Episode manuell laden (Download auf einer schon heruntergeladenen Episode startet keine zweite Übertragung.) | ☐ Manual download (Download on an episode that is already downloaded does not start a second transfer.) |
+| ☐ Episode manuell laden (Download auf einer schon heruntergeladenen Episode startet keine zweite Übertragung. Eine Media-URL ohne Audio-Endung wie `download.php?id=42` wird trotzdem abspielbar gespeichert.) | ☐ Manual download (Download on an episode that is already downloaded does not start a second transfer. A media URL without an audio extension, such as `download.php?id=42`, is still saved in a playable form.) |
 | ☐ Full Player + Mini ⋯: Download / Abbrechen / Download löschen (gleiche DownloadService-APIs; Wi‑Fi-Gate; **Confirm** + Titel; nur lokale Datei; shared `EpisodeDownloadActions`) | ☐ Full Player + Mini ⋯: Download / Cancel / Delete download (same DownloadService APIs; Wi‑Fi gate; **confirm** + title; local file only; shared `EpisodeDownloadActions`) |
 | ☐ Feed: Zufällig abspielen (⋯; nicht archiviert + playable; bevorzugt ungehört; kein Confirm; disabled wenn 0; `PlaybackService.play`; nicht Chip/Suche) | ☐ Feed: Play random (⋯; non-archived + playable; prefers unplayed; no confirm; disabled when 0; `PlaybackService.play`; not chip/search) |
 | ☐ Feed: Alle ungehörten herunterladen (Bestätigung + Soft-Cap default 50, Settings 10/25/50/100/200; ungespielt/nicht archiviert/nicht DL; http(s); nicht Chip/Suche; Wi‑Fi/Parallel/Storage) | ☐ Feed: Download all unplayed (confirm + soft cap default 50, Settings 10/25/50/100/200; unplayed/not archived/not DL; http(s); not chip/search; Wi‑Fi/parallel/storage) |
