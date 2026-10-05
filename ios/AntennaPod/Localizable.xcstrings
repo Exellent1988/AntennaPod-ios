@@ -11944,23 +11944,6 @@
         }
       }
     },
-    "Swipe to remove from this podcast; context menu to rename or delete everywhere": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipe to remove from this podcast; context menu to rename or delete everywhere"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wischen entfernt von diesem Podcast; Kontextmenü zum globalen Umbenennen oder Löschen"
-          }
-        }
-      }
-    },
     "1 podcast": {
       "extractionState": "manual",
       "localizations": {
@@ -49251,6 +49234,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Weist diesen vorhandenen Tag diesem Podcast sofort zu. Keine Bestätigung. Tags sind lokale Bezeichnungen, die Abonnements filtern — keine mit gpodder synchronisierten Ordner. Ein Podcast kann mehrere Tags haben. Kündigt nicht ab, benennt den Tag nicht überall um, löscht keine Downloads und ändert keine Tags anderer Podcasts."
+          }
+        }
+      }
+    },
+    "Swipe Remove or context menu Remove from podcast unassigns this tag from this podcast immediately. No confirmation. Removing the last use deletes the tag. Context menu Rename applies to every podcast using that name; Delete tag everywhere asks for confirmation. Tags are local Subscriptions filters — not gpodder folders. Does not unsubscribe or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipe Remove or context menu Remove from podcast unassigns this tag from this podcast immediately. No confirmation. Removing the last use deletes the tag. Context menu Rename applies to every podcast using that name; Delete tag everywhere asks for confirmation. Tags are local Subscriptions filters — not gpodder folders. Does not unsubscribe or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wisch-Entfernen oder Kontextmenü „Von Podcast entfernen“ hebt diesen Tag für diesen Podcast sofort auf. Keine Bestätigung. Die letzte Nutzung löscht den Tag. Kontextmenü Umbenennen gilt für alle Podcasts mit diesem Namen; Tag überall löschen fragt nach Bestätigung. Tags sind lokale Abonnement-Filter — keine gpodder-Ordner. Kündigt nicht ab und löscht keine Downloads."
           }
         }
       }

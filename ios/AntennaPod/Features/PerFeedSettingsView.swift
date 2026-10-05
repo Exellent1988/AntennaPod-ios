@@ -382,7 +382,7 @@ struct PerFeedSettingsView: View {
                         }
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel(tag)
-                        .accessibilityHint(String(localized: "Swipe to remove from this podcast; context menu to rename or delete everywhere"))
+                        .accessibilityHint(String(localized: "Swipe Remove or context menu Remove from podcast unassigns this tag from this podcast immediately. No confirmation. Removing the last use deletes the tag. Context menu Rename applies to every podcast using that name; Delete tag everywhere asks for confirmation. Tags are local Subscriptions filters — not gpodder folders. Does not unsubscribe or delete downloads."))
                         .contextMenu {
                             Button("Rename…") {
                                 renameFrom = tag
