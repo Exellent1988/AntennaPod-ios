@@ -1113,9 +1113,15 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     feedIsItunesComplete = flagged
                 }
             case "url" where inImage:
-                imageUrl = text
+                // An empty <image><url></url> stored "" here. That replaced a good itunes:image
+                // and also skipped the podcast:image fallback, so no cover showed.
+                if !text.isEmpty {
+                    imageUrl = text
+                }
             case "logo", "icon":
-                imageUrl = text
+                if !text.isEmpty {
+                    imageUrl = text
+                }
             case "image":
                 inImage = false
             case "guid":
