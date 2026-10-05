@@ -1026,23 +1026,6 @@
         }
       }
     },
-    "Change or clear the Downloads filters or search to see other downloads.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Change or clear the Downloads filters or search to see other downloads."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ändere oder lösche die Downloads-Filter oder die Suche, um andere Downloads zu sehen."
-          }
-        }
-      }
-    },
     "Change PIN": {
       "extractionState": "manual",
       "localizations": {
@@ -48611,6 +48594,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wähle Alle oder lösche die aktiven Filter, um andere Posteingangs-Episoden zu sehen. Das löscht, archiviert oder markiert keine Episoden als gehört."
+          }
+        }
+      }
+    },
+    "No downloads match your filter. Episodes remain in the full Downloads catalog. Delete played, Delete all, Mark all, Archive all, Add all to queue, Play random, Copy, and Share still use the full catalog, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No downloads match your filter. Episodes remain in the full Downloads catalog. Delete played, Delete all, Mark all, Archive all, Add all to queue, Play random, Copy, and Share still use the full catalog, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Downloads passen zu deinem Filter. Episoden bleiben im vollständigen Downloads-Katalog. Gehörte löschen, Alle löschen, Alle markieren, Alle archivieren, Alle zur Warteschlange, Zufällig abspielen, Kopieren und Teilen nutzen weiter den ganzen Katalog, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No downloads match your search. Episodes remain in the full Downloads catalog. Delete played, Delete all, Mark all, Archive all, Add all to queue, Play random, Copy, and Share still use the full catalog, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No downloads match your search. Episodes remain in the full Downloads catalog. Delete played, Delete all, Mark all, Archive all, Add all to queue, Play random, Copy, and Share still use the full catalog, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Downloads passen zu deiner Suche. Episoden bleiben im vollständigen Downloads-Katalog. Gehörte löschen, Alle löschen, Alle markieren, Alle archivieren, Alle zur Warteschlange, Zufällig abspielen, Kopieren und Teilen nutzen weiter den ganzen Katalog, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "Change or clear the played-status or podcast filter to see other downloads. This does not delete offline files.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the played-status or podcast filter to see other downloads. This does not delete offline files."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche den Gehört-Status- oder Podcast-Filter, um andere Downloads zu sehen. Das löscht keine Offline-Dateien."
+          }
+        }
+      }
+    },
+    "Change or clear search to see other downloads. This does not delete offline files.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear search to see other downloads. This does not delete offline files."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Suche, um andere Downloads zu sehen. Das löscht keine Offline-Dateien."
           }
         }
       }

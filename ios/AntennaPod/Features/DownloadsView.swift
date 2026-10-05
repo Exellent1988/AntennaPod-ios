@@ -203,6 +203,24 @@ struct DownloadsView: View {
         return String(localized: "No downloads match your search.")
     }
 
+    /// VoiceOver value for the filter/search mismatch empty state.
+    /// Visible description stays concise; this says downloads remain in the full catalog
+    /// and that bulk actions still use that catalog, not this empty view.
+    private var downloadsNoMatchAccessibilityValue: String {
+        if hasDownloadsChipOrPodcastFilter {
+            return String(localized: "No downloads match your filter. Episodes remain in the full Downloads catalog. Delete played, Delete all, Mark all, Archive all, Add all to queue, Play random, Copy, and Share still use the full catalog, not this empty view.")
+        }
+        return String(localized: "No downloads match your search. Episodes remain in the full Downloads catalog. Delete played, Delete all, Mark all, Archive all, Add all to queue, Play random, Copy, and Share still use the full catalog, not this empty view.")
+    }
+
+    /// VoiceOver recovery hint for the filter/search mismatch empty state only.
+    private var downloadsNoMatchAccessibilityHint: String {
+        if hasDownloadsChipOrPodcastFilter {
+            return String(localized: "Change or clear the played-status or podcast filter to see other downloads. This does not delete offline files.")
+        }
+        return String(localized: "Change or clear search to see other downloads. This does not delete offline files.")
+    }
+
     /// Played offline files eligible for bulk delete (skips favorites — matches auto-delete).
     /// **Global** across the full Downloads catalog — not scoped to the visible chip/search filter
     /// (same honesty as Clear history / Clear favorites / Restore all).
@@ -461,10 +479,8 @@ struct DownloadsView: View {
                     )
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(String(localized: "No matching downloads"))
-                    .accessibilityValue(downloadsNoMatchMessage)
-                    .accessibilityHint(
-                        String(localized: "Change or clear the Downloads filters or search to see other downloads.")
-                    )
+                    .accessibilityValue(downloadsNoMatchAccessibilityValue)
+                    .accessibilityHint(downloadsNoMatchAccessibilityHint)
                 } else {
                     Section {
                         ForEach(filteredDownloads) { item in
