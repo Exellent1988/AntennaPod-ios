@@ -2801,7 +2801,7 @@ struct SettingsView: View {
                 .keyboardType(.URL)
                 .disabled(gpodder.isLoggedIn)
                 .accessibilityLabel(String(localized: "Host"))
-                .accessibilityHint(String(localized: "Nextcloud server root or full Gpodder Sync API path."))
+                .accessibilityHint(String(localized: "Nextcloud server root or full Gpodder Sync API path. Saved in Settings and backup. Required for Nextcloud Login. Editing alone does not log in or sync. Disabled while logged in."))
             } else {
                 TextField("Host", text: $gpodder.host)
                     .textInputAutocapitalization(.never)
@@ -2809,7 +2809,7 @@ struct SettingsView: View {
                     .keyboardType(.URL)
                     .disabled(gpodder.isLoggedIn)
                     .accessibilityLabel(String(localized: "Host"))
-                    .accessibilityHint(String(localized: "gpodder.net host. Default is https://gpodder.net."))
+                    .accessibilityHint(String(localized: "gpodder.net host. Default is https://gpodder.net. Saved in Settings and backup. Editing alone does not log in or sync. Disabled while logged in."))
             }
 
             TextField("Username", text: $gpodder.username)

@@ -26584,42 +26584,6 @@
       },
       "comment": "Provider picker VoiceOver hint"
     },
-    "Nextcloud server root or full Gpodder Sync API path.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nextcloud server root or full Gpodder Sync API path."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nextcloud-Server-Root oder voller Gpodder-Sync-API-Pfad."
-          }
-        }
-      },
-      "comment": "Nextcloud host field VoiceOver hint"
-    },
-    "gpodder.net host. Default is https://gpodder.net.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "gpodder.net host. Default is https://gpodder.net."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "gpodder.net-Host. Standard ist https://gpodder.net."
-          }
-        }
-      },
-      "comment": "gpodder.net host field VoiceOver hint"
-    },
     "Creates a new device id from the device name and forces a full subscription pull next sync.": {
       "extractionState": "manual",
       "localizations": {
@@ -49499,6 +49463,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Passwort-Entwurf für Anmelden. Wird erst beim Tippen auf Anmelden nur im Keychain gespeichert — nie im Settings-Backup. Erforderlich für Anmelden. Bearbeiten allein meldet nicht an und synchronisiert nicht. Nach erfolgreichem Anmelden wird dieses Feld geleert."
+          }
+        }
+      }
+    },
+    "gpodder.net host. Default is https://gpodder.net. Saved in Settings and backup. Editing alone does not log in or sync. Disabled while logged in.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gpodder.net host. Default is https://gpodder.net. Saved in Settings and backup. Editing alone does not log in or sync. Disabled while logged in."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gpodder.net-Host. Standard ist https://gpodder.net. In Einstellungen und Backup gespeichert. Bearbeiten allein meldet nicht an und synchronisiert nicht. Deaktiviert solange angemeldet."
+          }
+        }
+      }
+    },
+    "Nextcloud server root or full Gpodder Sync API path. Saved in Settings and backup. Required for Nextcloud Login. Editing alone does not log in or sync. Disabled while logged in.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud server root or full Gpodder Sync API path. Saved in Settings and backup. Required for Nextcloud Login. Editing alone does not log in or sync. Disabled while logged in."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud-Server-Root oder voller Gpodder-Sync-API-Pfad. In Einstellungen und Backup gespeichert. Erforderlich für Nextcloud-Anmelden. Bearbeiten allein meldet nicht an und synchronisiert nicht. Deaktiviert solange angemeldet."
           }
         }
       }
