@@ -25982,24 +25982,6 @@
       },
       "comment": "FeedDetail local folder empty accessibility value"
     },
-    "Re-reads audio files in the folder. Does not fetch an RSS feed.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Re-reads audio files in the folder. Does not fetch an RSS feed."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Liest Audiodateien im Ordner erneut. Holt keinen RSS-Feed."
-          }
-        }
-      },
-      "comment": "Subscriptions Rescan a11y hint"
-    },
     "Subscriptions only (beta — not full sync): Synced = http(s) podcast feed URLs (pull missing + push local not on server). Merge is additive — remote removes do not unsubscribe local feeds. Password in Keychain (never plaintext Settings/backup). Not synced (local-only): episode actions (play/download/position), queue, favorites, bookmarks, tags, downloads, local folder feeds, playback progress, archive, inbox. Last sync status and errors stay visible here. Default host https://gpodder.net (editable).": {
       "extractionState": "manual",
       "localizations": {
@@ -43606,23 +43588,6 @@
       },
       "extractionState": "manual"
     },
-    "Fetches this podcast’s feed from the network, including when Keep updated is Never": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fetches this podcast’s feed from the network, including when Keep updated is Never"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lädt den Feed dieses Podcasts aus dem Netzwerk, auch wenn Keep updated auf Nie steht"
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone.": {
       "localizations": {
         "en": {
@@ -49319,6 +49284,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entfernt diese Fehlerzeile und stellt die Episode danach erneut über den normalen manuellen Download-Pfad in die Warteschlange. Manueller Download nur Wi‑Fi, Parallele Downloads und Speicherlimits gelten weiter. Ein späterer Fehler fügt einen neuen Protokolleintrag hinzu. Erfindet keine Episode und keine separate Retry-Warteschlange."
+          }
+        }
+      }
+    },
+    "Fetches this podcast’s feed from the network, including when Keep updated is Never. Not Refresh all. Feed refresh is not limited by the Wi‑Fi-only toggles and may use cellular. Does not invent episodes; Auto-download may enqueue newly appeared ones after a successful refresh. Distinct from Rescan folder for local-folder podcasts.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fetches this podcast’s feed from the network, including when Keep updated is Never. Not Refresh all. Feed refresh is not limited by the Wi‑Fi-only toggles and may use cellular. Does not invent episodes; Auto-download may enqueue newly appeared ones after a successful refresh. Distinct from Rescan folder for local-folder podcasts."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt den Feed dieses Podcasts aus dem Netzwerk, auch wenn Aktualisiert halten auf Nie steht. Nicht Alle aktualisieren. Feed-Aktualisierung wird von den Nur-Wi‑Fi-Schaltern nicht begrenzt und darf Mobilfunk nutzen. Erfindet keine Episoden; Automatischer Download kann nach erfolgreicher Aktualisierung neu erschienene einreihen. Unterschiedlich von Ordner neu scannen für lokale Ordner-Podcasts."
+          }
+        }
+      }
+    },
+    "Re-reads audio files in the folder via the saved bookmark. Does not fetch an RSS feed or invent network episodes. Distinct from Refresh for subscribed RSS podcasts. Does not change Keep updated or start Auto-download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Re-reads audio files in the folder via the saved bookmark. Does not fetch an RSS feed or invent network episodes. Distinct from Refresh for subscribed RSS podcasts. Does not change Keep updated or start Auto-download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liest Audiodateien im Ordner über das gespeicherte Lesezeichen erneut. Holt keinen RSS-Feed und erfindet keine Netzwerk-Episoden. Unterschiedlich von Aktualisieren für abonnierte RSS-Podcasts. Ändert Aktualisiert halten nicht und startet keinen Automatischer Download."
           }
         }
       }

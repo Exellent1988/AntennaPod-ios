@@ -1187,8 +1187,8 @@ struct SubscriptionsView: View {
             .tint(.blue)
             .accessibilityHint(
                 LocalFolderFeed.isLocalFolderFeed(feed)
-                    ? String(localized: "Re-reads audio files in the folder. Does not fetch an RSS feed.")
-                    : String(localized: "Fetches this podcast’s feed from the network, including when Keep updated is Never")
+                    ? String(localized: "Re-reads audio files in the folder via the saved bookmark. Does not fetch an RSS feed or invent network episodes. Distinct from Refresh for subscribed RSS podcasts. Does not change Keep updated or start Auto-download.")
+                    : String(localized: "Fetches this podcast’s feed from the network, including when Keep updated is Never. Not Refresh all. Feed refresh is not limited by the Wi‑Fi-only toggles and may use cellular. Does not invent episodes; Auto-download may enqueue newly appeared ones after a successful refresh. Distinct from Rescan folder for local-folder podcasts.")
             )
         }
         .modifier(SubscriptionRowContextMenu(
