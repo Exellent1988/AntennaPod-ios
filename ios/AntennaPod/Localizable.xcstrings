@@ -10288,23 +10288,6 @@
         }
       }
     },
-    "Opens the episode webpage in the system browser": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens the episode webpage in the system browser"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet die Episoden-Webseite im Systembrowser"
-          }
-        }
-      }
-    },
     "Move to top": {
       "extractionState": "manual",
       "localizations": {
@@ -49244,6 +49227,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert den feedseitigen Episoden-Webseiten-http(s)-Link in die Zwischenablage. Keine Bestätigung. Kopiert nie stillschweigend die Enclosure als Episodenlink. Unterschiedlich von Medien-URL kopieren und Episode teilen. Öffnet nicht den Browser, lädt nicht herunter, spielt nicht ab, markiert nicht als gehört und ändert nicht die Warteschlange."
+          }
+        }
+      }
+    },
+    "Opens the feed-provided episode webpage http(s) link in the system browser — not an in-app WebView. No confirmation. Never uses the enclosure or podcast website URL. Distinct from Copy episode link, Copy media URL, and Share episode. Does not download, play, mark played, or change the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the feed-provided episode webpage http(s) link in the system browser — not an in-app WebView. No confirmation. Never uses the enclosure or podcast website URL. Distinct from Copy episode link, Copy media URL, and Share episode. Does not download, play, mark played, or change the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den feedseitigen Episoden-Webseiten-http(s)-Link im Systembrowser — kein In-App-WebView. Keine Bestätigung. Nutzt nie die Enclosure- oder Podcast-Website-URL. Unterschiedlich von Episodenlink kopieren, Medien-URL kopieren und Episode teilen. Lädt nicht herunter, spielt nicht ab, markiert nicht als gehört und ändert nicht die Warteschlange."
           }
         }
       }

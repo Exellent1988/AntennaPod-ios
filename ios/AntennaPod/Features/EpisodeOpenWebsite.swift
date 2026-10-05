@@ -20,7 +20,7 @@ enum EpisodeOpenWebsite {
                 Label("Open episode website", systemImage: "safari")
             }
             .accessibilityLabel(String(localized: "Open episode website"))
-            .accessibilityHint(String(localized: "Opens the episode webpage in the system browser"))
+            .accessibilityHint(String(localized: "Opens the feed-provided episode webpage http(s) link in the system browser — not an in-app WebView. No confirmation. Never uses the enclosure or podcast website URL. Distinct from Copy episode link, Copy media URL, and Share episode. Does not download, play, mark played, or change the queue."))
         }
     }
 }
