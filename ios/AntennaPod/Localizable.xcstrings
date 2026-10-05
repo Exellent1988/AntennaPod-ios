@@ -26037,23 +26037,6 @@
         }
       }
     },
-    "Removes Podcast Index API key and secret from the Keychain": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes Podcast Index API key and secret from the Keychain"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt Podcast-Index-API-Schlüssel und Secret aus dem Schlüsselbund"
-          }
-        }
-      }
-    },
     "Paste your free Podcast Index API key from podcastindex.org": {
       "extractionState": "manual",
       "localizations": {
@@ -49029,6 +49012,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reiht diese Episode am Ende der Warteschlange ein. Keine Bestätigung. Warteschlangen-Sperre blockiert das Einreihen nicht. Startet keinen Download und markiert nicht als gehört."
+          }
+        }
+      }
+    },
+    "Removes Podcast Index API key and secret from the Keychain immediately. No confirmation. Podcast Index search in Add podcast stops working until you save new keys. Does not affect Apple charts, subscriptions, or already saved feeds.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes Podcast Index API key and secret from the Keychain immediately. No confirmation. Podcast Index search in Add podcast stops working until you save new keys. Does not affect Apple charts, subscriptions, or already saved feeds."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt Podcast-Index-API-Schlüssel und -Geheimnis sofort aus dem Keychain. Keine Bestätigung. Die Podcast-Index-Suche unter Podcast hinzufügen funktioniert erst wieder, wenn du neue Schlüssel speicherst. Betrifft nicht Apple-Charts, Abos oder bereits gespeicherte Feeds."
           }
         }
       }

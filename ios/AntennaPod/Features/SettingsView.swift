@@ -2608,7 +2608,7 @@ struct SettingsView: View {
                     podcastIndexAPISecretDraft = ""
                     podcastIndexKeyError = nil
                 }
-                .accessibilityHint(String(localized: "Removes Podcast Index API key and secret from the Keychain"))
+                .accessibilityHint(String(localized: "Removes Podcast Index API key and secret from the Keychain immediately. No confirmation. Podcast Index search in Add podcast stops working until you save new keys. Does not affect Apple charts, subscriptions, or already saved feeds."))
             } else {
                 SecureField("API key", text: $podcastIndexAPIKeyDraft)
                     .textInputAutocapitalization(.never)
