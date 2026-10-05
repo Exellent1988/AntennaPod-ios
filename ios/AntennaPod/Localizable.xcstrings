@@ -49318,6 +49318,23 @@
           }
         }
       }
+    },
+    "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Does not enable HTTP proxy, restart active downloads, or change playback. See Effective User-Agent for the value in use.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Does not enable HTTP proxy, restart active downloads, or change playback. See Effective User-Agent for the value in use."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optionaler Override für Feed-Aktualisierung und Downloads. Leer = App-Standard. Zeilenumbrüche werden entfernt. AVPlayer-Streaming kann weiterhin die System-UA nutzen. Schaltet HTTP-Proxy nicht ein, startet aktive Downloads nicht neu und ändert die Wiedergabe nicht. Siehe Effektiver User-Agent für den verwendeten Wert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

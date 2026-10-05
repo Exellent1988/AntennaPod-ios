@@ -1906,7 +1906,7 @@ struct SettingsView: View {
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .accessibilityLabel(String(localized: "Custom User-Agent"))
-            .accessibilityHint(String(localized: "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. See HTTP proxy for proxy settings."))
+            .accessibilityHint(String(localized: "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. Does not enable HTTP proxy, restart active downloads, or change playback. See Effective User-Agent for the value in use."))
             .accessibilityValue(
                 settings.customUserAgent.isEmpty
                     ? String(localized: "Using app default")
