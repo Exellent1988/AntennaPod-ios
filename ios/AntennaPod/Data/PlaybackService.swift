@@ -1972,7 +1972,15 @@ final class PlaybackService: ObservableObject {
             }
             return
         }
-        guard let url = URL(string: imageUrl) else { return }
+        // URL(string:) rejects a cover address that contains a space. EpisodeMediaURL
+        // percent-encodes that. An address it still cannot read must not keep the
+        // previous cover, and must not download.
+        guard let url = EpisodeMediaURL.url(from: imageUrl) else {
+            cachedArtwork = nil
+            cachedArtworkURL = nil
+            updateNowPlayingInfo(force: true)
+            return
+        }
         // play() already wrote Now Playing with the previous episode's cover.
         // Drop it before the download, including while paused. An unchanged URL
         // returned above and did not reach here.
