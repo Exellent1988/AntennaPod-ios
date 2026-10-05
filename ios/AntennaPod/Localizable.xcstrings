@@ -26020,23 +26020,6 @@
         }
       }
     },
-    "Always delete this podcast’s offline file when an episode is marked played, even when the global toggle is off. Favorites still keep their offline files.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Always delete this podcast’s offline file when an episode is marked played, even when the global toggle is off. Favorites still keep their offline files."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Löscht die Offline-Datei dieses Podcasts immer, wenn eine Episode als gehört markiert wird — auch wenn der globale Schalter aus ist. Favoriten behalten ihre Offline-Dateien."
-          }
-        }
-      }
-    },
     "Never auto-delete this podcast’s offline files after playing, even when the global toggle is on. Manual Delete download still works.": {
       "extractionState": "manual",
       "localizations": {
@@ -47525,6 +47508,23 @@
           }
         }
       }
+    },
+    "Always delete this podcast’s offline file when an episode is marked played, even when the global toggle is off. Favorites still keep their offline files. Defers while that local file is the active player item.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Always delete this podcast’s offline file when an episode is marked played, even when the global toggle is off. Favorites still keep their offline files. Defers while that local file is the active player item."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht die Offline-Datei dieses Podcasts immer, wenn eine Episode als gehört markiert wird — auch wenn der globale Schalter aus ist. Favoriten behalten ihre Offline-Dateien. Verschiebt das Löschen, solange diese lokale Datei das aktive Player-Element ist."
+          }
+        }
+      },
+      "extractionState": "manual"
     }
   },
   "version": "1.0"

@@ -676,7 +676,7 @@ struct PerFeedSettingsView: View {
                 global
             )
         case .always:
-            return String(localized: "Always delete this podcast’s offline file when an episode is marked played, even when the global toggle is off. Favorites still keep their offline files.")
+            return String(localized: "Always delete this podcast’s offline file when an episode is marked played, even when the global toggle is off. Favorites still keep their offline files. Defers while that local file is the active player item.")
         case .never:
             return String(localized: "Never auto-delete this podcast’s offline files after playing, even when the global toggle is on. Manual Delete download still works.")
         }
