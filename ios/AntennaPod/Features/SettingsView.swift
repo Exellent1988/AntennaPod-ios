@@ -2836,7 +2836,7 @@ struct SettingsView: View {
             TextField("Device name", text: $gpodder.deviceName)
                 .disabled(gpodder.isBusy)
                 .accessibilityLabel(String(localized: "Device name"))
-                .accessibilityHint(String(localized: "Caption for this sync device. Login and Sync now push it to the server when logged in; editing alone does not sync. Distinct from Regenerate device id from name."))
+                .accessibilityHint(String(localized: "Caption for this sync device. Saved in Settings and backup — not the Keychain. Login and Sync now push it to the server when logged in; empty uses AntennaPod iOS on Login. Editing alone does not sync and does not change Device id — use Regenerate device id from name for that. Stays on Logout."))
             LabeledContent("Device id") {
                 Text(gpodder.deviceId)
                     .font(.caption2)

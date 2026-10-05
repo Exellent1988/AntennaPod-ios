@@ -42983,22 +42983,6 @@
       },
       "extractionState": "manual"
     },
-    "Caption for this sync device. Login and Sync now push it to the server when logged in; editing alone does not sync. Distinct from Regenerate device id from name.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Caption for this sync device. Login and Sync now push it to the server when logged in; editing alone does not sync. Distinct from Regenerate device id from name."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bezeichnung für dieses Sync-Gerät. Login und Jetzt synchronisieren senden sie an den Server, wenn angemeldet; alleiniges Bearbeiten synchronisiert nicht. Unterschiedlich von Geräte-ID aus Name neu erzeugen."
-          }
-        }
-      }
-    },
     "This replaces subscriptions, queue, playback, favorites, archive, bookmarks, private episode notes, tags, feed settings, download catalog, download error log, local-folder bookmarks, Settings prefs, and gpodder sync prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. Local-folder bookmarks may need re-picking on another device. This cannot be undone except by importing another backup.": {
       "localizations": {
         "en": {
@@ -49512,6 +49496,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Erzeugt eine neue Geräte-ID aus dem aktuellen Gerätenamen und löscht Sync-Cursor, damit das nächste Jetzt synchronisieren einen vollen Abo-Abruf macht. Ändert nicht den Gerätenamen, startet kein Jetzt synchronisieren sofort, meldet nicht ab und deabonniert keine lokalen Feeds. Deaktiviert bei laufender Aktion oder wenn Gerätename leer ist."
+          }
+        }
+      }
+    },
+    "Caption for this sync device. Saved in Settings and backup — not the Keychain. Login and Sync now push it to the server when logged in; empty uses AntennaPod iOS on Login. Editing alone does not sync and does not change Device id — use Regenerate device id from name for that. Stays on Logout.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caption for this sync device. Saved in Settings and backup — not the Keychain. Login and Sync now push it to the server when logged in; empty uses AntennaPod iOS on Login. Editing alone does not sync and does not change Device id — use Regenerate device id from name for that. Stays on Logout."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bezeichnung für dieses Sync-Gerät. In Einstellungen und Backup gespeichert — nicht im Keychain. Anmelden und Jetzt synchronisieren senden sie an den Server, wenn angemeldet; leer nutzt AntennaPod iOS beim Anmelden. Alleiniges Bearbeiten synchronisiert nicht und ändert nicht die Geräte-ID — dafür Geräte-ID aus Name neu erzeugen. Bleibt bei Abmelden."
           }
         }
       }
