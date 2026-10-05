@@ -69,6 +69,8 @@ struct RootTabView: View {
                 // Relock parental controls when leaving foreground (inactive/background).
                 playback.persistProgressBeforeBackground()
                 store.flushDeferredFeedsSave()
+                // Finish the queued playback.json write before iOS may suspend the app.
+                PodcastPersistence.flushPendingWrites()
                 parental.lockSession()
                 return
             }

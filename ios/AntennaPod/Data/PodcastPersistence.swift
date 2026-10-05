@@ -25,9 +25,22 @@ enum PodcastPersistence {
     /// Application Support/AntennaPod directory (created if needed).
     static var applicationSupportDirectory: URL { directory }
 
+    /// Serial queue for `playback.json`. The map holds one entry per played / started episode
+    /// (Mark all as played on a big library = thousands) and is rewritten on every progress
+    /// save (~5s while playing); encoding it on the main thread caused periodic hitches.
+    /// Serial keeps write order; `flushPendingWrites()` lets readers see the latest state.
+    private static let playbackWriteQueue = DispatchQueue(label: "AntennaPod.playback-json", qos: .utility)
+
+    /// Wait for queued `playback.json` writes (backup export / import, reload, app background).
+    static func flushPendingWrites() {
+        playbackWriteQueue.sync {}
+    }
+
     /// Absolute URL for a persistence file name under Application Support/AntennaPod.
+    /// Flushes queued writes first: backup export, import, and rollback read or replace files by URL.
     static func fileURL(_ fileName: String) -> URL {
-        directory.appendingPathComponent(fileName)
+        flushPendingWrites()
+        return directory.appendingPathComponent(fileName)
     }
 
     /// Replace a persistence file atomically (used by data backup import).
@@ -54,11 +67,15 @@ enum PodcastPersistence {
 
     /// Map of episode id → playback state.
     static func loadPlaybackStates() -> [String: EpisodePlaybackState] {
-        decode(playbackURL) ?? [:]
+        flushPendingWrites()
+        return decode(playbackURL) ?? [:]
     }
 
     static func savePlaybackStates(_ states: [String: EpisodePlaybackState]) {
-        encode(states, to: playbackURL)
+        let url = playbackURL
+        playbackWriteQueue.async {
+            encode(states, to: url)
+        }
     }
 
     /// Completed offline downloads (episode metadata + file name under Documents/downloads).
