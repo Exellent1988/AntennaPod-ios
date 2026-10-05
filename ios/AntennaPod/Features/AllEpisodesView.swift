@@ -600,7 +600,7 @@ struct AllEpisodesView: View {
                         Label("Add all to queue", systemImage: "text.append")
                     }
                     .disabled(enqueueAllEpisodesCandidatesCount == 0)
-                    .accessibilityHint(String(localized: "Appends All Episodes not already queued (newest 500 soft cap)"))
+                    .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the soft-capped All Episodes catalog (newest 500 by publish date) that are not already queued, newest first within that cap, including played and archived. Ignores status, podcast, type, and search filters. Queue lock does not block enqueue."))
 
                     Button {
                         showEnqueueAllUnplayedConfirm = true
