@@ -11019,23 +11019,6 @@
         }
       }
     },
-    "Filters the Downloads list": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filters the Downloads list"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filtert die Downloads-Liste"
-          }
-        }
-      }
-    },
     "No downloads match your filter.": {
       "extractionState": "manual",
       "localizations": {
@@ -49319,6 +49302,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nur neu erschienene Episoden-IDs nach erfolgreicher Aktualisierung sind Kandidaten — nicht der ungespielte Rückstand. Lokale Ordner- und Datei-Feeds werden übersprungen. Es gibt keinen separaten Background-App-Refresh-Download. Nur-Wi‑Fi für Auto-Download liegt unter Netzwerk / Downloads. Pro-Podcast Nie überspringt diesen Podcast; Immer kann für diesen Podcast weiterhin einreihen, während dieser globale Schalter aus ist. Speicherlimit-Bereinigung gilt weiterhin. Manuelle Downloads bleiben unverändert."
+          }
+        }
+      }
+    },
+    "Filters completed downloads in this list by All, Unplayed, or Played. Does not delete files, change sort, start downloads, or alter the podcast filter chips. Search still applies on top of this filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters completed downloads in this list by All, Unplayed, or Played. Does not delete files, change sort, start downloads, or alter the podcast filter chips. Search still applies on top of this filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert abgeschlossene Downloads in dieser Liste nach Alle, Ungehört oder Gehört. Löscht keine Dateien, ändert die Sortierung nicht, startet keine Downloads und ändert die Podcast-Filterchips nicht. Suche gilt weiterhin zusätzlich zu diesem Filter."
           }
         }
       }
