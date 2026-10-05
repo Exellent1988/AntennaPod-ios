@@ -259,6 +259,9 @@ struct InboxView: View {
     /// Visible Inbox rows for remaining-time: podcast+type-filtered sorted list when **not** in
     /// library-search mode. While `.searchable` shows `LibrarySearchResultsView` (full library),
     /// the info bar is hidden — do not report full-Inbox / tab-badge totals over a different surface.
+    /// Built once per body (`body` passes it to the remaining-time helpers and the rows):
+    /// each `filteredItems` read re-sorts the whole Inbox, and the body reruns on every 0.5s
+    /// playback tick.
     private var visibleInboxForRemaining: [InboxEpisode] {
         isSearching ? [] : filteredItems
     }
@@ -268,15 +271,21 @@ struct InboxView: View {
     /// duration contributes full duration; **played** (not current) → 0; **unknown duration skipped**
     /// (tilde when any skipped). Currently playing uses live `PlaybackService` position/duration.
     /// Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate). Distinct from tab badge / Mark all / Mark all as unplayed / Add all / Archive all / Play random / Copy inbox / Share inbox (full catalog).
-    private var inboxRemainingInfoLabel: String? {
-        guard !visibleInboxForRemaining.isEmpty else { return nil }
-        return EpisodeRemainingTime.episodesInfoBarLabel(for: inboxRemainingSummary)
+    private func inboxRemainingInfoLabel(
+        visibleItems: [InboxEpisode],
+        summary: EpisodeRemainingTime.Summary
+    ) -> String? {
+        guard !visibleItems.isEmpty else { return nil }
+        return EpisodeRemainingTime.episodesInfoBarLabel(for: summary)
     }
 
-    private var inboxRemainingAccessibilityLabel: String {
-        guard let label = inboxRemainingInfoLabel else { return "" }
+    private func inboxRemainingAccessibilityLabel(
+        visibleItems: [InboxEpisode],
+        summary: EpisodeRemainingTime.Summary
+    ) -> String {
+        guard let label = inboxRemainingInfoLabel(visibleItems: visibleItems, summary: summary) else { return "" }
         var parts = [String(localized: "Inbox remaining time \(label)")]
-        let unknown = inboxRemainingSummary.unknownCount
+        let unknown = summary.unknownCount
         if unknown > 0 {
             parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
         }
@@ -293,9 +302,9 @@ struct InboxView: View {
         return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. Inbox is unplayed and not archived, including in-progress episodes, over the visible list after sort, podcast filter, and episode type. Sort changes order only. It is not the All Episodes newest-500 cap, not the full catalog behind the tab badge, Mark all, Add all to queue, Archive all, Play random, Copy, or Share, and not library-search episode hits. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Subscriptions unplayed remaining bar, the Home New / Inbox preview, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
     }
 
-    private var inboxRemainingSummary: EpisodeRemainingTime.Summary {
+    private func inboxRemainingSummary(for visibleItems: [InboxEpisode]) -> EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
-            episodes: visibleInboxForRemaining.map(\.episode),
+            episodes: visibleItems.map(\.episode),
             currentEpisodeId: playback.currentEpisode?.id,
             liveDurationSeconds: playback.durationSeconds,
             livePositionSeconds: playback.positionSeconds,
@@ -362,6 +371,10 @@ struct InboxView: View {
     var body: some View {
         NavigationStack {
             List {
+                // Sort + filter the Inbox once per body; the info bar, its VoiceOver label, and
+                // the rows share it (rows only render when not searching, same as the bar).
+                let visibleItems = visibleInboxForRemaining
+                let remainingSummary = inboxRemainingSummary(for: visibleItems)
                 // Podcast chips — hidden while library search replaces Inbox rows.
                 if !isSearching,
                    !store.inboxEpisodes.isEmpty,
@@ -410,7 +423,7 @@ struct InboxView: View {
 
                 // AntennaPod-like inbox info bar (visible sorted+podcast+type-filtered Inbox remaining time).
                 // Hidden while library search replaces the Inbox rows.
-                if let remainingLabel = inboxRemainingInfoLabel {
+                if let remainingLabel = inboxRemainingInfoLabel(visibleItems: visibleItems, summary: remainingSummary) {
                     Section {
                         Text(remainingLabel)
                             .font(.footnote)
@@ -418,7 +431,7 @@ struct InboxView: View {
                             .monospacedDigit()
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .accessibilityElement(children: .ignore)
-                            .accessibilityLabel(inboxRemainingAccessibilityLabel)
+                            .accessibilityLabel(inboxRemainingAccessibilityLabel(visibleItems: visibleItems, summary: remainingSummary))
                             .accessibilityHint(inboxRemainingAccessibilityHint)
                     }
                     .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
@@ -435,7 +448,7 @@ struct InboxView: View {
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel(String(localized: "Inbox empty"))
                     .accessibilityValue(inboxEmptyStateAccessibilityValue)
-                } else if filteredItems.isEmpty {
+                } else if visibleItems.isEmpty {
                     ContentUnavailableView(
                         "No matching inbox episodes",
                         systemImage: "magnifyingglass",
@@ -449,7 +462,7 @@ struct InboxView: View {
                     .accessibilityLabel(String(localized: "No matching inbox episodes"))
                     .accessibilityValue(inboxEmptyStateAccessibilityValue)
                 } else {
-                    ForEach(filteredItems) { item in
+                    ForEach(visibleItems) { item in
                         EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button {
@@ -576,7 +589,7 @@ struct InboxView: View {
                             Label("Mark all as played", systemImage: "checkmark.circle")
                         }
                         // Full Inbox catalog — not the podcast-chip filtered subset.
-                        .disabled(sortedItems.isEmpty)
+                        .disabled(store.inboxEpisodes.isEmpty)
 
                         Button {
                             showMarkAllUnplayedConfirm = true
@@ -605,7 +618,7 @@ struct InboxView: View {
                     }
                     // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
                     // Disabled while library search replaces Inbox rows (full-catalog actions only).
-                    .disabled((sortedItems.isEmpty && markAllInboxUnplayedCandidatesCount == 0) || isSearching)
+                    .disabled((store.inboxEpisodes.isEmpty && markAllInboxUnplayedCandidatesCount == 0) || isSearching)
                     .accessibilityLabel(String(localized: "Inbox actions"))
                     .accessibilityHint(
                         String(localized: "Copy inbox, share inbox, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, or archive all")
@@ -655,7 +668,7 @@ struct InboxView: View {
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Marks \(sortedItems.count) Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog (not only the current podcast filter).")
+                Text("Marks \(store.inboxEpisodes.count) Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog (not only the current podcast filter).")
             }
             .confirmationDialog(
                 "Mark all as unplayed?",
