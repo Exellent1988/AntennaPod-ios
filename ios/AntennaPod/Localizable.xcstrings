@@ -49067,6 +49067,23 @@
           }
         }
       }
+    },
+    "Starts a %lld-minute clock sleep timer. No confirmation. Replaces any active End of episode, End of chapter, or End of queue sleep timer. Does not pause playback now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts a %lld-minute clock sleep timer. No confirmation. Replaces any active End of episode, End of chapter, or End of queue sleep timer. Does not pause playback now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet einen %lld-Minuten-Uhr-Sleep-Timer. Keine Bestätigung. Ersetzt jeden aktiven Ende-der-Episode-, Ende-des-Kapitels- oder Ende-der-Queue-Sleep-Timer. Pausiert die Wiedergabe jetzt nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

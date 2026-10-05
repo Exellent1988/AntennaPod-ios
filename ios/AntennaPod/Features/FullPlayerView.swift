@@ -1459,6 +1459,7 @@ struct FullPlayerView: View {
                 Button("\(minutes) min") {
                     playback.setSleepTimer(minutes: minutes)
                 }
+                .accessibilityHint(clockPresetSleepTimerAccessibilityHint(minutes: minutes))
             }
             Button("End of episode") {
                 playback.setSleepTimerEndOfEpisode()
@@ -1523,6 +1524,10 @@ struct FullPlayerView: View {
         case nil:
             return String(localized: "Sets a \(minutes)-minute clock sleep timer.")
         }
+    }
+
+    private func clockPresetSleepTimerAccessibilityHint(minutes: Int) -> String {
+        String(localized: "Starts a \(minutes)-minute clock sleep timer. No confirmation. Replaces any active End of episode, End of chapter, or End of queue sleep timer. Does not pause playback now.")
     }
 
     /// Prefer Full Player merged chapters (feed / remote / media) so the item enables after lazy load.

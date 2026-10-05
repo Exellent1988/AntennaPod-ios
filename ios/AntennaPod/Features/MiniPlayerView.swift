@@ -668,6 +668,7 @@ struct MiniPlayerView: View {
                 Button("\(minutes) min") {
                     playback.setSleepTimer(minutes: minutes)
                 }
+                .accessibilityHint(clockPresetSleepTimerAccessibilityHint(minutes: minutes))
             }
             Button("End of episode") {
                 playback.setSleepTimerEndOfEpisode()
@@ -730,6 +731,10 @@ struct MiniPlayerView: View {
         case nil:
             return String(localized: "Sets a \(minutes)-minute clock sleep timer.")
         }
+    }
+
+    private func clockPresetSleepTimerAccessibilityHint(minutes: Int) -> String {
+        String(localized: "Starts a \(minutes)-minute clock sleep timer. No confirmation. Replaces any active End of episode, End of chapter, or End of queue sleep timer. Does not pause playback now.")
     }
 
     /// Chapters already on the store/player episode — same source as mini chapter title.
