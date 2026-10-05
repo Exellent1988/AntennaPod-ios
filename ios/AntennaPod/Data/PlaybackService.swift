@@ -992,6 +992,7 @@ final class PlaybackService: ObservableObject {
                 if let finishedId {
                     store?.flushAutoDeleteAfterPlaying(for: finishedId)
                 }
+                store?.publishWidgetSnapshot()
                 applyIdleTimerPolicy()
                 return
             case .endOfQueue:
@@ -1024,6 +1025,7 @@ final class PlaybackService: ObservableObject {
                 if let finishedId {
                     store?.flushAutoDeleteAfterPlaying(for: finishedId)
                 }
+                store?.publishWidgetSnapshot()
                 applyIdleTimerPolicy()
                 return
             case .clock:
@@ -1069,6 +1071,7 @@ final class PlaybackService: ObservableObject {
             if let finishedId {
                 store?.flushAutoDeleteAfterPlaying(for: finishedId)
             }
+            store?.publishWidgetSnapshot()
             applyIdleTimerPolicy()
         } else {
             // Continuous next started — play() already called applyIdleTimerPolicy.
