@@ -29938,24 +29938,6 @@
         }
       }
     },
-    "Filters the Inbox list by episode type": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Inbox itunes:episodeType filter chips.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filters the Inbox list by episode type"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filtert die Inbox-Liste nach Episodentyp"
-          }
-        }
-      }
-    },
     "Remove played": {
       "extractionState": "manual",
       "localizations": {
@@ -49316,6 +49298,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Filtert den Posteingang auf Alle oder einen Podcast, der derzeit Posteingang-Episoden hat. Markiert nicht als gehört, löscht keine Episoden, ändert die Sortierung nicht und ändert die Episodentyp-Chips nicht. Suche gilt weiterhin zusätzlich zu diesem Filter."
+          }
+        }
+      }
+    },
+    "Filters the Inbox by itunes episode type: All, Full, Trailer, Bonus, or Other when present. Does not mark played, delete episodes, change sort, or alter the podcast filter chips. Search still applies on top of this filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Inbox by itunes episode type: All, Full, Trailer, Bonus, or Other when present. Does not mark played, delete episodes, change sort, or alter the podcast filter chips. Search still applies on top of this filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert den Posteingang nach itunes-Episodentyp: Alle, Vollständig, Trailer, Bonus oder Sonstige, wenn vorhanden. Markiert nicht als gehört, löscht keine Episoden, ändert die Sortierung nicht und ändert die Podcast-Filterchips nicht. Suche gilt weiterhin zusätzlich zu diesem Filter."
           }
         }
       }

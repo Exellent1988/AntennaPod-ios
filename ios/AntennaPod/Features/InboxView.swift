@@ -423,7 +423,7 @@ struct InboxView: View {
                                     InboxPodcastFilterChip(
                                         title: chip.label,
                                         selected: settings.inboxEpisodeTypeFilter == chip,
-                                        accessibilityHint: String(localized: "Filters the Inbox list by episode type")
+                                        accessibilityHint: String(localized: "Filters the Inbox by itunes episode type: All, Full, Trailer, Bonus, or Other when present. Does not mark played, delete episodes, change sort, or alter the podcast filter chips. Search still applies on top of this filter.")
                                     ) {
                                         settings.inboxEpisodeTypeFilter = chip
                                     }
