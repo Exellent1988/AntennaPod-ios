@@ -12,7 +12,10 @@ struct RootTabView: View {
     @EnvironmentObject private var parental: ParentalControls
     @Environment(\.scenePhase) private var scenePhase
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
+    @ObservedObject private var subscribeLink = SubscribeLinkRouter.shared
     @State private var selectedTab: RootTab = .home
+    /// Feed preview for an incoming subscribe link (`SubscribeLinkRouter`).
+    @State private var subscribeLinkPreview: FeedPreviewRequest?
 
     var body: some View {
         // Tab bar VoiceOver names come from Label titles (Localizable.xcstrings).
@@ -128,6 +131,30 @@ struct RootTabView: View {
             guard token != nil else { return }
             selectedTab = .subscriptions
         }
+        .onChange(of: subscribeLink.pendingFeedUrl) { _, _ in
+            consumeSubscribeLink()
+        }
+        .onAppear {
+            // Cold start: the link can arrive before this view observes the router.
+            consumeSubscribeLink()
+        }
+        .sheet(item: $subscribeLinkPreview) { request in
+            // Same gate as the Add sheet; Confirm Subscribe in the preview is gated again.
+            if parental.needsPINForAddDiscover {
+                ParentalPINPromptSheet(
+                    title: String(localized: "Parental controls"),
+                    message: String(localized: "Enter your PIN to add or discover podcasts."),
+                    onCancel: { subscribeLinkPreview = nil },
+                    onSuccess: { pin in parental.unlockSession(with: pin) }
+                )
+            } else {
+                NavigationStack {
+                    FeedPreviewView(request: request) {
+                        subscribeLinkPreview = nil
+                    }
+                }
+            }
+        }
         .alert(
             "Cannot stream",
             isPresented: Binding(
@@ -140,6 +167,19 @@ struct RootTabView: View {
             }
         } message: {
             Text(playback.lastError ?? "")
+        }
+    }
+
+    /// Already subscribed → open that podcast (same path as the player's Open podcast);
+    /// otherwise show the normal feed preview, which only subscribes on Confirm.
+    private func consumeSubscribeLink() {
+        guard let feedUrl = subscribeLink.pendingFeedUrl else { return }
+        subscribeLink.pendingFeedUrl = nil
+        if let feed = FeedURLNormalization.subscribedFeed(matching: feedUrl, in: store.feeds) {
+            subscribeLinkPreview = nil
+            notificationDeepLink.openFeed(id: feed.id)
+        } else {
+            subscribeLinkPreview = FeedPreviewRequest(feedUrl: feedUrl)
         }
     }
 }

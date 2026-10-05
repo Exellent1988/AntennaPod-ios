@@ -60,6 +60,10 @@ struct AntennaPodApp: App {
                 .preferredColorScheme(settings.theme.colorScheme)
                 .modifier(OptionalAccentTint(tint: settings.accentColor.tintColor))
                 .onOpenURL { url in
+                    // Subscribe links first; playback links (antennapod://play …) unchanged.
+                    if SubscribeLinkRouter.shared.handle(url: url) {
+                        return
+                    }
                     _ = PlaybackDeepLinkRouter.shared.handle(url: url)
                 }
                 .onAppear {
