@@ -10782,23 +10782,6 @@
         }
       }
     },
-    "Adds this episode to the queue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Adds this episode to the queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fügt diese Episode zur Warteschlange hinzu"
-          }
-        }
-      }
-    },
     "Places this episode to play next in the queue": {
       "extractionState": "manual",
       "localizations": {
@@ -49029,6 +49012,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lädt diese Episode für die Offline-Wiedergabe herunter. Keine Bestätigung. Manueller Download nur über WLAN; Parallel-Download-Obergrenze und Speicherlimit gelten weiterhin, wenn aktiviert."
+          }
+        }
+      }
+    },
+    "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht diese Episode am Ende der Warteschlange ein. Keine Bestätigung. Warteschlangen-Sperre blockiert das Einreihen nicht. Startet keinen Download und markiert nicht als gehört."
           }
         }
       }

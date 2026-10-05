@@ -505,6 +505,9 @@ struct InboxView: View {
                                         Label("Add to queue", systemImage: "text.append")
                                     }
                                     .tint(.purple)
+                                    .accessibilityHint(
+                                        String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
+                                    )
                                 }
                                 Button {
                                     store.archive(item.episode.id)

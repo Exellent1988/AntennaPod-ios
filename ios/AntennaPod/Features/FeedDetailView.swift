@@ -3442,6 +3442,9 @@ struct EpisodeRow: View {
             } label: {
                 Label("Add to queue", systemImage: "text.append")
             }
+            .accessibilityHint(
+                String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
+            )
             // Move to top/bottom = manual reorder; hidden when Queue lock is on (Play Next / enqueue stay).
             if let qi = queueIndex, !settings.queueLocked {
                 if qi > 0 {
