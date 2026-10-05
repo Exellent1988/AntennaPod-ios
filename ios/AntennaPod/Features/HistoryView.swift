@@ -560,7 +560,7 @@ struct HistoryView: View {
                     }
                     .disabled(archiveAllHistoryCandidatesCount == 0)
                     .accessibilityHint(
-                        String(localized: "Archives non-archived episodes in the full History catalog; ignores podcast, search, and sort filters")
+                        String(localized: "Asks for confirmation, then archives non-archived episodes in the full History catalog, newest last-played first. Ignores podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
                     )
 
                     Button(role: .destructive) {
