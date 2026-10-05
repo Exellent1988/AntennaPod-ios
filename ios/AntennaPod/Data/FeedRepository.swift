@@ -95,7 +95,10 @@ struct FeedRepository {
         }
 
         do {
-            var feed = try FeedParsing.parse(xml: xml)
+            // Relative media / transcript / chapter / page links resolve against the
+            // fetched document (after redirects). Episode ids are already built from raw values.
+            let parsed = try FeedParsing.parse(xml: xml)
+            var feed = FeedParsing.resolvingRelativeLinks(in: parsed, against: response.url ?? url)
             feed.feedUrl = resolved
             return feed
         } catch FeedParsingError.emptyResponse {

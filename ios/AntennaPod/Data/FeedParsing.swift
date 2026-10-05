@@ -22,6 +22,42 @@ enum FeedParsing {
         try NativeRssAtomParser.parse(xml: xml)
     }
 
+    /// Enclosure, transcript, chapters, and episode / website links given as a relative
+    /// (`/media/ep1.mp3`, `ep1.mp3`) or protocol-relative (`//cdn.example.com/ep1.mp3`)
+    /// path cannot be played, downloaded, or opened. Resolve them against the fetched feed
+    /// URL. Runs after parsing, so episode ids (built from the raw values) do not change.
+    /// Values that already have a scheme, and artwork, are left as they are.
+    static func resolvingRelativeLinks(in feed: PodcastFeed, against base: URL) -> PodcastFeed {
+        var feed = feed
+        feed.siteLink = absoluteLink(feed.siteLink, base: base)
+        for index in feed.episodes.indices {
+            feed.episodes[index].link = absoluteLink(feed.episodes[index].link, base: base)
+            feed.episodes[index].downloadUrl = absoluteLink(feed.episodes[index].downloadUrl, base: base)
+            feed.episodes[index].transcriptUrl = absoluteLink(feed.episodes[index].transcriptUrl, base: base)
+            feed.episodes[index].podcastIndexChapterUrl = absoluteLink(
+                feed.episodes[index].podcastIndexChapterUrl,
+                base: base
+            )
+        }
+        return feed
+    }
+
+    /// `raw` resolved against `base` when it has no scheme and resolves to http(s); else `raw`.
+    static func absoluteLink(_ raw: String?, base: URL) -> String? {
+        guard let raw else { return nil }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty,
+              let parsed = URL(string: trimmed),
+              parsed.scheme == nil,
+              let resolved = URL(string: trimmed, relativeTo: base)?.absoluteURL,
+              let scheme = resolved.scheme?.lowercased(),
+              scheme == "http" || scheme == "https"
+        else {
+            return raw
+        }
+        return resolved.absoluteString
+    }
+
     /// Decode a body that is not valid UTF-8. Many feeds labeled ISO-8859-1 are really
     /// windows-1252, whose 0x80–0x9F bytes are €, curly quotes, and dashes; Latin-1 turns
     /// them into invisible C1 controls. 0xA0–0xFF map the same in both. Latin-1 stays the
