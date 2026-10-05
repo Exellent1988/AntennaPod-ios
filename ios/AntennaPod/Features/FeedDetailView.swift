@@ -3100,9 +3100,9 @@ struct EpisodeRow: View {
                 .accessibilityLabel(downloadAccessibilityLabel)
                 .accessibilityHint(
                     downloads.isWaitingDownload(episodeId: episode.id)
-                        ? String(localized: "Cancels this waiting download")
+                        ? String(localized: "Cancels this waiting download immediately. No confirmation. Does not delete completed offline files, and does not affect played status, queue, favorites, or archive. Distinct from Cancel all downloads and from Delete download.")
                         : downloads.inProgress.contains(episode.id)
-                            ? String(localized: "Cancels the in-progress download")
+                            ? String(localized: "Cancels this in-progress download immediately. No confirmation. Does not delete completed offline files, and does not affect played status, queue, favorites, or archive. Distinct from Cancel all downloads and from Delete download.")
                             : ""
                 )
 

@@ -10509,23 +10509,6 @@
         }
       }
     },
-    "Cancels the in-progress download": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancels the in-progress download"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bricht den laufenden Download ab"
-          }
-        }
-      }
-    },
     "Deletes the offline file for this episode": {
       "extractionState": "manual",
       "localizations": {
@@ -44490,23 +44473,6 @@
         }
       }
     },
-    "Cancels this waiting download": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancels this waiting download"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bricht diesen wartenden Download ab"
-          }
-        }
-      }
-    },
     "Download already waiting": {
       "extractionState": "manual",
       "localizations": {
@@ -49029,6 +48995,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Platziert diese Episode direkt hinter dem aktuell spielenden Queue-Eintrag, oder an den Anfang, wenn nichts spielt oder das aktuelle nicht in der Queue ist. Verschiebt sie, wenn sie schon in der Queue ist — kein Duplikat. Keine Bestätigung. Die Queue-Sperre blockiert Play Next nicht. Startet weder Wiedergabe noch Download und markiert nicht als gehört."
+          }
+        }
+      }
+    },
+    "Cancels this waiting download immediately. No confirmation. Does not delete completed offline files, and does not affect played status, queue, favorites, or archive. Distinct from Cancel all downloads and from Delete download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancels this waiting download immediately. No confirmation. Does not delete completed offline files, and does not affect played status, queue, favorites, or archive. Distinct from Cancel all downloads and from Delete download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bricht diesen wartenden Download sofort ab. Keine Bestätigung. Löscht keine fertigen Offline-Dateien und ändert weder Gehört-Status, Queue, Favoriten noch Archiv. Unterschiedlich von Alle Downloads abbrechen und von Download löschen."
+          }
+        }
+      }
+    },
+    "Cancels this in-progress download immediately. No confirmation. Does not delete completed offline files, and does not affect played status, queue, favorites, or archive. Distinct from Cancel all downloads and from Delete download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancels this in-progress download immediately. No confirmation. Does not delete completed offline files, and does not affect played status, queue, favorites, or archive. Distinct from Cancel all downloads and from Delete download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bricht diesen laufenden Download sofort ab. Keine Bestätigung. Löscht keine fertigen Offline-Dateien und ändert weder Gehört-Status, Queue, Favoriten noch Archiv. Unterschiedlich von Alle Downloads abbrechen und von Download löschen."
           }
         }
       }

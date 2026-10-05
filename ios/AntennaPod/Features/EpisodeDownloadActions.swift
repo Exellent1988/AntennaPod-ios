@@ -28,10 +28,10 @@ enum EpisodeDownloadActions {
 
     static func accessibilityHint(for episode: PodcastEpisode, downloads: DownloadService) -> String {
         if downloads.isWaitingDownload(episodeId: episode.id) {
-            return String(localized: "Cancels this waiting download")
+            return String(localized: "Cancels this waiting download immediately. No confirmation. Does not delete completed offline files, and does not affect played status, queue, favorites, or archive. Distinct from Cancel all downloads and from Delete download.")
         }
         if downloads.inProgress.contains(episode.id) {
-            return String(localized: "Cancels the in-progress download")
+            return String(localized: "Cancels this in-progress download immediately. No confirmation. Does not delete completed offline files, and does not affect played status, queue, favorites, or archive. Distinct from Cancel all downloads and from Delete download.")
         }
         if downloads.isDownloaded(episode) {
             return String(localized: "Asks for confirmation, then deletes the local offline file for this episode; keeps played status, queue membership, favorites, and archive state")
