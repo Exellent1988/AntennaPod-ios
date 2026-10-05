@@ -2623,7 +2623,7 @@ struct SettingsView: View {
                 Button("Save keys") {
                     savePodcastIndexKeys()
                 }
-                .accessibilityHint(String(localized: "Stores the API key and secret in the Keychain on this device only"))
+                .accessibilityHint(String(localized: "Stores the API key and secret in the Keychain on this device immediately. No confirmation. Enables Podcast Index search in Add podcast. Does not affect Apple charts, subscriptions, or already saved feeds."))
                 .disabled(
                     podcastIndexAPIKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                         || podcastIndexAPISecretDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

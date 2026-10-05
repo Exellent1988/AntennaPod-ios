@@ -25833,23 +25833,6 @@
         }
       }
     },
-    "Stores the API key and secret in the Keychain on this device only": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stores the API key and secret in the Keychain on this device only"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Speichert API-Schlüssel und Secret nur im Schlüsselbund auf diesem Gerät"
-          }
-        }
-      }
-    },
     "Enter a valid http(s) feed URL": {
       "extractionState": "manual",
       "localizations": {
@@ -49166,6 +49149,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Löscht den lokalen Spitznamen sofort und zeigt wieder den Feed-Titel aus dem RSS. Keine Bestätigung. Nur lokal — ändert weder den RSS-Titel noch Tags, Pin, private Notiz oder Abos."
+          }
+        }
+      }
+    },
+    "Stores the API key and secret in the Keychain on this device immediately. No confirmation. Enables Podcast Index search in Add podcast. Does not affect Apple charts, subscriptions, or already saved feeds.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stores the API key and secret in the Keychain on this device immediately. No confirmation. Enables Podcast Index search in Add podcast. Does not affect Apple charts, subscriptions, or already saved feeds."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert API-Schlüssel und -Geheimnis sofort im Keychain auf diesem Gerät. Keine Bestätigung. Aktiviert die Podcast-Index-Suche unter Podcast hinzufügen. Betrifft nicht Apple-Charts, Abos oder bereits gespeicherte Feeds."
           }
         }
       }
