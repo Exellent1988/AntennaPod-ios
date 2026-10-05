@@ -10747,23 +10747,6 @@
         }
       }
     },
-    "Opens the system share sheet with the episode title, link, and current playback position": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens the system share sheet with the episode title, link, and current playback position"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet das System-Teilen-Menü mit Episodentitel, Link und aktueller Wiedergabeposition"
-          }
-        }
-      }
-    },
     "End of ep.": {
       "extractionState": "manual",
       "localizations": {
@@ -47776,6 +47759,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nur lokal auf diesem Gerät — nicht aus RSS, nicht mit gpodder synchronisiert und nicht in OPML oder HTML-Export geschrieben. Anders als private Episoden-Notizen und Lesezeichen. Enthalten im iOS-JSON-Backup mit anderen Feed-Einstellungen. Bleibt bei Aktualisierung; wird beim Abbestellen gelöscht. Maximal 1000 Zeichen."
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the episode title, link, and a readable position timestamp in the message. The shared link is unchanged — no #t= seek fragment.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title, link, and a readable position timestamp in the message. The shared link is unchanged — no #t= seek fragment."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Blatt mit Episodentitel, Link und lesbarem Positionszeitstempel in der Nachricht. Der geteilte Link bleibt unverändert — kein #t=-Seek-Fragment."
           }
         }
       }

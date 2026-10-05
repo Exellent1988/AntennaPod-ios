@@ -77,7 +77,7 @@ enum EpisodeShareLinks {
                 }
                 .accessibilityLabel(String(localized: "Share with position"))
                 .accessibilityHint(
-                    String(localized: "Opens the system share sheet with the episode title, link, and current playback position")
+                    String(localized: "Opens the system share sheet with the episode title, link, and a readable position timestamp in the message. The shared link is unchanged — no #t= seek fragment.")
                 )
             }
         }
