@@ -42,7 +42,7 @@ struct ParentalControlsSettingsView: View {
             if parental.isEnabled {
                 Section {
                     Toggle("Lock Add / Discover", isOn: gatedOptionToggle(\.lockAddDiscover))
-                        .accessibilityHint(optionsHelpText)
+                        .accessibilityHint(String(localized: "When on, asks for the parental PIN before the Add sheet, Discover charts, or Import OPML from Settings or Subscriptions. Export OPML stays unlocked. Does not lock Network / Downloads Wi‑Fi-only toggles or hide explicit charts by itself. Changing this may ask for the PIN first when the session is locked."))
                     Toggle("Lock Network / Downloads settings", isOn: gatedOptionToggle(\.lockNetworkDownloadsSettings))
                         .accessibilityHint(optionsHelpText)
                     Toggle("Hide explicit top charts", isOn: gatedOptionToggle(\.hideExplicitCharts))

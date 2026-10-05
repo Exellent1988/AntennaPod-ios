@@ -49386,6 +49386,23 @@
           }
         }
       }
+    },
+    "When on, asks for the parental PIN before the Add sheet, Discover charts, or Import OPML from Settings or Subscriptions. Export OPML stays unlocked. Does not lock Network / Downloads Wi‑Fi-only toggles or hide explicit charts by itself. Changing this may ask for the PIN first when the session is locked.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, asks for the parental PIN before the Add sheet, Discover charts, or Import OPML from Settings or Subscriptions. Export OPML stays unlocked. Does not lock Network / Downloads Wi‑Fi-only toggles or hide explicit charts by itself. Changing this may ask for the PIN first when the session is locked."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an, fragt vor dem Hinzufügen-Sheet, Entdecken-Charts oder OPML importieren aus Einstellungen oder Abonnements nach der Elternschutz-PIN. OPML exportieren bleibt entsperrt. Sperrt nicht von selbst die Nur-Wi‑Fi-Schalter unter Netzwerk / Downloads und blendet keine expliziten Charts aus. Ändern kann bei gesperrter Sitzung zuerst die PIN verlangen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
