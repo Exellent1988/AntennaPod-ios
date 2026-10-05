@@ -548,7 +548,14 @@ final class PlaybackService: ObservableObject {
     /// - Parameter clearSoundbiteEndMarker: When `true` (default), cancels a pending soundbite
     ///   play-until-end window (user scrub / skip / chapter). Pass `false` when `playSoundbite`
     ///   seeks to the clip start before arming the end marker.
-    func seek(toSeconds seconds: Double, clearSoundbiteEndMarker clearEnd: Bool = true, releasesMarkPlayedResetHold: Bool = true) {
+    /// - Parameter resnapsSleepTimerChapterEnd: When `true` (default), an armed end-of-chapter timer
+    ///   picks the chapter at the seek target. Automatic rewind-after-pause passes `false`.
+    func seek(
+        toSeconds seconds: Double,
+        clearSoundbiteEndMarker clearEnd: Bool = true,
+        releasesMarkPlayedResetHold: Bool = true,
+        resnapsSleepTimerChapterEnd: Bool = true
+    ) {
         guard let player else {
             return
         }
@@ -576,6 +583,12 @@ final class PlaybackService: ObservableObject {
             }
         }
         positionSeconds = capped
+        // A seek into another chapter must not keep the old boundary: a later one
+        // paused right after a forward chapter jump, an earlier one ran past the chapter.
+        if resnapsSleepTimerChapterEnd, isSleepTimerActive, case .endOfChapter = sleepTimerMode {
+            sleepTimerChapterEndSeconds = nil
+            refreshSleepTimerChapterEndTarget()
+        }
         persistProgress(force: true)
         updateNowPlayingInfo(force: true)
     }
@@ -1854,7 +1867,7 @@ final class PlaybackService: ObservableObject {
             return
         }
         // Automatic rewind is not a listener seek; keep a mark-played reset.
-        seek(toSeconds: target, releasesMarkPlayedResetHold: false)
+        seek(toSeconds: target, releasesMarkPlayedResetHold: false, resnapsSleepTimerChapterEnd: false)
     }
 
     // MARK: - Now Playing / remote commands
