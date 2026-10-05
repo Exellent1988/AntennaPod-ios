@@ -1118,6 +1118,21 @@ struct FullPlayerView: View {
             .accessibilityLabel(String(localized: "Playback position"))
             .accessibilityValue(playbackPositionAccessibilityValue)
             .accessibilityHint(playbackPositionAccessibilityHint)
+            // VoiceOver swipe up/down: the binding setter above only stores scrubSeconds and the
+            // seek happens on drag end (onEditingChanged), which adjustments do not send, so a
+            // swipe never moved playback (and the default step would be 10% of the episode).
+            // Skip by the same intervals as the Forward / Rewind buttons instead.
+            .accessibilityAdjustableAction { direction in
+                isScrubbing = false
+                switch direction {
+                case .increment:
+                    playback.seek(bySeconds: playback.fastForwardSeconds)
+                case .decrement:
+                    playback.seek(bySeconds: -playback.rewindSeconds)
+                @unknown default:
+                    break
+                }
+            }
             HStack {
                 Button {
                     showJumpToPosition = true
