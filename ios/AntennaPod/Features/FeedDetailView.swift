@@ -1643,7 +1643,7 @@ struct FeedDetailView: View {
                         }
                         .disabled(enqueueAllUnplayedFromFeedCandidates.isEmpty)
                         .accessibilityLabel(String(localized: "Add all unplayed to queue"))
-                        .accessibilityHint(String(localized: "Appends unplayed episodes in this podcast that are not archived and not already queued, in episode sort order"))
+                        .accessibilityHint(String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from this podcast’s full feed catalog that are not already queued, in this podcast’s episode sort order. Ignores status, episode type, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived."))
 
                         Button {
                             showEnqueueAllConfirm = true

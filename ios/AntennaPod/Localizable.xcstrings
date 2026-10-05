@@ -32941,24 +32941,6 @@
         }
       }
     },
-    "Appends unplayed episodes in this podcast that are not archived and not already queued, in episode sort order": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Feed detail Add all unplayed to queue.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends unplayed episodes in this podcast that are not archived and not already queued, in episode sort order"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht ungehörte Episoden dieses Podcasts ein, die nicht archiviert und noch nicht in der Warteschlange sind, in der Episodensortierreihenfolge"
-          }
-        }
-      }
-    },
     "Appends %lld unplayed, non-archived episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued, played, and archived episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived episodes.": {
       "extractionState": "manual",
       "comment": "Confirmation message for All Episodes Add all unplayed to queue.",
@@ -48968,6 +48950,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und entfernt dann diese Episode nur aus der Warteschlange. Löscht nicht den Download, markiert nicht als gehört und stoppt keine Wiedergabe."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then appends unplayed, non-archived episodes from this podcast’s full feed catalog that are not already queued, in this podcast’s episode sort order. Ignores status, episode type, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then appends unplayed, non-archived episodes from this podcast’s full feed catalog that are not already queued, in this podcast’s episode sort order. Ignores status, episode type, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und reiht dann ungehörte, nicht archivierte Episoden aus dem vollständigen Feed-Katalog dieses Podcasts ein, die noch nicht in der Warteschlange sind, in der Episoden-Sortierung dieses Podcasts. Ignoriert Status-, Episodentyp-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht. Unterschiedlich von Alle zur Warteschlange hinzufügen, das auch gehörte und archivierte einschließt."
           }
         }
       }
