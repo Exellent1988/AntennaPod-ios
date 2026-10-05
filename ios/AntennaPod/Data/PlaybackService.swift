@@ -108,6 +108,8 @@ final class PlaybackService: ObservableObject {
     private var statusCancellable: AnyCancellable?
     /// First finite item duration only. Later jitter stays on the throttled tick.
     private var durationCancellable: AnyCancellable?
+    /// True after this loaded item's first finite duration was written to Now Playing.
+    private var didWriteLoadedItemDuration = false
     private var pipCancellable: AnyCancellable?
     /// Re-applies video-track enable/disable when `AVPlayerItem.tracks` populates after ready.
     private var videoTrackPolicyCancellable: AnyCancellable?
@@ -963,9 +965,12 @@ final class PlaybackService: ObservableObject {
                 self.applyIdleTimerPolicy()
             }
 
-        // play() publishes Now Playing and the widget before AVPlayerItem.duration
-        // is known. The 0.5s tick is throttled to 5s and stops while paused, so the
-        // first finite duration must be written once, including while paused.
+        // play() does not clear the previous episode's length, and play() publishes
+        // Now Playing before this item's duration is known. Drop that length so the
+        // existing publish writes no duration. The 0.5s tick is throttled and stops
+        // while paused, so the first finite duration of this item is written once.
+        durationSeconds = 0
+        didWriteLoadedItemDuration = false
         durationCancellable = item.publisher(for: \.duration)
             .receive(on: RunLoop.main)
             .sink { [weak self] duration in
@@ -973,7 +978,8 @@ final class PlaybackService: ObservableObject {
                 guard self.player === player else { return }
                 let seconds = duration.seconds
                 guard seconds.isFinite, seconds > 0 else { return }
-                guard !(self.durationSeconds.isFinite && self.durationSeconds > 0) else { return }
+                guard !self.didWriteLoadedItemDuration else { return }
+                self.didWriteLoadedItemDuration = true
                 self.durationSeconds = seconds
                 self.updateNowPlayingInfo(force: true)
                 self.store?.publishWidgetSnapshot()
