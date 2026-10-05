@@ -986,7 +986,7 @@ struct SettingsView: View {
                 } label: {
                     Label("Manage tags", systemImage: "tag")
                 }
-                .accessibilityHint(String(localized: "Rename or delete subscription tags across all podcasts"))
+                .accessibilityHint(String(localized: "Opens Manage tags to rename or delete tag labels across all podcasts. Rename updates every podcast using that name. Delete removes the tag from those podcasts but does not unsubscribe or delete downloads. Does not export OPML, start sync, or change playback."))
             }
             if matchesSearch(
                 "Library",

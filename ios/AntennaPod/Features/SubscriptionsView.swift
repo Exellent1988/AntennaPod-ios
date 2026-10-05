@@ -680,7 +680,7 @@ struct SubscriptionsView: View {
                         Image(systemName: "tag")
                     }
                     .accessibilityLabel(String(localized: "Manage tags"))
-                    .accessibilityHint(String(localized: "Rename or delete subscription tags across all podcasts"))
+                    .accessibilityHint(String(localized: "Opens Manage tags to rename or delete tag labels across all podcasts. Rename updates every podcast using that name. Delete removes the tag from those podcasts but does not unsubscribe or delete downloads. Does not export OPML, start sync, or change playback."))
                 }
             }
             .sheet(isPresented: $showAdd) {

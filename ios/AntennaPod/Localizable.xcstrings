@@ -11566,23 +11566,6 @@
         }
       }
     },
-    "Rename or delete subscription tags across all podcasts": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rename or delete subscription tags across all podcasts"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abonnement-Tags für alle Podcasts umbenennen oder löschen"
-          }
-        }
-      }
-    },
     "Tag name": {
       "extractionState": "manual",
       "localizations": {
@@ -49598,6 +49581,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Schreibgeschützt. Zeigt die User-Agent-Zeichenkette, die URLSession-Clients jetzt für Feed-Aktualisierung und Downloads nutzen — den Benutzerdefinierten User-Agent, wenn gesetzt, sonst den App-Standard. AVPlayer-Streaming kann weiterhin den System-User-Agent nutzen. Ändern des Benutzerdefinierten User-Agents aktualisiert dies; diese Zeile bearbeitet nicht, aktiviert keinen HTTP-Proxy, startet Downloads nicht neu und ändert die Wiedergabe nicht."
+          }
+        }
+      }
+    },
+    "Opens Manage tags to rename or delete tag labels across all podcasts. Rename updates every podcast using that name. Delete removes the tag from those podcasts but does not unsubscribe or delete downloads. Does not export OPML, start sync, or change playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens Manage tags to rename or delete tag labels across all podcasts. Rename updates every podcast using that name. Delete removes the tag from those podcasts but does not unsubscribe or delete downloads. Does not export OPML, start sync, or change playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet Tags verwalten zum Umbenennen oder Löschen von Tag-Bezeichnungen über alle Podcasts. Umbenennen aktualisiert jeden Podcast mit diesem Namen. Löschen entfernt den Tag von diesen Podcasts, kündigt aber keine Abos und löscht keine Downloads. Exportiert kein OPML, startet keinen Sync und ändert die Wiedergabe nicht."
           }
         }
       }
