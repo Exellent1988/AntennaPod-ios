@@ -39168,40 +39168,6 @@
         }
       }
     },
-    "Mark all as unplayed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mark all as unplayed"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle als ungehört markieren"
-          }
-        }
-      }
-    },
-    "Mark all as unplayed?": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mark all as unplayed?"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alle als ungehört markieren?"
-          }
-        }
-      }
-    },
     "Marks played episodes in the full queue, including archived episodes": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Queue Mark all as unplayed.",
