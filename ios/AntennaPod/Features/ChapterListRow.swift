@@ -80,8 +80,8 @@ struct ChapterListRow: View {
             .accessibilityLabel(accessibilityLabelText)
             .accessibilityHint(
                 seekFinishesEpisode
-                    ? String(localized: "Finishes the episode the same way as a forward skip.")
-                    : String(localized: "Seeks playback to this chapter")
+                    ? String(localized: "Finishes the episode the same way as a forward skip. No confirmation.")
+                    : String(localized: "Seeks playback to this chapter’s start immediately. No confirmation. Does not mark played, change the queue, or delete downloads.")
             )
             .accessibilityAddTraits(isCurrent ? .isSelected : [])
 

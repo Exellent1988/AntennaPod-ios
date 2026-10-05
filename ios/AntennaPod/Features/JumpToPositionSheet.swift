@@ -167,7 +167,7 @@ struct JumpToPositionSheet: View {
             return String(localized: "Enter a valid time as mm:ss or use the minutes and seconds steppers.")
         }
         if enteredTimeFinishesEpisode {
-            return String(localized: "Finishes the episode the same way as a forward skip.")
+            return String(localized: "Finishes the episode the same way as a forward skip. No confirmation.")
         }
         return String(localized: "Seeks to the entered position inside the episode.")
     }

@@ -1327,7 +1327,7 @@ struct FullPlayerView: View {
            duration.isFinite,
            duration > 0,
            target >= duration {
-            return String(localized: "Finishes the episode the same way as a forward skip.")
+            return String(localized: "Finishes the episode the same way as a forward skip. No confirmation.")
         }
         return String(localized: "Seeks to the next chapter")
     }

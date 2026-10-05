@@ -9723,23 +9723,6 @@
         }
       }
     },
-    "Finishes the episode the same way as a forward skip.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Finishes the episode the same way as a forward skip."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Beendet die Episode genauso wie Vorspulen."
-          }
-        }
-      }
-    },
     "Finishes the episode at %@, the same way as a forward skip.": {
       "extractionState": "manual",
       "localizations": {
@@ -15756,23 +15739,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Für diese Episode sind noch keine Kapitel bekannt."
-          }
-        }
-      }
-    },
-    "Seeks playback to this chapter": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seeks playback to this chapter"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Springt die Wiedergabe zu diesem Kapitel"
           }
         }
       }
@@ -49115,6 +49081,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Teilen-Sheet mit Episodentitel und dem aktuellen Kapitel an der Wiedergabeposition. Nutzt die volle Kapitelliste und ignoriert den Kapitel-Suchfilter. Lädt keine Remote- oder Medien-Kapitel nach."
+          }
+        }
+      }
+    },
+    "Seeks playback to this chapter’s start immediately. No confirmation. Does not mark played, change the queue, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks playback to this chapter’s start immediately. No confirmation. Does not mark played, change the queue, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt sofort zum Start dieses Kapitels. Keine Bestätigung. Markiert weder gehört noch ändert die Queue oder löscht Downloads."
+          }
+        }
+      }
+    },
+    "Finishes the episode the same way as a forward skip. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finishes the episode the same way as a forward skip. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beendet die Episode wie ein Vorwärtssprung. Keine Bestätigung."
           }
         }
       }
