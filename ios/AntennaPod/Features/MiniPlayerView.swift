@@ -736,6 +736,8 @@ struct MiniPlayerView: View {
     /// When Remaining time respects speed is on, −remaining ÷ live session rate
     /// (fallback feed/default, 0.5…3.0); otherwise wall-clock.
     private var rightTimeLabel: String {
+        // Unknown duration (live stream, item still loading): no 0:00 / -0:00 end time.
+        guard playback.durationSeconds.isFinite, playback.durationSeconds > 0 else { return "--:--" }
         if settings.showRemainingTime {
             let wall = playback.durationSeconds - playback.positionSeconds
             let fallback: Float

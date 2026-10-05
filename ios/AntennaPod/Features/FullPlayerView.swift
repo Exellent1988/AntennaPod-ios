@@ -1215,6 +1215,9 @@ struct FullPlayerView: View {
     /// When Remaining time respects speed is on, −remaining ÷ live session rate
     /// (fallback feed/default, 0.5…3.0); otherwise wall-clock.
     private var rightTimeLabel: String {
+        // Live streams and items still loading have no duration (0 / NaN). Showing
+        // 0:00 or -0:00 invented an end; use the same placeholder as an unknown clock.
+        guard hasKnownPlaybackDuration else { return "--:--" }
         if settings.showRemainingTime {
             let wall = playback.durationSeconds - displayPosition
             let fallback: Float
