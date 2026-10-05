@@ -35940,40 +35940,6 @@
         }
       }
     },
-    "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ermöglicht Ziehen-Neuordnen, Mischen, Mischen Wiedergabe zuerst, Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Nach Titel sortieren, Aktuelle Wiedergabe an den Anfang, Aktuelle Wiedergabe an das Ende und An Anfang/Ende"
-          }
-        }
-      }
-    },
-    "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deaktiviert Ziehen-Neuordnen, Mischen, Mischen Wiedergabe zuerst, Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Nach Titel sortieren, Aktuelle Wiedergabe an den Anfang, Aktuelle Wiedergabe an das Ende und An Anfang/Ende"
-          }
-        }
-      }
-    },
     "Shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, or clear the entire queue": {
       "extractionState": "manual",
       "localizations": {
@@ -47779,6 +47745,40 @@
         }
       },
       "extractionState": "manual"
+    },
+    "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom. Clear queue, Play random, Mark all as played or unplayed, Archive all, Copy queue, Share queue, Play Next, and adding episodes to the queue already work while locked.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom. Clear queue, Play random, Mark all as played or unplayed, Archive all, Copy queue, Share queue, Play Next, and adding episodes to the queue already work while locked."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ermöglicht Ziehen-Neuordnen, Mischen, Mischen Wiedergabe zuerst, Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Nach Titel sortieren, Aktuelle Wiedergabe an den Anfang, Aktuelle Wiedergabe an das Ende und An Anfang/Ende. Warteschlange leeren, Zufällig abspielen, Alle als gehört oder ungehört markieren, Alle archivieren, Warteschlange kopieren, Warteschlange teilen, Als Nächstes spielen und Episoden zur Warteschlange hinzufügen funktionieren bereits bei gesperrter Warteschlange."
+          }
+        }
+      }
+    },
+    "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom. Does not block Clear queue, Play random, Mark all as played or unplayed, Archive all, Copy queue, Share queue, Play Next, or adding episodes to the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom. Does not block Clear queue, Play random, Mark all as played or unplayed, Archive all, Copy queue, Share queue, Play Next, or adding episodes to the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deaktiviert Ziehen-Neuordnen, Mischen, Mischen Wiedergabe zuerst, Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Nach Titel sortieren, Aktuelle Wiedergabe an den Anfang, Aktuelle Wiedergabe an das Ende und An Anfang/Ende. Blockiert nicht Warteschlange leeren, Zufällig abspielen, Alle als gehört oder ungehört markieren, Alle archivieren, Warteschlange kopieren, Warteschlange teilen, Als Nächstes spielen oder Episoden zur Warteschlange hinzufügen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
