@@ -189,40 +189,6 @@
         }
       }
     },
-    "Remaining time %@": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remaining time %@"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verbleibende Zeit %@"
-          }
-        }
-      }
-    },
-    "Remaining time unknown": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Remaining time unknown"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verbleibende Zeit unbekannt"
-          }
-        }
-      }
-    },
     "No Continue listening snapshot is saved yet. This is not live playback and not the queue. Play an episode in AntennaPod to write the App Group snapshot. Until then there is no episode title or remaining time.": {
       "extractionState": "manual",
       "localizations": {
@@ -253,6 +219,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet AntennaPod und sendet Wiedergabe. Spielt die geladene Episode oder nach einem Kaltstart die ungehörte Episode des vorherigen Laufs, die im Miniplayer pausiert angezeigt wird. Erfindet keine andere Weiterspielen-Episode."
+          }
+        }
+      }
+    },
+    "Remaining time %@. Snapshot wall-clock; may be stale. Not live playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining time %@. Snapshot wall-clock; may be stale. Not live playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Zeit %@. Snapshot-Wanduhr; kann veraltet sein. Keine Live-Wiedergabe."
+          }
+        }
+      }
+    },
+    "Remaining time unknown. Snapshot has no known duration. Not live playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remaining time unknown. Snapshot has no known duration. Not live playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Zeit unbekannt. Snapshot ohne bekannte Dauer. Keine Live-Wiedergabe."
           }
         }
       }

@@ -120,9 +120,9 @@ enum WidgetRemainingTime {
     static func remainingAccessibilityLabel(for snapshot: WidgetContinueSnapshot) -> String {
         if let remaining = snapshot.remainingSecondsIfKnown {
             let formatted = formatDuration(remaining)
-            return String(localized: "Remaining time \(formatted)")
+            return String(localized: "Remaining time \(formatted). Snapshot wall-clock; may be stale. Not live playback.")
         }
-        return String(localized: "Remaining time unknown")
+        return String(localized: "Remaining time unknown. Snapshot has no known duration. Not live playback.")
     }
 }
 
