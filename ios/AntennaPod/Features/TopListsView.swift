@@ -194,6 +194,9 @@ struct HomeTopListsPreview: View {
     @State private var loadError: String?
     @State private var isLoading = false
     @State private var didLoad = false
+    /// Chart-position column: 24 pt at the default text size, growing with `.headline`.
+    /// A fixed 24 pt cut "10" off from xxxLarge and even single digits at accessibility sizes.
+    @ScaledMetric(relativeTo: .headline) private var rankColumnWidth: CGFloat = 24
 
     private let service = ItunesTopListService()
 
@@ -243,7 +246,7 @@ struct HomeTopListsPreview: View {
                         Text("\(index + 1)")
                             .font(.headline.monospacedDigit())
                             .foregroundStyle(.secondary)
-                            .frame(width: 24, alignment: .trailing)
+                            .frame(width: rankColumnWidth, alignment: .trailing)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(item.title)
                                 .font(.subheadline.weight(.semibold))
