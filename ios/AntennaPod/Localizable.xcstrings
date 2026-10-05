@@ -29316,23 +29316,6 @@
         }
       }
     },
-    "Port from 1 to 65535. Invalid port disables the proxy.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Port from 1 to 65535. Invalid port disables the proxy."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Port von 1 bis 65535. Ungültiger Port deaktiviert den Proxy."
-          }
-        }
-      }
-    },
     "Optional. Saved to Keychain only — never in backup JSON. Leave blank to keep the stored password.": {
       "extractionState": "manual",
       "localizations": {
@@ -49332,6 +49315,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hostname ohne http oder https. Leerer Host deaktiviert den Proxy auch wenn HTTP-Proxy an ist. Wird mit Proxy-Port für URLSession-Clients genutzt. Testet die Verbindung nicht, schaltet den Schalter nicht ein und ändert Proxy-Passwort nicht."
+          }
+        }
+      }
+    },
+    "Port from 1 to 65535. Invalid port disables the proxy even when HTTP proxy is on. Used with Proxy host for URLSession clients. Does not test the connection, enable the toggle, or change Proxy password.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Port from 1 to 65535. Invalid port disables the proxy even when HTTP proxy is on. Used with Proxy host for URLSession clients. Does not test the connection, enable the toggle, or change Proxy password."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Port von 1 bis 65535. Ungültiger Port deaktiviert den Proxy auch wenn HTTP-Proxy an ist. Wird mit Proxy-Host für URLSession-Clients genutzt. Testet die Verbindung nicht, schaltet den Schalter nicht ein und ändert Proxy-Passwort nicht."
           }
         }
       }

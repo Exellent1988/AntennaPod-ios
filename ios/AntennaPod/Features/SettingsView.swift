@@ -1952,7 +1952,7 @@ struct SettingsView: View {
                 )
                 .keyboardType(.numberPad)
                 .accessibilityLabel(String(localized: "Proxy port"))
-                .accessibilityHint(String(localized: "Port from 1 to 65535. Invalid port disables the proxy."))
+                .accessibilityHint(String(localized: "Port from 1 to 65535. Invalid port disables the proxy even when HTTP proxy is on. Used with Proxy host for URLSession clients. Does not test the connection, enable the toggle, or change Proxy password."))
                 .accessibilityValue("\(settings.httpProxyPort)")
 
                 TextField(
