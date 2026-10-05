@@ -691,9 +691,11 @@ enum PodcastValueDisplay {
                 )
             }
             guard !cleaned.isEmpty else { continue }
-            let total = cleaned.reduce(0) { $0 + max(0, $1.split) }
+            // Sum in Double: two feed splits such as 9223372036854775807 overflowed an Int sum
+            // and crashed Feed detail or Shownotes. Each percentage stays within 0...100.
+            let total = cleaned.reduce(0.0) { $0 + Double(max(0, $1.split)) }
             for rec in cleaned {
-                let pct: Int? = total > 0 ? Int((Double(rec.split) * 100.0 / Double(total)).rounded()) : nil
+                let pct: Int? = total > 0 ? Int((Double(rec.split) * 100.0 / total).rounded()) : nil
                 rows.append(
                     PodcastValueRecipientRow(
                         recipient: rec,
