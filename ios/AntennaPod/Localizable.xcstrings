@@ -49084,6 +49084,23 @@
           }
         }
       }
+    },
+    "Opens a sheet to set a custom clock sleep timer between 1 and 180 minutes. The timer starts only after you tap Set. Remembers the last Custom value for next time. Does not pause playback now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a sheet to set a custom clock sleep timer between 1 and 180 minutes. The timer starts only after you tap Set. Remembers the last Custom value for next time. Does not pause playback now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet ein Sheet, um einen eigenen Uhr-Sleep-Timer zwischen 1 und 180 Minuten festzulegen. Der Timer startet erst, wenn du auf Setzen tippst. Merkt sich den letzten Custom-Wert für das nächste Mal. Pausiert die Wiedergabe jetzt nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

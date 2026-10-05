@@ -1486,6 +1486,7 @@ struct FullPlayerView: View {
             Button(String(localized: "Custom…")) {
                 showCustomSleepTimer = true
             }
+            .accessibilityHint(String(localized: "Opens a sheet to set a custom clock sleep timer between 1 and 180 minutes. The timer starts only after you tap Set. Remembers the last Custom value for next time. Does not pause playback now."))
         } label: {
             HStack(spacing: 4) {
                 Image(systemName: "moon.zzz")
