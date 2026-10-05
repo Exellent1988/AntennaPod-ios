@@ -41963,23 +41963,6 @@
         }
       }
     },
-    "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default rewind is 10 seconds. The next rewind uses the saved interval. Changing it does not move the current position. Not Rewind after pause, which seeks back only after a pause of at least 1 second.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default rewind is 10 seconds. The next rewind uses the saved interval. Changing it does not move the current position. Not Rewind after pause, which seeks back only after a pause of at least 1 second."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Voreinstellungen sind 5, 10, 15, 20, 30 und 60 Sekunden, plus Benutzerdefiniert von 5 bis 60. Der Standard für Zurückspulen ist 10 Sekunden. Der nächste Rücksprung verwendet das gespeicherte Intervall. Die Änderung verschiebt die aktuelle Position nicht. Nicht Zurückspulen nach Pause, das nur nach einer Pause von mindestens 1 Sekunde zurückspringt."
-          }
-        }
-      }
-    },
     "Off. This is not the default. Resuming the current item does not seek backward, even after a pause of at least 1 second. Cold play, first start from a row, play from beginning, and stop do not rewind. Changing this does not seek the current position, start playback, or download. It is not the Rewind or Fast-forward skip interval, and not Android elapsed-time tiers.": {
       "extractionState": "manual",
       "localizations": {
@@ -49513,6 +49496,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Voreinstellungen sind 5, 10, 15, 20, 30 und 60 Sekunden, plus Benutzerdefiniert von 5 bis 60. Der Standard für Vorspulen ist 30 Sekunden. Das nächste Vorspulen im Mini-Player, im Vollbild-Player, auf dem Sperrbildschirm und in der Wiedergabeansicht, bei Siri Vorspulen und über den antennapod-Link zum Vorspulen verwendet das gespeicherte Intervall. Siri und der Link springen nur vor, wenn bereits eine Episode geladen ist, und erfinden keine. Die Änderung aktualisiert diese Steuerungen und sucht nicht die aktuelle Position, startet keine Wiedergabe und lädt nichts herunter. Nicht Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default rewind is 10 seconds. The next rewind in the mini player, full player, Lockscreen and Now Playing, Siri skip back, and the antennapod skip-back link uses the saved interval. Siri and the link skip only when an episode is already loaded and do not invent one. Changing it updates those controls and does not seek the current position, start playback, or download. Not Rewind after pause, which seeks back only after a pause of at least 1 second.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default rewind is 10 seconds. The next rewind in the mini player, full player, Lockscreen and Now Playing, Siri skip back, and the antennapod skip-back link uses the saved interval. Siri and the link skip only when an episode is already loaded and do not invent one. Changing it updates those controls and does not seek the current position, start playback, or download. Not Rewind after pause, which seeks back only after a pause of at least 1 second."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voreinstellungen sind 5, 10, 15, 20, 30 und 60 Sekunden, plus Benutzerdefiniert von 5 bis 60. Der Standard für Zurückspulen ist 10 Sekunden. Der nächste Rücksprung im Mini-Player, im Vollbild-Player, auf dem Sperrbildschirm und in der Wiedergabeansicht, bei Siri Zurückspringen und über den antennapod-Link zum Zurückspringen verwendet das gespeicherte Intervall. Siri und der Link springen nur zurück, wenn bereits eine Episode geladen ist, und erfinden keine. Die Änderung aktualisiert diese Steuerungen und sucht nicht die aktuelle Position, startet keine Wiedergabe und lädt nichts herunter. Nicht Zurückspulen nach Pause, das nur nach einer Pause von mindestens 1 Sekunde zurückspringt."
           }
         }
       }

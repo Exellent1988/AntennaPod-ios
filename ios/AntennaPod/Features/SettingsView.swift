@@ -1528,7 +1528,7 @@ struct SettingsView: View {
     }
 
     private var rewindIntervalAccessibilityHint: String {
-        String(localized: "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default rewind is 10 seconds. The next rewind uses the saved interval. Changing it does not move the current position. Not Rewind after pause, which seeks back only after a pause of at least 1 second.")
+        String(localized: "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default rewind is 10 seconds. The next rewind in the mini player, full player, Lockscreen and Now Playing, Siri skip back, and the antennapod skip-back link uses the saved interval. Siri and the link skip only when an episode is already loaded and do not invent one. Changing it updates those controls and does not seek the current position, start playback, or download. Not Rewind after pause, which seeks back only after a pause of at least 1 second.")
     }
 
     /// VoiceOver for Settings → Fast-forward. Names the saved interval and whether it is
