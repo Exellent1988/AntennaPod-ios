@@ -2000,6 +2000,7 @@ struct SettingsView: View {
                             settings.clearHTTPProxyPassword()
                             httpProxyPasswordDraft = ""
                         }
+                        .accessibilityHint(String(localized: "Removes the stored Proxy password from the Keychain and clears the draft field. Shown only when a password is stored. Does not turn off HTTP proxy, test the connection, or change host, port, or username. Password is never in Settings backup."))
                     }
                 }
                 .font(.subheadline)

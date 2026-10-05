@@ -49281,6 +49281,23 @@
           }
         }
       }
+    },
+    "Removes the stored Proxy password from the Keychain and clears the draft field. Shown only when a password is stored. Does not turn off HTTP proxy, test the connection, or change host, port, or username. Password is never in Settings backup.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the stored Proxy password from the Keychain and clears the draft field. Shown only when a password is stored. Does not turn off HTTP proxy, test the connection, or change host, port, or username. Password is never in Settings backup."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt das gespeicherte Proxy-Passwort aus dem Schlüsselbund und leert das Entwurfsfeld. Nur sichtbar, wenn ein Passwort gespeichert ist. Schaltet HTTP-Proxy nicht aus, testet die Verbindung nicht und ändert Host, Port oder Benutzername nicht. Das Passwort liegt nie im Einstellungen-Backup."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
