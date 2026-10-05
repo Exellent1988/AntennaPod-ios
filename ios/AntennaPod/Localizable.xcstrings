@@ -15131,23 +15131,6 @@
         }
       }
     },
-    "Set a custom default playback speed between 0.50× and 3.00×.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Set a custom default playback speed between 0.50× and 3.00×."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Benutzerdefinierte Standard-Wiedergabegeschwindigkeit zwischen 0,50× und 3,00× festlegen."
-          }
-        }
-      }
-    },
     "Unsubscribe and delete %lld downloads (%@)": {
       "extractionState": "manual",
       "localizations": {
@@ -49227,6 +49210,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert die feedseitige Podcast-GUID als reinen Text in die Zwischenablage. Keine Bestätigung. Unterschiedlich vom Kopieren des Podcasts, der Feed-URL, Website, Unterstützung und Diskussion und von Podcast-GUID teilen. Öffnet keinen Link, ändert keine Abonnements und erfindet keine GUID, wenn sie fehlt."
+          }
+        }
+      }
+    },
+    "Opens a sheet to set a custom Default speed from 0.50× to 3.00× in 0.05 steps. Speed applies only after you confirm. New episodes start at this speed. Does not change the rate already playing or rewrite a per-podcast speed override. Distinct from player session Custom…. Not Volume boost or Preserve pitch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a sheet to set a custom Default speed from 0.50× to 3.00× in 0.05 steps. Speed applies only after you confirm. New episodes start at this speed. Does not change the rate already playing or rewrite a per-podcast speed override. Distinct from player session Custom…. Not Volume boost or Preserve pitch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet ein Sheet, um eine eigene Standardgeschwindigkeit von 0,50× bis 3,00× in 0,05-Schritten festzulegen. Die Geschwindigkeit gilt erst nach Bestätigung. Neue Episoden starten mit dieser Geschwindigkeit. Ändert weder die bereits spielende Rate noch einen Podcast-Geschwindigkeits-Override. Unterschiedlich von Sitzungs-Benutzerdefiniert… im Player. Nicht Lautstärke-Verstärkung oder Tonhöhe beibehalten."
           }
         }
       }

@@ -1207,7 +1207,7 @@ struct SettingsView: View {
                 Button(String(localized: "Custom…")) {
                     showCustomDefaultSpeed = true
                 }
-                .accessibilityHint(String(localized: "Set a custom default playback speed between 0.50× and 3.00×."))
+                .accessibilityHint(String(localized: "Opens a sheet to set a custom Default speed from 0.50× to 3.00× in 0.05 steps. Speed applies only after you confirm. New episodes start at this speed. Does not change the rate already playing or rewrite a per-podcast speed override. Distinct from player session Custom…. Not Volume boost or Preserve pitch."))
                 Text(String(localized: "New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list and Custom…. Custom… also available in Settings (0.50×–3.00×)."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
