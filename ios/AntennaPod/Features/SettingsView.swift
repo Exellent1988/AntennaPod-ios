@@ -1566,7 +1566,7 @@ struct SettingsView: View {
     }
 
     private var rewindAfterPauseAccessibilityHint: String {
-        String(localized: "Presets are Off, 1, 2, 3, 5, and 10 seconds. The default is 2 seconds. Off never seeks on resume. Any other value seeks back that many seconds, not before 0, only when this item resumes after a pause of at least 1 second. Cold play, first start from a row, play from beginning, and stop do not rewind. Changing the picker does not move the current position, start playback, or download. Not the Rewind or Fast-forward buttons, and not Android elapsed-time tiers. There is no Pause-on-headset setting.")
+        String(localized: "Presets are Off, 1, 2, 3, 5, and 10 seconds. The default is 2 seconds. Off never seeks on resume. Any other value seeks back that many seconds, not before 0, only when this item resumes after a pause of at least 1 second — a shorter pause does not rewind. Play and pause in the mini player, full player, Lockscreen, and Now Playing count, and an audio interruption that pauses counts too. Cold play, first start from a row, play from beginning, and stop do not rewind. Changing the picker does not move the current position, start playback, or download. Not the Rewind or Fast-forward buttons, and not Android elapsed-time tiers. There is no Pause-on-headset setting.")
     }
 
 
