@@ -493,7 +493,7 @@ final class DownloadService: ObservableObject {
                     continue
                 }
             }
-            startActiveDownload(episode: next.episode)
+            startActiveDownload(episode: next.episode, source: next.source)
         }
         if !heldForWifi.isEmpty {
             waitingQueue.insert(contentsOf: heldForWifi, at: 0)
@@ -562,7 +562,7 @@ final class DownloadService: ObservableObject {
     /// When the owning feed has HTTP Basic credentials in Keychain **and** the media URL host
     /// matches the feed URL host, attaches `Authorization` (never logged). Other CDN hosts are
     /// left unauthenticated (honest). Local-folder `file://` never uses HTTP auth.
-    private func startActiveDownload(episode: PodcastEpisode) {
+    private func startActiveDownload(episode: PodcastEpisode, source: DownloadEnqueueSource) {
         guard let url = EpisodeMediaURL.url(from: episode.downloadUrl), !url.isFileURL else {
             inProgress.remove(episode.id)
             recordFailure(episode: episode, message: String(localized: "Episode has no media URL"))
@@ -574,6 +574,15 @@ final class DownloadService: ObservableObject {
 
         var request = URLRequest(url: url)
         AppUserAgent.apply(to: &request)
+        // The Wi‑Fi-only gates run only before the task starts; the session allows cellular, so
+        // leaving Wi‑Fi mid-transfer continued the download over mobile data. Pin the request
+        // instead: the background session then waits for Wi‑Fi / Ethernet.
+        let wifiOnly = source == .automatic
+            ? settings?.autoDownloadWifiOnly == true
+            : settings?.manualDownloadWifiOnly == true
+        if wifiOnly {
+            request.allowsCellularAccess = false
+        }
         if let creds = httpBasicCredentialsForDownload(episode: episode, mediaURL: url) {
             FeedHttpBasicAuth.apply(creds, to: &request)
         }
