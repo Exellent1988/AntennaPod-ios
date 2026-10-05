@@ -114,6 +114,10 @@ final class PlaybackService: ObservableObject {
     /// Re-applies video-track enable/disable when `AVPlayerItem.tracks` populates after ready.
     private var videoTrackPolicyCancellable: AnyCancellable?
     private var endObserver: NSObjectProtocol?
+    /// Item load failure (offline, dead host) and mid-episode network loss. A failed
+    /// `AVPlayerItem` never plays again, so these surface the error and force a rebuild.
+    private var itemStatusCancellable: AnyCancellable?
+    private var failedToEndObserver: NSObjectProtocol?
     private var lastPersistedAt: Date = .distantPast
     /// Monotonic seek id. Not reset on teardown, so a late completion cannot
     /// release a newer episode's hold (tokens would otherwise collide at 1).
@@ -186,6 +190,10 @@ final class PlaybackService: ObservableObject {
     ) -> Bool {
         guard !fromBeginning, preferredMediaURL == nil else { return false }
         guard currentEpisode?.id == episode.id, player != nil else { return false }
+        // A failed item (stream lost the network) cannot resume; rebuild from the saved position.
+        if player?.currentItem?.status == .failed {
+            return false
+        }
         if fileURL != nil, !isPlayingFromLocalFile {
             return false
         }
@@ -399,6 +407,11 @@ final class PlaybackService: ObservableObject {
             cancelSleepTimerFade(restoreVolume: true)
             recordPausedAt()
         } else {
+            // Play on a failed item did nothing and showed Pause with no audio. Rebuild instead.
+            if player.currentItem?.status == .failed, let episode = currentEpisode {
+                play(episode: episode)
+                return
+            }
             applyRewindAfterPauseIfNeeded()
             activateSession()
             player.play()
@@ -1030,6 +1043,25 @@ final class PlaybackService: ObservableObject {
                 self.store?.publishWidgetSnapshot()
             }
 
+        itemStatusCancellable = item.publisher(for: \.status)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] status in
+                guard let self, self.player === player, status == .failed else { return }
+                self.handleItemFailure(message: item.error?.localizedDescription)
+            }
+        failedToEndObserver = NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemFailedToPlayToEndTime,
+            object: item,
+            queue: .main
+        ) { [weak self] note in
+            let message = (note.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? Error)?
+                .localizedDescription
+            Task { @MainActor in
+                guard let self, self.player === player else { return }
+                self.handleItemFailure(message: message)
+            }
+        }
+
         endObserver = NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
             object: item,
@@ -1038,6 +1070,23 @@ final class PlaybackService: ObservableObject {
             Task { @MainActor in
                 self?.handlePlaybackEnded()
             }
+        }
+    }
+
+    /// Stream could not load or lost the network mid-episode. Without this the player sat on a
+    /// dead item: no audio, no alert, and Play did nothing. Saves the position, shows paused,
+    /// and reports the system error once (status change and notification can both arrive).
+    private func handleItemFailure(message: String?) {
+        persistProgress(force: true)
+        if isPlaying {
+            isPlaying = false
+            pauseSleepTimerCountdown()
+            updateNowPlayingInfo(force: true)
+            applyIdleTimerPolicy()
+        }
+        if lastError == nil {
+            lastError = message
+                ?? NSError(domain: NSURLErrorDomain, code: NSURLErrorUnknown).localizedDescription
         }
     }
 
@@ -1515,6 +1564,11 @@ final class PlaybackService: ObservableObject {
             NotificationCenter.default.removeObserver(endObserver)
         }
         endObserver = nil
+        itemStatusCancellable = nil
+        if let failedToEndObserver {
+            NotificationCenter.default.removeObserver(failedToEndObserver)
+        }
+        failedToEndObserver = nil
         pictureInPicture.tearDown()
         player?.pause()
         player = nil
