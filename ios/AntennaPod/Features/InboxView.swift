@@ -577,7 +577,7 @@ struct InboxView: View {
                         }
                         .disabled(playRandomCandidates.isEmpty)
                         .accessibilityLabel(String(localized: "Play random"))
-                        .accessibilityHint(String(localized: "Plays a random Inbox episode with playable media. Prefers unplayed when any remain."))
+                        .accessibilityHint(String(localized: "Plays a random episode from the full Inbox catalog with playable media. Prefers unplayed when any remain. Ignores podcast, episode type, search, and sort filters. Does not reorder Inbox. No confirmation."))
 
                         Button {
                             showEnqueueAllConfirm = true

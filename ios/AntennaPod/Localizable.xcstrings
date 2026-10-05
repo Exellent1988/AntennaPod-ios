@@ -33567,24 +33567,6 @@
         }
       }
     },
-    "Plays a random Inbox episode with playable media. Prefers unplayed when any remain.": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Inbox toolbar Play random. Inbox is unplayed-only so prefer-unplayed is a no-op.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plays a random Inbox episode with playable media. Prefers unplayed when any remain."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spielt eine zufällige Posteingangs-Episode mit abspielbarem Medium. Bevorzugt ungehörte, wenn vorhanden."
-          }
-        }
-      }
-    },
     "Plays a random archived episode with playable media. Prefers unplayed when any remain.": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Archived toolbar Play random. Does not restore/unarchive.",
@@ -48848,6 +48830,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und kehrt dann die gesamte Warteschlangen-Reihenfolge um, nicht nur den aktuellen Filter. Stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads. Die gerade spielende Episode bleibt dieselbe und wandert mit ihrer neuen Listenposition."
+          }
+        }
+      }
+    },
+    "Plays a random episode from the full Inbox catalog with playable media. Prefers unplayed when any remain. Ignores podcast, episode type, search, and sort filters. Does not reorder Inbox. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random episode from the full Inbox catalog with playable media. Prefers unplayed when any remain. Ignores podcast, episode type, search, and sort filters. Does not reorder Inbox. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine zufällige Episode aus dem vollständigen Posteingangs-Katalog mit abspielbaren Medien. Bevorzugt ungehörte, wenn welche übrig sind. Ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter. Ordnet den Posteingang nicht neu. Keine Bestätigung."
           }
         }
       }
