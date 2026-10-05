@@ -261,9 +261,17 @@ struct ArchivedView: View {
             return String(localized: "There are no archived episodes. Archive hides episodes from Inbox without marking them played. Restore them here or from a feed.")
         }
         if isPodcastFiltering && !isSearching {
-            return String(localized: "The selected podcast has no archived episodes. Choose All or another podcast filter.")
+            return String(localized: "The selected podcast has no archived episodes. Episodes remain in the full Archived catalog. Restore all, Add all to queue, Play random, Copy, and Share still use the full Archived list, not this empty view.")
         }
-        return String(localized: "No archived episodes match your search. Clear or change the search to see Archived.")
+        return String(localized: "No archived episodes match your search. Episodes remain in the full Archived catalog. Restore all, Add all to queue, Play random, Copy, and Share still use the full Archived list, not this empty view.")
+    }
+
+    /// VoiceOver recovery hint for the podcast/search mismatch empty state only.
+    private var archivedNoMatchAccessibilityHint: String {
+        if isPodcastFiltering && !isSearching {
+            return String(localized: "Choose All or another podcast filter to see other archived episodes. This does not restore or unarchive episodes.")
+        }
+        return String(localized: "Change or clear search to see other archived episodes. This does not restore or unarchive episodes.")
     }
 
     private var archivedRemainingSummary: EpisodeRemainingTime.Summary {
@@ -367,6 +375,7 @@ struct ArchivedView: View {
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(String(localized: "No matching archived"))
                 .accessibilityValue(archivedEmptyStateAccessibilityValue)
+                .accessibilityHint(archivedNoMatchAccessibilityHint)
             } else {
                 ForEach(filteredItems) { item in
                     EpisodeRow(

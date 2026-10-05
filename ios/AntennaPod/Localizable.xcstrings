@@ -24558,40 +24558,6 @@
         }
       }
     },
-    "The selected podcast has no archived episodes. Choose All or another podcast filter.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The selected podcast has no archived episodes. Choose All or another podcast filter."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Der gewählte Podcast hat keine archivierten Episoden. Wähle Alle oder einen anderen Podcast-Filter."
-          }
-        }
-      }
-    },
-    "No archived episodes match your search. Clear or change the search to see Archived.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No archived episodes match your search. Clear or change the search to see Archived."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine archivierten Episoden passen zu deiner Suche. Lösche oder ändere die Suche, um das Archiv zu sehen."
-          }
-        }
-      }
-    },
     "Appends %lld Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full Inbox catalog (same as Mark all / Archive all), not library search or the podcast filter. Queue lock does not block enqueue.": {
       "extractionState": "manual",
       "comment": "Inbox Add all to queue confirmation — full catalog, not podcast filter or library search.",
@@ -48730,6 +48696,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ändere oder lösche die Suche, um andere Favoriten zu sehen. Das entfernt keine Sterne und löscht die Favoriten nicht."
+          }
+        }
+      }
+    },
+    "The selected podcast has no archived episodes. Episodes remain in the full Archived catalog. Restore all, Add all to queue, Play random, Copy, and Share still use the full Archived list, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected podcast has no archived episodes. Episodes remain in the full Archived catalog. Restore all, Add all to queue, Play random, Copy, and Share still use the full Archived list, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der gewählte Podcast hat keine archivierten Episoden. Episoden bleiben im vollständigen Archiv-Katalog. Alle wiederherstellen, Alle zur Warteschlange, Zufällig abspielen, Kopieren und Teilen nutzen weiter die ganze Archivliste, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No archived episodes match your search. Episodes remain in the full Archived catalog. Restore all, Add all to queue, Play random, Copy, and Share still use the full Archived list, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No archived episodes match your search. Episodes remain in the full Archived catalog. Restore all, Add all to queue, Play random, Copy, and Share still use the full Archived list, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine archivierten Episoden passen zu deiner Suche. Episoden bleiben im vollständigen Archiv-Katalog. Alle wiederherstellen, Alle zur Warteschlange, Zufällig abspielen, Kopieren und Teilen nutzen weiter die ganze Archivliste, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "Choose All or another podcast filter to see other archived episodes. This does not restore or unarchive episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose All or another podcast filter to see other archived episodes. This does not restore or unarchive episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle Alle oder einen anderen Podcast-Filter, um andere archivierte Episoden zu sehen. Das stellt keine Episoden wieder her und hebt keine Archivierung auf."
+          }
+        }
+      }
+    },
+    "Change or clear search to see other archived episodes. This does not restore or unarchive episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear search to see other archived episodes. This does not restore or unarchive episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Suche, um andere archivierte Episoden zu sehen. Das stellt keine Episoden wieder her und hebt keine Archivierung auf."
           }
         }
       }
