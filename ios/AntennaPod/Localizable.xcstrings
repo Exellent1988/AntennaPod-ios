@@ -15471,23 +15471,6 @@
         }
       }
     },
-    "Set a custom playback speed for this podcast between 0.50× and 3.00×.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Set a custom playback speed for this podcast between 0.50× and 3.00×."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Benutzerdefinierte Wiedergabegeschwindigkeit für diesen Podcast zwischen 0,50× und 3,00× festlegen."
-          }
-        }
-      }
-    },
     "Use global, a preset, or Custom… for this podcast": {
       "extractionState": "manual",
       "localizations": {
@@ -49166,6 +49149,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zeigt Felder zum Einfügen eines neuen Podcast-Index-API-Schlüssels und -Geheimnisses. Keine Bestätigung. Entfernt die gespeicherten Keychain-Zugangsdaten erst, wenn du neue Schlüssel speicherst oder Schlüssel löschen nutzt. Die Podcast-Index-Suche funktioniert bis dahin weiter."
+          }
+        }
+      }
+    },
+    "Opens a sheet to set a custom playback speed for this podcast from 0.50× to 3.00×. Speed applies only after you confirm. Applied on a fresh episode start and immediately if an episode from this podcast is already playing. Does not rewrite the global Default speed alone. Not Volume boost or Preserve pitch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a sheet to set a custom playback speed for this podcast from 0.50× to 3.00×. Speed applies only after you confirm. Applied on a fresh episode start and immediately if an episode from this podcast is already playing. Does not rewrite the global Default speed alone. Not Volume boost or Preserve pitch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet ein Sheet, um eine eigene Wiedergabegeschwindigkeit für diesen Podcast von 0,50× bis 3,00× festzulegen. Die Geschwindigkeit gilt erst nach Bestätigung. Wird beim frischen Episodenstart und sofort angewendet, wenn bereits eine Episode dieses Podcasts spielt. Ändert allein nicht die globale Standardgeschwindigkeit. Nicht Lautstärke-Boost oder Tonhöhe beibehalten."
           }
         }
       }

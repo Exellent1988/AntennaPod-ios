@@ -252,7 +252,7 @@ struct PerFeedSettingsView: View {
                 Button(String(localized: "Custom…")) {
                     showCustomFeedSpeed = true
                 }
-                .accessibilityHint(String(localized: "Set a custom playback speed for this podcast between 0.50× and 3.00×."))
+                .accessibilityHint(String(localized: "Opens a sheet to set a custom playback speed for this podcast from 0.50× to 3.00×. Speed applies only after you confirm. Applied on a fresh episode start and immediately if an episode from this podcast is already playing. Does not rewrite the global Default speed alone. Not Volume boost or Preserve pitch."))
                 Text(playbackSpeedHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)
