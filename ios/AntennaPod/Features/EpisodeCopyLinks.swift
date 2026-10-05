@@ -153,7 +153,7 @@ enum EpisodeCopyLinks {
                 Label("Copy media URL", systemImage: "link")
             }
             .accessibilityLabel(String(localized: "Copy media URL"))
-            .accessibilityHint(String(localized: "Copies the episode media / enclosure URL to the pasteboard"))
+            .accessibilityHint(String(localized: "Copies the feed-provided episode media / enclosure http(s) URL to the pasteboard. No confirmation. Hidden for local file or local-folder URLs. Distinct from Copy episode link and Share episode. Does not download, play, mark played, or change the queue."))
         }
     }
 }
