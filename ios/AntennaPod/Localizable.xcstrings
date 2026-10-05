@@ -29534,23 +29534,6 @@
         }
       }
     },
-    "Stores username and password in the Keychain for this podcast only": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stores username and password in the Keychain for this podcast only"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Speichert Benutzername und Passwort nur für diesen Podcast im Schlüsselbund"
-          }
-        }
-      }
-    },
     "HTTP Basic for private feeds. Credentials are stored only in the Keychain on this device — never in feed-settings.json, OPML, or iOS JSON backup. Applied on feed refresh and on media downloads when the media host matches the feed host. Not used for local folder podcasts. Streaming without download may still fail if the player cannot send Authorization. Passwords are never logged.": {
       "extractionState": "manual",
       "localizations": {
@@ -49166,6 +49149,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Speichert API-Schlüssel und -Geheimnis sofort im Keychain auf diesem Gerät. Keine Bestätigung. Aktiviert die Podcast-Index-Suche unter Podcast hinzufügen. Betrifft nicht Apple-Charts, Abos oder bereits gespeicherte Feeds."
+          }
+        }
+      }
+    },
+    "Stores username and password in the Keychain for this podcast immediately. No confirmation. Enables private feed refresh and matching-host downloads for this podcast. Does not affect other podcasts, Podcast Index keys, subscriptions, or offline files.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stores username and password in the Keychain for this podcast immediately. No confirmation. Enables private feed refresh and matching-host downloads for this podcast. Does not affect other podcasts, Podcast Index keys, subscriptions, or offline files."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert Benutzername und Passwort sofort im Keychain für diesen Podcast. Keine Bestätigung. Aktiviert private Feed-Aktualisierung und Downloads vom gleichen Host für diesen Podcast. Betrifft nicht andere Podcasts, Podcast-Index-Schlüssel, Abos oder Offline-Dateien."
           }
         }
       }

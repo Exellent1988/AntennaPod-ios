@@ -330,7 +330,7 @@ struct PerFeedSettingsView: View {
                         saveHttpBasicAuth()
                     }
                     .disabled(authUsername.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    .accessibilityHint(String(localized: "Stores username and password in the Keychain for this podcast only"))
+                    .accessibilityHint(String(localized: "Stores username and password in the Keychain for this podcast immediately. No confirmation. Enables private feed refresh and matching-host downloads for this podcast. Does not affect other podcasts, Podcast Index keys, subscriptions, or offline files."))
 
                     if authSaved {
                         Button("Clear authentication", role: .destructive) {
