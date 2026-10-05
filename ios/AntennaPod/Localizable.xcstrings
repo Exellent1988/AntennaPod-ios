@@ -14251,23 +14251,6 @@
         }
       }
     },
-    "Asks for confirmation, then removes this episode from the queue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks for confirmation, then removes this episode from the queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragt nach Bestätigung und entfernt dann diese Episode aus der Warteschlange"
-          }
-        }
-      }
-    },
     "Reverse order": {
       "extractionState": "manual",
       "localizations": {
@@ -48968,6 +48951,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und bricht dann laufende und wartende Downloads ab. Stoppt aktive Übertragungen und leert die Warteschlange. Löscht keine abgeschlossenen Offline-Dateien."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und entfernt dann diese Episode nur aus der Warteschlange. Löscht nicht den Download, markiert nicht als gehört und stoppt keine Wiedergabe."
           }
         }
       }

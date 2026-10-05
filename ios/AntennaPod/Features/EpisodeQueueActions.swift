@@ -104,7 +104,7 @@ enum EpisodeQueueActions {
             )
             .accessibilityHint(
                 inQueue
-                    ? String(localized: "Asks for confirmation, then removes this episode from the queue")
+                    ? String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
                     : String(localized: "Adds this episode to the queue")
             )
 

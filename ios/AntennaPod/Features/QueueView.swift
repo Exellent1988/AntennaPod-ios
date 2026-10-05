@@ -483,7 +483,7 @@ struct QueueView: View {
                                 Label("Remove", systemImage: "minus.circle")
                             }
                             .accessibilityHint(
-                                String(localized: "Asks for confirmation, then removes this episode from the queue")
+                                String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
                             )
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
