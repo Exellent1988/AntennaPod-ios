@@ -444,6 +444,15 @@ final class PlaybackService: ObservableObject {
                 play(episode: episode)
                 return
             }
+            // Deleting the download while paused leaves this player on the removed file
+            // (delete only switches to the stream while playing). Rebuild so it streams.
+            if isPlayingFromLocalFile, let episode = currentEpisode,
+               let asset = player.currentItem?.asset as? AVURLAsset,
+               asset.url.isFileURL,
+               !FileManager.default.fileExists(atPath: asset.url.path) {
+                play(episode: episode)
+                return
+            }
             applyRewindAfterPauseIfNeeded()
             activateSession()
             player.play()
