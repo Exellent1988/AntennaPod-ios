@@ -17184,23 +17184,6 @@
         }
       }
     },
-    "Copies the podcast description to the pasteboard": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the podcast description to the pasteboard"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert die Podcast-Beschreibung in die Zwischenablage"
-          }
-        }
-      }
-    },
     "Podcast description copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {
@@ -47897,6 +47880,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Stellt einen %lld-Minuten-Uhr-Schlaf-Timer."
+          }
+        }
+      }
+    },
+    "Copies the full podcast description to the pasteboard as plain text, with HTML stripped; ignores search filters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full podcast description to the pasteboard as plain text, with HTML stripped; ignores search filters"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vollständige Podcast-Beschreibung als Klartext in die Zwischenablage, HTML entfernt; ignoriert Suchfilter"
           }
         }
       }

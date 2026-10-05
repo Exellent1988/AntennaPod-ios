@@ -430,7 +430,7 @@ struct FeedDescriptionSheetView: View {
                     }
                     .disabled(!hasPlainDescription)
                     .accessibilityLabel(String(localized: "Copy podcast description"))
-                    .accessibilityHint(String(localized: "Copies the podcast description to the pasteboard"))
+                    .accessibilityHint(String(localized: "Copies the full podcast description to the pasteboard as plain text, with HTML stripped; ignores search filters"))
 
                     ShareLink(
                         item: descriptionShareText,
