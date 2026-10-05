@@ -876,7 +876,13 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         } else if inItem {
             switch local.lowercased() {
             case "title":
-                itemTitle = text
+                // Only the item's own title. A nested media:title (inside media:content or
+                // media:group) or Atom source title would rename every episode, and an
+                // empty itunes:title would blank it.
+                let parent = elementStack.count >= 2 ? elementStack[elementStack.count - 2].lowercased() : ""
+                if (parent == "item" || parent == "entry"), !text.isEmpty {
+                    itemTitle = text
+                }
             case "link":
                 if itemLink == nil, !text.isEmpty {
                     itemLink = text
