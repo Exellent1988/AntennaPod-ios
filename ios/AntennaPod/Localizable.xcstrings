@@ -29364,23 +29364,6 @@
         }
       }
     },
-    "Marks unplayed, non-archived episodes in the full Downloads catalog as played; ignores chip, podcast, search, and sort filters": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks unplayed, non-archived episodes in the full Downloads catalog as played; ignores chip, podcast, search, and sort filters"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert ungehörte, nicht archivierte Episoden im vollständigen Downloads-Katalog als gehört; ignoriert Chip-, Podcast-, Such- und Sortierfilter"
-          }
-        }
-      }
-    },
     "Marks played episodes, including archived episodes, in the full Downloads catalog as unplayed; ignores chip, podcast, search, and sort filters and does not delete files": {
       "extractionState": "manual",
       "localizations": {
@@ -48969,6 +48952,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und markiert dann Posteingangs-Episoden als gehört anhand des vollständigen Posteingangs-Katalogs. Episoden verlassen den Posteingang. Ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then marks unplayed, non-archived episodes in the full completed Downloads catalog as played. Ignores chip, podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not itself clear downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then marks unplayed, non-archived episodes in the full completed Downloads catalog as played. Ignores chip, podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not itself clear downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und markiert dann ungehörte, nicht archivierte Episoden im vollständigen Katalog abgeschlossener Downloads als gehört. Ignoriert Chip-, Podcast-, Such- und Sortierfilter. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert; leert Downloads nicht selbst."
           }
         }
       }
