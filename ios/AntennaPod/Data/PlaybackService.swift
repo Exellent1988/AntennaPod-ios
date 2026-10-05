@@ -184,6 +184,14 @@ final class PlaybackService: ObservableObject {
         if fileURL != nil, !isPlayingFromLocalFile {
             return false
         }
+        // Delete removes the file but leaves this player. A missing local file must
+        // rebuild so resolvePlaybackURL can stream. A file that is still there keeps it.
+        if isPlayingFromLocalFile,
+           let asset = player?.currentItem?.asset as? AVURLAsset,
+           asset.url.isFileURL,
+           !FileManager.default.fileExists(atPath: asset.url.path) {
+            return false
+        }
         return true
     }
 
