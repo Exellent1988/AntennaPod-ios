@@ -36,6 +36,9 @@ struct FeedPreviewView: View {
     @State private var isLoading = false
     @State private var loadError: String?
     @State private var isSubscribing = false
+    /// Error from this preview's own Confirm Subscribe. `store.lastError` is shared with
+    /// Refresh all / OPML / local rescan and can hold an unrelated failure.
+    @State private var subscribeError: String?
     @State private var openFeed: PodcastFeed?
     /// Shown after HTTP 401 so a private feed can be previewed before subscribe.
     @State private var needsHttpAuth = false
@@ -277,7 +280,7 @@ struct FeedPreviewView: View {
                 .frame(maxWidth: .infinity)
             }
 
-            if let error = store.lastError, !isAlreadySubscribed {
+            if let error = subscribeError, !isAlreadySubscribed {
                 Section {
                     Text(error)
                         .foregroundStyle(.red)
@@ -491,14 +494,18 @@ struct FeedPreviewView: View {
         }
         isSubscribing = true
         defer { isSubscribing = false }
+        subscribeError = nil
         let creds = previewCredentials
         await store.subscribe(feedUrl: resolved, credentials: creds)
         if store.lastError == nil {
             onSubscribed?()
             dismiss()
-        } else if store.lastError?.contains("401") == true {
-            needsHttpAuth = true
-            loadError = store.lastError
+        } else {
+            subscribeError = store.lastError
+            if store.lastError?.contains("401") == true {
+                needsHttpAuth = true
+                loadError = store.lastError
+            }
         }
     }
 
