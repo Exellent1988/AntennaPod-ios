@@ -48860,6 +48860,23 @@
           }
         }
       }
+    },
+    "Asks for confirmation, then removes every episode from the full Favorites catalog. Ignores podcast, search, and sort filters. Does not delete downloads, archive, mark played, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then removes every episode from the full Favorites catalog. Ignores podcast, search, and sort filters. Does not delete downloads, archive, mark played, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und entfernt dann jede Episode aus dem vollständigen Favoriten-Katalog. Ignoriert Podcast-, Such- und Sortierfilter. Löscht keine Downloads, archiviert nicht, markiert nicht als gehört und leert nicht die Warteschlange."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -576,6 +576,9 @@ struct FavoritesView: View {
                     }
                     // Clear always targets the full favorites list (not the filtered subset).
                     .disabled(items.isEmpty)
+                    .accessibilityHint(
+                        String(localized: "Asks for confirmation, then removes every episode from the full Favorites catalog. Ignores podcast, search, and sort filters. Does not delete downloads, archive, mark played, or clear the queue.")
+                    )
                 } label: {
                     Label("Favorites actions", systemImage: "ellipsis.circle")
                 }
