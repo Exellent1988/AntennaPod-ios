@@ -49118,6 +49118,23 @@
           }
         }
       }
+    },
+    "Seeks to the entered position inside the episode immediately. No confirmation. Does not mark played, change the queue, or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seeks to the entered position inside the episode immediately. No confirmation. Does not mark played, change the queue, or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Springt sofort zur eingegebenen Position in der Episode. Keine Bestätigung. Markiert weder gehört noch ändert die Queue oder löscht Downloads."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

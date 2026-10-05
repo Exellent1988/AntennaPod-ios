@@ -169,7 +169,7 @@ struct JumpToPositionSheet: View {
         if enteredTimeFinishesEpisode {
             return String(localized: "Finishes the episode the same way as a forward skip. No confirmation.")
         }
-        return String(localized: "Seeks to the entered position inside the episode.")
+        return String(localized: "Seeks to the entered position inside the episode immediately. No confirmation. Does not mark played, change the queue, or delete downloads.")
     }
 
     private func syncTextFromSteppers() {
