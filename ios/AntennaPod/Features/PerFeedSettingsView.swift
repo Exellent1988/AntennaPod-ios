@@ -171,7 +171,7 @@ struct PerFeedSettingsView: View {
                     }
                 }
                 .accessibilityLabel(String(localized: "Keep updated"))
-                .accessibilityHint(String(localized: "When Never, Refresh all and automatic refresh skip this podcast. Manual single-podcast refresh still works."))
+                .accessibilityHint(String(localized: "When Never, Refresh all, pull-to-refresh, and timed refresh skip this podcast. Manual single-podcast refresh still works."))
                 .accessibilityValue(current.keepUpdated.label)
                 Text(keepUpdatedHelp)
                     .font(.caption)
@@ -180,7 +180,7 @@ struct PerFeedSettingsView: View {
             } header: {
                 Text("Refresh")
             } footer: {
-                Text("Refresh all (Subscriptions) and automatic Keep updated refresh respect Never. Manual single-podcast refresh still works.")
+                Text("Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh skip Never. Manual single-podcast refresh (swipe or Feed detail) still works.")
             }
 
             Section {
@@ -685,9 +685,9 @@ struct PerFeedSettingsView: View {
     private var keepUpdatedHelp: String {
         switch current.keepUpdated {
         case .useGlobal, .always:
-            return String(localized: "Included in Refresh all and automatic Keep updated refresh (Subscriptions toolbar, Home/Inbox pull-to-refresh, launch/foreground interval). “Always” matches Use global until a global exclude exists.")
+            return String(localized: "Included in Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh (Subscriptions toolbar, launch/foreground interval). “Always” matches Use global until a global exclude exists.")
         case .never:
-            return String(localized: "Skipped by Refresh all and automatic Keep updated refresh. You can still refresh this podcast alone from Subscriptions (swipe) or Feed detail.")
+            return String(localized: "Skipped by Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh. You can still refresh this podcast alone from Subscriptions (swipe) or Feed detail.")
         }
     }
 

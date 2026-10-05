@@ -11667,74 +11667,6 @@
         }
       }
     },
-    "Included in Refresh all and automatic Keep updated refresh (Subscriptions toolbar, Home/Inbox pull-to-refresh, launch/foreground interval). “Always” matches Use global until a global exclude exists.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Included in Refresh all and automatic Keep updated refresh (Subscriptions toolbar, Home/Inbox pull-to-refresh, launch/foreground interval). “Always” matches Use global until a global exclude exists."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enthalten bei „Alle aktualisieren“ und automatischer Aktualisierung (Abonnements-Symbolleiste, Home/Posteingang Zum Aktualisieren ziehen, Start/Vordergrund-Intervall). „Immer“ entspricht vorerst „Global verwenden“, bis es eine globale Ausschlussliste gibt."
-          }
-        }
-      }
-    },
-    "Skipped by Refresh all and automatic Keep updated refresh. You can still refresh this podcast alone from Subscriptions (swipe) or Feed detail.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Skipped by Refresh all and automatic Keep updated refresh. You can still refresh this podcast alone from Subscriptions (swipe) or Feed detail."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wird von „Alle aktualisieren“ und der automatischen Aktualisierung übersprungen. Du kannst diesen Podcast weiterhin einzeln unter Abonnements (wischen) oder in der Feed-Ansicht aktualisieren."
-          }
-        }
-      }
-    },
-    "When Never, Refresh all and automatic refresh skip this podcast. Manual single-podcast refresh still works.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When Never, Refresh all and automatic refresh skip this podcast. Manual single-podcast refresh still works."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bei „Nie“ überspringen „Alle aktualisieren“ und die automatische Aktualisierung diesen Podcast. Manuelles Aktualisieren einzelner Podcasts funktioniert weiterhin."
-          }
-        }
-      }
-    },
-    "Refresh all (Subscriptions) and automatic Keep updated refresh respect Never. Manual single-podcast refresh still works.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Refresh all (Subscriptions) and automatic Keep updated refresh respect Never. Manual single-podcast refresh still works."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "„Alle aktualisieren“ (Abonnements) und die automatische Aktualisierung respektieren „Nie“. Manuelles Aktualisieren einzelner Podcasts funktioniert weiterhin."
-          }
-        }
-      }
-    },
     "Open podcast website": {
       "extractionState": "manual",
       "localizations": {
@@ -47603,6 +47535,74 @@
           }
         }
       }
+    },
+    "When Never, Refresh all, pull-to-refresh, and timed refresh skip this podcast. Manual single-podcast refresh still works.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When Never, Refresh all, pull-to-refresh, and timed refresh skip this podcast. Manual single-podcast refresh still works."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bei „Nie“ überspringen „Alle aktualisieren“, Pull-to-Refresh und Zeitintervall diesen Podcast. Manuelle Einzelaktualisierung funktioniert weiterhin."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh skip Never. Manual single-podcast refresh (swipe or Feed detail) still works.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh skip Never. Manual single-podcast refresh (swipe or Feed detail) still works."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Alle aktualisieren“, Pull-to-Refresh (Abos, Home, Eingang) und zeitgesteuerte Keep-updated-Aktualisierung überspringen „Nie“. Manuelle Einzelaktualisierung (Wischen oder Feed-Detail) funktioniert weiterhin."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Skipped by Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh. You can still refresh this podcast alone from Subscriptions (swipe) or Feed detail.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skipped by Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh. You can still refresh this podcast alone from Subscriptions (swipe) or Feed detail."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird von „Alle aktualisieren“, Pull-to-Refresh (Abos, Home, Eingang) und zeitgesteuerter Keep-updated-Aktualisierung übersprungen. Du kannst diesen Podcast weiterhin allein über Abonnements (Wischen) oder Feed-Detail aktualisieren."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Included in Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh (Subscriptions toolbar, launch/foreground interval). “Always” matches Use global until a global exclude exists.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Included in Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh (Subscriptions toolbar, launch/foreground interval). “Always” matches Use global until a global exclude exists."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enthalten bei „Alle aktualisieren“, Pull-to-Refresh (Abos, Home, Eingang) und zeitgesteuerter Keep-updated-Aktualisierung (Abonnements-Symbolleiste, Start-/Vordergrund-Intervall). „Immer“ entspricht „Global verwenden“, bis es eine globale Ausnahme gibt."
+          }
+        }
+      },
+      "extractionState": "manual"
     }
   },
   "version": "1.0"
