@@ -692,7 +692,7 @@ struct DownloadsView: View {
                         }
                         .disabled(markAllDownloadsUnplayedCandidatesCount == 0)
                         .accessibilityHint(
-                            String(localized: "Marks played episodes, including archived episodes, in the full Downloads catalog as unplayed; ignores chip, podcast, search, and sort filters and does not delete files")
+                            String(localized: "Asks for confirmation, then marks played episodes, including archived, in the full completed Downloads catalog as unplayed. Ignores chip, podcast, search, and sort filters. Does not delete download files, clear the queue, stop playback, or unarchive episodes.")
                         )
 
                         Button {

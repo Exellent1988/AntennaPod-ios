@@ -29364,23 +29364,6 @@
         }
       }
     },
-    "Marks played episodes, including archived episodes, in the full Downloads catalog as unplayed; ignores chip, podcast, search, and sort filters and does not delete files": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks played episodes, including archived episodes, in the full Downloads catalog as unplayed; ignores chip, podcast, search, and sort filters and does not delete files"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert gehörte Episoden einschließlich archivierter Episoden im vollständigen Downloads-Katalog als ungehört; ignoriert Chip-, Podcast-, Such- und Sortierfilter und löscht keine Dateien"
-          }
-        }
-      }
-    },
     "Marks %lld unplayed, non-archived episodes as played. Uses the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Auto-delete after playing still applies when enabled.": {
       "extractionState": "manual",
       "localizations": {
@@ -48967,6 +48950,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden im vollständigen Katalog abgeschlossener Downloads. Ignoriert Chip-, Podcast-, Such- und Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Download-Dateien, leert nicht die Warteschlange und löst kein automatisches Löschen nach dem Abspielen aus."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then marks played episodes, including archived, in the full completed Downloads catalog as unplayed. Ignores chip, podcast, search, and sort filters. Does not delete download files, clear the queue, stop playback, or unarchive episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then marks played episodes, including archived, in the full completed Downloads catalog as unplayed. Ignores chip, podcast, search, and sort filters. Does not delete download files, clear the queue, stop playback, or unarchive episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und markiert dann gehörte Episoden, einschließlich archivierter, im vollständigen Katalog abgeschlossener Downloads als ungehört. Ignoriert Chip-, Podcast-, Such- und Sortierfilter. Löscht keine Download-Dateien, leert nicht die Warteschlange, stoppt keine Wiedergabe und hebt die Archivierung nicht auf."
           }
         }
       }
