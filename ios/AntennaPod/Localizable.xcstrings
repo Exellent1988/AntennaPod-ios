@@ -13997,23 +13997,6 @@
         }
       }
     },
-    "Appends favorite episodes not already queued": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends favorite episodes not already queued"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht Favoriten-Episoden ein, die noch nicht in der Warteschlange sind"
-          }
-        }
-      }
-    },
     "Appends downloaded episodes not already queued": {
       "extractionState": "manual",
       "localizations": {
@@ -48841,6 +48824,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und reiht dann Episoden aus dem vollständigen Verlaufs-Katalog, die noch nicht in der Warteschlange sind, zuletzt gehört zuerst ein. Ignoriert Podcast-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then appends episodes from the full Favorites catalog that are not already queued, newest favorited first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then appends episodes from the full Favorites catalog that are not already queued, newest favorited first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und reiht dann Episoden aus dem vollständigen Favoriten-Katalog, die noch nicht in der Warteschlange sind, zuletzt favorisiert zuerst ein. Ignoriert Podcast-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht."
           }
         }
       }

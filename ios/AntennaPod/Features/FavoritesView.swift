@@ -526,7 +526,7 @@ struct FavoritesView: View {
                         Label("Add all to queue", systemImage: "text.append")
                     }
                     .disabled(enqueueAllFavoritesCandidatesCount == 0)
-                    .accessibilityHint(String(localized: "Appends favorite episodes not already queued"))
+                    .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full Favorites catalog that are not already queued, newest favorited first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue."))
 
                     Button {
                         showEnqueueAllUnplayedConfirm = true
