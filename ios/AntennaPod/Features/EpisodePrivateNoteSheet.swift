@@ -36,7 +36,7 @@ struct EpisodePrivateNoteSheet: View {
                             store.setEpisodePrivateNote(for: episodeId, nil)
                         }
                         .accessibilityLabel(String(localized: "Clear private note"))
-                        .accessibilityHint(String(localized: "Removes the local private note for this episode. Does not affect bookmarks, chapters, Share with position, playback, favorites, or the queue."))
+                        .accessibilityHint(String(localized: "Removes the local private note for this episode immediately. No confirmation. Local only — not RSS / gpodder / OPML. Does not affect bookmarks, chapters, Share with position, playback, favorites, feed private notes, or the queue."))
                     }
                     Text(
                         String(

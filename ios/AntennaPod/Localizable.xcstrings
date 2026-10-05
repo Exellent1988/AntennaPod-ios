@@ -45600,23 +45600,6 @@
         }
       }
     },
-    "Removes the local private note for this episode. Does not affect bookmarks, chapters, Share with position, playback, favorites, or the queue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes the local private note for this episode. Does not affect bookmarks, chapters, Share with position, playback, favorites, or the queue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt die lokale private Notiz für diese Episode. Betrifft keine Lesezeichen, Kapitel, Mit Position teilen, Wiedergabe, Favoriten oder die Warteschlange."
-          }
-        }
-      }
-    },
     "Removes the local private note for this podcast. Does not affect episode private notes, bookmarks, pin, tags, favorites, or the queue.": {
       "extractionState": "manual",
       "localizations": {
@@ -49098,6 +49081,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet ein Sheet, um einen eigenen Uhr-Sleep-Timer zwischen 1 und 180 Minuten festzulegen. Der Timer startet erst, wenn du auf Setzen tippst. Merkt sich den letzten Custom-Wert für das nächste Mal. Pausiert die Wiedergabe jetzt nicht."
+          }
+        }
+      }
+    },
+    "Removes the local private note for this episode immediately. No confirmation. Local only — not RSS / gpodder / OPML. Does not affect bookmarks, chapters, Share with position, playback, favorites, feed private notes, or the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the local private note for this episode immediately. No confirmation. Local only — not RSS / gpodder / OPML. Does not affect bookmarks, chapters, Share with position, playback, favorites, feed private notes, or the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt die lokale private Notiz für diese Episode sofort. Keine Bestätigung. Nur lokal — nicht RSS / gpodder / OPML. Betrifft nicht Lesezeichen, Kapitel, Teilen mit Position, Wiedergabe, Favoriten, Feed-Notizen oder die Queue."
           }
         }
       }
