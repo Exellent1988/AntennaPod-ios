@@ -2845,6 +2845,8 @@ struct SettingsView: View {
                     .textSelection(.enabled)
             }
             .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "Device id"))
+            .accessibilityHint(String(localized: "Read-only sync device id. Saved in Settings and backup — not the Keychain. Stays on Logout. Editing Device name alone does not change it; use Regenerate device id from name. Does not log in or sync by itself."))
             Button("Regenerate device id from name") {
                 gpodder.regenerateDeviceIdFromName()
             }

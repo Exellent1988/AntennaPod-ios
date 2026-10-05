@@ -49499,6 +49499,23 @@
           }
         }
       }
+    },
+    "Read-only sync device id. Saved in Settings and backup — not the Keychain. Stays on Logout. Editing Device name alone does not change it; use Regenerate device id from name. Does not log in or sync by itself.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read-only sync device id. Saved in Settings and backup — not the Keychain. Stays on Logout. Editing Device name alone does not change it; use Regenerate device id from name. Does not log in or sync by itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schreibgeschützte Sync-Geräte-ID. In Einstellungen und Backup gespeichert — nicht im Keychain. Bleibt bei Abmelden. Alleiniges Bearbeiten von Gerätename ändert sie nicht; nutze Geräte-ID aus Name neu erzeugen. Meldet nicht an und synchronisiert nicht von selbst."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
