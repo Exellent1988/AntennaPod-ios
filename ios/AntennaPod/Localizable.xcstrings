@@ -24279,23 +24279,6 @@
         }
       }
     },
-    "When on, user-initiated downloads are refused on cellular and an error is recorded. Default off — manual downloads may use mobile data.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When on, user-initiated downloads are refused on cellular and an error is recorded. Default off — manual downloads may use mobile data."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn aktiv, werden manuelle Downloads im Mobilfunk abgelehnt und ein Fehler protokolliert. Standard aus — manuelle Downloads dürfen Mobilfunk nutzen."
-          }
-        }
-      }
-    },
     "Reset position when marked played": {
       "extractionState": "manual",
       "localizations": {
@@ -49261,6 +49244,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiv (Standard), braucht Auto-Download nach erfolgreicher Aktualisierung Wi‑Fi oder Ethernet. Startet selbst keinen Download. Manuelle Downloads und Streaming bleiben auf eigenen Schaltern. Feed-Aktualisierung wird von diesem Schalter nicht begrenzt und darf Mobilfunk nutzen. Nicht Manueller Download nur Wi‑Fi oder Stream nur Wi‑Fi. Keine VPN- oder Proxy-Erkennung."
+          }
+        }
+      }
+    },
+    "When on, user-started downloads need Wi‑Fi or Ethernet and a download error is recorded on cellular. Default off — manual downloads may use mobile data. Files already saved stay. Does not start a download by itself. Feed refresh is not limited by this toggle and may use cellular. Not Auto-download or Stream Wi‑Fi only. No VPN or proxy detection.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, user-started downloads need Wi‑Fi or Ethernet and a download error is recorded on cellular. Default off — manual downloads may use mobile data. Files already saved stay. Does not start a download by itself. Feed refresh is not limited by this toggle and may use cellular. Not Auto-download or Stream Wi‑Fi only. No VPN or proxy detection."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, brauchen vom Nutzer gestartete Downloads Wi‑Fi oder Ethernet, und bei Mobilfunk wird ein Download-Fehler erfasst. Standard aus — manuelle Downloads dürfen Mobilfunk nutzen. Bereits gespeicherte Dateien bleiben. Startet selbst keinen Download. Feed-Aktualisierung wird von diesem Schalter nicht begrenzt und darf Mobilfunk nutzen. Nicht Auto-Download nur Wi‑Fi oder Stream nur Wi‑Fi. Keine VPN- oder Proxy-Erkennung."
           }
         }
       }

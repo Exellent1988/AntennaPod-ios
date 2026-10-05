@@ -1878,7 +1878,7 @@ struct SettingsView: View {
             Toggle(String(localized: "Manual download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.manualDownloadWifiOnly))
                 .accessibilityLabel(String(localized: "Manual download Wi‑Fi only"))
                 .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.manualDownloadWifiOnly, role: .manualDownload))
-                .accessibilityHint(String(localized: "When on, user-initiated downloads are refused on cellular and an error is recorded. Default off — manual downloads may use mobile data."))
+                .accessibilityHint(String(localized: "When on, user-started downloads need Wi‑Fi or Ethernet and a download error is recorded on cellular. Default off — manual downloads may use mobile data. Files already saved stay. Does not start a download by itself. Feed refresh is not limited by this toggle and may use cellular. Not Auto-download or Stream Wi‑Fi only. No VPN or proxy detection."))
             Toggle(String(localized: "Stream Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.streamWifiOnly))
                 .accessibilityLabel(String(localized: "Stream Wi‑Fi only"))
                 .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.streamWifiOnly, role: .stream))
