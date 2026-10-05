@@ -25391,23 +25391,6 @@
         }
       }
     },
-    "Set a custom smart mark threshold between 1 and 600 seconds remaining.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Set a custom smart mark threshold between 1 and 600 seconds remaining."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Benutzerdefinierten Smart-Mark-Schwellwert zwischen 1 und 600 Sekunden Restzeit festlegen."
-          }
-        }
-      }
-    },
     "Enter a whole number from 1 to 600 seconds remaining. The Set button stays unavailable until the value is valid.": {
       "extractionState": "manual",
       "localizations": {
@@ -25506,23 +25489,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kein Schwellwert eingegeben"
-          }
-        }
-      }
-    },
-    "Seconds before end that count as played when leaving. Off marks only on natural end. Presets plus Custom… 1–600. Default 30.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seconds before end that count as played when leaving. Off marks only on natural end. Presets plus Custom… 1–600. Default 30."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sekunden vor dem Ende, die beim Verlassen als gehört zählen. Aus markiert nur bei natürlichem Ende. Presets plus Benutzerdefiniert… 1–600. Standard 30."
           }
         }
       }
@@ -48033,6 +47999,108 @@
           "stringUnit": {
             "state": "translated",
             "value": "An setzt einen sprachorientierten Audiositzungsmodus. Aus nutzt Standard oder Film-Wiedergabe. Das ist keine Lautstärkeverstärkung, kein Lautstärke-Boost, kein Stille überspringen und kein Tonhöhe beibehalten. Standard aus. Der Schalter startet keine Wiedergabe und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Off. This is not the default. Leaving or stopping never smart-marks. Only a natural end or an explicit Mark played counts. Near-end scrub alone does not mark played. Changing this does not mark the loaded episode, seek, start playback, or download. It is seconds remaining only, not a percent threshold, and not Skip outro.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. This is not the default. Leaving or stopping never smart-marks. Only a natural end or an explicit Mark played counts. Near-end scrub alone does not mark played. Changing this does not mark the loaded episode, seek, start playback, or download. It is seconds remaining only, not a percent threshold, and not Skip outro."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. Das ist nicht die Voreinstellung. Verlassen oder Stoppen markiert nie per Smart Mark. Nur ein natürliches Ende oder explizit als gehört markieren zählt. Nur Ans Ende scrubben markiert nicht. Umschalten markiert die geladene Episode nicht, sucht nicht, startet keine Wiedergabe und lädt nichts herunter. Nur verbleibende Sekunden, kein Prozent-Schwellenwert und nicht Outro überspringen."
+          }
+        }
+      }
+    },
+    "When you leave or stop the loaded episode with this many seconds or fewer remaining, it is marked played and may leave the queue. Natural end still marks played. Near-end scrub alone does not. Mark unplayed on the loaded episode inside this window stays unplayed for this session until you play to the end. Changing this does not mark the loaded episode now, seek, start playback, or download. Seconds remaining only — not a percent threshold, not Skip outro, and not Reset position when marked played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When you leave or stop the loaded episode with this many seconds or fewer remaining, it is marked played and may leave the queue. Natural end still marks played. Near-end scrub alone does not. Mark unplayed on the loaded episode inside this window stays unplayed for this session until you play to the end. Changing this does not mark the loaded episode now, seek, start playback, or download. Seconds remaining only — not a percent threshold, not Skip outro, and not Reset position when marked played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn du die geladene Episode verlässt oder stoppst und höchstens so viele Sekunden verbleiben, wird sie als gehört markiert und kann die Warteschlange verlassen. Natürliches Ende markiert weiterhin. Nur Ans Ende scrubben nicht. Als ungespielt markieren innerhalb dieses Fensters bleibt in dieser Sitzung ungespielt, bis du bis zum Ende spielst. Umschalten markiert die geladene Episode jetzt nicht, sucht nicht, startet keine Wiedergabe und lädt nichts herunter. Nur verbleibende Sekunden — kein Prozent-Schwellenwert, nicht Outro überspringen und nicht Position zurücksetzen wenn als gehört markiert."
+          }
+        }
+      }
+    },
+    "Presets are Off, 15, 30, 60, 120, 300, and 600 seconds, plus Custom from 1 to 600. The default is 30 seconds. Off marks only on natural end or explicit Mark played. Any other value smart-marks on leave or stop within that remaining window. Near-end scrub alone does not mark played. Changing the picker does not mark an episode now. Not Skip outro or Rewind after pause.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are Off, 15, 30, 60, 120, 300, and 600 seconds, plus Custom from 1 to 600. The default is 30 seconds. Off marks only on natural end or explicit Mark played. Any other value smart-marks on leave or stop within that remaining window. Near-end scrub alone does not mark played. Changing the picker does not mark an episode now. Not Skip outro or Rewind after pause."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voreinstellungen sind Aus, 15, 30, 60, 120, 300 und 600 Sekunden, plus Benutzerdefiniert von 1 bis 600. Die Voreinstellung ist 30 Sekunden. Aus markiert nur bei natürlichem Ende oder explizit als gehört. Jeder andere Wert smart-markiert beim Verlassen oder Stoppen innerhalb dieses Restfensters. Nur Ans Ende scrubben markiert nicht. Der Picker markiert jetzt keine Episode. Nicht Outro überspringen und nicht Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "Opens a sheet to set a custom smart mark threshold between 1 and 600 seconds remaining. Does not mark an episode played now. Presets stay in the picker. Off is not available here.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a sheet to set a custom smart mark threshold between 1 and 600 seconds remaining. Does not mark an episode played now. Presets stay in the picker. Off is not available here."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet ein Blatt für einen benutzerdefinierten Smart-Mark-Schwellenwert zwischen 1 und 600 verbleibenden Sekunden. Markiert jetzt keine Episode als gehört. Voreinstellungen bleiben im Picker. Aus ist hier nicht verfügbar."
+          }
+        }
+      }
+    },
+    "%@. This is not the default of 30 seconds.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is not the default of 30 seconds."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist nicht die Voreinstellung von 30 Sekunden."
+          }
+        }
+      }
+    },
+    "%@. This is a custom threshold, not one of the presets, and not the default of 30 seconds.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is a custom threshold, not one of the presets, and not the default of 30 seconds."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist ein benutzerdefinierter Schwellenwert, keiner der Vorgaben und nicht die Voreinstellung von 30 Sekunden."
           }
         }
       }

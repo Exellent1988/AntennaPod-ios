@@ -1407,11 +1407,14 @@ struct SettingsView: View {
                             .tag(settings.smartMarkAsPlayedSeconds)
                     }
                 }
-                .accessibilityHint(String(localized: "Seconds before end that count as played when leaving. Off marks only on natural end. Presets plus Custom… 1–600. Default 30."))
+                .accessibilityLabel(String(localized: "Smart mark as played"))
+                .accessibilityValue(smartMarkAsPlayedAccessibilityValue)
+                .accessibilityHint(smartMarkAsPlayedAccessibilityHint)
                 Button(String(localized: "Custom…")) {
                     showCustomSmartMark = true
                 }
-                .accessibilityHint(String(localized: "Set a custom smart mark threshold between 1 and 600 seconds remaining."))
+                .accessibilityLabel(String(localized: "Custom smart mark"))
+                .accessibilityHint(String(localized: "Opens a sheet to set a custom smart mark threshold between 1 and 600 seconds remaining. Does not mark an episode played now. Presets stay in the picker. Off is not available here."))
                 Text(String(localized: "Mark as played when leaving or stopping within this many seconds of the end (AntennaPod smart mark). Presets Off/15/30/60/120/300/600 plus Custom… (1–600 seconds). Off (0) = only on natural end or explicit mark — not near-end scrub. Default 30. Seconds remaining only — not a percent threshold."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -1562,6 +1565,33 @@ struct SettingsView: View {
 
     private var rewindAfterPauseAccessibilityHint: String {
         String(localized: "Presets are Off, 1, 2, 3, 5, and 10 seconds. The default is 2 seconds. Off never seeks on resume. Any other value seeks back that many seconds, not before 0, only when this item resumes after a pause of at least 1 second. Cold play, first start from a row, play from beginning, and stop do not rewind. Changing the picker does not move the current position, start playback, or download. Not the Rewind or Fast-forward buttons, and not Android elapsed-time tiers. There is no Pause-on-headset setting.")
+    }
+
+
+    /// VoiceOver for Settings → Smart mark as played. Off = natural end / explicit mark only.
+    /// On = leave/stop within remaining seconds; not near-end scrub; seconds only.
+    private var smartMarkAsPlayedAccessibilityValue: String {
+        let seconds = settings.smartMarkAsPlayedSeconds
+        let label = AppSettings.smartMarkAsPlayedLabel(seconds)
+        if seconds <= 0 {
+            return String(localized: "Off. This is not the default. Leaving or stopping never smart-marks. Only a natural end or an explicit Mark played counts. Near-end scrub alone does not mark played. Changing this does not mark the loaded episode, seek, start playback, or download. It is seconds remaining only, not a percent threshold, and not Skip outro.")
+        }
+        let isDefault = seconds == AppSettings.defaultSmartMarkAsPlayedSeconds
+        let isPreset = AppSettings.smartMarkAsPlayedPresets.contains(seconds)
+        let headFormat: String
+        if isDefault {
+            headFormat = String(localized: "%@. This is the default.")
+        } else if isPreset {
+            headFormat = String(localized: "%@. This is not the default of 30 seconds.")
+        } else {
+            headFormat = String(localized: "%@. This is a custom threshold, not one of the presets, and not the default of 30 seconds.")
+        }
+        let head = String(format: headFormat, locale: .current, label)
+        return head + " " + String(localized: "When you leave or stop the loaded episode with this many seconds or fewer remaining, it is marked played and may leave the queue. Natural end still marks played. Near-end scrub alone does not. Mark unplayed on the loaded episode inside this window stays unplayed for this session until you play to the end. Changing this does not mark the loaded episode now, seek, start playback, or download. Seconds remaining only — not a percent threshold, not Skip outro, and not Reset position when marked played.")
+    }
+
+    private var smartMarkAsPlayedAccessibilityHint: String {
+        String(localized: "Presets are Off, 15, 30, 60, 120, 300, and 600 seconds, plus Custom from 1 to 600. The default is 30 seconds. Off marks only on natural end or explicit Mark played. Any other value smart-marks on leave or stop within that remaining window. Near-end scrub alone does not mark played. Changing the picker does not mark an episode now. Not Skip outro or Rewind after pause.")
     }
 
     /// Spoken preset for Settings Skip intro / Skip outro. The visible picker
