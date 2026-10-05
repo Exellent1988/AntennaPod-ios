@@ -126,7 +126,7 @@ struct PerFeedSettingsView: View {
                     Label(String(localized: "Keep at top"), systemImage: "pin.fill")
                 }
                 .accessibilityLabel(String(localized: "Keep at top"))
-                .accessibilityHint(String(localized: "Pins this podcast above unpinned ones on the Subscriptions list for every sort. Local preference only — not synced."))
+                .accessibilityHint(String(localized: "When on, pins this podcast above unpinned ones on Subscriptions for every sort (Recently updated, Alphabetical, and others). Not a separate sort mode. Local preference only — not synced to gpodder. Included in iOS JSON backup with other feed settings. Cleared when you unsubscribe. Does not unsubscribe, change tags, or change the Subscriptions sort preference. Toggles immediately. No confirmation."))
                 .accessibilityValue(
                     current.isPinned
                         ? String(localized: "On")
