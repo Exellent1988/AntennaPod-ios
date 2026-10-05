@@ -46,7 +46,7 @@ struct ParentalControlsSettingsView: View {
                     Toggle("Lock Network / Downloads settings", isOn: gatedOptionToggle(\.lockNetworkDownloadsSettings))
                         .accessibilityHint(String(localized: "When on, blocks changing Network / Downloads Wi‑Fi-only toggles until the parental PIN unlocks this session. Does not lock Add / Discover or hide explicit charts by itself. Export OPML stays unlocked. Changing this may ask for the PIN first when the session is locked."))
                     Toggle("Hide explicit top charts", isOn: gatedOptionToggle(\.hideExplicitCharts))
-                        .accessibilityHint(optionsHelpText)
+                        .accessibilityHint(String(localized: "When on, requests iTunes Discover charts with explicit=false while parental controls are enabled. Unlocking this session does not turn this filter off — turn the toggle off or disable parental controls. Does not lock Add / Discover or Network / Downloads by itself. Changing this may ask for the PIN first when the session is locked."))
                     Text(optionsHelpText)
                         .font(.caption)
                         .foregroundStyle(.secondary)

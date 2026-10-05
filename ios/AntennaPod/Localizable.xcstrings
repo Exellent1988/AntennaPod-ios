@@ -49420,6 +49420,23 @@
           }
         }
       }
+    },
+    "When on, requests iTunes Discover charts with explicit=false while parental controls are enabled. Unlocking this session does not turn this filter off — turn the toggle off or disable parental controls. Does not lock Add / Discover or Network / Downloads by itself. Changing this may ask for the PIN first when the session is locked.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, requests iTunes Discover charts with explicit=false while parental controls are enabled. Unlocking this session does not turn this filter off — turn the toggle off or disable parental controls. Does not lock Add / Discover or Network / Downloads by itself. Changing this may ask for the PIN first when the session is locked."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an, fordert iTunes-Entdecken-Charts mit explicit=false an, solange Elternschutz aktiv ist. Entsperren dieser Sitzung schaltet diesen Filter nicht aus — Schalter aus oder Elternschutz deaktivieren. Sperrt nicht von selbst Hinzufügen / Entdecken oder Netzwerk / Downloads. Ändern kann bei gesperrter Sitzung zuerst die PIN verlangen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
