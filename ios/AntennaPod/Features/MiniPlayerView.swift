@@ -484,32 +484,7 @@ struct MiniPlayerView: View {
                     .environmentObject(playback)
             }
         } else if let restored = playback.restoredEpisodeIfStillValid {
-            // Cold launch: previous episode shown paused. Play loads it via play(episode:).
-            HStack(spacing: 10) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(restored.title)
-                        .font(.subheadline.weight(.semibold))
-                        .lineLimit(1)
-                    Text(verbatim: "\(String(localized: "Continue listening")) · \(format(store.positionSeconds(for: restored.id)))")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .accessibilityElement(children: .combine)
-                Button {
-                    playback.playRestoredEpisode()
-                } label: {
-                    Image(systemName: "play.fill")
-                        .font(.title3)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(String(localized: "Play"))
-                .accessibilityHint(String(localized: "Resumes this episode from the saved position"))
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 8)
-            .background(.bar)
+            restoredEpisodeBar(restored)
         } else {
             Button {
                 showFullPlayer = true
@@ -777,6 +752,48 @@ struct MiniPlayerView: View {
             return formatRemaining(display)
         }
         return format(playback.durationSeconds)
+    }
+
+
+    /// Cold-launch restored placeholder. Caption says Continue listening only when saved
+    /// progress is past 1 second (same threshold as Home Continue); otherwise Previous episode.
+    @ViewBuilder
+    private func restoredEpisodeBar(_ restored: PodcastEpisode) -> some View {
+        let restoredPosition = store.positionSeconds(for: restored.id)
+        let restoredHasContinueProgress = restoredPosition > 1
+        HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(restored.title)
+                    .font(.subheadline.weight(.semibold))
+                    .lineLimit(1)
+                Text(
+                    restoredHasContinueProgress
+                        ? String(localized: "Continue listening") + " · " + format(restoredPosition)
+                        : String(localized: "Previous episode")
+                )
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .accessibilityElement(children: .combine)
+            Button {
+                playback.playRestoredEpisode()
+            } label: {
+                Image(systemName: "play.fill")
+                    .font(.title3)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(String(localized: "Play"))
+            .accessibilityHint(
+                restoredHasContinueProgress
+                    ? String(localized: "Resumes this episode from the saved position")
+                    : String(localized: "Starts this episode from the beginning")
+            )
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(.bar)
     }
 
     /// Same clock as the full player. Minutes-only (`125:05`) hid the hour,

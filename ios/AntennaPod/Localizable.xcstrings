@@ -47683,6 +47683,38 @@
         }
       },
       "extractionState": "manual"
+    },
+    "Previous episode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous episode"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorherige Episode"
+          }
+        }
+      }
+    },
+    "Starts this episode from the beginning": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starts this episode from the beginning"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Startet diese Episode von Anfang an"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
