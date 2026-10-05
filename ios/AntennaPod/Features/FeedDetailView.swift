@@ -3465,15 +3465,39 @@ struct EpisodeRow: View {
         }
     }
 
+    /// Live playhead while this row is the loaded episode. Saved progress lags by about 5s.
+    /// Other episodes, and a non-finite live value, stay on `playback.json`.
+    /// Do not take the greater of the two: an unsaved rewind must not jump forward.
+    private var displayPositionSeconds: Double {
+        if playback.currentEpisode?.id == episode.id, playback.positionSeconds.isFinite {
+            return max(0, playback.positionSeconds)
+        }
+        return state.positionSeconds
+    }
+
+    /// Bar duration only. A known feed or saved duration is never replaced by 0.
+    /// The loaded episode may use a finite live duration when nothing is stored yet.
+    private var progressBarDurationSeconds: Double? {
+        if let known = knownDurationSeconds {
+            return known
+        }
+        if playback.currentEpisode?.id == episode.id,
+           playback.durationSeconds.isFinite,
+           playback.durationSeconds > 0 {
+            return playback.durationSeconds
+        }
+        return nil
+    }
+
     /// Fraction of episode heard for the thin list ProgressView.
-    /// Position + duration from `playback.json` (`EpisodePlaybackState`); duration may fall back
-    /// to feed `itunes:duration` / media via `knownDurationSeconds` when playback duration is unset.
+    /// Position is the live playhead for the loaded episode, otherwise `playback.json`.
+    /// Duration may fall back to feed `itunes:duration` / media via `knownDurationSeconds`.
     /// Hidden (0) when unplayed (`position ≤ 1`), fully played (`isPlayed`), or duration unknown.
     private var progressFraction: Double {
         guard !state.isPlayed else { return 0 }
-        let position = state.positionSeconds
+        let position = displayPositionSeconds
         // Match Resume / Continue listening: ignore sub-second noise.
-        guard position > 1, let duration = knownDurationSeconds, duration > 0 else {
+        guard position > 1, let duration = progressBarDurationSeconds, duration > 0 else {
             return 0
         }
         return min(1, position / duration)
@@ -3482,13 +3506,13 @@ struct EpisodeRow: View {
     /// Remaining wall-clock seconds when in-progress with known duration; else `nil`.
     private var remainingSeconds: Double? {
         guard progressFraction > 0, let duration = knownDurationSeconds else { return nil }
-        let left = duration - state.positionSeconds
+        let left = duration - displayPositionSeconds
         guard left.isFinite, left > 0 else { return nil }
         return left
     }
 
     private var resumeLabel: String {
-        if !state.isPlayed, state.positionSeconds > 1 {
+        if !state.isPlayed, displayPositionSeconds > 1 {
             return String(localized: "Resume")
         }
         return String(localized: "Play")
@@ -3544,7 +3568,7 @@ struct EpisodeRow: View {
             }
         } else if !state.isPlayed, state.positionSeconds > 1 {
             // Duration unknown: no bar, but VoiceOver can still say saved position.
-            if let formatted = PodcastEpisode.formatPlaybackPosition(state.positionSeconds) {
+            if let formatted = PodcastEpisode.formatPlaybackPosition(displayPositionSeconds) {
                 parts.append(String(localized: "At \(formatted)"))
             }
         }
