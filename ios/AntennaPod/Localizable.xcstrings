@@ -13292,23 +13292,6 @@
         }
       }
     },
-    "No episodes or podcasts in the visible Home section previews match your search. Clear or change the search. Discover is hidden while searching. Home shows soft-capped section previews — not the full Inbox, Queue, or Subscriptions tabs.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No episodes or podcasts in the visible Home section previews match your search. Clear or change the search. Discover is hidden while searching. Home shows soft-capped section previews — not the full Inbox, Queue, or Subscriptions tabs."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Episoden oder Podcasts in den sichtbaren Home-Abschnittsvorschauen passen zu deiner Suche. Lösche oder ändere die Suche. Entdecken ist während der Suche ausgeblendet. Home zeigt Soft-Cap-Abschnittsvorschauen — nicht die vollständigen Tabs Inbox, Warteschlange oder Abonnements."
-          }
-        }
-      }
-    },
     "Home has no library previews to show yet. Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Or use Discover for Apple Charts. Customize sections under Settings → Home layout or Configure Home.": {
       "extractionState": "manual",
       "localizations": {
@@ -13339,23 +13322,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Home hat noch keine Bibliotheksvorschauen. Abonniere Podcasts, um Weiterspielen, neue Episoden, die Warteschlange und zuletzt aktualisierte Feeds hier zu sehen. Abschnitte unter Einstellungen → Startseiten-Layout oder Home konfigurieren anpassen."
-          }
-        }
-      }
-    },
-    "Clear or change the Home search to see section previews again.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clear or change the Home search to see section previews again."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lösche oder ändere die Home-Suche, um Abschnittsvorschauen wieder zu sehen."
           }
         }
       }
@@ -48841,6 +48807,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spielt eine zufällige Episode aus dem Katalog der neuesten 500 Alle-Episoden mit abspielbaren Medien. Bevorzugt ungehörte, wenn welche übrig sind. Ignoriert Status-, Podcast-, Episodentyp-, Such- und Sortierfilter. Holt keine älteren Episoden jenseits des Soft-Caps. Ordnet Alle Episoden nicht neu. Keine Bestätigung."
+          }
+        }
+      }
+    },
+    "Change or clear the Home search to see section previews again. This does not unsubscribe or change the full Inbox, Queue, Downloads, or Subscriptions tabs. Home only shows soft-capped section previews.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the Home search to see section previews again. This does not unsubscribe or change the full Inbox, Queue, Downloads, or Subscriptions tabs. Home only shows soft-capped section previews."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Home-Suche, um Abschnittsvorschauen wieder zu sehen. Das kündigt keine Abos und ändert nicht die vollen Posteingangs-, Warteschlangen-, Downloads- oder Abonnement-Tabs. Home zeigt nur Soft-Cap-Abschnittsvorschauen."
+          }
+        }
+      }
+    },
+    "No episodes or podcasts in the visible Home section previews match your search. Episodes and podcasts remain in your library tabs. Discover is hidden while searching. Home shows soft-capped section previews — not the full Inbox, Queue, Downloads, or Subscriptions catalogs.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No episodes or podcasts in the visible Home section previews match your search. Episodes and podcasts remain in your library tabs. Discover is hidden while searching. Home shows soft-capped section previews — not the full Inbox, Queue, Downloads, or Subscriptions catalogs."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Episoden oder Podcasts in den sichtbaren Home-Abschnittsvorschauen passen zu deiner Suche. Episoden und Podcasts bleiben in deinen Bibliotheks-Tabs. Entdecken ist während der Suche ausgeblendet. Home zeigt Soft-Cap-Abschnittsvorschauen — nicht die vollen Posteingangs-, Warteschlangen-, Downloads- oder Abonnement-Kataloge."
           }
         }
       }

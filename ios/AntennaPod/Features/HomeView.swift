@@ -584,7 +584,7 @@ struct HomeView: View {
     /// Visible ContentUnavailableView copy stays concise; this value adds soft-cap / Discover honesty.
     private var homeEmptyStateAccessibilityValue: String {
         if isSearchFiltering {
-            return String(localized: "No episodes or podcasts in the visible Home section previews match your search. Clear or change the search. Discover is hidden while searching. Home shows soft-capped section previews — not the full Inbox, Queue, or Subscriptions tabs.")
+            return String(localized: "No episodes or podcasts in the visible Home section previews match your search. Episodes and podcasts remain in your library tabs. Discover is hidden while searching. Home shows soft-capped section previews — not the full Inbox, Queue, Downloads, or Subscriptions catalogs.")
         }
         if settings.isHomeSectionVisible(.discover) {
             return String(localized: "Home has no library previews to show yet. Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Or use Discover for Apple Charts. Customize sections under Settings → Home layout or Configure Home.")
@@ -635,7 +635,7 @@ struct HomeView: View {
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(String(localized: "No matching home items"))
                     .accessibilityValue(homeEmptyStateAccessibilityValue)
-                    .accessibilityHint(String(localized: "Clear or change the Home search to see section previews again."))
+                    .accessibilityHint(String(localized: "Change or clear the Home search to see section previews again. This does not unsubscribe or change the full Inbox, Queue, Downloads, or Subscriptions tabs. Home only shows soft-capped section previews."))
                 } else if !isSearchFiltering && !hasVisibleLibraryContent {
                     ContentUnavailableView(
                         "Welcome",
