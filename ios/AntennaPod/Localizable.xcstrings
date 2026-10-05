@@ -48964,6 +48964,23 @@
           }
         }
       }
+    },
+    "Asks for confirmation. Uses the full feed catalog — not the chip or search filter. Requires http(s) enclosure. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation. Uses the full feed catalog — not the chip or search filter. Requires http(s) enclosure. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung. Nutzt den vollständigen Feed-Katalog — nicht den Chip- oder Suchfilter. Erfordert http(s)-Enclosure. Manueller Download nur über WLAN; Parallel-Download-Obergrenze und Speicherlimit gelten weiterhin."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

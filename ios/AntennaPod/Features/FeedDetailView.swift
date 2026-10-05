@@ -513,14 +513,17 @@ struct FeedDetailView: View {
         let capped = downloadAllCandidates.count
         let total = downloadAllEligibleTotalCount
         let softCap = settings.feedDownloadUnplayedSoftCap.episodeCap
+        let tail = String(
+            localized: "Asks for confirmation. Uses the full feed catalog — not the chip or search filter. Requires http(s) enclosure. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply."
+        )
         if total > capped {
             return String(
                 localized: "Queues the \(capped) newest eligible unplayed downloads (soft cap \(softCap); \(total) match on this podcast). Skips played, archived, already downloaded, and local-folder files."
-            )
+            ) + " " + tail
         }
         return String(
             localized: "Queues downloads for unplayed episodes in this podcast that are not archived and not already downloaded (soft cap \(softCap))."
-        )
+        ) + " " + tail
     }
 
     /// Unplayed, non-archived episodes on this feed only (for Mark all as played).
