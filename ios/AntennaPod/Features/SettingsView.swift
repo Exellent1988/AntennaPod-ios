@@ -1700,9 +1700,9 @@ struct SettingsView: View {
 
     private var refreshHelpText: String {
         if settings.refreshInterval == .manual {
-            return String(localized: "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).")
+            return String(localized: "Feeds refresh when you pull to refresh (Subscriptions, Home, or Inbox), use Refresh all, or refresh a podcast alone. Bulk refresh skips Keep updated Never; swipe or Feed detail refresh still works for those podcasts. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).")
         }
-        return String(localized: "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch.")
+        return String(localized: "When you open the app (launch or return to foreground), subscriptions refresh if this interval has elapsed, except podcasts set to Keep updated Never. Same bulk path as Refresh all and pull-to-refresh. Manual single-podcast refresh still works for Never feeds. Background App Refresh is stubbed until Info.plist adds fetch.")
     }
 
     /// VoiceOver for Settings → Last refresh. Never means no bulk refresh has finished;
@@ -1719,11 +1719,11 @@ struct SettingsView: View {
     }
 
     private var lastRefreshAccessibilityHint: String {
-        String(localized: "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta.")
+        String(localized: "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta.")
     }
 
     private var refreshIntervalAccessibilityHint: String {
-        String(localized: "Manual only refreshes when you pull to refresh or refresh a podcast. A timed interval runs when you open the app, not as iOS Background App Refresh. Per-podcast Keep updated Never still skips that podcast.")
+        String(localized: "Manual only refreshes when you pull to refresh, use Refresh all, or refresh a podcast alone. A timed interval runs when you open the app, not as iOS Background App Refresh. Per-podcast Keep updated Never skips Refresh all, pull-to-refresh, and timed refresh — not a single-podcast refresh.")
     }
 
 

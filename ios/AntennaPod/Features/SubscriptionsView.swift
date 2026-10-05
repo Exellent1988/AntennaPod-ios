@@ -583,6 +583,9 @@ struct SubscriptionsView: View {
                     }
                     .disabled(store.isLoading || store.feeds.isEmpty)
                     .accessibilityLabel(String(localized: "Refresh all"))
+                    .accessibilityHint(
+                        String(localized: "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone.")
+                    )
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -1167,7 +1170,7 @@ struct SubscriptionsView: View {
             .accessibilityHint(
                 LocalFolderFeed.isLocalFolderFeed(feed)
                     ? String(localized: "Re-reads audio files in the folder. Does not fetch an RSS feed.")
-                    : String(localized: "Fetches the podcast feed from the network")
+                    : String(localized: "Fetches this podcast’s feed from the network, including when Keep updated is Never")
             )
         }
         .modifier(SubscriptionRowContextMenu(

@@ -2961,23 +2961,6 @@
         }
       }
     },
-    "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode)."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Feeds aktualisieren sich nur per Pull-to-Refresh (Posteingang) oder bei Podcast-Aktualisierung. Background App Refresh ist in dieser Beta nicht aktiv (kein Fetch-Modus in Info.plist)."
-          }
-        }
-      }
-    },
     "Folder": {
       "extractionState": "manual",
       "localizations": {
@@ -8104,23 +8087,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiv, deaktiviert den Idle-Timer während aktiver Wiedergabe, damit der Bildschirm wach bleibt. Wiederhergestellt bei Pause, Stopp oder ohne Episode. Standard aus (akkufreundlich). Überschreibt den Energiesparmodus nur beim Idle-Timer; keine Helligkeitsänderung; PiP und Hintergrund-Audio unverändert."
-          }
-        }
-      }
-    },
-    "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Beim Öffnen der App (Start oder Rückkehr in den Vordergrund) aktualisieren sich alle Abonnements, wenn dieses Intervall abgelaufen ist. Gilt global für jeden Feed. Background App Refresh ist stubbed, bis Info.plist Fetch ergänzt."
           }
         }
       }
@@ -28244,24 +28210,6 @@
       },
       "comment": "Subscriptions Rescan a11y hint"
     },
-    "Fetches the podcast feed from the network": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fetches the podcast feed from the network"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Holt den Podcast-Feed aus dem Netzwerk"
-          }
-        }
-      },
-      "comment": "Subscriptions Refresh a11y hint"
-    },
     "Subscriptions only (beta — not full sync): Synced = http(s) podcast feed URLs (pull missing + push local not on server). Merge is additive — remote removes do not unsubscribe local feeds. Password in Keychain (never plaintext Settings/backup). Not synced (local-only): episode actions (play/download/position), queue, favorites, bookmarks, tags, downloads, local folder feeds, playback progress, archive, inbox. Last sync status and errors stay visible here. Default host https://gpodder.net (editable).": {
       "extractionState": "manual",
       "localizations": {
@@ -45094,40 +45042,6 @@
         }
       }
     },
-    "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zum Aktualisieren auf Abos, Home oder Eingang ziehen oder Alle aktualisieren nutzen. Ein Zeitintervall prüft auch beim Öffnen der App. iOS-Hintergrundaktualisierung ist in dieser Beta nicht aktiv."
-          }
-        }
-      }
-    },
-    "Manual only refreshes when you pull to refresh or refresh a podcast. A timed interval runs when you open the app, not as iOS Background App Refresh. Per-podcast Keep updated Never still skips that podcast.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Manual only refreshes when you pull to refresh or refresh a podcast. A timed interval runs when you open the app, not as iOS Background App Refresh. Per-podcast Keep updated Never still skips that podcast."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur manuell aktualisiert, wenn du zum Aktualisieren ziehst oder einen Podcast aktualisierst. Ein Zeitintervall läuft beim Öffnen der App, nicht als iOS-Hintergrundaktualisierung. Pro Podcast „Aktualisiert halten → Nie“ überspringt diesen Podcast weiterhin."
-          }
-        }
-      }
-    },
     "Never. No subscription sync has finished yet. Login alone does not write this time, and no timestamp is invented. This is not each podcast's Last refreshed time.": {
       "extractionState": "manual",
       "localizations": {
@@ -47588,6 +47502,107 @@
         }
       },
       "extractionState": "manual"
+    },
+    "Feeds refresh when you pull to refresh (Subscriptions, Home, or Inbox), use Refresh all, or refresh a podcast alone. Bulk refresh skips Keep updated Never; swipe or Feed detail refresh still works for those podcasts. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feeds refresh when you pull to refresh (Subscriptions, Home, or Inbox), use Refresh all, or refresh a podcast alone. Bulk refresh skips Keep updated Never; swipe or Feed detail refresh still works for those podcasts. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feeds aktualisieren sich per Pull-to-Refresh (Abos, Home oder Eingang), über Alle aktualisieren oder einzeln. Sammelaktualisierung überspringt Keep updated Nie; Wischen oder Feed-Detail aktualisiert diese Podcasts trotzdem. Background App Refresh ist in dieser Beta nicht aktiv (Info.plist ohne fetch)."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "When you open the app (launch or return to foreground), subscriptions refresh if this interval has elapsed, except podcasts set to Keep updated Never. Same bulk path as Refresh all and pull-to-refresh. Manual single-podcast refresh still works for Never feeds. Background App Refresh is stubbed until Info.plist adds fetch.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When you open the app (launch or return to foreground), subscriptions refresh if this interval has elapsed, except podcasts set to Keep updated Never. Same bulk path as Refresh all and pull-to-refresh. Manual single-podcast refresh still works for Never feeds. Background App Refresh is stubbed until Info.plist adds fetch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beim Öffnen der App (Start oder Rückkehr in den Vordergrund) aktualisieren sich Abonnements, wenn dieses Intervall abgelaufen ist — außer Podcasts mit Keep updated Nie. Gleicher Sammelpfad wie Alle aktualisieren und Pull-to-Refresh. Einzelne Podcast-Aktualisierung funktioniert weiterhin bei Nie. Background App Refresh ist stubbed, bis Info.plist fetch ergänzt."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Manual only refreshes when you pull to refresh, use Refresh all, or refresh a podcast alone. A timed interval runs when you open the app, not as iOS Background App Refresh. Per-podcast Keep updated Never skips Refresh all, pull-to-refresh, and timed refresh — not a single-podcast refresh.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual only refreshes when you pull to refresh, use Refresh all, or refresh a podcast alone. A timed interval runs when you open the app, not as iOS Background App Refresh. Per-podcast Keep updated Never skips Refresh all, pull-to-refresh, and timed refresh — not a single-podcast refresh."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur manuell aktualisiert per Pull-to-Refresh, Alle aktualisieren oder einzelnem Podcast. Ein Zeitintervall läuft beim Öffnen der App, nicht als iOS Background App Refresh. Keep updated Nie überspringt Alle aktualisieren, Pull-to-Refresh und Zeitintervall — nicht die Einzelaktualisierung."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Aktualisieren auf Abos, Home oder Eingang ziehen oder Alle aktualisieren nutzen — Podcasts mit Keep updated Nie werden übersprungen. Ein Zeitintervall prüft auch beim Öffnen der App. iOS Background App Refresh ist in dieser Beta nicht aktiv."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Fetches this podcast’s feed from the network, including when Keep updated is Never": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fetches this podcast’s feed from the network, including when Keep updated is Never"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt den Feed dieses Podcasts aus dem Netzwerk, auch wenn Keep updated auf Nie steht"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert jedes abonnierte Podcast, das an Keep updated teilnimmt. Podcasts mit Keep updated Nie werden übersprungen; Wischen Aktualisieren in einer Zeile aktualisiert diesen Podcast weiterhin allein."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
