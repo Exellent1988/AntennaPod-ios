@@ -45311,23 +45311,6 @@
         }
       }
     },
-    "Opens the system share sheet with the episode title, link, and a readable position timestamp in the message. The shared link is unchanged — no #t= seek fragment.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens the system share sheet with the episode title, link, and a readable position timestamp in the message. The shared link is unchanged — no #t= seek fragment."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet das System-Teilen-Blatt mit Episodentitel, Link und lesbarem Positionszeitstempel in der Nachricht. Der geteilte Link bleibt unverändert — kein #t=-Seek-Fragment."
-          }
-        }
-      }
-    },
     "Change or clear the chapters search to see other chapters.": {
       "extractionState": "manual",
       "localizations": {
@@ -49132,6 +49115,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Teilen-Sheet mit Episodentitel und dem besten Netzwerklink (Episodenseite, Enclosure, Feed-Homepage oder Feed-URL). Lokale Datei-URLs werden nicht geteilt. Enthält keine Wiedergabeposition — dafür Teilen mit Position nutzen."
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the episode title, best network link (episode page, enclosure, feed homepage, or feed URL), and a readable position timestamp in the message. Local file URLs are not shared. The shared link is unchanged — no #t= seek fragment.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title, best network link (episode page, enclosure, feed homepage, or feed URL), and a readable position timestamp in the message. Local file URLs are not shared. The shared link is unchanged — no #t= seek fragment."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Sheet mit Episodentitel, bestem Netzwerklink (Episodenseite, Enclosure, Feed-Homepage oder Feed-URL) und einer lesbaren Positionszeit im Text. Lokale Datei-URLs werden nicht geteilt. Der geteilte Link bleibt unverändert — kein #t=-Seek-Fragment."
           }
         }
       }
