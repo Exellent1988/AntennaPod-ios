@@ -49264,6 +49264,23 @@
           }
         }
       }
+    },
+    "Saves the Proxy password draft to the Keychain only — never in Settings backup. Disabled while the field is empty. Does not turn on HTTP proxy, test the connection, or change host, port, or username. Clears the draft field after a successful save.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saves the Proxy password draft to the Keychain only — never in Settings backup. Disabled while the field is empty. Does not turn on HTTP proxy, test the connection, or change host, port, or username. Clears the draft field after a successful save."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert den Proxy-Passwort-Entwurf nur im Schlüsselbund — nie im Einstellungen-Backup. Deaktiviert, solange das Feld leer ist. Schaltet HTTP-Proxy nicht ein, testet die Verbindung nicht und ändert Host, Port oder Benutzername nicht. Leert das Entwurfsfeld nach erfolgreichem Speichern."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

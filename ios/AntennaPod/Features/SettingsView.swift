@@ -1994,6 +1994,7 @@ struct SettingsView: View {
                         commitHTTPProxyPasswordDraft()
                     }
                     .disabled(httpProxyPasswordDraft.isEmpty)
+                    .accessibilityHint(String(localized: "Saves the Proxy password draft to the Keychain only — never in Settings backup. Disabled while the field is empty. Does not turn on HTTP proxy, test the connection, or change host, port, or username. Clears the draft field after a successful save."))
                     if settings.httpProxyHasStoredPassword {
                         Button(String(localized: "Clear password"), role: .destructive) {
                             settings.clearHTTPProxyPassword()
