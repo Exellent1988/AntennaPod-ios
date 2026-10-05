@@ -7,6 +7,8 @@ struct MiniPlayerView: View {
     @EnvironmentObject private var downloads: DownloadService
     @Environment(\.openURL) private var openURL
     @State private var showFullPlayer = false
+    /// Incoming subscribe link closes the Full Player first (`SubscribeLinkRouter`).
+    @ObservedObject private var subscribeLink = SubscribeLinkRouter.shared
     @State private var showFeedUnavailable = false
     @State private var showCustomSleepTimer = false
     @State private var showCustomPlaybackSpeed = false
@@ -337,6 +339,9 @@ struct MiniPlayerView: View {
             .sheet(isPresented: $showFullPlayer) {
                 FullPlayerView()
             }
+            .onChange(of: subscribeLink.closeFullPlayerToken) { _, token in
+                if token != nil { showFullPlayer = false }
+            }
             .alert(
                 String(localized: "Podcast unavailable"),
                 isPresented: $showFeedUnavailable
@@ -500,6 +505,9 @@ struct MiniPlayerView: View {
             )
             .sheet(isPresented: $showFullPlayer) {
                 FullPlayerView()
+            }
+            .onChange(of: subscribeLink.closeFullPlayerToken) { _, token in
+                if token != nil { showFullPlayer = false }
             }
         }
     }

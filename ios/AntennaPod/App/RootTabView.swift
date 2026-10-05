@@ -172,14 +172,20 @@ struct RootTabView: View {
 
     /// Already subscribed → open that podcast (same path as the player's Open podcast);
     /// otherwise show the normal feed preview, which only subscribes on Confirm.
+    /// Closes the Full Player first and waits like `MiniPlayerView.openPodcastFromMiniPlayer`;
+    /// sheets opened by other screens are not closed. Clearing the preview first lets the same
+    /// link present again.
     private func consumeSubscribeLink() {
         guard let feedUrl = subscribeLink.pendingFeedUrl else { return }
         subscribeLink.pendingFeedUrl = nil
-        if let feed = FeedURLNormalization.subscribedFeed(matching: feedUrl, in: store.feeds) {
-            subscribeLinkPreview = nil
-            notificationDeepLink.openFeed(id: feed.id)
-        } else {
-            subscribeLinkPreview = FeedPreviewRequest(feedUrl: feedUrl)
+        subscribeLink.requestFullPlayerClose()
+        subscribeLinkPreview = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            if let feed = FeedURLNormalization.subscribedFeed(matching: feedUrl, in: store.feeds) {
+                notificationDeepLink.openFeed(id: feed.id)
+            } else {
+                subscribeLinkPreview = FeedPreviewRequest(feedUrl: feedUrl)
+            }
         }
     }
 }

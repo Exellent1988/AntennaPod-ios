@@ -10,6 +10,13 @@ final class SubscribeLinkRouter: ObservableObject {
 
     /// http(s) feed URL waiting for `RootTabView`; cleared when it is consumed.
     @Published var pendingFeedUrl: String?
+    /// New token when a link is consumed: `MiniPlayerView` closes the Full Player sheet, which
+    /// would otherwise keep the root preview sheet from presenting.
+    @Published private(set) var closeFullPlayerToken: UUID?
+
+    func requestFullPlayerClose() {
+        closeFullPlayerToken = UUID()
+    }
 
     /// Returns `true` when `url` is a subscribe link (handled or rejected); `false` lets the
     /// playback deep-link router try it.
