@@ -1842,8 +1842,19 @@ enum ChapterTimeParsing {
 /// Episode duration from feed metadata (`itunes:duration`, Media RSS seconds).
 /// Same formats as Android `DurationParser` / chapter NPT: `H:MM:SS`, `MM:SS`, or plain seconds.
 enum EpisodeDurationParsing {
+    /// Longer than a year is not a real episode length. A malformed value such as
+    /// `99999999999999999999` parsed to 1e20 seconds, and the `m:ss` / `h:mm:ss`
+    /// formatters trap converting that to `Int`, so Inbox or Feed detail crashed.
+    static let maxSeconds: Double = 366 * 24 * 3600
+
     static func seconds(from raw: String) -> Double? {
-        ChapterTimeParsing.seconds(from: raw)
+        guard let seconds = ChapterTimeParsing.seconds(from: raw),
+              seconds.isFinite,
+              seconds <= maxSeconds
+        else {
+            return nil
+        }
+        return seconds
     }
 }
 
