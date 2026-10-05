@@ -284,6 +284,8 @@ struct FullPlayerView: View {
             showJumpToPosition = false
             // Speed sheet keeps the typed speed and Set applies it to whatever is now playing.
             showCustomPlaybackSpeed = false
+            // Custom sleep sheet keeps the typed minutes and Set arms whatever is now playing.
+            showCustomSleepTimer = false
             resetChapterSearch()
             scheduleChapterLoad()
         }
