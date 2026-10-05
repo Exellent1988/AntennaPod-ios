@@ -490,12 +490,23 @@ enum TranscriptParser {
 }
 
 enum TranscriptCueIndexing {
-    /// Index of the cue active at `positionSeconds`, or `nil` if before the first / empty.
+    /// Index of the cue active at `positionSeconds`, or `nil` if before the first / empty,
+    /// or in a gap after a cue’s known `endTimeSeconds` and before the next start.
+    /// When `endTimeSeconds` is missing or not after start, the cue stays current until the
+    /// next cue starts (same contiguous model as chapters).
     static func currentIndex(in cues: [TranscriptCue], at positionSeconds: Double) -> Int? {
-        guard !cues.isEmpty else { return nil }
+        guard !cues.isEmpty, positionSeconds.isFinite else { return nil }
         var current: Int?
         for (i, cue) in cues.enumerated() {
+            guard cue.startTimeSeconds.isFinite else { continue }
             if cue.startTimeSeconds <= positionSeconds {
+                if let end = cue.endTimeSeconds,
+                   end.isFinite,
+                   end > cue.startTimeSeconds,
+                   positionSeconds >= end {
+                    // Past this timed cue — do not keep it highlighted through a silence gap.
+                    continue
+                }
                 current = i
             } else {
                 break
