@@ -183,7 +183,7 @@ struct EpisodeChaptersSheet: View {
                     .disabled(!canShareCurrentChapter)
                     .accessibilityLabel(String(localized: "Share current chapter"))
                     .accessibilityHint(
-                        String(localized: "Opens the system share sheet with the episode title and current chapter")
+                        String(localized: "Opens the system share sheet with the episode title and the current chapter at the playback position. Uses the full chapter list and ignores the chapters search filter. Does not fetch remote or media chapters.")
                     )
 
                     ShareLink(
