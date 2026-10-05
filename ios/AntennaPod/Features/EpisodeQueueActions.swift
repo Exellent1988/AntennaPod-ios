@@ -131,7 +131,7 @@ enum EpisodeQueueActions {
                 }
                 .accessibilityLabel(String(localized: "Move playing to top"))
                 .accessibilityHint(
-                    String(localized: "Moves the currently playing episode to the start of the queue")
+                    String(localized: "Moves the currently playing episode to the start of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation.")
                 )
             }
 
@@ -144,7 +144,7 @@ enum EpisodeQueueActions {
                 }
                 .accessibilityLabel(String(localized: "Move playing to bottom"))
                 .accessibilityHint(
-                    String(localized: "Moves the currently playing episode to the end of the queue")
+                    String(localized: "Moves the currently playing episode to the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation.")
                 )
             }
         } label: {

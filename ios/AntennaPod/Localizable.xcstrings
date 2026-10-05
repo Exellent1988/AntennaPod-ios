@@ -10509,40 +10509,6 @@
         }
       }
     },
-    "Places this episode at the start of the queue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Places this episode at the start of the queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Setzt diese Episode an den Anfang der Warteschlange"
-          }
-        }
-      }
-    },
-    "Places this episode at the end of the queue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Places this episode at the end of the queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Setzt diese Episode an das Ende der Warteschlange"
-          }
-        }
-      }
-    },
     "Hides this episode from Inbox without marking it played": {
       "extractionState": "manual",
       "localizations": {
@@ -14588,23 +14554,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aktuelle Wiedergabe an den Anfang"
-          }
-        }
-      }
-    },
-    "Moves the currently playing episode to the start of the queue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moves the currently playing episode to the start of the queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verschiebt die aktuell spielende Episode an den Anfang der Warteschlange"
           }
         }
       }
@@ -35074,23 +35023,6 @@
         }
       }
     },
-    "Moves the currently playing episode to the end of the queue": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Moves the currently playing episode to the end of the queue"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Verschiebt die aktuell spielende Episode an das Ende der Warteschlange"
-          }
-        }
-      }
-    },
     "Opens add, remove, Play Next, Move playing to top, and Move playing to bottom queue actions": {
       "extractionState": "manual",
       "localizations": {
@@ -48849,6 +48781,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und sortiert dann die gesamte Warteschlange nach Titel, Z bis A. Leere Titel kommen zuletzt. Stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Moves the currently playing episode to the start of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moves the currently playing episode to the start of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verschiebt die gerade spielende Episode an den Anfang der Warteschlange. Springt nicht in der Episode und stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads. Keine Bestätigung."
+          }
+        }
+      }
+    },
+    "Moves the currently playing episode to the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moves the currently playing episode to the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verschiebt die gerade spielende Episode an das Ende der Warteschlange. Springt nicht in der Episode und stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads. Keine Bestätigung."
+          }
+        }
+      }
+    },
+    "Places this episode at the start of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Places this episode at the start of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt diese Episode an den Anfang der Warteschlange. Springt nicht in der Episode und stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads. Keine Bestätigung."
+          }
+        }
+      }
+    },
+    "Places this episode at the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Places this episode at the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt diese Episode an das Ende der Warteschlange. Springt nicht in der Episode und stoppt die Wiedergabe nicht, ändert keinen Fortschritt, markiert nichts als gehört und löscht keine Downloads. Keine Bestätigung."
           }
         }
       }

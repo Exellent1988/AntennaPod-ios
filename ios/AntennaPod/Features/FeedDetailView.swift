@@ -3448,7 +3448,7 @@ struct EpisodeRow: View {
                         Label("Move to top", systemImage: "arrow.up.to.line")
                     }
                     .accessibilityLabel(String(localized: "Move to top"))
-                    .accessibilityHint(String(localized: "Places this episode at the start of the queue"))
+                    .accessibilityHint(String(localized: "Places this episode at the start of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."))
                 }
                 if qi < store.queue.count - 1 {
                     Button {
@@ -3457,7 +3457,7 @@ struct EpisodeRow: View {
                         Label("Move to bottom", systemImage: "arrow.down.to.line")
                     }
                     .accessibilityLabel(String(localized: "Move to bottom"))
-                    .accessibilityHint(String(localized: "Places this episode at the end of the queue"))
+                    .accessibilityHint(String(localized: "Places this episode at the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."))
                 }
             }
             Button {
