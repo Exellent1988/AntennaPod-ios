@@ -1483,7 +1483,7 @@ struct FeedDetailView: View {
                             ShareLink(
                                 item: url,
                                 subject: Text(feedDisplayTitle),
-                                message: Text("\(feedDisplayTitle) — Discuss")
+                                message: Text("\(feedDisplayTitle) — \(String(localized: "Discuss"))")
                             ) {
                                 Label("Share discuss URL", systemImage: "square.and.arrow.up")
                             }
@@ -1520,8 +1520,8 @@ struct FeedDetailView: View {
                         if let url = feedURLShareURL {
                             ShareLink(
                                 item: url,
-                                subject: Text("\(feedDisplayTitle) — Feed URL"),
-                                message: Text("\(feedDisplayTitle) — Feed URL")
+                                subject: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))"),
+                                message: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))")
                             ) {
                                 Label("Share feed URL", systemImage: "square.and.arrow.up")
                             }
@@ -1533,8 +1533,8 @@ struct FeedDetailView: View {
                         } else {
                             ShareLink(
                                 item: feedURLShareString,
-                                subject: Text("\(feedDisplayTitle) — Feed URL"),
-                                message: Text("\(feedDisplayTitle) — Feed URL")
+                                subject: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))"),
+                                message: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))")
                             ) {
                                 Label("Share feed URL", systemImage: "square.and.arrow.up")
                             }
