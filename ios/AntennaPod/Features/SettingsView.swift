@@ -2110,14 +2110,14 @@ struct SettingsView: View {
             }
 
             LabeledContent("Notifies") {
-                Text(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)"))
+                Text(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.trailing)
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(String(localized: "Notifies"))
-            .accessibilityValue(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)"))
+            .accessibilityValue(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)"))
 
             LabeledContent("Does not notify") {
                 Text(String(localized: "No push / APNs / server-side alerts. Download-complete banners only when that optional toggle is on (default off). No episode-level deep link for new episodes (Inbox only). Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push."))
@@ -2176,7 +2176,7 @@ struct SettingsView: View {
         case (.downloadComplete, false):
             return String(localized: "Successful-download banners stay off. Failures stay on their own toggle. This does not post a banner.")
         case (.syncErrors, true):
-            return String(localized: "When gpodder or Nextcloud login or sync fails, one local banner may open Settings Sync. This toggle does not post a banner by itself and does not start a sync.")
+            return String(localized: "When gpodder or Nextcloud login or sync fails, one local banner may open Settings Sync. Banner title is Login failed, Not logged in, or Sync failed — not always Sync failed for login. This toggle does not post a banner by itself and does not start a sync.")
         case (.syncErrors, false):
             return String(localized: "Sync and login failure banners stay off. This does not post a banner and does not start a sync.")
         case (.sleepTimer, true):
@@ -2236,7 +2236,7 @@ struct SettingsView: View {
             return String(localized: "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings (Open iOS Settings). Toggles stay on so your preference is clear. Local UserNotifications only — never push / APNs / server-side alerts. Download-complete is optional (default off).")
         }
         if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors && !settings.notifyOnDownloadComplete && !settings.notifyOnSyncErrors && !settings.notifyOnSleepTimerEnd {
-            return String(localized: "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync, and/or sleep timer end (banner + foreground haptic). Local only — no push / APNs; iOS Notifications permission required.")
+            return String(localized: "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed), and/or sleep timer end (banner + foreground haptic). Local only — no push / APNs; iOS Notifications permission required.")
         }
         if notificationAuthStatus == .notDetermined {
             return String(localized: "iOS permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails or completes / sync fails / sleep timer ends. Local UserNotifications only — no push / APNs / server-side alerts. Download-complete is optional (default off).")
@@ -2252,7 +2252,7 @@ struct SettingsView: View {
             parts.append(String(localized: "Download complete → Downloads (title = episode, body = feed)"))
         }
         if settings.notifyOnSyncErrors {
-            parts.append(String(localized: "Sync / login failures → Settings Sync (short error)"))
+            parts.append(String(localized: "Sync / login failures → Settings Sync (title Login failed, Not logged in, or Sync failed; short error body)"))
         }
         if settings.notifyOnSleepTimerEnd {
             parts.append(String(localized: "Sleep timer end → local banner + foreground haptic (one per fire)"))

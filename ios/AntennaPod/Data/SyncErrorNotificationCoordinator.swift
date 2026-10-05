@@ -26,7 +26,13 @@ enum SyncErrorNotificationCoordinator {
     }
 
     /// When Settings toggle is on and system permission allows, post a local banner.
-    static func notifyIfNeeded(message: String, settings: AppSettings?) async {
+    /// `title` is the user-visible banner title (Login failed / Not logged in / Sync failed) —
+    /// must not always say Sync failed for login failures.
+    static func notifyIfNeeded(
+        message: String,
+        title: String = String(localized: "Sync failed"),
+        settings: AppSettings?
+    ) async {
         guard let settings, settings.notifyOnSyncErrors else { return }
 
         let short = message.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -39,7 +45,8 @@ enum SyncErrorNotificationCoordinator {
         guard status == .authorized || status == .provisional else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = String(localized: "Sync failed")
+        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        content.title = trimmedTitle.isEmpty ? String(localized: "Sync failed") : String(trimmedTitle.prefix(80))
         content.body = String(short.prefix(120))
         content.sound = .default
         content.categoryIdentifier = categoryId

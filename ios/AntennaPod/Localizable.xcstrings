@@ -7376,23 +7376,6 @@
         }
       }
     },
-    "Sync / login failures → Settings Sync (short error)": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sync / login failures → Settings Sync (short error)"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sync-/Login-Fehler → Einstellungen Sync (kurzer Fehler)"
-          }
-        }
-      }
-    },
     "Sync failed": {
       "extractionState": "manual",
       "localizations": {
@@ -32863,23 +32846,6 @@
         }
       }
     },
-    "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync; sleep timer end (banner + foreground haptic)"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neue Episoden nach Aktualisierung (ein lokales Banner → Inbox); Download-Fehler → Downloads; Download abgeschlossen (optional, Standard aus) → Downloads; Sync-/Login-Fehler → Einstellungen Sync; Ende des Sleep-Timers (Banner + Haptik im Vordergrund)"
-          }
-        }
-      }
-    },
     "No push / APNs / server-side alerts. Download-complete banners only when that optional toggle is on (default off). No episode-level deep link for new episodes (Inbox only). Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push.": {
       "extractionState": "manual",
       "localizations": {
@@ -32910,23 +32876,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Benachrichtigungsberechtigung wurde verweigert. AntennaPod zeigt keine Banner, bis du Benachrichtigungen in den iOS-Einstellungen erlaubst (iOS-Einstellungen öffnen). Schalter bleiben an, damit deine Präferenz klar ist. Nur lokale UserNotifications — nie Push / APNs / serverseitige Alerts. Download-Abschluss ist optional (Standard aus)."
-          }
-        }
-      }
-    },
-    "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync, and/or sleep timer end (banner + foreground haptic). Local only — no push / APNs; iOS Notifications permission required.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync, and/or sleep timer end (banner + foreground haptic). Local only — no push / APNs; iOS Notifications permission required."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn aktiviert: neue Episoden nach Aktualisierung (ein aggregiertes lokales Banner → Inbox), Download-Fehler → Downloads, Download abgeschlossen (optional, Standard aus) → Downloads, gpodder-/Nextcloud-Login- oder Sync-Fehler → Einstellungen Sync und/oder Ende des Sleep-Timers (Banner + Haptik im Vordergrund). Nur lokal — kein Push / APNs; iOS-Benachrichtigungsberechtigung erforderlich."
           }
         }
       }
@@ -45484,23 +45433,6 @@
         }
       }
     },
-    "When gpodder or Nextcloud login or sync fails, one local banner may open Settings Sync. This toggle does not post a banner by itself and does not start a sync.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When gpodder or Nextcloud login or sync fails, one local banner may open Settings Sync. This toggle does not post a banner by itself and does not start a sync."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn Anmeldung oder Sync bei gpodder oder Nextcloud fehlschlägt, kann ein lokales Banner Einstellungen Sync öffnen. Dieser Schalter postet selbst kein Banner und startet keinen Sync."
-          }
-        }
-      }
-    },
     "Sync and login failure banners stay off. This does not post a banner and does not start a sync.": {
       "extractionState": "manual",
       "localizations": {
@@ -47683,6 +47615,74 @@
           }
         }
       }
+    },
+    "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Folgen nach Aktualisierung (ein lokaler Banner → Eingang); Download-Fehler → Downloads; Download fertig (optional, standardmäßig aus) → Downloads; Sync-/Login-Fehler → Einstellungen Sync (Banner-Titel Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen); Sleep-Timer-Ende (Banner + Vordergrund-Haptik)"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "When gpodder or Nextcloud login or sync fails, one local banner may open Settings Sync. Banner title is Login failed, Not logged in, or Sync failed — not always Sync failed for login. This toggle does not post a banner by itself and does not start a sync.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When gpodder or Nextcloud login or sync fails, one local banner may open Settings Sync. Banner title is Login failed, Not logged in, or Sync failed — not always Sync failed for login. This toggle does not post a banner by itself and does not start a sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn gpodder- oder Nextcloud-Login oder Sync fehlschlägt, kann ein lokaler Banner Einstellungen Sync öffnen. Banner-Titel ist Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen — nicht immer Sync fehlgeschlagen bei Login. Dieser Schalter postet keinen Banner von allein und startet keinen Sync."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Sync / login failures → Settings Sync (title Login failed, Not logged in, or Sync failed; short error body)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync / login failures → Settings Sync (title Login failed, Not logged in, or Sync failed; short error body)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync-/Login-Fehler → Einstellungen Sync (Titel Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen; kurze Fehler-Body)"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed), and/or sleep timer end (banner + foreground haptic). Local only — no push / APNs; iOS Notifications permission required.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed), and/or sleep timer end (banner + foreground haptic). Local only — no push / APNs; iOS Notifications permission required."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiviert: neue Folgen nach Aktualisierung (ein aggregierter lokaler Banner → Eingang), Download-Fehler → Downloads, Download fertig (optional, standardmäßig aus) → Downloads, gpodder-/Nextcloud-Login- oder Sync-Fehler → Einstellungen Sync (Banner-Titel Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen) und/oder Sleep-Timer-Ende (Banner + Vordergrund-Haptik). Nur lokal — kein Push / APNs; iOS-Benachrichtigungsberechtigung erforderlich."
+          }
+        }
+      },
+      "extractionState": "manual"
     }
   },
   "version": "1.0"

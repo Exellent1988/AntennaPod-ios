@@ -181,14 +181,16 @@ final class GpodderSyncService: ObservableObject {
         guard !user.isEmpty, !pass.isEmpty else {
             recordFailure(
                 error: String(localized: "Enter username and password"),
-                status: String(localized: "Login failed")
+                status: String(localized: "Login failed"),
+                notificationTitle: String(localized: "Login failed")
             )
             return
         }
         if provider == .nextcloud, host.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             recordFailure(
                 error: String(localized: "Enter Nextcloud base URL (e.g. https://cloud.example.com/index.php/apps/gpoddersync/)"),
-                status: String(localized: "Login failed")
+                status: String(localized: "Login failed"),
+                notificationTitle: String(localized: "Login failed")
             )
             return
         }
@@ -205,7 +207,11 @@ final class GpodderSyncService: ObservableObject {
             lastSyncStatus = String(localized: "Logged in — subscriptions only (not full sync)")
         } catch {
             isLoggedIn = false
-            recordFailure(error: error.localizedDescription, status: String(localized: "Login failed"))
+            recordFailure(
+                error: error.localizedDescription,
+                status: String(localized: "Login failed"),
+                notificationTitle: String(localized: "Login failed")
+            )
         }
     }
 
@@ -231,7 +237,8 @@ final class GpodderSyncService: ObservableObject {
         guard isLoggedIn else {
             recordFailure(
                 error: GpodderError.notLoggedIn.localizedDescription,
-                status: String(localized: "Not logged in")
+                status: String(localized: "Not logged in"),
+                notificationTitle: String(localized: "Not logged in")
             )
             return
         }
@@ -239,7 +246,8 @@ final class GpodderSyncService: ObservableObject {
             isLoggedIn = false
             recordFailure(
                 error: String(localized: "Password missing from Keychain — log in again"),
-                status: String(localized: "Not logged in")
+                status: String(localized: "Not logged in"),
+                notificationTitle: String(localized: "Not logged in")
             )
             return
         }
@@ -363,13 +371,23 @@ final class GpodderSyncService: ObservableObject {
 
 
     /// Persist failure + optional local notification (Settings toggle + permission).
-    private func recordFailure(error message: String, status: String) {
+    /// `notificationTitle` is the banner title (Login failed / Not logged in / Sync failed default).
+    private func recordFailure(
+        error message: String,
+        status: String,
+        notificationTitle: String = String(localized: "Sync failed")
+    ) {
         lastSyncError = message
         lastSyncStatus = status
         let msg = message
+        let title = notificationTitle
         let settings = self.settings
         Task {
-            await SyncErrorNotificationCoordinator.notifyIfNeeded(message: msg, settings: settings)
+            await SyncErrorNotificationCoordinator.notifyIfNeeded(
+                message: msg,
+                title: title,
+                settings: settings
+            )
         }
     }
 
