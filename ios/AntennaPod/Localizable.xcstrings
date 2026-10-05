@@ -18275,24 +18275,6 @@
       },
       "comment": "Feed detail ⋯ and socialInteract list row: share the feed-provided podcast:socialInteract discussion URL. Hidden when no openable URL exists; does not post as the user."
     },
-    "Copies the feed-provided discussion URL to the pasteboard; does not post as you": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the feed-provided discussion URL to the pasteboard; does not post as you"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert die vom Feed bereitgestellte Diskussions-URL in die Zwischenablage; veröffentlicht nicht in deinem Namen"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Copy discuss URL in the feed detail menu or socialInteract list. Copy only; no posting."
-    },
     "Shares the feed-provided discussion URL; opens only and does not post as you": {
       "extractionState": "manual",
       "localizations": {
@@ -49328,6 +49310,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet den vom Feed gelieferten Diskussions-http(s)-Link im Systembrowser — kein In-App-WebView. Keine Bestätigung. Postet nicht in deinem Namen. Nutzt nie die Feed-RSS-URL oder die Podcast-Website. Unterschiedlich von Diskussions-URL kopieren, Diskussions-URL teilen und Podcast-Website öffnen. Abonniert nicht, lädt nicht herunter und ändert die Wiedergabe nicht."
+          }
+        }
+      }
+    },
+    "Copies the feed-provided discussion URL to the pasteboard. No confirmation. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Discuss, Share discuss URL, and Copy feed URL. Does not open a browser, subscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided discussion URL to the pasteboard. No confirmation. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Discuss, Share discuss URL, and Copy feed URL. Does not open a browser, subscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vom Feed gelieferte Diskussions-URL in die Zwischenablage. Keine Bestätigung. Postet nicht in deinem Namen. Nutzt nie die Feed-RSS-URL oder die Podcast-Website. Unterschiedlich von Diskutieren, Diskussions-URL teilen und Feed-URL kopieren. Öffnet keinen Browser, abonniert nicht und lädt nicht herunter."
           }
         }
       }

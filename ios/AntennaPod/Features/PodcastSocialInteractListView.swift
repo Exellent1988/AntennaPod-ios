@@ -162,7 +162,7 @@ struct PodcastSocialInteractListView: View {
                         }
                         .accessibilityLabel(String(localized: "Copy discuss URL"))
                         .accessibilityHint(
-                            String(localized: "Copies the feed-provided discussion URL to the pasteboard; does not post as you")
+                            String(localized: "Copies the feed-provided discussion URL to the pasteboard. No confirmation. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Discuss, Share discuss URL, and Copy feed URL. Does not open a browser, subscribe, or download.")
                         )
 
                         ShareLink(item: url) {
