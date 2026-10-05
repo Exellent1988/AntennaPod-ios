@@ -17,6 +17,8 @@ struct FeedDetailView: View {
     @State private var showEnqueueAllUnplayedConfirm = false
     @State private var showDeleteDownloadsConfirm = false
     @State private var showUnsubscribeConfirm = false
+    /// Episode pending swipe Remove-from-queue confirmation (nil = dismissed).
+    @State private var episodePendingRemoveFromQueue: PodcastEpisode?
     @State private var showFeedURLCopied = false
     @State private var showFundingURLCopied = false
     @State private var showFundingLabelCopied = false
@@ -1187,12 +1189,23 @@ struct FeedDetailView: View {
                                     Label("Play Next", systemImage: "text.insert")
                                 }
                                 .tint(.teal)
-                                Button {
-                                    store.enqueue(episode)
-                                } label: {
-                                    Label("Queue", systemImage: "text.append")
+                                if store.isInQueue(episode.id) {
+                                    Button(role: .destructive) {
+                                        episodePendingRemoveFromQueue = episode
+                                    } label: {
+                                        Label("Remove from queue", systemImage: "minus.circle")
+                                    }
+                                    .accessibilityHint(
+                                        String(localized: "Asks for confirmation, then removes this episode from the queue")
+                                    )
+                                } else {
+                                    Button {
+                                        store.enqueue(episode)
+                                    } label: {
+                                        Label("Queue", systemImage: "text.append")
+                                    }
+                                    .tint(.purple)
                                 }
-                                .tint(.purple)
                                 if let url = episode.shareURL(feed: liveFeed) {
                                     ShareLink(
                                         item: url,
@@ -1735,6 +1748,27 @@ struct FeedDetailView: View {
                     "Unsubscribe from \"\(feedDisplayTitle)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
                 )
             }
+        }
+        .confirmationDialog(
+            "Remove from queue?",
+            isPresented: Binding(
+                get: { episodePendingRemoveFromQueue != nil },
+                set: { if !$0 { episodePendingRemoveFromQueue = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: episodePendingRemoveFromQueue
+        ) { episode in
+            Button("Remove from queue", role: .destructive) {
+                store.removeFromQueue(episode)
+                episodePendingRemoveFromQueue = nil
+            }
+            Button("Cancel", role: .cancel) {
+                episodePendingRemoveFromQueue = nil
+            }
+        } message: { episode in
+            Text(
+                "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
+            )
         }
         .alert(
             String(localized: "Copied"),

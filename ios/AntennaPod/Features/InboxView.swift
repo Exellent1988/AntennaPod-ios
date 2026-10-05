@@ -15,6 +15,8 @@ struct InboxView: View {
     @State private var showEnqueueAllConfirm = false
     @State private var showEnqueueAllUnplayedConfirm = false
     @State private var showArchiveAllConfirm = false
+    /// Episode pending swipe Remove-from-queue confirmation (nil = dismissed).
+    @State private var episodePendingRemoveFromQueue: PodcastEpisode?
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyFeedbackTick = 0
@@ -459,12 +461,23 @@ struct InboxView: View {
                                     Label("Play Next", systemImage: "text.insert")
                                 }
                                 .tint(.teal)
-                                Button {
-                                    store.enqueue(item.episode)
-                                } label: {
-                                    Label("Add to queue", systemImage: "text.append")
+                                if store.isInQueue(item.episode.id) {
+                                    Button(role: .destructive) {
+                                        episodePendingRemoveFromQueue = item.episode
+                                    } label: {
+                                        Label("Remove from queue", systemImage: "minus.circle")
+                                    }
+                                    .accessibilityHint(
+                                        String(localized: "Asks for confirmation, then removes this episode from the queue")
+                                    )
+                                } else {
+                                    Button {
+                                        store.enqueue(item.episode)
+                                    } label: {
+                                        Label("Add to queue", systemImage: "text.append")
+                                    }
+                                    .tint(.purple)
                                 }
-                                .tint(.purple)
                                 Button {
                                     store.archive(item.episode.id)
                                 } label: {
@@ -667,6 +680,27 @@ struct InboxView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Archives \(archiveAllInboxCandidatesCount) non-archived Inbox episode(s) in the full Inbox catalog (newest first), not the podcast, episode type, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
+            }
+            .confirmationDialog(
+                "Remove from queue?",
+                isPresented: Binding(
+                    get: { episodePendingRemoveFromQueue != nil },
+                    set: { if !$0 { episodePendingRemoveFromQueue = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: episodePendingRemoveFromQueue
+            ) { episode in
+                Button("Remove from queue", role: .destructive) {
+                    store.removeFromQueue(episode)
+                    episodePendingRemoveFromQueue = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    episodePendingRemoveFromQueue = nil
+                }
+            } message: { episode in
+                Text(
+                    "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
+                )
             }
             .navigationDestination(for: PodcastFeed.self) { feed in
                 FeedDetailView(feed: feed)

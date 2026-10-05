@@ -23,6 +23,8 @@ struct DownloadsView: View {
     @State private var copyFeedbackTick = 0
     /// Single download pending swipe-delete confirmation (nil = dialog dismissed).
     @State private var episodePendingDelete: PodcastEpisode?
+    /// Episode pending swipe Remove-from-queue confirmation (nil = dismissed).
+    @State private var episodePendingRemoveFromQueue: PodcastEpisode?
 
     private let debounceNs: UInt64 = 250_000_000 // 250 ms
 
@@ -522,12 +524,23 @@ struct DownloadsView: View {
                                     Label("Play Next", systemImage: "text.insert")
                                 }
                                 .tint(.teal)
-                                Button {
-                                    store.enqueue(item.episode)
-                                } label: {
-                                    Label("Add to queue", systemImage: "text.append")
+                                if store.isInQueue(item.episode.id) {
+                                    Button(role: .destructive) {
+                                        episodePendingRemoveFromQueue = item.episode
+                                    } label: {
+                                        Label("Remove from queue", systemImage: "minus.circle")
+                                    }
+                                    .accessibilityHint(
+                                        String(localized: "Asks for confirmation, then removes this episode from the queue")
+                                    )
+                                } else {
+                                    Button {
+                                        store.enqueue(item.episode)
+                                    } label: {
+                                        Label("Add to queue", systemImage: "text.append")
+                                    }
+                                    .tint(.purple)
                                 }
-                                .tint(.purple)
                                 Button(role: .destructive) {
                                     episodePendingDelete = item.episode
                                 } label: {
@@ -848,6 +861,27 @@ struct DownloadsView: View {
             } message: { episode in
                 Text(
                     "Delete download for \"\(episode.title)\"? Removes the local offline file only. Keeps played status, queue membership, favorites, and archive state."
+                )
+            }
+            .confirmationDialog(
+                "Remove from queue?",
+                isPresented: Binding(
+                    get: { episodePendingRemoveFromQueue != nil },
+                    set: { if !$0 { episodePendingRemoveFromQueue = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: episodePendingRemoveFromQueue
+            ) { episode in
+                Button("Remove from queue", role: .destructive) {
+                    store.removeFromQueue(episode)
+                    episodePendingRemoveFromQueue = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    episodePendingRemoveFromQueue = nil
+                }
+            } message: { episode in
+                Text(
+                    "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
                 )
             }
         }
