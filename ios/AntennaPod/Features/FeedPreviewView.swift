@@ -74,8 +74,16 @@ struct FeedPreviewView: View {
         parsed?.episodes.count ?? 0
     }
 
+    /// Newest `pubDateEpochMs` first (missing dates last, then feed order), so the
+    /// "Latest" header holds for feeds that list their oldest episode first.
     private var previewEpisodes: [PodcastEpisode] {
-        Array((parsed?.episodes ?? []).prefix(previewEpisodeLimit))
+        let ordered = (parsed?.episodes ?? []).enumerated().sorted { lhs, rhs in
+            let l = lhs.element.pubDateEpochMs ?? Int64.min
+            let r = rhs.element.pubDateEpochMs ?? Int64.min
+            if l != r { return l > r }
+            return lhs.offset < rhs.offset
+        }
+        return Array(ordered.prefix(previewEpisodeLimit).map(\.element))
     }
 
     private var headerAccessibilityLabel: String {
