@@ -182,13 +182,39 @@ struct QueueView: View {
     private var queuePodcastFeeds: [PodcastFeed] {
         var seen = Set<UUID>()
         var feeds: [PodcastFeed] = []
+        let feedsByEpisodeId = queueFeedsByEpisodeId()
         for episode in store.queue {
-            guard let feed = store.feed(containingEpisodeId: episode.id) else { continue }
+            guard let feed = queueFeed(for: episode.id, in: feedsByEpisodeId) else { continue }
             if seen.insert(feed.id).inserted {
                 feeds.append(feed)
             }
         }
         return queuePodcastsByDisplayTitle(feeds)
+    }
+
+    /// Episode id → first feed whose `episodes` holds it, for queued ids only (same answer as
+    /// `PodcastStore.feed(containingEpisodeId:)`). One pass over the library; calling the store
+    /// per queue row scanned every feed's episodes once per row, on every 0.5s playback tick.
+    private func queueFeedsByEpisodeId() -> [String: PodcastFeed] {
+        let queueIds = Set(store.queue.map(\.id))
+        var result: [String: PodcastFeed] = [:]
+        guard !queueIds.isEmpty else { return result }
+        for feed in store.feeds {
+            for episode in feed.episodes where queueIds.contains(episode.id) && result[episode.id] == nil {
+                result[episode.id] = feed
+            }
+        }
+        return result
+    }
+
+    /// Map hit, else the store's synthetic `podcast-trailer:` id fallback (trailers are not in
+    /// `feed.episodes`). Any other miss is nil in the store too.
+    private func queueFeed(for episodeId: String, in feedsByEpisodeId: [String: PodcastFeed]) -> PodcastFeed? {
+        if let feed = feedsByEpisodeId[episodeId] {
+            return feed
+        }
+        guard episodeId.hasPrefix("podcast-trailer:") else { return nil }
+        return store.feed(containingEpisodeId: episodeId)
     }
 
     /// A–Z by the name the chip shows. Raw RSS title would place a renamed podcast
@@ -251,17 +277,23 @@ struct QueueView: View {
         case .played:
             base = base.filter { store.isPlayed($0.id) }
         }
+        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        // Built only when the podcast chip or search needs each row's podcast.
+        var feedsByEpisodeId: [String: PodcastFeed] = [:]
+        if podcastFilter != .all || !q.isEmpty {
+            feedsByEpisodeId = queueFeedsByEpisodeId()
+        }
         switch podcastFilter {
         case .all:
             break
         case .feed(let feedId):
-            base = base.filter { store.feed(containingEpisodeId: $0.id)?.id == feedId }
+            base = base.filter { queueFeed(for: $0.id, in: feedsByEpisodeId)?.id == feedId }
         }
-        let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         if q.isEmpty { return base }
         return base.filter { episode in
             if store.episodeMatchesLibraryQuery(episode, query: q) { return true }
-            let feedTitle = store.displayTitle(containingEpisodeId: episode.id)
+            let feedTitle = queueFeed(for: episode.id, in: feedsByEpisodeId)
+                .map { store.displayTitle(for: $0) } ?? ""
             return feedTitle.localizedCaseInsensitiveContains(q)
         }
     }
