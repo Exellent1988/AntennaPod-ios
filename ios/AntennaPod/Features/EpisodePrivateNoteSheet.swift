@@ -36,7 +36,7 @@ struct EpisodePrivateNoteSheet: View {
                             store.setEpisodePrivateNote(for: episodeId, nil)
                         }
                         .accessibilityLabel(String(localized: "Clear private note"))
-                        .accessibilityHint(String(localized: "Removes the local private note for this episode."))
+                        .accessibilityHint(String(localized: "Removes the local private note for this episode. Does not affect bookmarks, chapters, Share with position, playback, favorites, or the queue."))
                     }
                     Text(
                         String(
@@ -57,7 +57,7 @@ struct EpisodePrivateNoteSheet: View {
                 } header: {
                     Text(String(localized: "Private note"))
                 } footer: {
-                    Text(String(localized: "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML, HTML export, chapters, or Share. Included in iOS JSON backup. Cleared when you unsubscribe from the podcast. Maximum 1000 characters."))
+                    Text(String(localized: "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML, HTML export, chapters, or Share. Distinct from bookmarks. Included in iOS JSON backup. Cleared when you unsubscribe from the podcast. Maximum 1000 characters."))
                 }
             }
             .navigationTitle(String(localized: "Private note"))

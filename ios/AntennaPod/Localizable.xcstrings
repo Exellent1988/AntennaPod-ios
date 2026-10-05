@@ -35172,23 +35172,6 @@
         }
       }
     },
-    "Removes the local private note for this podcast.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes the local private note for this podcast."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt die lokale private Notiz für diesen Podcast."
-          }
-        }
-      }
-    },
     "%lld / %lld characters": {
       "extractionState": "manual",
       "localizations": {
@@ -35219,23 +35202,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld von %lld Zeichen verwendet"
-          }
-        }
-      }
-    },
-    "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML or HTML export. Included in iOS JSON backup with other feed settings. Survives refresh; cleared when you unsubscribe. Maximum 1000 characters.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML or HTML export. Included in iOS JSON backup with other feed settings. Survives refresh; cleared when you unsubscribe. Maximum 1000 characters."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur lokal auf diesem Gerät — nicht aus RSS, nicht mit gpodder synchronisiert und nicht in OPML- oder HTML-Export. In iOS-JSON-Backup mit anderen Feed-Einstellungen enthalten. Übersteht Aktualisieren; wird beim Abbestellen gelöscht. Maximal 1000 Zeichen."
           }
         }
       }
@@ -35401,40 +35367,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Optionale nur lokale Notiz für diese Episode. Nicht synchronisiert und nicht aus dem Feed. Maximal 1000 Zeichen."
-          }
-        }
-      }
-    },
-    "Removes the local private note for this episode.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes the local private note for this episode."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt die lokale private Notiz für diese Episode."
-          }
-        }
-      }
-    },
-    "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML, HTML export, chapters, or Share. Included in iOS JSON backup. Cleared when you unsubscribe from the podcast. Maximum 1000 characters.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML, HTML export, chapters, or Share. Included in iOS JSON backup. Cleared when you unsubscribe from the podcast. Maximum 1000 characters."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur lokal auf diesem Gerät — nicht aus RSS, nicht mit gpodder synchronisiert und nicht in OPML-, HTML-Export, Kapitel oder Teilen. In iOS-JSON-Backup enthalten. Wird gelöscht, wenn du den Podcast abbestellst. Maximal 1000 Zeichen."
           }
         }
       }
@@ -47776,6 +47708,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld von 50 Lesezeichen. Nur lokal; Wanduhr-Positionen; nicht über gpodder synchronisiert. Anders als Kapitel, Mit Position teilen und private Notizen."
+          }
+        }
+      }
+    },
+    "Removes the local private note for this episode. Does not affect bookmarks, chapters, Share with position, playback, favorites, or the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the local private note for this episode. Does not affect bookmarks, chapters, Share with position, playback, favorites, or the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt die lokale private Notiz für diese Episode. Betrifft keine Lesezeichen, Kapitel, Mit Position teilen, Wiedergabe, Favoriten oder die Warteschlange."
+          }
+        }
+      }
+    },
+    "Removes the local private note for this podcast. Does not affect episode private notes, bookmarks, pin, tags, favorites, or the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the local private note for this podcast. Does not affect episode private notes, bookmarks, pin, tags, favorites, or the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt die lokale private Notiz für diesen Podcast. Betrifft keine privaten Episoden-Notizen, Lesezeichen, Pin, Tags, Favoriten oder die Warteschlange."
+          }
+        }
+      }
+    },
+    "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML, HTML export, chapters, or Share. Distinct from bookmarks. Included in iOS JSON backup. Cleared when you unsubscribe from the podcast. Maximum 1000 characters.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML, HTML export, chapters, or Share. Distinct from bookmarks. Included in iOS JSON backup. Cleared when you unsubscribe from the podcast. Maximum 1000 characters."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur lokal auf diesem Gerät — nicht aus RSS, nicht mit gpodder synchronisiert und nicht in OPML, HTML-Export, Kapitel oder Teilen geschrieben. Anders als Lesezeichen. Enthalten im iOS-JSON-Backup. Wird gelöscht, wenn du den Podcast abbestellst. Maximal 1000 Zeichen."
+          }
+        }
+      }
+    },
+    "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML or HTML export. Distinct from episode private notes and bookmarks. Included in iOS JSON backup with other feed settings. Survives refresh; cleared when you unsubscribe. Maximum 1000 characters.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML or HTML export. Distinct from episode private notes and bookmarks. Included in iOS JSON backup with other feed settings. Survives refresh; cleared when you unsubscribe. Maximum 1000 characters."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur lokal auf diesem Gerät — nicht aus RSS, nicht mit gpodder synchronisiert und nicht in OPML oder HTML-Export geschrieben. Anders als private Episoden-Notizen und Lesezeichen. Enthalten im iOS-JSON-Backup mit anderen Feed-Einstellungen. Bleibt bei Aktualisierung; wird beim Abbestellen gelöscht. Maximal 1000 Zeichen."
           }
         }
       }

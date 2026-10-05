@@ -97,7 +97,7 @@ struct PerFeedSettingsView: View {
                         store.updateFeedSettings(for: feedId) { $0.privateNote = nil }
                     }
                     .accessibilityLabel(String(localized: "Clear private note"))
-                    .accessibilityHint(String(localized: "Removes the local private note for this podcast."))
+                    .accessibilityHint(String(localized: "Removes the local private note for this podcast. Does not affect episode private notes, bookmarks, pin, tags, favorites, or the queue."))
                 }
                 Text(
                     String(
@@ -118,7 +118,7 @@ struct PerFeedSettingsView: View {
             } header: {
                 Text(String(localized: "Private note"))
             } footer: {
-                Text(String(localized: "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML or HTML export. Included in iOS JSON backup with other feed settings. Survives refresh; cleared when you unsubscribe. Maximum 1000 characters."))
+                Text(String(localized: "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML or HTML export. Distinct from episode private notes and bookmarks. Included in iOS JSON backup with other feed settings. Survives refresh; cleared when you unsubscribe. Maximum 1000 characters."))
             }
 
             Section {
