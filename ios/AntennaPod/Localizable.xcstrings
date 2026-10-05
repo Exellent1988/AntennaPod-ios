@@ -18175,24 +18175,6 @@
       },
       "comment": "Copy confirmation message for Feed detail podcast:trailer URL."
     },
-    "Opens the trailer URL in the system browser": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens the trailer URL in the system browser"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet die Trailer-URL im Systembrowser"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Open trailer on Feed detail."
-    },
     "Locations": {
       "extractionState": "manual",
       "localizations": {
@@ -49231,6 +49213,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spielt diesen Feed-bereitgestellten podcast:trailer in der App, wenn die Medien-URL abspielbar wirkt, vom Anfang an, damit Intro überspringen ihn nicht abschneidet. Sonst öffnet die URL im Systembrowser. Keine Bestätigung. Unterschiedlich von Trailer öffnen. Markiert nicht als gehört, ändert nicht die Warteschlange, löscht keine Downloads und ändert keine Abonnements."
+          }
+        }
+      }
+    },
+    "Opens this feed-provided podcast:trailer URL in the system browser. Shown when in-app play is not offered for this media URL. No confirmation. Distinct from Play trailer. Does not mark played, change the queue, delete downloads, or alter subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens this feed-provided podcast:trailer URL in the system browser. Shown when in-app play is not offered for this media URL. No confirmation. Distinct from Play trailer. Does not mark played, change the queue, delete downloads, or alter subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet diese Feed-bereitgestellte podcast:trailer-URL im Systembrowser. Wird gezeigt, wenn In-App-Wiedergabe für diese Medien-URL nicht angeboten wird. Keine Bestätigung. Unterschiedlich von Trailer abspielen. Markiert nicht als gehört, ändert nicht die Warteschlange, löscht keine Downloads und ändert keine Abonnements."
           }
         }
       }

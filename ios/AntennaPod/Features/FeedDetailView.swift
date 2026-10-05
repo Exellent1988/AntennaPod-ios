@@ -2787,7 +2787,7 @@ struct FeedDetailView: View {
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Open trailer"))
-                        .accessibilityHint(String(localized: "Opens the trailer URL in the system browser"))
+                        .accessibilityHint(String(localized: "Opens this feed-provided podcast:trailer URL in the system browser. Shown when in-app play is not offered for this media URL. No confirmation. Distinct from Play trailer. Does not mark played, change the queue, delete downloads, or alter subscriptions."))
                     }
 
                     Button {
