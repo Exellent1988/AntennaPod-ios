@@ -157,7 +157,7 @@ struct StatisticsView: View {
                     Button("Reset statistics", role: .destructive) {
                         showResetConfirm = true
                     }
-                    .accessibilityHint(String(localized: "Sets a baseline so Statistics and Echo count only listening after now. Does not clear History."))
+                    .accessibilityHint(String(localized: "Asks for confirmation, then sets a baseline so Statistics and Echo count only episodes last touched after now. Does not clear History, progress, played flags, downloads, queue, or favorites. Filters playback.json stamps — unlike Android there is no separate played-duration counter. Episodes last played before the reset reappear only when played again."))
                 } label: {
                     Label("Statistics actions", systemImage: "ellipsis.circle")
                 }

@@ -29636,23 +29636,6 @@
         }
       }
     },
-    "Sets a baseline so Statistics and Echo count only listening after now. Does not clear History.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sets a baseline so Statistics and Echo count only listening after now. Does not clear History."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Setzt eine Basislinie, sodass Statistik und Echo nur Hören danach zählen. Löscht den Verlauf nicht."
-          }
-        }
-      }
-    },
     "No statistics since reset": {
       "extractionState": "manual",
       "localizations": {
@@ -48900,6 +48883,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Statistik-Basislinie zurücksetzen. Kopieren und Teilen erscheinen, wenn dieser Zeitraum Summen zum Exportieren hat."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then sets a baseline so Statistics and Echo count only episodes last touched after now. Does not clear History, progress, played flags, downloads, queue, or favorites. Filters playback.json stamps — unlike Android there is no separate played-duration counter. Episodes last played before the reset reappear only when played again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then sets a baseline so Statistics and Echo count only episodes last touched after now. Does not clear History, progress, played flags, downloads, queue, or favorites. Filters playback.json stamps — unlike Android there is no separate played-duration counter. Episodes last played before the reset reappear only when played again."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und setzt dann eine Basislinie, sodass Statistik und Echo nur Episoden zählen, die danach zuletzt berührt wurden. Löscht nicht Verlauf, Fortschritt, Gehört-Markierungen, Downloads, Warteschlange oder Favoriten. Filtert playback.json-Zeitstempel — anders als Android gibt es keinen separaten Abspieldauer-Zähler. Vor dem Reset zuletzt gehörte Episoden erscheinen erst wieder, wenn sie erneut abgespielt werden."
           }
         }
       }
