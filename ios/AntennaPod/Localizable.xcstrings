@@ -46656,23 +46656,6 @@
       },
       "extractionState": "manual"
     },
-    "Manual only refreshes when you pull to refresh, use Refresh all, or refresh a podcast alone. A timed interval runs when you open the app, not as iOS Background App Refresh. Per-podcast Keep updated Never skips Refresh all, pull-to-refresh, and timed refresh — not a single-podcast refresh.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Manual only refreshes when you pull to refresh, use Refresh all, or refresh a podcast alone. A timed interval runs when you open the app, not as iOS Background App Refresh. Per-podcast Keep updated Never skips Refresh all, pull-to-refresh, and timed refresh — not a single-podcast refresh."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur manuell aktualisiert per Pull-to-Refresh, Alle aktualisieren oder einzelnem Podcast. Ein Zeitintervall läuft beim Öffnen der App, nicht als iOS Background App Refresh. Keep updated Nie überspringt Alle aktualisieren, Pull-to-Refresh und Zeitintervall — nicht die Einzelaktualisierung."
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta.": {
       "localizations": {
         "en": {
@@ -48323,6 +48306,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "An löscht die Offline-Datei beim Als gehört markieren. Aus behält Dateien. Favoriten bleiben immer. Löschen wartet, solange die Episode noch aus dieser lokalen Datei spielt. Pro Podcast in den Feed-Einstellungen: Global, Immer oder Nie. Standard aus. Der Schalter löscht jetzt keine Dateien."
+          }
+        }
+      }
+    },
+    "Manual only. This is the default. Subscriptions refresh when you pull to refresh on Subscriptions, Home, or Inbox, use Refresh all, or refresh one podcast. There is no timed check when you open the app. Keep updated Never podcasts are skipped on Refresh all and pull-to-refresh; a single-podcast refresh still works. iOS Background App Refresh is not enabled in this beta. Changing this does not refresh now, download, or invent new episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual only. This is the default. Subscriptions refresh when you pull to refresh on Subscriptions, Home, or Inbox, use Refresh all, or refresh one podcast. There is no timed check when you open the app. Keep updated Never podcasts are skipped on Refresh all and pull-to-refresh; a single-podcast refresh still works. iOS Background App Refresh is not enabled in this beta. Changing this does not refresh now, download, or invent new episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur manuell. Das ist die Voreinstellung. Abonnements aktualisieren sich, wenn du auf Abonnements, Start oder Posteingang zum Aktualisieren ziehst, Alle aktualisieren nutzt oder einen Podcast allein aktualisierst. Beim Öffnen der App gibt es keine zeitgesteuerte Prüfung. Podcasts mit Aktualisiert halten Nie werden bei Alle aktualisieren und Ziehen zum Aktualisieren übersprungen; Einzelaktualisierung funktioniert weiter. iOS Hintergrundaktualisierung ist in dieser Beta nicht aktiv. Umschalten aktualisiert jetzt nicht, lädt nichts herunter und erfindet keine neuen Episoden."
+          }
+        }
+      }
+    },
+    "When you open the app or return to the foreground, subscriptions refresh if this interval has elapsed since the last bulk refresh finished. Same bulk path as Refresh all and pull-to-refresh. Keep updated Never podcasts are skipped on those bulk paths; a single-podcast refresh still works. This is not iOS Background App Refresh — nothing runs while the app is fully quit. Changing this does not refresh now, download, or invent new episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When you open the app or return to the foreground, subscriptions refresh if this interval has elapsed since the last bulk refresh finished. Same bulk path as Refresh all and pull-to-refresh. Keep updated Never podcasts are skipped on those bulk paths; a single-podcast refresh still works. This is not iOS Background App Refresh — nothing runs while the app is fully quit. Changing this does not refresh now, download, or invent new episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn du die App öffnest oder in den Vordergrund zurückkehrst, aktualisieren sich Abonnements, wenn dieses Intervall seit dem letzten abgeschlossenen Sammel-Refresh vergangen ist. Derselbe Sammelpfad wie Alle aktualisieren und Ziehen zum Aktualisieren. Podcasts mit Aktualisiert halten Nie werden auf diesen Sammelpfaden übersprungen; Einzelaktualisierung funktioniert weiter. Das ist keine iOS Hintergrundaktualisierung — nichts läuft, während die App vollständig beendet ist. Umschalten aktualisiert jetzt nicht, lädt nichts herunter und erfindet keine neuen Episoden."
+          }
+        }
+      }
+    },
+    "Choices are Manual only, Every 1 hour, Every 4 hours, Every 12 hours, and Every 24 hours. The default is Manual only. Timed intervals check only when you open the app or return to the foreground — not as iOS Background App Refresh. Keep updated Never skips Refresh all, pull-to-refresh, and timed refresh; single-podcast refresh still works. Changing the picker does not refresh now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choices are Manual only, Every 1 hour, Every 4 hours, Every 12 hours, and Every 24 hours. The default is Manual only. Timed intervals check only when you open the app or return to the foreground — not as iOS Background App Refresh. Keep updated Never skips Refresh all, pull-to-refresh, and timed refresh; single-podcast refresh still works. Changing the picker does not refresh now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswahl sind Nur manuell, Alle 1 Stunde, Alle 4 Stunden, Alle 12 Stunden und Alle 24 Stunden. Die Voreinstellung ist Nur manuell. Zeitgesteuerte Intervalle prüfen nur beim Öffnen der App oder bei Rückkehr in den Vordergrund — nicht als iOS Hintergrundaktualisierung. Aktualisiert halten Nie überspringt Alle aktualisieren, Ziehen zum Aktualisieren und zeitgesteuerten Refresh; Einzelaktualisierung funktioniert weiter. Der Picker aktualisiert jetzt nicht."
+          }
+        }
+      }
+    },
+    "%@. This is not the default of Manual only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is not the default of Manual only."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist nicht die Voreinstellung Nur manuell."
           }
         }
       }
