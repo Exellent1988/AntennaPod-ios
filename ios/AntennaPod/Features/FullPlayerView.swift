@@ -1043,7 +1043,7 @@ struct FullPlayerView: View {
     /// Episode / feed artwork for Full player cover (fallback when chapter has no image or load fails).
     @ViewBuilder
     private var episodeArtworkContent: some View {
-        if let urlString = preferredArtworkURLString, let url = URL(string: urlString) {
+        if let urlString = preferredArtworkURLString, let url = EpisodeMediaURL.url(from: urlString) {
             AsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):
