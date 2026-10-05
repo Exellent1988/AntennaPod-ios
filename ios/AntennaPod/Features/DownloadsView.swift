@@ -702,7 +702,7 @@ struct DownloadsView: View {
                         }
                         .disabled(archiveAllDownloadsCandidatesCount == 0)
                         .accessibilityHint(
-                            String(localized: "Archives non-archived completed downloads in the full Downloads catalog; ignores chip, podcast, search, and sort filters; archived does not mean played")
+                            String(localized: "Asks for confirmation, then archives non-archived episodes in the full completed Downloads catalog. Ignores chip, podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing.")
                         )
 
                         Button {

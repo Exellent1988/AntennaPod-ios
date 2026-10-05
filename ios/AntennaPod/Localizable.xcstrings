@@ -36780,24 +36780,6 @@
         }
       }
     },
-    "Archives non-archived completed downloads in the full Downloads catalog; ignores chip, podcast, search, and sort filters; archived does not mean played": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Downloads Archive all.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archives non-archived completed downloads in the full Downloads catalog; ignores chip, podcast, search, and sort filters; archived does not mean played"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archiviert nicht archivierte abgeschlossene Downloads im vollständigen Katalog; ignoriert Chip-, Podcast-, Such- und Sortierfilter; archiviert bedeutet nicht gehört"
-          }
-        }
-      }
-    },
     "Copy inbox, share inbox, play random, add all to queue, mark all as played, mark all as unplayed, or archive all": {
       "extractionState": "manual",
       "comment": "Inbox actions accessibility hint including Mark all as unplayed.",
@@ -48968,6 +48950,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden im vollständigen Feed-Katalog dieses Podcasts. Ignoriert Status-, Episodentyp-, Such- und Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange. Unterschiedlich von globalen Alle archivieren-Aktionen."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then archives non-archived episodes in the full completed Downloads catalog. Ignores chip, podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then archives non-archived episodes in the full completed Downloads catalog. Ignores chip, podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden im vollständigen Katalog abgeschlossener Downloads. Ignoriert Chip-, Podcast-, Such- und Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Download-Dateien, leert nicht die Warteschlange und löst kein automatisches Löschen nach dem Abspielen aus."
           }
         }
       }
