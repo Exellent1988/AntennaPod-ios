@@ -214,17 +214,27 @@ struct JumpToPositionSheet: View {
                 let m = ints[0]
                 let s = ints[1]
                 guard m >= 0, s >= 0, s < 60 else { return nil }
-                return m * 60 + s
+                return checkedSum(m, times: 60, plus: s)
             }
             let h = ints[0]
             let m = ints[1]
             let s = ints[2]
             guard h >= 0, m >= 0, m < 60, s >= 0, s < 60 else { return nil }
-            return h * 3600 + m * 60 + s
+            return checkedSum(h, times: 3600, plus: m * 60 + s)
         }
 
         // Plain integer → total seconds.
         guard let secondsOnly = Int(trimmed), secondsOnly >= 0 else { return nil }
         return secondsOnly
+    }
+
+    /// `value * factor + addend`, or nil on overflow. Typing `999999999999999999:00` overflowed
+    /// `m * 60` and crashed the sheet, since the VoiceOver value parses the field on every redraw.
+    private static func checkedSum(_ value: Int, times factor: Int, plus addend: Int) -> Int? {
+        let product = value.multipliedReportingOverflow(by: factor)
+        guard !product.overflow else { return nil }
+        let sum = product.partialValue.addingReportingOverflow(addend)
+        guard !sum.overflow else { return nil }
+        return sum.partialValue
     }
 }
