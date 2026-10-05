@@ -45600,23 +45600,6 @@
         }
       }
     },
-    "Removes the local private note for this podcast. Does not affect episode private notes, bookmarks, pin, tags, favorites, or the queue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes the local private note for this podcast. Does not affect episode private notes, bookmarks, pin, tags, favorites, or the queue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt die lokale private Notiz für diesen Podcast. Betrifft keine privaten Episoden-Notizen, Lesezeichen, Pin, Tags, Favoriten oder die Warteschlange."
-          }
-        }
-      }
-    },
     "Local only on this device — not from RSS, not synced to gpodder, and not written to OPML, HTML export, chapters, or Share. Distinct from bookmarks. Included in iOS JSON backup. Cleared when you unsubscribe from the podcast. Maximum 1000 characters.": {
       "extractionState": "manual",
       "localizations": {
@@ -49098,6 +49081,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entfernt die lokale private Notiz für diese Episode sofort. Keine Bestätigung. Nur lokal — nicht RSS / gpodder / OPML. Betrifft nicht Lesezeichen, Kapitel, Teilen mit Position, Wiedergabe, Favoriten, Feed-Notizen oder die Queue."
+          }
+        }
+      }
+    },
+    "Removes the local private note for this podcast immediately. No confirmation. Local only — not RSS / gpodder / OPML. Does not affect episode private notes, bookmarks, pin, tags, favorites, or the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the local private note for this podcast immediately. No confirmation. Local only — not RSS / gpodder / OPML. Does not affect episode private notes, bookmarks, pin, tags, favorites, or the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt die lokale private Notiz für diesen Podcast sofort. Keine Bestätigung. Nur lokal — nicht RSS / gpodder / OPML. Betrifft nicht Episode-Notizen, Lesezeichen, Pin, Tags, Favoriten oder die Queue."
           }
         }
       }

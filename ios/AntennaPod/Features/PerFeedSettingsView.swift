@@ -97,7 +97,7 @@ struct PerFeedSettingsView: View {
                         store.updateFeedSettings(for: feedId) { $0.privateNote = nil }
                     }
                     .accessibilityLabel(String(localized: "Clear private note"))
-                    .accessibilityHint(String(localized: "Removes the local private note for this podcast. Does not affect episode private notes, bookmarks, pin, tags, favorites, or the queue."))
+                    .accessibilityHint(String(localized: "Removes the local private note for this podcast immediately. No confirmation. Local only — not RSS / gpodder / OPML. Does not affect episode private notes, bookmarks, pin, tags, favorites, or the queue."))
                 }
                 Text(
                     String(
