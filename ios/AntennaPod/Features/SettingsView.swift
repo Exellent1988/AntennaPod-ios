@@ -1548,7 +1548,7 @@ struct SettingsView: View {
     }
 
     private var fastForwardIntervalAccessibilityHint: String {
-        String(localized: "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default fast-forward is 30 seconds. The next fast-forward uses the saved interval. Changing it does not move the current position. Not Rewind after pause.")
+        String(localized: "Presets are 5, 10, 15, 20, 30, and 60 seconds, plus Custom from 5 to 60. The default fast-forward is 30 seconds. The next fast-forward in the mini player, full player, Lockscreen and Now Playing, Siri skip forward, and the antennapod skip-forward link uses the saved interval. Siri and the link skip only when an episode is already loaded and do not invent one. Changing it updates those controls and does not seek the current position, start playback, or download. Not Rewind after pause.")
     }
 
     /// VoiceOver for Settings → Rewind after pause. Names the saved preset and whether
