@@ -163,6 +163,26 @@ final class PlaybackService: ObservableObject {
         }
     }
 
+    /// Same episode already has a player. Rebuilding would drop up to the 5s
+    /// progress save and, when the saved position is still ~0, run skip intro again.
+    /// A list Play / Downloads Play on that episode keeps the player: pause resumes
+    /// in place (rewind after pause included). Play from beginning, an alternate
+    /// media URL, and an explicit local file while this session is still streaming
+    /// still rebuild.
+    private func shouldKeepLoadedPlayer(
+        episode: PodcastEpisode,
+        fileURL: URL?,
+        preferredMediaURL: URL?,
+        fromBeginning: Bool
+    ) -> Bool {
+        guard !fromBeginning, preferredMediaURL == nil else { return false }
+        guard currentEpisode?.id == episode.id, player != nil else { return false }
+        if fileURL != nil, !isPlayingFromLocalFile {
+            return false
+        }
+        return true
+    }
+
     /// Starts or switches playback. Returns `false` when streaming is blocked by Wi‑Fi-only policy
     /// (current player left unchanged; `lastError` set for UI).
     /// - Parameter fromBeginning: When `true`, start at position 0 (ignore saved resume) and do **not**
@@ -172,6 +192,7 @@ final class PlaybackService: ObservableObject {
     ///   still keys on the primary enclosure — local file is reused only when that primary remote URL
     ///   matches `preferredMediaURL`. Non-http(s) URLs are rejected (return false). Video-as-audio,
     ///   HTTP proxy, and Wi‑Fi stream gates still apply.
+    /// When this episode is already loaded, keeps that player instead of rebuilding it.
     @discardableResult
     func play(
         episode: PodcastEpisode,
@@ -179,6 +200,29 @@ final class PlaybackService: ObservableObject {
         preferredMediaURL: URL? = nil,
         fromBeginning: Bool = false
     ) -> Bool {
+        if shouldKeepLoadedPlayer(
+            episode: episode,
+            fileURL: fileURL,
+            preferredMediaURL: preferredMediaURL,
+            fromBeginning: fromBeginning
+        ) {
+            // Same gate as a fresh stream start, and still before any teardown:
+            // cellular + Wi‑Fi-only refuses without stopping audio that is already going.
+            if !isPlayingFromLocalFile, settings?.streamWifiOnly == true {
+                AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
+                if !NetworkPathGate.shared.allowsTransfer(wifiOnly: true) {
+                    lastError = Self.streamCellularBlockedMessage
+                    return false
+                }
+            }
+            lastError = nil
+            if !isPlaying {
+                togglePlayPause()
+                store?.touchLastPlayed(episode.id)
+                store?.publishWidgetSnapshot()
+            }
+            return true
+        }
         guard let url = resolvePlaybackURL(
             for: episode,
             preferredFileURL: fileURL,
