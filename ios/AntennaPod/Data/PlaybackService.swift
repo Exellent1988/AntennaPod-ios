@@ -532,13 +532,21 @@ final class PlaybackService: ObservableObject {
     /// removing it from the queue, or deleting its download.
     /// Backup import replaces `playback.json`; a later progress tick must not
     /// write the pre-import position back, and the mini player / Lock Screen
-    /// must not keep an episode from the previous catalog.
+    /// must not keep an episode from the previous catalog. Also drops the cold-launch
+    /// restored placeholder and its UserDefaults id — import can run while only that
+    /// row is showing (`currentEpisode` already nil), and a leftover id would restore
+    /// the pre-import episode after the next cold launch when the new catalog still
+    /// contains that id.
     func discardLoadedEpisodeForBackupImport() {
         resumeAfterInterruption = false
         pausedAt = nil
         clearSoundbiteEndMarker()
         tearDownPlayer(clearSleepTimer: true)
         currentEpisode = nil
+        // Cold-launch placeholder is independent of currentEpisode; clear it even when
+        // import runs with nothing loaded so the mini player does not keep the old row.
+        restoredEpisode = nil
+        UserDefaults.standard.removeObject(forKey: Self.lastEpisodeIdKey)
         isPlayingFromLocalFile = false
         isPlaying = false
         positionSeconds = 0
