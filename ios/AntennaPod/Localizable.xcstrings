@@ -22839,24 +22839,6 @@
         }
       }
     },
-    "Filters the Queue list by podcast": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filters the Queue list by podcast"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filtert die Warteschlangen-Liste nach Podcast"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Queue podcast filter chips."
-    },
     "Filters the Inbox list by podcast": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Inbox podcast filter chips.",
@@ -49318,6 +49300,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Filtert die Warteschlange nach Alle, Ungehört oder Gehört. Entfernt keine Warteschlangen-Einträge, ändert die Sortierung nicht, startet keine Downloads und ändert die Podcast-Filterchips nicht. Suche gilt weiterhin zusätzlich zu diesem Filter."
+          }
+        }
+      }
+    },
+    "Filters the Queue to All or one podcast that currently has queue items. Does not remove queue items, change sort, start downloads, or alter the All/Unplayed/Played status chips. Search still applies on top of this filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Queue to All or one podcast that currently has queue items. Does not remove queue items, change sort, start downloads, or alter the All/Unplayed/Played status chips. Search still applies on top of this filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Warteschlange auf Alle oder einen Podcast, der derzeit Einträge in der Warteschlange hat. Entfernt keine Warteschlangen-Einträge, ändert die Sortierung nicht, startet keine Downloads und ändert die Status-Chips Alle/Ungehört/Gehört nicht. Suche gilt weiterhin zusätzlich zu diesem Filter."
           }
         }
       }

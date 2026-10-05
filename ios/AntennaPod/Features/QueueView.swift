@@ -417,7 +417,7 @@ struct QueueView: View {
                                     QueueFilterChip(
                                         title: podcastChipTitle(chip),
                                         selected: podcastFilter == chip,
-                                        accessibilityHint: String(localized: "Filters the Queue list by podcast")
+                                        accessibilityHint: String(localized: "Filters the Queue to All or one podcast that currently has queue items. Does not remove queue items, change sort, start downloads, or alter the All/Unplayed/Played status chips. Search still applies on top of this filter.")
                                     ) {
                                         settings.queuePodcastFilter = chip.storageValue
                                     }
