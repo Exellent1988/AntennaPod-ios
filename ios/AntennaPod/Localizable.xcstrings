@@ -36672,23 +36672,6 @@
       },
       "comment": "VoiceOver hint for Manage tags actions menu."
     },
-    "Marks unplayed, non-archived episodes in the full Favorites catalog as played; ignores podcast, search, and sort filters": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks unplayed, non-archived episodes in the full Favorites catalog as played; ignores podcast, search, and sort filters"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert ungehörte, nicht archivierte Episoden im vollständigen Favoriten-Katalog als gehört; ignoriert Podcast-, Such- und Sortierfilter"
-          }
-        }
-      }
-    },
     "Copy favorites, share favorites, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, archive all, or clear favorites": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Favorites actions menu.",
@@ -48890,6 +48873,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und markiert dann gehörte Episoden im vollständigen Verlaufs-Katalog als ungehört. Ignoriert Podcast-, Such- und Sortierfilter. Episoden verlassen den Verlauf, wenn kein Fortschritt mehr bleibt — wie bei Markierung ungehört pro Zeile. Löscht keine Downloads, leert nicht die Warteschlange und stoppt keine Wiedergabe."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then marks unplayed, non-archived episodes in the full Favorites catalog as played, newest favorited first. Ignores podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not clear Favorites, unfavorite episodes, or delete downloads itself.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then marks unplayed, non-archived episodes in the full Favorites catalog as played, newest favorited first. Ignores podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not clear Favorites, unfavorite episodes, or delete downloads itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und markiert dann ungehörte, nicht archivierte Episoden im vollständigen Favoriten-Katalog als gehört, neueste favorisierte zuerst. Ignoriert Podcast-, Such- und Sortierfilter. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert; leert Favoriten nicht, entfernt keine Favoriten und löscht selbst keine Downloads."
           }
         }
       }

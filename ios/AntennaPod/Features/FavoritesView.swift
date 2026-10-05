@@ -546,7 +546,7 @@ struct FavoritesView: View {
                     }
                     .disabled(markAllFavoritesPlayedCandidatesCount == 0)
                     .accessibilityHint(
-                        String(localized: "Marks unplayed, non-archived episodes in the full Favorites catalog as played; ignores podcast, search, and sort filters")
+                        String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the full Favorites catalog as played, newest favorited first. Ignores podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not clear Favorites, unfavorite episodes, or delete downloads itself.")
                     )
 
                     Button {
