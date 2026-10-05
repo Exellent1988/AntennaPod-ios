@@ -60,7 +60,7 @@ enum TranscriptService {
             ?? (response as? HTTPURLResponse)?.mimeType
             ?? guessMime(from: urlString)
         let body = String(data: data, encoding: .utf8)
-            ?? String(data: data, encoding: .isoLatin1)
+            ?? FeedParsing.decodeLegacy8Bit(data)
             ?? ""
         let parsed = TranscriptParser.parse(body: body, mimeType: mime, sourceURL: urlString)
         store(parsed)
