@@ -45197,23 +45197,6 @@
       },
       "comment": "Feed detail Mark all as unplayed confirmation — full-feed played count including archived."
     },
-    "Marks played episodes in this podcast’s full feed catalog as unplayed, including archived; not the status, episode type, search, or sort filter": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks played episodes in this podcast’s full feed catalog as unplayed, including archived; not the status, episode type, search, or sort filter"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert gehörte Episoden im vollständigen Feed-Katalog dieses Podcasts als ungehört, einschließlich archivierter; nicht Status-, Episodentyp-, Such- oder Sortierfilter"
-          }
-        }
-      }
-    },
     "Marks %lld Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog, not the podcast, episode type, search, or sort filter.": {
       "localizations": {
         "en": {
@@ -48969,6 +48952,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und markiert dann ungehörte, nicht archivierte Episoden im vollständigen Feed-Katalog dieses Podcasts als gehört. Ignoriert Status-, Episodentyp-, Such- und Sortierfilter. Archiviert nicht; Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then marks played episodes in this podcast’s full feed catalog as unplayed, including archived. Ignores status, episode type, search, and sort filters. Does not delete downloads, remove from queue, stop playback, or unarchive.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then marks played episodes in this podcast’s full feed catalog as unplayed, including archived. Ignores status, episode type, search, and sort filters. Does not delete downloads, remove from queue, stop playback, or unarchive."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und markiert dann gehörte Episoden im vollständigen Feed-Katalog dieses Podcasts als ungehört, einschließlich archivierter. Ignoriert Status-, Episodentyp-, Such- und Sortierfilter. Löscht keine Downloads, entfernt nichts aus der Warteschlange, stoppt keine Wiedergabe und hebt die Archivierung nicht auf."
           }
         }
       }

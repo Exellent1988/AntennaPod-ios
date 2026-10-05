@@ -1625,7 +1625,7 @@ struct FeedDetailView: View {
                             Label("Mark all as unplayed", systemImage: "circle")
                         }
                         .disabled(markAllUnplayedCandidates.isEmpty)
-                        .accessibilityHint(String(localized: "Marks played episodes in this podcast’s full feed catalog as unplayed, including archived; not the status, episode type, search, or sort filter"))
+                        .accessibilityHint(String(localized: "Asks for confirmation, then marks played episodes in this podcast’s full feed catalog as unplayed, including archived. Ignores status, episode type, search, and sort filters. Does not delete downloads, remove from queue, stop playback, or unarchive."))
 
                         Button {
                             showArchiveAllConfirm = true
