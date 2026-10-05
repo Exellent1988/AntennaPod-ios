@@ -3549,7 +3549,7 @@ struct EpisodeRow: View {
             }
             .buttonStyle(.bordered)
             .accessibilityLabel(String(localized: "Share episode"))
-            .accessibilityHint(String(localized: "Opens the system share sheet with the episode title and link"))
+            .accessibilityHint(String(localized: "Opens the system share sheet with the episode title and best network link (episode page, enclosure, feed homepage, or feed URL). Local file URLs are not shared. Does not include a playback position — use Share with position for that."))
         } else {
             Button {} label: {
                 Label("Share", systemImage: "square.and.arrow.up")

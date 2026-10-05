@@ -367,7 +367,7 @@ struct EpisodeDescriptionSheetView: View {
                             Image(systemName: "square.and.arrow.up")
                         }
                         .accessibilityLabel(String(localized: "Share episode"))
-                        .accessibilityHint(String(localized: "Opens the system share sheet with the episode title and link"))
+                        .accessibilityHint(String(localized: "Opens the system share sheet with the episode title and best network link (episode page, enclosure, feed homepage, or feed URL). Local file URLs are not shared. Does not include a playback position — use Share with position for that."))
 
                         if canShareWithPosition {
                             ShareLink(
