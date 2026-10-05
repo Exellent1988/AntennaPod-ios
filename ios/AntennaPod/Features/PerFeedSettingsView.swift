@@ -64,7 +64,7 @@ struct PerFeedSettingsView: View {
                         store.updateFeedSettings(for: feedId) { $0.customTitle = nil }
                     }
                     .accessibilityLabel(String(localized: "Reset display name"))
-                    .accessibilityHint(String(localized: "Clears the local nickname and shows the feed title from RSS again."))
+                    .accessibilityHint(String(localized: "Clears the local nickname immediately and shows the feed title from RSS again. No confirmation. Local only — does not change the RSS title, tags, pin, private note, or subscriptions."))
                 }
                 if let rss = liveFeed?.title, !rss.isEmpty, current.customTitle != nil {
                     Text(String(localized: "Feed title: \(rss)"))

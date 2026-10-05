@@ -33018,23 +33018,6 @@
         }
       }
     },
-    "Clears the local nickname and shows the feed title from RSS again.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clears the local nickname and shows the feed title from RSS again."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Löscht den lokalen Spitznamen und zeigt wieder den Feed-Titel aus dem RSS."
-          }
-        }
-      }
-    },
     "Local only — does not rename the RSS title on this device’s feed object. Survives refresh; cleared when you unsubscribe.": {
       "extractionState": "manual",
       "localizations": {
@@ -49166,6 +49149,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiv, speichert Setzen diesen Wert auch als globale Standardgeschwindigkeit für neue Episoden. Ändert keinen Podcast-Geschwindigkeits-Override. Die Sitzungsrate gilt weiterhin erst, wenn du auf Setzen tippst. Nicht Lautstärke-Boost oder Tonhöhe beibehalten."
+          }
+        }
+      }
+    },
+    "Clears the local nickname immediately and shows the feed title from RSS again. No confirmation. Local only — does not change the RSS title, tags, pin, private note, or subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clears the local nickname immediately and shows the feed title from RSS again. No confirmation. Local only — does not change the RSS title, tags, pin, private note, or subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht den lokalen Spitznamen sofort und zeigt wieder den Feed-Titel aus dem RSS. Keine Bestätigung. Nur lokal — ändert weder den RSS-Titel noch Tags, Pin, private Notiz oder Abos."
           }
         }
       }
