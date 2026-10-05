@@ -47968,6 +47968,40 @@
           }
         }
       }
+    },
+    "Honest partial. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings intervals. Next and previous skip by those intervals. Background audio and the playback session are already set. There are no custom CarPlay templates, no CarPlay scene, and no CarPlay entitlement in this beta. Apple Watch Continue listening is a separate beta-lite target and is not CarPlay.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Honest partial. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings intervals. Next and previous skip by those intervals. Background audio and the playback session are already set. There are no custom CarPlay templates, no CarPlay scene, and no CarPlay entitlement in this beta. Apple Watch Continue listening is a separate beta-lite target and is not CarPlay."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ehrlicher Teilumfang. Wenn Audio läuft, zeigt CarPlay die System-Jetzt-läuft-Ansicht mit Wiedergabe, Pause, Springen und Suchen anhand der Einstellungsintervalle. Weiter und Zurück springen um diese Intervalle. Hintergrundaudio und die Wiedergabesitzung sind bereits gesetzt. In dieser Beta gibt es keine eigenen CarPlay-Vorlagen, keine CarPlay-Szene und keine CarPlay-Berechtigung. Apple Watch Weiterhören ist ein separates Beta-Lite-Ziel und nicht CarPlay."
+          }
+        }
+      }
+    },
+    "Read-only note. This screen does not turn CarPlay on or off, start playback, or install templates. Use system Now Playing while audio is playing. Not Siri Shortcuts, the homescreen widget, or Apple Watch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read-only note. This screen does not turn CarPlay on or off, start playback, or install templates. Use system Now Playing while audio is playing. Not Siri Shortcuts, the homescreen widget, or Apple Watch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Hinweis zum Lesen. Dieser Bildschirm schaltet CarPlay nicht ein oder aus, startet keine Wiedergabe und installiert keine Vorlagen. Nutze die System-Jetzt-läuft-Ansicht, während Audio spielt. Nicht Siri Shortcuts, das Homescreen-Widget oder Apple Watch."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

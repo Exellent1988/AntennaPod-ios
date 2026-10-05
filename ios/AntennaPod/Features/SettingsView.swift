@@ -2586,9 +2586,21 @@ struct SettingsView: View {
             Text("CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .accessibilityLabel(String(localized: "CarPlay"))
+                .accessibilityValue(carPlayAccessibilityValue)
+                .accessibilityHint(carPlayAccessibilityHint)
         } header: {
             Text("CarPlay")
         }
+    }
+
+    /// VoiceOver for Settings → CarPlay. Caption-only honesty note: Now Playing remotes, no templates.
+    private var carPlayAccessibilityValue: String {
+        String(localized: "Honest partial. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings intervals. Next and previous skip by those intervals. Background audio and the playback session are already set. There are no custom CarPlay templates, no CarPlay scene, and no CarPlay entitlement in this beta. Apple Watch Continue listening is a separate beta-lite target and is not CarPlay.")
+    }
+
+    private var carPlayAccessibilityHint: String {
+        String(localized: "Read-only note. This screen does not turn CarPlay on or off, start playback, or install templates. Use system Now Playing while audio is playing. Not Siri Shortcuts, the homescreen widget, or Apple Watch.")
     }
 
     @ViewBuilder
