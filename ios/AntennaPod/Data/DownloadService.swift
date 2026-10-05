@@ -832,10 +832,12 @@ final class DownloadService: ObservableObject {
     }
 
     /// Deletes **every** completed offline file in the Downloads catalog — including favorited / starred
-    /// episodes (unlike `deletePlayedDownloads` / auto-delete, which skip favorites). Local files only:
-    /// does **not** mark unplayed, clear the queue, remove favorites/history entries, or stop playback.
-    /// Uses the same single-episode `delete(_:)` path as swipe / player deletion, including its
-    /// cancellation, catalog persistence, and storage refresh behavior. Confirmation is UI responsibility.
+    /// episodes (unlike `deletePlayedDownloads` / auto-delete, which skip favorites). Does **not** skip
+    /// queue membership or the active local player file (`delete(_:)` may re-stream that episode).
+    /// Local files only: does **not** mark unplayed, clear the queue, remove favorites/history entries,
+    /// or stop playback. Uses the same single-episode `delete(_:)` path as swipe / player deletion,
+    /// including its cancellation, catalog persistence, and storage refresh behavior. Confirmation is
+    /// UI responsibility.
     @discardableResult
     func deleteAllDownloads() -> Int {
         let victims = downloads

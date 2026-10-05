@@ -16084,57 +16084,6 @@
         }
       }
     },
-    "Deletes every completed offline file in the full Downloads catalog, including favorites; keeps played status, queue membership, favorites, and archive state": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deletes every completed offline file in the full Downloads catalog, including favorites; keeps played status, queue membership, favorites, and archive state"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Löscht jede abgeschlossene Offline-Datei im vollständigen Downloads-Katalog einschließlich Favoriten; Wiedergabestatus, Warteschlangenmitgliedschaft, Favoriten und Archivstatus bleiben erhalten"
-          }
-        }
-      }
-    },
-    "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Löscht %lld abgeschlossene Offline-Datei(en) (%@), einschließlich favorisierter Downloads. Nutzt den gesamten Downloads-Katalog — nicht den Chip-/Suche-Filter. Nur lokale Dateien — Wiedergabestatus, Warteschlangenmitgliedschaft, Favoriten, Archivstatus und Verlauf bleiben erhalten. Unterschiedlich von „Gehörte Downloads löschen“ und „Warteschlange leeren“."
-          }
-        }
-      }
-    },
-    "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog. Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog. Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Löscht %lld abgeschlossene Offline-Datei(en) (%@), einschließlich favorisierter Downloads. Nutzt den gesamten Downloads-Katalog. Nur lokale Dateien — Wiedergabestatus, Warteschlangenmitgliedschaft, Favoriten, Archivstatus und Verlauf bleiben erhalten. Unterschiedlich von „Gehörte Downloads löschen“ und „Warteschlange leeren“."
-          }
-        }
-      }
-    },
     "Cycles to the next speed. Long-press for full list and Custom…": {
       "extractionState": "manual",
       "localizations": {
@@ -47588,6 +47537,57 @@
           }
         }
       }
+    },
+    "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Queued episodes and the episode playing from a download can lose their offline file (queue membership stays; playback continues from the stream). Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Queued episodes and the episode playing from a download can lose their offline file (queue membership stays; playback continues from the stream). Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht %lld fertige Offline-Datei(en) (%@), einschließlich favorisierter Downloads. Nutzt den vollständigen Downloads-Katalog — nicht den Chip-/Suchfilter. Episoden in der Warteschlange und die aus einem Download spielende Episode können ihre Offline-Datei verlieren (Warteschlangen-Mitgliedschaft bleibt; Wiedergabe läuft vom Stream weiter). Nur lokale Dateien — behält Gehört-Status, Warteschlangen-Mitgliedschaft, Favoriten, Archiv und Verlauf. Unterschiedlich von Gehörte Downloads löschen und Warteschlange leeren."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog. Queued episodes and the episode playing from a download can lose their offline file (queue membership stays; playback continues from the stream). Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes %lld completed offline file(s) (%@), including favorited downloads. Uses the full Downloads catalog. Queued episodes and the episode playing from a download can lose their offline file (queue membership stays; playback continues from the stream). Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht %lld fertige Offline-Datei(en) (%@), einschließlich favorisierter Downloads. Nutzt den vollständigen Downloads-Katalog. Episoden in der Warteschlange und die aus einem Download spielende Episode können ihre Offline-Datei verlieren (Warteschlangen-Mitgliedschaft bleibt; Wiedergabe läuft vom Stream weiter). Nur lokale Dateien — behält Gehört-Status, Warteschlangen-Mitgliedschaft, Favoriten, Archiv und Verlauf. Unterschiedlich von Gehörte Downloads löschen und Warteschlange leeren."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Deletes every completed offline file in the full Downloads catalog, including favorites; queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes every completed offline file in the full Downloads catalog, including favorites; queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht jede fertige Offline-Datei im vollständigen Downloads-Katalog, einschließlich Favoriten; Episoden in der Warteschlange und der spielende Download können ihre Datei verlieren, während die Warteschlangen-Mitgliedschaft bleibt und die Wiedergabe vom Stream weiterläuft"
+          }
+        }
+      },
+      "extractionState": "manual"
     }
   },
   "version": "1.0"

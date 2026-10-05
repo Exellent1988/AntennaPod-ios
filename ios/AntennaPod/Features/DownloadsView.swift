@@ -716,7 +716,7 @@ struct DownloadsView: View {
                         .disabled(downloads.downloads.isEmpty)
                         .accessibilityLabel(String(localized: "Delete all downloads"))
                         .accessibilityHint(
-                            String(localized: "Deletes every completed offline file in the full Downloads catalog, including favorites; keeps played status, queue membership, favorites, and archive state")
+                            String(localized: "Deletes every completed offline file in the full Downloads catalog, including favorites; queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream")
                         )
                     } label: {
                         Label("Downloads actions", systemImage: "ellipsis.circle")
@@ -846,7 +846,7 @@ struct DownloadsView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text(
-                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(deleteAllDownloadsSizeLabel)), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
+                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(deleteAllDownloadsSizeLabel)), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Queued episodes and the episode playing from a download can lose their offline file (queue membership stays; playback continues from the stream). Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
                 )
             }
             .confirmationDialog(

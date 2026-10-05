@@ -510,7 +510,7 @@ struct SettingsView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text(
-                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(DownloadStorageUsage.formatBytes(downloads.completedDownloadsByteSize()))), including favorited downloads. Uses the full Downloads catalog. Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
+                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(DownloadStorageUsage.formatBytes(downloads.completedDownloadsByteSize()))), including favorited downloads. Uses the full Downloads catalog. Queued episodes and the episode playing from a download can lose their offline file (queue membership stays; playback continues from the stream). Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
                 )
             }
             .confirmationDialog(
@@ -2350,6 +2350,10 @@ struct SettingsView: View {
                 showDeleteAllConfirmation = true
             }
             .disabled(downloads.downloads.isEmpty)
+            .accessibilityLabel(String(localized: "Delete all downloads"))
+            .accessibilityHint(
+                String(localized: "Deletes every completed offline file in the full Downloads catalog, including favorites; queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream")
+            )
         } header: {
             Text("Downloads / Storage")
         }
