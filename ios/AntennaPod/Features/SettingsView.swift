@@ -2342,7 +2342,9 @@ struct SettingsView: View {
     private var storageSection: some View {
         Section {
             Toggle("Delete episode after playing", isOn: $settings.autoDeleteAfterPlaying)
-                .accessibilityHint(String(localized: "Removes the offline file when marked played; favorites are kept. Per-podcast override available in Feed settings."))
+                .accessibilityLabel(String(localized: "Delete episode after playing"))
+                .accessibilityValue(autoDeleteAfterPlayingAccessibilityValue)
+                .accessibilityHint(autoDeleteAfterPlayingAccessibilityHint)
             Text(autoDeleteHelpText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -2466,6 +2468,19 @@ struct SettingsView: View {
 
     private var feedDownloadUnplayedSoftCapHelpText: String {
         String(localized: "Limits how many newest unplayed episodes Feed detail Download all unplayed may enqueue at once (10–200, default 50). Always soft-capped — no unlimited. Full-feed eligibility still applies.")
+    }
+
+    /// VoiceOver for Settings → Delete episode after playing. Global only; per-feed Always/Never overrides.
+    /// Skips favorites and defers while the local file is the active player item.
+    private var autoDeleteAfterPlayingAccessibilityValue: String {
+        if settings.autoDeleteAfterPlaying {
+            return String(localized: "On. This is not the default. When an episode is marked played — manually or when playback finishes — its offline file is deleted. The episode row and played status stay. Favorited episodes are never deleted by this. Deletion waits while that local file is still the active player item. A per-podcast Always or Never override can replace this global choice. Changing this does not delete files now, start playback, or download.")
+        }
+        return String(localized: "Off. This is the default. Marking an episode played does not remove its offline file under this global setting. A per-podcast Always override can still delete that podcast’s files when marked played, except favorites and while the file is the active player item. Changing this does not delete files now, start playback, or download.")
+    }
+
+    private var autoDeleteAfterPlayingAccessibilityHint: String {
+        String(localized: "On deletes the offline file when marked played. Off keeps files. Favorites are always kept. Deletion waits while the episode is still playing from that local file. Per-podcast Feed settings can Use global, Always, or Never. Default off. The switch does not delete files now.")
     }
 
     private var autoDeleteHelpText: String {
