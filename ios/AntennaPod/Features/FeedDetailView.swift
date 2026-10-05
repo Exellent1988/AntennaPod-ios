@@ -1607,6 +1607,7 @@ struct FeedDetailView: View {
                             Label("Mark all as played", systemImage: "checkmark.circle")
                         }
                         .disabled(markAllPlayedCandidates.isEmpty)
+                        .accessibilityHint(String(localized: "Marks unplayed, non-archived episodes in this podcast’s full feed catalog as played, not the status, episode type, search, or sort filter"))
 
                         Button {
                             showMarkAllUnplayedConfirm = true
@@ -1614,7 +1615,7 @@ struct FeedDetailView: View {
                             Label("Mark all as unplayed", systemImage: "circle")
                         }
                         .disabled(markAllUnplayedCandidates.isEmpty)
-                        .accessibilityHint(String(localized: "Marks played episodes in this podcast as unplayed, including archived"))
+                        .accessibilityHint(String(localized: "Marks played episodes in this podcast’s full feed catalog as unplayed, including archived; not the status, episode type, search, or sort filter"))
 
                         Button {
                             showArchiveAllConfirm = true
@@ -1694,7 +1695,7 @@ struct FeedDetailView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text(
-                "Marks \(markAllPlayedCandidates.count) unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled."
+                "Marks \(markAllPlayedCandidates.count) unplayed, non-archived episodes in this podcast as played. Uses the full feed catalog — not the status, episode type, search, or sort filter. Does not archive; auto-delete after playing still applies when enabled."
             )
         }
         .confirmationDialog(
@@ -1708,7 +1709,7 @@ struct FeedDetailView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text(
-                "Marks \(markAllUnplayedCandidates.count) played episodes in this podcast as unplayed (including archived). Does not delete downloads, remove from queue, stop playback, or unarchive."
+                "Marks \(markAllUnplayedCandidates.count) played episodes in this podcast as unplayed (including archived). Uses the full feed catalog — not the status, episode type, search, or sort filter. Does not delete downloads, remove from queue, stop playback, or unarchive."
             )
         }
         .confirmationDialog(

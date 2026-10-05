@@ -4329,23 +4329,6 @@
         }
       }
     },
-    "Marks %lld unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks %lld unplayed episodes in this podcast as played. Does not archive; auto-delete after playing still applies when enabled."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert %lld ungehörte Episoden in diesem Podcast als gehört. Archiviert nicht; Auto-Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
-          }
-        }
-      }
-    },
     "Mode": {
       "extractionState": "manual",
       "localizations": {
@@ -33756,41 +33739,6 @@
         }
       }
     },
-    "Marks played episodes in this podcast as unplayed, including archived": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks played episodes in this podcast as unplayed, including archived"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert gehörte Episoden in diesem Podcast als ungehört, auch archivierte"
-          }
-        }
-      }
-    },
-    "Marks %lld played episodes in this podcast as unplayed (including archived). Does not delete downloads, remove from queue, stop playback, or unarchive.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks %lld played episodes in this podcast as unplayed (including archived). Does not delete downloads, remove from queue, stop playback, or unarchive."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert %lld gehörte Episoden in diesem Podcast als ungehört (auch archivierte). Löscht keine Downloads, entfernt nicht aus der Warteschlange, stoppt die Wiedergabe nicht und stellt nicht wieder her."
-          }
-        }
-      },
-      "comment": "Feed detail Mark all as unplayed confirmation — full-feed played count including archived."
-    },
     "Marks unplayed, non-archived episodes in the full History catalog as played; ignores podcast, search, and sort filters": {
       "extractionState": "manual",
       "localizations": {
@@ -47490,6 +47438,75 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reiht Downloads für ungehörte Episoden in diesem Podcast ein, die nicht archiviert und noch nicht heruntergeladen sind (Soft-Cap %lld)."
+          }
+        }
+      }
+    },
+    "Marks %lld unplayed, non-archived episodes in this podcast as played. Uses the full feed catalog — not the status, episode type, search, or sort filter. Does not archive; auto-delete after playing still applies when enabled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld unplayed, non-archived episodes in this podcast as played. Uses the full feed catalog — not the status, episode type, search, or sort filter. Does not archive; auto-delete after playing still applies when enabled."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld ungehörte, nicht archivierte Episoden in diesem Podcast als gehört. Nutzt den vollständigen Feed-Katalog — nicht Status-, Episodentyp-, Such- oder Sortierfilter. Archiviert nicht; Auto-Löschen nach dem Abspielen gilt weiterhin, wenn aktiv."
+          }
+        }
+      }
+    },
+    "Marks %lld played episodes in this podcast as unplayed (including archived). Uses the full feed catalog — not the status, episode type, search, or sort filter. Does not delete downloads, remove from queue, stop playback, or unarchive.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks %lld played episodes in this podcast as unplayed (including archived). Uses the full feed catalog — not the status, episode type, search, or sort filter. Does not delete downloads, remove from queue, stop playback, or unarchive."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert %lld gehörte Episoden in diesem Podcast als ungehört (einschließlich archivierter). Nutzt den vollständigen Feed-Katalog — nicht Status-, Episodentyp-, Such- oder Sortierfilter. Löscht keine Downloads, entfernt nicht aus der Warteschlange, stoppt die Wiedergabe nicht und stellt Archive nicht wieder her."
+          }
+        }
+      },
+      "comment": "Feed detail Mark all as unplayed confirmation — full-feed played count including archived."
+    },
+    "Marks unplayed, non-archived episodes in this podcast’s full feed catalog as played, not the status, episode type, search, or sort filter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks unplayed, non-archived episodes in this podcast’s full feed catalog as played, not the status, episode type, search, or sort filter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert ungehörte, nicht archivierte Episoden im vollständigen Feed-Katalog dieses Podcasts als gehört, nicht Status-, Episodentyp-, Such- oder Sortierfilter"
+          }
+        }
+      }
+    },
+    "Marks played episodes in this podcast’s full feed catalog as unplayed, including archived; not the status, episode type, search, or sort filter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks played episodes in this podcast’s full feed catalog as unplayed, including archived; not the status, episode type, search, or sort filter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert gehörte Episoden im vollständigen Feed-Katalog dieses Podcasts als ungehört, einschließlich archivierter; nicht Status-, Episodentyp-, Such- oder Sortierfilter"
           }
         }
       }
