@@ -32793,23 +32793,6 @@
         }
       }
     },
-    "Opens a field to change or clear this bookmark’s note. Position stays the same.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens a field to change or clear this bookmark’s note. Position stays the same."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet ein Feld zum Ändern oder Löschen der Notiz. Die Position bleibt unverändert."
-          }
-        }
-      }
-    },
     "Short note saved with the bookmark, up to 120 characters. Leave empty to clear.": {
       "extractionState": "manual",
       "localizations": {
@@ -49115,6 +49098,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Löscht dieses Lesezeichen sofort. Keine Bestätigung. Ändert weder Wiedergabeposition noch andere Lesezeichen, Kapitel, Teilen mit Position, private Notizen, Favoriten oder die Queue."
+          }
+        }
+      }
+    },
+    "Opens a field to change or clear this bookmark’s note. No confirmation to open. Position stays the same. Local only — not synced via gpodder. Does not change playback, other bookmarks, chapters, Share with position, private notes, favorites, or the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a field to change or clear this bookmark’s note. No confirmation to open. Position stays the same. Local only — not synced via gpodder. Does not change playback, other bookmarks, chapters, Share with position, private notes, favorites, or the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet ein Feld, um die Notiz dieses Lesezeichens zu ändern oder zu löschen. Keine Bestätigung zum Öffnen. Die Position bleibt gleich. Nur lokal — nicht über gpodder synchronisiert. Ändert weder Wiedergabe, andere Lesezeichen, Kapitel, Teilen mit Position, private Notizen, Favoriten noch die Queue."
           }
         }
       }

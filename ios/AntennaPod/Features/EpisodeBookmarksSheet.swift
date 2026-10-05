@@ -95,7 +95,7 @@ struct EpisodeBookmarksSheet: View {
                                 }
                                 .tint(.indigo)
                                 .accessibilityLabel(String(localized: "Edit note"))
-                                .accessibilityHint(String(localized: "Opens a field to change or clear this bookmark’s note. Position stays the same."))
+                                .accessibilityHint(String(localized: "Opens a field to change or clear this bookmark’s note. No confirmation to open. Position stays the same. Local only — not synced via gpodder. Does not change playback, other bookmarks, chapters, Share with position, private notes, favorites, or the queue."))
                             }
                             .contextMenu {
                                 Button {
@@ -103,6 +103,7 @@ struct EpisodeBookmarksSheet: View {
                                 } label: {
                                     Label(String(localized: "Edit note"), systemImage: "pencil")
                                 }
+                                .accessibilityHint(String(localized: "Opens a field to change or clear this bookmark’s note. No confirmation to open. Position stays the same. Local only — not synced via gpodder. Does not change playback, other bookmarks, chapters, Share with position, private notes, favorites, or the queue."))
                                 Button(role: .destructive) {
                                     store.removeBookmark(episodeId: episodeId, bookmarkId: bookmark.id)
                                 } label: {
