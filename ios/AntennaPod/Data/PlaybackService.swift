@@ -1973,6 +1973,12 @@ final class PlaybackService: ObservableObject {
             return
         }
         guard let url = URL(string: imageUrl) else { return }
+        // play() already wrote Now Playing with the previous episode's cover.
+        // Drop it before the download, including while paused. An unchanged URL
+        // returned above and did not reach here.
+        cachedArtwork = nil
+        cachedArtworkURL = nil
+        updateNowPlayingInfo(force: true)
         let episodeId = episode.id
         Task {
             do {
