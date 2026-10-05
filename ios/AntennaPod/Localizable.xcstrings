@@ -19318,23 +19318,6 @@
         }
       }
     },
-    "Saves the current playback position as a bookmark": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Saves the current playback position as a bookmark"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Speichert die aktuelle Wiedergabeposition als Lesezeichen"
-          }
-        }
-      }
-    },
     "Lists bookmarks for this episode and saves the current position": {
       "extractionState": "manual",
       "localizations": {
@@ -49098,6 +49081,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Springt zum Anfang dieser Episode und spielt sofort. Keine Bestätigung. Überspringt weder Intro noch markiert ungehört, ändert nicht die Queue und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Saves the current playback position as a bookmark immediately. No confirmation. Local only — not synced via gpodder. Distinct from chapters, Share with position, and private notes. Does not change playback, favorites, or the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saves the current playback position as a bookmark immediately. No confirmation. Local only — not synced via gpodder. Distinct from chapters, Share with position, and private notes. Does not change playback, favorites, or the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speichert die aktuelle Wiedergabeposition sofort als Lesezeichen. Keine Bestätigung. Nur lokal — nicht über gpodder synchronisiert. Unterschiedlich von Kapiteln, Teilen mit Position und privaten Notizen. Ändert weder Wiedergabe, Favoriten noch die Queue."
           }
         }
       }

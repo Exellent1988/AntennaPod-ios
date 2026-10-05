@@ -537,7 +537,7 @@ struct MiniPlayerView: View {
         if let episode = playback.currentEpisode, store.isBookmarkCapReached(for: episode.id) {
             return String(localized: "Limit reached — delete a bookmark first")
         }
-        return String(localized: "Saves the current playback position as a bookmark")
+        return String(localized: "Saves the current playback position as a bookmark immediately. No confirmation. Local only — not synced via gpodder. Distinct from chapters, Share with position, and private notes. Does not change playback, favorites, or the queue.")
     }
 
     private func bookmarksAccessibilityValue(for episodeId: String) -> String {

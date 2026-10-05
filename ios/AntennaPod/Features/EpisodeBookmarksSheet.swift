@@ -262,7 +262,7 @@ struct EpisodeBookmarksSheet: View {
         if atCap {
             return String(localized: "Limit reached — delete a bookmark first")
         }
-        return String(localized: "Saves the current playback position as a bookmark")
+        return String(localized: "Saves the current playback position as a bookmark immediately. No confirmation. Local only — not synced via gpodder. Distinct from chapters, Share with position, and private notes. Does not change playback, favorites, or the queue.")
     }
 
     @ViewBuilder
