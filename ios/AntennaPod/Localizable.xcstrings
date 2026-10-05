@@ -49403,6 +49403,23 @@
           }
         }
       }
+    },
+    "When on, blocks changing Network / Downloads Wi‑Fi-only toggles until the parental PIN unlocks this session. Does not lock Add / Discover or hide explicit charts by itself. Export OPML stays unlocked. Changing this may ask for the PIN first when the session is locked.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, blocks changing Network / Downloads Wi‑Fi-only toggles until the parental PIN unlocks this session. Does not lock Add / Discover or hide explicit charts by itself. Export OPML stays unlocked. Changing this may ask for the PIN first when the session is locked."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an, blockiert Änderungen an den Nur-Wi‑Fi-Schaltern unter Netzwerk / Downloads, bis die Elternschutz-PIN diese Sitzung entsperrt. Sperrt nicht von selbst Hinzufügen / Entdecken und blendet keine expliziten Charts aus. OPML exportieren bleibt entsperrt. Ändern kann bei gesperrter Sitzung zuerst die PIN verlangen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
