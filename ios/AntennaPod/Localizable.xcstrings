@@ -43085,23 +43085,6 @@
       },
       "extractionState": "manual"
     },
-    "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Zum Aktualisieren auf Abos, Home oder Eingang ziehen oder Alle aktualisieren nutzen — Podcasts mit Keep updated Nie werden übersprungen. Ein Zeitintervall prüft auch beim Öffnen der App. iOS Background App Refresh ist in dieser Beta nicht aktiv."
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh skip Never. Manual single-podcast refresh (swipe or Feed detail) still works.": {
       "localizations": {
         "en": {
@@ -49513,6 +49496,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nur Hinweis zum Lesen. Dieser Bildschirm schaltet CarPlay nicht ein oder aus, startet keine Wiedergabe und installiert keine Vorlagen. Wenn Audio läuft, zeigt CarPlay die System-Jetzt-läuft-Ansicht mit Wiedergabe, Pause, Springen und Suchen anhand der Einstellungen-Zurückspulen- und Vorspulen-Intervalle — Weiter und Zurück springen um diese Intervalle. In dieser Beta keine eigenen CarPlay-Vorlagen, keine CarPlay-Szene und keine CarPlay-Berechtigung. Hintergrundaudio ist bereits gesetzt. Nicht Siri Shortcuts, das Homescreen-Widget oder Apple Watch."
+          }
+        }
+      }
+    },
+    "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. The stamp is written when Refresh all finishes, even if some podcasts failed. This is not each podcast's Last refreshed time, and no timestamp is invented. iOS Background App Refresh is not enabled in this beta.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. The stamp is written when Refresh all finishes, even if some podcasts failed. This is not each podcast's Last refreshed time, and no timestamp is invented. iOS Background App Refresh is not enabled in this beta."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zum Aktualisieren auf Abos, Home oder Eingang ziehen oder Alle aktualisieren nutzen — Podcasts mit Aktualisiert halten Nie werden übersprungen. Ein Zeitintervall prüft auch beim Öffnen der App. Der Stempel wird geschrieben, wenn Alle aktualisieren fertig ist, auch wenn einzelne Podcasts fehlschlagen. Das ist nicht die Zeit „Zuletzt aktualisiert“ jedes Podcasts, und es wird kein Zeitpunkt erfunden. iOS Background App Refresh ist in dieser Beta nicht aktiv."
           }
         }
       }

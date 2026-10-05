@@ -1779,7 +1779,7 @@ struct SettingsView: View {
     }
 
     private var lastRefreshAccessibilityHint: String {
-        String(localized: "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. iOS Background App Refresh is not enabled in this beta.")
+        String(localized: "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. The stamp is written when Refresh all finishes, even if some podcasts failed. This is not each podcast's Last refreshed time, and no timestamp is invented. iOS Background App Refresh is not enabled in this beta.")
     }
 
     /// VoiceOver for Settings → Refresh interval. Timed checks run on launch/foreground only —
