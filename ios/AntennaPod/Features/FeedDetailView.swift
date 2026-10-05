@@ -1617,7 +1617,7 @@ struct FeedDetailView: View {
                             Label("Mark all as played", systemImage: "checkmark.circle")
                         }
                         .disabled(markAllPlayedCandidates.isEmpty)
-                        .accessibilityHint(String(localized: "Marks unplayed, non-archived episodes in this podcast’s full feed catalog as played, not the status, episode type, search, or sort filter"))
+                        .accessibilityHint(String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in this podcast’s full feed catalog as played. Ignores status, episode type, search, and sort filters. Does not archive; Auto-delete after playing still applies when enabled."))
 
                         Button {
                             showMarkAllUnplayedConfirm = true
