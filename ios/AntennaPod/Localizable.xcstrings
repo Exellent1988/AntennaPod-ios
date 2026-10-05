@@ -48981,6 +48981,40 @@
           }
         }
       }
+    },
+    "Removes this episode from History by clearing its played status and saved playback position so it counts as unplayed again. No confirmation. Does not unsubscribe, delete downloads, clear the queue, or remove favorites.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes this episode from History by clearing its played status and saved playback position so it counts as unplayed again. No confirmation. Does not unsubscribe, delete downloads, clear the queue, or remove favorites."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt diese Episode aus dem Verlauf, indem Gehört-Status und gespeicherte Wiedergabeposition gelöscht werden, sodass sie wieder als ungehört zählt. Keine Bestätigung. Kündigt keine Abos, löscht keine Downloads, leert nicht die Warteschlange und entfernt keine Favoriten."
+          }
+        }
+      }
+    },
+    "Remove from History": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove from History"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus dem Verlauf entfernen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

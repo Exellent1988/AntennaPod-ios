@@ -421,6 +421,10 @@ struct HistoryView: View {
                         } label: {
                             Label("Remove", systemImage: "trash")
                         }
+                        .accessibilityLabel(String(localized: "Remove from History"))
+                        .accessibilityHint(
+                            String(localized: "Removes this episode from History by clearing its played status and saved playback position so it counts as unplayed again. No confirmation. Does not unsubscribe, delete downloads, clear the queue, or remove favorites.")
+                        )
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         Button {
