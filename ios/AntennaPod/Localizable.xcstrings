@@ -16728,24 +16728,6 @@
         }
       }
     },
-    "Opens the feed-provided funding/support page in the system browser; does not process payments": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens the feed-provided funding/support page in the system browser; does not process payments"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet die vom Feed bereitgestellte Finanzierungs-/Supportseite im Systembrowser; verarbeitet keine Zahlungen"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for the feed-provided funding/support page. Display/open only; no payment processing."
-    },
     "Copy funding URL": {
       "extractionState": "manual",
       "localizations": {
@@ -49326,6 +49308,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Share-Sheet mit der vom Feed gelieferten Diskussions-URL. Postet nicht in deinem Namen. Nutzt nie die Feed-RSS-URL oder die Podcast-Website. Unterschiedlich von Diskutieren, Diskussions-URL kopieren und Feed-URL teilen. Teilen ist deine Entscheidung und abonniert nicht und lädt nicht herunter."
+          }
+        }
+      }
+    },
+    "Opens the feed-provided funding or support http(s) page in the system browser — not an in-app WebView. No confirmation. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from Copy funding URL, Share funding URL, and Open podcast website. Does not subscribe, download, or change playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the feed-provided funding or support http(s) page in the system browser — not an in-app WebView. No confirmation. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from Copy funding URL, Share funding URL, and Open podcast website. Does not subscribe, download, or change playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die vom Feed gelieferte Funding- oder Support-http(s)-Seite im Systembrowser — kein In-App-WebView. Keine Bestätigung. Verarbeitet keine Zahlungen. Nutzt nie die Feed-RSS-URL, die Podcast-Website oder den Diskussionslink. Unterschiedlich von Funding-URL kopieren, Funding-URL teilen und Podcast-Website öffnen. Abonniert nicht, lädt nicht herunter und ändert die Wiedergabe nicht."
           }
         }
       }

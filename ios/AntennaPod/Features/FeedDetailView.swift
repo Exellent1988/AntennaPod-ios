@@ -1383,7 +1383,7 @@ struct FeedDetailView: View {
                             }
                             .accessibilityLabel(liveFeed.supportAccessibilityLabel)
                             .accessibilityHint(
-                                String(localized: "Opens the feed-provided funding/support page in the system browser; does not process payments")
+                                String(localized: "Opens the feed-provided funding or support http(s) page in the system browser — not an in-app WebView. No confirmation. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from Copy funding URL, Share funding URL, and Open podcast website. Does not subscribe, download, or change playback.")
                             )
 
                             Button {
