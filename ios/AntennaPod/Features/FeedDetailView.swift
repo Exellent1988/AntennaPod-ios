@@ -391,9 +391,12 @@ struct FeedDetailView: View {
     /// → 0; **unknown duration skipped** (tilde when any skipped). Currently playing uses live
     /// `PlaybackService` position/duration. Wall-clock by default; optional Settings → Remaining time respects speed divides by feed/default speed (estimate).
     /// Distinct from **Download all unplayed** / **Mark all as played** / **Mark all as unplayed** / **Add all unplayed to queue** / **Add all to queue** / **Delete downloads** / **Play random** full-feed eligibility counts.
-    private var feedRemainingInfoLabel: String? {
-        guard !filteredEpisodes.isEmpty else { return nil }
-        return EpisodeRemainingTime.episodesInfoBarLabel(for: feedRemainingSummary)
+    private func feedRemainingInfoLabel(
+        visibleEpisodes: [PodcastEpisode],
+        summary: EpisodeRemainingTime.Summary
+    ) -> String? {
+        guard !visibleEpisodes.isEmpty else { return nil }
+        return EpisodeRemainingTime.episodesInfoBarLabel(for: summary)
     }
 
     private var feedEpisodesEmptyStateAccessibilityValue: String {
@@ -408,10 +411,13 @@ struct FeedDetailView: View {
             : String(localized: "No episodes match your search.")
     }
 
-    private var feedRemainingAccessibilityLabel: String {
-        guard let label = feedRemainingInfoLabel else { return "" }
+    private func feedRemainingAccessibilityLabel(
+        visibleEpisodes: [PodcastEpisode],
+        summary: EpisodeRemainingTime.Summary
+    ) -> String {
+        guard let label = feedRemainingInfoLabel(visibleEpisodes: visibleEpisodes, summary: summary) else { return "" }
         var parts = [String(localized: "Feed remaining time \(label)")]
-        let unknown = feedRemainingSummary.unknownCount
+        let unknown = summary.unknownCount
         if unknown > 0 {
             parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
         }
@@ -432,9 +438,9 @@ struct FeedDetailView: View {
         return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The Feed bar is this feed’s visible episode list after sort, the status chip (All, Unplayed, or Played), the episode type (All, Full, Trailer, Bonus, or Other), and search. Sort changes order only. Unplayed means not played and not archived. Played episodes that are not currently playing count as zero. It is not the full feed catalog behind Download all unplayed, Mark all as played, Mark all as unplayed, Archive all, Add all unplayed to queue, Add all to queue, Delete downloads, or Play random. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Archived remaining bar, the Downloads remaining bar, the History remaining bar, the Favorites remaining bar, the All Episodes remaining bar, the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
     }
 
-    private var feedRemainingSummary: EpisodeRemainingTime.Summary {
+    private func feedRemainingSummary(for visibleEpisodes: [PodcastEpisode]) -> EpisodeRemainingTime.Summary {
         EpisodeRemainingTime.summarize(
-            episodes: filteredEpisodes,
+            episodes: visibleEpisodes,
             currentEpisodeId: playback.currentEpisode?.id,
             liveDurationSeconds: playback.durationSeconds,
             livePositionSeconds: playback.positionSeconds,
@@ -1102,9 +1108,13 @@ struct FeedDetailView: View {
                 }
             }
 
+            // Sort + filter + search the whole feed once per body (the body reruns on each 0.5s
+            // playback tick); the info bar, its VoiceOver label, and the list share this result.
+            let visibleEpisodes = filteredEpisodes
+            let remainingSummary = feedRemainingSummary(for: visibleEpisodes)
             // AntennaPod-like Feed detail info bar (visible sort→status→type→search list remaining time).
             // Distinct from Download all unplayed / Mark all as played / Mark all as unplayed / Add all unplayed to queue / Add all to queue / Delete downloads / Play random full-feed eligibility counts.
-            if let remainingLabel = feedRemainingInfoLabel {
+            if let remainingLabel = feedRemainingInfoLabel(visibleEpisodes: visibleEpisodes, summary: remainingSummary) {
                 Section {
                     Text(remainingLabel)
                         .font(.footnote)
@@ -1112,7 +1122,7 @@ struct FeedDetailView: View {
                         .monospacedDigit()
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityElement(children: .ignore)
-                        .accessibilityLabel(feedRemainingAccessibilityLabel)
+                        .accessibilityLabel(feedRemainingAccessibilityLabel(visibleEpisodes: visibleEpisodes, summary: remainingSummary))
                         .accessibilityHint(feedRemainingAccessibilityHint)
                 }
                 .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
@@ -1139,7 +1149,7 @@ struct FeedDetailView: View {
                         .accessibilityLabel(String(localized: "No episodes"))
                         .accessibilityValue(feedEpisodesEmptyStateAccessibilityValue)
                     }
-                } else if filteredEpisodes.isEmpty {
+                } else if visibleEpisodes.isEmpty {
                     ContentUnavailableView(
                         "No matching episodes",
                         systemImage: "magnifyingglass",
@@ -1153,7 +1163,7 @@ struct FeedDetailView: View {
                     .accessibilityLabel(String(localized: "No matching episodes"))
                     .accessibilityValue(feedEpisodesEmptyStateAccessibilityValue)
                 } else {
-                    ForEach(filteredEpisodes) { episode in
+                    ForEach(visibleEpisodes) { episode in
                         EpisodeRow(episode: episode, feedTitle: feedDisplayTitle)
                             .swipeActions(edge: .leading, allowsFullSwipe: true) {
                                 Button {
