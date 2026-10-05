@@ -1289,7 +1289,9 @@ struct SettingsView: View {
             }
             if matchesPlaybackVolume {
                 Toggle("Volume adaptation", isOn: $settings.volumeAdaptationEnabled)
-                    .accessibilityHint(String(localized: "Optimizes the audio session for speech. Not Android loudness gain."))
+                    .accessibilityLabel(String(localized: "Volume adaptation"))
+                    .accessibilityValue(volumeAdaptationAccessibilityValue)
+                    .accessibilityHint(volumeAdaptationAccessibilityHint)
                 Text("Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -1654,6 +1656,19 @@ struct SettingsView: View {
     /// Above 100% is software gain on the audio mix and may clip. Changing the
     /// picker applies only when a loaded item's audio tracks can be read.
     /// It does not change playback speed.
+    /// VoiceOver for Settings → Volume adaptation. On is AVAudioSession spokenAudio
+    /// (voiceChat fallback) — a session mode, not gain / LoudnessEnhancer / Volume boost.
+    private var volumeAdaptationAccessibilityValue: String {
+        if settings.volumeAdaptationEnabled {
+            return String(localized: "On. This is not the default. The audio session uses spoken-audio mode for speech, or voice-chat if spoken-audio is refused. It does not raise loudness, apply ReplayGain, or change Volume boost. When an episode is paused, changing this does not activate the session or interrupt other apps; it applies on the next play. Video with a visible surface still uses movie playback when this is off. Not Volume boost, Skip silence, or Preserve pitch.")
+        }
+        return String(localized: "Off. This is the default. Audio uses the default session mode, and video with a visible surface uses movie playback. Turning this off does not change Volume boost, start playback, seek, or download. Not Android LoudnessEnhancer.")
+    }
+
+    private var volumeAdaptationAccessibilityHint: String {
+        String(localized: "On sets a speech-oriented audio session mode. Off uses default or movie playback. This is not loudness gain, Volume boost, Skip silence, or Preserve pitch. Default off. The switch does not start playback or download.")
+    }
+
     private var volumeBoostAccessibilityValue: String {
         let percent = AppSettings.clampVolumeBoostPercent(settings.volumeBoostPercent)
         let label = AppSettings.volumeBoostLabel(percent)

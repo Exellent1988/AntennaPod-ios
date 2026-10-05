@@ -15557,23 +15557,6 @@
         }
       }
     },
-    "Optimizes the audio session for speech. Not Android loudness gain.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optimizes the audio session for speech. Not Android loudness gain."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optimiert die Audio-Session für Sprache. Kein Android-Loudness-Gewinn."
-          }
-        }
-      }
-    },
     "Preference only; not applied on stock AVPlayer in this beta.": {
       "extractionState": "manual",
       "localizations": {
@@ -47999,6 +47982,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nur Hinweis zum Lesen. Dieser Bildschirm schaltet CarPlay nicht ein oder aus, startet keine Wiedergabe und installiert keine Vorlagen. Nutze die System-Jetzt-läuft-Ansicht, während Audio spielt. Nicht Siri Shortcuts, das Homescreen-Widget oder Apple Watch."
+          }
+        }
+      }
+    },
+    "On. This is not the default. The audio session uses spoken-audio mode for speech, or voice-chat if spoken-audio is refused. It does not raise loudness, apply ReplayGain, or change Volume boost. When an episode is paused, changing this does not activate the session or interrupt other apps; it applies on the next play. Video with a visible surface still uses movie playback when this is off. Not Volume boost, Skip silence, or Preserve pitch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On. This is not the default. The audio session uses spoken-audio mode for speech, or voice-chat if spoken-audio is refused. It does not raise loudness, apply ReplayGain, or change Volume boost. When an episode is paused, changing this does not activate the session or interrupt other apps; it applies on the next play. Video with a visible surface still uses movie playback when this is off. Not Volume boost, Skip silence, or Preserve pitch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An. Das ist nicht die Voreinstellung. Die Audiositzung nutzt den Spoken-Audio-Modus für Sprache, oder Voice-Chat, wenn Spoken-Audio abgelehnt wird. Es erhöht nicht die Lautstärke, wendet kein ReplayGain an und ändert nicht den Lautstärke-Boost. Wenn eine Episode pausiert ist, aktiviert das Umschalten die Sitzung nicht und unterbricht keine anderen Apps; es gilt beim nächsten Abspielen. Video mit sichtbarer Fläche nutzt bei Aus weiterhin Film-Wiedergabe. Nicht Lautstärke-Boost, Stille überspringen oder Tonhöhe beibehalten."
+          }
+        }
+      }
+    },
+    "Off. This is the default. Audio uses the default session mode, and video with a visible surface uses movie playback. Turning this off does not change Volume boost, start playback, seek, or download. Not Android LoudnessEnhancer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. This is the default. Audio uses the default session mode, and video with a visible surface uses movie playback. Turning this off does not change Volume boost, start playback, seek, or download. Not Android LoudnessEnhancer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. Das ist die Voreinstellung. Audio nutzt den Standard-Sitzungsmodus, und Video mit sichtbarer Fläche nutzt Film-Wiedergabe. Ausschalten ändert nicht den Lautstärke-Boost, startet keine Wiedergabe, sucht nicht und lädt nichts herunter. Nicht Android LoudnessEnhancer."
+          }
+        }
+      }
+    },
+    "On sets a speech-oriented audio session mode. Off uses default or movie playback. This is not loudness gain, Volume boost, Skip silence, or Preserve pitch. Default off. The switch does not start playback or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On sets a speech-oriented audio session mode. Off uses default or movie playback. This is not loudness gain, Volume boost, Skip silence, or Preserve pitch. Default off. The switch does not start playback or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An setzt einen sprachorientierten Audiositzungsmodus. Aus nutzt Standard oder Film-Wiedergabe. Das ist keine Lautstärkeverstärkung, kein Lautstärke-Boost, kein Stille überspringen und kein Tonhöhe beibehalten. Standard aus. Der Schalter startet keine Wiedergabe und lädt nichts herunter."
           }
         }
       }
