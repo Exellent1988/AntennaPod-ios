@@ -24313,23 +24313,6 @@
         }
       }
     },
-    "When on, network streaming is blocked on cellular; local offline files still play. Default off.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When on, network streaming is blocked on cellular; local offline files still play. Default off."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn aktiv, ist Netzwerk-Streaming im Mobilfunk gesperrt; lokale Offline-Dateien spielen weiter. Standard aus."
-          }
-        }
-      }
-    },
     "Reset position when marked played": {
       "extractionState": "manual",
       "localizations": {
@@ -49261,6 +49244,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lokale Banner, wenn ein Download fertig ist und die Datei gespeichert wurde — können Downloads öffnen. Titel ist der Episodentitel, der Podcasttitel wenn der Episodentitel leer ist, oder Download abgeschlossen. Standard aus. Löst selbst keinen Banner aus. Kein Push. Abgebrochene und fehlgeschlagene Downloads zählen nicht; Fehler nutzen Bei Download-Fehlern benachrichtigen."
+          }
+        }
+      }
+    },
+    "When on, network streaming needs Wi‑Fi or Ethernet; local offline files still play. Default off. Does not download the episode or start playback. Feed refresh is not limited by this toggle and may use cellular. Not Manual download or Auto-download Wi‑Fi only. No VPN or proxy detection.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, network streaming needs Wi‑Fi or Ethernet; local offline files still play. Default off. Does not download the episode or start playback. Feed refresh is not limited by this toggle and may use cellular. Not Manual download or Auto-download Wi‑Fi only. No VPN or proxy detection."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, braucht Netzwerk-Streaming Wi‑Fi oder Ethernet; lokale Offline-Dateien spielen weiter. Standard aus. Lädt die Episode nicht herunter und startet keine Wiedergabe. Feed-Aktualisierung wird von diesem Schalter nicht begrenzt und darf Mobilfunk nutzen. Nicht Manueller Download nur Wi‑Fi oder Auto-Download nur Wi‑Fi. Keine VPN- oder Proxy-Erkennung."
           }
         }
       }

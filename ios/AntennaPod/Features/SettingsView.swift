@@ -1882,7 +1882,7 @@ struct SettingsView: View {
             Toggle(String(localized: "Stream Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.streamWifiOnly))
                 .accessibilityLabel(String(localized: "Stream Wi‑Fi only"))
                 .accessibilityValue(wifiOnlyToggleAccessibilityValue(isOn: settings.streamWifiOnly, role: .stream))
-                .accessibilityHint(String(localized: "When on, network streaming is blocked on cellular; local offline files still play. Default off."))
+                .accessibilityHint(String(localized: "When on, network streaming needs Wi‑Fi or Ethernet; local offline files still play. Default off. Does not download the episode or start playback. Feed refresh is not limited by this toggle and may use cellular. Not Manual download or Auto-download Wi‑Fi only. No VPN or proxy detection."))
             if parental.isEnabled && parental.lockNetworkDownloadsSettings && parental.isLocked {
                 Text(String(localized: "Network / Downloads settings are locked. Enter the parental PIN to change these toggles."))
                     .font(.caption)
