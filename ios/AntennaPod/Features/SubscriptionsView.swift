@@ -321,14 +321,14 @@ struct SubscriptionsView: View {
     /// when current. Wall-clock by default; optional Remaining time respects speed divides by feed/default speed (estimate). Distinct from Inbox tab
     /// remaining (`inboxSort` / full Inbox). Hidden when no visible feeds or no unplayed
     /// episodes among them.
-    private var subscriptionsRemainingInfoLabel: String? {
-        EpisodeRemainingTime.unplayedInfoBarLabel(for: subscriptionsRemainingSummary)
+    private func subscriptionsRemainingInfoLabel(_ summary: EpisodeRemainingTime.Summary) -> String? {
+        EpisodeRemainingTime.unplayedInfoBarLabel(for: summary)
     }
 
-    private var subscriptionsRemainingAccessibilityLabel: String {
-        guard let label = subscriptionsRemainingInfoLabel else { return "" }
+    private func subscriptionsRemainingAccessibilityLabel(_ summary: EpisodeRemainingTime.Summary) -> String {
+        guard let label = subscriptionsRemainingInfoLabel(summary) else { return "" }
         var parts = [String(localized: "Subscriptions unplayed remaining time \(label)")]
-        let unknown = subscriptionsRemainingSummary.unknownCount
+        let unknown = summary.unknownCount
         if unknown > 0 {
             parts.append(String(localized: "Remaining time excludes \(unknown) episode(s) with unknown duration"))
         }
@@ -348,13 +348,17 @@ struct SubscriptionsView: View {
         return String(localized: "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. Unplayed means not played and not archived, over each visible podcast’s stored episodes, not the All Episodes newest-500 cap. Group by tag counts each podcast once. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Inbox remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.")
     }
 
-    private var subscriptionsRemainingSummary: EpisodeRemainingTime.Summary {
+    /// `remainingByFeedId` is the body's single `unplayedRemainingByFeedId` pass; reading the
+    /// property per feed here rescanned every feed's episodes once per visible feed.
+    private func subscriptionsRemainingSummary(
+        _ remainingByFeedId: [UUID: FeedUnplayedRemainingSummary]
+    ) -> EpisodeRemainingTime.Summary {
         var episodeCount = 0
         var remaining = 0.0
         var known = 0
         var unknown = 0
         for feed in tagFilteredFeeds {
-            guard let s = unplayedRemainingByFeedId[feed.id] else { continue }
+            guard let s = remainingByFeedId[feed.id] else { continue }
             episodeCount += s.unplayedCount
             remaining += s.remainingSeconds
             known += s.knownCount
@@ -371,9 +375,13 @@ struct SubscriptionsView: View {
     var body: some View {
         NavigationStack(path: $path) {
             List {
+                // One pass over every feed's episodes per body (the body reruns on each 0.5s
+                // playback tick); the info bar and every row read this same map.
+                let remainingByFeedId = unplayedRemainingByFeedId
+                let remainingSummary = subscriptionsRemainingSummary(remainingByFeedId)
                 // AntennaPod-like subscriptions info bar (unplayed remaining over visible feeds).
                 // Per-feed remaining also on each row (same map); unique feeds when grouped by tag.
-                if let remainingLabel = subscriptionsRemainingInfoLabel {
+                if let remainingLabel = subscriptionsRemainingInfoLabel(remainingSummary) {
                     Section {
                         Text(remainingLabel)
                             .font(.footnote)
@@ -381,7 +389,7 @@ struct SubscriptionsView: View {
                             .monospacedDigit()
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .accessibilityElement(children: .ignore)
-                            .accessibilityLabel(subscriptionsRemainingAccessibilityLabel)
+                            .accessibilityLabel(subscriptionsRemainingAccessibilityLabel(remainingSummary))
                             .accessibilityHint(subscriptionsRemainingAccessibilityHint)
                     }
                     .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
@@ -542,7 +550,7 @@ struct SubscriptionsView: View {
                     ForEach(groupedSections, id: \.title) { section in
                         Section(section.title) {
                             ForEach(section.feeds) { feed in
-                                feedRow(feed)
+                                feedRow(feed, summary: remainingByFeedId[feed.id])
                             }
                         }
                     }
@@ -968,8 +976,7 @@ struct SubscriptionsView: View {
     }
 
     @ViewBuilder
-    private func feedRow(_ feed: PodcastFeed) -> some View {
-        let summary = unplayedRemainingByFeedId[feed.id]
+    private func feedRow(_ feed: PodcastFeed, summary: FeedUnplayedRemainingSummary?) -> some View {
         let unplayed = summary?.unplayedCount ?? 0
         let remainingLabel = feedRowRemainingLabel(summary)
         NavigationLink(value: feed) {
