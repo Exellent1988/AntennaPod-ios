@@ -18,6 +18,8 @@ import UIKit
 struct TranscriptSheetView: View {
     @EnvironmentObject private var playback: PlaybackService
     @Environment(\.dismiss) private var dismiss
+    /// Follow-along jumps to each cue without the scroll animation when Reduce Motion is on.
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let episode: PodcastEpisode
 
@@ -414,12 +416,12 @@ struct TranscriptSheetView: View {
         guard let cueId, filteredCues.contains(where: { $0.id == cueId }) else { return }
         if afterLayout {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                withAnimation(.easeInOut(duration: 0.2)) {
+                withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
                     proxy.scrollTo(cueId, anchor: .center)
                 }
             }
         } else {
-            withAnimation(.easeInOut(duration: 0.2)) {
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) {
                 proxy.scrollTo(cueId, anchor: .center)
             }
         }
