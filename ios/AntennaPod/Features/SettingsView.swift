@@ -2877,7 +2877,7 @@ struct SettingsView: View {
                     }
                 }
                 .disabled(gpodder.isBusy)
-                .accessibilityHint(String(localized: "Logs in and stores the password in the Keychain. Sync remains subscriptions-only."))
+                .accessibilityHint(String(localized: "Logs in and stores the password in the Keychain only — never in Settings backup. Does not run Sync now or write Last sync. Sync remains subscriptions-only and does not invent a full sync. Requires username and password; Nextcloud also needs a host."))
             }
             // Visible relative time stays; VoiceOver uses Never vs absolute finish time.
             // Stamp is the last Sync now that finished subscription URL pull/push — not login,

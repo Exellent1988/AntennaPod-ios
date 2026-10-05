@@ -26656,24 +26656,6 @@
       },
       "comment": "Regenerate device id VoiceOver hint"
     },
-    "Logs in and stores the password in the Keychain. Sync remains subscriptions-only.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Logs in and stores the password in the Keychain. Sync remains subscriptions-only."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Meldet an und speichert das Passwort im Keychain. Sync bleibt abo-only."
-          }
-        }
-      },
-      "comment": "Login VoiceOver hint"
-    },
     "System follows the iOS appearance. Light and Dark force light or dark mode.": {
       "extractionState": "manual",
       "localizations": {
@@ -49484,6 +49466,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Synchronisiert nur http(s)-Abo-Feed-URLs: holt fehlende Remotes und pusht lokale URLs, die nicht auf dem Server sind. Merge ist additiv — Remote-Entfernungen deabonnieren lokale Feeds nicht. Keine Episodenaktionen, Warteschlange, Lesezeichen, Tags, Downloads oder lokale Ordner. Schreibt Letzter Sync bei Abschluss; alleiniges Anmelden nicht. Erfindet keinen vollständigen Sync."
+          }
+        }
+      }
+    },
+    "Logs in and stores the password in the Keychain only — never in Settings backup. Does not run Sync now or write Last sync. Sync remains subscriptions-only and does not invent a full sync. Requires username and password; Nextcloud also needs a host.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logs in and stores the password in the Keychain only — never in Settings backup. Does not run Sync now or write Last sync. Sync remains subscriptions-only and does not invent a full sync. Requires username and password; Nextcloud also needs a host."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meldet an und speichert das Passwort nur im Keychain — nie im Settings-Backup. Startet kein Jetzt synchronisieren und schreibt keinen Letzter Sync. Sync bleibt abo-only und erfindet keinen vollständigen Sync. Erfordert Benutzername und Passwort; Nextcloud braucht auch einen Host."
           }
         }
       }
