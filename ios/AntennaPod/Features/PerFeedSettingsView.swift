@@ -210,7 +210,7 @@ struct PerFeedSettingsView: View {
                 }
                 .accessibilityLabel(String(localized: "Notify on new episodes"))
                 .accessibilityValue(notifyAccessibilityValue)
-                .accessibilityHint(String(localized: "Use global, On, or Off. Global Settings → Notify on new episodes is the master switch. Per-podcast Off silences this podcast when global is on; per-podcast On is ignored while global is off. Local notifications only — no push."))
+                .accessibilityHint(String(localized: "Use global, On, or Off. Global Settings → Notify on new episodes is the master switch. Per-podcast Off silences this podcast when global is on; per-podcast On is ignored while global is off. System permission still required. Local UserNotifications only — no push / APNs. Changing this does not send a notification now."))
                 Text(notifyHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)

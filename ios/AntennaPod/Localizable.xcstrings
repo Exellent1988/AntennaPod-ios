@@ -44403,23 +44403,6 @@
       },
       "extractionState": "manual"
     },
-    "Use global, On, or Off. Global Settings → Notify on new episodes is the master switch. Per-podcast Off silences this podcast when global is on; per-podcast On is ignored while global is off. Local notifications only — no push.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Use global, On, or Off. Global Settings → Notify on new episodes is the master switch. Per-podcast Off silences this podcast when global is on; per-podcast On is ignored while global is off. Local notifications only — no push."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Global, An oder Aus. Global Einstellungen → Bei neuen Folgen benachrichtigen ist der Master-Schalter. Pro-Podcast Aus verstummt diesen Podcast, wenn global an ist; pro-Podcast An wird ignoriert, solange global aus ist. Nur lokale Benachrichtigungen — kein Push."
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "Global Notify on new episodes is the master switch. Per-podcast On is ignored while global is off; per-podcast Off silences that feed when global is on. Local UserNotifications only — no push / APNs.": {
       "localizations": {
         "en": {
@@ -49250,6 +49233,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Global, Neueste zuerst, Älteste zuerst, Kürzeste zuerst, Längste zuerst, Titel A–Z oder Titel Z–A nur für die Episodenliste dieses Podcasts. Das Sortieren-Menü im Feed-Detail speichert dieselbe Ausnahme pro Podcast. Bei Seriell kann einmal „Älteste zuerst“ gesetzt werden, wenn noch ungesetzt; die itunes:type-Kapsel bleibt nur Anzeige. Schreibt die globale Feed-Episoden-Sortierung nicht allein um. Ändern ordnet andere Podcasts nicht neu und startet keine Aktualisierung."
+          }
+        }
+      }
+    },
+    "Use global, On, or Off. Global Settings → Notify on new episodes is the master switch. Per-podcast Off silences this podcast when global is on; per-podcast On is ignored while global is off. System permission still required. Local UserNotifications only — no push / APNs. Changing this does not send a notification now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, On, or Off. Global Settings → Notify on new episodes is the master switch. Per-podcast Off silences this podcast when global is on; per-podcast On is ignored while global is off. System permission still required. Local UserNotifications only — no push / APNs. Changing this does not send a notification now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global, An oder Aus. Global Einstellungen → Bei neuen Episoden benachrichtigen ist der Master-Schalter. Pro-Podcast Aus verstummt diesen Podcast, wenn global an ist; pro-Podcast An wird ignoriert, solange global aus ist. Systemberechtigung weiterhin nötig. Nur lokale UserNotifications — kein Push / APNs. Ändern sendet jetzt keine Benachrichtigung."
           }
         }
       }
