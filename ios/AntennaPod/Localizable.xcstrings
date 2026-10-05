@@ -29054,23 +29054,6 @@
         }
       }
     },
-    "Best-effort mono via AVAudioSession preferred channels. Route-dependent; not AVAudioMix remix. Default off.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Best-effort mono via AVAudioSession preferred channels. Route-dependent; not AVAudioMix remix. Default off."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Best-Effort-Mono über AVAudioSession bevorzugte Kanäle. Routenabhängig; kein AVAudioMix-Remix. Standard aus."
-          }
-        }
-      }
-    },
     "When on, requests mono output via `AVAudioSession.setPreferredOutputNumberOfChannels(1)` (restores up to 2 when off). Reapplied on play, Settings change, and audio route change. **Best-effort** — the system may ignore this depending on the route (built-in speaker, Bluetooth, CarPlay, etc.). `AVMutableAudioMix` only scales track volume (no L+R→mono); a real remix needs `MTAudioProcessingTap` (file-based only, not HLS) or `AVAudioEngine` (would break video / PiP / Now Playing). Keeps stock `AVPlayer`. Not Android ExoPlayer stereo→mono remix. Default off.": {
       "extractionState": "manual",
       "localizations": {
@@ -49228,6 +49211,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Begrenzt die im Verlauf gelisteten Episoden in playback.json (gehört / in Bearbeitung). Älteste nach lastPlayedAt (sonst updatedAt) zuerst — wie „Aus Verlauf entfernen“ (Fortschritt und Gehört-Status weg). Unbegrenzt behält die ganze Liste. Favoriten, Archiv, Downloads und Warteschlange bleiben. Statistik und Weitershören können getrimmte Episoden verlieren. Standard: Unbegrenzt. Ändern löscht jetzt keine Downloads und leert die Warteschlange nicht."
+          }
+        }
+      }
+    },
+    "When on, requests mono output (restores stereo when off). Reapplied on play, Settings change, and audio route change. Best-effort — the system may ignore this on some routes (speaker, Bluetooth, CarPlay). Not a true L+R remix; keeps stock AVPlayer. Not Android ExoPlayer stereo→mono. Default off. Changing this does not start or stop playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, requests mono output (restores stereo when off). Reapplied on play, Settings change, and audio route change. Best-effort — the system may ignore this on some routes (speaker, Bluetooth, CarPlay). Not a true L+R remix; keeps stock AVPlayer. Not Android ExoPlayer stereo→mono. Default off. Changing this does not start or stop playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn an, fordert Mono-Ausgabe an (stellt Stereo wieder her, wenn aus). Wird bei Wiedergabe, Einstellungsänderung und Audio-Routenwechsel erneut angewendet. Best effort — das System kann dies auf manchen Routen ignorieren (Lautsprecher, Bluetooth, CarPlay). Kein echtes L+R-Remix; behält stock AVPlayer. Nicht Android-ExoPlayer Stereo→Mono. Standard aus. Ändern startet oder stoppt die Wiedergabe nicht."
           }
         }
       }
