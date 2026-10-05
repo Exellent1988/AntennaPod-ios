@@ -81,6 +81,7 @@ struct StatisticsView: View {
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel(String(localized: "In progress"))
                         .accessibilityValue("\(stats.inProgressEpisodeCount)")
+                        .accessibilityHint(String(localized: "Episodes with saved playback progress that are not marked played. Same time range and Reset baseline as Totals. Their saved position contributes to Approx. listening time."))
                     }
 
                     LabeledContent("Approx. listening time") {

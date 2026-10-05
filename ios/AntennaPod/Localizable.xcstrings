@@ -48920,6 +48920,23 @@
           }
         }
       }
+    },
+    "Episodes with saved playback progress that are not marked played. Same time range and Reset baseline as Totals. Their saved position contributes to Approx. listening time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodes with saved playback progress that are not marked played. Same time range and Reset baseline as Totals. Their saved position contributes to Approx. listening time."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden mit gespeichertem Wiedergabefortschritt, die nicht als gehört markiert sind. Gleicher Zeitraum und Zurücksetzen-Basislinie wie bei Summen. Ihre gespeicherte Position fließt in die ungefähre Hörzeit ein."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
