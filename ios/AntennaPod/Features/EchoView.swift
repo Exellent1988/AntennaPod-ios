@@ -105,6 +105,7 @@ struct EchoView: View {
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel(favoritesInRangeLabel)
                         .accessibilityValue("\(summary.favoritesCountThisYear)")
+                        .accessibilityHint(String(localized: "Count of currently starred episodes whose favorited-at stamp falls in this time range and after any Statistics Reset. Same Favorites list as the Favorites screen — orphans in favorites.json are not counted."))
                         if summary.favoritesTotalCount != summary.favoritesCountThisYear {
                             LabeledContent("Favorites total") {
                                 Text("\(summary.favoritesTotalCount)")
@@ -113,6 +114,7 @@ struct EchoView: View {
                             .accessibilityElement(children: .combine)
                             .accessibilityLabel(String(localized: "Favorites total"))
                             .accessibilityValue("\(summary.favoritesTotalCount)")
+                            .accessibilityHint(String(localized: "All currently starred episodes in any year. Not limited to this time range. Same Favorites list as the Favorites screen — orphans in favorites.json are not counted."))
                         }
                     }
                 } header: {

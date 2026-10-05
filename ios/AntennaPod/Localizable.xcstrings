@@ -48937,6 +48937,40 @@
           }
         }
       }
+    },
+    "Count of currently starred episodes whose favorited-at stamp falls in this time range and after any Statistics Reset. Same Favorites list as the Favorites screen — orphans in favorites.json are not counted.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Count of currently starred episodes whose favorited-at stamp falls in this time range and after any Statistics Reset. Same Favorites list as the Favorites screen — orphans in favorites.json are not counted."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anzahl derzeit markierter Favoriten-Episoden, deren Favorisiert-am-Zeitstempel in diesen Zeitraum und nach einem Statistik-Zurücksetzen fällt. Gleiche Favoritenliste wie der Favoriten-Bildschirm — verwaiste Einträge in favorites.json zählen nicht."
+          }
+        }
+      }
+    },
+    "All currently starred episodes in any year. Not limited to this time range. Same Favorites list as the Favorites screen — orphans in favorites.json are not counted.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All currently starred episodes in any year. Not limited to this time range. Same Favorites list as the Favorites screen — orphans in favorites.json are not counted."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle derzeit markierten Favoriten-Episoden in jedem Jahr. Nicht auf diesen Zeitraum begrenzt. Gleiche Favoritenliste wie der Favoriten-Bildschirm — verwaiste Einträge in favorites.json zählen nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
