@@ -43972,23 +43972,6 @@
         }
       }
     },
-    "Local notification and haptic when the sleep timer pauses or stops playback. Banner tap opens no screen.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Local notification and haptic when the sleep timer pauses or stops playback. Banner tap opens no screen."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lokale Benachrichtigung und Haptik, wenn der Sleep-Timer die Wiedergabe pausiert oder stoppt. Tippen auf den Banner öffnet keinen Bildschirm."
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "When the sleep timer pauses or stops playback, a foreground haptic may play if AntennaPod is active, and a local banner may be posted only if iOS permission allows banners. Banner tap opens no screen — not Inbox, Downloads, or Settings. This toggle does not start or end a timer.": {
       "localizations": {
         "en": {
@@ -49319,6 +49302,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Share-Sheet mit der vom Feed gelieferten Podcast-Website-URL. Nutzt nie die Feed-RSS-URL, eine Episoden-Webseite, Funding-URL oder den Diskussionslink. Unterschiedlich von Podcast-Website öffnen, Podcast-Website kopieren und Feed-URL teilen. Teilen ist deine Entscheidung und abonniert nicht und lädt nicht herunter."
+          }
+        }
+      }
+    },
+    "Local banner and foreground haptic when the sleep timer pauses or stops playback — only if iOS allows banners. Banner tap opens no screen — not Inbox, Downloads, or Settings. Does not start or end a timer by itself. Not push. The sleep timer itself is unchanged when this is off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local banner and foreground haptic when the sleep timer pauses or stops playback — only if iOS allows banners. Banner tap opens no screen — not Inbox, Downloads, or Settings. Does not start or end a timer by itself. Not push. The sleep timer itself is unchanged when this is off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokaler Banner und Vordergrund-Haptik, wenn der Schlaf-Timer die Wiedergabe pausiert oder stoppt — nur wenn iOS Banner erlaubt. Tippen auf den Banner öffnet keinen Bildschirm — nicht Posteingang, Downloads oder Einstellungen. Startet oder beendet keinen Timer von selbst. Kein Push. Der Schlaf-Timer selbst bleibt unverändert, wenn dies aus ist."
           }
         }
       }

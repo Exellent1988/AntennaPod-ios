@@ -2166,7 +2166,7 @@ struct SettingsView: View {
                 .accessibilityHint(String(localized: "Local banners when gpodder or Nextcloud login or sync fails — may open Settings Sync. Title may be Login failed, Not logged in, or Sync failed. Does not post a banner by itself and does not start a sync. Not push. Successful sync stays silent."))
             Toggle("Notify when sleep timer ends", isOn: $settings.notifyOnSleepTimerEnd)
                 .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnSleepTimerEnd, role: .sleepTimer))
-                .accessibilityHint(String(localized: "Local notification and haptic when the sleep timer pauses or stops playback. Banner tap opens no screen."))
+                .accessibilityHint(String(localized: "Local banner and foreground haptic when the sleep timer pauses or stops playback — only if iOS allows banners. Banner tap opens no screen — not Inbox, Downloads, or Settings. Does not start or end a timer by itself. Not push. The sleep timer itself is unchanged when this is off."))
 
             LabeledContent("Permission") {
                 Text(notificationAuthStatus.label)
