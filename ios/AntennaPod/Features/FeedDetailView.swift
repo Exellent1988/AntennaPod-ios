@@ -2778,7 +2778,7 @@ struct FeedDetailView: View {
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Play trailer"))
-                        .accessibilityHint(String(localized: "Plays the podcast trailer from the feed"))
+                        .accessibilityHint(String(localized: "Plays this feed-provided podcast:trailer in the app when the media URL looks playable, starting from the beginning so Skip intro does not clip it. Otherwise opens the URL in the system browser. No confirmation. Distinct from Open trailer. Does not mark played, change the queue, delete downloads, or alter subscriptions."))
                     } else {
                         Button {
                             playOrOpenTrailer(trailer)

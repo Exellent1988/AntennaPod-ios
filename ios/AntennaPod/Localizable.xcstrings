@@ -18175,24 +18175,6 @@
       },
       "comment": "Copy confirmation message for Feed detail podcast:trailer URL."
     },
-    "Plays the podcast trailer from the feed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plays the podcast trailer from the feed"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spielt den Podcast-Trailer aus dem Feed ab"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Play trailer on Feed detail."
-    },
     "Opens the trailer URL in the system browser": {
       "extractionState": "manual",
       "localizations": {
@@ -49232,6 +49214,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ordnet nur die Episodenliste dieses Podcasts: Neueste zuerst, Älteste zuerst, Kürzeste zuerst, Längste zuerst, Titel A–Z oder Titel Z–A. Pro Podcast gespeichert — dieselbe Ausnahme wie Podcast-Einstellungen → Episoden-Sortierung. Bei Seriell kann einmal „Älteste zuerst“ gesetzt werden, wenn noch ungesetzt; die itunes:type-Kapsel bleibt nur Anzeige. Schreibt die globale Feed-Episoden-Sortierung nicht allein um. Ändern ordnet andere Podcasts nicht neu und startet keine Aktualisierung."
+          }
+        }
+      }
+    },
+    "Plays this feed-provided podcast:trailer in the app when the media URL looks playable, starting from the beginning so Skip intro does not clip it. Otherwise opens the URL in the system browser. No confirmation. Distinct from Open trailer. Does not mark played, change the queue, delete downloads, or alter subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays this feed-provided podcast:trailer in the app when the media URL looks playable, starting from the beginning so Skip intro does not clip it. Otherwise opens the URL in the system browser. No confirmation. Distinct from Open trailer. Does not mark played, change the queue, delete downloads, or alter subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt diesen Feed-bereitgestellten podcast:trailer in der App, wenn die Medien-URL abspielbar wirkt, vom Anfang an, damit Intro überspringen ihn nicht abschneidet. Sonst öffnet die URL im Systembrowser. Keine Bestätigung. Unterschiedlich von Trailer öffnen. Markiert nicht als gehört, ändert nicht die Warteschlange, löscht keine Downloads und ändert keine Abonnements."
           }
         }
       }
