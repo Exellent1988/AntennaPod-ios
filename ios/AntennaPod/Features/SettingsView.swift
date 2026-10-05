@@ -1730,7 +1730,7 @@ struct SettingsView: View {
     }
 
     private var volumeBoostAccessibilityHint: String {
-        String(localized: "Presets are 100%, 125%, 150%, 175%, 200%, 250%, and 300%. There is no custom percent. The default is 100%, which is unity and clears the audio mix. Above 100% is soft gain and may clip or distort. Changing this applies to a loaded item only when its audio tracks can be read; otherwise it is saved and no boost is invented. It does not start playback, seek, change playback speed, or download. Not Volume adaptation, Preserve pitch, Skip silence, ReplayGain, or LoudnessEnhancer. Sleep-timer fade stays on player volume.")
+        String(localized: "Presets are 100%, 125%, 150%, 175%, 200%, 250%, and 300%. There is no custom percent. The default is 100%, which is unity and clears the audio mix. Above 100% is soft gain and may clip or distort. Changing this applies to a loaded item only when its audio tracks can be read; otherwise it is saved and no boost is invented. Some streams, including HLS, may ignore the audio mix. Stock AVPlayer keeps video, Picture in Picture, and Now Playing. It does not start playback, seek, change playback speed, or download. Not Volume adaptation, Preserve pitch, Skip silence, ReplayGain, loudness normalization, LoudnessEnhancer, or an audio engine. Sleep-timer fade stays on player volume and multiplies with the mix.")
     }
 
     /// VoiceOver for Settings → Default speed. 1.0× is the default.

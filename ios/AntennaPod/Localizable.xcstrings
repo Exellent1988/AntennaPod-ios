@@ -42480,23 +42480,6 @@
         }
       }
     },
-    "Presets are 100%, 125%, 150%, 175%, 200%, 250%, and 300%. There is no custom percent. The default is 100%, which is unity and clears the audio mix. Above 100% is soft gain and may clip or distort. Changing this applies to a loaded item only when its audio tracks can be read; otherwise it is saved and no boost is invented. It does not start playback, seek, change playback speed, or download. Not Volume adaptation, Preserve pitch, Skip silence, ReplayGain, or LoudnessEnhancer. Sleep-timer fade stays on player volume.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Presets are 100%, 125%, 150%, 175%, 200%, 250%, and 300%. There is no custom percent. The default is 100%, which is unity and clears the audio mix. Above 100% is soft gain and may clip or distort. Changing this applies to a loaded item only when its audio tracks can be read; otherwise it is saved and no boost is invented. It does not start playback, seek, change playback speed, or download. Not Volume adaptation, Preserve pitch, Skip silence, ReplayGain, or LoudnessEnhancer. Sleep-timer fade stays on player volume."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vorgaben sind 100%, 125%, 150%, 175%, 200%, 250% und 300%. Es gibt keinen benutzerdefinierten Prozentwert. Der Standard ist 100%, das ist Unity und entfernt den Audio-Mix. Über 100% ist sanfte Verstärkung und kann clippen oder verzerren. Die Änderung gilt für ein geladenes Element nur, wenn seine Audiospuren gelesen werden können; sonst wird sie gespeichert und keine Verstärkung erfunden. Sie startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergabegeschwindigkeit und lädt nichts herunter. Nicht Lautstärkeanpassung, Tonhöhe beibehalten, Stille überspringen, ReplayGain oder LoudnessEnhancer. Der Schlaf-Timer-Fade bleibt auf der Player-Lautstärke."
-          }
-        }
-      }
-    },
     "On. This is not the default. List and Home remaining-time bars divide each episode’s remaining by that podcast’s playback speed: the per-podcast speed if one is set, otherwise Default speed, and never below 0.5. It is an estimate, not a live ETA, and those bars do not use the current player session rate. Unknown durations stay marked with a tilde, and a played episode that is not the current one still counts as zero remaining. Mini and full player remaining time, only when Show remaining time is also on, and the current chapter’s remaining, use the live session rate, or the podcast or default speed if there is no live rate, clamped from 0.5 to 3.0. Chapter duration labels stay wall-clock. Sleep-timer end of chapter stays wall-clock. Volume boost is not speed. Widget and Watch Continue, Lock Screen, and Now Playing stay wall-clock. Turning this on does not start playback, seek, change the playback rate, or download, and it does not invent a duration.": {
       "extractionState": "manual",
       "localizations": {
@@ -49485,6 +49468,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nur gespeicherte Einstellung. Diese Beta überspringt Stille auf dem Standard-AVPlayer nicht, weil eine eigene Audio-Engine die Videofläche, Now Playing und das Wiedergabetempo stören würde. Umschalten ändert weder Wiedergabe noch Tempo noch Downloads, und es wird keine übersprungene Stille erfunden. Nicht Tonhöhe beibehalten. Standard aus."
+          }
+        }
+      }
+    },
+    "Presets are 100%, 125%, 150%, 175%, 200%, 250%, and 300%. There is no custom percent. The default is 100%, which is unity and clears the audio mix. Above 100% is soft gain and may clip or distort. Changing this applies to a loaded item only when its audio tracks can be read; otherwise it is saved and no boost is invented. Some streams, including HLS, may ignore the audio mix. Stock AVPlayer keeps video, Picture in Picture, and Now Playing. It does not start playback, seek, change playback speed, or download. Not Volume adaptation, Preserve pitch, Skip silence, ReplayGain, loudness normalization, LoudnessEnhancer, or an audio engine. Sleep-timer fade stays on player volume and multiplies with the mix.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Presets are 100%, 125%, 150%, 175%, 200%, 250%, and 300%. There is no custom percent. The default is 100%, which is unity and clears the audio mix. Above 100% is soft gain and may clip or distort. Changing this applies to a loaded item only when its audio tracks can be read; otherwise it is saved and no boost is invented. Some streams, including HLS, may ignore the audio mix. Stock AVPlayer keeps video, Picture in Picture, and Now Playing. It does not start playback, seek, change playback speed, or download. Not Volume adaptation, Preserve pitch, Skip silence, ReplayGain, loudness normalization, LoudnessEnhancer, or an audio engine. Sleep-timer fade stays on player volume and multiplies with the mix."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorgaben sind 100%, 125%, 150%, 175%, 200%, 250% und 300%. Es gibt keinen benutzerdefinierten Prozentwert. Der Standard ist 100%, das ist Unity und entfernt den Audio-Mix. Über 100% ist sanfte Verstärkung und kann clippen oder verzerren. Die Änderung gilt für ein geladenes Element nur, wenn seine Audiospuren gelesen werden können; sonst wird sie gespeichert und keine Verstärkung erfunden. Manche Streams, auch HLS, können den Audio-Mix ignorieren. Stock AVPlayer behält Video, Bild-in-Bild und Now Playing. Sie startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergabegeschwindigkeit und lädt nichts herunter. Nicht Lautstärkeanpassung, Tonhöhe beibehalten, Stille überspringen, ReplayGain, Lautheitsnormalisierung, LoudnessEnhancer oder eine Audio-Engine. Der Schlaf-Timer-Fade bleibt auf der Player-Lautstärke und multipliziert mit dem Mix."
           }
         }
       }
