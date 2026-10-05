@@ -41970,23 +41970,6 @@
         }
       }
     },
-    "On keeps natural pitch when speed is not 1×. Off lets pitch follow speed. The switch does not start playback, skip silence, or download anything. Default on.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "On keeps natural pitch when speed is not 1×. Off lets pitch follow speed. The switch does not start playback, skip silence, or download anything. Default on."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "An behält die natürliche Tonhöhe, wenn das Tempo nicht 1× ist. Aus lässt die Tonhöhe dem Tempo folgen. Der Schalter startet keine Wiedergabe, überspringt keine Stille und lädt nichts herunter. Standard an."
-          }
-        }
-      }
-    },
     "Off. When an episode ends, playback stops. Mark played and saved progress still apply. Nothing is added to the Queue or downloaded, and no next episode is invented. This is not the default. An end-of-episode or last-chapter sleep timer also stops. End of queue still continues through the Queue only. Changing this does not start playback.": {
       "extractionState": "manual",
       "localizations": {
@@ -49485,6 +49468,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Springt um das Einstellungen-Vorspulen-Intervall vor. Tut nichts, wenn keine Episode geladen ist. Gleicher Pfad wie Sperrbildschirm- und Now-Playing-Fernbedienung. Ein Sprung, der eine bekannte Dauer erreicht, beendet die Wiedergabe wie bis zum Ende abspielen."
+          }
+        }
+      }
+    },
+    "On keeps natural pitch on stock AVPlayer when speed is not 1×. Off lets pitch follow speed (faster sounds higher). At 1× the pitch stays the same either way. If an item is already loaded, the change applies to that item; otherwise it is saved for the next one. Default on. The switch does not start playback, skip silence, seek, or download. Not Android ExoPlayer or Sonic.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On keeps natural pitch on stock AVPlayer when speed is not 1×. Off lets pitch follow speed (faster sounds higher). At 1× the pitch stays the same either way. If an item is already loaded, the change applies to that item; otherwise it is saved for the next one. Default on. The switch does not start playback, skip silence, seek, or download. Not Android ExoPlayer or Sonic."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An behält auf dem Standard-AVPlayer eine natürliche Tonhöhe, wenn das Wiedergabetempo nicht 1× ist. Aus lässt die Tonhöhe dem Tempo folgen (schneller klingt höher). Bei 1× bleibt die Tonhöhe in beiden Fällen gleich. Ist bereits etwas geladen, gilt die Änderung für dieses Element, sonst wird sie für das nächste gespeichert. Standard an. Der Schalter startet keine Wiedergabe, überspringt keine Stille, sucht nicht und lädt nichts herunter. Kein Android-ExoPlayer und kein Sonic."
           }
         }
       }

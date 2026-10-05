@@ -1491,7 +1491,7 @@ struct SettingsView: View {
     }
 
     private var preservePitchAccessibilityHint: String {
-        String(localized: "On keeps natural pitch when speed is not 1×. Off lets pitch follow speed. The switch does not start playback, skip silence, or download anything. Default on.")
+        String(localized: "On keeps natural pitch on stock AVPlayer when speed is not 1×. Off lets pitch follow speed (faster sounds higher). At 1× the pitch stays the same either way. If an item is already loaded, the change applies to that item; otherwise it is saved for the next one. Default on. The switch does not start playback, skip silence, seek, or download. Not Android ExoPlayer or Sonic.")
     }
 
     /// VoiceOver for Settings → Continuous playback. Each value names the saved mode
