@@ -1000,7 +1000,12 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         } else {
             switch local.lowercased() {
             case "title":
-                title = text
+                // Only the channel's own title. RSS <image><title> comes later and is often a
+                // slogan or an old name, and an empty itunes:title would blank the show name.
+                let parent = elementStack.count >= 2 ? elementStack[elementStack.count - 2].lowercased() : ""
+                if (parent == "channel" || parent == "feed"), !text.isEmpty {
+                    title = text
+                }
             case "link":
                 if link == nil, !text.isEmpty {
                     link = text
