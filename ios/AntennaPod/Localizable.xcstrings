@@ -47815,6 +47815,91 @@
           }
         }
       }
+    },
+    "Extend +%lld min": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Extend +%lld min"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um %lld Min. verlängern"
+          }
+        }
+      }
+    },
+    "Switch to %lld min clock": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch to %lld min clock"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf %lld-Min.-Uhr umschalten"
+          }
+        }
+      }
+    },
+    "Adds %lld minutes to the remaining clock sleep timer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds %lld minutes to the remaining clock sleep timer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlängert den verbleibenden Uhr-Schlaf-Timer um %lld Minuten."
+          }
+        }
+      }
+    },
+    "Replaces End of episode, End of chapter, or End of queue with a %lld-minute clock sleep timer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replaces End of episode, End of chapter, or End of queue with a %lld-minute clock sleep timer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ersetzt Ende der Episode, Ende des Kapitels oder Ende der Warteschlange durch einen %lld-Minuten-Uhr-Schlaf-Timer."
+          }
+        }
+      }
+    },
+    "Sets a %lld-minute clock sleep timer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets a %lld-minute clock sleep timer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stellt einen %lld-Minuten-Uhr-Schlaf-Timer."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

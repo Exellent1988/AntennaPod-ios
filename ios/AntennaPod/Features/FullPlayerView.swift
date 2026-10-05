@@ -1439,12 +1439,16 @@ struct FullPlayerView: View {
                 if let label = playback.sleepTimerStatusLabel {
                     Text(String(format: String(localized: "Active · %@"), label))
                 }
-                Button("Extend +5 min") {
+                Button(extendSleepTimerButtonTitle(minutes: 5)) {
                     playback.extendSleepTimer(byMinutes: 5)
                 }
-                Button("Extend +10 min") {
+                .accessibilityLabel(extendSleepTimerButtonTitle(minutes: 5))
+                .accessibilityHint(extendSleepTimerAccessibilityHint(minutes: 5))
+                Button(extendSleepTimerButtonTitle(minutes: 10)) {
                     playback.extendSleepTimer(byMinutes: 10)
                 }
+                .accessibilityLabel(extendSleepTimerButtonTitle(minutes: 10))
+                .accessibilityHint(extendSleepTimerAccessibilityHint(minutes: 10))
                 Button("Turn off", role: .destructive) {
                     playback.disableSleepTimer()
                 }
@@ -1493,6 +1497,30 @@ struct FullPlayerView: View {
         }
         .accessibilityLabel(playback.sleepTimerAccessibilityLabel)
         .accessibilityHint(String(localized: "Sets or turns off the sleep timer"))
+    }
+
+    /// Extend only lengthens an active **clock** timer. On End of episode / chapter / queue it
+    /// replaces that mode with a new clock countdown (`PlaybackService.extendSleepTimer`).
+    private func extendSleepTimerButtonTitle(minutes: Int) -> String {
+        switch playback.sleepTimerMode {
+        case .clock:
+            return String(localized: "Extend +\(minutes) min")
+        case .endOfEpisode, .endOfChapter, .endOfQueue:
+            return String(localized: "Switch to \(minutes) min clock")
+        case nil:
+            return String(localized: "Extend +\(minutes) min")
+        }
+    }
+
+    private func extendSleepTimerAccessibilityHint(minutes: Int) -> String {
+        switch playback.sleepTimerMode {
+        case .clock:
+            return String(localized: "Adds \(minutes) minutes to the remaining clock sleep timer.")
+        case .endOfEpisode, .endOfChapter, .endOfQueue:
+            return String(localized: "Replaces End of episode, End of chapter, or End of queue with a \(minutes)-minute clock sleep timer.")
+        case nil:
+            return String(localized: "Sets a \(minutes)-minute clock sleep timer.")
+        }
     }
 
     /// Prefer Full Player merged chapters (feed / remote / media) so the item enables after lazy load.
