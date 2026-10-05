@@ -401,7 +401,7 @@ struct FeedPreviewView: View {
     private var artwork: some View {
         let size: CGFloat = 88
         if let url = displayArtworkURL {
-            AsyncImage(url: url) { phase in
+            AppAsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):
                     image

@@ -60,7 +60,7 @@ struct DiscoveryResultRow: View {
 
         let size: CGFloat = 56
         if let url = artworkURL {
-            AsyncImage(url: url) { phase in
+            AppAsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):
                     image

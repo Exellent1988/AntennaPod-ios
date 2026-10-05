@@ -4,7 +4,7 @@ import SwiftUI
 ///
 /// - Shows only when an http(s) URL is provided (PSC / Podcast Index).
 /// - On load failure or missing URL: **empty** — never episode / feed artwork placeholder.
-/// - Lazy per visible cell via `AsyncImage` — does **not** download all chapter images eagerly.
+/// - Lazy per visible cell via `AppAsyncImage` (AppURLSession; respects HTTP proxy) — does **not** download all chapter images eagerly.
 /// - VoiceOver: decorative here; parent row appends “Chapter image” only after a successful load.
 struct ChapterImageThumbnail: View {
     let url: URL?
@@ -13,7 +13,7 @@ struct ChapterImageThumbnail: View {
 
     var body: some View {
         if let url {
-            AsyncImage(url: url) { phase in
+            AppAsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):
                     image

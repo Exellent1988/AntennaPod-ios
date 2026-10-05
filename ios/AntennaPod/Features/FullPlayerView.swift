@@ -1012,7 +1012,7 @@ struct FullPlayerView: View {
     private func artwork(side: CGFloat) -> some View {
         Group {
             if let chapterURL = currentChapterDisplayImageURL {
-                AsyncImage(url: chapterURL) { phase in
+                AppAsyncImage(url: chapterURL) { phase in
                     switch phase {
                     case .success(let image):
                         image
@@ -1044,7 +1044,7 @@ struct FullPlayerView: View {
     @ViewBuilder
     private var episodeArtworkContent: some View {
         if let urlString = preferredArtworkURLString, let url = EpisodeMediaURL.url(from: urlString) {
-            AsyncImage(url: url) { phase in
+            AppAsyncImage(url: url) { phase in
                 switch phase {
                 case .success(let image):
                     image
