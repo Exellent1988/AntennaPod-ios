@@ -1741,11 +1741,11 @@ struct FeedDetailView: View {
         } message: {
             if unsubscribeFeedDownloadsCount > 0 {
                 Text(
-                    "Unsubscribe from \"\(feedDisplayTitle)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. This feed has \(unsubscribeFeedDownloadsCount) offline download(s) (\(unsubscribeFeedDownloadsSizeLabel)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Delete all downloads."
+                    "Unsubscribe from \"\(feedDisplayTitle)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. This feed has \(unsubscribeFeedDownloadsCount) offline download(s) (\(unsubscribeFeedDownloadsSizeLabel)). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Delete all downloads."
                 )
             } else {
                 Text(
-                    "Unsubscribe from \"\(feedDisplayTitle)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, and playback history for its episodes. Downloaded files are kept."
+                    "Unsubscribe from \"\(feedDisplayTitle)\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. Downloaded files are kept."
                 )
             }
         }

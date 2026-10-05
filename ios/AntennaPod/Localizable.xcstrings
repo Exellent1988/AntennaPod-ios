@@ -10326,6 +10326,23 @@
         }
       }
     },
+    "Unsubscribe from \"%@\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. Downloaded files are kept.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsubscribe from \"%@\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. Downloaded files are kept."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abo von „%@“ beenden? Entfernt diesen Podcast aus Abonnements, seine Feed-Einstellungen und Tags, Warteschlangen-Einträge dieses Feeds sowie Favoriten, Archiv, Wiedergabeverlauf, Lesezeichen und private Notizen seiner Episoden. Heruntergeladene Dateien bleiben erhalten."
+          }
+        }
+      }
+    },
     "Refresh all": {
       "extractionState": "manual",
       "localizations": {
@@ -16408,6 +16425,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abo von „%@“ beenden? Entfernt diesen Podcast aus Abonnements, seine Feed-Einstellungen und Tags, Warteschlangen-Einträge dieses Feeds sowie Favoriten, Archiv und Wiedergabeverlauf seiner Episoden. Dieser Feed hat %lld Offline-Download(s) (%@). „Abo beenden“ behält diese Dateien; „Abo beenden und Downloads löschen“ entfernt nur die Offline-Dateien dieses Feeds (inkl. favorisierter). Löscht nicht Downloads anderer Podcasts und ist nicht „Alle Downloads löschen“."
+          }
+        }
+      }
+    },
+    "Unsubscribe from \"%@\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. This feed has %lld offline download(s) (%@). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Delete all downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsubscribe from \"%@\"? Removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. This feed has %lld offline download(s) (%@). Unsubscribe keeps those files; Unsubscribe and delete downloads removes only this feed’s offline files (incl. favorited). Does not clear other podcasts’ downloads or Delete all downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abo von „%@“ beenden? Entfernt diesen Podcast aus Abonnements, seine Feed-Einstellungen und Tags, Warteschlangen-Einträge dieses Feeds sowie Favoriten, Archiv, Wiedergabeverlauf, Lesezeichen und private Notizen seiner Episoden. Dieser Feed hat %lld Offline-Download(s) (%@). „Abo beenden“ behält diese Dateien; „Abo beenden und Downloads löschen“ entfernt nur die Offline-Dateien dieses Feeds (inkl. favorisierter). Löscht nicht Downloads anderer Podcasts und ist nicht „Alle Downloads löschen“."
           }
         }
       }
