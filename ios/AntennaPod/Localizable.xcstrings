@@ -31234,24 +31234,6 @@
       },
       "comment": "Honesty footnote under Serial itunes:type capsule (Feed detail) and Per-feed Episode sort. Capsule display-only; nil-only Oldest first heuristic."
     },
-    "Orders this podcast’s episode list. Saved per podcast. Serial may auto-set Oldest first once when unset; capsule stays display-only.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Orders this podcast’s episode list. Saved per podcast. Serial may auto-set Oldest first once when unset; capsule stays display-only."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ordnet die Episodenliste dieses Podcasts. Pro Podcast gespeichert. Bei Seriell kann einmal „Älteste zuerst“ gesetzt werden, wenn noch ungesetzt; Kapsel bleibt nur Anzeige."
-          }
-        }
-      },
-      "comment": "Feed detail Sort menu accessibilityHint — Serial nil-only heuristic honesty."
-    },
     "This podcast: %@. Feed detail Sort menu saves per podcast. Serial may auto-set Oldest first once when unset; capsule stays display-only.": {
       "extractionState": "manual",
       "localizations": {
@@ -49233,6 +49215,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Global, An oder Aus. Global Einstellungen → Bei neuen Episoden benachrichtigen ist der Master-Schalter. Pro-Podcast Aus verstummt diesen Podcast, wenn global an ist; pro-Podcast An wird ignoriert, solange global aus ist. Systemberechtigung weiterhin nötig. Nur lokale UserNotifications — kein Push / APNs. Ändern sendet jetzt keine Benachrichtigung."
+          }
+        }
+      }
+    },
+    "Orders this podcast’s episode list only: Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A. Saved per podcast — same override as Podcast settings → Episode sort. Serial may auto-set Oldest first once when unset; itunes:type capsule stays display-only. Does not rewrite the global Feed episode sort alone. Changing this does not reorder other podcasts or start a refresh.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orders this podcast’s episode list only: Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A. Saved per podcast — same override as Podcast settings → Episode sort. Serial may auto-set Oldest first once when unset; itunes:type capsule stays display-only. Does not rewrite the global Feed episode sort alone. Changing this does not reorder other podcasts or start a refresh."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordnet nur die Episodenliste dieses Podcasts: Neueste zuerst, Älteste zuerst, Kürzeste zuerst, Längste zuerst, Titel A–Z oder Titel Z–A. Pro Podcast gespeichert — dieselbe Ausnahme wie Podcast-Einstellungen → Episoden-Sortierung. Bei Seriell kann einmal „Älteste zuerst“ gesetzt werden, wenn noch ungesetzt; die itunes:type-Kapsel bleibt nur Anzeige. Schreibt die globale Feed-Episoden-Sortierung nicht allein um. Ändern ordnet andere Podcasts nicht neu und startet keine Aktualisierung."
           }
         }
       }

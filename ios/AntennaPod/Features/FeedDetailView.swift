@@ -1319,7 +1319,7 @@ struct FeedDetailView: View {
                 }
                 .accessibilityLabel(String(localized: "Sort episodes"))
                 .accessibilityValue(resolvedEpisodeSort.label)
-                .accessibilityHint(String(localized: "Orders this podcast’s episode list. Saved per podcast. Serial may auto-set Oldest first once when unset; capsule stays display-only."))
+                .accessibilityHint(String(localized: "Orders this podcast’s episode list only: Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A. Saved per podcast — same override as Podcast settings → Episode sort. Serial may auto-set Oldest first once when unset; itunes:type capsule stays display-only. Does not rewrite the global Feed episode sort alone. Changing this does not reorder other podcasts or start a refresh."))
             }
             ToolbarItem(placement: .primaryAction) {
                 HStack(spacing: 12) {
