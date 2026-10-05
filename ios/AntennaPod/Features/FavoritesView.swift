@@ -409,6 +409,9 @@ struct FavoritesView: View {
                         } label: {
                             Label("Unfavorite", systemImage: "star.slash")
                         }
+                        .accessibilityHint(
+                            String(localized: "Removes this episode from Favorites. No confirmation. Does not delete downloads, archive, mark played, or clear the queue.")
+                        )
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         Button {

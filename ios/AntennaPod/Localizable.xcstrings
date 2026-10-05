@@ -49015,6 +49015,23 @@
           }
         }
       }
+    },
+    "Removes this episode from Favorites. No confirmation. Does not delete downloads, archive, mark played, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes this episode from Favorites. No confirmation. Does not delete downloads, archive, mark played, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt diese Episode aus den Favoriten. Keine Bestätigung. Löscht keine Downloads, archiviert nicht, markiert nicht als gehört und leert nicht die Warteschlange."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
