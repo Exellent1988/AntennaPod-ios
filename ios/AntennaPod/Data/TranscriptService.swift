@@ -400,10 +400,13 @@ enum TranscriptParser {
             var speaker: String?
             if let idx = payload.firstIndex(of: ":"),
                idx > payload.startIndex,
-               idx < payload.index(payload.endIndex, offsetBy: -1) {
+               idx < payload.index(payload.endIndex, offsetBy: -1),
+               payload[payload.index(after: idx)].isWhitespace {
                 let maybe = String(payload[..<idx]).trimmingCharacters(in: .whitespacesAndNewlines)
-                // Heuristic: short speaker label without digits-only
-                if maybe.count <= 40, maybe.rangeOfCharacter(from: .letters) != nil {
+                // Heuristic: a short label like "Alice", "Dr. Smith", or "SPEAKER 1". Plain
+                // cue text with a colon ("Here's the thing: …", "at 10:30") is not a speaker.
+                if maybe.count <= 40, maybe.rangeOfCharacter(from: .letters) != nil,
+                   Self.looksLikeSpeakerLabel(maybe) {
                     speaker = maybe
                     payload = String(payload[payload.index(after: idx)...])
                         .trimmingCharacters(in: .whitespacesAndNewlines)
@@ -421,6 +424,16 @@ enum TranscriptParser {
             )
         }
         return cues
+    }
+
+    /// At most three words, each starting with an uppercase letter or a digit.
+    private static func looksLikeSpeakerLabel(_ label: String) -> Bool {
+        let words = label.split(whereSeparator: { $0 == " " || $0 == "\t" })
+        guard !words.isEmpty, words.count <= 3 else { return false }
+        return words.allSatisfy { word in
+            guard let first = word.first else { return false }
+            return first.isUppercase || first.isNumber
+        }
     }
 
     /// `HH:MM:SS,mmm`
