@@ -19,8 +19,11 @@ struct StatisticsView: View {
         store.listeningStatistics(in: .allTime)
     }
 
+    /// Same rows Statistics can count (History catalog). A playback.json row whose
+    /// episode is gone (local file removed on rescan, left after Clear history) is
+    /// never counted, so it must not turn "No statistics yet" into "in this range".
     private var hasAnyPlaybackHistory: Bool {
-        store.playbackStates.values.contains { ListeningTimeEstimate.hasMeaningfulData($0) }
+        !store.historyEpisodes.isEmpty
     }
 
     private var hasActiveReset: Bool {
