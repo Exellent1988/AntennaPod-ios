@@ -49,6 +49,9 @@ struct FeedDetailView: View {
     @State private var showLastRefreshedCopied = false
     @State private var showFeedDescription = false
     @State private var isRescanningLocalFolder = false
+    /// Error from this page's own Rescan folder. `store.lastError` also carries other feeds'
+    /// Refresh all failures, which must not appear under this folder.
+    @State private var localFolderRescanError: String?
     @Environment(\.dismiss) private var dismiss
     @State private var copyFeedURLFeedbackTick = 0
     @State private var copyFundingURLFeedbackTick = 0
@@ -583,7 +586,7 @@ struct FeedDetailView: View {
                     .accessibilityLabel(String(localized: "Rescan folder"))
                     .accessibilityHint(String(localized: "Re-reads audio files in the folder via the saved bookmark. Does not fetch an RSS feed."))
 
-                    if let err = store.lastError, LocalFolderFeed.isLocalFolderFeed(liveFeed) {
+                    if let err = localFolderRescanError, LocalFolderFeed.isLocalFolderFeed(liveFeed) {
                         Text(err)
                             .font(.caption)
                             .foregroundStyle(.red)
@@ -2071,7 +2074,10 @@ struct FeedDetailView: View {
         guard LocalFolderFeed.isLocalFolderFeed(liveFeed) else { return }
         isRescanningLocalFolder = true
         defer { isRescanningLocalFolder = false }
+        localFolderRescanError = nil
         await store.refresh(liveFeed)
+        // refreshLocalFolderFeed clears lastError first, then sets it only on a rescan failure.
+        localFolderRescanError = store.lastError
     }
 
     /// Network RSS/Atom feeds only — local-folder feeds use a synthetic `local-folder://` id, not a pasteable feed URL.
