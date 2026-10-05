@@ -222,6 +222,8 @@ struct PerFeedSettingsView: View {
                         Text(AppSettings.skipIntroOutroLabel(secs)).tag(Optional(secs))
                     }
                 }
+                .accessibilityLabel(String(localized: "Skip intro"))
+                .accessibilityHint(String(localized: "Use global or a per-podcast override. Applied on a fresh start (position near 0). Changing this does not seek now, start playback, or download. Distinct from Skip outro, Rewind, and Fast-forward."))
                 Text(skipIntroHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -232,6 +234,8 @@ struct PerFeedSettingsView: View {
                         Text(AppSettings.skipIntroOutroLabel(secs)).tag(Optional(secs))
                     }
                 }
+                .accessibilityLabel(String(localized: "Skip outro"))
+                .accessibilityHint(String(localized: "Use global or a per-podcast override. Near end, remaining within the value finishes the episode like a natural end when duration is known. Changing this does not mark played now, seek, or download. Distinct from Skip intro and Smart mark as played."))
                 Text(skipOutroHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)
