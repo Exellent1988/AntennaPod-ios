@@ -45265,22 +45265,6 @@
       },
       "extractionState": "manual"
     },
-    "Marks Inbox episodes as played using the full Inbox catalog; ignores podcast, episode type, search, and sort filters": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks Inbox episodes as played using the full Inbox catalog; ignores podcast, episode type, search, and sort filters"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert Posteingangs-Episoden als gehört anhand des vollständigen Posteingangs-Katalogs; ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter"
-          }
-        }
-      }
-    },
     "Always delete this podcast’s offline file when an episode is marked played, even when the global toggle is off. Favorites still keep their offline files. Defers while that local file is the active player item.": {
       "localizations": {
         "en": {
@@ -48968,6 +48952,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Alle derzeit markierten Favoriten-Episoden in jedem Jahr. Nicht auf diesen Zeitraum begrenzt. Gleiche Favoritenliste wie der Favoriten-Bildschirm — verwaiste Einträge in favorites.json zählen nicht."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then marks Inbox episodes as played using the full Inbox catalog. Episodes leave the Inbox. Ignores podcast, episode type, search, and sort filters. Auto-delete after playing still applies when enabled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then marks Inbox episodes as played using the full Inbox catalog. Episodes leave the Inbox. Ignores podcast, episode type, search, and sort filters. Auto-delete after playing still applies when enabled."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und markiert dann Posteingangs-Episoden als gehört anhand des vollständigen Posteingangs-Katalogs. Episoden verlassen den Posteingang. Ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
           }
         }
       }

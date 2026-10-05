@@ -606,7 +606,7 @@ struct InboxView: View {
                         // Full Inbox catalog — not the podcast/type/search/sort filtered subset.
                         .disabled(store.inboxEpisodes.isEmpty)
                         .accessibilityHint(
-                            String(localized: "Marks Inbox episodes as played using the full Inbox catalog; ignores podcast, episode type, search, and sort filters")
+                            String(localized: "Asks for confirmation, then marks Inbox episodes as played using the full Inbox catalog. Episodes leave the Inbox. Ignores podcast, episode type, search, and sort filters. Auto-delete after playing still applies when enabled.")
                         )
 
                         Button {
