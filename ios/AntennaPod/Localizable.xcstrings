@@ -24524,40 +24524,6 @@
         }
       }
     },
-    "The selected podcast has no favorited episodes. Choose All or another podcast filter.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The selected podcast has no favorited episodes. Choose All or another podcast filter."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Der gewählte Podcast hat keine Favoriten-Episoden. Wähle Alle oder einen anderen Podcast-Filter."
-          }
-        }
-      }
-    },
-    "No favorited episodes match your search. Clear or change the search to see Favorites.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No favorited episodes match your search. Clear or change the search to see Favorites."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Favoriten-Episoden passen zu deiner Suche. Lösche oder ändere die Suche, um die Favoriten zu sehen."
-          }
-        }
-      }
-    },
     "There are no history episodes. Episodes you play or mark as played appear here, ordered by last played.": {
       "extractionState": "manual",
       "localizations": {
@@ -48696,6 +48662,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ändere oder lösche die Suche, um andere Verlaufs-Episoden zu sehen. Das löscht den Verlauf nicht und markiert keine Episoden als gehört."
+          }
+        }
+      }
+    },
+    "The selected podcast has no favorited episodes. Episodes remain in the full Favorites catalog. Clear favorites, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full Favorites, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected podcast has no favorited episodes. Episodes remain in the full Favorites catalog. Clear favorites, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full Favorites, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der gewählte Podcast hat keine Favoriten-Episoden. Episoden bleiben im vollständigen Favoriten-Katalog. Favoriten löschen, Alle zur Warteschlange, Alle markieren, Alle archivieren, Zufällig abspielen, Kopieren und Teilen nutzen weiter die ganzen Favoriten, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No favorited episodes match your search. Episodes remain in the full Favorites catalog. Clear favorites, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full Favorites, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No favorited episodes match your search. Episodes remain in the full Favorites catalog. Clear favorites, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full Favorites, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Favoriten-Episoden passen zu deiner Suche. Episoden bleiben im vollständigen Favoriten-Katalog. Favoriten löschen, Alle zur Warteschlange, Alle markieren, Alle archivieren, Zufällig abspielen, Kopieren und Teilen nutzen weiter die ganzen Favoriten, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "Choose All or another podcast filter to see other Favorites. This does not unstar episodes or clear Favorites.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose All or another podcast filter to see other Favorites. This does not unstar episodes or clear Favorites."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle Alle oder einen anderen Podcast-Filter, um andere Favoriten zu sehen. Das entfernt keine Sterne und löscht die Favoriten nicht."
+          }
+        }
+      }
+    },
+    "Change or clear search to see other Favorites. This does not unstar episodes or clear Favorites.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear search to see other Favorites. This does not unstar episodes or clear Favorites."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Suche, um andere Favoriten zu sehen. Das entfernt keine Sterne und löscht die Favoriten nicht."
           }
         }
       }

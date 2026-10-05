@@ -280,9 +280,17 @@ struct FavoritesView: View {
             return String(localized: "There are no favorited episodes. Star an episode from a feed or the full player to add it to Favorites.")
         }
         if isPodcastFiltering && !isSearching {
-            return String(localized: "The selected podcast has no favorited episodes. Choose All or another podcast filter.")
+            return String(localized: "The selected podcast has no favorited episodes. Episodes remain in the full Favorites catalog. Clear favorites, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full Favorites, not this empty view.")
         }
-        return String(localized: "No favorited episodes match your search. Clear or change the search to see Favorites.")
+        return String(localized: "No favorited episodes match your search. Episodes remain in the full Favorites catalog. Clear favorites, Add all to queue, Mark all, Archive all, Play random, Copy, and Share still use the full Favorites, not this empty view.")
+    }
+
+    /// VoiceOver recovery hint for the podcast/search mismatch empty state only.
+    private var favoritesNoMatchAccessibilityHint: String {
+        if isPodcastFiltering && !isSearching {
+            return String(localized: "Choose All or another podcast filter to see other Favorites. This does not unstar episodes or clear Favorites.")
+        }
+        return String(localized: "Change or clear search to see other Favorites. This does not unstar episodes or clear Favorites.")
     }
 
     private var favoritesRemainingSummary: EpisodeRemainingTime.Summary {
@@ -386,6 +394,7 @@ struct FavoritesView: View {
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(String(localized: "No matching favorites"))
                 .accessibilityValue(favoritesEmptyStateAccessibilityValue)
+                .accessibilityHint(favoritesNoMatchAccessibilityHint)
             } else {
                 ForEach(filteredItems) { item in
                     EpisodeRow(
