@@ -53,14 +53,14 @@ struct PodcastSoundbitesListView: View {
 
                 Text(
                     String(
-                        localized: "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player."
+                        localized: "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player. That pause does not mark the episode played or advance Continuous or the queue."
                     )
                 )
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .accessibilityLabel(
                     String(
-                        localized: "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player."
+                        localized: "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player. That pause does not mark the episode played or advance Continuous or the queue."
                     )
                 )
 
@@ -195,7 +195,7 @@ struct PodcastSoundbitesListView: View {
                     .accessibilityLabel(String(localized: "Play soundbite"))
                     .accessibilityHint(
                         String(
-                            localized: "Plays this soundbite in the episode player from the start time and pauses at the end"
+                            localized: "Plays this soundbite in the episode player from the start time and pauses at the end. Not a separate clip player. That pause does not mark the episode played or advance Continuous or the queue."
                         )
                     )
                 }

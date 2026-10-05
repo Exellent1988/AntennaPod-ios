@@ -32424,22 +32424,6 @@
         }
       }
     },
-    "Plays this soundbite in the episode player from the start time and pauses at the end": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plays this soundbite in the episode player from the start time and pauses at the end"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spielt dieses Soundbite im Episoden-Player ab der Startzeit und pausiert am Ende"
-          }
-        }
-      }
-    },
     "Copies the soundbite title and times to the pasteboard": {
       "localizations": {
         "en": {
@@ -32452,22 +32436,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert Titel und Zeiten des Soundbites in die Zwischenablage"
-          }
-        }
-      }
-    },
-    "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Soundbites stammen aus dem Feed. Abspielen springt zum Start und pausiert am Ende des Clips im Episoden-Player; es gibt keinen eigenen Clip-Player."
           }
         }
       }
@@ -47810,6 +47778,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ändere oder lösche die Transkriptsuche, um andere Textstellen zu sehen."
+          }
+        }
+      }
+    },
+    "Plays this soundbite in the episode player from the start time and pauses at the end. Not a separate clip player. That pause does not mark the episode played or advance Continuous or the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays this soundbite in the episode player from the start time and pauses at the end. Not a separate clip player. That pause does not mark the episode played or advance Continuous or the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt dieses Soundbite im Episoden-Player ab der Startzeit und pausiert am Ende. Kein separater Clip-Player. Diese Pause markiert die Episode nicht als gehört und setzt Continuous oder die Warteschlange nicht fort."
+          }
+        }
+      }
+    },
+    "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player. That pause does not mark the episode played or advance Continuous or the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbites come from the feed. Play seeks to the start and pauses at the end of the clip in the episode player; there is no separate clip player. That pause does not mark the episode played or advance Continuous or the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soundbites stammen aus dem Feed. Abspielen springt zum Start und pausiert am Ende des Clips im Episoden-Player; es gibt keinen separaten Clip-Player. Diese Pause markiert die Episode nicht als gehört und setzt Continuous oder die Warteschlange nicht fort."
           }
         }
       }
