@@ -20475,23 +20475,6 @@
         }
       }
     },
-    "This replaces subscriptions, queue, playback, favorites, archive, bookmarks, private episode notes, tags, feed settings, download catalog, and Settings prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This replaces subscriptions, queue, playback, favorites, archive, bookmarks, private episode notes, tags, feed settings, download catalog, and Settings prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ersetzt Abonnements, Warteschlange, Wiedergabe, Favoriten, Archiv, Lesezeichen, private Episoden-Notizen, Tags, Feed-Einstellungen, Download-Katalog und Einstellungen durch das Backup. Wenn die ZIP downloads/ enthält, werden diese Episodendateien nach Documents/downloads geschrieben (gleiche Namen überschrieben; andere lokale Dateien bleiben). Katalog-only-Backups brauchen fehlende Medien erneut. Keychain-Passwörter/Schlüssel werden nicht ersetzt. Nicht rückgängig außer durch ein anderes Backup."
-          }
-        }
-      }
-    },
     "Value / Support creators": {
       "extractionState": "manual",
       "localizations": {
@@ -47572,6 +47555,23 @@
           }
         }
       }
+    },
+    "This replaces subscriptions, queue, playback, favorites, archive, bookmarks, private episode notes, tags, feed settings, download catalog, download error log, local-folder bookmarks, Settings prefs, and gpodder sync prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. Local-folder bookmarks may need re-picking on another device. This cannot be undone except by importing another backup.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This replaces subscriptions, queue, playback, favorites, archive, bookmarks, private episode notes, tags, feed settings, download catalog, download error log, local-folder bookmarks, Settings prefs, and gpodder sync prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. Local-folder bookmarks may need re-picking on another device. This cannot be undone except by importing another backup."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ersetzt Abonnements, Warteschlange, Wiedergabe, Favoriten, Archiv, Lesezeichen, private Episoden-Notizen, Tags, Feed-Einstellungen, Download-Katalog, Download-Fehlerprotokoll, Lesezeichen für lokale Ordner, Einstellungen und gpodder-Sync-Einstellungen durch das Backup. Wenn die ZIP downloads/ enthält, werden diese Episodendateien nach Documents/downloads geschrieben (gleiche Namen überschrieben; andere lokale Dateien bleiben). Katalog-only-Backups brauchen fehlende Medien erneut. Keychain-Passwörter/Schlüssel werden nicht ersetzt. Lesezeichen für lokale Ordner müssen auf einem anderen Gerät ggf. neu gewählt werden. Nicht rückgängig außer durch ein anderes Backup."
+          }
+        }
+      },
+      "extractionState": "manual"
     }
   },
   "version": "1.0"
