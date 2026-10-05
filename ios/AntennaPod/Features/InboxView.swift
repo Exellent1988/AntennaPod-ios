@@ -585,7 +585,7 @@ struct InboxView: View {
                             Label("Add all to queue", systemImage: "text.append")
                         }
                         .disabled(enqueueAllInboxCandidatesCount == 0)
-                        .accessibilityHint(String(localized: "Appends Inbox episodes not already queued"))
+                        .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full Inbox catalog that are not already queued, newest first. Ignores podcast, episode type, search, and sort filters. Queue lock does not block enqueue."))
 
                         Button {
                             showEnqueueAllUnplayedConfirm = true

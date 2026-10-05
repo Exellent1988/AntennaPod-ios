@@ -13962,23 +13962,6 @@
         }
       }
     },
-    "Appends Inbox episodes not already queued": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends Inbox episodes not already queued"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht Posteingangs-Episoden ein, die noch nicht in der Warteschlange sind"
-          }
-        }
-      }
-    },
     "Appends %lld Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full Inbox catalog (same as Mark all / Archive all), not library search. Queue lock does not block enqueue.": {
       "extractionState": "manual",
       "localizations": {
@@ -48841,6 +48824,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Episoden oder Podcasts in den sichtbaren Home-Abschnittsvorschauen passen zu deiner Suche. Episoden und Podcasts bleiben in deinen Bibliotheks-Tabs. Entdecken ist während der Suche ausgeblendet. Home zeigt Soft-Cap-Abschnittsvorschauen — nicht die vollen Posteingangs-, Warteschlangen-, Downloads- oder Abonnement-Kataloge."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then appends episodes from the full Inbox catalog that are not already queued, newest first. Ignores podcast, episode type, search, and sort filters. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then appends episodes from the full Inbox catalog that are not already queued, newest first. Ignores podcast, episode type, search, and sort filters. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und reiht dann Episoden aus dem vollständigen Posteingangs-Katalog, die noch nicht in der Warteschlange sind, neueste zuerst ein. Ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht."
           }
         }
       }
