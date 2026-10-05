@@ -10543,23 +10543,6 @@
         }
       }
     },
-    "Downloads this episode for offline playback": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Downloads this episode for offline playback"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lädt diese Episode für die Offlinewiedergabe herunter"
-          }
-        }
-      }
-    },
     "Share with position": {
       "extractionState": "manual",
       "localizations": {
@@ -49029,6 +49012,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Markiert diese Episode als ungehört. Keine Bestätigung. Löscht keine Downloads, entfernt nichts aus der Warteschlange und stoppt keine Wiedergabe."
+          }
+        }
+      }
+    },
+    "Downloads this episode for offline playback. No confirmation. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply when enabled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads this episode for offline playback. No confirmation. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply when enabled."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt diese Episode für die Offline-Wiedergabe herunter. Keine Bestätigung. Manueller Download nur über WLAN; Parallel-Download-Obergrenze und Speicherlimit gelten weiterhin, wenn aktiviert."
           }
         }
       }

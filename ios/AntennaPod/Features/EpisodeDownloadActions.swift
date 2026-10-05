@@ -36,7 +36,7 @@ enum EpisodeDownloadActions {
         if downloads.isDownloaded(episode) {
             return String(localized: "Asks for confirmation, then deletes the local offline file for this episode; keeps played status, queue membership, favorites, and archive state")
         }
-        return String(localized: "Downloads this episode for offline playback")
+        return String(localized: "Downloads this episode for offline playback. No confirmation. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply when enabled.")
     }
 
     /// Single Button control. Use in Full secondary HStack or nest inside mini ⋯ `Menu`.
