@@ -1393,7 +1393,7 @@ struct FeedDetailView: View {
                             }
                             .accessibilityLabel(String(localized: "Copy funding URL"))
                             .accessibilityHint(
-                                String(localized: "Copies the feed-provided funding/support page URL to the pasteboard; does not process payments")
+                                String(localized: "Copies the feed-provided funding or support page URL to the pasteboard. No confirmation. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from opening the funding page, Share funding URL, and Copy feed URL. Does not open a browser, subscribe, or download.")
                             )
 
                             ShareLink(

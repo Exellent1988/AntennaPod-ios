@@ -16764,24 +16764,6 @@
       },
       "comment": "Feed detail ⋯: share the feed-provided funding/support page URL. Hidden when fundingURL is missing."
     },
-    "Copies the feed-provided funding/support page URL to the pasteboard; does not process payments": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the feed-provided funding/support page URL to the pasteboard; does not process payments"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert die vom Feed bereitgestellte URL der Finanzierungs-/Supportseite in die Zwischenablage; verarbeitet keine Zahlungen"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Copy funding URL. Display/copy only; no payment processing."
-    },
     "Shares the feed-provided funding/support page URL; does not process payments": {
       "extractionState": "manual",
       "localizations": {
@@ -49325,6 +49307,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet die vom Feed gelieferte Funding- oder Support-http(s)-Seite im Systembrowser — kein In-App-WebView. Keine Bestätigung. Verarbeitet keine Zahlungen. Nutzt nie die Feed-RSS-URL, die Podcast-Website oder den Diskussionslink. Unterschiedlich von Funding-URL kopieren, Funding-URL teilen und Podcast-Website öffnen. Abonniert nicht, lädt nicht herunter und ändert die Wiedergabe nicht."
+          }
+        }
+      }
+    },
+    "Copies the feed-provided funding or support page URL to the pasteboard. No confirmation. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from opening the funding page, Share funding URL, and Copy feed URL. Does not open a browser, subscribe, or download.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the feed-provided funding or support page URL to the pasteboard. No confirmation. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from opening the funding page, Share funding URL, and Copy feed URL. Does not open a browser, subscribe, or download."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vom Feed gelieferte Funding- oder Support-Seiten-URL in die Zwischenablage. Keine Bestätigung. Verarbeitet keine Zahlungen. Nutzt nie die Feed-RSS-URL, die Podcast-Website oder den Diskussionslink. Unterschiedlich vom Öffnen der Funding-Seite, Funding-URL teilen und Feed-URL kopieren. Öffnet keinen Browser, abonniert nicht und lädt nicht herunter."
           }
         }
       }
