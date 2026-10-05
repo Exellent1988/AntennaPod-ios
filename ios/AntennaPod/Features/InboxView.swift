@@ -629,7 +629,7 @@ struct InboxView: View {
                         .disabled(archiveAllInboxCandidatesCount == 0)
                         .accessibilityLabel(String(localized: "Archive all"))
                         .accessibilityHint(
-                            String(localized: "Archives non-archived episodes in the full Inbox catalog; ignores podcast, episode type, search, and sort filters")
+                            String(localized: "Asks for confirmation, then archives non-archived episodes in the full Inbox catalog, newest first. Ignores podcast, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
                         )
                     } label: {
                         Label("Inbox actions", systemImage: "ellipsis.circle")

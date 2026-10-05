@@ -24184,24 +24184,6 @@
         }
       }
     },
-    "Archives non-archived episodes in the full Inbox catalog; ignores podcast, episode type, search, and sort filters": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archives non-archived episodes in the full Inbox catalog; ignores podcast, episode type, search, and sort filters"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archiviert nicht archivierte Episoden im vollständigen Posteingangs-Katalog; ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter"
-          }
-        }
-      },
-      "comment": "VoiceOver hint for Inbox Archive all."
-    },
     "Archives %lld non-archived Inbox episode(s) in the full Inbox catalog (newest first), not the podcast, episode type, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.": {
       "extractionState": "manual",
       "localizations": {
@@ -48887,6 +48869,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und markiert dann gehörte Episoden aus dem vollständigen gespeicherten Feed-Katalog hinter dem Posteingang als ungehört, einschließlich archivierter Episoden. Ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter. Löscht keine Downloads, leert nicht die Warteschlange, stoppt keine Wiedergabe und hebt die Archivierung nicht auf."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then archives non-archived episodes in the full Inbox catalog, newest first. Ignores podcast, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then archives non-archived episodes in the full Inbox catalog, newest first. Ignores podcast, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden im vollständigen Posteingangs-Katalog, neueste zuerst. Ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange."
           }
         }
       }
