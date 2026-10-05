@@ -26039,23 +26039,6 @@
         }
       }
     },
-    "Maximum number of completed offline downloads to keep. Unlimited by default. Favorites and queued episodes are never auto-deleted by this limit.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maximum number of completed offline downloads to keep. Unlimited by default. Favorites and queued episodes are never auto-deleted by this limit."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maximale Anzahl abgeschlossener Offline-Downloads, die behalten werden. Standard: Unbegrenzt. Favoriten und Episoden in der Warteschlange werden durch dieses Limit nie automatisch gelöscht."
-          }
-        }
-      }
-    },
     "When over the episode count, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU). Favorites and queued episodes are never auto-deleted by this cap. Runs after each successful download, when opening Settings, and on launch. Separate from the Max storage byte budget.": {
       "extractionState": "manual",
       "localizations": {
@@ -48255,6 +48238,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Voreinstellungen sind Unbegrenzt, 1 GB, 5 GB, 10 GB und Benutzerdefinierte Megabytes. Die Voreinstellung ist Unbegrenzt. Über-Limit-Bereinigung überspringt Favoriten, Episoden in der Warteschlange und den spielenden Download. Nicht Max. heruntergeladene Episoden oder Parallele Downloads. Der Picker kann ungeschützte Offline-Dateien löschen, die über dem neuen Budget liegen."
+          }
+        }
+      }
+    },
+    "Unlimited. This is the default. There is no episode-count cache, so count alone does not auto-delete offline files. Max storage can still evict by byte budget. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by either limit. Changing this does not delete files now, start a download, or change Parallel downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlimited. This is the default. There is no episode-count cache, so count alone does not auto-delete offline files. Max storage can still evict by byte budget. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by either limit. Changing this does not delete files now, start a download, or change Parallel downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbegrenzt. Das ist die Voreinstellung. Es gibt keinen Episodenanzahl-Cache, daher löscht die Anzahl allein keine Offline-Dateien. Max. Speicher kann weiterhin nach Byte-Budget entfernen. Favoriten, Episoden in der Warteschlange und die im Player geladene Datei werden von keinem der beiden Limits automatisch gelöscht. Umschalten löscht jetzt keine Dateien, startet keinen Download und ändert nicht Parallele Downloads."
+          }
+        }
+      }
+    },
+    "When the number of completed offline downloads is over this count, played downloads that are not favorited and not queued are deleted first, oldest file first, then unplayed non-favorite non-queued by least recently used. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by this cap. Maintenance runs after each successful download, when opening Settings, and on launch, and may run when you change this. Separate from the Max storage byte budget. Changing this does not invent downloads or change Parallel downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When the number of completed offline downloads is over this count, played downloads that are not favorited and not queued are deleted first, oldest file first, then unplayed non-favorite non-queued by least recently used. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by this cap. Maintenance runs after each successful download, when opening Settings, and on launch, and may run when you change this. Separate from the Max storage byte budget. Changing this does not invent downloads or change Parallel downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn die Anzahl abgeschlossener Offline-Downloads über diesem Wert liegt, werden zuerst gehörte Downloads gelöscht, die nicht favorisiert und nicht in der Warteschlange sind, älteste Datei zuerst, dann ungehörte nicht favorisierte nicht in der Warteschlange nach zuletzt genutzt. Favoriten, Episoden in der Warteschlange und die im Player geladene Datei werden von diesem Limit nie automatisch gelöscht. Wartung läuft nach jedem erfolgreichen Download, beim Öffnen der Einstellungen und beim Start, und kann beim Ändern laufen. Getrennt vom Byte-Budget Max. Speicher. Umschalten erfindet keine Downloads und ändert nicht Parallele Downloads."
+          }
+        }
+      }
+    },
+    "Choices are Unlimited, 25, 50, 100, 200, and 500 episodes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max storage or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new count.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choices are Unlimited, 25, 50, 100, 200, and 500 episodes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max storage or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new count."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswahl sind Unbegrenzt, 25, 50, 100, 200 und 500 Episoden. Die Voreinstellung ist Unbegrenzt. Über-Limit-Bereinigung überspringt Favoriten, Episoden in der Warteschlange und den spielenden Download. Nicht Max. Speicher oder Parallele Downloads. Der Picker kann ungeschützte Offline-Dateien löschen, die über der neuen Anzahl liegen."
           }
         }
       }

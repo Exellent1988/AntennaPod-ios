@@ -2376,7 +2376,8 @@ struct SettingsView: View {
                 }
             }
             .accessibilityLabel(String(localized: "Max downloaded episodes"))
-            .accessibilityHint(String(localized: "Maximum number of completed offline downloads to keep. Unlimited by default. Favorites and queued episodes are never auto-deleted by this limit."))
+            .accessibilityValue(maxDownloadedEpisodesAccessibilityValue)
+            .accessibilityHint(maxDownloadedEpisodesAccessibilityHint)
             .onChange(of: settings.downloadEpisodeCacheLimit) { _, _ in
                 downloads.runStorageMaintenance()
             }
@@ -2421,6 +2422,22 @@ struct SettingsView: View {
         } header: {
             Text("Downloads / Storage")
         }
+    }
+
+    /// VoiceOver for Settings → Max downloaded episodes. Count cache eviction;
+    /// not the Max storage byte budget. Favorites, queued, and loaded player file protected.
+    private var maxDownloadedEpisodesAccessibilityValue: String {
+        let cap = settings.downloadEpisodeCacheLimit
+        let label = cap.label
+        if cap == .unlimited {
+            return String(localized: "Unlimited. This is the default. There is no episode-count cache, so count alone does not auto-delete offline files. Max storage can still evict by byte budget. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by either limit. Changing this does not delete files now, start a download, or change Parallel downloads.")
+        }
+        let head = String(format: String(localized: "%@. This is not the default of Unlimited."), locale: .current, label)
+        return head + " " + String(localized: "When the number of completed offline downloads is over this count, played downloads that are not favorited and not queued are deleted first, oldest file first, then unplayed non-favorite non-queued by least recently used. Favorites, queued episodes, and the file loaded in the player are never auto-deleted by this cap. Maintenance runs after each successful download, when opening Settings, and on launch, and may run when you change this. Separate from the Max storage byte budget. Changing this does not invent downloads or change Parallel downloads.")
+    }
+
+    private var maxDownloadedEpisodesAccessibilityHint: String {
+        String(localized: "Choices are Unlimited, 25, 50, 100, 200, and 500 episodes. The default is Unlimited. Over-limit eviction skips favorites, queued episodes, and the playing download. Not Max storage or Parallel downloads. Changing the picker may delete unprotected offline files that are over the new count.")
     }
 
     private var episodeCacheHelpText: String {
