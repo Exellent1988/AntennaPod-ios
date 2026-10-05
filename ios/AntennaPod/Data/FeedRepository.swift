@@ -86,7 +86,9 @@ struct FeedRepository {
             throw FetchError.httpStatus(http.statusCode)
         }
 
-        guard let xml = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1),
+        // Latin-1 fallback is re-encoded as UTF-8 for XMLParser, so its declaration must say UTF-8.
+        guard let xml = String(data: data, encoding: .utf8)
+            ?? String(data: data, encoding: .isoLatin1).map(FeedParsing.declaringUTF8),
               !xml.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         else {
             throw FetchError.emptyResponse
