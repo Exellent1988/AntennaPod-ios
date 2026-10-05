@@ -1174,6 +1174,12 @@ final class PlaybackService: ObservableObject {
         activeSeekHold = nil
     }
 
+    /// Scene left the foreground. The periodic observer only writes every
+    /// `persistIntervalSeconds`, so a kill in that window would resume early.
+    func persistProgressBeforeBackground() {
+        persistProgress(force: true)
+    }
+
     private func persistProgress(force: Bool) {
         guard let episode = currentEpisode, let store else {
             return

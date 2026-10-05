@@ -67,6 +67,7 @@ struct RootTabView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase != .active {
                 // Relock parental controls when leaving foreground (inactive/background).
+                playback.persistProgressBeforeBackground()
                 parental.lockSession()
                 return
             }
