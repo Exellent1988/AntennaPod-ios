@@ -48410,6 +48410,74 @@
           }
         }
       }
+    },
+    "No queue episodes match your filter. Episodes remain in the full queue. Clear queue, Remove played, Shuffle, and other full-queue actions still use the entire queue, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No queue episodes match your filter. Episodes remain in the full queue. Clear queue, Remove played, Shuffle, and other full-queue actions still use the entire queue, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Warteschlangen-Episoden passen zu deinem Filter. Episoden bleiben in der gesamten Warteschlange. Warteschlange leeren, Gehörte entfernen, Mischen und andere Aktionen für die gesamte Warteschlange nutzen weiter die ganze Warteschlange, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No queue episodes match your search. Episodes remain in the full queue. Clear queue, Remove played, Shuffle, and other full-queue actions still use the entire queue, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No queue episodes match your search. Episodes remain in the full queue. Clear queue, Remove played, Shuffle, and other full-queue actions still use the entire queue, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Warteschlangen-Episoden passen zu deiner Suche. Episoden bleiben in der gesamten Warteschlange. Warteschlange leeren, Gehörte entfernen, Mischen und andere Aktionen für die gesamte Warteschlange nutzen weiter die ganze Warteschlange, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "Change or clear the played-status or podcast filter to see other queued episodes. This does not remove episodes from the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear the played-status or podcast filter to see other queued episodes. This does not remove episodes from the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche den Gehört-Status- oder Podcast-Filter, um andere Episoden in der Warteschlange zu sehen. Das entfernt keine Episoden aus der Warteschlange."
+          }
+        }
+      }
+    },
+    "Change or clear search to see other queued episodes. This does not remove episodes from the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear search to see other queued episodes. This does not remove episodes from the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Suche, um andere Episoden in der Warteschlange zu sehen. Das entfernt keine Episoden aus der Warteschlange."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

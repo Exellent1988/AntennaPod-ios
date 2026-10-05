@@ -337,7 +337,18 @@ struct QueueView: View {
                 ? String(localized: "Add episodes from a podcast feed. Queue is locked — unlock to drag reorder.")
                 : String(localized: "Add episodes from a podcast feed. Edit mode lets you drag to reorder.")
         }
-        return queueNoMatchMessage
+        if hasQueueChipOrPodcastFilter {
+            return String(localized: "No queue episodes match your filter. Episodes remain in the full queue. Clear queue, Remove played, Shuffle, and other full-queue actions still use the entire queue, not this empty view.")
+        }
+        return String(localized: "No queue episodes match your search. Episodes remain in the full queue. Clear queue, Remove played, Shuffle, and other full-queue actions still use the entire queue, not this empty view.")
+    }
+
+    /// VoiceOver recovery hint for the filter/search mismatch empty state only.
+    private var queueNoMatchAccessibilityHint: String {
+        if hasQueueChipOrPodcastFilter {
+            return String(localized: "Change or clear the played-status or podcast filter to see other queued episodes. This does not remove episodes from the queue.")
+        }
+        return String(localized: "Change or clear search to see other queued episodes. This does not remove episodes from the queue.")
     }
 
     private var queueRemainingSummary: EpisodeRemainingTime.Summary {
@@ -457,6 +468,7 @@ struct QueueView: View {
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel(String(localized: "No matching queue episodes"))
                     .accessibilityValue(queueEmptyStateAccessibilityValue)
+                    .accessibilityHint(queueNoMatchAccessibilityHint)
                 } else {
                     ForEach(filteredQueue) { episode in
                         EpisodeRow(
