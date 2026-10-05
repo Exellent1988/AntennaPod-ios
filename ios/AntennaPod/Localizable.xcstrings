@@ -29144,24 +29144,6 @@
       },
       "comment": "Sync now VoiceOver hint"
     },
-    "Removes the Keychain password and clears sync cursors. Host and username stay for re-login.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes the Keychain password and clears sync cursors. Host and username stay for re-login."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt das Keychain-Passwort und löscht Sync-Cursor. Host und Benutzername bleiben für erneutes Login."
-          }
-        }
-      },
-      "comment": "Logout VoiceOver hint"
-    },
     "Logs in and stores the password in the Keychain. Sync remains subscriptions-only.": {
       "extractionState": "manual",
       "localizations": {
@@ -47557,6 +47539,39 @@
         }
       },
       "extractionState": "manual"
+    },
+    "Removes the Keychain password and clears sync cursors. Host, username, device name, and device id stay for re-login. Last sync time stays; status becomes Logged out.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the Keychain password and clears sync cursors. Host, username, device name, and device id stay for re-login. Last sync time stays; status becomes Logged out."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt das Keychain-Passwort und löscht Sync-Cursor. Host, Benutzername, Gerätename und Geräte-ID bleiben für erneutes Login. Die Letzte-Sync-Zeit bleibt; der Status wird Abgemeldet."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Caption for this sync device. Login and Sync now push it to the server when logged in; editing alone does not sync. Distinct from Regenerate device id from name.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caption for this sync device. Login and Sync now push it to the server when logged in; editing alone does not sync. Distinct from Regenerate device id from name."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bezeichnung für dieses Sync-Gerät. Login und Jetzt synchronisieren senden sie an den Server, wenn angemeldet; alleiniges Bearbeiten synchronisiert nicht. Unterschiedlich von Geräte-ID aus Name neu erzeugen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

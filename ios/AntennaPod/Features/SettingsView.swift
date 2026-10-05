@@ -2646,6 +2646,7 @@ struct SettingsView: View {
             TextField("Device name", text: $gpodder.deviceName)
                 .disabled(gpodder.isBusy)
                 .accessibilityLabel(String(localized: "Device name"))
+                .accessibilityHint(String(localized: "Caption for this sync device. Login and Sync now push it to the server when logged in; editing alone does not sync. Distinct from Regenerate device id from name."))
             LabeledContent("Device id") {
                 Text(gpodder.deviceId)
                     .font(.caption2)
@@ -2675,7 +2676,7 @@ struct SettingsView: View {
                     gpodder.logout()
                 }
                 .disabled(gpodder.isBusy)
-                .accessibilityHint(String(localized: "Removes the Keychain password and clears sync cursors. Host and username stay for re-login."))
+                .accessibilityHint(String(localized: "Removes the Keychain password and clears sync cursors. Host, username, device name, and device id stay for re-login. Last sync time stays; status becomes Logged out."))
             } else {
                 Button {
                     Task { await gpodder.login() }
