@@ -2865,7 +2865,7 @@ struct SettingsView: View {
                     gpodder.logout()
                 }
                 .disabled(gpodder.isBusy)
-                .accessibilityHint(String(localized: "Removes the Keychain password and clears sync cursors. Host, username, device name, and device id stay for re-login. Last sync time stays; status becomes Logged out."))
+                .accessibilityHint(String(localized: "Removes the Keychain password and clears sync cursors and the password draft. Host, username, device name, and device id stay for re-login. Last sync stays; status becomes Logged out. Does not unsubscribe local feeds, delete downloads, clear the queue, or invent a sync."))
             } else {
                 Button {
                     Task { await gpodder.login() }

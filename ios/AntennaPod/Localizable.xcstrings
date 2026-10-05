@@ -43073,23 +43073,6 @@
       },
       "extractionState": "manual"
     },
-    "Removes the Keychain password and clears sync cursors. Host, username, device name, and device id stay for re-login. Last sync time stays; status becomes Logged out.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes the Keychain password and clears sync cursors. Host, username, device name, and device id stay for re-login. Last sync time stays; status becomes Logged out."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt das Keychain-Passwort und löscht Sync-Cursor. Host, Benutzername, Gerätename und Geräte-ID bleiben für erneutes Login. Die Letzte-Sync-Zeit bleibt; der Status wird Abgemeldet."
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "Caption for this sync device. Login and Sync now push it to the server when logged in; editing alone does not sync. Distinct from Regenerate device id from name.": {
       "localizations": {
         "en": {
@@ -49483,6 +49466,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Meldet an und speichert das Passwort nur im Keychain — nie im Settings-Backup. Startet kein Jetzt synchronisieren und schreibt keinen Letzter Sync. Sync bleibt abo-only und erfindet keinen vollständigen Sync. Erfordert Benutzername und Passwort; Nextcloud braucht auch einen Host."
+          }
+        }
+      }
+    },
+    "Removes the Keychain password and clears sync cursors and the password draft. Host, username, device name, and device id stay for re-login. Last sync stays; status becomes Logged out. Does not unsubscribe local feeds, delete downloads, clear the queue, or invent a sync.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the Keychain password and clears sync cursors and the password draft. Host, username, device name, and device id stay for re-login. Last sync stays; status becomes Logged out. Does not unsubscribe local feeds, delete downloads, clear the queue, or invent a sync."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt das Keychain-Passwort und löscht Sync-Cursor und den Passwort-Entwurf. Host, Benutzername, Gerätename und Geräte-ID bleiben für erneutes Anmelden. Letzter Sync bleibt; der Status wird Abgemeldet. Deabonniert keine lokalen Feeds, löscht keine Downloads, leert nicht die Warteschlange und erfindet keinen Sync."
           }
         }
       }
