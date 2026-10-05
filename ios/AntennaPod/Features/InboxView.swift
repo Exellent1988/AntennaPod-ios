@@ -400,7 +400,7 @@ struct InboxView: View {
                                     InboxPodcastFilterChip(
                                         title: podcastChipTitle(chip),
                                         selected: podcastFilter == chip,
-                                        accessibilityHint: String(localized: "Filters the Inbox list by podcast")
+                                        accessibilityHint: String(localized: "Filters the Inbox to All or one podcast that currently has inbox episodes. Does not mark played, delete episodes, change sort, or alter the episode type chips. Search still applies on top of this filter.")
                                     ) {
                                         settings.inboxPodcastFilter = chip.storageValue
                                     }

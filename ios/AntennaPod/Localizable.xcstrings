@@ -22839,24 +22839,6 @@
         }
       }
     },
-    "Filters the Inbox list by podcast": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Inbox podcast filter chips.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filters the Inbox list by podcast"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filtert die Posteingangs-Liste nach Podcast"
-          }
-        }
-      }
-    },
     "No matching inbox episodes": {
       "extractionState": "manual",
       "localizations": {
@@ -49317,6 +49299,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Filtert die Warteschlange auf Alle oder einen Podcast, der derzeit Einträge in der Warteschlange hat. Entfernt keine Warteschlangen-Einträge, ändert die Sortierung nicht, startet keine Downloads und ändert die Status-Chips Alle/Ungehört/Gehört nicht. Suche gilt weiterhin zusätzlich zu diesem Filter."
+          }
+        }
+      }
+    },
+    "Filters the Inbox to All or one podcast that currently has inbox episodes. Does not mark played, delete episodes, change sort, or alter the episode type chips. Search still applies on top of this filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Inbox to All or one podcast that currently has inbox episodes. Does not mark played, delete episodes, change sort, or alter the episode type chips. Search still applies on top of this filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert den Posteingang auf Alle oder einen Podcast, der derzeit Posteingang-Episoden hat. Markiert nicht als gehört, löscht keine Episoden, ändert die Sortierung nicht und ändert die Episodentyp-Chips nicht. Suche gilt weiterhin zusätzlich zu diesem Filter."
           }
         }
       }
