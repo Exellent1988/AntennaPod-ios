@@ -24,6 +24,20 @@ struct EpisodeBookmark: Codable, Identifiable, Equatable, Hashable {
     }
 }
 
+extension EpisodeBookmark {
+    /// Same keys as the synthesized decoder. `bookmarks.json` is replaced by a backup import;
+    /// a position such as 1e20 crashed the Bookmarks sheet's `m:ss` / `h:mm:ss` formatter.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        positionSeconds = EpisodeDurationParsing.storedSeconds(
+            try c.decode(Double.self, forKey: .positionSeconds)
+        )
+        note = try c.decode(String.self, forKey: .note)
+        createdAtEpochMs = try c.decode(Int64.self, forKey: .createdAtEpochMs)
+    }
+}
+
 /// Persistence helpers / caps for episode bookmarks (`bookmarks.json`).
 enum EpisodeBookmarkStore {
     /// Soft cap per episode — Add is blocked with honesty when at cap.
