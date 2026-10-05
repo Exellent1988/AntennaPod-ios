@@ -357,8 +357,12 @@ final class PodcastStore: ObservableObject {
             deleteTag(oldName)
             return
         }
-        if FeedTags.equal(oldName, newName) { return }
-        let display = allTags.first(where: { FeedTags.equal($0, newName) }) ?? newName
+        if oldName == newName { return }
+        // A case- or accent-only change (news → News) matches the old name, so the
+        // vocabulary lookup would hand back the old spelling and the rename did nothing.
+        let display = FeedTags.equal(oldName, newName)
+            ? newName
+            : allTags.first(where: { FeedTags.equal($0, newName) }) ?? newName
         var next = tagsByFeedId
         for (feedId, list) in next {
             var updated: [String] = []
