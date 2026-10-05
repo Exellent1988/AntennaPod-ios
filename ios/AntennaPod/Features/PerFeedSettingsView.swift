@@ -257,7 +257,7 @@ struct PerFeedSettingsView: View {
                     }
                 }
                 .accessibilityLabel(String(localized: "Playback speed"))
-                .accessibilityHint(String(localized: "Use global, a preset, or Custom… for this podcast"))
+                .accessibilityHint(String(localized: "Use global, a preset, or pick Custom… for this podcast’s playback speed. Applied on a fresh episode start and immediately when you change this while an episode from this podcast is playing. Player speed controls stay session-only and do not rewrite this override. Does not rewrite the global Default speed alone. Not Volume boost or Preserve pitch. Changing a preset does not seek or mark played."))
                 .accessibilityValue(playbackSpeedAccessibilityValue)
                 Button(String(localized: "Custom…")) {
                     showCustomFeedSpeed = true
