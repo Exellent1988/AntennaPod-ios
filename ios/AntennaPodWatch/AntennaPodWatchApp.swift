@@ -56,9 +56,13 @@ final class WatchContinueModel: NSObject, ObservableObject {
 
         let session = WCSession.default
         if session.activationState == .activated, session.isReachable {
-            session.sendMessage(payload, replyHandler: { [weak self] _ in
+            session.sendMessage(payload, replyHandler: { [weak self] reply in
+                // The phone answers `ok: false` when no episode is loaded there, so nothing plays.
+                let isPlaying = (reply["ok"] as? Bool) ?? false
                 Task { @MainActor in
-                    self?.statusMessage = String(localized: "Playing on iPhone")
+                    self?.statusMessage = isPlaying
+                        ? String(localized: "Playing on iPhone")
+                        : String(localized: "Open AntennaPod on iPhone to continue")
                 }
             }, errorHandler: { [weak self] _ in
                 Task { @MainActor in

@@ -39,12 +39,19 @@ final class WatchCompanionBridge: NSObject {
         }
     }
 
-    private func handleWatchMessage(_ message: [String: Any]) {
+    /// - Parameter completion: Called on main with whether audio is playing after the action.
+    ///   Play only resumes an episode that is already loaded, so a Continue snapshot of an
+    ///   unloaded episode reports `false` and the Watch must not claim playback.
+    private func handleWatchMessage(_ message: [String: Any], completion: ((Bool) -> Void)? = nil) {
         guard let action = message[WatchCompanionKeys.actionKey] as? String,
               action == WatchCompanionKeys.playAction
-        else { return }
+        else {
+            completion?(false)
+            return
+        }
         DispatchQueue.main.async {
             _ = PlaybackDeepLinkRouter.shared.handle(url: WidgetContinueSnapshot.playURL)
+            completion?(PlaybackDeepLinkRouter.shared.playback?.isPlaying == true)
         }
     }
 }
@@ -75,8 +82,9 @@ extension WatchCompanionBridge: WCSessionDelegate {
         didReceiveMessage message: [String: Any],
         replyHandler: @escaping ([String: Any]) -> Void
     ) {
-        handleWatchMessage(message)
-        replyHandler(["ok": true])
+        handleWatchMessage(message) { isPlaying in
+            replyHandler(["ok": isPlaying])
+        }
     }
 
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
