@@ -29,6 +29,12 @@ enum FeedURLNormalization {
 
         guard !candidate.isEmpty else { return .empty }
 
+        // Pasted subscribe links (itpc://, podcast://, feed:…) failed the http(s) check below;
+        // rewrite them the same way an opened link is (`SubscribeLinkRouter`).
+        if let rewritten = SubscribeLinkRouter.feedURLString(fromSubscribeLink: candidate) {
+            candidate = rewritten
+        }
+
         // Scheme missing: safe https default when it looks like a host/path (not a relative path alone).
         if !candidate.contains("://") {
             if candidate.hasPrefix("//") {
