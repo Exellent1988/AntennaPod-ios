@@ -2598,9 +2598,12 @@ final class PodcastStore: ObservableObject {
             return lhs.feedTitle.localizedCaseInsensitiveCompare(rhs.feedTitle) == .orderedAscending
         }
 
+        // Same catalog as the Favorites screen. A star whose episode is gone (local file
+        // removed on rescan) stays in favorites.json but is not listed there.
+        let listedFavorites = favoriteEpisodes
         var favoritesInRange = 0
-        for (_, favoritedAt) in favoriteAtById {
-            if inRange(favoritedAt) {
+        for item in listedFavorites {
+            if inRange(item.favoritedAtEpochMs) {
                 favoritesInRange += 1
             }
         }
@@ -2611,7 +2614,7 @@ final class PodcastStore: ObservableObject {
             approximateListenedSeconds: totalSeconds,
             topPodcasts: Array(top.prefix(10)),
             favoritesCountThisYear: favoritesInRange,
-            favoritesTotalCount: favoriteAtById.count
+            favoritesTotalCount: listedFavorites.count
         )
     }
 
