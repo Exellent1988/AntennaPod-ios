@@ -14,6 +14,7 @@ final class PodcastStore: ObservableObject {
             allEpisodesCache = nil
             inboxEpisodesCache = nil
             historyEpisodesCache = nil
+            feedIndexByEpisodeIdCache = nil
         }
     }
     /// > 0 while a batch loop runs; `feeds` changes then only mark `feedsSaveIsPending`.
@@ -1009,12 +1010,31 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Episode id → index in `feeds` of the first feed whose `episodes` holds it (the same
+    /// feed `first(where:)` found). Lists call `feed(containingEpisodeId:)` per row or per
+    /// item on every 0.5s playback tick; scanning the library each time was O(library) per
+    /// call (Inbox podcast chips: per Inbox episode). Only input: `feeds`, whose observer
+    /// clears this.
+    private var feedIndexByEpisodeIdCache: [String: Int]?
+
+    private var feedIndexByEpisodeId: [String: Int] {
+        if let cached = feedIndexByEpisodeIdCache {
+            return cached
+        }
+        var built: [String: Int] = [:]
+        for (index, feed) in feeds.enumerated() {
+            for episode in feed.episodes where built[episode.id] == nil {
+                built[episode.id] = index
+            }
+        }
+        feedIndexByEpisodeIdCache = built
+        return built
+    }
+
     /// Feed that owns the episode (for Now Playing artist / artwork).
     func feed(containingEpisodeId episodeId: String) -> PodcastFeed? {
-        if let feed = feeds.first(where: { feed in
-            feed.episodes.contains { $0.id == episodeId }
-        }) {
-            return feed
+        if let index = feedIndexByEpisodeId[episodeId] {
+            return feeds[index]
         }
         // Synthetic channel podcast:trailer playback ids: podcast-trailer:<feedUUID>:<mediaURL>
         // so Now Playing can resolve artwork / podcast title without adding trailer to episodes[].
