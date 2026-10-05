@@ -448,6 +448,7 @@ final class PlaybackService: ObservableObject {
         let leavingId = currentEpisode?.id
         finishCurrentEpisode(ended: false)
         tearDownPlayer(clearSleepTimer: true)
+        deactivateSessionAfterPlaybackStopped()
         currentEpisode = nil
         isPlayingFromLocalFile = false
         isPlaying = false
@@ -1126,6 +1127,7 @@ final class PlaybackService: ObservableObject {
                 finishCurrentEpisode(ended: true)
                 expireSleepTimer()
                 tearDownPlayer(clearSleepTimer: false)
+                deactivateSessionAfterPlaybackStopped()
                 currentEpisode = nil
                 isPlayingFromLocalFile = false
                 positionSeconds = 0
@@ -1159,6 +1161,7 @@ final class PlaybackService: ObservableObject {
                 }
                 expireSleepTimer()
                 tearDownPlayer(clearSleepTimer: false)
+                deactivateSessionAfterPlaybackStopped()
                 currentEpisode = nil
                 isPlayingFromLocalFile = false
                 positionSeconds = 0
@@ -1205,6 +1208,7 @@ final class PlaybackService: ObservableObject {
             isPlaying = false
             pauseSleepTimerCountdown()
             tearDownPlayer(clearSleepTimer: false)
+            deactivateSessionAfterPlaybackStopped()
             currentEpisode = nil
             isPlayingFromLocalFile = false
             positionSeconds = 0
@@ -1772,6 +1776,14 @@ final class PlaybackService: ObservableObject {
         }
         UIApplication.shared.beginReceivingRemoteControlEvents()
         setupAudioSessionObserversIfNeeded()
+    }
+
+    /// Player is torn down (Stop, last episode finished, end-of-episode / end-of-queue sleep
+    /// timer). Release the session so audio this app interrupted (Music, another podcast app)
+    /// gets `.shouldResume`; the next play re-activates via `activateSession()`. Best-effort.
+    private func deactivateSessionAfterPlaybackStopped() {
+        guard player == nil else { return }
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
     /// Best-effort mono / stereo preference via `AVAudioSession.setPreferredOutputNumberOfChannels`.
