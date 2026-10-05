@@ -643,7 +643,8 @@ final class PlaybackService: ObservableObject {
     ///   play-until-end window (user scrub / skip / chapter). Pass `false` when `playSoundbite`
     ///   seeks to the clip start before arming the end marker.
     /// - Parameter resnapsSleepTimerChapterEnd: When `true` (default), an armed end-of-chapter timer
-    ///   picks the chapter at the seek target. Automatic rewind-after-pause passes `false`.
+    ///   re-snaps to the chapter at the seek target, or expires if the target is past the armed
+    ///   chapter end. Automatic rewind-after-pause passes `false`.
     func seek(
         toSeconds seconds: Double,
         clearSoundbiteEndMarker clearEnd: Bool = true,
@@ -677,11 +678,20 @@ final class PlaybackService: ObservableObject {
             }
         }
         positionSeconds = capped
-        // A seek into another chapter must not keep the old boundary: a later one
-        // paused right after a forward chapter jump, an earlier one ran past the chapter.
+        // End-of-chapter sleep timer vs seek:
+        // - Landing past the armed chapter end (skip/scrub deep into a later chapter) must
+        //   fire the timer — re-snapping alone left sleep armed for a later chapter and it
+        //   never paused for the chapter the user chose.
+        // - Landing on or before that end (Next chapter → exact next start, scrub inside
+        //   the chapter, or jump backward) still re-snaps so a forward chapter jump does
+        //   not pause at once, and a backward jump pauses at the earlier chapter's end.
         if resnapsSleepTimerChapterEnd, isSleepTimerActive, case .endOfChapter = sleepTimerMode {
-            sleepTimerChapterEndSeconds = nil
-            refreshSleepTimerChapterEndTarget()
+            if let oldEnd = sleepTimerChapterEndSeconds, oldEnd.isFinite, capped > oldEnd + 0.05 {
+                expireSleepTimer()
+            } else {
+                sleepTimerChapterEndSeconds = nil
+                refreshSleepTimerChapterEndTarget()
+            }
         }
         persistProgress(force: true)
         updateNowPlayingInfo(force: true)
