@@ -951,11 +951,12 @@ final class DownloadService: ObservableObject {
 
     ///
     /// Eviction policy (AntennaPod-like: prefer deleting played):
-    /// 1. While `usedBytes > limit`, delete downloaded episodes marked **played**, oldest file
-    ///    modification date first (proxy for “longest since kept / LRU among played”).
-    /// 2. If still over limit after all played files are gone, delete **unplayed** downloads
-    ///    oldest-mtime-first (LRU among remaining).
-    /// 3. Never deletes the episode currently in the catalog mid-write; skips missing files.
+    /// 1. While `usedBytes > limit`, delete downloaded episodes marked **played** that are not
+    ///    favorited and not queued, oldest file modification date first.
+    /// 2. If still over limit after those are gone, delete **unplayed** non-favorite non-queued
+    ///    downloads oldest-mtime-first (LRU among remaining).
+    /// 3. Never auto-deletes favorites or queued episodes (same as episode-count cache); skips
+    ///    the active player file and missing files. Stops if only protected remain over the budget.
     /// 4. Unlimited (`byteLimit == nil`) is a no-op.
     ///
     /// Called after successful downloads, on Settings open, and optionally at app launch.
@@ -996,7 +997,7 @@ final class DownloadService: ObservableObject {
     /// 4. Unlimited (`episodeLimit == nil`) is a no-op.
     /// 5. `keepEpisodeId` (just-finished download) is skipped when choosing victims.
     ///
-    /// Distinct from the byte `enforceStorageLimit` (which does not protect favorites/queue).
+    /// Distinct from the byte `enforceStorageLimit` (same favorite/queue protection; bytes vs count).
     /// Called after successful downloads, on Settings open, and on app launch / backup reload.
     @discardableResult
     func enforceEpisodeCacheLimit(keepEpisodeId: String? = nil) -> Int {
@@ -1192,6 +1193,9 @@ final class DownloadService: ObservableObject {
             if let keepEpisodeId, item.id == keepEpisodeId { return false }
             // The player has this file open; same deferral as auto-delete after playing.
             if store?.playback?.shouldBlockAutoDelete(for: item.id) == true { return false }
+            // Same protection as the episode-count cache — never auto-delete favorites or queue.
+            if store?.isFavorite(item.id) == true { return false }
+            if store?.isInQueue(item.id) == true { return false }
             return FileManager.default.fileExists(atPath: item.localFileURL.path)
         }
         guard !candidates.isEmpty else { return nil }

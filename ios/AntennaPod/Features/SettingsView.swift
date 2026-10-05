@@ -290,7 +290,7 @@ struct SettingsView: View {
                     "3 parallel",
                     "4 parallel",
                     "5 parallel",
-                    "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch.",
+                    "When over the limit, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU by file date). Favorites and queued episodes are never auto-deleted by this budget. Runs after each successful download, when opening Settings, and on launch.",
                     "When over the episode count, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU). Favorites and queued episodes are never auto-deleted by this cap. Runs after each successful download, when opening Settings, and on launch. Separate from the Max storage byte budget.",
                     "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch.",
                     "Limits how many newest unplayed episodes Feed detail Download all unplayed may enqueue at once (10–200, default 50). Always soft-capped — no unlimited. Full-feed eligibility still applies."
@@ -2383,7 +2383,7 @@ struct SettingsView: View {
     }
 
     private var evictionHelpText: String {
-        String(localized: "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch.")
+        String(localized: "When over the limit, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU by file date). Favorites and queued episodes are never auto-deleted by this budget. Runs after each successful download, when opening Settings, and on launch.")
     }
 
     @ViewBuilder

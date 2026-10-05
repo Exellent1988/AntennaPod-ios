@@ -8159,23 +8159,6 @@
         }
       }
     },
-    "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When over the limit, played downloads are deleted first (oldest file first), then unplayed (LRU by file date). Runs after each successful download, when opening Settings, and on launch."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Über dem Limit werden zuerst gehörte Downloads gelöscht (älteste Datei zuerst), dann ungehörte (LRU nach Dateidatum). Läuft nach jedem erfolgreichen Download, beim Öffnen der Einstellungen und beim Start."
-          }
-        }
-      }
-    },
     "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch.": {
       "extractionState": "manual",
       "localizations": {
@@ -47423,6 +47406,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lädt diesen Podcast nie automatisch herunter, auch wenn globales Auto-Download an ist. Neue Episoden „Zur Warteschlange hinzufügen und herunterladen“ reiht weiterhin ein, lädt aber nicht herunter. Manueller Download funktioniert weiterhin."
+          }
+        }
+      }
+    },
+    "When over the limit, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU by file date). Favorites and queued episodes are never auto-deleted by this budget. Runs after each successful download, when opening Settings, and on launch.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When over the limit, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU by file date). Favorites and queued episodes are never auto-deleted by this budget. Runs after each successful download, when opening Settings, and on launch."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bei Überschreitung werden zuerst gehörte Downloads gelöscht, die nicht favorisiert und nicht in der Warteschlange sind (älteste Datei zuerst), danach ungehörte nicht-favorisierte nicht-eingereihte (LRU nach Dateidatum). Favoriten und Warteschlangen-Episoden werden durch dieses Kontingent nie automatisch gelöscht. Läuft nach jedem erfolgreichen Download, beim Öffnen der Einstellungen und beim Start."
           }
         }
       }
