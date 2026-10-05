@@ -451,7 +451,7 @@ struct FeedDescriptionSheetView: View {
                             Image(systemName: "safari")
                         }
                         .accessibilityLabel(String(localized: "Open podcast website"))
-                        .accessibilityHint(String(localized: "Opens the podcast webpage in the system browser"))
+                        .accessibilityHint(String(localized: "Opens the feed-provided podcast website http(s) link in the system browser — not an in-app WebView. No confirmation. Never uses the feed RSS URL or an episode webpage. Distinct from Open episode website, Copy podcast website, and Share podcast website. Does not subscribe, download, or change playback."))
                     }
                 }
             }
