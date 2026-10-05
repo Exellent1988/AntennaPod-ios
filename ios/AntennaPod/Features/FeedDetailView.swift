@@ -3566,8 +3566,9 @@ struct EpisodeRow: View {
                let formatted = PodcastEpisode.formatPlaybackPosition(remaining) {
                 parts.append(String(localized: "\(formatted) remaining"))
             }
-        } else if !state.isPlayed, state.positionSeconds > 1 {
-            // Duration unknown: no bar, but VoiceOver can still say saved position.
+        } else if !state.isPlayed, displayPositionSeconds > 1 {
+            // Duration unknown: no bar, but VoiceOver can still say the position.
+            // For the loaded episode that is the live playhead, not the last save.
             if let formatted = PodcastEpisode.formatPlaybackPosition(displayPositionSeconds) {
                 parts.append(String(localized: "At \(formatted)"))
             }
