@@ -505,7 +505,8 @@ final class PodcastStore: ObservableObject {
         if wasSubscribed {
             // Same as subscribe(), except a podcast unsubscribed while this fetch runs
             // (Subscriptions swipe Refresh, then Unsubscribe) is not added back.
-            if !isRefreshingAllFeeds { lastError = nil }
+            // Do not clear lastError here: a success on another feed must leave this
+            // podcast's banner up (clear only via clearRefreshError on success below).
             beginLoadingOperation()
             do {
                 newcomers = try await subscribeQuietly(feedUrl: feed.feedUrl, onlyIfSubscribed: true)
@@ -514,6 +515,9 @@ final class PodcastStore: ObservableObject {
                 setRefreshError(error.localizedDescription, feed: feeds.first(where: { $0.feedUrl == feed.feedUrl }) ?? feed)
             }
             endLoadingOperation()
+            if ownError == nil {
+                clearRefreshError(ifFeed: feeds.first(where: { $0.feedUrl == feed.feedUrl }) ?? feed)
+            }
         } else {
             ownError = await subscribe(feedUrl: feed.feedUrl)
         }
@@ -2799,6 +2803,14 @@ final class PodcastStore: ObservableObject {
         lastErrorFeedId = feed.id
     }
 
+    /// Drop the Home/Inbox banner only when this podcast is the one it names.
+    /// A successful refresh of a different feed must not hide another podcast's failure.
+    private func clearRefreshError(ifFeed feed: PodcastFeed) {
+        if lastErrorFeedId == feed.id {
+            lastError = nil
+        }
+    }
+
     private func beginLoadingOperation() {
         loadingOperationCount += 1
         isLoading = true
@@ -3051,7 +3063,7 @@ final class PodcastStore: ObservableObject {
     /// Re-scan one local folder feed (manual Refresh swipe / Feed detail Rescan).
     @discardableResult
     func refreshLocalFolderFeed(_ feed: PodcastFeed) async -> String? {
-        if !isRefreshingAllFeeds { lastError = nil }
+        // Same as refresh(_:): do not wipe another podcast's Home/Inbox banner at start.
         beginLoadingOperation()
         defer { endLoadingOperation() }
         let existingIds = Set(feed.episodes.map(\.id))
@@ -3087,6 +3099,7 @@ final class PodcastStore: ObservableObject {
                 settings: settings,
                 newBatches: newBatches
             )
+            clearRefreshError(ifFeed: feed)
         } catch {
             setRefreshError(error.localizedDescription, feed: feed)
             return error.localizedDescription
