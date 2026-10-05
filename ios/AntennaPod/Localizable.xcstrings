@@ -41171,23 +41171,6 @@
         }
       }
     },
-    "Subscriptions only: additive http(s) feed URLs. Not a full sync. Logout does not clear this time. Local folders are not pushed.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subscriptions only: additive http(s) feed URLs. Not a full sync. Logout does not clear this time. Local folders are not pushed."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur Abonnements: additive http(s)-Feed-URLs. Kein vollständiger Sync. Abmelden löscht diese Zeit nicht. Lokale Ordner werden nicht hochgeladen."
-          }
-        }
-      }
-    },
     "Off. This global switch does not enqueue episodes. A per-podcast Always override can still enqueue newly appeared episodes for that podcast. The unplayed backlog is not downloaded, and no download is invented.": {
       "extractionState": "manual",
       "localizations": {
@@ -49485,6 +49468,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vorgaben sind 100%, 125%, 150%, 175%, 200%, 250% und 300%. Es gibt keinen benutzerdefinierten Prozentwert. Der Standard ist 100%, das ist Unity und entfernt den Audio-Mix. Über 100% ist sanfte Verstärkung und kann clippen oder verzerren. Die Änderung gilt für ein geladenes Element nur, wenn seine Audiospuren gelesen werden können; sonst wird sie gespeichert und keine Verstärkung erfunden. Manche Streams, auch HLS, können den Audio-Mix ignorieren. Stock AVPlayer behält Video, Bild-in-Bild und Now Playing. Sie startet keine Wiedergabe, sucht nicht, ändert nicht die Wiedergabegeschwindigkeit und lädt nichts herunter. Nicht Lautstärkeanpassung, Tonhöhe beibehalten, Stille überspringen, ReplayGain, Lautheitsnormalisierung, LoudnessEnhancer oder eine Audio-Engine. Der Schlaf-Timer-Fade bleibt auf der Player-Lautstärke und multipliziert mit dem Mix."
+          }
+        }
+      }
+    },
+    "Subscriptions only: additive http(s) feed URLs. Not a full sync — not episode actions, queue, or bookmarks. The stamp is written when Sync now finishes; Login alone does not write it, and no timestamp is invented. A failed sync that throws before finishing keeps the previous time. Logout does not clear this time. Local folders are not pushed. This is not each podcast's Last refreshed time.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscriptions only: additive http(s) feed URLs. Not a full sync — not episode actions, queue, or bookmarks. The stamp is written when Sync now finishes; Login alone does not write it, and no timestamp is invented. A failed sync that throws before finishing keeps the previous time. Logout does not clear this time. Local folders are not pushed. This is not each podcast's Last refreshed time."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Abonnements: additive http(s)-Feed-URLs. Kein vollständiger Sync — nicht Episodenaktionen, Warteschlange oder Lesezeichen. Der Stempel wird geschrieben, wenn Jetzt synchronisieren beendet; alleiniges Anmelden schreibt ihn nicht, und es wird kein Zeitpunkt erfunden. Ein Sync, der vor dem Abschluss fehlschlägt, behält die vorherige Zeit. Abmelden löscht diese Zeit nicht. Lokale Ordner werden nicht hochgeladen. Das ist nicht die Zeit „Zuletzt aktualisiert“ jedes Podcasts."
           }
         }
       }

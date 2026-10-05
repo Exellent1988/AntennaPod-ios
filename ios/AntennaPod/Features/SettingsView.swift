@@ -2952,7 +2952,7 @@ struct SettingsView: View {
     }
 
     private var lastSyncAccessibilityHint: String {
-        String(localized: "Subscriptions only: additive http(s) feed URLs. Not a full sync. Logout does not clear this time. Local folders are not pushed.")
+        String(localized: "Subscriptions only: additive http(s) feed URLs. Not a full sync — not episode actions, queue, or bookmarks. The stamp is written when Sync now finishes; Login alone does not write it, and no timestamp is invented. A failed sync that throws before finishing keeps the previous time. Logout does not clear this time. Local folders are not pushed. This is not each podcast's Last refreshed time.")
     }
 
     private var gpodderHelpText: String {
