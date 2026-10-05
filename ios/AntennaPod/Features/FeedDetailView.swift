@@ -1634,7 +1634,7 @@ struct FeedDetailView: View {
                         }
                         .disabled(archiveAllFeedCandidatesCount == 0)
                         .accessibilityLabel(String(localized: "Archive all"))
-                        .accessibilityHint(String(localized: "Archives non-archived episodes in this podcast’s full feed catalog, not the status, episode type, search, or sort filters"))
+                        .accessibilityHint(String(localized: "Asks for confirmation, then archives non-archived episodes in this podcast’s full feed catalog. Ignores status, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue. Distinct from global Archive all actions."))
 
                         Button {
                             showEnqueueAllUnplayedConfirm = true

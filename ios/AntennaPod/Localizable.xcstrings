@@ -37253,24 +37253,6 @@
         }
       }
     },
-    "Archives non-archived episodes in this podcast’s full feed catalog, not the status, episode type, search, or sort filters": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Feed detail Archive all.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archives non-archived episodes in this podcast’s full feed catalog, not the status, episode type, search, or sort filters"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archiviert nicht archivierte Episoden im vollständigen Feed-Katalog dieses Podcasts, unabhängig von Status-, Episodentyp-, Such- oder Sortierfiltern"
-          }
-        }
-      }
-    },
     "Archives %lld non-archived episodes in this podcast’s full feed catalog, not the status, episode type, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue. Distinct from global Archive all actions.": {
       "extractionState": "manual",
       "comment": "Feed detail Archive all confirmation — full feed catalog, non-archived eligibility, not status/episode type/search/sort filters; distinct from global Archive all.",
@@ -48969,6 +48951,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und markiert dann gehörte Episoden im vollständigen Feed-Katalog dieses Podcasts als ungehört, einschließlich archivierter. Ignoriert Status-, Episodentyp-, Such- und Sortierfilter. Löscht keine Downloads, entfernt nichts aus der Warteschlange, stoppt keine Wiedergabe und hebt die Archivierung nicht auf."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then archives non-archived episodes in this podcast’s full feed catalog. Ignores status, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue. Distinct from global Archive all actions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then archives non-archived episodes in this podcast’s full feed catalog. Ignores status, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue. Distinct from global Archive all actions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und archiviert dann nicht archivierte Episoden im vollständigen Feed-Katalog dieses Podcasts. Ignoriert Status-, Episodentyp-, Such- und Sortierfilter. Archiviert bedeutet nicht gehört. Markiert nicht als gehört, löscht keine Downloads und leert nicht die Warteschlange. Unterschiedlich von globalen Alle archivieren-Aktionen."
           }
         }
       }
