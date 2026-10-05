@@ -3024,7 +3024,13 @@ struct EpisodeRow: View {
                 .accessibilityAddTraits(.startsMediaSession)
 
                 Button {
-                    Task { await downloads.download(episode) }
+                    // A running, queued, or Wi-Fi-held download could only be stopped with
+                    // Cancel all downloads. Tapping the spinner cancels just this one.
+                    if downloads.inProgress.contains(episode.id) {
+                        downloads.cancelDownload(episode)
+                    } else {
+                        Task { await downloads.download(episode) }
+                    }
                 } label: {
                     if downloads.inProgress.contains(episode.id) {
                         ProgressView()
@@ -3035,8 +3041,13 @@ struct EpisodeRow: View {
                     }
                 }
                 .buttonStyle(.bordered)
-                .disabled(episode.downloadUrl == nil || downloads.inProgress.contains(episode.id))
+                .disabled(episode.downloadUrl == nil)
                 .accessibilityLabel(downloadAccessibilityLabel)
+                .accessibilityHint(
+                    downloads.inProgress.contains(episode.id)
+                        ? String(localized: "Cancels the in-progress download")
+                        : ""
+                )
 
                 Button {
                     store.enqueue(episode)
@@ -3542,7 +3553,7 @@ struct EpisodeRow: View {
 
     private var downloadAccessibilityLabel: String {
         if downloads.inProgress.contains(episode.id) {
-            return String(localized: "Downloading")
+            return String(localized: "Cancel download")
         }
         if downloads.isDownloaded(episode) {
             return String(localized: "Downloaded")
