@@ -1846,7 +1846,7 @@ struct SettingsView: View {
     }
 
     private var autoDownloadCapAccessibilityHint: String {
-        String(localized: "Shown only while global auto-download is on. The same cap applies when a podcast is set to Always. Per-podcast Never still skips that podcast. Does not change the Wi‑Fi-only gate under Network / Downloads. Local-folder feeds are skipped. Not a silent background download.")
+        String(localized: "Shown only while global auto-download is on. Caps newly appeared unplayed episodes after a successful refresh — not the unplayed backlog. The same cap applies when a podcast is set to Always. Per-podcast Never still skips that podcast. Does not change the Wi‑Fi-only gate under Network / Downloads. Local-folder feeds are skipped. Not a silent background download. Changing this does not invent downloads.")
     }
 
     private var autoDownloadHelpText: String {

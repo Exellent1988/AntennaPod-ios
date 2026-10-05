@@ -41273,23 +41273,6 @@
         }
       }
     },
-    "Shown only while global auto-download is on. The same cap applies when a podcast is set to Always. Per-podcast Never still skips that podcast. Does not change the Wi‑Fi-only gate under Network / Downloads. Local-folder feeds are skipped. Not a silent background download.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Shown only while global auto-download is on. The same cap applies when a podcast is set to Always. Per-podcast Never still skips that podcast. Does not change the Wi‑Fi-only gate under Network / Downloads. Local-folder feeds are skipped. Not a silent background download."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur sichtbar, solange automatischer Download global an ist. Dieselbe Obergrenze gilt, wenn ein Podcast auf Immer steht. Nie pro Podcast überspringt diesen Podcast trotzdem. Ändert nicht die Nur-Wi‑Fi-Sperre unter Netzwerk / Downloads. Lokale-Ordner-Feeds werden übersprungen. Kein stiller Hintergrund-Download."
-          }
-        }
-      }
-    },
     "Auto-download help": {
       "extractionState": "manual",
       "localizations": {
@@ -49366,6 +49349,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Optionaler Farbton für Schaltflächen und Hervorhebungen. Nur systemeigene SwiftUI-Farben — keine eigenen Assets oder Android-Themes. Standard folgt dem App-Akzent. Ändert nicht Design, startet die Wiedergabe nicht neu, lädt nicht herunter und ändert keine Podcast-Einstellungen."
+          }
+        }
+      }
+    },
+    "Shown only while global auto-download is on. Caps newly appeared unplayed episodes after a successful refresh — not the unplayed backlog. The same cap applies when a podcast is set to Always. Per-podcast Never still skips that podcast. Does not change the Wi‑Fi-only gate under Network / Downloads. Local-folder feeds are skipped. Not a silent background download. Changing this does not invent downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shown only while global auto-download is on. Caps newly appeared unplayed episodes after a successful refresh — not the unplayed backlog. The same cap applies when a podcast is set to Always. Per-podcast Never still skips that podcast. Does not change the Wi‑Fi-only gate under Network / Downloads. Local-folder feeds are skipped. Not a silent background download. Changing this does not invent downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur sichtbar, solange globaler Auto-Download an ist. Begrenzt neu erschienene ungehörte Episoden nach erfolgreicher Aktualisierung — nicht den ungehörten Rückstand. Dieselbe Obergrenze gilt, wenn ein Podcast auf Immer steht. Pro-Podcast Nie überspringt diesen Podcast weiterhin. Ändert die Nur-Wi‑Fi-Sperre unter Netzwerk / Downloads nicht. Lokale Ordner-Feeds werden übersprungen. Kein stiller Hintergrund-Download. Ändern erfindet keine Downloads."
           }
         }
       }
