@@ -835,7 +835,9 @@ final class DownloadService: ObservableObject {
     /// call **before** unsubscribe so episode ids are still on the feed. Returns how many completed
     /// catalog files were deleted.
     @discardableResult
-    func deleteDownloads(forFeed feed: PodcastFeed) -> Int {
+    func deleteDownloads(forFeed staleFeed: PodcastFeed) -> Int {
+        // Live episode list: the caller's copy can predate a refresh that downloaded new episodes.
+        let feed = store?.feeds.first(where: { $0.id == staleFeed.id }) ?? staleFeed
         let episodeIds = Set(feed.episodes.map(\.id))
         let trailerPrefix = PodcastTrailer.playbackEpisodeIdPrefix(feedId: feed.id)
         func belongs(_ episodeId: String) -> Bool {

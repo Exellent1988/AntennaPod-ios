@@ -170,7 +170,10 @@ final class PodcastStore: ObservableObject {
     /// Does **not** delete downloaded episode files by itself — UI may call
     /// `DownloadService.deleteDownloads(forFeed:)` **before** this when the user chooses
     /// Unsubscribe and delete downloads (feed-scoped offline files only).
-    func unsubscribe(_ feed: PodcastFeed) {
+    func unsubscribe(_ staleFeed: PodcastFeed) {
+        // The caller's copy can predate a refresh (Unsubscribe dialog left open while Refresh
+        // all merged new episodes); clean up with the live episode list.
+        let feed = feeds.first(where: { $0.id == staleFeed.id }) ?? staleFeed
         if LocalFolderFeed.isLocalFolderFeed(feed) {
             LocalFolderBookmarkStore.release(feedId: feed.id)
         }
