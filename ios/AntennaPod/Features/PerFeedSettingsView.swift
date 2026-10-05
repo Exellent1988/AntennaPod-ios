@@ -21,6 +21,7 @@ struct PerFeedSettingsView: View {
     @State private var authStatusMessage: String?
     @State private var authErrorMessage: String?
     @State private var privateNoteDraft = ""
+    @State private var displayNameDraft = ""
 
     private var liveFeed: PodcastFeed? {
         store.feeds.first { $0.id == feedId }
@@ -48,14 +49,18 @@ struct PerFeedSettingsView: View {
     var body: some View {
         Form {
             Section {
-                TextField(String(localized: "Display name"), text: displayNameBinding)
+                TextField(String(localized: "Display name"), text: $displayNameDraft)
                     .textInputAutocapitalization(.words)
                     .autocorrectionDisabled()
                     .accessibilityLabel(String(localized: "Display name"))
                     .accessibilityHint(String(localized: "Optional local nickname for this podcast. Leave empty to use the feed title from RSS."))
                     .accessibilityValue(current.customTitle ?? String(localized: "Using feed title"))
+                    .onChange(of: displayNameDraft) { _, newValue in
+                        commitDisplayNameDraft(newValue)
+                    }
                 if current.customTitle != nil {
                     Button(String(localized: "Reset display name")) {
+                        displayNameDraft = ""
                         store.updateFeedSettings(for: feedId) { $0.customTitle = nil }
                     }
                     .accessibilityLabel(String(localized: "Reset display name"))
@@ -427,6 +432,7 @@ struct PerFeedSettingsView: View {
                     Button("Reset to global defaults", role: .destructive) {
                         store.setFeedSettings(.default, for: feedId)
                         privateNoteDraft = ""
+                        displayNameDraft = ""
                     }
                 }
             }
@@ -486,6 +492,7 @@ struct PerFeedSettingsView: View {
         .onAppear {
             loadHttpBasicAuthState()
             privateNoteDraft = current.privateNote ?? ""
+            displayNameDraft = current.customTitle ?? ""
         }
     }
 
@@ -505,15 +512,18 @@ struct PerFeedSettingsView: View {
         }
     }
 
-    private var displayNameBinding: Binding<String> {
-        Binding(
-            get: { current.customTitle ?? "" },
-            set: { newValue in
-                store.updateFeedSettings(for: feedId) {
-                    $0.customTitle = FeedSettings.normalizedCustomTitle(newValue)
-                }
-            }
-        )
+    /// The field keeps what is typed. Reading the trimmed saved title back into it
+    /// removed each space as soon as it was typed at the end ("My " became "My").
+    private func commitDisplayNameDraft(_ newValue: String) {
+        if newValue.count > FeedSettings.customTitleMaxLength {
+            let end = newValue.index(newValue.startIndex, offsetBy: FeedSettings.customTitleMaxLength)
+            displayNameDraft = String(newValue[..<end])
+            return
+        }
+        let normalized = FeedSettings.normalizedCustomTitle(newValue)
+        if current.customTitle != normalized {
+            store.updateFeedSettings(for: feedId) { $0.customTitle = normalized }
+        }
     }
 
     private var authFooter: String {
