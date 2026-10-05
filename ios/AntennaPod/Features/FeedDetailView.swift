@@ -1651,7 +1651,7 @@ struct FeedDetailView: View {
                             Label("Add all to queue", systemImage: "text.append")
                         }
                         .disabled(enqueueAllFromFeedCandidatesCount == 0)
-                        .accessibilityHint(String(localized: "Appends all feed episodes not already queued, including played and archived"))
+                        .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from this podcast’s full feed catalog that are not already queued, newest publish date first, including played and archived. Ignores status, episode type, search, and sort filters. Queue lock does not block enqueue."))
 
                         Button(role: .destructive) {
                             showDeleteDownloadsConfirm = true

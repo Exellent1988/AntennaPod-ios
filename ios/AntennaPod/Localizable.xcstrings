@@ -33268,24 +33268,6 @@
         }
       }
     },
-    "Appends all feed episodes not already queued, including played and archived": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Feed detail Add all to queue (includes played/archived).",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends all feed episodes not already queued, including played and archived"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht alle Feed-Episoden ein, die noch nicht in der Warteschlange sind, einschließlich gehörter und archivierter"
-          }
-        }
-      }
-    },
     "Appends %lld unplayed, non-archived episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued, played, and archived episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived episodes.": {
       "extractionState": "manual",
       "comment": "Confirmation message for All Episodes Add all unplayed to queue.",
@@ -48841,6 +48823,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und reiht dann Episoden aus dem vollständigen Katalog abgeschlossener Downloads, die noch nicht in der Warteschlange sind, älteste abgeschlossene zuerst ein. Ignoriert Gehört-Status-, Podcast-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then appends episodes from this podcast’s full feed catalog that are not already queued, newest publish date first, including played and archived. Ignores status, episode type, search, and sort filters. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then appends episodes from this podcast’s full feed catalog that are not already queued, newest publish date first, including played and archived. Ignores status, episode type, search, and sort filters. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und reiht dann Episoden aus dem vollständigen Feed-Katalog dieses Podcasts, die noch nicht in der Warteschlange sind, neuestes Veröffentlichungsdatum zuerst ein, einschließlich gehörter und archivierter. Ignoriert Status-, Episodentyp-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht."
           }
         }
       }
