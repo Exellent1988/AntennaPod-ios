@@ -48843,6 +48843,23 @@
           }
         }
       }
+    },
+    "Asks for confirmation, then restores every episode in the full Archived catalog. Ignores podcast, search, and sort filters. Does not mark unplayed or delete downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then restores every episode in the full Archived catalog. Ignores podcast, search, and sort filters. Does not mark unplayed or delete downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und stellt dann jede Episode im vollständigen Archiv-Katalog wieder her. Ignoriert Podcast-, Such- und Sortierfilter. Markiert nicht als ungehört und löscht keine Downloads."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -478,6 +478,9 @@ struct ArchivedView: View {
                     }
                     // Restore all always targets the full archived list (not the filtered subset).
                     .disabled(items.isEmpty)
+                    .accessibilityHint(
+                        String(localized: "Asks for confirmation, then restores every episode in the full Archived catalog. Ignores podcast, search, and sort filters. Does not mark unplayed or delete downloads.")
+                    )
                 } label: {
                     Label("Archived actions", systemImage: "ellipsis.circle")
                 }
