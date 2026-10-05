@@ -173,6 +173,21 @@ enum NewEpisodeNotificationCoordinator {
         await postAggregatedNotification(batches: flat)
     }
 
+    /// Banner count body: singular "1 new episode" vs plural "%lld new episodes".
+    private static func newEpisodeCountBody(_ count: Int) -> String {
+        if count == 1 {
+            return String(localized: "1 new episode")
+        }
+        return String(localized: "\(count) new episodes")
+    }
+
+    /// Fallback title when feed title is missing: singular vs plural for the batch size.
+    private static func newEpisodeFallbackTitle(episodeCount: Int) -> String {
+        episodeCount == 1
+            ? String(localized: "New episode")
+            : String(localized: "New episodes")
+    }
+
     private static func postAggregatedNotification(batches: [NewEpisodeBatch]) async {
         let totalCount = batches.reduce(0) { $0 + $1.episodes.count }
         guard totalCount > 0 else { return }
@@ -187,23 +202,24 @@ enum NewEpisodeNotificationCoordinator {
 
         if batches.count == 1 {
             let batch = batches[0]
-            content.title = batch.feedTitle.isEmpty
-                ? String(localized: "New episodes")
-                : batch.feedTitle
+            let feed = batch.feedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+            content.title = feed.isEmpty
+                ? newEpisodeFallbackTitle(episodeCount: batch.episodes.count)
+                : feed
             if batch.episodes.count == 1 {
                 let title = batch.episodes[0].title.trimmingCharacters(in: .whitespacesAndNewlines)
                 content.body = title.isEmpty
-                    ? String(localized: "\(1) new episodes")
+                    ? newEpisodeCountBody(1)
                     : title
             } else {
-                content.body = String(localized: "\(batch.episodes.count) new episodes")
+                content.body = newEpisodeCountBody(batch.episodes.count)
             }
             userInfo[feedIdKey] = batch.feedId.uuidString
             userInfo["feedUrl"] = batch.feedUrl
         } else {
             // Multi-feed refresh: one banner — "N new episodes" (avoid per-feed spam).
             content.title = String(localized: "New episodes")
-            content.body = String(localized: "\(totalCount) new episodes")
+            content.body = newEpisodeCountBody(totalCount)
         }
         content.userInfo = userInfo
 

@@ -2110,14 +2110,14 @@ struct SettingsView: View {
             }
 
             LabeledContent("Notifies") {
-                Text(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic; tap opens no screen)"))
+                Text(String(localized: "New episodes after refresh (one local banner → Inbox; title podcast or New episode(s); body episode title or count); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic; tap opens no screen)"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.trailing)
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(String(localized: "Notifies"))
-            .accessibilityValue(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic; tap opens no screen)"))
+            .accessibilityValue(String(localized: "New episodes after refresh (one local banner → Inbox; title podcast or New episode(s); body episode title or count); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic; tap opens no screen)"))
 
             LabeledContent("Does not notify") {
                 Text(String(localized: "No push / APNs / server-side alerts. Download-complete banners only when that optional toggle is on (default off). No episode-level deep link for new episodes (Inbox only). Sleep timer banner tap opens no screen. Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push."))
@@ -2164,7 +2164,7 @@ struct SettingsView: View {
     private func notificationPolicySentence(isOn: Bool, role: NotificationVoiceOverRole) -> String {
         switch (role, isOn) {
         case (.newEpisodes, true):
-            return String(localized: "After a successful refresh, one local banner may open Inbox for newly appeared episodes. A per-podcast Off still silences that feed. This toggle does not post a banner by itself and does not download episodes.")
+            return String(localized: "After a successful refresh, one local banner may open Inbox for newly appeared episodes. Title is the podcast name, or New episode / New episodes when the podcast title is empty. Body is the episode title when a single new episode has a title; otherwise a singular or plural count. A per-podcast Off still silences that feed. This toggle does not post a banner by itself and does not download episodes.")
         case (.newEpisodes, false):
             return String(localized: "New-episode banners stay off for every podcast. A per-podcast On does not override this. This does not post a banner and does not change downloads.")
         case (.downloadErrors, true):
@@ -2236,14 +2236,14 @@ struct SettingsView: View {
             return String(localized: "Notification permission was denied. AntennaPod will not show banners until you allow Notifications in iOS Settings (Open iOS Settings). Toggles stay on so your preference is clear. Local UserNotifications only — never push / APNs / server-side alerts. Download-complete is optional (default off).")
         }
         if !settings.notifyOnNewEpisodes && !settings.notifyOnDownloadErrors && !settings.notifyOnDownloadComplete && !settings.notifyOnSyncErrors && !settings.notifyOnSleepTimerEnd {
-            return String(localized: "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed), and/or sleep timer end (banner + foreground haptic; tap opens no screen). Local only — no push / APNs; iOS Notifications permission required.")
+            return String(localized: "When enabled: new episodes after refresh (one aggregated local banner → Inbox; title podcast or New episode(s); body episode or count), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed), and/or sleep timer end (banner + foreground haptic; tap opens no screen). Local only — no push / APNs; iOS Notifications permission required.")
         }
         if notificationAuthStatus == .notDetermined {
             return String(localized: "iOS permission is requested when you turn a notification toggle on, or when a refresh first finds new episodes / a download fails or completes / sync fails / sleep timer ends. Local UserNotifications only — no push / APNs / server-side alerts. Download-complete is optional (default off).")
         }
         var parts: [String] = []
         if settings.notifyOnNewEpisodes {
-            parts.append(String(localized: "New episodes after refresh (one local banner) → Inbox; needs feed refresh + permission"))
+            parts.append(String(localized: "New episodes after refresh (one local banner) → Inbox; title podcast or New episode(s); body episode title or singular/plural count; needs feed refresh + permission"))
         }
         if settings.notifyOnDownloadErrors {
             parts.append(String(localized: "Download failures → Downloads (title = episode, or podcast if episode title empty, or Download failed; body = error)"))

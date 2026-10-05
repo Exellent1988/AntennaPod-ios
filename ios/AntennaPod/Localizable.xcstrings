@@ -12590,23 +12590,6 @@
         }
       }
     },
-    "New episodes after refresh (one local banner) → Inbox; needs feed refresh + permission": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "New episodes after refresh (one local banner) → Inbox; needs feed refresh + permission"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neue Episoden nach Aktualisierung (ein lokales Banner) → Posteingang; braucht Feed-Aktualisierung + Berechtigung"
-          }
-        }
-      }
-    },
     "When enabled: new episodes after refresh (aggregated local banner), download failures, and/or gpodder/Nextcloud login or sync failures. Local only — no push; needs refresh + permission.": {
       "extractionState": "manual",
       "localizations": {
@@ -45246,23 +45229,6 @@
         }
       }
     },
-    "After a successful refresh, one local banner may open Inbox for newly appeared episodes. A per-podcast Off still silences that feed. This toggle does not post a banner by itself and does not download episodes.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "After a successful refresh, one local banner may open Inbox for newly appeared episodes. A per-podcast Off still silences that feed. This toggle does not post a banner by itself and does not download episodes."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nach einem erfolgreichen Refresh kann ein lokales Banner den Posteingang für neu erschienene Episoden öffnen. Aus pro Podcast schaltet diesen Feed weiter stumm. Dieser Schalter postet selbst kein Banner und lädt keine Episoden herunter."
-          }
-        }
-      }
-    },
     "New-episode banners stay off for every podcast. A per-podcast On does not override this. This does not post a banner and does not change downloads.": {
       "extractionState": "manual",
       "localizations": {
@@ -47665,23 +47631,6 @@
       },
       "extractionState": "manual"
     },
-    "New episodes after refresh (one local banner → Inbox); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic; tap opens no screen)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "New episodes after refresh (one local banner → Inbox); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic; tap opens no screen)"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neue Folgen nach Aktualisierung (ein lokaler Banner → Eingang); Download-Fehler → Downloads (Titel Episode, oder Podcast wenn Episodentitel leer); Download fertig (optional, standardmäßig aus) → Downloads (Titel Episode, oder Podcast wenn Episodentitel leer); Sync-/Login-Fehler → Einstellungen Sync (Banner-Titel Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen); Sleep-Timer-Ende (Banner + Vordergrund-Haptik; Tippen öffnet keinen Bildschirm)"
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "No push / APNs / server-side alerts. Download-complete banners only when that optional toggle is on (default off). No episode-level deep link for new episodes (Inbox only). Sleep timer banner tap opens no screen. Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push.": {
       "localizations": {
         "en": {
@@ -47699,18 +47648,101 @@
       },
       "extractionState": "manual"
     },
-    "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed), and/or sleep timer end (banner + foreground haptic; tap opens no screen). Local only — no push / APNs; iOS Notifications permission required.": {
+    "1 new episode": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "When enabled: new episodes after refresh (one aggregated local banner → Inbox), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed), and/or sleep timer end (banner + foreground haptic; tap opens no screen). Local only — no push / APNs; iOS Notifications permission required."
+            "value": "1 new episode"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wenn aktiviert: neue Folgen nach Aktualisierung (ein aggregierter lokaler Banner → Eingang), Download-Fehler → Downloads, Download fertig (optional, standardmäßig aus) → Downloads, gpodder-/Nextcloud-Login- oder Sync-Fehler → Einstellungen Sync (Banner-Titel Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen) und/oder Sleep-Timer-Ende (Banner + Vordergrund-Haptik; Tippen öffnet keinen Bildschirm). Nur lokal — kein Push / APNs; iOS-Benachrichtigungsberechtigung erforderlich."
+            "value": "1 neue Episode"
+          }
+        }
+      }
+    },
+    "New episode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episode"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Episode"
+          }
+        }
+      }
+    },
+    "After a successful refresh, one local banner may open Inbox for newly appeared episodes. Title is the podcast name, or New episode / New episodes when the podcast title is empty. Body is the episode title when a single new episode has a title; otherwise a singular or plural count. A per-podcast Off still silences that feed. This toggle does not post a banner by itself and does not download episodes.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After a successful refresh, one local banner may open Inbox for newly appeared episodes. Title is the podcast name, or New episode / New episodes when the podcast title is empty. Body is the episode title when a single new episode has a title; otherwise a singular or plural count. A per-podcast Off still silences that feed. This toggle does not post a banner by itself and does not download episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach erfolgreicher Aktualisierung kann ein lokaler Banner den Eingang für neu erschienene Folgen öffnen. Titel ist der Podcast-Name, oder Neue Episode / Neue Episoden wenn der Podcast-Titel leer ist. Body ist der Episodentitel wenn eine einzelne neue Folge einen Titel hat; sonst eine Singular- oder Plural-Anzahl. Pro-Podcast Aus verstummt diesen Feed weiterhin. Dieser Schalter postet keinen Banner von allein und lädt keine Folgen herunter."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "New episodes after refresh (one local banner) → Inbox; title podcast or New episode(s); body episode title or singular/plural count; needs feed refresh + permission": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes after refresh (one local banner) → Inbox; title podcast or New episode(s); body episode title or singular/plural count; needs feed refresh + permission"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Folgen nach Aktualisierung (ein lokaler Banner) → Eingang; Titel Podcast oder Neue Episode(n); Body Episodentitel oder Singular-/Plural-Anzahl; braucht Feed-Aktualisierung + Berechtigung"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "New episodes after refresh (one local banner → Inbox; title podcast or New episode(s); body episode title or count); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic; tap opens no screen)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes after refresh (one local banner → Inbox; title podcast or New episode(s); body episode title or count); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic; tap opens no screen)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Folgen nach Aktualisierung (ein lokaler Banner → Eingang; Titel Podcast oder Neue Episode(n); Body Episodentitel oder Anzahl); Download-Fehler → Downloads (Titel Episode, oder Podcast wenn Episodentitel leer); Download fertig (optional, standardmäßig aus) → Downloads (Titel Episode, oder Podcast wenn Episodentitel leer); Sync-/Login-Fehler → Einstellungen Sync (Banner-Titel Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen); Sleep-Timer-Ende (Banner + Vordergrund-Haptik; Tippen öffnet keinen Bildschirm)"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "When enabled: new episodes after refresh (one aggregated local banner → Inbox; title podcast or New episode(s); body episode or count), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed), and/or sleep timer end (banner + foreground haptic; tap opens no screen). Local only — no push / APNs; iOS Notifications permission required.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When enabled: new episodes after refresh (one aggregated local banner → Inbox; title podcast or New episode(s); body episode or count), download failures → Downloads, download complete (optional, default off) → Downloads, gpodder/Nextcloud login or sync failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed), and/or sleep timer end (banner + foreground haptic; tap opens no screen). Local only — no push / APNs; iOS Notifications permission required."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiviert: neue Folgen nach Aktualisierung (ein aggregierter lokaler Banner → Eingang; Titel Podcast oder Neue Episode(n); Body Episode oder Anzahl), Download-Fehler → Downloads, Download fertig (optional, standardmäßig aus) → Downloads, gpodder-/Nextcloud-Login- oder Sync-Fehler → Einstellungen Sync (Banner-Titel Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen) und/oder Sleep-Timer-Ende (Banner + Vordergrund-Haptik; Tippen öffnet keinen Bildschirm). Nur lokal — kein Push / APNs; iOS-Benachrichtigungsberechtigung erforderlich."
           }
         }
       },
