@@ -36760,24 +36760,6 @@
       },
       "comment": "VoiceOver hint for History actions menu."
     },
-    "Appends unplayed, non-archived downloaded episodes not already queued; ignores chip, podcast, search, and sort filters": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Downloads Add all unplayed to queue.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends unplayed, non-archived downloaded episodes not already queued; ignores chip, podcast, search, and sort filters"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht ungehörte, nicht archivierte heruntergeladene Episoden ein, die noch nicht in der Warteschlange sind; ignoriert Chip-, Podcast-, Such- und Sortierfilter"
-          }
-        }
-      }
-    },
     "Appends %lld unplayed, non-archived downloaded episode(s) to the end of the queue (catalog order — oldest completed first). Already queued, played, and archived episodes are skipped. Uses the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived downloads.": {
       "extractionState": "manual",
       "comment": "Downloads Add all unplayed to queue confirmation message — full completed catalog, not chip/podcast/search/sort.",
@@ -48884,6 +48866,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und reiht dann ungehörte, nicht archivierte Episoden aus dem weich begrenzten Alle-Episoden-Katalog (neueste 500 nach Veröffentlichungsdatum) ein, die noch nicht in der Warteschlange sind, neueste zuerst innerhalb dieser Grenze. Ignoriert Status-, Podcast-, Typ-, Sortier- und Suchfilter; ältere Episoden jenseits der Soft-Obergrenze sind nicht enthalten. Warteschlangen-Sperre blockiert das Einreihen nicht. Unterschiedlich von Alle zur Warteschlange hinzufügen, das auch gehörte und archivierte einschließt."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then appends unplayed, non-archived episodes from the full completed Downloads catalog that are not already queued, oldest completed first. Ignores chip, podcast, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then appends unplayed, non-archived episodes from the full completed Downloads catalog that are not already queued, oldest completed first. Ignores chip, podcast, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und reiht dann ungehörte, nicht archivierte Episoden aus dem vollständigen Katalog abgeschlossener Downloads ein, die noch nicht in der Warteschlange sind, älteste abgeschlossene zuerst. Ignoriert Chip-, Podcast-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht. Unterschiedlich von Alle zur Warteschlange hinzufügen, das auch gehörte und archivierte Downloads einschließt."
           }
         }
       }

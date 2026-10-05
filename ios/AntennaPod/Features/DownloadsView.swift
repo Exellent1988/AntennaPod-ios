@@ -672,7 +672,7 @@ struct DownloadsView: View {
                         .disabled(enqueueAllUnplayedDownloadsCandidatesCount == 0)
                         .accessibilityLabel(String(localized: "Add all unplayed to queue"))
                         .accessibilityHint(
-                            String(localized: "Appends unplayed, non-archived downloaded episodes not already queued; ignores chip, podcast, search, and sort filters")
+                            String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from the full completed Downloads catalog that are not already queued, oldest completed first. Ignores chip, podcast, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived downloads.")
                         )
 
                         Button {
