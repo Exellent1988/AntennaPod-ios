@@ -630,7 +630,7 @@ struct AllEpisodesView: View {
                     }
                     .disabled(markAllEpisodesUnplayedCandidatesCount == 0)
                     .accessibilityHint(
-                        String(localized: "Marks played episodes in the newest-500 All Episodes catalog as unplayed, including archived episodes")
+                        String(localized: "Asks for confirmation, then marks played episodes in the newest-500 All Episodes catalog as unplayed, including archived episodes. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Does not delete downloads, remove episodes from the queue, stop playback, or unarchive.")
                     )
 
                     Button {
