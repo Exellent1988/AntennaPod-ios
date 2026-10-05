@@ -662,7 +662,7 @@ struct DownloadsView: View {
                             Label("Add all to queue", systemImage: "text.append")
                         }
                         .disabled(enqueueAllDownloadsCandidatesCount == 0)
-                        .accessibilityHint(String(localized: "Appends downloaded episodes not already queued"))
+                        .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full completed Downloads catalog that are not already queued, oldest completed first. Ignores played-status, podcast, search, and sort filters. Queue lock does not block enqueue."))
 
                         Button {
                             showEnqueueAllUnplayedConfirm = true

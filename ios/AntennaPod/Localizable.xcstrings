@@ -13997,23 +13997,6 @@
         }
       }
     },
-    "Appends downloaded episodes not already queued": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends downloaded episodes not already queued"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht heruntergeladene Episoden ein, die noch nicht in der Warteschlange sind"
-          }
-        }
-      }
-    },
     "Appends %lld downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue.": {
       "extractionState": "manual",
       "localizations": {
@@ -48841,6 +48824,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und reiht dann Episoden aus dem vollständigen Favoriten-Katalog, die noch nicht in der Warteschlange sind, zuletzt favorisiert zuerst ein. Ignoriert Podcast-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then appends episodes from the full completed Downloads catalog that are not already queued, oldest completed first. Ignores played-status, podcast, search, and sort filters. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then appends episodes from the full completed Downloads catalog that are not already queued, oldest completed first. Ignores played-status, podcast, search, and sort filters. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und reiht dann Episoden aus dem vollständigen Katalog abgeschlossener Downloads, die noch nicht in der Warteschlange sind, älteste abgeschlossene zuerst ein. Ignoriert Gehört-Status-, Podcast-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht."
           }
         }
       }
