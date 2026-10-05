@@ -1006,7 +1006,11 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     link = text
                 }
             case "description", "subtitle", "summary":
-                descriptionText = text
+                // Same rule as items: keep the longest. A later short itunes:subtitle
+                // or an empty itunes:summary replaced the full channel description.
+                if !text.isEmpty, text.count > (descriptionText ?? "").count {
+                    descriptionText = text
+                }
             case "author":
                 // itunes:author / RSS author: text node on the element itself.
                 // Atom wraps <name>/<email> — those set atomAuthorName; leave text empty here.
