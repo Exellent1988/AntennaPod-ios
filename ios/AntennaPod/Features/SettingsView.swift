@@ -1508,7 +1508,7 @@ struct SettingsView: View {
     }
 
     private var continuousPlaybackAccessibilityHint: String {
-        String(localized: "Off stops at episode end. Queue, the default, plays the next Queue item only. Same podcast plays the next unplayed, non-archived episode of this feed by episode sort, forward only, no wrap, and does not jump the Queue. Mark played and progress still apply in every mode. An end-of-episode or last-chapter sleep timer still stops without advancing. End of queue still advances through the Queue only, even when this is Off or Same podcast. Changing this does not start playback, seek, or download, and it does not invent a next episode.")
+        String(localized: "Off stops at episode end and adds nothing to the Queue or downloads. Queue, the default, plays the next Queue item only if one exists and playback can start — it does not walk the feed list. Same podcast plays the next unplayed, non-archived episode of this feed by episode sort, forward only, no wrap, and does not jump the Queue, only if one exists and playback can start. If none exists or it cannot start, playback stops. Mark played and progress still apply in every mode. An end-of-episode or last-chapter sleep timer still stops without advancing. End of queue still advances through the Queue only, even when this is Off or Same podcast. Changing this does not start playback, seek, or download, and it does not invent a next episode.")
     }
 
     /// VoiceOver for Settings → Rewind. Names the saved interval and whether it is

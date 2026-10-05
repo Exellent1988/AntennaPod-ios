@@ -42038,23 +42038,6 @@
         }
       }
     },
-    "Off stops at episode end. Queue, the default, plays the next Queue item only. Same podcast plays the next unplayed, non-archived episode of this feed by episode sort, forward only, no wrap, and does not jump the Queue. Mark played and progress still apply in every mode. An end-of-episode or last-chapter sleep timer still stops without advancing. End of queue still advances through the Queue only, even when this is Off or Same podcast. Changing this does not start playback, seek, or download, and it does not invent a next episode.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Off stops at episode end. Queue, the default, plays the next Queue item only. Same podcast plays the next unplayed, non-archived episode of this feed by episode sort, forward only, no wrap, and does not jump the Queue. Mark played and progress still apply in every mode. An end-of-episode or last-chapter sleep timer still stops without advancing. End of queue still advances through the Queue only, even when this is Off or Same podcast. Changing this does not start playback, seek, or download, and it does not invent a next episode."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aus stoppt am Episodenende. Warteschlange, der Standard, spielt nur den nächsten Warteschlangen-Eintrag. Gleicher Podcast spielt die nächste ungehörte, nicht archivierte Episode dieses Feeds nach Episoden-Sortierung, nur vorwärts, ohne Wrap, und springt nicht in die Warteschlange. Als gehört markieren und der Fortschritt gelten in jedem Modus weiter. Ein Schlaf-Timer am Ende der Episode oder des letzten Kapitels stoppt weiterhin ohne Weitergehen. Ende der Warteschlange geht weiterhin nur durch die Warteschlange, auch bei Aus oder Gleicher Podcast. Die Änderung startet keine Wiedergabe, sucht nicht und lädt nichts herunter, und erfindet keine nächste Episode."
-          }
-        }
-      }
-    },
     "Rewind": {
       "extractionState": "manual",
       "localizations": {
@@ -49434,6 +49417,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Auswahl sind Nur manuell, Alle 1 Stunde, Alle 4 Stunden, Alle 12 Stunden und Alle 24 Stunden. Die Voreinstellung ist Nur manuell. Zeitgesteuerte Intervalle prüfen nur beim Öffnen der App oder bei Rückkehr in den Vordergrund — nicht als iOS Hintergrundaktualisierung, und nichts läuft bei vollständig beendeter App. Gleicher Sammelpfad wie Alle aktualisieren und Ziehen zum Aktualisieren. Aktualisiert halten Nie überspringt diese Sammelpfade; Einzelaktualisierung funktioniert weiter. Der Picker aktualisiert jetzt nicht, lädt nicht herunter und erfindet keine neuen Episoden."
+          }
+        }
+      }
+    },
+    "Off stops at episode end and adds nothing to the Queue or downloads. Queue, the default, plays the next Queue item only if one exists and playback can start — it does not walk the feed list. Same podcast plays the next unplayed, non-archived episode of this feed by episode sort, forward only, no wrap, and does not jump the Queue, only if one exists and playback can start. If none exists or it cannot start, playback stops. Mark played and progress still apply in every mode. An end-of-episode or last-chapter sleep timer still stops without advancing. End of queue still advances through the Queue only, even when this is Off or Same podcast. Changing this does not start playback, seek, or download, and it does not invent a next episode.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off stops at episode end and adds nothing to the Queue or downloads. Queue, the default, plays the next Queue item only if one exists and playback can start — it does not walk the feed list. Same podcast plays the next unplayed, non-archived episode of this feed by episode sort, forward only, no wrap, and does not jump the Queue, only if one exists and playback can start. If none exists or it cannot start, playback stops. Mark played and progress still apply in every mode. An end-of-episode or last-chapter sleep timer still stops without advancing. End of queue still advances through the Queue only, even when this is Off or Same podcast. Changing this does not start playback, seek, or download, and it does not invent a next episode."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus stoppt am Episodenende und fügt nichts zur Warteschlange hinzu und lädt nichts herunter. Warteschlange, der Standard, spielt nur den nächsten Warteschlangen-Eintrag, falls einer existiert und die Wiedergabe starten kann — die Feed-Liste wird nicht durchlaufen. Gleicher Podcast spielt die nächste ungehörte, nicht archivierte Episode dieses Feeds nach Episoden-Sortierung, nur vorwärts, ohne Wrap, und springt nicht in die Warteschlange, nur falls eine existiert und die Wiedergabe starten kann. Wenn keine existiert oder sie nicht starten kann, stoppt die Wiedergabe. Als gehört markieren und der Fortschritt gelten in jedem Modus weiter. Ein Schlaf-Timer am Ende der Episode oder des letzten Kapitels stoppt weiterhin ohne Weitergehen. Ende der Warteschlange geht weiterhin nur durch die Warteschlange, auch bei Aus oder Gleicher Podcast. Die Änderung startet keine Wiedergabe, sucht nicht und lädt nichts herunter, und erfindet keine nächste Episode."
           }
         }
       }
