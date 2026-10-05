@@ -471,7 +471,7 @@ struct DownloadsView: View {
                                     Text(item.episode.title)
                                         .font(.headline)
                                     HStack(spacing: 6) {
-                                        Text(item.localFileURL.lastPathComponent)
+                                        Text(downloadsRowSubtitle(for: item))
                                             .lineLimit(1)
                                         if let sizeLabel = item.formattedKnownByteSize {
                                             Text("·")
@@ -851,6 +851,17 @@ struct DownloadsView: View {
                 )
             }
         }
+    }
+
+    /// Visible subtitle: the podcast display title when this episode is still on a
+    /// subscription. The storage file name (percent-encoded id, or a SHA-256 name when
+    /// the id is long) is not a podcast, so a sighted row was only a hash. Fall back
+    /// to that file name when the feed is gone — never invent a podcast title.
+    private func downloadsRowSubtitle(for item: DownloadedEpisode) -> String {
+        let title = store.displayTitle(containingEpisodeId: item.episode.id)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        if !title.isEmpty { return title }
+        return item.localFileURL.lastPathComponent
     }
 
     /// VoiceOver: title, podcast when known, size when known, and local file name.
