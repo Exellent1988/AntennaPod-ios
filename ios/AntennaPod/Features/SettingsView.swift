@@ -2751,6 +2751,9 @@ struct SettingsView: View {
             Text("Apple Watch (beta lite): Continue listening shows episode title + podcast + remaining time from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .accessibilityLabel(String(localized: "Apple Watch"))
+                .accessibilityValue(appleWatchAccessibilityValue)
+                .accessibilityHint(appleWatchAccessibilityHint)
         } header: {
             Text("Apple Watch")
         }
@@ -2768,6 +2771,15 @@ struct SettingsView: View {
         } header: {
             Text("CarPlay")
         }
+    }
+
+    /// VoiceOver for Settings → Apple Watch. Caption-only honesty note: same snapshot, no independent playback.
+    private var appleWatchAccessibilityValue: String {
+        String(localized: "Honest partial. Continue listening shows episode title, podcast, and remaining time from the same App Group snapshot as the homescreen widget; the phone pushes it via Watch Connectivity. Play or Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires the AntennaPodWatch target, Dev Team, and App Group on Mac. Not CarPlay and not live phone scrubbing.")
+    }
+
+    private var appleWatchAccessibilityHint: String {
+        String(localized: "Read-only note. This screen does not install the Watch app, start playback on the Watch, or refresh the snapshot. Play on iPhone opens the companion for the loaded episode or a cold-launch restored one. Not independent Watch downloads or queue, and not CarPlay templates.")
     }
 
     /// VoiceOver for Settings → Homescreen widget. Caption-only honesty note: App Group snapshot, not live.

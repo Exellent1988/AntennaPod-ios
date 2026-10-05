@@ -49550,6 +49550,40 @@
           }
         }
       }
+    },
+    "Honest partial. Continue listening shows episode title, podcast, and remaining time from the same App Group snapshot as the homescreen widget; the phone pushes it via Watch Connectivity. Play or Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires the AntennaPodWatch target, Dev Team, and App Group on Mac. Not CarPlay and not live phone scrubbing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Honest partial. Continue listening shows episode title, podcast, and remaining time from the same App Group snapshot as the homescreen widget; the phone pushes it via Watch Connectivity. Play or Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires the AntennaPodWatch target, Dev Team, and App Group on Mac. Not CarPlay and not live phone scrubbing."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ehrlicher Teilumfang. Weiterhören zeigt Episodentitel, Podcast und Restzeit aus demselben App-Group-Snapshot wie das Homescreen-Widget; das iPhone sendet ihn per Watch Connectivity. Play oder Auf dem iPhone öffnen steuert antennapod://play auf dem Companion. Keine unabhängige Watch-Wiedergabe, keine Downloads und keine Warteschlange — wenn Audio bereits läuft, nutze die System-Jetzt-läuft-Ansicht auf der Watch. Erfordert das AntennaPodWatch-Target, Dev Team und App Group auf dem Mac. Nicht CarPlay und nicht Live-Scrubbing auf dem Telefon."
+          }
+        }
+      }
+    },
+    "Read-only note. This screen does not install the Watch app, start playback on the Watch, or refresh the snapshot. Play on iPhone opens the companion for the loaded episode or a cold-launch restored one. Not independent Watch downloads or queue, and not CarPlay templates.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read-only note. This screen does not install the Watch app, start playback on the Watch, or refresh the snapshot. Play on iPhone opens the companion for the loaded episode or a cold-launch restored one. Not independent Watch downloads or queue, and not CarPlay templates."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur Hinweis zum Lesen. Dieser Bildschirm installiert die Watch-App nicht, startet keine Wiedergabe auf der Watch und aktualisiert den Snapshot nicht. Play on iPhone öffnet den Companion für die geladene Episode oder eine beim Kaltstart wiederhergestellte. Keine unabhängigen Watch-Downloads oder Warteschlange und keine CarPlay-Vorlagen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
