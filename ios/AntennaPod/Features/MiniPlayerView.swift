@@ -268,8 +268,8 @@ struct MiniPlayerView: View {
                         )
                         .accessibilityHint(
                             store.isFavorite(episode.id)
-                                ? String(localized: "Removes this episode from favorites")
-                                : String(localized: "Adds this episode to favorites")
+                                ? String(localized: "Removes this episode from Favorites. No confirmation. Does not delete downloads, archive, mark played, or clear the queue.")
+                                : String(localized: "Adds this episode to Favorites. No confirmation. Does not download, archive, mark played, or change the queue.")
                         )
                         Button {
                             store.toggleArchived(episode.id)

@@ -10390,23 +10390,6 @@
         }
       }
     },
-    "Adds this episode to favorites": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Adds this episode to favorites"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fügt diese Episode zu den Favoriten hinzu"
-          }
-        }
-      }
-    },
     "Remove from favorites": {
       "extractionState": "manual",
       "localizations": {
@@ -10420,23 +10403,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aus Favoriten entfernen"
-          }
-        }
-      }
-    },
-    "Removes this episode from favorites": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Removes this episode from favorites"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Entfernt diese Episode aus den Favoriten"
           }
         }
       }
@@ -49046,6 +49012,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entfernt dieses Tag von allen Podcasts. Kündigt keine Abos und löscht keine Downloads."
+          }
+        }
+      }
+    },
+    "Adds this episode to Favorites. No confirmation. Does not download, archive, mark played, or change the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds this episode to Favorites. No confirmation. Does not download, archive, mark played, or change the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fügt diese Episode zu den Favoriten hinzu. Keine Bestätigung. Lädt nicht herunter, archiviert nicht, markiert nicht als gehört und ändert nicht die Warteschlange."
           }
         }
       }
