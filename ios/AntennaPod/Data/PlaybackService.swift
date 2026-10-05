@@ -387,6 +387,9 @@ final class PlaybackService: ObservableObject {
         guard currentEpisode?.id == episode.id, currentEpisode != episode else { return }
         currentEpisode = episode
         updateNowPlayingInfo(force: true)
+        // Same id, new image URL. Unchanged URL returns immediately; a removed URL
+        // clears the lock screen cover without a download.
+        loadArtworkIfNeeded()
         store?.publishWidgetSnapshot()
     }
 
@@ -1964,6 +1967,8 @@ final class PlaybackService: ObservableObject {
             if imageUrl == nil || imageUrl?.isEmpty == true {
                 cachedArtwork = nil
                 cachedArtworkURL = nil
+                // Paused playback has no tick to drop a cover that refresh removed.
+                updateNowPlayingInfo(force: true)
             }
             return
         }

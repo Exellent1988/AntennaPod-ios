@@ -156,7 +156,7 @@ Jedes Item: ☐ offen · ☑ ok · ✗ Fehler (+ Notiz).
 
 | DE | EN |
 |----|----|
-| ☐ Lockscreen: Titel, Podcast, Artwork | ☐ Lockscreen: title, podcast, artwork |
+| ☐ Lockscreen: Titel, Podcast, Artwork (Ein Aktualisieren, das dieses Bild ändert oder entfernt, aktualisiert Sperrbildschirm und Kontrollzentrum, solange die Episode geladen ist, auch bei Pause.) | ☐ Lockscreen: title, podcast, artwork (A refresh that changes or removes that image updates the lock screen and Control Center while the episode is loaded, including while paused.) |
 | ☐ Remote Play/Pause/Skip/Seek | ☐ Remote play/pause/skip/seek |
 | ☐ Hintergrund weiterhören (Audio-Session `.playback`) | ☐ Background continues (`.playback` session) |
 | ☐ Headset/BT Pause bei Unterbrechung / Unplug | ☐ Headset/BT pause on interrupt / unplug |
