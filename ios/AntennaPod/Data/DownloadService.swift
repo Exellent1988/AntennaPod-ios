@@ -640,6 +640,11 @@ final class DownloadService: ObservableObject {
         }
         inProgress.remove(episode.id)
         refreshStorageUsage()
+        // The player still has the removed file open; switch the playing episode to its stream.
+        if let playback = store?.playback, playback.isPlaying,
+           playback.currentEpisode?.id == episode.id, playback.isPlayingFromLocalFile {
+            playback.play(episode: episode)
+        }
     }
 
     /// Cancels an in-flight background download for `episode`. No-op if none is pending.
