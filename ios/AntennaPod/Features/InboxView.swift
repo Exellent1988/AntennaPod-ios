@@ -520,7 +520,7 @@ struct InboxView: View {
                                     Label("Mark played", systemImage: "checkmark.circle")
                                 }
                                 .tint(.blue)
-                                .accessibilityHint(String(localized: "Marks this episode as played"))
+                                .accessibilityHint(String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled."))
                             }
                     }
                 }

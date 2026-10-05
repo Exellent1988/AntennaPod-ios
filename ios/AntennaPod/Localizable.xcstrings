@@ -10850,40 +10850,6 @@
         }
       }
     },
-    "Marks this episode as played": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks this episode as played"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert diese Episode als gehört"
-          }
-        }
-      }
-    },
-    "Marks this episode as unplayed": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks this episode as unplayed"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert diese Episode als ungehört"
-          }
-        }
-      }
-    },
     "Open full player": {
       "extractionState": "manual",
       "localizations": {
@@ -49029,6 +48995,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Archiviert diese Episode und blendet sie im Posteingang aus, ohne sie als gehört zu markieren. Keine Bestätigung. Löscht keine Downloads, entfernt nichts aus der Warteschlange und entfernt keine Favoriten."
+          }
+        }
+      }
+    },
+    "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert diese Episode als gehört. Keine Bestätigung. Entfernt sie aus der Warteschlange. Kann die Wiedergabeposition zurücksetzen und den Download automatisch löschen, wenn diese Einstellungen aktiviert sind."
+          }
+        }
+      }
+    },
+    "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markiert diese Episode als ungehört. Keine Bestätigung. Löscht keine Downloads, entfernt nichts aus der Warteschlange und stoppt keine Wiedergabe."
           }
         }
       }

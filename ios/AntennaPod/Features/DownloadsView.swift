@@ -529,8 +529,8 @@ struct DownloadsView: View {
                                 .tint(.blue)
                                 .accessibilityHint(
                                     store.isPlayed(item.episode.id)
-                                        ? String(localized: "Marks this episode as unplayed")
-                                        : String(localized: "Marks this episode as played")
+                                        ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
+                                        : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
                                 )
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
