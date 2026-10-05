@@ -33154,23 +33154,6 @@
         }
       }
     },
-    "Copies the current transcript cue to the pasteboard": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the current transcript cue to the pasteboard"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert die aktuelle Transkript-Textstelle in die Zwischenablage"
-          }
-        }
-      }
-    },
     "Current cue copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {
@@ -49132,6 +49115,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Teilen-Sheet mit Episodentitel und vollständig bereits geladenem Transkript. Ignoriert den Transkript-Suchfilter. Lädt oder erzeugt kein Transkript."
+          }
+        }
+      }
+    },
+    "Copies the current transcript cue at the playback position to the pasteboard. Uses the full cue list and ignores the transcript search filter. Does not fetch or generate a transcript.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the current transcript cue at the playback position to the pasteboard. Uses the full cue list and ignores the transcript search filter. Does not fetch or generate a transcript."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert den aktuellen Transkript-Cue an der Wiedergabeposition in die Zwischenablage. Nutzt die volle Cue-Liste und ignoriert den Transkript-Suchfilter. Lädt oder erzeugt kein Transkript."
           }
         }
       }

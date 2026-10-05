@@ -202,7 +202,7 @@ struct TranscriptSheetView: View {
                     .disabled(!canCopyCurrentCue)
                     .accessibilityLabel(String(localized: "Copy current cue"))
                     .accessibilityHint(
-                        String(localized: "Copies the current transcript cue to the pasteboard")
+                        String(localized: "Copies the current transcript cue at the playback position to the pasteboard. Uses the full cue list and ignores the transcript search filter. Does not fetch or generate a transcript.")
                     )
 
                     ShareLink(
