@@ -546,6 +546,7 @@ struct SubscriptionsView: View {
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel(String(localized: "No matching podcasts"))
                     .accessibilityValue(subscriptionsEmptyStateAccessibilityValue)
+                    .accessibilityHint(subscriptionsNoMatchAccessibilityHint)
                 } else {
                     ForEach(groupedSections, id: \.title) { section in
                         Section(section.title) {
@@ -903,18 +904,35 @@ struct SubscriptionsView: View {
             return String(localized: "There are no subscriptions. Use Add podcast to subscribe, open Discover, choose a local folder, or import an OPML file.")
         }
         if isSearchFiltering {
-            return String(localized: "No subscriptions match your search. Clear or change the search to see your podcasts.")
+            return String(localized: "No subscriptions match your search. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view.")
         }
         if isCategoryFiltering {
-            return String(localized: "No subscriptions match this category filter. Choose All or another category.")
+            return String(localized: "No subscriptions match this category filter. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view.")
         }
         if isLanguageFiltering {
-            return String(localized: "No subscriptions match this language filter. Choose All or another language.")
+            return String(localized: "No subscriptions match this language filter. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view.")
         }
         if tagFilter == .pinned {
-            return String(localized: "No pinned podcasts match the active filters. Choose All or change the search, category, or language filter.")
+            return String(localized: "No pinned podcasts match the active filters. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view.")
         }
-        return String(localized: "No subscriptions match this tag filter. Choose All or another tag.")
+        return String(localized: "No subscriptions match this tag filter. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view.")
+    }
+
+    /// VoiceOver recovery hint for the search/category/language/tag mismatch empty state only.
+    private var subscriptionsNoMatchAccessibilityHint: String {
+        if isSearchFiltering {
+            return String(localized: "Change or clear search to see other subscriptions. This does not unsubscribe or delete podcasts.")
+        }
+        if isCategoryFiltering {
+            return String(localized: "Choose All or another category to see other subscriptions. This does not unsubscribe or delete podcasts.")
+        }
+        if isLanguageFiltering {
+            return String(localized: "Choose All or another language to see other subscriptions. This does not unsubscribe or delete podcasts.")
+        }
+        if tagFilter == .pinned {
+            return String(localized: "Choose All or change the search, category, or language filter to see other subscriptions. This does not unpin or unsubscribe.")
+        }
+        return String(localized: "Choose All or another tag to see other subscriptions. This does not unsubscribe or delete podcasts.")
     }
 
     /// VoiceOver for Subscriptions → Group by tag. Starts on for this visit

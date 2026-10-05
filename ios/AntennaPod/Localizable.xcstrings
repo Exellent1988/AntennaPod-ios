@@ -4924,40 +4924,6 @@
         }
       }
     },
-    "No subscriptions match this category filter. Choose All or another category.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No subscriptions match this category filter. Choose All or another category."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Abonnements passen zu diesem Kategorie-Filter. Wähle Alle oder eine andere Kategorie."
-          }
-        }
-      }
-    },
-    "No subscriptions match this language filter. Choose All or another language.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No subscriptions match this language filter. Choose All or another language."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Abonnements passen zu diesem Sprach-Filter. Wähle Alle oder eine andere Sprache."
-          }
-        }
-      }
-    },
     "No subscriptions match this tag filter.": {
       "extractionState": "manual",
       "localizations": {
@@ -4971,23 +4937,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Keine Abonnements passen zu diesem Tag-Filter."
-          }
-        }
-      }
-    },
-    "No subscriptions match this tag filter. Choose All or another tag.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No subscriptions match this tag filter. Choose All or another tag."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Abonnements passen zu diesem Tag-Filter. Wähle Alle oder einen anderen Tag."
           }
         }
       }
@@ -11429,23 +11378,6 @@
         }
       }
     },
-    "No subscriptions match your search. Clear or change the search to see your podcasts.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No subscriptions match your search. Clear or change the search to see your podcasts."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Abonnements passen zu deiner Suche. Lösche oder ändere die Suche, um deine Podcasts zu sehen."
-          }
-        }
-      }
-    },
     "Sort downloads": {
       "extractionState": "manual",
       "localizations": {
@@ -16318,23 +16250,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kein passender Text"
-          }
-        }
-      }
-    },
-    "No pinned podcasts match the active filters. Choose All or change the search, category, or language filter.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No pinned podcasts match the active filters. Choose All or change the search, category, or language filter."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine angepinnten Podcasts passen zu den aktiven Filtern. Wähle Alle oder ändere die Suche, den Kategorie- oder den Sprachfilter."
           }
         }
       }
@@ -48764,6 +48679,176 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ändere oder lösche die Suche, um andere archivierte Episoden zu sehen. Das stellt keine Episoden wieder her und hebt keine Archivierung auf."
+          }
+        }
+      }
+    },
+    "No subscriptions match your search. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match your search. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu deiner Suche. Podcasts bleiben in der vollständigen Abonnement-Bibliothek. Alle aktualisieren, Kopieren, Teilen und Alle nicht mehr oben halten nutzen weiter die ganze Bibliothek, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No subscriptions match this category filter. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match this category filter. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu diesem Kategorie-Filter. Podcasts bleiben in der vollständigen Abonnement-Bibliothek. Alle aktualisieren, Kopieren, Teilen und Alle nicht mehr oben halten nutzen weiter die ganze Bibliothek, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No subscriptions match this language filter. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match this language filter. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu diesem Sprach-Filter. Podcasts bleiben in der vollständigen Abonnement-Bibliothek. Alle aktualisieren, Kopieren, Teilen und Alle nicht mehr oben halten nutzen weiter die ganze Bibliothek, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No pinned podcasts match the active filters. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No pinned podcasts match the active filters. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine angehefteten Podcasts passen zu den aktiven Filtern. Podcasts bleiben in der vollständigen Abonnement-Bibliothek. Alle aktualisieren, Kopieren, Teilen und Alle nicht mehr oben halten nutzen weiter die ganze Bibliothek, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No subscriptions match this tag filter. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No subscriptions match this tag filter. Podcasts remain in the full subscriptions library. Refresh all, Copy, Share, and Unpin all still use the full library, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Abonnements passen zu diesem Tag-Filter. Podcasts bleiben in der vollständigen Abonnement-Bibliothek. Alle aktualisieren, Kopieren, Teilen und Alle nicht mehr oben halten nutzen weiter die ganze Bibliothek, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "Change or clear search to see other subscriptions. This does not unsubscribe or delete podcasts.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear search to see other subscriptions. This does not unsubscribe or delete podcasts."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Suche, um andere Abonnements zu sehen. Das kündigt keine Abonnements und löscht keine Podcasts."
+          }
+        }
+      }
+    },
+    "Choose All or another category to see other subscriptions. This does not unsubscribe or delete podcasts.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose All or another category to see other subscriptions. This does not unsubscribe or delete podcasts."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle Alle oder eine andere Kategorie, um andere Abonnements zu sehen. Das kündigt keine Abonnements und löscht keine Podcasts."
+          }
+        }
+      }
+    },
+    "Choose All or another language to see other subscriptions. This does not unsubscribe or delete podcasts.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose All or another language to see other subscriptions. This does not unsubscribe or delete podcasts."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle Alle oder eine andere Sprache, um andere Abonnements zu sehen. Das kündigt keine Abonnements und löscht keine Podcasts."
+          }
+        }
+      }
+    },
+    "Choose All or change the search, category, or language filter to see other subscriptions. This does not unpin or unsubscribe.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose All or change the search, category, or language filter to see other subscriptions. This does not unpin or unsubscribe."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle Alle oder ändere Suche, Kategorie oder Sprach-Filter, um andere Abonnements zu sehen. Das hebt »Oben halten« nicht auf und kündigt kein Abo."
+          }
+        }
+      }
+    },
+    "Choose All or another tag to see other subscriptions. This does not unsubscribe or delete podcasts.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose All or another tag to see other subscriptions. This does not unsubscribe or delete podcasts."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle Alle oder einen anderen Tag, um andere Abonnements zu sehen. Das kündigt keine Abonnements und löscht keine Podcasts."
           }
         }
       }
