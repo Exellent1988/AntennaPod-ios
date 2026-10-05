@@ -238,6 +238,9 @@ final class DownloadService: ObservableObject {
 
     @Published var downloads: [DownloadedEpisode] = []
     @Published var inProgress: Set<String> = []
+    /// Episode ids in the in-memory waiting FIFO (accepted, not yet a live `URLSession` task).
+    /// Subset of `inProgress`. Published so episode rows can say Waiting instead of Downloading.
+    @Published private(set) var waitingEpisodeIds: Set<String> = []
     @Published var lastError: String?
     /// Recent download failures (newest first; Application Support ring buffer).
     @Published private(set) var recentErrors: [DownloadErrorEntry] = []
@@ -270,6 +273,14 @@ final class DownloadService: ObservableObject {
     /// survives while the service is alive / session completion handlers fire; not written to disk.
     private var waitingQueue: [WaitingDownload] = []
     private var backgroundCompletionHandler: (() -> Void)?
+
+    /// Keep `waitingEpisodeIds` in sync so SwiftUI can distinguish Waiting vs Downloading.
+    private func syncWaitingEpisodeIds() {
+        let ids = Set(waitingQueue.map(\.episode.id))
+        if ids != waitingEpisodeIds {
+            waitingEpisodeIds = ids
+        }
+    }
 
     private static weak var activeInstance: DownloadService?
     private static var pendingBackgroundCompletionHandler: (() -> Void)?
@@ -498,6 +509,7 @@ final class DownloadService: ObservableObject {
         if !heldForWifi.isEmpty {
             waitingQueue.insert(contentsOf: heldForWifi, at: 0)
         }
+        syncWaitingEpisodeIds()
     }
 
 
@@ -716,6 +728,11 @@ final class DownloadService: ObservableObject {
         cancelTask(for: episode.id)
     }
 
+    /// True while the episode is accepted but not yet a live `URLSession` task (waiting FIFO).
+    func isWaitingDownload(episodeId: String) -> Bool {
+        waitingEpisodeIds.contains(episodeId)
+    }
+
     /// Count of downloads that `cancelAllInFlightDownloads` would cancel: active `URLSession`
     /// tasks + waiting FIFO items. Equals `inProgress.count` in steady state (published for UI).
     var cancelAllInFlightCount: Int {
@@ -732,6 +749,7 @@ final class DownloadService: ObservableObject {
         // Snapshot task ids before clearing maps so async cancel still targets the right tasks.
         let taskIds = Array(pendingByTaskId.keys)
         waitingQueue.removeAll()
+        syncWaitingEpisodeIds()
         pendingByTaskId.removeAll()
         sessionDelegate.removeAllPending()
         persistPending()
@@ -1251,6 +1269,7 @@ final class DownloadService: ObservableObject {
         // Drop stale pending mappings from before restore.
         pendingByTaskId.removeAll()
         waitingQueue.removeAll()
+        syncWaitingEpisodeIds()
         inProgress.removeAll()
         sessionDelegate.removeAllPending()
         PodcastPersistence.savePendingDownloads([])
@@ -1319,6 +1338,7 @@ final class DownloadService: ObservableObject {
         // Waiting (not yet a URLSession task): drop from FIFO only.
         if let idx = waitingQueue.firstIndex(where: { $0.episode.id == episodeId }) {
             waitingQueue.remove(at: idx)
+            syncWaitingEpisodeIds()
             inProgress.remove(episodeId)
             return
         }

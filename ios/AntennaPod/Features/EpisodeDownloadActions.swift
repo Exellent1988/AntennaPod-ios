@@ -27,6 +27,9 @@ enum EpisodeDownloadActions {
     }
 
     static func accessibilityHint(for episode: PodcastEpisode, downloads: DownloadService) -> String {
+        if downloads.isWaitingDownload(episodeId: episode.id) {
+            return String(localized: "Cancels this waiting download")
+        }
         if downloads.inProgress.contains(episode.id) {
             return String(localized: "Cancels the in-progress download")
         }
@@ -55,7 +58,9 @@ enum EpisodeDownloadActions {
                     Task { await downloads.download(episode) }
                 }
             } label: {
-                if downloads.inProgress.contains(episode.id) {
+                if downloads.isWaitingDownload(episodeId: episode.id) {
+                    Label("Waiting", systemImage: "clock")
+                } else if downloads.inProgress.contains(episode.id) {
                     Label("Cancel download", systemImage: "xmark.circle")
                 } else if downloads.isDownloaded(episode) {
                     Label("Delete download", systemImage: "trash")

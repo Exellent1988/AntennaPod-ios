@@ -3025,14 +3025,16 @@ struct EpisodeRow: View {
 
                 Button {
                     // A running, queued, or Wi-Fi-held download could only be stopped with
-                    // Cancel all downloads. Tapping the spinner cancels just this one.
+                    // Cancel all downloads. Tapping Waiting / the spinner cancels just this one.
                     if downloads.inProgress.contains(episode.id) {
                         downloads.cancelDownload(episode)
                     } else {
                         Task { await downloads.download(episode) }
                     }
                 } label: {
-                    if downloads.inProgress.contains(episode.id) {
+                    if downloads.isWaitingDownload(episodeId: episode.id) {
+                        Label("Waiting", systemImage: "clock")
+                    } else if downloads.inProgress.contains(episode.id) {
                         ProgressView()
                     } else if downloads.isDownloaded(episode) {
                         Label("Downloaded", systemImage: "checkmark.circle.fill")
@@ -3044,9 +3046,11 @@ struct EpisodeRow: View {
                 .disabled(episode.downloadUrl == nil)
                 .accessibilityLabel(downloadAccessibilityLabel)
                 .accessibilityHint(
-                    downloads.inProgress.contains(episode.id)
-                        ? String(localized: "Cancels the in-progress download")
-                        : ""
+                    downloads.isWaitingDownload(episodeId: episode.id)
+                        ? String(localized: "Cancels this waiting download")
+                        : downloads.inProgress.contains(episode.id)
+                            ? String(localized: "Cancels the in-progress download")
+                            : ""
                 )
 
                 Button {
@@ -3608,6 +3612,8 @@ struct EpisodeRow: View {
         }
         if downloads.isDownloaded(episode) {
             parts.append(String(localized: "Downloaded"))
+        } else if downloads.isWaitingDownload(episodeId: episode.id) {
+            parts.append(String(localized: "Waiting"))
         } else if downloads.inProgress.contains(episode.id) {
             parts.append(String(localized: "Downloading"))
         }

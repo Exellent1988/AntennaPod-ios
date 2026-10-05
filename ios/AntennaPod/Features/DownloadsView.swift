@@ -1207,6 +1207,9 @@ private struct DownloadErrorRow: View {
         if canRetry {
             return String(localized: "Enqueues this episode again via the normal download path")
         }
+        if downloads.isWaitingDownload(episodeId: entry.episodeId) {
+            return String(localized: "Download already waiting")
+        }
         if downloads.inProgress.contains(entry.episodeId) {
             return String(localized: "Download already in progress")
         }
