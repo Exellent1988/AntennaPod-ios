@@ -412,11 +412,26 @@ struct FavoritesView: View {
                                 : String(localized: "Marks this episode as played")
                         )
                         Button {
-                            store.archive(item.episode.id)
+                            // Archived episodes stay in Favorites, so this swipe must undo
+                            // as well as archive — same toggle as the row button. A one-way
+                            // archive() leaves the action labeled Archive and does nothing.
+                            store.toggleArchived(item.episode.id)
                         } label: {
-                            Label("Archive", systemImage: "archivebox")
+                            Label(
+                                store.isArchived(item.episode.id)
+                                    ? String(localized: "Restore")
+                                    : String(localized: "Archive"),
+                                systemImage: store.isArchived(item.episode.id)
+                                    ? "arrow.uturn.backward"
+                                    : "archivebox"
+                            )
                         }
-                        .tint(.orange)
+                        .tint(store.isArchived(item.episode.id) ? .green : .orange)
+                        .accessibilityHint(
+                            store.isArchived(item.episode.id)
+                                ? String(localized: "Restores this episode from the archive")
+                                : String(localized: "Hides this episode from Inbox without marking it played")
+                        )
                     }
                 }
             }
