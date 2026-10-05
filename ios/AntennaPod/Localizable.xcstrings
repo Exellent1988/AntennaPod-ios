@@ -49220,6 +49220,23 @@
           }
         }
       }
+    },
+    "Use global, Inbox only, or Add to Queue for newly appeared episodes of this podcast. Queue and download is only a global choice. Inbox only keeps them out of Queue even when global adds to Queue. Add to Queue does not auto-download from this override; Inbox still lists them while unplayed. Changing this does not move or download existing episodes now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, Inbox only, or Add to Queue for newly appeared episodes of this podcast. Queue and download is only a global choice. Inbox only keeps them out of Queue even when global adds to Queue. Add to Queue does not auto-download from this override; Inbox still lists them while unplayed. Changing this does not move or download existing episodes now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global, Nur Posteingang oder Zur Warteschlange hinzufügen für neu erschienene Episoden dieses Podcasts. „Zur Warteschlange hinzufügen und herunterladen“ gibt es nur als globale Auswahl. Nur Posteingang hält sie aus der Warteschlange, auch wenn global hinzufügt. Zur Warteschlange hinzufügen lädt durch diese Ausnahme nicht automatisch; der Posteingang zeigt sie weiter, solange ungehört. Ändern verschiebt oder lädt bestehende Episoden jetzt nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

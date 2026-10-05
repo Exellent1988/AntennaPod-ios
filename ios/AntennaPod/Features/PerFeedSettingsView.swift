@@ -192,6 +192,9 @@ struct PerFeedSettingsView: View {
                         Text(option.label).tag(option)
                     }
                 }
+                .accessibilityLabel(String(localized: "New episodes"))
+                .accessibilityHint(String(localized: "Use global, Inbox only, or Add to Queue for newly appeared episodes of this podcast. Queue and download is only a global choice. Inbox only keeps them out of Queue even when global adds to Queue. Add to Queue does not auto-download from this override; Inbox still lists them while unplayed. Changing this does not move or download existing episodes now."))
+                .accessibilityValue(current.newEpisodeAction.label)
                 Text(newEpisodeActionHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)
