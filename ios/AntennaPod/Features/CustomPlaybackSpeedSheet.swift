@@ -140,7 +140,8 @@ struct CustomPlaybackSpeedSheet: View {
         let trimmed = speedText
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .replacingOccurrences(of: ",", with: ".")
-        guard let value = Float(trimmed) else { return nil }
+        // Float("nan") and Float("inf") parse; NaN slipped past the clamp and showed "nan×".
+        guard let value = Float(trimmed), value.isFinite else { return nil }
         return value
     }
 
