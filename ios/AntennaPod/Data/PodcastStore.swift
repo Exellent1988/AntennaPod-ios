@@ -327,6 +327,24 @@ final class PodcastStore: ObservableObject {
         return displayTitle(for: feed)
     }
 
+    /// Live lookup first; a download whose episode has since left the feed falls back to the
+    /// subscription id recorded when it finished.
+    func downloadFeed(for item: DownloadedEpisode) -> PodcastFeed? {
+        if let feed = feed(containingEpisodeId: item.episode.id) {
+            return feed
+        }
+        guard let feedId = item.feedId else { return nil }
+        return feeds.first { $0.id == feedId }
+    }
+
+    /// `downloadFeed(for:)` display title, else the title recorded at download time, else "".
+    func downloadDisplayTitle(for item: DownloadedEpisode) -> String {
+        if let feed = downloadFeed(for: item) {
+            return displayTitle(for: feed)
+        }
+        return item.feedTitle ?? ""
+    }
+
     /// Serial narrative default (one-shot / nil-only): when channel `itunes:type` canonicalizes to
     /// `serial` and per-feed `episodeSort` is still `nil`, set **Oldest first** once.
     /// - Never invents type (parsed channel only via `ItunesTypeParsing.canonical`).

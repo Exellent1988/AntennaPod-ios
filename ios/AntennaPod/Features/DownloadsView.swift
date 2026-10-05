@@ -52,7 +52,7 @@ struct DownloadsView: View {
         case .all:
             break
         case .feed(let feedId):
-            base = base.filter { store.feed(containingEpisodeId: $0.episode.id)?.id == feedId }
+            base = base.filter { store.downloadFeed(for: $0)?.id == feedId }
         }
         let q = debouncedQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         let filtered: [DownloadedEpisode]
@@ -61,7 +61,7 @@ struct DownloadsView: View {
         } else {
             filtered = base.filter { item in
                 if store.episodeMatchesLibraryQuery(item.episode, query: q) { return true }
-                let feedTitle = store.displayTitle(containingEpisodeId: item.episode.id)
+                let feedTitle = store.downloadDisplayTitle(for: item)
                 return feedTitle.localizedCaseInsensitiveContains(q)
             }
         }
@@ -135,7 +135,7 @@ struct DownloadsView: View {
         var seen = Set<UUID>()
         var feeds: [PodcastFeed] = []
         for item in downloads.downloads {
-            guard let feed = store.feed(containingEpisodeId: item.episode.id) else { continue }
+            guard let feed = store.downloadFeed(for: item) else { continue }
             if seen.insert(feed.id).inserted {
                 feeds.append(feed)
             }
@@ -895,7 +895,7 @@ struct DownloadsView: View {
     /// the id is long) is not a podcast, so a sighted row was only a hash. Fall back
     /// to that file name when the feed is gone — never invent a podcast title.
     private func downloadsRowSubtitle(for item: DownloadedEpisode) -> String {
-        let title = store.displayTitle(containingEpisodeId: item.episode.id)
+        let title = store.downloadDisplayTitle(for: item)
             .trimmingCharacters(in: .whitespacesAndNewlines)
         if !title.isEmpty { return title }
         return item.localFileURL.lastPathComponent
@@ -911,7 +911,7 @@ struct DownloadsView: View {
             parts.append(episodeTitle)
         }
 
-        let feedTitle = store.displayTitle(containingEpisodeId: item.episode.id)
+        let feedTitle = store.downloadDisplayTitle(for: item)
             .trimmingCharacters(in: .whitespacesAndNewlines)
         if !feedTitle.isEmpty {
             parts.append(String(localized: "Podcast \(feedTitle)"))

@@ -8,11 +8,24 @@ struct DownloadedEpisode: Identifiable, Hashable, Codable {
     /// Wall-clock when the offline file finished downloading (ms since epoch).
     /// Absent in older `downloads.json` rows; may be backfilled from file creation/mtime once.
     var downloadedAtEpochMs: Int64?
+    /// Owning subscription and its display title when the download finished. Only a
+    /// fallback for rows whose episode later left the feed (`PodcastStore.downloadDisplayTitle`);
+    /// absent (nil) in older `downloads.json` rows (synthesized `decodeIfPresent`).
+    var feedId: UUID?
+    var feedTitle: String?
 
-    init(episode: PodcastEpisode, fileName: String, downloadedAtEpochMs: Int64? = nil) {
+    init(
+        episode: PodcastEpisode,
+        fileName: String,
+        downloadedAtEpochMs: Int64? = nil,
+        feedId: UUID? = nil,
+        feedTitle: String? = nil
+    ) {
         self.episode = episode
         self.fileName = fileName
         self.downloadedAtEpochMs = downloadedAtEpochMs
+        self.feedId = feedId
+        self.feedTitle = feedTitle
     }
 
     var id: String { episode.id }
@@ -620,7 +633,9 @@ final class DownloadService: ObservableObject {
                 next[index] = DownloadedEpisode(
                     episode: merged,
                     fileName: item.fileName,
-                    downloadedAtEpochMs: item.downloadedAtEpochMs
+                    downloadedAtEpochMs: item.downloadedAtEpochMs,
+                    feedId: item.feedId,
+                    feedTitle: item.feedTitle
                 )
                 changed = true
             }
@@ -973,12 +988,23 @@ final class DownloadService: ObservableObject {
 
     // MARK: - Delegate callbacks (from DownloadSessionDelegate)
 
-    fileprivate func handleMovedDownload(taskIdentifier: Int, fileName: String, episode: PodcastEpisode) {
+    fileprivate func handleMovedDownload(
+        taskIdentifier: Int,
+        fileName: String,
+        episode: PodcastEpisode,
+        feedId: UUID?
+    ) {
         let completedAt = Int64(Date().timeIntervalSince1970 * 1000)
+        // The episode may have left the feed while downloading; the enqueue-time feed id still
+        // names the podcast, so remember it (and its title) for the Downloads row.
+        let owningFeed = store?.feed(containingEpisodeId: episode.id)
+            ?? feedId.flatMap { id in store?.feeds.first { $0.id == id } }
         let item = DownloadedEpisode(
             episode: episode,
             fileName: fileName,
-            downloadedAtEpochMs: completedAt
+            downloadedAtEpochMs: completedAt,
+            feedId: owningFeed?.id ?? feedId,
+            feedTitle: owningFeed.flatMap { store?.displayTitle(for: $0) }
         )
         downloads.removeAll { $0.id == item.id }
         downloads.append(item)
@@ -1239,7 +1265,8 @@ final class DownloadService: ObservableObject {
                         self.handleMovedDownload(
                             taskIdentifier: id,
                             fileName: mapping.fileName,
-                            episode: mapping.episode
+                            episode: mapping.episode,
+                            feedId: mapping.feedId
                         )
                         self.pendingByTaskId.removeValue(forKey: id)
                         self.sessionDelegate.removePending(for: id)
@@ -1370,7 +1397,8 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
                 self.owner?.handleMovedDownload(
                     taskIdentifier: taskId,
                     fileName: mapping.fileName,
-                    episode: mapping.episode
+                    episode: mapping.episode,
+                    feedId: mapping.feedId
                 )
             }
         } catch {

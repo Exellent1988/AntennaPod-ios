@@ -121,7 +121,7 @@ struct HomeView: View {
         if q.isEmpty { return base }
         return base.filter { item in
             if store.episodeMatchesLibraryQuery(item.episode, query: q) { return true }
-            let feedTitle = store.displayTitle(containingEpisodeId: item.episode.id)
+            let feedTitle = store.downloadDisplayTitle(for: item)
             return feedTitle.localizedCaseInsensitiveContains(q)
         }
     }
@@ -1070,7 +1070,7 @@ struct HomeView: View {
             ForEach(downloadItems) { item in
                 EpisodeRow(
                     episode: item.episode,
-                    feedTitle: store.displayTitle(containingEpisodeId: item.episode.id),
+                    feedTitle: store.downloadDisplayTitle(for: item),
                     dateOverride: item.downloadedAtEpochMs.map {
                         Date(timeIntervalSince1970: Double($0) / 1000)
                     },
