@@ -278,6 +278,17 @@ final class PlaybackService: ObservableObject {
         }
 
         // Keep an active sleep timer across episode changes (clock continues; EOE/EOC/EOQ stay armed).
+        // Choose the resume point while this episode is still loaded. Saved progress
+        // can lag the live playhead by about 5s. A rewind that is not saved yet must
+        // not jump forward. A different episode still uses the stored position.
+        let resumeAt: Double
+        if fromBeginning {
+            resumeAt = 0
+        } else if currentEpisode?.id == episode.id, player != nil, positionSeconds.isFinite {
+            resumeAt = max(0, positionSeconds)
+        } else {
+            resumeAt = resumePosition(for: episode.id)
+        }
         tearDownPlayer(clearSleepTimer: false)
         currentEpisode = episode
         isPlayingFromLocalFile = playingLocal
@@ -302,7 +313,6 @@ final class PlaybackService: ObservableObject {
         // Cold play / episode (re)start is not a pause-resume — do not rewind-after-pause.
         pausedAt = nil
 
-        let resumeAt = fromBeginning ? 0 : resumePosition(for: episode.id)
         if resumeAt > 1 {
             let time = CMTime(seconds: resumeAt, preferredTimescale: 600)
             let hold = beginSeekHold()
