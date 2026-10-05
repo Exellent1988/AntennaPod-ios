@@ -330,15 +330,29 @@ struct InboxView: View {
             return String(localized: "No Inbox episodes match your search. Clear or change the search to see Inbox.")
         }
         if isPodcastFiltering && isEpisodeTypeFiltering {
-            return String(localized: "No Inbox episodes match the selected podcast and episode type filters. Choose All for the podcast or episode type to see more episodes.")
+            return String(localized: "No Inbox episodes match the selected podcast and episode type filters. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view.")
         }
         if isPodcastFiltering {
-            return String(localized: "The selected podcast has no matching Inbox episodes. Choose All or another podcast filter.")
+            return String(localized: "The selected podcast has no matching Inbox episodes. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view.")
         }
         if isEpisodeTypeFiltering {
-            return String(localized: "No Inbox episodes match the selected episode type. Choose All or another episode type.")
+            return String(localized: "No Inbox episodes match the selected episode type. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view.")
         }
-        return String(localized: "No Inbox episodes match the active filters. Choose All or another filter.")
+        return String(localized: "No Inbox episodes match the active filters. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view.")
+    }
+
+    /// VoiceOver recovery hint for the podcast/type filter mismatch empty state only.
+    private var inboxNoMatchAccessibilityHint: String {
+        if isPodcastFiltering && isEpisodeTypeFiltering {
+            return String(localized: "Choose All for the podcast or episode type filter to see other Inbox episodes. This does not delete, archive, or mark episodes played.")
+        }
+        if isPodcastFiltering {
+            return String(localized: "Choose All or another podcast filter to see other Inbox episodes. This does not delete, archive, or mark episodes played.")
+        }
+        if isEpisodeTypeFiltering {
+            return String(localized: "Choose All or another episode type to see other Inbox episodes. This does not delete, archive, or mark episodes played.")
+        }
+        return String(localized: "Choose All or clear the active filters to see other Inbox episodes. This does not delete, archive, or mark episodes played.")
     }
 
 
@@ -461,6 +475,7 @@ struct InboxView: View {
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel(String(localized: "No matching inbox episodes"))
                     .accessibilityValue(inboxEmptyStateAccessibilityValue)
+                    .accessibilityHint(inboxNoMatchAccessibilityHint)
                 } else {
                     ForEach(visibleItems) { item in
                         EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)

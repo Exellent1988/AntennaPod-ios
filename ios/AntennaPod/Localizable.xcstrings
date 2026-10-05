@@ -24439,74 +24439,6 @@
         }
       }
     },
-    "No Inbox episodes match the selected podcast and episode type filters. Choose All for the podcast or episode type to see more episodes.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Inbox episodes match the selected podcast and episode type filters. Choose All for the podcast or episode type to see more episodes."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Posteingangs-Episoden passen zu den gewählten Podcast- und Episodentyp-Filtern. Wähle Alle für den Podcast oder den Episodentyp, um mehr Episoden zu sehen."
-          }
-        }
-      }
-    },
-    "The selected podcast has no matching Inbox episodes. Choose All or another podcast filter.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "The selected podcast has no matching Inbox episodes. Choose All or another podcast filter."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Der gewählte Podcast hat keine passenden Posteingangs-Episoden. Wähle Alle oder einen anderen Podcast-Filter."
-          }
-        }
-      }
-    },
-    "No Inbox episodes match the selected episode type. Choose All or another episode type.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Inbox episodes match the selected episode type. Choose All or another episode type."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Posteingangs-Episoden passen zum gewählten Episodentyp. Wähle Alle oder einen anderen Episodentyp."
-          }
-        }
-      }
-    },
-    "No Inbox episodes match the active filters. Choose All or another filter.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Inbox episodes match the active filters. Choose All or another filter."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Posteingangs-Episoden passen zu den aktiven Filtern. Wähle Alle oder einen anderen Filter."
-          }
-        }
-      }
-    },
     "There are no episodes in All Episodes. Episodes from your subscriptions appear here, newest first.": {
       "extractionState": "manual",
       "localizations": {
@@ -48543,6 +48475,142 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ändere oder lösche die Suche, um andere Episoden in diesem Podcast zu sehen. Das löscht nichts und kündigt kein Abonnement."
+          }
+        }
+      }
+    },
+    "No Inbox episodes match the selected podcast and episode type filters. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Inbox episodes match the selected podcast and episode type filters. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Posteingangs-Episoden passen zu den gewählten Podcast- und Episodentyp-Filtern. Episoden bleiben im vollständigen Posteingangs-Katalog. Alle als gehört markieren, Alle archivieren, Alle zur Warteschlange, Zufällig abspielen, Kopieren und Teilen nutzen weiter den ganzen Posteingang, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "The selected podcast has no matching Inbox episodes. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The selected podcast has no matching Inbox episodes. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der gewählte Podcast hat keine passenden Posteingangs-Episoden. Episoden bleiben im vollständigen Posteingangs-Katalog. Alle als gehört markieren, Alle archivieren, Alle zur Warteschlange, Zufällig abspielen, Kopieren und Teilen nutzen weiter den ganzen Posteingang, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No Inbox episodes match the selected episode type. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Inbox episodes match the selected episode type. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Posteingangs-Episoden passen zum gewählten Episodentyp. Episoden bleiben im vollständigen Posteingangs-Katalog. Alle als gehört markieren, Alle archivieren, Alle zur Warteschlange, Zufällig abspielen, Kopieren und Teilen nutzen weiter den ganzen Posteingang, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "No Inbox episodes match the active filters. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Inbox episodes match the active filters. Episodes remain in the full Inbox catalog. Mark all as played, Archive all, Add all to queue, Play random, Copy, and Share still use the full Inbox, not this empty view."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Posteingangs-Episoden passen zu den aktiven Filtern. Episoden bleiben im vollständigen Posteingangs-Katalog. Alle als gehört markieren, Alle archivieren, Alle zur Warteschlange, Zufällig abspielen, Kopieren und Teilen nutzen weiter den ganzen Posteingang, nicht diese leere Ansicht."
+          }
+        }
+      }
+    },
+    "Choose All for the podcast or episode type filter to see other Inbox episodes. This does not delete, archive, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose All for the podcast or episode type filter to see other Inbox episodes. This does not delete, archive, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle Alle für den Podcast- oder Episodentyp-Filter, um andere Posteingangs-Episoden zu sehen. Das löscht, archiviert oder markiert keine Episoden als gehört."
+          }
+        }
+      }
+    },
+    "Choose All or another podcast filter to see other Inbox episodes. This does not delete, archive, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose All or another podcast filter to see other Inbox episodes. This does not delete, archive, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle Alle oder einen anderen Podcast-Filter, um andere Posteingangs-Episoden zu sehen. Das löscht, archiviert oder markiert keine Episoden als gehört."
+          }
+        }
+      }
+    },
+    "Choose All or another episode type to see other Inbox episodes. This does not delete, archive, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose All or another episode type to see other Inbox episodes. This does not delete, archive, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle Alle oder einen anderen Episodentyp, um andere Posteingangs-Episoden zu sehen. Das löscht, archiviert oder markiert keine Episoden als gehört."
+          }
+        }
+      }
+    },
+    "Choose All or clear the active filters to see other Inbox episodes. This does not delete, archive, or mark episodes played.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose All or clear the active filters to see other Inbox episodes. This does not delete, archive, or mark episodes played."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle Alle oder lösche die aktiven Filter, um andere Posteingangs-Episoden zu sehen. Das löscht, archiviert oder markiert keine Episoden als gehört."
           }
         }
       }
