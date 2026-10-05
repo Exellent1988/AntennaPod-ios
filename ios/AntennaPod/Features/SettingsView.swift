@@ -1942,7 +1942,7 @@ struct SettingsView: View {
                 .autocorrectionDisabled()
                 .keyboardType(.URL)
                 .accessibilityLabel(String(localized: "Proxy host"))
-                .accessibilityHint(String(localized: "Hostname without http or https. Empty host disables the proxy."))
+                .accessibilityHint(String(localized: "Hostname without http or https. Empty host disables the proxy even when HTTP proxy is on. Used with Proxy port for URLSession clients. Does not test the connection, enable the toggle, or change Proxy password."))
 
                 TextField(
                     String(localized: "Proxy port"),
