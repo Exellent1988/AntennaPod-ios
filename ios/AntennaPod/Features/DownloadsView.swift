@@ -126,8 +126,9 @@ struct DownloadsView: View {
         return false
     }
 
-    /// Unique feeds that currently have at least one completed download (title A–Z).
+    /// Unique feeds that currently have at least one completed download.
     /// Built from the visible download catalog via `feed(containingEpisodeId:)` — never invent.
+    /// Order matches the chip label: display title (custom title when set, else RSS title).
     private var downloadPodcastFeeds: [PodcastFeed] {
         var seen = Set<UUID>()
         var feeds: [PodcastFeed] = []
@@ -137,8 +138,16 @@ struct DownloadsView: View {
                 feeds.append(feed)
             }
         }
-        return feeds.sorted {
-            $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+        return downloadPodcastsByDisplayTitle(feeds)
+    }
+
+    /// A–Z by the name the chip shows. Raw RSS title would place a renamed podcast
+    /// where the old name sorts, so the visible label and the row disagree.
+    private func downloadPodcastsByDisplayTitle(_ feeds: [PodcastFeed]) -> [PodcastFeed] {
+        feeds.sorted {
+            store.displayTitle(for: $0).localizedCaseInsensitiveCompare(
+                store.displayTitle(for: $1)
+            ) == .orderedAscending
         }
     }
 
@@ -151,9 +160,7 @@ struct DownloadsView: View {
            !feeds.contains(where: { $0.id == id }),
            let feed = store.feeds.first(where: { $0.id == id }) {
             feeds.append(feed)
-            feeds.sort {
-                $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
-            }
+            feeds = downloadPodcastsByDisplayTitle(feeds)
         }
         chips.append(contentsOf: feeds.map { .feed($0.id) })
         return chips
