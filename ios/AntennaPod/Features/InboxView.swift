@@ -617,7 +617,7 @@ struct InboxView: View {
                         // Played episodes are no longer in `inboxEpisodes`; use the full catalog count.
                         .disabled(markAllInboxUnplayedCandidatesCount == 0)
                         .accessibilityHint(
-                            String(localized: "Marks played episodes in the full Inbox catalog, including archived episodes")
+                            String(localized: "Asks for confirmation, then marks played episodes from the full stored feed catalog behind Inbox as unplayed, including archived episodes. Ignores podcast, episode type, search, and sort filters. Does not delete downloads, clear the queue, stop playback, or unarchive episodes.")
                         )
 
                         Button {
