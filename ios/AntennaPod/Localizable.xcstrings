@@ -36786,24 +36786,6 @@
         }
       }
     },
-    "Marks played episodes in the full queue, including archived episodes": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Queue Mark all as unplayed.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks played episodes in the full queue, including archived episodes"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert gehörte Episoden in der vollständigen Warteschlange, einschließlich archivierter Episoden"
-          }
-        }
-      }
-    },
     "Marks %lld played episodes in the full queue as unplayed, including archived episodes. This does not delete downloads, remove episodes from the queue, stop playback, or unarchive episodes. It ignores the Queue played/podcast/search filters.": {
       "extractionState": "manual",
       "comment": "Queue Mark all as unplayed confirmation — full queue, including archived played episodes.",
@@ -48967,6 +48949,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und reiht dann ungehörte, nicht archivierte Episoden aus dem vollständigen Feed-Katalog dieses Podcasts ein, die noch nicht in der Warteschlange sind, in der Episoden-Sortierung dieses Podcasts. Ignoriert Status-, Episodentyp-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht. Unterschiedlich von Alle zur Warteschlange hinzufügen, das auch gehörte und archivierte einschließt."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then marks played episodes in the full queue as unplayed, including archived. Ignores played, podcast, and search filters. Does not delete downloads, remove episodes from the queue, stop playback, or unarchive.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then marks played episodes in the full queue as unplayed, including archived. Ignores played, podcast, and search filters. Does not delete downloads, remove episodes from the queue, stop playback, or unarchive."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und markiert dann gehörte Episoden in der gesamten Warteschlange als ungehört, einschließlich archivierter. Ignoriert Gehört-, Podcast- und Suchfilter. Löscht keine Downloads, entfernt keine Episoden aus der Warteschlange, stoppt keine Wiedergabe und hebt die Archivierung nicht auf."
           }
         }
       }

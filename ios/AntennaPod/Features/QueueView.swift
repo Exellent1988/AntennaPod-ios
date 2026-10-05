@@ -795,7 +795,7 @@ struct QueueView: View {
                         .disabled(markAllQueueUnplayedCandidatesCount == 0)
                         .accessibilityLabel(String(localized: "Mark all as unplayed"))
                         .accessibilityHint(
-                            String(localized: "Marks played episodes in the full queue, including archived episodes")
+                            String(localized: "Asks for confirmation, then marks played episodes in the full queue as unplayed, including archived. Ignores played, podcast, and search filters. Does not delete downloads, remove episodes from the queue, stop playback, or unarchive.")
                         )
 
                         Button {
