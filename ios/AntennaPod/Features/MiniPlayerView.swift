@@ -425,6 +425,11 @@ struct MiniPlayerView: View {
                 // Leaving the sheet open after auto-next retargets copy/share/soundbite
                 // onto the next episode — Full Player already dismisses Description.
                 showDescription = false
+                // Delete-download / Remove-from-queue confirms keep the episode they were opened for.
+                // Leaving them up after auto-next lets Confirm mutate that prior episode while the
+                // mini player already shows the next one.
+                episodePendingDeleteDownload = nil
+                episodePendingRemoveFromQueue = nil
                 // Speed sheet keeps the typed speed and Set applies it to whatever is now playing.
                 showCustomPlaybackSpeed = false
                 // Custom sleep sheet keeps the typed minutes and Set arms whatever is now playing.

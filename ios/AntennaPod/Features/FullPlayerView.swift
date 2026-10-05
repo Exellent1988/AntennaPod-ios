@@ -286,6 +286,11 @@ struct FullPlayerView: View {
             showCustomPlaybackSpeed = false
             // Custom sleep sheet keeps the typed minutes and Set arms whatever is now playing.
             showCustomSleepTimer = false
+            // Delete-download / Remove-from-queue confirms keep the episode they were opened for.
+            // Leaving them up after auto-next lets Confirm mutate that prior episode while the
+            // player already shows the next one.
+            episodePendingDeleteDownload = nil
+            episodePendingRemoveFromQueue = nil
             resetChapterSearch()
             scheduleChapterLoad()
         }
