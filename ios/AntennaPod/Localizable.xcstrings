@@ -44321,23 +44321,6 @@
         }
       }
     },
-    "On sets a speech-oriented audio session mode. Off uses default or movie playback. This is not loudness gain, Volume boost, Skip silence, or Preserve pitch. Default off. The switch does not start playback or download.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "On sets a speech-oriented audio session mode. Off uses default or movie playback. This is not loudness gain, Volume boost, Skip silence, or Preserve pitch. Default off. The switch does not start playback or download."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "An setzt einen sprachorientierten Audiositzungsmodus. Aus nutzt Standard oder Film-Wiedergabe. Das ist keine Lautstärkeverstärkung, kein Lautstärke-Boost, kein Stille überspringen und kein Tonhöhe beibehalten. Standard aus. Der Schalter startet keine Wiedergabe und lädt nichts herunter."
-          }
-        }
-      }
-    },
     "Off. This is not the default. Leaving or stopping never smart-marks. Only a natural end or an explicit Mark played counts. Near-end scrub alone does not mark played. Changing this does not mark the loaded episode, seek, start playback, or download. It is seconds remaining only, not a percent threshold, and not Skip outro.": {
       "extractionState": "manual",
       "localizations": {
@@ -49485,6 +49468,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "An behält auf dem Standard-AVPlayer eine natürliche Tonhöhe, wenn das Wiedergabetempo nicht 1× ist. Aus lässt die Tonhöhe dem Tempo folgen (schneller klingt höher). Bei 1× bleibt die Tonhöhe in beiden Fällen gleich. Ist bereits etwas geladen, gilt die Änderung für dieses Element, sonst wird sie für das nächste gespeichert. Standard an. Der Schalter startet keine Wiedergabe, überspringt keine Stille, sucht nicht und lädt nichts herunter. Kein Android-ExoPlayer und kein Sonic."
+          }
+        }
+      }
+    },
+    "On sets spoken-audio session mode for speech, or voice-chat if spoken-audio is refused — not loudness gain, ReplayGain, Volume boost, Skip silence, or Preserve pitch. Off uses the default session mode, and video with a visible surface uses movie playback. Default off. When paused, changing this does not activate the session or interrupt other apps; it applies on the next play. The switch does not start playback, seek, or download. Not Android LoudnessEnhancer.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On sets spoken-audio session mode for speech, or voice-chat if spoken-audio is refused — not loudness gain, ReplayGain, Volume boost, Skip silence, or Preserve pitch. Off uses the default session mode, and video with a visible surface uses movie playback. Default off. When paused, changing this does not activate the session or interrupt other apps; it applies on the next play. The switch does not start playback, seek, or download. Not Android LoudnessEnhancer."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An setzt den Spoken-Audio-Sitzungsmodus für Sprache, oder Voice-Chat, wenn Spoken-Audio abgelehnt wird — keine Lautstärkeverstärkung, kein ReplayGain, kein Lautstärke-Boost, kein Stille überspringen und kein Tonhöhe beibehalten. Aus nutzt den Standard-Sitzungsmodus, und Video mit sichtbarer Fläche nutzt Film-Wiedergabe. Standard aus. Wenn pausiert, aktiviert das Umschalten die Sitzung nicht und unterbricht keine anderen Apps; es gilt beim nächsten Abspielen. Der Schalter startet keine Wiedergabe, sucht nicht und lädt nichts herunter. Nicht Android LoudnessEnhancer."
           }
         }
       }

@@ -1711,7 +1711,7 @@ struct SettingsView: View {
     }
 
     private var volumeAdaptationAccessibilityHint: String {
-        String(localized: "On sets a speech-oriented audio session mode. Off uses default or movie playback. This is not loudness gain, Volume boost, Skip silence, or Preserve pitch. Default off. The switch does not start playback or download.")
+        String(localized: "On sets spoken-audio session mode for speech, or voice-chat if spoken-audio is refused — not loudness gain, ReplayGain, Volume boost, Skip silence, or Preserve pitch. Off uses the default session mode, and video with a visible surface uses movie playback. Default off. When paused, changing this does not activate the session or interrupt other apps; it applies on the next play. The switch does not start playback, seek, or download. Not Android LoudnessEnhancer.")
     }
 
     private var volumeBoostAccessibilityValue: String {
