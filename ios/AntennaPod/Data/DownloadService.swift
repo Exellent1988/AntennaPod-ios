@@ -389,15 +389,34 @@ final class DownloadService: ObservableObject {
         cap: Int = DownloadService.feedDownloadAllCap
     ) -> [PodcastEpisode] {
         let effectiveCap = max(1, cap)
+        var picked: [PodcastEpisode] = []
+        for episode in episodesEligibleForFeedDownloadAll(in: feed, store: store) {
+            guard picked.count < effectiveCap else { break }
+            picked.append(episode)
+        }
+        return picked
+    }
+
+    /// Uncapped count of episodes that match Download all unplayed eligibility (same filters as
+    /// `eligibleForFeedDownloadAll`, no soft cap). Used so the confirm can say “N of M” when the
+    /// soft cap truncates the newest-first list.
+    func eligibleForFeedDownloadAllCount(in feed: PodcastFeed, store: PodcastStore) -> Int {
+        episodesEligibleForFeedDownloadAll(in: feed, store: store).count
+    }
+
+    /// Newest-first full-feed eligibility list (no soft cap).
+    private func episodesEligibleForFeedDownloadAll(
+        in feed: PodcastFeed,
+        store: PodcastStore
+    ) -> [PodcastEpisode] {
         let sorted = feed.episodes.sorted { lhs, rhs in
             let l = lhs.pubDateEpochMs ?? Int64.min
             let r = rhs.pubDateEpochMs ?? Int64.min
             if l != r { return l > r }
             return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
         }
-        var picked: [PodcastEpisode] = []
+        var eligible: [PodcastEpisode] = []
         for episode in sorted {
-            guard picked.count < effectiveCap else { break }
             guard let raw = episode.downloadUrl?.trimmingCharacters(in: .whitespacesAndNewlines),
                   !raw.isEmpty,
                   let url = EpisodeMediaURL.url(from: raw) else { continue }
@@ -408,9 +427,9 @@ final class DownloadService: ObservableObject {
             guard !store.isArchived(episode.id) else { continue }
             guard !isDownloaded(episode) else { continue }
             guard !inProgress.contains(episode.id) else { continue }
-            picked.append(episode)
+            eligible.append(episode)
         }
-        return picked
+        return eligible
     }
 
     /// Enqueues manual downloads for many episodes. Honors `manualDownloadWifiOnly` **once**

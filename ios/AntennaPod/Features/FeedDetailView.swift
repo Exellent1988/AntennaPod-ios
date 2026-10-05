@@ -476,6 +476,44 @@ struct FeedDetailView: View {
         )
     }
 
+    /// Uncapped eligibility count — soft-cap confirm honesty when truncated.
+    private var downloadAllEligibleTotalCount: Int {
+        downloads.eligibleForFeedDownloadAllCount(in: liveFeed, store: store)
+    }
+
+    private var downloadAllConfirmMessage: String {
+        let capped = downloadAllCandidates.count
+        let total = downloadAllEligibleTotalCount
+        let softCap = settings.feedDownloadUnplayedSoftCap.episodeCap
+        let head: String
+        if total > capped {
+            head = String(
+                localized: "Queues download of \(capped) of \(total) eligible unplayed episodes (newest first, soft cap \(softCap))."
+            )
+        } else {
+            head = String(
+                localized: "Queues download of \(capped) unplayed episodes (newest first, soft cap \(softCap))."
+            )
+        }
+        return head + " " + String(
+            localized: "Played, archived, already downloaded, and local-folder files are skipped. Requires http(s) enclosure. Uses the full feed catalog — not the chip or search filter. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply."
+        )
+    }
+
+    private var downloadAllAccessibilityHint: String {
+        let capped = downloadAllCandidates.count
+        let total = downloadAllEligibleTotalCount
+        let softCap = settings.feedDownloadUnplayedSoftCap.episodeCap
+        if total > capped {
+            return String(
+                localized: "Queues the \(capped) newest eligible unplayed downloads (soft cap \(softCap); \(total) match on this podcast). Skips played, archived, already downloaded, and local-folder files."
+            )
+        }
+        return String(
+            localized: "Queues downloads for unplayed episodes in this podcast that are not archived and not already downloaded (soft cap \(softCap))."
+        )
+    }
+
     /// Unplayed, non-archived episodes on this feed only (for Mark all as played).
     /// Bulk Mark all as played always uses full-feed eligibility (not the filtered subset).
     private var markAllPlayedCandidates: [PodcastEpisode] {
@@ -1561,7 +1599,7 @@ struct FeedDetailView: View {
                         }
                         .disabled(downloadAllCandidates.isEmpty)
                         .accessibilityLabel(String(localized: "Download all unplayed"))
-                        .accessibilityHint(String(localized: "Queues downloads for unplayed episodes in this podcast that are not archived and not already downloaded"))
+                        .accessibilityHint(downloadAllAccessibilityHint)
 
                         Button {
                             showMarkAllPlayedConfirm = true
@@ -1643,9 +1681,7 @@ struct FeedDetailView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text(
-                "Queues download of \(downloadAllCandidates.count) unplayed episodes (newest first, max \(settings.feedDownloadUnplayedSoftCap.episodeCap)). Played, archived, already downloaded, and local-folder files are skipped. Requires http(s) enclosure. Uses the full feed catalog — not the chip or search filter. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply."
-            )
+            Text(downloadAllConfirmMessage)
         }
         .confirmationDialog(
             "Mark all as played?",

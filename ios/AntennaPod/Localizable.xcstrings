@@ -34680,24 +34680,6 @@
       },
       "comment": "Confirmation title for Feed detail Download all unplayed."
     },
-    "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, already downloaded, and local-folder files are skipped. Requires http(s) enclosure. Uses the full feed catalog — not the chip or search filter. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Queues download of %lld unplayed episodes (newest first, max %lld). Played, archived, already downloaded, and local-folder files are skipped. Requires http(s) enclosure. Uses the full feed catalog — not the chip or search filter. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Stellt den Download von %lld ungehörten Episoden in die Warteschlange (neueste zuerst, max. %lld). Gehörte, archivierte, bereits heruntergeladene und Local-Folder-Dateien werden übersprungen. Erfordert http(s)-Enclosure. Nutzt den vollen Feed-Katalog — nicht Chip- oder Suchfilter. „Manueller Download nur per WLAN“, Parallel-Download-Limit und Speicherlimit gelten weiterhin."
-          }
-        }
-      },
-      "comment": "Confirm message for Feed detail Download all unplayed (eligible count + soft cap)."
-    },
     "Queues downloads for unplayed episodes in this podcast that are not archived and not already downloaded": {
       "extractionState": "manual",
       "localizations": {
@@ -47423,6 +47405,91 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bei Überschreitung werden zuerst gehörte Downloads gelöscht, die nicht favorisiert und nicht in der Warteschlange sind (älteste Datei zuerst), danach ungehörte nicht-favorisierte nicht-eingereihte (LRU nach Dateidatum). Favoriten und Warteschlangen-Episoden werden durch dieses Kontingent nie automatisch gelöscht. Läuft nach jedem erfolgreichen Download, beim Öffnen der Einstellungen und beim Start."
+          }
+        }
+      }
+    },
+    "Queues download of %lld of %lld eligible unplayed episodes (newest first, soft cap %lld).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queues download of %lld of %lld eligible unplayed episodes (newest first, soft cap %lld)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stellt den Download von %lld von %lld geeigneten ungehörten Episoden in die Warteschlange (neueste zuerst, Soft-Cap %lld)."
+          }
+        }
+      }
+    },
+    "Queues download of %lld unplayed episodes (newest first, soft cap %lld).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queues download of %lld unplayed episodes (newest first, soft cap %lld)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stellt den Download von %lld ungehörten Episoden in die Warteschlange (neueste zuerst, Soft-Cap %lld)."
+          }
+        }
+      }
+    },
+    "Played, archived, already downloaded, and local-folder files are skipped. Requires http(s) enclosure. Uses the full feed catalog — not the chip or search filter. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Played, archived, already downloaded, and local-folder files are skipped. Requires http(s) enclosure. Uses the full feed catalog — not the chip or search filter. Manual download Wi‑Fi only, parallel-download cap, and storage limit still apply."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gehörte, archivierte, bereits heruntergeladene und Lokalordner-Dateien werden übersprungen. Erfordert http(s)-Enclosure. Nutzt den vollständigen Feed-Katalog — nicht Chip- oder Suchfilter. Manuelles Download nur per WLAN, Parallel-Download-Limit und Speicherlimit gelten weiterhin."
+          }
+        }
+      }
+    },
+    "Queues the %lld newest eligible unplayed downloads (soft cap %lld; %lld match on this podcast). Skips played, archived, already downloaded, and local-folder files.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queues the %lld newest eligible unplayed downloads (soft cap %lld; %lld match on this podcast). Skips played, archived, already downloaded, and local-folder files."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht die %lld neuesten geeigneten ungehörten Downloads ein (Soft-Cap %lld; %lld passen bei diesem Podcast). Überspringt gehörte, archivierte, bereits heruntergeladene und Lokalordner-Dateien."
+          }
+        }
+      }
+    },
+    "Queues downloads for unplayed episodes in this podcast that are not archived and not already downloaded (soft cap %lld).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queues downloads for unplayed episodes in this podcast that are not archived and not already downloaded (soft cap %lld)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiht Downloads für ungehörte Episoden in diesem Podcast ein, die nicht archiviert und noch nicht heruntergeladen sind (Soft-Cap %lld)."
           }
         }
       }
