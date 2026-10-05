@@ -282,6 +282,8 @@ struct FullPlayerView: View {
             // Jump sheet keeps the typed time in local state and seeks the live item.
             // Leaving it open after auto-next seeks that time on the next episode.
             showJumpToPosition = false
+            // Speed sheet keeps the typed speed and Set applies it to whatever is now playing.
+            showCustomPlaybackSpeed = false
             resetChapterSearch()
             scheduleChapterLoad()
         }

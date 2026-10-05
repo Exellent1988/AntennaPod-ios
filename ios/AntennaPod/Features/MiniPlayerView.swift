@@ -416,6 +416,8 @@ struct MiniPlayerView: View {
                 showBookmarks = false
                 showEpisodePrivateNote = false
                 showJumpToPosition = false
+                // Speed sheet keeps the typed speed and Set applies it to whatever is now playing.
+                showCustomPlaybackSpeed = false
                 // Chapters sheet lists the live episode and tap seeks the player.
                 // Leaving it open after auto-next shows the next episode's chapters
                 // and a tap seeks that episode.
