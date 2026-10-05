@@ -32106,23 +32106,6 @@
         }
       }
     },
-    "Deletes this podcast’s offline files except favorites; keeps played status, queue, and archive": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deletes this podcast’s offline files except favorites; keeps played status, queue, and archive"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Löscht Offline-Dateien dieses Podcasts außer Favoriten; behält Played-Status, Warteschlange und Archiv"
-          }
-        }
-      }
-    },
     "Deletes %lld offline file(s) for this podcast (%@). Skips %lld favorited download(s). Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Delete all downloads.": {
       "extractionState": "manual",
       "localizations": {
@@ -48961,6 +48944,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und markiert dann ungehörte, nicht archivierte Episoden in der gesamten Warteschlange als gehört. Sie verlassen die Warteschlange. Ignoriert Gehört-, Podcast- und Suchfilter. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then deletes this podcast’s offline files, skipping favorites. Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Delete all downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then deletes this podcast’s offline files, skipping favorites. Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Delete all downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und löscht dann die Offline-Dateien dieses Podcasts, überspringt Favoriten. Nur lokale Dateien — behält Gehört-Status, Warteschlange, Favoriten und Archiv. Unterschiedlich von Abo beenden, Gehörte Downloads löschen und Alle Downloads löschen."
           }
         }
       }

@@ -1659,7 +1659,7 @@ struct FeedDetailView: View {
                             Label("Delete downloads", systemImage: "externaldrive.badge.minus")
                         }
                         .disabled(deleteFeedDownloadsEligible.isEmpty)
-                        .accessibilityHint(String(localized: "Deletes this podcast’s offline files except favorites; keeps played status, queue, and archive"))
+                        .accessibilityHint(String(localized: "Asks for confirmation, then deletes this podcast’s offline files, skipping favorites. Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Delete all downloads."))
 
                         Button(role: .destructive) {
                             showUnsubscribeConfirm = true
