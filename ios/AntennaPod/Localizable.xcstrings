@@ -15925,23 +15925,6 @@
         }
       }
     },
-    "Copies the episode shownotes to the pasteboard": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Copies the episode shownotes to the pasteboard"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kopiert die Episoden-Shownotes in die Zwischenablage"
-          }
-        }
-      }
-    },
     "Shownotes copied to the pasteboard.": {
       "extractionState": "manual",
       "localizations": {
@@ -49261,6 +49244,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert die Feed-RSS- oder Atom-URL in die Zwischenablage. Keine Bestätigung. Deaktiviert für Lokalordner-Podcasts und leere URLs. Unterschiedlich von Podcast-Website, Funding- und Diskussionslinks und von Feed-URL teilen. Abonniert nicht, aktualisiert nicht und öffnet keinen Browser."
+          }
+        }
+      }
+    },
+    "Copies the full episode shownotes as plain text with HTML stripped to the pasteboard. Ignores the shownotes search filter. No confirmation. Distinct from Share shownotes. Does not open a browser, download, play, mark played, or change the queue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copies the full episode shownotes as plain text with HTML stripped to the pasteboard. Ignores the shownotes search filter. No confirmation. Distinct from Share shownotes. Does not open a browser, download, play, mark played, or change the queue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert die vollständigen Episoden-Shownotes als Klartext ohne HTML in die Zwischenablage. Ignoriert den Shownotes-Suchfilter. Keine Bestätigung. Unterschiedlich von Shownotes teilen. Öffnet keinen Browser, lädt nicht herunter, spielt nicht ab, markiert nicht als gehört und ändert nicht die Warteschlange."
           }
         }
       }

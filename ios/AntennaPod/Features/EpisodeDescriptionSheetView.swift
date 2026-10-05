@@ -314,7 +314,7 @@ struct EpisodeDescriptionSheetView: View {
                     }
                     .disabled(!hasPlainShownotes)
                     .accessibilityLabel(String(localized: "Copy shownotes"))
-                    .accessibilityHint(String(localized: "Copies the episode shownotes to the pasteboard"))
+                    .accessibilityHint(String(localized: "Copies the full episode shownotes as plain text with HTML stripped to the pasteboard. Ignores the shownotes search filter. No confirmation. Distinct from Share shownotes. Does not open a browser, download, play, mark played, or change the queue."))
 
                     ShareLink(
                         item: shownotesShareText,
