@@ -436,6 +436,11 @@ final class DownloadService: ObservableObject {
         if inProgress.contains(episode.id) {
             return
         }
+        // The EpisodeRow Download button stays tappable on a downloaded episode.
+        // A second transfer would fetch the whole enclosure again and replace the file.
+        if isDownloaded(episode) {
+            return
+        }
         if source == .manual, settings?.manualDownloadWifiOnly == true {
             AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
             if !NetworkPathGate.shared.allowsTransfer(wifiOnly: true) {
