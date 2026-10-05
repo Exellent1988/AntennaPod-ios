@@ -226,7 +226,7 @@ struct TranscriptSheetView: View {
                     .disabled(!canShareTranscript)
                     .accessibilityLabel(String(localized: "Share transcript"))
                     .accessibilityHint(
-                        String(localized: "Opens the system share sheet with the episode title and transcript")
+                        String(localized: "Opens the system share sheet with the episode title and full already-loaded transcript. Ignores the transcript search filter. Does not fetch or generate a transcript.")
                     )
 
                     if canCopyOrShareTranscriptURL, let raw = transcriptURLString {
