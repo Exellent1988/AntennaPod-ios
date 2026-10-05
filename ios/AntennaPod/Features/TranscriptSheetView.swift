@@ -352,7 +352,7 @@ struct TranscriptSheetView: View {
                         ForEach(filteredCues) { cue in
                             let isCurrent = cue.id == currentCueId
                             Button {
-                                playback.seek(toSeconds: cue.startTimeSeconds)
+                                playback.jumpToPosition(seconds: cue.startTimeSeconds)
                             } label: {
                                 HStack(alignment: .firstTextBaseline, spacing: 12) {
                                     Text(format(cue.startTimeSeconds))
