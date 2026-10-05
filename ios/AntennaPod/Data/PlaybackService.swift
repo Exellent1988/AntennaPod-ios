@@ -296,6 +296,11 @@ final class PlaybackService: ObservableObject {
             resumeAt = resumePosition(for: episode.id)
         }
         tearDownPlayer(clearSleepTimer: false)
+        // An armed end-of-chapter timer snapped its boundary in the episode we left.
+        // Drop it so the next tick resolves the chapter end in the new episode.
+        if isFreshEpisode {
+            sleepTimerChapterEndSeconds = nil
+        }
         currentEpisode = episode
         isPlayingFromLocalFile = playingLocal
         // Local file no longer the active player item — run deferred auto-delete if pending.
