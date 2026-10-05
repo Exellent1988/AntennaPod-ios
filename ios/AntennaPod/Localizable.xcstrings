@@ -32224,23 +32224,6 @@
         }
       }
     },
-    "Marks unplayed, non-archived episodes in the full History catalog as played; ignores podcast, search, and sort filters": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks unplayed, non-archived episodes in the full History catalog as played; ignores podcast, search, and sort filters"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert ungehörte, nicht archivierte Episoden im vollständigen Verlaufs-Katalog als gehört; ignoriert Podcast-, Such- und Sortierfilter"
-          }
-        }
-      }
-    },
     "Marks %lld unplayed, non-archived History episode(s) as played. Uses the full History catalog (newest last-played first), not the podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not clear History, remove episodes from the catalog, or delete downloads itself.": {
       "extractionState": "manual",
       "localizations": {
@@ -48890,6 +48873,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und markiert dann ungehörte, nicht archivierte Episoden im vollständigen Favoriten-Katalog als gehört, neueste favorisierte zuerst. Ignoriert Podcast-, Such- und Sortierfilter. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert; leert Favoriten nicht, entfernt keine Favoriten und löscht selbst keine Downloads."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then marks unplayed, non-archived episodes in the full History catalog as played, newest last-played first. Ignores podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not clear History, remove episodes from the catalog, or delete downloads itself.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then marks unplayed, non-archived episodes in the full History catalog as played, newest last-played first. Ignores podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not clear History, remove episodes from the catalog, or delete downloads itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und markiert dann ungehörte, nicht archivierte Episoden im vollständigen Verlaufs-Katalog als gehört, neueste zuletzt gehörte zuerst. Ignoriert Podcast-, Such- und Sortierfilter. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert; leert den Verlauf nicht, entfernt keine Episoden aus dem Katalog und löscht selbst keine Downloads."
           }
         }
       }

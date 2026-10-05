@@ -542,7 +542,7 @@ struct HistoryView: View {
                     }
                     .disabled(markAllHistoryPlayedCandidatesCount == 0)
                     .accessibilityHint(
-                        String(localized: "Marks unplayed, non-archived episodes in the full History catalog as played; ignores podcast, search, and sort filters")
+                        String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the full History catalog as played, newest last-played first. Ignores podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not clear History, remove episodes from the catalog, or delete downloads itself.")
                     )
 
                     Button {
