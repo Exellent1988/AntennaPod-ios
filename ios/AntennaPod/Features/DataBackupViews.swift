@@ -148,7 +148,7 @@ struct DataBackupSection: View {
     }
 
     private var importConfirmMessage: String {
-        String(localized: "This replaces subscriptions, queue, playback, favorites, archive, bookmarks, tags, feed settings, download catalog, and Settings prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup.")
+        String(localized: "This replaces subscriptions, queue, playback, favorites, archive, bookmarks, private episode notes, tags, feed settings, download catalog, and Settings prefs with the backup. If the ZIP includes downloads/, those episode files are written into Documents/downloads (same names overwritten; other local files are left). Catalog-only backups still need re-download for missing media. Keychain passwords/keys are not replaced. This cannot be undone except by importing another backup.")
     }
 
     private var helpText: String {
