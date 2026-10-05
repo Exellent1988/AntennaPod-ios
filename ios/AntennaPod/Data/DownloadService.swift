@@ -786,6 +786,7 @@ final class DownloadService: ObservableObject {
 
     /// Completed downloads marked **played**, excluding favorited / starred episodes.
     /// Matches auto-delete-after-playing favorite protection (`PodcastStore.isFavorite`).
+    /// Does **not** skip queue membership — queued played files can be deleted (membership stays).
     /// Unplayed downloads are never included.
     func playedDownloadsEligibleForDelete(store: PodcastStore? = nil) -> [DownloadedEpisode] {
         let s = store ?? self.store

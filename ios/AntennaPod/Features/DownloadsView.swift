@@ -703,6 +703,10 @@ struct DownloadsView: View {
                             Label("Delete played downloads", systemImage: "trash")
                         }
                         .disabled(playedDownloadsForDelete.isEmpty)
+                        .accessibilityLabel(String(localized: "Delete played downloads"))
+                        .accessibilityHint(
+                            String(localized: "Deletes played offline files in the full Downloads catalog, skipping favorites; queued played episodes can lose their file while staying in the queue")
+                        )
 
                         Button(role: .destructive) {
                             showDeleteAllConfirm = true
@@ -828,7 +832,7 @@ struct DownloadsView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text(
-                    "Deletes \(playedDownloadsForDelete.count) played offline file(s) (\(playedDownloadsDeleteSizeLabel)). Keeps unplayed downloads and favorites. Does not mark unplayed, clear the queue, or delete all downloads."
+                    "Deletes \(playedDownloadsForDelete.count) played offline file(s) (\(playedDownloadsDeleteSizeLabel)). Keeps unplayed downloads and favorites. Played episodes that are still queued can lose their offline file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads."
                 )
             }
             .confirmationDialog(

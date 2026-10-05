@@ -8873,23 +8873,6 @@
         }
       }
     },
-    "Deletes %lld played offline file(s) (%@). Keeps unplayed downloads and favorites. Does not mark unplayed, clear the queue, or delete all downloads.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deletes %lld played offline file(s) (%@). Keeps unplayed downloads and favorites. Does not mark unplayed, clear the queue, or delete all downloads."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Löscht %lld gehörte Offline-Datei(en) (%@). Behält ungehörte Downloads und Favoriten. Markiert nicht als ungehört, leert die Warteschlange nicht und löscht nicht alle Downloads."
-          }
-        }
-      }
-    },
     "Search history": {
       "extractionState": "manual",
       "localizations": {
@@ -47572,6 +47555,39 @@
         }
       },
       "extractionState": "manual"
+    },
+    "Deletes %lld played offline file(s) (%@). Keeps unplayed downloads and favorites. Played episodes that are still queued can lose their offline file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes %lld played offline file(s) (%@). Keeps unplayed downloads and favorites. Played episodes that are still queued can lose their offline file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht %lld gehörte Offline-Datei(en) (%@). Behält ungehörte Downloads und Favoriten. Gehörte Episoden, die noch in der Warteschlange sind, können ihre Offline-Datei verlieren und bleiben trotzdem in der Warteschlange. Markiert nicht als ungehört, leert die Warteschlange nicht und löscht nicht alle Downloads."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Deletes played offline files in the full Downloads catalog, skipping favorites; queued played episodes can lose their file while staying in the queue": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes played offline files in the full Downloads catalog, skipping favorites; queued played episodes can lose their file while staying in the queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht gehörte Offline-Dateien im vollständigen Downloads-Katalog und überspringt Favoriten; gehörte Episoden in der Warteschlange können ihre Datei verlieren und bleiben trotzdem in der Warteschlange"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
