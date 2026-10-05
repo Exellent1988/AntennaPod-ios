@@ -1470,7 +1470,7 @@ struct FullPlayerView: View {
             .disabled(!canSleepTimerEndOfChapter)
             .accessibilityHint(
                 canSleepTimerEndOfChapter
-                    ? String(localized: "Pauses when the current chapter ends")
+                    ? String(localized: "Pauses when the current chapter ends. No confirmation. Replaces any active clock, End of episode, or End of queue sleep timer. Does not pause playback now.")
                     : String(localized: "No chapters available")
             )
             Button(String(localized: "End of queue")) {
