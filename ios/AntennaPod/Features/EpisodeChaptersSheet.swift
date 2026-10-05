@@ -229,6 +229,7 @@ struct EpisodeChaptersSheet: View {
             trailingTimeLabel: chapterTrailingTimeLabel(index: index),
             isCurrent: index == currentChapterIndex,
             accessibilityBaseLabel: chapterAccessibilityLabel(index: index, chapter: chapter),
+            seekFinishesEpisode: chapterSeekFinishesEpisode(chapter),
             onSeek: {
                 playback.jumpToPosition(seconds: chapter.startTimeSeconds)
             }
@@ -309,6 +310,18 @@ struct EpisodeChaptersSheet: View {
             sessionRate: sessionRate,
             fallbackSpeed: fallback
         )
+    }
+
+
+    /// Same gate as Jump to position / Full Player `seekToChapter`: start at or past a known
+    /// duration finishes instead of seeking to the last second.
+    private func chapterSeekFinishesEpisode(_ chapter: PodcastChapter) -> Bool {
+        guard let duration = chapterEpisodeDurationSeconds,
+              duration.isFinite,
+              duration > 0 else {
+            return false
+        }
+        return chapter.startTimeSeconds >= duration
     }
 
     private func scheduleChapterFilter(for term: String) {

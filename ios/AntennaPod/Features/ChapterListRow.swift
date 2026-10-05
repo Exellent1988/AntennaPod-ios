@@ -17,6 +17,8 @@ struct ChapterListRow: View {
     let isCurrent: Bool
     /// Accessibility label without chapter-image mention (parent builds duration / remaining).
     let accessibilityBaseLabel: String
+    /// When true, primary tap uses `jumpToPosition` finish path (start ≥ known duration).
+    let seekFinishesEpisode: Bool
     let onSeek: () -> Void
 
     @State private var imageLoaded = false
@@ -76,7 +78,11 @@ struct ChapterListRow: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(accessibilityLabelText)
-            .accessibilityHint(String(localized: "Seeks playback to this chapter"))
+            .accessibilityHint(
+                seekFinishesEpisode
+                    ? String(localized: "Finishes the episode the same way as a forward skip.")
+                    : String(localized: "Seeks playback to this chapter")
+            )
             .accessibilityAddTraits(isCurrent ? .isSelected : [])
 
             if hasCopyableStart {

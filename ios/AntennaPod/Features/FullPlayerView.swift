@@ -745,6 +745,7 @@ struct FullPlayerView: View {
                             trailingTimeLabel: chapterTrailingTimeLabel(index: index),
                             isCurrent: index == currentChapterIndex,
                             accessibilityBaseLabel: chapterAccessibilityLabel(index: index, chapter: chapter),
+                            seekFinishesEpisode: chapterSeekFinishesEpisode(chapter),
                             onSeek: {
                                 seekToChapter(chapter.startTimeSeconds)
                             }
@@ -1299,11 +1300,33 @@ struct FullPlayerView: View {
                 }
                 .disabled(nextChapterTarget == nil)
                 .accessibilityLabel(String(localized: "Next chapter"))
-                .accessibilityHint(String(localized: "Seeks to the next chapter"))
+                .accessibilityHint(nextChapterAccessibilityHint)
             }
             .buttonStyle(.plain)
             .frame(maxWidth: .infinity)
         }
+    }
+
+
+    /// True when a chapter list tap / Next target finishes via `jumpToPosition`.
+    private func chapterSeekFinishesEpisode(_ chapter: PodcastChapter) -> Bool {
+        guard let duration = chapterEpisodeDurationSeconds,
+              duration.isFinite,
+              duration > 0 else {
+            return false
+        }
+        return chapter.startTimeSeconds >= duration
+    }
+
+    private var nextChapterAccessibilityHint: String {
+        if let target = nextChapterTarget,
+           let duration = chapterEpisodeDurationSeconds,
+           duration.isFinite,
+           duration > 0,
+           target >= duration {
+            return String(localized: "Finishes the episode the same way as a forward skip.")
+        }
+        return String(localized: "Seeks to the next chapter")
     }
 
     private func seekToChapter(_ seconds: Double?) {

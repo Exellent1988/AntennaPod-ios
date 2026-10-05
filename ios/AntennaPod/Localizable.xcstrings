@@ -32659,23 +32659,6 @@
         }
       }
     },
-    "Lists chapters for this episode; tap a chapter to seek": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lists chapters for this episode; tap a chapter to seek"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Listet Kapitel dieser Episode; Tippen springt zum Kapitelanfang"
-          }
-        }
-      }
-    },
     "No chapters known for this episode yet.": {
       "extractionState": "manual",
       "localizations": {
@@ -47776,6 +47759,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Deaktiviert Ziehen-Neuordnen, Mischen, Mischen Wiedergabe zuerst, Umkehren, Nach Datum sortieren, Nach Dauer sortieren, Nach Titel sortieren, Aktuelle Wiedergabe an den Anfang, Aktuelle Wiedergabe an das Ende und An Anfang/Ende. Blockiert nicht Warteschlange leeren, Zufällig abspielen, Alle als gehört oder ungehört markieren, Alle archivieren, Warteschlange kopieren, Warteschlange teilen, Als Nächstes spielen oder Episoden zur Warteschlange hinzufügen."
+          }
+        }
+      }
+    },
+    "Lists chapters for this episode; tap a chapter to seek. A chapter start at or past a known duration finishes the episode the same way as a forward skip.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lists chapters for this episode; tap a chapter to seek. A chapter start at or past a known duration finishes the episode the same way as a forward skip."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listet Kapitel für diese Episode; Tippen sucht zum Kapitel. Ein Kapitelbeginn bei oder nach bekannter Episodendauer beendet die Episode genauso wie Vorspulen."
           }
         }
       }

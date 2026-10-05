@@ -174,7 +174,7 @@ struct MiniPlayerView: View {
                             }
                             .disabled(nextChapterTarget == nil)
                             .accessibilityLabel(String(localized: "Next chapter"))
-                            .accessibilityHint(String(localized: "Seeks to the next chapter"))
+                            .accessibilityHint(nextChapterAccessibilityHint)
                             // Chapters list — same searchable list + seek as Full (EpisodeChaptersSheet).
                             // Only when chapters already on store/player episode (no mini lazy fetch).
                             Button {
@@ -183,7 +183,7 @@ struct MiniPlayerView: View {
                                 Label("Chapters", systemImage: "list.bullet")
                             }
                             .accessibilityLabel(String(localized: "Chapters"))
-                            .accessibilityHint(String(localized: "Lists chapters for this episode; tap a chapter to seek"))
+                            .accessibilityHint(String(localized: "Lists chapters for this episode; tap a chapter to seek. A chapter start at or past a known duration finishes the episode the same way as a forward skip."))
                         }
                         // Add bookmark — one-tap at current wall-clock position (empty note).
                         // Same 50/episode cap as Full sheet: disabled at cap + honesty alert.
@@ -596,6 +596,17 @@ struct MiniPlayerView: View {
     private var nextChapterTarget: Double? {
         ChapterIndexing.nextSeekSeconds(in: chapters, at: playback.positionSeconds)
     }
+
+    private var nextChapterAccessibilityHint: String {
+        if let target = nextChapterTarget {
+            let duration = playback.durationSeconds
+            if duration.isFinite, duration > 0, target >= duration {
+                return String(localized: "Finishes the episode the same way as a forward skip.")
+            }
+        }
+        return String(localized: "Seeks to the next chapter")
+    }
+
 
     /// Title of the chapter at `positionSeconds`, or `nil` when none / empty title.
     private var currentChapterTitle: String? {
