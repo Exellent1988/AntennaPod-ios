@@ -5554,23 +5554,6 @@
         }
       }
     },
-    "PIN is stored in the Keychain (not in Settings backup). Unlock lasts until the app goes to the background. Disable requires the PIN and clears Keychain.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "PIN is stored in the Keychain (not in Settings backup). Unlock lasts until the app goes to the background. Disable requires the PIN and clears Keychain."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Die PIN liegt im Keychain (nicht im Einstellungs-Backup). Entsperren gilt bis die App in den Hintergrund geht. Deaktivieren verlangt die PIN und löscht den Keychain-Eintrag."
-          }
-        }
-      }
-    },
     "PIN must be 4–6 digits": {
       "extractionState": "manual",
       "localizations": {
@@ -43195,23 +43178,6 @@
       },
       "extractionState": "manual"
     },
-    "Set a 4–6 digit PIN to restrict Add / Discover (including Import OPML) and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Set a 4–6 digit PIN to restrict Add / Discover (including Import OPML) and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Lege eine 4–6-stellige PIN fest, um Hinzufügen / Entdecken (einschließlich OPML-Import) und optional Netzwerk-/Download-Einstellungen oder explizite Charts einzuschränken. Beta-MVP — kein vollständiger Geräte-Elternschutz."
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "Import OPML (PIN required)": {
       "localizations": {
         "en": {
@@ -49434,6 +49400,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn an, fordert iTunes-Entdecken-Charts mit explicit=false an, solange Elternschutz aktiv ist. Entsperren dieser Sitzung schaltet diesen Filter nicht aus — Schalter aus oder Elternschutz deaktivieren. Sperrt nicht von selbst Hinzufügen / Entdecken oder Netzwerk / Downloads. Ändern kann bei gesperrter Sitzung zuerst die PIN verlangen."
+          }
+        }
+      }
+    },
+    "Opens a sheet to set a 4–6 digit PIN stored in the Keychain only — never in Settings backup. After enable, can restrict Add / Discover (including Import OPML) and optionally Network / Downloads or explicit charts. Beta MVP — not a full device parental lock. Does not enable until you save a PIN.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a sheet to set a 4–6 digit PIN stored in the Keychain only — never in Settings backup. After enable, can restrict Add / Discover (including Import OPML) and optionally Network / Downloads or explicit charts. Beta MVP — not a full device parental lock. Does not enable until you save a PIN."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet ein Sheet, um eine 4–6-stellige PIN nur im Schlüsselbund festzulegen — nie im Einstellungen-Backup. Nach dem Aktivieren kann Hinzufügen / Entdecken (einschließlich OPML importieren) und optional Netzwerk / Downloads oder explizite Charts eingeschränkt werden. Beta-MVP — keine vollständige Geräte-Kindersicherung. Aktiviert erst, wenn du eine PIN speicherst."
+          }
+        }
+      }
+    },
+    "Opens a sheet that asks for the PIN to turn off parental controls and clear the Keychain PIN. Unlock lasts until the app goes to the background. PIN is never in Settings backup. Does not change option locks by itself.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens a sheet that asks for the PIN to turn off parental controls and clear the Keychain PIN. Unlock lasts until the app goes to the background. PIN is never in Settings backup. Does not change option locks by itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet ein Sheet, das nach der PIN fragt, um Elternschutz auszuschalten und die Schlüsselbund-PIN zu löschen. Entsperren gilt bis die App in den Hintergrund geht. Die PIN liegt nie im Einstellungen-Backup. Ändert Options-Sperren nicht von selbst."
           }
         }
       }

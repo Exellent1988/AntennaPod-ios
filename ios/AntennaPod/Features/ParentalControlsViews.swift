@@ -169,9 +169,9 @@ struct ParentalControlsSettingsView: View {
 
     private var enableHelpText: String {
         if parental.isEnabled {
-            return String(localized: "PIN is stored in the Keychain (not in Settings backup). Unlock lasts until the app goes to the background. Disable requires the PIN and clears Keychain.")
+            return String(localized: "Opens a sheet that asks for the PIN to turn off parental controls and clear the Keychain PIN. Unlock lasts until the app goes to the background. PIN is never in Settings backup. Does not change option locks by itself.")
         }
-        return String(localized: "Set a 4–6 digit PIN to restrict Add / Discover (including Import OPML) and optionally Network / Downloads settings or explicit charts. Beta MVP — not a full device parental lock.")
+        return String(localized: "Opens a sheet to set a 4–6 digit PIN stored in the Keychain only — never in Settings backup. After enable, can restrict Add / Discover (including Import OPML) and optionally Network / Downloads or explicit charts. Beta MVP — not a full device parental lock. Does not enable until you save a PIN.")
     }
 
     private var optionsHelpText: String {
