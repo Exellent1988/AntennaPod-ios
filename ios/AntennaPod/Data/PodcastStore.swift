@@ -476,15 +476,15 @@ final class PodcastStore: ObservableObject {
             await refreshLocalFolderFeed(feed)
             return
         }
-        let existingIds = Set(feed.episodes.map(\.id))
         let wasSubscribed = feeds.contains(where: { $0.feedUrl == feed.feedUrl })
+        var newcomers: [PodcastEpisode] = []
         if wasSubscribed {
             // Same as subscribe(), except a podcast unsubscribed while this fetch runs
             // (Subscriptions swipe Refresh, then Unsubscribe) is not added back.
             lastError = nil
             isLoading = true
             do {
-                try await subscribeQuietly(feedUrl: feed.feedUrl, onlyIfSubscribed: true)
+                newcomers = try await subscribeQuietly(feedUrl: feed.feedUrl, onlyIfSubscribed: true)
             } catch {
                 lastError = error.localizedDescription
             }
@@ -494,7 +494,6 @@ final class PodcastStore: ObservableObject {
         }
         var newBatches: [NewEpisodeBatch] = []
         if wasSubscribed, let updated = feeds.first(where: { $0.feedUrl == feed.feedUrl }) {
-            let newcomers = updated.episodes.filter { !existingIds.contains($0.id) }
             if !newcomers.isEmpty {
                 newBatches = [
                     NewEpisodeBatch(
@@ -2844,11 +2843,9 @@ final class PodcastStore: ObservableObject {
                 refreshCompletedCount += 1
                 continue
             }
-            let existingIds = Set(feed.episodes.map(\.id))
             do {
-                try await subscribeQuietly(feedUrl: feed.feedUrl, onlyIfSubscribed: true)
+                let newcomers = try await subscribeQuietly(feedUrl: feed.feedUrl, onlyIfSubscribed: true)
                 if let updated = feeds.first(where: { $0.feedUrl == feed.feedUrl }) {
-                    let newcomers = updated.episodes.filter { !existingIds.contains($0.id) }
                     if !newcomers.isEmpty {
                         newBatches.append(
                             NewEpisodeBatch(
@@ -3178,12 +3175,17 @@ final class PodcastStore: ObservableObject {
     /// Loads Keychain credentials for an existing subscription when `credentials` is nil.
     /// When `persistCredentials` is true and credentials are usable, saves them under the feed id
     /// (never into `feed-settings.json`). Passwords are never logged.
+    /// Returns the refreshed episodes whose ids the stored feed did not have at merge time
+    /// (empty for a new subscription). Taken at merge, not before the fetch, so a per-feed
+    /// refresh overlapping refresh-all of the same feed reports each new episode only once.
+    @discardableResult
     func subscribeQuietly(
         feedUrl: String,
         credentials: FeedHttpBasicCredentials? = nil,
         persistCredentials: Bool = false,
         onlyIfSubscribed: Bool = false
-    ) async throws {
+    ) async throws -> [PodcastEpisode] {
+        var newcomers: [PodcastEpisode] = []
         let resolvedCreds = credentials ?? httpBasicCredentials(forFeedUrl: feedUrl)
         var feed = try await repository.fetchAndParse(feedUrl: feedUrl, credentials: resolvedCreds)
         feed.feedUrl = feedUrl
@@ -3197,6 +3199,8 @@ final class PodcastStore: ObservableObject {
             // would also leave Favorites, Archived, and History, which list feed.episodes.
             // Queue and Downloads keep their own copy, but resolve the podcast name,
             // artwork, and per-feed settings through feed.episodes.
+            let storedIds = Set(feeds[index].episodes.map(\.id))
+            newcomers = feed.episodes.filter { !storedIds.contains($0.id) }
             let freshIds = Set(feed.episodes.map(\.id))
             let kept = feeds[index].episodes.filter { episode in
                 !freshIds.contains(episode.id) && (
@@ -3211,7 +3215,7 @@ final class PodcastStore: ObservableObject {
             feeds[index] = feed
         } else if onlyIfSubscribed {
             // Refresh all: the podcast was unsubscribed during the network fetch.
-            return
+            return []
         } else {
             feeds.append(feed)
         }
@@ -3228,6 +3232,7 @@ final class PodcastStore: ObservableObject {
         // structs. Copy refreshed fields onto matching ids so Queue search, play, waiting
         // starts, and finished Downloads rows see the new title and URL.
         syncStoredEpisodeCopies(with: feed)
+        return newcomers
     }
 
     /// After a successful refresh or local-folder rescan, copy refreshed episode fields onto
