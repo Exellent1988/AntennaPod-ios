@@ -73,6 +73,10 @@ struct SettingsView: View {
     @State private var pendingNetworkUnlockAction: (() -> Void)?
     /// Proxy password SecureField (write-only; never prefilled from Keychain).
     @State private var httpProxyPasswordDraft = ""
+    // Typed text for fields whose AppSettings didSet trims. Binding them directly
+    // dropped a space as soon as it was typed at the end ("MyApp/1.0 " → "MyApp/1.0").
+    @State private var customUserAgentDraft = ""
+    @State private var httpProxyUsernameDraft = ""
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
     @ObservedObject private var networkPath = NetworkPathGate.shared
     @State private var ratingPromptUITick = 0
@@ -1814,9 +1818,18 @@ struct SettingsView: View {
 
             TextField(
                 String(localized: "Custom User-Agent"),
-                text: $settings.customUserAgent,
+                text: $customUserAgentDraft,
                 prompt: Text(AppUserAgent.defaultValue)
             )
+            .onChange(of: customUserAgentDraft) { _, newValue in
+                settings.customUserAgent = newValue
+            }
+            .onChange(of: settings.customUserAgent) { _, stored in
+                // Restore or Reset changed the saved value; show it unless it is what is being typed.
+                if AppUserAgent.sanitize(customUserAgentDraft) != stored {
+                    customUserAgentDraft = stored
+                }
+            }
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .accessibilityLabel(String(localized: "Custom User-Agent"))
@@ -1871,9 +1884,17 @@ struct SettingsView: View {
 
                 TextField(
                     String(localized: "Proxy username"),
-                    text: $settings.httpProxyUsername,
+                    text: $httpProxyUsernameDraft,
                     prompt: Text(String(localized: "Optional"))
                 )
+                .onChange(of: httpProxyUsernameDraft) { _, newValue in
+                    settings.httpProxyUsername = newValue
+                }
+                .onChange(of: settings.httpProxyUsername) { _, stored in
+                    if AppHTTPProxy.sanitizeUsername(httpProxyUsernameDraft) != stored {
+                        httpProxyUsernameDraft = stored
+                    }
+                }
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .accessibilityLabel(String(localized: "Proxy username"))
@@ -1924,6 +1945,8 @@ struct SettingsView: View {
         }
         .onAppear {
             AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
+            customUserAgentDraft = settings.customUserAgent
+            httpProxyUsernameDraft = settings.httpProxyUsername
         }
         .sheet(isPresented: $showNetworkPINGate) {
             ParentalPINPromptSheet(
