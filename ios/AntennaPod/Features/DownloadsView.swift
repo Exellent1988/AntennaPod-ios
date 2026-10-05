@@ -654,7 +654,7 @@ struct DownloadsView: View {
                         }
                         .disabled(playRandomCandidates.isEmpty)
                         .accessibilityLabel(String(localized: "Play random"))
-                        .accessibilityHint(String(localized: "Plays a random completed download with a local file. Prefers unplayed when any remain."))
+                        .accessibilityHint(String(localized: "Plays a random episode from the full completed Downloads catalog with a local file. Prefers unplayed when any remain. Ignores played-status, podcast, search, and sort filters. Does not reorder Downloads. No confirmation."))
 
                         Button {
                             showEnqueueAllConfirm = true

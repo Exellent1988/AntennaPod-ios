@@ -33126,24 +33126,6 @@
         }
       }
     },
-    "Plays a random completed download with a local file. Prefers unplayed when any remain.": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for Downloads toolbar Play random.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plays a random completed download with a local file. Prefers unplayed when any remain."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spielt einen zufälligen abgeschlossenen Download mit lokaler Datei. Bevorzugt ungehörte, wenn vorhanden."
-          }
-        }
-      }
-    },
     "Remaining time respects speed": {
       "extractionState": "manual",
       "localizations": {
@@ -48846,6 +48828,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spielt eine zufällige nicht archivierte Episode aus dem vollständigen Katalog dieses Podcasts mit abspielbaren Medien. Bevorzugt ungehörte, wenn welche übrig sind. Ignoriert Status-, Episodentyp- und Suchfilter. Ordnet die Feed-Liste nicht neu. Keine Bestätigung."
+          }
+        }
+      }
+    },
+    "Plays a random episode from the full completed Downloads catalog with a local file. Prefers unplayed when any remain. Ignores played-status, podcast, search, and sort filters. Does not reorder Downloads. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random episode from the full completed Downloads catalog with a local file. Prefers unplayed when any remain. Ignores played-status, podcast, search, and sort filters. Does not reorder Downloads. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine zufällige Episode aus dem vollständigen Katalog abgeschlossener Downloads mit lokaler Datei. Bevorzugt ungehörte, wenn welche übrig sind. Ignoriert Gehört-Status-, Podcast-, Such- und Sortierfilter. Ordnet Downloads nicht neu. Keine Bestätigung."
           }
         }
       }
