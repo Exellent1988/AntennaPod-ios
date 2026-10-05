@@ -47917,6 +47917,57 @@
           }
         }
       }
+    },
+    "Change or clear Discover search, or switch to Index, fyyd, or Feed URL.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear Discover search, or switch to Index, fyyd, or Feed URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Entdecken-Suche, oder wechsle zu Index, fyyd oder Feed-URL."
+          }
+        }
+      }
+    },
+    "Change or clear Discover search, or switch to Apple, fyyd, or Feed URL.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear Discover search, or switch to Apple, fyyd, or Feed URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Entdecken-Suche, oder wechsle zu Apple, fyyd oder Feed-URL."
+          }
+        }
+      }
+    },
+    "Change or clear Discover search, or switch to Apple, Index, or Feed URL.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change or clear Discover search, or switch to Apple, Index, or Feed URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändere oder lösche die Entdecken-Suche, oder wechsle zu Apple, Index oder Feed-URL."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -230,7 +230,14 @@ struct AddFeedView: View {
                         description: Text("Try another name or artist, or switch to Index / fyyd / URL.")
                     )
                     .listRowBackground(Color.clear)
-                    .accessibilityElement(children: .combine)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "No podcasts found"))
+                    .accessibilityValue(
+                        String(localized: "Try another name or artist, or switch to Index / fyyd / URL.")
+                    )
+                    .accessibilityHint(
+                        String(localized: "Change or clear Discover search, or switch to Index, fyyd, or Feed URL.")
+                    )
                 }
             }
 
@@ -347,7 +354,14 @@ struct AddFeedView: View {
                             description: Text("Try another name or author, or switch to Apple / fyyd / URL.")
                         )
                         .listRowBackground(Color.clear)
-                        .accessibilityElement(children: .combine)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(String(localized: "No podcasts found"))
+                        .accessibilityValue(
+                            String(localized: "Try another name or author, or switch to Apple / fyyd / URL.")
+                        )
+                        .accessibilityHint(
+                            String(localized: "Change or clear Discover search, or switch to Apple, fyyd, or Feed URL.")
+                        )
                     }
                 }
 
@@ -868,7 +882,14 @@ struct AddFeedView: View {
                         description: Text("Try another name or author, or switch to Apple / Index / URL.")
                     )
                     .listRowBackground(Color.clear)
-                    .accessibilityElement(children: .combine)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(String(localized: "No podcasts found"))
+                    .accessibilityValue(
+                        String(localized: "Try another name or author, or switch to Apple / Index / URL.")
+                    )
+                    .accessibilityHint(
+                        String(localized: "Change or clear Discover search, or switch to Apple, Index, or Feed URL.")
+                    )
                 }
             }
 
