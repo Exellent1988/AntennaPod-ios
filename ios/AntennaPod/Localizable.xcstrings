@@ -49032,6 +49032,23 @@
           }
         }
       }
+    },
+    "Turns off the active sleep timer immediately, including clock, End of episode, End of chapter, and End of queue. Restores volume if a fade was in progress. No confirmation. Does not pause or stop playback now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turns off the active sleep timer immediately, including clock, End of episode, End of chapter, and End of queue. Restores volume if a fade was in progress. No confirmation. Does not pause or stop playback now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schaltet den aktiven Sleep-Timer sofort aus — Uhr, Ende der Episode, Ende des Kapitels und Ende der Queue. Stellt die Lautstärke wieder her, wenn ein Fade lief. Keine Bestätigung. Pausiert oder stoppt die Wiedergabe jetzt nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

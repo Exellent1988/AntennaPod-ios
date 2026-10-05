@@ -1452,6 +1452,7 @@ struct FullPlayerView: View {
                 Button("Turn off", role: .destructive) {
                     playback.disableSleepTimer()
                 }
+                .accessibilityHint(String(localized: "Turns off the active sleep timer immediately, including clock, End of episode, End of chapter, and End of queue. Restores volume if a fade was in progress. No confirmation. Does not pause or stop playback now."))
                 Divider()
             }
             ForEach(PlaybackService.clockPresetsMinutes, id: \.self) { minutes in
