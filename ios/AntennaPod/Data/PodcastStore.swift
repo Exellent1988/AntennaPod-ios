@@ -3021,12 +3021,16 @@ final class PodcastStore: ObservableObject {
             feed.id = feeds[index].id // keep stable identity across refresh
             // Many feeds only list their newest items. An episode that left the RSS
             // would also leave Favorites, Archived, and History, which list feed.episodes.
+            // Queue and Downloads keep their own copy, but resolve the podcast name,
+            // artwork, and per-feed settings through feed.episodes.
             let freshIds = Set(feed.episodes.map(\.id))
             let kept = feeds[index].episodes.filter { episode in
                 !freshIds.contains(episode.id) && (
                     isFavorite(episode.id)
                         || isArchived(episode.id)
                         || playbackState(for: episode.id).belongsInHistory
+                        || isInQueue(episode.id)
+                        || downloads?.isDownloaded(episode) == true
                 )
             }
             feed.episodes.append(contentsOf: kept)
