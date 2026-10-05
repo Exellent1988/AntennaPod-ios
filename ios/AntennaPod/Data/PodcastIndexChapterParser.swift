@@ -20,6 +20,7 @@ enum PodcastIndexChapterParser {
             } else {
                 start = 0
             }
+            guard ChapterTimeParsing.isUsableChapterStart(start) else { continue }
             let title = (obj["title"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines)
             let href = obj["url"] as? String
             let img = obj["img"] as? String ?? obj["image"] as? String

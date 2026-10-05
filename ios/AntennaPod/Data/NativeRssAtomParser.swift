@@ -581,7 +581,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
         case "chapter":
             // Podlove Simple Chapters (psc:/sc:) — also works under Atom entries.
             if inItem, let startRaw = attributeDict["start"], !startRaw.isEmpty,
-               let startSeconds = ChapterTimeParsing.seconds(from: startRaw) {
+               let startSeconds = ChapterTimeParsing.seconds(from: startRaw),
+               ChapterTimeParsing.isUsableChapterStart(startSeconds) {
                 let title = attributeDict["title"]?.trimmingCharacters(in: .whitespacesAndNewlines)
                 let href = attributeDict["href"] ?? attributeDict["url"]
                 let image = attributeDict["image"] ?? attributeDict["img"]
@@ -1836,6 +1837,13 @@ enum ChapterTimeParsing {
         }
 
         return Double(trimmed)
+    }
+
+    /// Whether a parsed chapter start can be shown and seeked to. A start such as
+    /// `99999999999999999999` parsed to 1e20 seconds, and the chapter list's
+    /// `m:ss` / `h:mm:ss` formatter traps converting that to `Int`.
+    static func isUsableChapterStart(_ seconds: Double) -> Bool {
+        seconds.isFinite && seconds <= EpisodeDurationParsing.maxSeconds
     }
 }
 
