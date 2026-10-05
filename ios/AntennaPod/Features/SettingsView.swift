@@ -1922,6 +1922,7 @@ struct SettingsView: View {
             .accessibilityElement(children: .combine)
             .accessibilityLabel(String(localized: "Effective User-Agent"))
             .accessibilityValue(settings.effectiveUserAgent)
+            .accessibilityHint(String(localized: "Read-only. Shows the User-Agent string URLSession clients use for feed refresh and downloads right now — the Custom User-Agent when set, otherwise the app default. AVPlayer streaming may still use the system User-Agent. Changing Custom User-Agent updates this; this row does not edit, enable HTTP proxy, restart downloads, or change playback."))
 
             Text(customUserAgentHelpText)
                 .font(.caption)

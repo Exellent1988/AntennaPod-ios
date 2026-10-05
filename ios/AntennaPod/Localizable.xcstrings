@@ -49584,6 +49584,23 @@
           }
         }
       }
+    },
+    "Read-only. Shows the User-Agent string URLSession clients use for feed refresh and downloads right now — the Custom User-Agent when set, otherwise the app default. AVPlayer streaming may still use the system User-Agent. Changing Custom User-Agent updates this; this row does not edit, enable HTTP proxy, restart downloads, or change playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read-only. Shows the User-Agent string URLSession clients use for feed refresh and downloads right now — the Custom User-Agent when set, otherwise the app default. AVPlayer streaming may still use the system User-Agent. Changing Custom User-Agent updates this; this row does not edit, enable HTTP proxy, restart downloads, or change playback."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schreibgeschützt. Zeigt die User-Agent-Zeichenkette, die URLSession-Clients jetzt für Feed-Aktualisierung und Downloads nutzen — den Benutzerdefinierten User-Agent, wenn gesetzt, sonst den App-Standard. AVPlayer-Streaming kann weiterhin den System-User-Agent nutzen. Ändern des Benutzerdefinierten User-Agents aktualisiert dies; diese Zeile bearbeitet nicht, aktiviert keinen HTTP-Proxy, startet Downloads nicht neu und ändert die Wiedergabe nicht."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
