@@ -135,11 +135,23 @@ final class PodcastStore: ObservableObject {
         lastError = nil
         isLoading = true
         defer { isLoading = false }
+        // New subscription to https://user:pass@host/feed: keep the password in the Keychain
+        // (sent as HTTP Basic on refresh and downloads), not in feeds.json. Entered credentials
+        // win. Existing subscriptions keep their stored URL (refresh matches it exactly).
+        var subscribeUrl = feedUrl
+        var resolvedCredentials = credentials
+        if !feeds.contains(where: { $0.feedUrl == feedUrl }),
+           let embedded = FeedURLNormalization.embeddedCredentials(in: feedUrl) {
+            subscribeUrl = FeedURLNormalization.strippingCredentials(feedUrl)
+            if resolvedCredentials?.isUsable != true {
+                resolvedCredentials = embedded
+            }
+        }
         do {
             try await subscribeQuietly(
-                feedUrl: feedUrl,
-                credentials: credentials,
-                persistCredentials: credentials?.isUsable == true
+                feedUrl: subscribeUrl,
+                credentials: resolvedCredentials,
+                persistCredentials: resolvedCredentials?.isUsable == true
             )
         } catch {
             lastError = error.localizedDescription

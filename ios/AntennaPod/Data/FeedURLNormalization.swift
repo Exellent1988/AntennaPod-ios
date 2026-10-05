@@ -80,8 +80,8 @@ enum FeedURLNormalization {
     }
 
     /// Removes `user:password@` from a feed URL for anything shown, copied, shared, or exported
-    /// (OPML, HTML, plain text). Other strings are returned unchanged. The stored feed URL keeps
-    /// its userinfo because refresh may rely on it.
+    /// (OPML, HTML, plain text). Other strings are returned unchanged. Subscriptions made before
+    /// `PodcastStore.subscribe` moved userinfo to the Keychain keep it in their stored URL.
     static func strippingCredentials(_ feedUrl: String) -> String {
         guard feedUrl.contains("@"),
               var components = URLComponents(string: feedUrl.trimmingCharacters(in: .whitespacesAndNewlines)),
@@ -92,6 +92,18 @@ enum FeedURLNormalization {
         components.user = nil
         components.password = nil
         return components.string ?? feedUrl
+    }
+
+    /// `user:password@` from a feed URL as HTTP Basic credentials (percent-decoded), or nil.
+    static func embeddedCredentials(in feedUrl: String) -> FeedHttpBasicCredentials? {
+        guard feedUrl.contains("@"),
+              let components = URLComponents(string: feedUrl.trimmingCharacters(in: .whitespacesAndNewlines)),
+              let user = components.user
+        else {
+            return nil
+        }
+        let credentials = FeedHttpBasicCredentials(username: user, password: components.password ?? "")
+        return credentials.isUsable ? credentials : nil
     }
 
     /// First library feed whose canonical URL matches `feedUrl`, if any.
