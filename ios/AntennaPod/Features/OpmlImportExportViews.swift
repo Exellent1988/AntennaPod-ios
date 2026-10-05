@@ -95,8 +95,8 @@ struct OpmlImportExportSection: View {
             )
             .accessibilityHint(
                 parental.needsPINForAddDiscover
-                    ? String(localized: "Asks for the parental PIN, then opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Export OPML stays unlocked.")
-                    : String(localized: "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network.")
+                    ? String(localized: "Asks for the parental PIN, then opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Does not unsubscribe existing podcasts, change tags, or export. Export OPML, Save OPML to Files…, and HTML export stay unlocked. Not gpodder sync and not a cloud backup.")
+                    : String(localized: "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Does not unsubscribe existing podcasts, change tags, or export. Export OPML, Save OPML to Files…, and HTML export stay available. Not gpodder sync and not a cloud backup.")
             )
 
             if store.opmlImport.isImporting {

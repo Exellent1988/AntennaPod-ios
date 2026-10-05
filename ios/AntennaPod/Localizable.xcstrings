@@ -26328,23 +26328,6 @@
         }
       }
     },
-    "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet Dateien zur Auswahl einer .opml- oder .xml-Abonnementliste. Bereits abonnierte Feeds werden übersprungen; jeder neue Feed wird über das Netzwerk geladen."
-          }
-        }
-      }
-    },
     "Shows added, already subscribed, and failed counts from the last OPML import.": {
       "extractionState": "manual",
       "localizations": {
@@ -46522,22 +46505,6 @@
         }
       }
     },
-    "Asks for the parental PIN, then opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Export OPML stays unlocked.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Asks for the parental PIN, then opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Export OPML stays unlocked."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fragt nach der Elternschutz-PIN und öffnet danach Dateien, um eine .opml- oder .xml-Abonnementliste auszuwählen. Bereits abonnierte Feeds werden übersprungen; jeder neue Feed wird über das Netzwerk geladen. OPML-Export bleibt entsperrt."
-          }
-        }
-      }
-    },
     "Lock Add / Discover asks for the PIN before the Add sheet, Discover charts, or Import OPML (Settings and Subscriptions). Lock Network / Downloads blocks Wi‑Fi-only toggles until unlocked. Hide explicit top charts requests iTunes charts with explicit=false while parental controls are enabled — unlocking the session does not turn this filter off; turn the toggle off or disable parental controls. Export OPML stays unlocked.": {
       "localizations": {
         "en": {
@@ -48169,6 +48136,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@. Das ist nicht die Voreinstellung von 3 parallel."
+          }
+        }
+      }
+    },
+    "Asks for the parental PIN, then opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Does not unsubscribe existing podcasts, change tags, or export. Export OPML, Save OPML to Files…, and HTML export stay unlocked. Not gpodder sync and not a cloud backup.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for the parental PIN, then opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Does not unsubscribe existing podcasts, change tags, or export. Export OPML, Save OPML to Files…, and HTML export stay unlocked. Not gpodder sync and not a cloud backup."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach der Eltern-PIN und öffnet dann Dateien, um eine .opml- oder .xml-Abonnementliste zu wählen. Bereits abonnierte Feeds werden übersprungen; jeder neue Feed wird über das Netzwerk geladen. Abonniert bestehende Podcasts nicht ab, ändert keine Tags und exportiert nicht. OPML exportieren, OPML in Dateien speichern… und HTML-Export bleiben entsperrt. Kein gpodder-Sync und kein Cloud-Backup."
+          }
+        }
+      }
+    },
+    "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Does not unsubscribe existing podcasts, change tags, or export. Export OPML, Save OPML to Files…, and HTML export stay available. Not gpodder sync and not a cloud backup.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network. Does not unsubscribe existing podcasts, change tags, or export. Export OPML, Save OPML to Files…, and HTML export stay available. Not gpodder sync and not a cloud backup."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet Dateien, um eine .opml- oder .xml-Abonnementliste zu wählen. Bereits abonnierte Feeds werden übersprungen; jeder neue Feed wird über das Netzwerk geladen. Abonniert bestehende Podcasts nicht ab, ändert keine Tags und exportiert nicht. OPML exportieren, OPML in Dateien speichern… und HTML-Export bleiben verfügbar. Kein gpodder-Sync und kein Cloud-Backup."
           }
         }
       }
