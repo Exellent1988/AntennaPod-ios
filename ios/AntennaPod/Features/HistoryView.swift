@@ -533,7 +533,7 @@ struct HistoryView: View {
                         Label("Add all to queue", systemImage: "text.append")
                     }
                     .disabled(enqueueAllHistoryCandidatesCount == 0)
-                    .accessibilityHint(String(localized: "Appends history episodes not already queued"))
+                    .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full History catalog that are not already queued, newest last-played first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue."))
 
                     Button {
                         showMarkAllPlayedConfirm = true

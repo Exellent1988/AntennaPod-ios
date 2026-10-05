@@ -14048,23 +14048,6 @@
         }
       }
     },
-    "Appends history episodes not already queued": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Appends history episodes not already queued"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reiht Verlaufs-Episoden ein, die noch nicht in der Warteschlange sind"
-          }
-        }
-      }
-    },
     "Appends archived episodes not already queued": {
       "extractionState": "manual",
       "localizations": {
@@ -48841,6 +48824,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und reiht dann Episoden aus dem vollständigen Posteingangs-Katalog, die noch nicht in der Warteschlange sind, neueste zuerst ein. Ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then appends episodes from the full History catalog that are not already queued, newest last-played first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then appends episodes from the full History catalog that are not already queued, newest last-played first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und reiht dann Episoden aus dem vollständigen Verlaufs-Katalog, die noch nicht in der Warteschlange sind, zuletzt gehört zuerst ein. Ignoriert Podcast-, Such- und Sortierfilter. Warteschlangen-Sperre blockiert das Einreihen nicht."
           }
         }
       }
