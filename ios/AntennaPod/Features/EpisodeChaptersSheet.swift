@@ -195,7 +195,7 @@ struct EpisodeChaptersSheet: View {
                     .disabled(!canExportChaptersTOC)
                     .accessibilityLabel(String(localized: "Share chapters"))
                     .accessibilityHint(
-                        String(localized: "Opens the system share sheet with the episode title and chapter table of contents")
+                        String(localized: "Opens the system share sheet with the episode title and full chapter table of contents. Ignores the chapters search filter. Does not fetch remote or media chapters.")
                     )
                 }
             }

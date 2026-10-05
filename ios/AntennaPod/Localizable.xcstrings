@@ -32238,23 +32238,6 @@
       },
       "extractionState": "manual"
     },
-    "Opens the system share sheet with the episode title and chapter table of contents": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens the system share sheet with the episode title and chapter table of contents"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet das System-Teilen-Menü mit Episodentitel und Kapitel-Inhaltsverzeichnis"
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "Chapters copied to the pasteboard.": {
       "localizations": {
         "en": {
@@ -49115,6 +49098,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kopiert das vollständige Kapitelinhaltsverzeichnis in die Zwischenablage. Ignoriert den Kapitel-Suchfilter. Lädt keine Remote- oder Medien-Kapitel nach."
+          }
+        }
+      }
+    },
+    "Opens the system share sheet with the episode title and full chapter table of contents. Ignores the chapters search filter. Does not fetch remote or media chapters.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the system share sheet with the episode title and full chapter table of contents. Ignores the chapters search filter. Does not fetch remote or media chapters."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet das System-Teilen-Sheet mit Episodentitel und vollständigem Kapitelinhaltsverzeichnis. Ignoriert den Kapitel-Suchfilter. Lädt keine Remote- oder Medien-Kapitel nach."
           }
         }
       }
