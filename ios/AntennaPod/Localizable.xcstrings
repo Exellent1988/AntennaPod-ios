@@ -29398,23 +29398,6 @@
         }
       }
     },
-    "Marks unplayed, non-archived episodes in the newest-500 All Episodes catalog as played": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Marks unplayed, non-archived episodes in the newest-500 All Episodes catalog as played"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Markiert ungehörte, nicht archivierte Episoden im Soft-Cap-Katalog (neueste 500) aller Episoden als gehört"
-          }
-        }
-      }
-    },
     "Marks %lld unplayed, non-archived episodes as played. Uses the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Auto-delete after playing still applies when enabled.": {
       "extractionState": "manual",
       "localizations": {
@@ -48885,6 +48868,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fragt nach Bestätigung und reiht dann ungehörte, nicht archivierte Episoden aus dem vollständigen aktuellen Posteingangs-Katalog ein, die noch nicht in der Warteschlange sind, neueste zuerst. Ignoriert Podcast-, Episodentyp-, Such- und Sortierfilter. Der Posteingang enthält im Normalbetrieb bereits nur Ungehörte, daher kann dies Alle zur Warteschlange hinzufügen entsprechen. Warteschlangen-Sperre blockiert das Einreihen nicht."
+          }
+        }
+      }
+    },
+    "Asks for confirmation, then marks unplayed, non-archived episodes in the newest-500 All Episodes catalog as played. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Auto-delete after playing still applies when enabled.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asks for confirmation, then marks unplayed, non-archived episodes in the newest-500 All Episodes catalog as played. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Auto-delete after playing still applies when enabled."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fragt nach Bestätigung und markiert dann ungehörte, nicht archivierte Episoden im Alle-Episoden-Katalog der neuesten 500 als gehört. Ignoriert Status-, Podcast-, Typ-, Sortier- und Suchfilter; ältere Episoden jenseits der Soft-Obergrenze sind nicht enthalten. Automatisches Löschen nach dem Abspielen gilt weiterhin, wenn aktiviert."
           }
         }
       }
