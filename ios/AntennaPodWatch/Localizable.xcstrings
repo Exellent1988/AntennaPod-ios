@@ -291,19 +291,19 @@
         }
       }
     },
-    "Opens AntennaPod on iPhone and sends play. Playback starts only if an episode is already loaded. Does not create a continue episode. No independent Watch playback.": {
+    "Opens AntennaPod on iPhone and sends play. Plays the loaded episode, or after a cold launch the previous run’s unplayed episode restored paused in the mini player. Does not invent any other continue episode. No independent Watch playback.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Opens AntennaPod on iPhone and sends play. Playback starts only if an episode is already loaded. Does not create a continue episode. No independent Watch playback."
+            "value": "Opens AntennaPod on iPhone and sends play. Plays the loaded episode, or after a cold launch the previous run’s unplayed episode restored paused in the mini player. Does not invent any other continue episode. No independent Watch playback."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Öffnet AntennaPod auf dem iPhone und sendet Wiedergabe. Die Wiedergabe startet nur, wenn bereits eine Episode geladen ist. Es wird keine Weiterspielen-Episode erzeugt. Kein unabhängiges Watch-Playback."
+            "value": "Öffnet AntennaPod auf dem iPhone und sendet Wiedergabe. Spielt die geladene Episode oder nach einem Kaltstart die ungehörte Episode des vorherigen Laufs, die im Miniplayer pausiert angezeigt wird. Erfindet keine andere Weiterspielen-Episode. Kein unabhängiges Watch-Playback."
           }
         }
       }

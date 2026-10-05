@@ -102,7 +102,7 @@ struct ContinueListeningWidgetView: View {
                     String(localized: "No Continue listening snapshot is saved yet. This is not live playback and not the queue. Play an episode in AntennaPod to write the App Group snapshot. Until then there is no episode title or remaining time.")
                 )
                 .accessibilityHint(
-                    String(localized: "Opens AntennaPod and sends play. Playback starts only if an episode is already loaded. Does not create a continue episode.")
+                    String(localized: "Opens AntennaPod and sends play. Plays the loaded episode, or after a cold launch the previous run’s unplayed episode shown paused in the mini player. Does not invent any other continue episode.")
                 )
             }
         }

@@ -64,7 +64,7 @@ struct ContinueListeningWatchView: View {
                     .buttonStyle(.bordered)
                     .padding(.top, 4)
                     .accessibilityHint(
-                        String(localized: "Opens AntennaPod on iPhone and sends play. Playback starts only if an episode is already loaded. Does not create a continue episode. No independent Watch playback.")
+                        String(localized: "Opens AntennaPod on iPhone and sends play. Plays the loaded episode, or after a cold launch the previous run’s unplayed episode restored paused in the mini player. Does not invent any other continue episode. No independent Watch playback.")
                     )
                 }
 
