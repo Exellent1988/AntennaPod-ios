@@ -1476,13 +1476,17 @@ final class PodcastStore: ObservableObject {
         )
     }
 
-    /// Subscriptions ordered by newest episode `pubDateEpochMs` (proxy for recently updated).
+    /// Home Recently updated cards, newest episode `pubDateEpochMs` first.
+    /// Equal dates (including both missing) break ties by the name on the card
+    /// (custom title when set, else the RSS title). A raw RSS compare puts a
+    /// renamed podcast where the old name sorts, so the visible label and the
+    /// row disagree. Same tiebreak as Subscriptions Recently updated.
     var recentlyUpdatedFeeds: [PodcastFeed] {
         feeds.sorted { lhs, rhs in
             let l = lhs.episodes.compactMap(\.pubDateEpochMs).max() ?? Int64.min
             let r = rhs.episodes.compactMap(\.pubDateEpochMs).max() ?? Int64.min
             if l != r { return l > r }
-            return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+            return displayTitle(for: lhs).localizedCaseInsensitiveCompare(displayTitle(for: rhs)) == .orderedAscending
         }
     }
 
