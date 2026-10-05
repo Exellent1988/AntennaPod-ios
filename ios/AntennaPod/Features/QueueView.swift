@@ -398,7 +398,7 @@ struct QueueView: View {
                                 QueueFilterChip(
                                     title: chip.label,
                                     selected: settings.queueFilter == chip,
-                                    accessibilityHint: String(localized: "Filters the Queue list")
+                                    accessibilityHint: String(localized: "Filters the Queue by All, Unplayed, or Played. Does not remove queue items, change sort, start downloads, or alter the podcast filter chips. Search still applies on top of this filter.")
                                 ) {
                                     settings.queueFilter = chip
                                 }

@@ -11175,23 +11175,6 @@
         }
       }
     },
-    "Filters the Queue list": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filters the Queue list"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filtert die Warteschlangen-Liste"
-          }
-        }
-      }
-    },
     "No queue episodes match your filter.": {
       "extractionState": "manual",
       "localizations": {
@@ -49318,6 +49301,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Filtert abgeschlossene Downloads in dieser Liste auf Alle oder einen Podcast, der derzeit Downloads hat. Löscht keine Dateien, ändert die Sortierung nicht, startet keine Downloads und ändert die Status-Chips Alle/Ungehört/Gehört nicht. Suche gilt weiterhin zusätzlich zu diesem Filter."
+          }
+        }
+      }
+    },
+    "Filters the Queue by All, Unplayed, or Played. Does not remove queue items, change sort, start downloads, or alter the podcast filter chips. Search still applies on top of this filter.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filters the Queue by All, Unplayed, or Played. Does not remove queue items, change sort, start downloads, or alter the podcast filter chips. Search still applies on top of this filter."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtert die Warteschlange nach Alle, Ungehört oder Gehört. Entfernt keine Warteschlangen-Einträge, ändert die Sortierung nicht, startet keine Downloads und ändert die Podcast-Filterchips nicht. Suche gilt weiterhin zusätzlich zu diesem Filter."
           }
         }
       }
