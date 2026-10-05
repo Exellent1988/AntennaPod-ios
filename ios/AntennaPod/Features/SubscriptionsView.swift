@@ -585,7 +585,7 @@ struct SubscriptionsView: View {
                     .disabled(store.isLoading || store.feeds.isEmpty)
                     .accessibilityLabel(String(localized: "Refresh all"))
                     .accessibilityHint(
-                        String(localized: "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone.")
+                        String(localized: "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone. Uses the full subscriptions library, not search or filter. Feed refresh is not limited by the Wi‑Fi-only toggles and may use cellular. Does not invent episodes; Auto-download may enqueue newly appeared ones after successful refreshes. Distinct from Rescan folder.")
                     )
                 }
                 ToolbarItem(placement: .primaryAction) {

@@ -43588,22 +43588,6 @@
       },
       "extractionState": "manual"
     },
-    "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aktualisiert jedes abonnierte Podcast, das an Keep updated teilnimmt. Podcasts mit Keep updated Nie werden übersprungen; Wischen Aktualisieren in einer Zeile aktualisiert diesen Podcast weiterhin allein."
-          }
-        }
-      }
-    },
     "Refresh all, pull-to-refresh (Subscriptions, Home, Inbox), and timed Keep updated refresh skip Never. Manual single-podcast refresh (swipe or Feed detail) still works.": {
       "localizations": {
         "en": {
@@ -49318,6 +49302,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Liest Audiodateien im Ordner über das gespeicherte Lesezeichen erneut. Holt keinen RSS-Feed und erfindet keine Netzwerk-Episoden. Unterschiedlich von Aktualisieren für abonnierte RSS-Podcasts. Ändert Aktualisiert halten nicht und startet keinen Automatischer Download."
+          }
+        }
+      }
+    },
+    "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone. Uses the full subscriptions library, not search or filter. Feed refresh is not limited by the Wi‑Fi-only toggles and may use cellular. Does not invent episodes; Auto-download may enqueue newly appeared ones after successful refreshes. Distinct from Rescan folder.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone. Uses the full subscriptions library, not search or filter. Feed refresh is not limited by the Wi‑Fi-only toggles and may use cellular. Does not invent episodes; Auto-download may enqueue newly appeared ones after successful refreshes. Distinct from Rescan folder."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert jeden abonnierten Podcast, der an Aktualisiert halten teilnimmt. Podcasts mit Aktualisiert halten Nie werden übersprungen; Wischen-Aktualisieren an einer Zeile aktualisiert diesen Podcast weiterhin allein. Nutzt die volle Abonnement-Bibliothek, nicht Suche oder Filter. Feed-Aktualisierung wird von den Nur-Wi‑Fi-Schaltern nicht begrenzt und darf Mobilfunk nutzen. Erfindet keine Episoden; Automatischer Download kann nach erfolgreichen Aktualisierungen neu erschienene einreihen. Unterschiedlich von Ordner neu scannen."
           }
         }
       }
