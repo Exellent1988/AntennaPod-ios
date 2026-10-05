@@ -25987,23 +25987,6 @@
         }
       }
     },
-    "Maximum number of episode downloads that run at the same time. Default 3.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maximum number of episode downloads that run at the same time. Default 3."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Maximale Anzahl Episode-Downloads, die gleichzeitig laufen. Standard 3."
-          }
-        }
-      }
-    },
     "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch.": {
       "extractionState": "manual",
       "localizations": {
@@ -48135,6 +48118,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "An setzt die gespeicherte Position beim Als gehört markieren auf 0. Aus behält die Position für Fortsetzen nach Als ungespielt markieren. Gilt für manuelles Markieren, Alle markieren, Smart Mark und natürliches Ende. Standard an. Der Schalter sucht jetzt nicht, startet keine Wiedergabe und lädt nichts herunter."
+          }
+        }
+      }
+    },
+    "Only this many episode downloads run as active transfers at once. Extra downloads wait in memory until a slot frees. Waiting items are not saved across quitting the app; already-started background transfers continue after relaunch. Lowering this does not cancel transfers that already started. Changing this does not start a new download, delete files, or change Max storage or Max downloaded episodes.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only this many episode downloads run as active transfers at once. Extra downloads wait in memory until a slot frees. Waiting items are not saved across quitting the app; already-started background transfers continue after relaunch. Lowering this does not cancel transfers that already started. Changing this does not start a new download, delete files, or change Max storage or Max downloaded episodes."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur so viele Episoden-Downloads laufen gleichzeitig als aktive Übertragungen. Weitere warten im Speicher, bis ein Platz frei wird. Wartende Einträge bleiben nach dem Beenden der App nicht erhalten; bereits gestartete Hintergrundübertragungen laufen nach dem Neustart weiter. Verringern bricht bereits gestartete Übertragungen nicht ab. Umschalten startet keinen neuen Download, löscht keine Dateien und ändert nicht Max. Speicher oder Max. heruntergeladene Episoden."
+          }
+        }
+      }
+    },
+    "Choices are 1 at a time through 5 parallel. The default is 3 parallel. Caps active download transfers only. Waiting downloads stay in memory and are lost if the app is killed. Already-started background tasks continue. Not Max storage, Max downloaded episodes, or Download all unplayed soft cap. Changing the picker does not invent downloads.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choices are 1 at a time through 5 parallel. The default is 3 parallel. Caps active download transfers only. Waiting downloads stay in memory and are lost if the app is killed. Already-started background tasks continue. Not Max storage, Max downloaded episodes, or Download all unplayed soft cap. Changing the picker does not invent downloads."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auswahl von 1 gleichzeitig bis 5 parallel. Die Voreinstellung ist 3 parallel. Begrenzt nur aktive Download-Übertragungen. Wartende Downloads bleiben im Speicher und gehen verloren, wenn die App beendet wird. Bereits gestartete Hintergrundaufgaben laufen weiter. Nicht Max. Speicher, Max. heruntergeladene Episoden oder Soft-Limit für Alle ungehörten herunterladen. Der Picker erfindet keine Downloads."
+          }
+        }
+      }
+    },
+    "%@. This is not the default of 3 parallel.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. This is not the default of 3 parallel."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@. Das ist nicht die Voreinstellung von 3 parallel."
           }
         }
       }

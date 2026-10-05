@@ -2387,7 +2387,8 @@ struct SettingsView: View {
                 }
             }
             .accessibilityLabel(String(localized: "Parallel downloads"))
-            .accessibilityHint(String(localized: "Maximum number of episode downloads that run at the same time. Default 3."))
+            .accessibilityValue(parallelDownloadsAccessibilityValue)
+            .accessibilityHint(parallelDownloadsAccessibilityHint)
             .onChange(of: settings.maxParallelDownloads) { _, _ in
                 downloads.pumpWaitingQueue()
             }
@@ -2421,6 +2422,22 @@ struct SettingsView: View {
 
     private var episodeCacheHelpText: String {
         String(localized: "When over the episode count, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU). Favorites and queued episodes are never auto-deleted by this cap. Runs after each successful download, when opening Settings, and on launch. Separate from the Max storage byte budget.")
+    }
+
+    /// VoiceOver for Settings → Parallel downloads. Cap is active transfers only;
+    /// waiting FIFO is in-memory and not restored after process death.
+    private var parallelDownloadsAccessibilityValue: String {
+        let label = settings.maxParallelDownloads.label
+        let isDefault = settings.maxParallelDownloads == .three
+        let headFormat = isDefault
+            ? String(localized: "%@. This is the default.")
+            : String(localized: "%@. This is not the default of 3 parallel.")
+        let head = String(format: headFormat, locale: .current, label)
+        return head + " " + String(localized: "Only this many episode downloads run as active transfers at once. Extra downloads wait in memory until a slot frees. Waiting items are not saved across quitting the app; already-started background transfers continue after relaunch. Lowering this does not cancel transfers that already started. Changing this does not start a new download, delete files, or change Max storage or Max downloaded episodes.")
+    }
+
+    private var parallelDownloadsAccessibilityHint: String {
+        String(localized: "Choices are 1 at a time through 5 parallel. The default is 3 parallel. Caps active download transfers only. Waiting downloads stay in memory and are lost if the app is killed. Already-started background tasks continue. Not Max storage, Max downloaded episodes, or Download all unplayed soft cap. Changing the picker does not invent downloads.")
     }
 
     private var parallelDownloadsHelpText: String {
