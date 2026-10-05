@@ -2158,7 +2158,7 @@ struct SettingsView: View {
                 .accessibilityHint(String(localized: "Local banners when a download fails — may open Downloads. Title is the episode title, the podcast title when the episode title is empty, or Download failed. Body is a short error. Does not post a banner by itself. Not push. Successful downloads use Notify on download complete. Failures can still appear in Download errors when this is off."))
             Toggle("Notify on download complete", isOn: $settings.notifyOnDownloadComplete)
                 .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnDownloadComplete, role: .downloadComplete))
-                .accessibilityHint(String(localized: "Optional local notifications when a download finishes successfully. Default off — quieter than download errors."))
+                .accessibilityHint(String(localized: "Local banners when a download finishes and the file is saved — may open Downloads. Title is the episode title, the podcast title when the episode title is empty, or Download complete. Default off. Does not post a banner by itself. Not push. Cancelled and failed downloads are not included; failures use Notify on download errors."))
             Toggle("Notify on sync errors", isOn: $settings.notifyOnSyncErrors)
                 .accessibilityValue(notificationToggleAccessibilityValue(isOn: settings.notifyOnSyncErrors, role: .syncErrors))
                 .accessibilityHint(String(localized: "Local banners when gpodder or Nextcloud login or sync fails — may open Settings Sync. Title may be Login failed, Not logged in, or Sync failed. Does not post a banner by itself and does not start a sync. Not push. Successful sync stays silent."))

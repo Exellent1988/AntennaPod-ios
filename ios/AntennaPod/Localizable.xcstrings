@@ -30563,23 +30563,6 @@
         }
       }
     },
-    "Optional local notifications when a download finishes successfully. Default off — quieter than download errors.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optional local notifications when a download finishes successfully. Default off — quieter than download errors."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optionale lokale Benachrichtigungen, wenn ein Download erfolgreich fertig ist. Standard aus — zurückhaltender als Download-Fehler."
-          }
-        }
-      }
-    },
     "Download complete": {
       "extractionState": "manual",
       "localizations": {
@@ -49261,6 +49244,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet ein Sheet, um ein eigenes Zurückspul-Intervall von 5 bis 60 Sekunden festzulegen. Das Intervall gilt erst nach Bestätigung mit Festlegen. Das nächste Zurückspulen nutzt den gespeicherten Wert. Ändern verschiebt die aktuelle Position nicht. Unterschiedlich von Vorspulen Benutzerdefiniert…. Nicht Zurückspulen nach Pause."
+          }
+        }
+      }
+    },
+    "Local banners when a download finishes and the file is saved — may open Downloads. Title is the episode title, the podcast title when the episode title is empty, or Download complete. Default off. Does not post a banner by itself. Not push. Cancelled and failed downloads are not included; failures use Notify on download errors.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Local banners when a download finishes and the file is saved — may open Downloads. Title is the episode title, the podcast title when the episode title is empty, or Download complete. Default off. Does not post a banner by itself. Not push. Cancelled and failed downloads are not included; failures use Notify on download errors."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokale Banner, wenn ein Download fertig ist und die Datei gespeichert wurde — können Downloads öffnen. Titel ist der Episodentitel, der Podcasttitel wenn der Episodentitel leer ist, oder Download abgeschlossen. Standard aus. Löst selbst keinen Banner aus. Kein Push. Abgebrochene und fehlgeschlagene Downloads zählen nicht; Fehler nutzen Bei Download-Fehlern benachrichtigen."
           }
         }
       }
