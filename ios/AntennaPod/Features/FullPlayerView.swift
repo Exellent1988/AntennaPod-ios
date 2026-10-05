@@ -1294,36 +1294,61 @@ struct FullPlayerView: View {
         }
     }
 
+    /// One row at default sizes. At large accessibility text sizes the five controls are far
+    /// wider than the screen, and the sleep countdown and speed text got squeezed to "…";
+    /// fall back to a row of seek and play controls above a row with sleep timer and speed.
     private var transportControls: some View {
-        HStack(spacing: 28) {
-            sleepTimerMenu
-            Button {
-                playback.seek(bySeconds: -playback.rewindSeconds)
-            } label: {
-                Image(systemName: AppSettings.skipSystemImage(forward: false, seconds: settings.rewindSeconds))
-                    .font(.title2)
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 28) {
+                sleepTimerMenu
+                seekAndPlayButtons
+                speedMenu
             }
-            .accessibilityLabel(String(localized: "Rewind \(settings.rewindSeconds) seconds"))
-
-            Button {
-                playback.togglePlayPause()
-            } label: {
-                Image(systemName: playback.isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                    .font(.system(size: 64))
+            VStack(spacing: 16) {
+                HStack(spacing: 28) {
+                    seekAndPlayButtons
+                }
+                HStack(spacing: 28) {
+                    sleepTimerMenu
+                    speedMenu
+                }
             }
-            .accessibilityLabel(playback.isPlaying ? String(localized: "Pause") : String(localized: "Play"))
-
-            Button {
-                playback.seek(bySeconds: playback.fastForwardSeconds)
-            } label: {
-                Image(systemName: AppSettings.skipSystemImage(forward: true, seconds: settings.fastForwardSeconds))
-                    .font(.title2)
+            VStack(spacing: 16) {
+                HStack(spacing: 28) {
+                    seekAndPlayButtons
+                }
+                sleepTimerMenu
+                speedMenu
             }
-            .accessibilityLabel(String(localized: "Forward \(settings.fastForwardSeconds) seconds"))
-
-            speedMenu
         }
         .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var seekAndPlayButtons: some View {
+        Button {
+            playback.seek(bySeconds: -playback.rewindSeconds)
+        } label: {
+            Image(systemName: AppSettings.skipSystemImage(forward: false, seconds: settings.rewindSeconds))
+                .font(.title2)
+        }
+        .accessibilityLabel(String(localized: "Rewind \(settings.rewindSeconds) seconds"))
+
+        Button {
+            playback.togglePlayPause()
+        } label: {
+            Image(systemName: playback.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                .font(.system(size: 64))
+        }
+        .accessibilityLabel(playback.isPlaying ? String(localized: "Pause") : String(localized: "Play"))
+
+        Button {
+            playback.seek(bySeconds: playback.fastForwardSeconds)
+        } label: {
+            Image(systemName: AppSettings.skipSystemImage(forward: true, seconds: settings.fastForwardSeconds))
+                .font(.title2)
+        }
+        .accessibilityLabel(String(localized: "Forward \(settings.fastForwardSeconds) seconds"))
     }
 
     private var speedMenu: some View {
