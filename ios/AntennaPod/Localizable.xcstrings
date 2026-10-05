@@ -1808,23 +1808,6 @@
         }
       }
     },
-    "Download failures → Downloads (title = episode, body = error)": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download failures → Downloads (title = episode, body = error)"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download-Fehler → Downloads (Titel = Episode, Text = Fehler)"
-          }
-        }
-      }
-    },
     "Downloaded": {
       "extractionState": "manual",
       "localizations": {
@@ -32897,23 +32880,6 @@
         }
       }
     },
-    "Download complete → Downloads (title = episode, body = feed)": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download complete → Downloads (title = episode, body = feed)"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Download abgeschlossen → Downloads (Titel = Episode, Text = Feed)"
-          }
-        }
-      }
-    },
     "Local only — no APNs / push. OS Notifications permission required.": {
       "extractionState": "manual",
       "localizations": {
@@ -45365,23 +45331,6 @@
         }
       }
     },
-    "When a download fails, one local banner may open Downloads, with the episode title and a short error. Successful downloads use the separate download-complete toggle. This toggle does not post a banner by itself.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When a download fails, one local banner may open Downloads, with the episode title and a short error. Successful downloads use the separate download-complete toggle. This toggle does not post a banner by itself."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn ein Download fehlschlägt, kann ein lokales Banner Downloads öffnen, mit Episodentitel und kurzem Fehler. Erfolgreiche Downloads nutzen den eigenen Schalter Download abgeschlossen. Dieser Schalter postet selbst kein Banner."
-          }
-        }
-      }
-    },
     "Download-failure banners stay off. Failures can still appear in Download errors. Successful downloads are unchanged. This does not post a banner.": {
       "extractionState": "manual",
       "localizations": {
@@ -45395,23 +45344,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Banner für fehlgeschlagene Downloads bleiben aus. Fehler können weiter unter Download-Fehler erscheinen. Erfolgreiche Downloads bleiben unverändert. Das postet kein Banner."
-          }
-        }
-      }
-    },
-    "When a download finishes and the file is saved, one local banner may open Downloads. Cancelled and failed downloads are not included. This toggle does not post a banner by itself.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "When a download finishes and the file is saved, one local banner may open Downloads. Cancelled and failed downloads are not included. This toggle does not post a banner by itself."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wenn ein Download fertig ist und die Datei gespeichert wurde, kann ein lokales Banner Downloads öffnen. Abgebrochene und fehlgeschlagene Downloads gehören nicht dazu. Dieser Schalter postet selbst kein Banner."
           }
         }
       }
@@ -47616,23 +47548,6 @@
         }
       }
     },
-    "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neue Folgen nach Aktualisierung (ein lokaler Banner → Eingang); Download-Fehler → Downloads; Download fertig (optional, standardmäßig aus) → Downloads; Sync-/Login-Fehler → Einstellungen Sync (Banner-Titel Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen); Sleep-Timer-Ende (Banner + Vordergrund-Haptik)"
-          }
-        }
-      },
-      "extractionState": "manual"
-    },
     "When gpodder or Nextcloud login or sync fails, one local banner may open Settings Sync. Banner title is Login failed, Not logged in, or Sync failed — not always Sync failed for login. This toggle does not post a banner by itself and does not start a sync.": {
       "localizations": {
         "en": {
@@ -47679,6 +47594,91 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wenn aktiviert: neue Folgen nach Aktualisierung (ein aggregierter lokaler Banner → Eingang), Download-Fehler → Downloads, Download fertig (optional, standardmäßig aus) → Downloads, gpodder-/Nextcloud-Login- oder Sync-Fehler → Einstellungen Sync (Banner-Titel Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen) und/oder Sleep-Timer-Ende (Banner + Vordergrund-Haptik). Nur lokal — kein Push / APNs; iOS-Benachrichtigungsberechtigung erforderlich."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "When a download fails, one local banner may open Downloads. Title is the episode title, or the podcast title when the episode title is empty, or Download failed. Body is a short error. Successful downloads use the separate download-complete toggle. This toggle does not post a banner by itself.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When a download fails, one local banner may open Downloads. Title is the episode title, or the podcast title when the episode title is empty, or Download failed. Body is a short error. Successful downloads use the separate download-complete toggle. This toggle does not post a banner by itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn ein Download fehlschlägt, kann ein lokaler Banner Downloads öffnen. Titel ist der Episodentitel, oder der Podcast-Titel wenn der Episodentitel leer ist, oder Download fehlgeschlagen. Body ist ein kurzer Fehler. Erfolgreiche Downloads nutzen den separaten Download-fertig-Schalter. Dieser Schalter postet keinen Banner von allein."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "When a download finishes and the file is saved, one local banner may open Downloads. Title is the episode title, or the podcast title when the episode title is empty, or Download complete. Body is the podcast title when the episode title is present, otherwise Download complete. Cancelled and failed downloads are not included. This toggle does not post a banner by itself.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When a download finishes and the file is saved, one local banner may open Downloads. Title is the episode title, or the podcast title when the episode title is empty, or Download complete. Body is the podcast title when the episode title is present, otherwise Download complete. Cancelled and failed downloads are not included. This toggle does not post a banner by itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn ein Download fertig ist und die Datei gespeichert wurde, kann ein lokaler Banner Downloads öffnen. Titel ist der Episodentitel, oder der Podcast-Titel wenn der Episodentitel leer ist, oder Download fertig. Body ist der Podcast-Titel wenn ein Episodentitel da ist, sonst Download fertig. Abgebrochene und fehlgeschlagene Downloads sind nicht enthalten. Dieser Schalter postet keinen Banner von allein."
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Download failures → Downloads (title = episode, or podcast if episode title empty, or Download failed; body = error)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download failures → Downloads (title = episode, or podcast if episode title empty, or Download failed; body = error)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-Fehler → Downloads (Titel = Episode, oder Podcast wenn Episodentitel leer, oder Download fehlgeschlagen; Body = Fehler)"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "Download complete → Downloads (title = episode, or podcast if episode title empty, or Download complete; body = feed when episode titled, else Download complete)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download complete → Downloads (title = episode, or podcast if episode title empty, or Download complete; body = feed when episode titled, else Download complete)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download fertig → Downloads (Titel = Episode, oder Podcast wenn Episodentitel leer, oder Download fertig; Body = Feed wenn Episode betitelt, sonst Download fertig)"
+          }
+        }
+      },
+      "extractionState": "manual"
+    },
+    "New episodes after refresh (one local banner → Inbox); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New episodes after refresh (one local banner → Inbox); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Folgen nach Aktualisierung (ein lokaler Banner → Eingang); Download-Fehler → Downloads (Titel Episode, oder Podcast wenn Episodentitel leer); Download fertig (optional, standardmäßig aus) → Downloads (Titel Episode, oder Podcast wenn Episodentitel leer); Sync-/Login-Fehler → Einstellungen Sync (Banner-Titel Login fehlgeschlagen, Nicht angemeldet oder Sync fehlgeschlagen); Sleep-Timer-Ende (Banner + Vordergrund-Haptik)"
           }
         }
       },

@@ -2110,14 +2110,14 @@ struct SettingsView: View {
             }
 
             LabeledContent("Notifies") {
-                Text(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)"))
+                Text(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.trailing)
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(String(localized: "Notifies"))
-            .accessibilityValue(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads; download complete (optional, default off) → Downloads; sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)"))
+            .accessibilityValue(String(localized: "New episodes after refresh (one local banner → Inbox); download failures → Downloads (title episode, or podcast if episode title empty); download complete (optional, default off) → Downloads (title episode, or podcast if episode title empty); sync/login failures → Settings Sync (banner title Login failed, Not logged in, or Sync failed); sleep timer end (banner + foreground haptic)"))
 
             LabeledContent("Does not notify") {
                 Text(String(localized: "No push / APNs / server-side alerts. Download-complete banners only when that optional toggle is on (default off). No episode-level deep link for new episodes (Inbox only). Needs an in-app refresh, download, sync, or sleep-timer fire — not a remote push."))
@@ -2168,11 +2168,11 @@ struct SettingsView: View {
         case (.newEpisodes, false):
             return String(localized: "New-episode banners stay off for every podcast. A per-podcast On does not override this. This does not post a banner and does not change downloads.")
         case (.downloadErrors, true):
-            return String(localized: "When a download fails, one local banner may open Downloads, with the episode title and a short error. Successful downloads use the separate download-complete toggle. This toggle does not post a banner by itself.")
+            return String(localized: "When a download fails, one local banner may open Downloads. Title is the episode title, or the podcast title when the episode title is empty, or Download failed. Body is a short error. Successful downloads use the separate download-complete toggle. This toggle does not post a banner by itself.")
         case (.downloadErrors, false):
             return String(localized: "Download-failure banners stay off. Failures can still appear in Download errors. Successful downloads are unchanged. This does not post a banner.")
         case (.downloadComplete, true):
-            return String(localized: "When a download finishes and the file is saved, one local banner may open Downloads. Cancelled and failed downloads are not included. This toggle does not post a banner by itself.")
+            return String(localized: "When a download finishes and the file is saved, one local banner may open Downloads. Title is the episode title, or the podcast title when the episode title is empty, or Download complete. Body is the podcast title when the episode title is present, otherwise Download complete. Cancelled and failed downloads are not included. This toggle does not post a banner by itself.")
         case (.downloadComplete, false):
             return String(localized: "Successful-download banners stay off. Failures stay on their own toggle. This does not post a banner.")
         case (.syncErrors, true):
@@ -2246,10 +2246,10 @@ struct SettingsView: View {
             parts.append(String(localized: "New episodes after refresh (one local banner) → Inbox; needs feed refresh + permission"))
         }
         if settings.notifyOnDownloadErrors {
-            parts.append(String(localized: "Download failures → Downloads (title = episode, body = error)"))
+            parts.append(String(localized: "Download failures → Downloads (title = episode, or podcast if episode title empty, or Download failed; body = error)"))
         }
         if settings.notifyOnDownloadComplete {
-            parts.append(String(localized: "Download complete → Downloads (title = episode, body = feed)"))
+            parts.append(String(localized: "Download complete → Downloads (title = episode, or podcast if episode title empty, or Download complete; body = feed when episode titled, else Download complete)"))
         }
         if settings.notifyOnSyncErrors {
             parts.append(String(localized: "Sync / login failures → Settings Sync (title Login failed, Not logged in, or Sync failed; short error body)"))

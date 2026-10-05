@@ -44,13 +44,20 @@ enum DownloadCompleteNotificationCoordinator {
         guard status == .authorized || status == .provisional else { return }
 
         let content = UNMutableNotificationContent()
-        let title = episode.title.trimmingCharacters(in: .whitespacesAndNewlines)
-        content.title = title.isEmpty ? String(localized: "Download complete") : title
+        // Prefer episode title; fall back to feed title before generic "Download complete"
+        // so an empty episode title still names the podcast. Body stays feed when episode
+        // title is present; otherwise "Download complete" (avoid duplicating the title).
+        let episodeTitle = episode.title.trimmingCharacters(in: .whitespacesAndNewlines)
         let feed = (feedTitle ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        if feed.isEmpty {
+        if !episodeTitle.isEmpty {
+            content.title = episodeTitle
+            content.body = feed.isEmpty ? String(localized: "Download complete") : feed
+        } else if !feed.isEmpty {
+            content.title = feed
             content.body = String(localized: "Download complete")
         } else {
-            content.body = feed
+            content.title = String(localized: "Download complete")
+            content.body = String(localized: "Download complete")
         }
         content.sound = .default
         content.categoryIdentifier = categoryId

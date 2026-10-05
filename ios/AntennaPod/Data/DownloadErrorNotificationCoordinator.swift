@@ -38,8 +38,17 @@ enum DownloadErrorNotificationCoordinator {
         guard status == .authorized || status == .provisional else { return }
 
         let content = UNMutableNotificationContent()
-        let title = entry.episodeTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-        content.title = title.isEmpty ? String(localized: "Download failed") : title
+        // Prefer episode title; fall back to feed title before generic "Download failed"
+        // so an empty episode title does not hide which podcast failed.
+        let episodeTitle = entry.episodeTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        let feedTitle = entry.feedTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !episodeTitle.isEmpty {
+            content.title = episodeTitle
+        } else if !feedTitle.isEmpty {
+            content.title = feedTitle
+        } else {
+            content.title = String(localized: "Download failed")
+        }
         let short = entry.message.trimmingCharacters(in: .whitespacesAndNewlines)
         content.body = short.isEmpty ? String(localized: "Download failed") : String(short.prefix(120))
         content.sound = .default
