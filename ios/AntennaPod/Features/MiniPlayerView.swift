@@ -102,6 +102,7 @@ struct MiniPlayerView: View {
                                     }
                                 }
                             }
+                            .accessibilityHint(String(localized: "Sets this preset as the session playback speed immediately. No confirmation. Does not change Default speed or this podcast’s speed override. Not Volume boost or Preserve pitch."))
                         }
                         Divider()
                         Button(String(localized: "Custom…")) {
