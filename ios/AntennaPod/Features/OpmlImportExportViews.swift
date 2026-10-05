@@ -67,7 +67,7 @@ struct OpmlImportExportSection: View {
             }
             .disabled(!canExport)
             .accessibilityLabel(String(localized: "Save OPML to Files…"))
-            .accessibilityHint(String(localized: "Opens the Files save picker and writes AntennaPod-compatible OPML. Local folder podcasts are omitted."))
+            .accessibilityHint(String(localized: "Opens the Files save picker and writes AntennaPod-compatible OPML 2.0. Local folder podcasts are omitted. Does not unsubscribe, import, or change tags. Distinct from Export OPML share sheet and HTML export."))
 
             Button {
                 exportHtml()

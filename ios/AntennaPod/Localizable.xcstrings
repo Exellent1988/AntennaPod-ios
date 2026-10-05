@@ -26362,23 +26362,6 @@
         }
       }
     },
-    "Opens the Files save picker and writes AntennaPod-compatible OPML. Local folder podcasts are omitted.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opens the Files save picker and writes AntennaPod-compatible OPML. Local folder podcasts are omitted."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Öffnet den Dateien-Speicherpicker und schreibt AntennaPod-kompatibles OPML. Lokale Ordner-Podcasts werden ausgelassen."
-          }
-        }
-      }
-    },
     "Opens Files to pick an .opml or .xml subscription list. Already subscribed feeds are skipped; each new feed is fetched over the network.": {
       "extractionState": "manual",
       "localizations": {
@@ -48101,6 +48084,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Öffnet das System-Teilen-Blatt mit einer eigenständigen HTML-Abonnementliste. Jede Zeile listet Titel, Feed-URL und Episodenanzahl; Autor, Sprache, Kategorien und Finanzierung nur, wenn der Feed sie liefert. Lokale Ordner-Podcasts fehlen. Du kannst von dort in Dateien speichern. Abonniert nicht ab, importiert nicht, ändert keine Tags und schreibt kein OPML. Kein gpodder-Sync. Unterschiedlich von OPML exportieren und OPML in Dateien speichern…."
+          }
+        }
+      }
+    },
+    "Opens the Files save picker and writes AntennaPod-compatible OPML 2.0. Local folder podcasts are omitted. Does not unsubscribe, import, or change tags. Distinct from Export OPML share sheet and HTML export.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the Files save picker and writes AntennaPod-compatible OPML 2.0. Local folder podcasts are omitted. Does not unsubscribe, import, or change tags. Distinct from Export OPML share sheet and HTML export."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den Dateien-Speicherpicker und schreibt AntennaPod-kompatibles OPML 2.0. Lokale Ordner-Podcasts fehlen. Abonniert nicht ab, importiert nicht und ändert keine Tags. Unterschiedlich vom OPML-Teilen-Blatt und HTML-Export."
           }
         }
       }
