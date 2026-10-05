@@ -525,7 +525,7 @@ struct HistoryView: View {
                     }
                     .disabled(playRandomCandidates.isEmpty)
                     .accessibilityLabel(String(localized: "Play random"))
-                    .accessibilityHint(String(localized: "Plays a random history episode with playable media. Prefers unplayed when any remain."))
+                    .accessibilityHint(String(localized: "Plays a random episode from the full History catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not reorder History. No confirmation."))
 
                     Button {
                         showEnqueueAllConfirm = true

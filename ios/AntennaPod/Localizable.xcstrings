@@ -33513,24 +33513,6 @@
       },
       "comment": "Help caption under Download all unplayed soft cap picker."
     },
-    "Plays a random history episode with playable media. Prefers unplayed when any remain.": {
-      "extractionState": "manual",
-      "comment": "VoiceOver hint for History toolbar Play random.",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Plays a random history episode with playable media. Prefers unplayed when any remain."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spielt eine zufällige Verlaufs-Episode mit abspielbarem Medium. Bevorzugt ungehörte, wenn vorhanden."
-          }
-        }
-      }
-    },
     "Plays a random archived episode with playable media. Prefers unplayed when any remain.": {
       "extractionState": "manual",
       "comment": "VoiceOver hint for Archived toolbar Play random. Does not restore/unarchive.",
@@ -48845,6 +48827,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Spielt eine zufällige Episode aus dem vollständigen Katalog abgeschlossener Downloads mit lokaler Datei. Bevorzugt ungehörte, wenn welche übrig sind. Ignoriert Gehört-Status-, Podcast-, Such- und Sortierfilter. Ordnet Downloads nicht neu. Keine Bestätigung."
+          }
+        }
+      }
+    },
+    "Plays a random episode from the full History catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not reorder History. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plays a random episode from the full History catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not reorder History. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt eine zufällige Episode aus dem vollständigen Verlaufs-Katalog mit abspielbaren Medien. Bevorzugt ungehörte, wenn welche übrig sind. Ignoriert Podcast-, Such- und Sortierfilter. Ordnet den Verlauf nicht neu. Keine Bestätigung."
           }
         }
       }
