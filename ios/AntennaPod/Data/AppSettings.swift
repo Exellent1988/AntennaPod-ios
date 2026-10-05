@@ -2219,6 +2219,14 @@ final class AppSettings: ObservableObject {
     }
 
     func setHomeSectionVisible(_ id: HomeSectionId, _ visible: Bool) {
+        // Launch re-hides default-hidden sections missing from the saved order. Without a
+        // reorder that key was never written, so Favorites etc. turned off again on relaunch.
+        if UserDefaults.standard.object(forKey: Keys.homeSectionOrder) == nil {
+            UserDefaults.standard.set(
+                homeSectionOrder.map(\.rawValue).joined(separator: ","),
+                forKey: Keys.homeSectionOrder
+            )
+        }
         var next = homeHiddenSections
         if visible {
             next.remove(id)
