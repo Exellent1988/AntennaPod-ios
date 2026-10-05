@@ -25527,23 +25527,6 @@
         }
       }
     },
-    "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wi‑Fi / Ethernet vs. Mobilfunk (System-Pfadmonitor — keine VPN-/Proxy-Erkennung). Auto-Download nur Wi‑Fi standardmäßig an — überspringt Auto-Einreihen im Mobilfunk. Manuelle Downloads erlauben Mobilfunk standardmäßig; Manueller Download nur Wi‑Fi lehnt manuelle Downloads im Mobilfunk ab und protokolliert einen Fehler. Stream nur Wi‑Fi (Standard aus) sperrt Netzwerk-Stream-URLs im Mobilfunk; lokale Offline-Dateien spielen weiter. Schalter aus = Mobilfunk für diese Aktion erlaubt."
-          }
-        }
-      }
-    },
     "Reset position when marked played": {
       "extractionState": "manual",
       "localizations": {
@@ -44125,23 +44108,6 @@
         }
       }
     },
-    "After the first path sample, Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular, other, and offline do not. Before that sample the row says Checking and does not claim Wi‑Fi. No VPN or proxy detection.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "After the first path sample, Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular, other, and offline do not. Before that sample the row says Checking and does not claim Wi‑Fi. No VPN or proxy detection."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nach der ersten Pfadmessung erlauben Wi‑Fi und Ethernet Nur-Wi‑Fi-Aktionen; Mobilfunk, andere Netze und offline nicht. Vor der Messung steht Prüfe und es wird kein Wi‑Fi behauptet. Keine VPN- oder Proxy-Erkennung."
-          }
-        }
-      }
-    },
     "Checking. The system path monitor has not delivered a sample, so this is not Wi‑Fi, Ethernet, cellular, offline, or another network. No status is invented.": {
       "extractionState": "manual",
       "localizations": {
@@ -44206,40 +44172,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aus."
-          }
-        }
-      }
-    },
-    "Auto-download after a successful refresh is skipped unless the path is Wi‑Fi or Ethernet. This does not start a download. Manual downloads and streaming stay on their own toggles.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auto-download after a successful refresh is skipped unless the path is Wi‑Fi or Ethernet. This does not start a download. Manual downloads and streaming stay on their own toggles."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auto-Download nach einem erfolgreichen Refresh wird übersprungen, außer der Pfad ist Wi‑Fi oder Ethernet. Das startet keinen Download. Manuelle Downloads und Streaming bleiben bei ihren eigenen Schaltern."
-          }
-        }
-      }
-    },
-    "Auto-download is not limited to Wi‑Fi or Ethernet. It still runs only after a successful refresh and still needs a satisfied path. This does not start a download.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auto-download is not limited to Wi‑Fi or Ethernet. It still runs only after a successful refresh and still needs a satisfied path. This does not start a download."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Auto-Download ist nicht auf Wi‑Fi oder Ethernet beschränkt. Er läuft weiterhin nur nach einem erfolgreichen Refresh und braucht weiterhin einen erfüllten Pfad. Das startet keinen Download."
           }
         }
       }
@@ -48849,6 +48781,74 @@
           "stringUnit": {
             "state": "translated",
             "value": "Wähle Alle oder einen anderen Tag, um andere Abonnements zu sehen. Das kündigt keine Abonnements und löscht keine Podcasts."
+          }
+        }
+      }
+    },
+    "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action. Feed refresh (Refresh all, pull-to-refresh, timed interval, and single-podcast refresh) is not limited by these toggles and may use cellular — there is no separate Mobile updates setting.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action. Feed refresh (Refresh all, pull-to-refresh, timed interval, and single-podcast refresh) is not limited by these toggles and may use cellular — there is no separate Mobile updates setting."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wi‑Fi / Ethernet vs Mobilfunk (System-Pfadmonitor — keine VPN- oder Proxy-Erkennung). Automatischer Download nur über Wi‑Fi ist standardmäßig an — überspringt automatisches Einreihen über Mobilfunk. Manuelle Downloads erlauben standardmäßig Mobilfunk; Manueller Download nur über Wi‑Fi lehnt vom Nutzer gestartete Downloads über Mobilfunk ab und protokolliert einen Fehler. Streaming nur über Wi‑Fi (standardmäßig aus) blockiert Netzwerk-Stream-URLs über Mobilfunk; lokale Offline-Dateien spielen weiter. Schalter aus = diese Aktion darf Mobilfunk nutzen. Feed-Aktualisierung (Alle aktualisieren, Zum Aktualisieren ziehen, zeitgesteuertes Intervall und einzelner Podcast) wird von diesen Schaltern nicht begrenzt und darf Mobilfunk nutzen — es gibt keine separate Einstellung „Mobile Updates“."
+          }
+        }
+      }
+    },
+    "After the first path sample, Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular, other, and offline do not. Before that sample the row says Checking and does not claim Wi‑Fi. No VPN or proxy detection. Feed refresh is not a Wi‑Fi-only action and may use cellular.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After the first path sample, Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular, other, and offline do not. Before that sample the row says Checking and does not claim Wi‑Fi. No VPN or proxy detection. Feed refresh is not a Wi‑Fi-only action and may use cellular."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach der ersten Pfadprobe erlauben Wi‑Fi und Ethernet Wi‑Fi-only-Aktionen; Mobilfunk, Sonstiges und Offline nicht. Vor dieser Probe steht Prüfen und behauptet kein Wi‑Fi. Keine VPN- oder Proxy-Erkennung. Feed-Aktualisierung ist keine Wi‑Fi-only-Aktion und darf Mobilfunk nutzen."
+          }
+        }
+      }
+    },
+    "Auto-download after a successful refresh is skipped unless the path is Wi‑Fi or Ethernet. This does not start a download. Manual downloads and streaming stay on their own toggles. Feed refresh itself is not blocked and may still use cellular.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-download after a successful refresh is skipped unless the path is Wi‑Fi or Ethernet. This does not start a download. Manual downloads and streaming stay on their own toggles. Feed refresh itself is not blocked and may still use cellular."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatischer Download nach erfolgreicher Aktualisierung wird übersprungen, solange der Pfad nicht Wi‑Fi oder Ethernet ist. Das startet keinen Download. Manuelle Downloads und Streaming bleiben bei ihren eigenen Schaltern. Die Feed-Aktualisierung selbst wird nicht blockiert und darf weiterhin Mobilfunk nutzen."
+          }
+        }
+      }
+    },
+    "Auto-download is not limited to Wi‑Fi or Ethernet. It still runs only after a successful refresh and still needs a satisfied path. This does not start a download. Feed refresh is also not limited by this toggle.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-download is not limited to Wi‑Fi or Ethernet. It still runs only after a successful refresh and still needs a satisfied path. This does not start a download. Feed refresh is also not limited by this toggle."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatischer Download ist nicht auf Wi‑Fi oder Ethernet beschränkt. Er läuft weiterhin nur nach erfolgreicher Aktualisierung und braucht einen erfüllten Pfad. Das startet keinen Download. Die Feed-Aktualisierung wird von diesem Schalter ebenfalls nicht begrenzt."
           }
         }
       }

@@ -240,7 +240,7 @@ struct SettingsView: View {
                     "Proxy password",
                     "HTTP-Proxy",
                     "Network / Downloads settings are locked. Enter the parental PIN to change these toggles.",
-                    "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action.",
+                    "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action. Feed refresh (Refresh all, pull-to-refresh, timed interval, and single-podcast refresh) is not limited by these toggles and may use cellular — there is no separate Mobile updates setting.",
                     "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. See HTTP proxy for proxy settings.",
                     "Optional HTTP(S) proxy for URLSession clients (feeds, downloads, search, …). AVPlayer streaming may bypass the app proxy. Not VPN detection; not certificate pinning; not SOCKS."
                 ) {
@@ -1866,7 +1866,7 @@ struct SettingsView: View {
             .accessibilityElement(children: .combine)
             .accessibilityLabel(String(localized: "Current network"))
             .accessibilityValue(currentNetworkAccessibilityValue)
-            .accessibilityHint(String(localized: "After the first path sample, Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular, other, and offline do not. Before that sample the row says Checking and does not claim Wi‑Fi. No VPN or proxy detection."))
+            .accessibilityHint(String(localized: "After the first path sample, Wi‑Fi and Ethernet allow Wi‑Fi-only actions; cellular, other, and offline do not. Before that sample the row says Checking and does not claim Wi‑Fi. No VPN or proxy detection. Feed refresh is not a Wi‑Fi-only action and may use cellular."))
 
             Toggle(String(localized: "Auto-download Wi‑Fi only"), isOn: gatedWifiToggle(\AppSettings.autoDownloadWifiOnly))
                 .accessibilityLabel(String(localized: "Auto-download Wi‑Fi only"))
@@ -2095,9 +2095,9 @@ struct SettingsView: View {
     private func wifiOnlyPolicySentence(isOn: Bool, role: WifiOnlyVoiceOverRole) -> String {
         switch (role, isOn) {
         case (.autoDownload, true):
-            return String(localized: "Auto-download after a successful refresh is skipped unless the path is Wi‑Fi or Ethernet. This does not start a download. Manual downloads and streaming stay on their own toggles.")
+            return String(localized: "Auto-download after a successful refresh is skipped unless the path is Wi‑Fi or Ethernet. This does not start a download. Manual downloads and streaming stay on their own toggles. Feed refresh itself is not blocked and may still use cellular.")
         case (.autoDownload, false):
-            return String(localized: "Auto-download is not limited to Wi‑Fi or Ethernet. It still runs only after a successful refresh and still needs a satisfied path. This does not start a download.")
+            return String(localized: "Auto-download is not limited to Wi‑Fi or Ethernet. It still runs only after a successful refresh and still needs a satisfied path. This does not start a download. Feed refresh is also not limited by this toggle.")
         case (.manualDownload, true):
             return String(localized: "User-started downloads are refused unless the path is Wi‑Fi or Ethernet, and a download error is recorded. Files already saved stay. This does not start a download.")
         case (.manualDownload, false):
@@ -2129,7 +2129,7 @@ struct SettingsView: View {
     }
 
     private var networkDownloadsHelpText: String {
-        String(localized: "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action.")
+        String(localized: "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action. Feed refresh (Refresh all, pull-to-refresh, timed interval, and single-podcast refresh) is not limited by these toggles and may use cellular — there is no separate Mobile updates setting.")
     }
 
     private var customUserAgentHelpText: String {
