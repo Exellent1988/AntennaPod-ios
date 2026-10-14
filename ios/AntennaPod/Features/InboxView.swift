@@ -382,155 +382,160 @@ struct InboxView: View {
         }
     }
 
-    var body: some View {
-        NavigationStack {
-            List {
-                // Sort + filter the Inbox once per body; the info bar, its VoiceOver label, and
-                // the rows share it (rows only render when not searching, same as the bar).
-                let visibleItems = visibleInboxForRemaining
-                let remainingSummary = inboxRemainingSummary(for: visibleItems)
-                // Podcast chips — hidden while library search replaces Inbox rows.
-                if !isSearching,
-                   !store.inboxEpisodes.isEmpty,
-                   !inboxPodcastFeeds.isEmpty || isPodcastFiltering {
-                    Section {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(podcastFilterChips) { chip in
-                                    InboxPodcastFilterChip(
-                                        title: podcastChipTitle(chip),
-                                        selected: podcastFilter == chip,
-                                        accessibilityHint: String(localized: "Filters the Inbox to All or one podcast that currently has inbox episodes. Does not mark played, delete episodes, change sort, or alter the episode type chips. Search still applies on top of this filter.")
-                                    ) {
-                                        settings.inboxPodcastFilter = chip.storageValue
-                                    }
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var inboxList: some View {
+        List {
+            // Sort + filter the Inbox once per body; the info bar, its VoiceOver label, and
+            // the rows share it (rows only render when not searching, same as the bar).
+            let visibleItems = visibleInboxForRemaining
+            let remainingSummary = inboxRemainingSummary(for: visibleItems)
+            // Podcast chips — hidden while library search replaces Inbox rows.
+            if !isSearching,
+               !store.inboxEpisodes.isEmpty,
+               !inboxPodcastFeeds.isEmpty || isPodcastFiltering {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(podcastFilterChips) { chip in
+                                InboxPodcastFilterChip(
+                                    title: podcastChipTitle(chip),
+                                    selected: podcastFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the Inbox to All or one podcast that currently has inbox episodes. Does not mark played, delete episodes, change sort, or alter the episode type chips. Search still applies on top of this filter.")
+                                ) {
+                                    settings.inboxPodcastFilter = chip.storageValue
                                 }
                             }
-                            .padding(.vertical, 4)
                         }
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                    } header: {
-                        Text("Podcasts")
+                        .padding(.vertical, 4)
                     }
-                }
-
-                // itunes:episodeType chips — hide when no types in Inbox catalog / while searching.
-                if !isSearching, !store.inboxEpisodes.isEmpty, showEpisodeTypeFilterChips {
-                    Section {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(episodeTypeFilterChips) { chip in
-                                    InboxPodcastFilterChip(
-                                        title: chip.label,
-                                        selected: settings.inboxEpisodeTypeFilter == chip,
-                                        accessibilityHint: String(localized: "Filters the Inbox by itunes episode type: All, Full, Trailer, Bonus, or Other when present. Does not mark played, delete episodes, change sort, or alter the podcast filter chips. Search still applies on top of this filter.")
-                                    ) {
-                                        settings.inboxEpisodeTypeFilter = chip
-                                    }
-                                }
-                            }
-                            .padding(.vertical, 4)
-                        }
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                    }
-                }
-
-                // AntennaPod-like inbox info bar (visible sorted+podcast+type-filtered Inbox remaining time).
-                // Hidden while library search replaces the Inbox rows.
-                if let remainingLabel = inboxRemainingInfoLabel(visibleItems: visibleItems, summary: remainingSummary) {
-                    Section {
-                        Text(remainingLabel)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                            .monospacedDigit()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .accessibilityElement(children: .ignore)
-                            .accessibilityLabel(inboxRemainingAccessibilityLabel(visibleItems: visibleItems, summary: remainingSummary))
-                            .accessibilityHint(inboxRemainingAccessibilityHint)
-                    }
-                    .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
-                }
-
-                if isSearching {
-                    LibrarySearchResultsView(query: debouncedQuery)
-                } else if store.inboxEpisodes.isEmpty {
-                    ContentUnavailableView(
-                        "Inbox empty",
-                        systemImage: "tray",
-                        description: Text("New and unplayed episodes from your subscriptions appear here. Use search to find any episode or podcast in your library.")
-                    )
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel(String(localized: "Inbox empty"))
-                    .accessibilityValue(inboxEmptyStateAccessibilityValue)
-                } else if visibleItems.isEmpty {
-                    ContentUnavailableView(
-                        "No matching inbox episodes",
-                        systemImage: "magnifyingglass",
-                        description: Text(
-                            (isPodcastFiltering || isEpisodeTypeFiltering)
-                                ? String(localized: "No inbox episodes match your filter.")
-                                : String(localized: "No inbox episodes match your search.")
-                        )
-                    )
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel(String(localized: "No matching inbox episodes"))
-                    .accessibilityValue(inboxEmptyStateAccessibilityValue)
-                    .accessibilityHint(inboxNoMatchAccessibilityHint)
-                } else {
-                    ForEach(visibleItems) { item in
-                        EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button {
-                                    store.playNext(
-                                        item.episode,
-                                        currentlyPlayingId: playback.currentEpisode?.id
-                                    )
-                                } label: {
-                                    Label("Play Next", systemImage: "text.insert")
-                                }
-                                .tint(.teal)
-                                .accessibilityHint(
-                                    String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
-                                )
-                                if store.isInQueue(item.episode.id) {
-                                    Button(role: .destructive) {
-                                        episodePendingRemoveFromQueue = item.episode
-                                    } label: {
-                                        Label("Remove from queue", systemImage: "minus.circle")
-                                    }
-                                    .accessibilityHint(
-                                        String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
-                                    )
-                                } else {
-                                    Button {
-                                        store.enqueue(item.episode)
-                                    } label: {
-                                        Label("Add to queue", systemImage: "text.append")
-                                    }
-                                    .tint(.purple)
-                                    .accessibilityHint(
-                                        String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
-                                    )
-                                }
-                                Button {
-                                    store.archive(item.episode.id)
-                                } label: {
-                                    Label("Archive", systemImage: "archivebox")
-                                }
-                                .tint(.orange)
-                            }
-                            .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                                Button {
-                                    store.markPlayed(item.episode.id)
-                                } label: {
-                                    Label("Mark played", systemImage: "checkmark.circle")
-                                }
-                                .tint(.blue)
-                                .accessibilityHint(String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled."))
-                            }
-                    }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                } header: {
+                    Text("Podcasts")
                 }
             }
+
+            // itunes:episodeType chips — hide when no types in Inbox catalog / while searching.
+            if !isSearching, !store.inboxEpisodes.isEmpty, showEpisodeTypeFilterChips {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(episodeTypeFilterChips) { chip in
+                                InboxPodcastFilterChip(
+                                    title: chip.label,
+                                    selected: settings.inboxEpisodeTypeFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the Inbox by itunes episode type: All, Full, Trailer, Bonus, or Other when present. Does not mark played, delete episodes, change sort, or alter the podcast filter chips. Search still applies on top of this filter.")
+                                ) {
+                                    settings.inboxEpisodeTypeFilter = chip
+                                }
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                }
+            }
+
+            // AntennaPod-like inbox info bar (visible sorted+podcast+type-filtered Inbox remaining time).
+            // Hidden while library search replaces the Inbox rows.
+            if let remainingLabel = inboxRemainingInfoLabel(visibleItems: visibleItems, summary: remainingSummary) {
+                Section {
+                    Text(remainingLabel)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(inboxRemainingAccessibilityLabel(visibleItems: visibleItems, summary: remainingSummary))
+                        .accessibilityHint(inboxRemainingAccessibilityHint)
+                }
+                .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            }
+
+            if isSearching {
+                LibrarySearchResultsView(query: debouncedQuery)
+            } else if store.inboxEpisodes.isEmpty {
+                ContentUnavailableView(
+                    "Inbox empty",
+                    systemImage: "tray",
+                    description: Text("New and unplayed episodes from your subscriptions appear here. Use search to find any episode or podcast in your library.")
+                )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "Inbox empty"))
+                .accessibilityValue(inboxEmptyStateAccessibilityValue)
+            } else if visibleItems.isEmpty {
+                ContentUnavailableView(
+                    "No matching inbox episodes",
+                    systemImage: "magnifyingglass",
+                    description: Text(
+                        (isPodcastFiltering || isEpisodeTypeFiltering)
+                            ? String(localized: "No inbox episodes match your filter.")
+                            : String(localized: "No inbox episodes match your search.")
+                    )
+                )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No matching inbox episodes"))
+                .accessibilityValue(inboxEmptyStateAccessibilityValue)
+                .accessibilityHint(inboxNoMatchAccessibilityHint)
+            } else {
+                ForEach(visibleItems) { item in
+                    EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button {
+                                store.playNext(
+                                    item.episode,
+                                    currentlyPlayingId: playback.currentEpisode?.id
+                                )
+                            } label: {
+                                Label("Play Next", systemImage: "text.insert")
+                            }
+                            .tint(.teal)
+                            .accessibilityHint(
+                                String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
+                            )
+                            if store.isInQueue(item.episode.id) {
+                                Button(role: .destructive) {
+                                    episodePendingRemoveFromQueue = item.episode
+                                } label: {
+                                    Label("Remove from queue", systemImage: "minus.circle")
+                                }
+                                .accessibilityHint(
+                                    String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
+                                )
+                            } else {
+                                Button {
+                                    store.enqueue(item.episode)
+                                } label: {
+                                    Label("Add to queue", systemImage: "text.append")
+                                }
+                                .tint(.purple)
+                                .accessibilityHint(
+                                    String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
+                                )
+                            }
+                            Button {
+                                store.archive(item.episode.id)
+                            } label: {
+                                Label("Archive", systemImage: "archivebox")
+                            }
+                            .tint(.orange)
+                        }
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button {
+                                store.markPlayed(item.episode.id)
+                            } label: {
+                                Label("Mark played", systemImage: "checkmark.circle")
+                            }
+                            .tint(.blue)
+                            .accessibilityHint(String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled."))
+                        }
+                }
+            }
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            inboxList
             .navigationTitle("Inbox")
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

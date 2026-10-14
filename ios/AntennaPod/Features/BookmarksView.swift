@@ -58,7 +58,8 @@ struct BookmarksView: View {
         BookmarksExport.shareText(items: catalogItems)
     }
 
-    var body: some View {
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var bookmarksList: some View {
         List {
             if catalogItems.isEmpty {
                 ContentUnavailableView(
@@ -93,6 +94,10 @@ struct BookmarksView: View {
                 }
             }
         }
+    }
+
+    var body: some View {
+        bookmarksList
         .navigationTitle(String(localized: "Bookmarks"))
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: String(localized: "Search bookmarks"))

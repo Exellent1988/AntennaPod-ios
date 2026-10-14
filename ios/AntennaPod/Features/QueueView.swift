@@ -388,150 +388,155 @@ struct QueueView: View {
         }
     }
 
-    var body: some View {
-        NavigationStack {
-            List {
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var queueList: some View {
+        List {
+            Section {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(QueueFilter.allCases) { chip in
+                            QueueFilterChip(
+                                title: chip.label,
+                                selected: settings.queueFilter == chip,
+                                accessibilityHint: String(localized: "Filters the Queue by All, Unplayed, or Played. Does not remove queue items, change sort, start downloads, or alter the podcast filter chips. Search still applies on top of this filter.")
+                            ) {
+                                settings.queueFilter = chip
+                            }
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+
+            if !store.queue.isEmpty, !queuePodcastFeeds.isEmpty || isPodcastFiltering {
                 Section {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
-                            ForEach(QueueFilter.allCases) { chip in
+                            ForEach(podcastFilterChips) { chip in
                                 QueueFilterChip(
-                                    title: chip.label,
-                                    selected: settings.queueFilter == chip,
-                                    accessibilityHint: String(localized: "Filters the Queue by All, Unplayed, or Played. Does not remove queue items, change sort, start downloads, or alter the podcast filter chips. Search still applies on top of this filter.")
+                                    title: podcastChipTitle(chip),
+                                    selected: podcastFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the Queue to All or one podcast that currently has queue items. Does not remove queue items, change sort, start downloads, or alter the All/Unplayed/Played status chips. Search still applies on top of this filter.")
                                 ) {
-                                    settings.queueFilter = chip
+                                    settings.queuePodcastFilter = chip.storageValue
                                 }
                             }
                         }
                         .padding(.vertical, 4)
                     }
                     .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                }
-
-                if !store.queue.isEmpty, !queuePodcastFeeds.isEmpty || isPodcastFiltering {
-                    Section {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(podcastFilterChips) { chip in
-                                    QueueFilterChip(
-                                        title: podcastChipTitle(chip),
-                                        selected: podcastFilter == chip,
-                                        accessibilityHint: String(localized: "Filters the Queue to All or one podcast that currently has queue items. Does not remove queue items, change sort, start downloads, or alter the All/Unplayed/Played status chips. Search still applies on top of this filter.")
-                                    ) {
-                                        settings.queuePodcastFilter = chip.storageValue
-                                    }
-                                }
-                            }
-                            .padding(.vertical, 4)
-                        }
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                    } header: {
-                        Text("Podcasts")
-                    }
-                }
-
-                // AntennaPod-like queue info bar (visible filtered list remaining time).
-                if let remainingLabel = queueRemainingInfoLabel {
-                    Section {
-                        Text(remainingLabel)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                            .monospacedDigit()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .accessibilityElement(children: .ignore)
-                            .accessibilityLabel(queueRemainingAccessibilityLabel)
-                            .accessibilityHint(queueRemainingAccessibilityHint)
-                    }
-                    .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
-                }
-
-                if store.queue.isEmpty {
-                    ContentUnavailableView(
-                        "Queue empty",
-                        systemImage: "list.bullet",
-                        description: Text(
-                            settings.queueLocked
-                                ? String(localized: "Add episodes from a podcast feed. Queue is locked — unlock to drag reorder.")
-                                : String(localized: "Add episodes from a podcast feed. Edit mode lets you drag to reorder.")
-                        )
-                    )
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel(String(localized: "Queue empty"))
-                    .accessibilityValue(queueEmptyStateAccessibilityValue)
-                } else if filteredQueue.isEmpty {
-                    ContentUnavailableView(
-                        "No matching queue episodes",
-                        systemImage: "magnifyingglass",
-                        description: Text(queueNoMatchMessage)
-                    )
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel(String(localized: "No matching queue episodes"))
-                    .accessibilityValue(queueEmptyStateAccessibilityValue)
-                    .accessibilityHint(queueNoMatchAccessibilityHint)
-                } else {
-                    ForEach(filteredQueue) { episode in
-                        EpisodeRow(
-                            episode: episode,
-                            feedTitle: store.displayTitle(containingEpisodeId: episode.id)
-                        )
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                // Same path as Full Player Remove from queue — confirm first.
-                                episodePendingRemove = episode
-                            } label: {
-                                Label("Remove", systemImage: "minus.circle")
-                            }
-                            .accessibilityHint(
-                                String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
-                            )
-                        }
-                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                            Button {
-                                store.togglePlayed(episode.id)
-                            } label: {
-                                Label(
-                                    store.isPlayed(episode.id)
-                                        ? String(localized: "Mark unplayed")
-                                        : String(localized: "Mark played"),
-                                    systemImage: store.isPlayed(episode.id) ? "circle" : "checkmark.circle"
-                                )
-                            }
-                            .tint(.blue)
-                            .accessibilityHint(
-                                store.isPlayed(episode.id)
-                                    ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
-                                    : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
-                            )
-                            Button {
-                                // Archived episodes stay in the queue, so this swipe must undo
-                                // as well as archive — same toggle as the row button. A one-way
-                                // archive() leaves the action labeled Archive and does nothing.
-                                store.toggleArchived(episode.id)
-                            } label: {
-                                Label(
-                                    store.isArchived(episode.id)
-                                        ? String(localized: "Restore")
-                                        : String(localized: "Archive"),
-                                    systemImage: store.isArchived(episode.id)
-                                        ? "arrow.uturn.backward"
-                                        : "archivebox"
-                                )
-                            }
-                            .tint(store.isArchived(episode.id) ? .green : .orange)
-                            .accessibilityHint(
-                                store.isArchived(episode.id)
-                                    ? String(localized: "Restores this episode from the archive. No confirmation. Does not delete downloads, remove from queue, unfavorite, or mark played.")
-                                    : String(localized: "Archives this episode and hides it from Inbox without marking it played. No confirmation. Does not delete downloads, remove from queue, or unfavorite.")
-                            )
-                        }
-                    }
-                    .onMove(perform: canReorder ? { source, destination in
-                        // Indices are only valid when the list shows the full queue (All + All podcasts + empty search).
-                        store.moveQueue(from: source, to: destination)
-                    } : nil)
+                } header: {
+                    Text("Podcasts")
                 }
             }
+
+            // AntennaPod-like queue info bar (visible filtered list remaining time).
+            if let remainingLabel = queueRemainingInfoLabel {
+                Section {
+                    Text(remainingLabel)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(queueRemainingAccessibilityLabel)
+                        .accessibilityHint(queueRemainingAccessibilityHint)
+                }
+                .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            }
+
+            if store.queue.isEmpty {
+                ContentUnavailableView(
+                    "Queue empty",
+                    systemImage: "list.bullet",
+                    description: Text(
+                        settings.queueLocked
+                            ? String(localized: "Add episodes from a podcast feed. Queue is locked — unlock to drag reorder.")
+                            : String(localized: "Add episodes from a podcast feed. Edit mode lets you drag to reorder.")
+                    )
+                )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "Queue empty"))
+                .accessibilityValue(queueEmptyStateAccessibilityValue)
+            } else if filteredQueue.isEmpty {
+                ContentUnavailableView(
+                    "No matching queue episodes",
+                    systemImage: "magnifyingglass",
+                    description: Text(queueNoMatchMessage)
+                )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No matching queue episodes"))
+                .accessibilityValue(queueEmptyStateAccessibilityValue)
+                .accessibilityHint(queueNoMatchAccessibilityHint)
+            } else {
+                ForEach(filteredQueue) { episode in
+                    EpisodeRow(
+                        episode: episode,
+                        feedTitle: store.displayTitle(containingEpisodeId: episode.id)
+                    )
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            // Same path as Full Player Remove from queue — confirm first.
+                            episodePendingRemove = episode
+                        } label: {
+                            Label("Remove", systemImage: "minus.circle")
+                        }
+                        .accessibilityHint(
+                            String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
+                        )
+                    }
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button {
+                            store.togglePlayed(episode.id)
+                        } label: {
+                            Label(
+                                store.isPlayed(episode.id)
+                                    ? String(localized: "Mark unplayed")
+                                    : String(localized: "Mark played"),
+                                systemImage: store.isPlayed(episode.id) ? "circle" : "checkmark.circle"
+                            )
+                        }
+                        .tint(.blue)
+                        .accessibilityHint(
+                            store.isPlayed(episode.id)
+                                ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
+                                : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
+                        )
+                        Button {
+                            // Archived episodes stay in the queue, so this swipe must undo
+                            // as well as archive — same toggle as the row button. A one-way
+                            // archive() leaves the action labeled Archive and does nothing.
+                            store.toggleArchived(episode.id)
+                        } label: {
+                            Label(
+                                store.isArchived(episode.id)
+                                    ? String(localized: "Restore")
+                                    : String(localized: "Archive"),
+                                systemImage: store.isArchived(episode.id)
+                                    ? "arrow.uturn.backward"
+                                    : "archivebox"
+                            )
+                        }
+                        .tint(store.isArchived(episode.id) ? .green : .orange)
+                        .accessibilityHint(
+                            store.isArchived(episode.id)
+                                ? String(localized: "Restores this episode from the archive. No confirmation. Does not delete downloads, remove from queue, unfavorite, or mark played.")
+                                : String(localized: "Archives this episode and hides it from Inbox without marking it played. No confirmation. Does not delete downloads, remove from queue, or unfavorite.")
+                        )
+                    }
+                }
+                .onMove(perform: canReorder ? { source, destination in
+                    // Indices are only valid when the list shows the full queue (All + All podcasts + empty search).
+                    store.moveQueue(from: source, to: destination)
+                } : nil)
+            }
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            queueList
             .navigationTitle("Queue")
             .searchable(text: $searchText, prompt: "Search queue")
             .onChange(of: searchText) { _, newValue in

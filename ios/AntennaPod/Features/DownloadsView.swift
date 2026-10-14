@@ -373,213 +373,218 @@ struct DownloadsView: View {
         )
     }
 
-    var body: some View {
-        NavigationStack {
-            List {
-                if let error = downloads.lastError {
-                    Section {
-                        HStack(alignment: .top, spacing: 12) {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundStyle(.red)
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Last download failed")
-                                    .font(.subheadline.weight(.semibold))
-                                Text(error)
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var downloadsList: some View {
+        List {
+            if let error = downloads.lastError {
+                Section {
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.red)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Last download failed")
+                                .font(.subheadline.weight(.semibold))
+                            Text(error)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            if let latest = downloads.recentErrors.first {
+                                Text(latest.episodeTitle)
                                     .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                if let latest = downloads.recentErrors.first {
-                                    Text(latest.episodeTitle)
-                                        .font(.caption)
-                                        .foregroundStyle(.primary)
-                                    if !latest.feedTitle.isEmpty {
-                                        Text(latest.feedTitle)
-                                            .font(.caption2)
-                                            .foregroundStyle(.secondary)
-                                    }
+                                    .foregroundStyle(.primary)
+                                if !latest.feedTitle.isEmpty {
+                                    Text(latest.feedTitle)
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
                                 }
                             }
-                            Spacer(minLength: 0)
                         }
-                        .accessibilityElement(children: .combine)
+                        Spacer(minLength: 0)
                     }
+                    .accessibilityElement(children: .combine)
                 }
+            }
 
+            Section {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(DownloadsFilter.allCases) { chip in
+                            DownloadsFilterChip(
+                                title: chip.label,
+                                selected: settings.downloadsFilter == chip,
+                                accessibilityHint: String(localized: "Filters completed downloads in this list by All, Unplayed, or Played. Does not delete files, change sort, start downloads, or alter the podcast filter chips. Search still applies on top of this filter.")
+                            ) {
+                                settings.downloadsFilter = chip
+                            }
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+
+            if !downloads.downloads.isEmpty, !downloadPodcastFeeds.isEmpty || isPodcastFiltering {
                 Section {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
-                            ForEach(DownloadsFilter.allCases) { chip in
+                            ForEach(podcastFilterChips) { chip in
                                 DownloadsFilterChip(
-                                    title: chip.label,
-                                    selected: settings.downloadsFilter == chip,
-                                    accessibilityHint: String(localized: "Filters completed downloads in this list by All, Unplayed, or Played. Does not delete files, change sort, start downloads, or alter the podcast filter chips. Search still applies on top of this filter.")
+                                    title: podcastChipTitle(chip),
+                                    selected: podcastFilter == chip,
+                                    accessibilityHint: String(localized: "Filters completed downloads in this list to All or one podcast that currently has downloads. Does not delete files, change sort, start downloads, or alter the All/Unplayed/Played status chips. Search still applies on top of this filter.")
                                 ) {
-                                    settings.downloadsFilter = chip
+                                    settings.downloadsPodcastFilter = chip.storageValue
                                 }
                             }
                         }
                         .padding(.vertical, 4)
                     }
                     .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                } header: {
+                    Text("Podcasts")
                 }
+            }
 
-                if !downloads.downloads.isEmpty, !downloadPodcastFeeds.isEmpty || isPodcastFiltering {
-                    Section {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(podcastFilterChips) { chip in
-                                    DownloadsFilterChip(
-                                        title: podcastChipTitle(chip),
-                                        selected: podcastFilter == chip,
-                                        accessibilityHint: String(localized: "Filters completed downloads in this list to All or one podcast that currently has downloads. Does not delete files, change sort, start downloads, or alter the All/Unplayed/Played status chips. Search still applies on top of this filter.")
-                                    ) {
-                                        settings.downloadsPodcastFilter = chip.storageValue
+            // AntennaPod-like downloads info bar (visible filtered list remaining time).
+            if let remainingLabel = downloadsRemainingInfoLabel {
+                Section {
+                    Text(remainingLabel)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(downloadsRemainingAccessibilityLabel)
+                        .accessibilityHint(downloadsRemainingAccessibilityHint)
+                }
+                .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            }
+
+            if downloads.downloads.isEmpty {
+                ContentUnavailableView(
+                    "No downloads",
+                    systemImage: "arrow.down.circle",
+                    description: Text("Downloaded episodes will appear here for offline playback.")
+                )
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(String(localized: "No downloads"))
+                .accessibilityValue(
+                    String(localized: "Downloaded episodes will appear here for offline playback.")
+                )
+                .accessibilityHint(String(localized: "Download an episode to see it here."))
+            } else if filteredDownloads.isEmpty {
+                ContentUnavailableView(
+                    "No matching downloads",
+                    systemImage: "magnifyingglass",
+                    description: Text(downloadsNoMatchMessage)
+                )
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(String(localized: "No matching downloads"))
+                .accessibilityValue(downloadsNoMatchAccessibilityValue)
+                .accessibilityHint(downloadsNoMatchAccessibilityHint)
+            } else {
+                Section {
+                    ForEach(filteredDownloads) { item in
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(item.episode.title)
+                                    .font(.headline)
+                                HStack(spacing: 6) {
+                                    Text(downloadsRowSubtitle(for: item))
+                                        .lineLimit(1)
+                                    if let sizeLabel = item.formattedKnownByteSize {
+                                        Text("·")
+                                            .accessibilityHidden(true)
+                                        Text(sizeLabel)
+                                            .monospacedDigit()
                                     }
                                 }
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                             }
-                            .padding(.vertical, 4)
-                        }
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                    } header: {
-                        Text("Podcasts")
-                    }
-                }
-
-                // AntennaPod-like downloads info bar (visible filtered list remaining time).
-                if let remainingLabel = downloadsRemainingInfoLabel {
-                    Section {
-                        Text(remainingLabel)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                            .monospacedDigit()
-                            .frame(maxWidth: .infinity, alignment: .leading)
                             .accessibilityElement(children: .ignore)
-                            .accessibilityLabel(downloadsRemainingAccessibilityLabel)
-                            .accessibilityHint(downloadsRemainingAccessibilityHint)
-                    }
-                    .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
-                }
-
-                if downloads.downloads.isEmpty {
-                    ContentUnavailableView(
-                        "No downloads",
-                        systemImage: "arrow.down.circle",
-                        description: Text("Downloaded episodes will appear here for offline playback.")
-                    )
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(String(localized: "No downloads"))
-                    .accessibilityValue(
-                        String(localized: "Downloaded episodes will appear here for offline playback.")
-                    )
-                    .accessibilityHint(String(localized: "Download an episode to see it here."))
-                } else if filteredDownloads.isEmpty {
-                    ContentUnavailableView(
-                        "No matching downloads",
-                        systemImage: "magnifyingglass",
-                        description: Text(downloadsNoMatchMessage)
-                    )
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel(String(localized: "No matching downloads"))
-                    .accessibilityValue(downloadsNoMatchAccessibilityValue)
-                    .accessibilityHint(downloadsNoMatchAccessibilityHint)
-                } else {
-                    Section {
-                        ForEach(filteredDownloads) { item in
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(item.episode.title)
-                                        .font(.headline)
-                                    HStack(spacing: 6) {
-                                        Text(downloadsRowSubtitle(for: item))
-                                            .lineLimit(1)
-                                        if let sizeLabel = item.formattedKnownByteSize {
-                                            Text("·")
-                                                .accessibilityHidden(true)
-                                            Text(sizeLabel)
-                                                .monospacedDigit()
-                                        }
-                                    }
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                }
-                                .accessibilityElement(children: .ignore)
-                                .accessibilityLabel(downloadsRowAccessibilityLabel(for: item))
-                                Spacer()
-                                Button {
-                                    playback.play(
-                                        episode: item.episode,
-                                        fileURL: downloads.localURL(for: item.episode)
-                                    )
-                                } label: {
-                                    Image(systemName: "play.fill")
-                                }
-                                .buttonStyle(.bordered)
-                                .accessibilityLabel(String(localized: "Play"))
+                            .accessibilityLabel(downloadsRowAccessibilityLabel(for: item))
+                            Spacer()
+                            Button {
+                                playback.play(
+                                    episode: item.episode,
+                                    fileURL: downloads.localURL(for: item.episode)
+                                )
+                            } label: {
+                                Image(systemName: "play.fill")
                             }
-                            .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                                Button {
-                                    store.togglePlayed(item.episode.id)
-                                } label: {
-                                    Label(
-                                        store.isPlayed(item.episode.id)
-                                            ? String(localized: "Mark unplayed")
-                                            : String(localized: "Mark played"),
-                                        systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
-                                    )
-                                }
-                                .tint(.blue)
-                                .accessibilityHint(
+                            .buttonStyle(.bordered)
+                            .accessibilityLabel(String(localized: "Play"))
+                        }
+                        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                            Button {
+                                store.togglePlayed(item.episode.id)
+                            } label: {
+                                Label(
                                     store.isPlayed(item.episode.id)
-                                        ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
-                                        : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
+                                        ? String(localized: "Mark unplayed")
+                                        : String(localized: "Mark played"),
+                                    systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
                                 )
                             }
-                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button {
-                                    store.playNext(
-                                        item.episode,
-                                        currentlyPlayingId: playback.currentEpisode?.id
-                                    )
-                                } label: {
-                                    Label("Play Next", systemImage: "text.insert")
-                                }
-                                .tint(.teal)
-                                .accessibilityHint(
-                                    String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
+                            .tint(.blue)
+                            .accessibilityHint(
+                                store.isPlayed(item.episode.id)
+                                    ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
+                                    : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
+                            )
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button {
+                                store.playNext(
+                                    item.episode,
+                                    currentlyPlayingId: playback.currentEpisode?.id
                                 )
-                                if store.isInQueue(item.episode.id) {
-                                    Button(role: .destructive) {
-                                        episodePendingRemoveFromQueue = item.episode
-                                    } label: {
-                                        Label("Remove from queue", systemImage: "minus.circle")
-                                    }
-                                    .accessibilityHint(
-                                        String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
-                                    )
-                                } else {
-                                    Button {
-                                        store.enqueue(item.episode)
-                                    } label: {
-                                        Label("Add to queue", systemImage: "text.append")
-                                    }
-                                    .tint(.purple)
-                                    .accessibilityHint(
-                                        String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
-                                    )
-                                }
+                            } label: {
+                                Label("Play Next", systemImage: "text.insert")
+                            }
+                            .tint(.teal)
+                            .accessibilityHint(
+                                String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
+                            )
+                            if store.isInQueue(item.episode.id) {
                                 Button(role: .destructive) {
-                                    episodePendingDelete = item.episode
+                                    episodePendingRemoveFromQueue = item.episode
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Label("Remove from queue", systemImage: "minus.circle")
                                 }
-                                .accessibilityLabel(String(localized: "Delete download"))
                                 .accessibilityHint(
-                                    String(localized: "Asks for confirmation, then deletes the local offline file for this episode; keeps played status, queue membership, favorites, and archive state")
+                                    String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
+                                )
+                            } else {
+                                Button {
+                                    store.enqueue(item.episode)
+                                } label: {
+                                    Label("Add to queue", systemImage: "text.append")
+                                }
+                                .tint(.purple)
+                                .accessibilityHint(
+                                    String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
                                 )
                             }
+                            Button(role: .destructive) {
+                                episodePendingDelete = item.episode
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                            .accessibilityLabel(String(localized: "Delete download"))
+                            .accessibilityHint(
+                                String(localized: "Asks for confirmation, then deletes the local offline file for this episode; keeps played status, queue membership, favorites, and archive state")
+                            )
                         }
                     }
                 }
             }
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            downloadsList
             .navigationTitle("Downloads")
             .searchable(text: $searchText, prompt: "Search downloads")
             .onChange(of: searchText) { _, newValue in
