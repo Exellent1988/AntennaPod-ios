@@ -186,6 +186,7 @@ struct FullPlayerView: View {
                     } else {
                         playerContent(episode: episode)
                             .searchable(text: $chapterSearchText, prompt: "Search chapters")
+                            .modifier(MinimizedSearchToolbar())
                             .onChange(of: chapterSearchText) { _, newValue in
                                 scheduleChapterFilter(for: newValue)
                             }
@@ -481,7 +482,8 @@ struct FullPlayerView: View {
 
                     Spacer(minLength: 24)
                 }
-                .frame(maxWidth: .infinity)
+                // Pin to the screen width: wide detail rows must not widen the hero.
+                .frame(width: geo.size.width)
                 .padding(.bottom, 16)
             }
             .frame(width: geo.size.width, height: geo.size.height)
@@ -1581,8 +1583,8 @@ struct FullPlayerView: View {
         } label: {
             Image(systemName: playback.isPlaying ? "pause.circle.fill" : "play.circle.fill")
                 .font(.system(size: 72))
-                .symbolRenderingMode(.hierarchical)
-                .foregroundStyle(Color.accentColor)
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(Color.white, Color.accentColor)
         }
         .accessibilityLabel(playback.isPlaying ? String(localized: "Pause") : String(localized: "Play"))
 
@@ -2125,5 +2127,17 @@ struct FullPlayerView: View {
             return String(format: "-%d:%02d:%02d", h, m, s)
         }
         return String(format: "-%d:%02d", m, s)
+    }
+}
+
+/// iOS 26 puts `.searchable` at the bottom, over the player controls; collapse it into a
+/// toolbar button there. Earlier iOS keeps the default (navigation bar drawer).
+private struct MinimizedSearchToolbar: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, *) {
+            content.searchToolbarBehavior(.minimize)
+        } else {
+            content
+        }
     }
 }
