@@ -92,4 +92,38 @@ enum NowPlayingLogic {
         }
         return out
     }
+
+    // MARK: Android Auto skip parity
+
+    enum TrackAction: Equatable { case skipEpisode, hardwareButton }
+
+    /// Android `onSkipToNext`: in a car skip to the next episode, else the reassigned hardware
+    /// Forward button (`prefHardwareForwardButton`, default fast-forward).
+    /// Previous track always uses the reassigned hardware Previous button (default rewind).
+    static func nextTrackAction(inCar: Bool) -> TrackAction { inCar ? .skipEpisode : .hardwareButton }
+    static func previousTrackAction() -> TrackAction { .hardwareButton }
+
+    /// Android `onNextChapter`: next chapter start, or `nil` → fall back to skipping the episode.
+    static func nextChapterStart(starts: [Double], at seconds: Double) -> Double? {
+        let sorted = starts.filter(\.isFinite).sorted()
+        guard !sorted.isEmpty else { return nil }
+        guard let idx = sorted.lastIndex(where: { $0 <= seconds + 0.001 }) else { return sorted[0] }
+        return idx + 1 < sorted.count ? sorted[idx + 1] : nil
+    }
+
+    /// Minutes for the CarPlay sleep-timer toggle when off (Android default 15 min).
+    static func sleepToggleMinutes(presets: [Int]) -> Int {
+        presets.contains(15) ? 15 : (presets.first(where: { $0 > 0 }) ?? 15)
+    }
+
+    enum NowPlayingButton: Equatable { case rate, sleepTimer, nextChapter, skipEpisode }
+
+    /// Android Auto custom-action order (rewind/FF are system skip buttons on CarPlay):
+    /// speed, sleep timer, next chapter (only with chapters), skip episode. CarPlay allows ≤ 5.
+    static func nowPlayingButtons(hasChapters: Bool) -> [NowPlayingButton] {
+        var out: [NowPlayingButton] = [.rate, .sleepTimer]
+        if hasChapters { out.append(.nextChapter) }
+        out.append(.skipEpisode)
+        return out
+    }
 }
