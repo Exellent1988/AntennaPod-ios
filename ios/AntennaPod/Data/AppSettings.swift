@@ -2483,13 +2483,14 @@ final class AppSettings: ObservableObject {
             volumeBoostPercent = Self.defaultVolumeBoostPercent
         }
         let legacyVolumeAdaptation = UserDefaults.standard.object(forKey: Keys.legacyVolumeAdaptationEnabled) as? Bool
-        volumeAdaptationMode = Self.migratedVolumeAdaptationMode(
+        let migratedVolumeAdaptation = Self.migratedVolumeAdaptationMode(
             storedMode: UserDefaults.standard.string(forKey: Keys.volumeAdaptationMode),
             legacyEnabled: legacyVolumeAdaptation
         )
+        volumeAdaptationMode = migratedVolumeAdaptation
         if legacyVolumeAdaptation != nil {
             // One-time migration: persist the merged mode and drop the old switch.
-            UserDefaults.standard.set(volumeAdaptationMode.rawValue, forKey: Keys.volumeAdaptationMode)
+            UserDefaults.standard.set(migratedVolumeAdaptation.rawValue, forKey: Keys.volumeAdaptationMode)
             UserDefaults.standard.removeObject(forKey: Keys.legacyVolumeAdaptationEnabled)
         }
         skipSilenceLevel = UserDefaults.standard.string(forKey: Keys.skipSilenceLevel)
