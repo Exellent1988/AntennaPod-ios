@@ -1519,6 +1519,23 @@
         }
       }
     },
+    "Up Next": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Up Next"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als Nächstes"
+          }
+        }
+      }
+    },
     "Currently playing": {
       "extractionState": "manual",
       "localizations": {
