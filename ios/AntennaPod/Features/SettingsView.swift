@@ -83,6 +83,8 @@ struct SettingsView: View {
     @ObservedObject private var networkPath = NetworkPathGate.shared
     @State private var ratingPromptUITick = 0
     @State private var searchText = ""
+    /// Sub-screen stack (Android MainPreferencesFragment → *PreferencesFragment).
+    @State private var settingsPath: [SettingsPage] = []
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
 
@@ -125,11 +127,9 @@ struct SettingsView: View {
             searchText = ""
             debouncedQuery = ""
         }
-        // Defer slightly so the Settings tab is visible and the Sync section is mounted.
+        // Land on the Synchronization sub-screen (Android prefScreenSynchronization).
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-            withAnimation {
-                proxy.scrollTo("settings-sync", anchor: .top)
-            }
+            settingsPath = [.synchronization]
         }
     }
 
@@ -276,259 +276,21 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $settingsPath) {
             settingsDialogsStageB(settingsDialogsStageA(
                 ScrollViewReader { proxy in
                 Form {
                     if searchText.isEmpty {
-                        gpodderSyncEntrySection
-                    }
-                    if matchesAppearanceSection {
-                        appearanceSection
-                    }
-                    if matchesHomeSection {
-                        homeSettingsSection
-                    }
-                    if matchesPlaybackSection {
-                        playbackSettingsSection
-                    }
-                    if matchesQueueSection {
-                        queueSettingsSection
-                    }
-                    if matchesSearch(
-                        "Feeds / Keep updated",
-                        "Refresh interval",
-                        "Last refresh",
-                        "Never",
-                        "New episodes",
-                        "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).",
-                        "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch."
-                    ) {
-                        refreshSection
-                    }
-                    if matchesSearch(
-                        "Auto-download",
-                        "Episodes per feed",
-                        "When enabled, after a feed refresh only newly appeared episode IDs (not the whole backlog) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Local-folder feeds are skipped. Storage-limit eviction still applies. Runs on refresh success — no separate silent BGAppRefresh. Wi‑Fi-only for auto-download is under Network / Downloads."
-                    ) {
-                        autoDownloadSection
-                    }
-                    if matchesSearch(
-                        "Network / Downloads",
-                        "Auto-download Wi‑Fi only",
-                        "Manual download Wi‑Fi only",
-                        "Stream Wi‑Fi only",
-                        "Current network",
-                        "Wi‑Fi",
-                        "Cellular",
-                        "mobile data",
-                        "Mobilfunk",
-                        "Ethernet",
-                        "Offline",
-                        "Custom User-Agent",
-                        "User-Agent",
-                        "AntennaPod-iOS",
-                        "HTTP proxy",
-                        "Proxy",
-                        "Proxy host",
-                        "Proxy port",
-                        "Proxy username",
-                        "Proxy password",
-                        "HTTP-Proxy",
-                        "Network / Downloads settings are locked. Enter the parental PIN to change these toggles.",
-                        "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action. Feed refresh (Refresh all, pull-to-refresh, timed interval, and single-podcast refresh) is not limited by these toggles and may use cellular — there is no separate Mobile updates setting.",
-                        "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. See HTTP proxy for proxy settings.",
-                        "Optional HTTP(S) proxy for URLSession clients (feeds, downloads, search, …). AVPlayer streaming may bypass the app proxy. Not VPN detection; not certificate pinning; not SOCKS."
-                    ) {
-                        networkDownloadsSection
-                    }
-                    if matchesSearch(
-                        "Notifications",
-                        "Notify on new episodes",
-                        "Notify on download errors",
-                        "Notify on download complete",
-                        "Notify on sync errors",
-                        "Notify when sleep timer ends",
-                        "Permission",
-                        "Open iOS Settings",
-                        "Download errors",
-                        "Allowed",
-                        "Denied",
-                        "Not determined",
-                        "Notifies",
-                        "Does not notify",
-                        "local only",
-                        "no push",
-                        "APNs",
-                        "download complete"
-                    ) {
-                        notificationsSection
-                    }
-                    if matchesSearch(
-                        "Downloads / Storage",
-                        "Delete episode after playing",
-                        "Used",
-                        "Max storage",
-                        "Max downloaded episodes",
-                        "Parallel downloads",
-                        "Download all unplayed soft cap",
-                        "Delete all downloads",
-                        "Unlimited",
-                        "Custom (MB)",
-                        "10 episodes",
-                        "25 episodes",
-                        "50 episodes",
-                        "100 episodes",
-                        "200 episodes",
-                        "500 episodes",
-                        "1 at a time",
-                        "2 parallel",
-                        "3 parallel",
-                        "4 parallel",
-                        "5 parallel",
-                        "When over the limit, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU by file date). Favorites and queued episodes are never auto-deleted by this budget. Runs after each successful download, when opening Settings, and on launch.",
-                        "When over the episode count, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU). Favorites and queued episodes are never auto-deleted by this cap. Runs after each successful download, when opening Settings, and on launch. Separate from the Max storage byte budget.",
-                        "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch.",
-                        "Limits how many newest unplayed episodes Feed detail Download all unplayed may enqueue at once (10–200, default 50). Always soft-capped — no unlimited. Full-feed eligibility still applies."
-                    ) {
-                        storageSection
-                    }
-                    if matchesSearch(
-                        "Discovery",
-                        "Charts country",
-                        "Discover charts count",
-                        "charts",
-                        "Top lists",
-                        "10 podcasts",
-                        "25 podcasts",
-                        "50 podcasts",
-                        "100 podcasts",
-                        "API key",
-                        "API secret",
-                        "Replace keys…",
-                        "Clear keys",
-                        "Save keys",
-                        "Stored in Keychain",
-                        "Free API key + secret from podcastindex.org (register / API docs). Stored only in the Keychain — not hardcoded and not shipped with the app. Used by Add podcast → Podcast Index search; Subscribe still follows the feed URL pipeline.",
-                        "Used by Home → Discover / Charts and Subscriptions → Discover. Apple iTunes RSS top podcasts (no API key). Automatic uses the device region, or de if unknown.",
-                        "How many podcasts the full Discover / Top lists screen loads from Apple iTunes charts. Does not change the Home Discover preview, episode-list or Recently updated Home soft-caps, or Podcast Index search. Default 25. Always capped — no unlimited."
-                    ) {
-                        podcastIndexDiscoverySection
-                    }
-                    if matchesSearch(
-                        "Sync",
-                        "Provider",
-                        "Host",
-                        "Username",
-                        "Password",
-                        "Device name",
-                        "Device id",
-                        "Regenerate device id from name",
-                        "Sync now",
-                        "Login",
-                        "Logout",
-                        "Last sync",
-                        "Working…",
-                        "Logging in…",
-                        "gpodder.net",
-                        "Nextcloud",
-                        "Synced",
-                        "Local only",
-                        "subscriptions",
-                        "episode actions",
-                        "bookmarks",
-                        "tags",
-                        "downloads",
-                        "local folder",
-                        "Keychain",
-                        "additive"
-                    ) {
-                        gpodderSyncSection
-                            .id("settings-sync")
-                    }
-                    if matchesLibrarySection {
-                        librarySettingsSection
-                    }
-                    if matchesSearch("Privacy", "Parental controls") {
-                        Section("Privacy") {
-                            NavigationLink {
-                                ParentalControlsSettingsView()
-                            } label: {
-                                Label("Parental controls", systemImage: "lock.shield")
-                            }
-                        }
-                    }
-                    if matchesSearch(
-                        "App Store",
-                        "Ask for App Store rating",
-                        "Mark-played count",
-                        "Prompt attempted",
-                        "Reset rating prompt state",
-                        "Yes (once)",
-                        "Not yet"
-                    ) {
-                        appStoreRatingSection
-                    }
-                    if matchesSearch("Siri / Shortcuts", "Siri / Shortcuts (lite): App Intents — Play, Pause, Play/Pause (toggle), Skip Forward, Skip Back — donated via AppShortcutsProvider for Siri / Shortcuts discoverability. Same actions via URL schemes antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents use openAppWhenRun (open the app). Play and Play/Pause play the loaded episode, or after a cold launch the previous run’s unplayed episode shown paused in the mini player. Skip Forward and Skip Back need a loaded episode. Not background-only / no App Group shared store. Not episode or feed deep links. Not CarPlay templates (see CarPlay note).") {
-                        siriShortcutsSection
-                    }
-                    if matchesSearch("Homescreen widget", "Homescreen widget (beta lite): Continue listening shows episode title + podcast + remaining time (wall-clock max(0, duration − position) when duration known; ~ when unknown) from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).") {
-                        homescreenWidgetSection
-                    }
-                    if matchesSearch("Apple Watch", "Apple Watch (beta lite): Continue listening shows episode title + podcast + remaining time from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.") {
-                        appleWatchSection
-                    }
-                    if matchesSearch("CarPlay", "CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).") {
-                        carPlaySection
-                    }
-                    if matchesSearch("About") {
-                        Section("About") {
-                            NavigationLink {
-                                AboutView()
-                            } label: {
-                                Label("About", systemImage: "info.circle")
-                            }
-                        }
-                    }
-                    if matchesSearch(
-                        "Backup",
-                        "Export data backup",
-                        "Import data backup",
-                        "Include downloaded episode files"
-                    ) {
-                        DataBackupSection()
-                    }
-                    if matchesSearch(
-                        "Import / Export",
-                        "Export OPML",
-                        "Save OPML to Files…",
-                        "Import OPML",
-                        "Export subscriptions as HTML",
-                        "Import from Files",
-                        "Choose OPML file…",
-                        "HTML lists title, feed URL, and episode count",
-                        "author, language, categories, and funding",
-                        "Local folder podcasts are omitted from OPML and HTML"
-                    ) {
-                        OpmlImportExportSection()
-                    }
-                    if isSearchFiltering && !hasAnyMatchingSettingsSection {
-                        ContentUnavailableView(
-                            "No matching settings",
-                            systemImage: "magnifyingglass",
-                            description: Text("No settings rows or sections match your search.")
-                        )
-                        .accessibilityElement(children: .combine)
-                        .accessibilityLabel(String(localized: "No matching settings"))
-                        .accessibilityValue(
-                            String(localized: "No settings rows or sections match your search.")
-                        )
-                        .accessibilityHint(
-                            String(localized: "Clear the search field or try another settings term.")
-                        )
+                        // Android preferences.xml root: one row per sub-screen.
+                        settingsRootLinks
+                    } else {
+                        flatSettingsContent
                     }
                 }
                 .navigationTitle("Settings")
+                .navigationDestination(for: SettingsPage.self) { page in
+                    settingsPage(page)
+                }
                 // Settings is presented as a sheet from Home (RootTabView), not a tab.
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
@@ -602,6 +364,342 @@ struct SettingsView: View {
                 }
                 } // ScrollViewReader
             ))
+        }
+    }
+
+    /// Flat, search-filtered list of every section (used only while searching).
+    @ViewBuilder
+    private var flatSettingsContent: some View {
+        if matchesAppearanceSection {
+            appearanceSection
+        }
+        if matchesHomeSection {
+            homeSettingsSection
+        }
+        if matchesPlaybackSection {
+            playbackSettingsSection
+        }
+        if matchesQueueSection {
+            queueSettingsSection
+        }
+        if matchesSearch(
+            "Feeds / Keep updated",
+            "Refresh interval",
+            "Last refresh",
+            "Never",
+            "New episodes",
+            "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).",
+            "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch."
+        ) {
+            refreshSection
+        }
+        if matchesSearch(
+            "Auto-download",
+            "Episodes per feed",
+            "When enabled, after a feed refresh only newly appeared episode IDs (not the whole backlog) are enqueued via DownloadService, capped per feed. Per-podcast Always/Never overrides are on each feed’s settings sheet. Local-folder feeds are skipped. Storage-limit eviction still applies. Runs on refresh success — no separate silent BGAppRefresh. Wi‑Fi-only for auto-download is under Network / Downloads."
+        ) {
+            autoDownloadSection
+        }
+        if matchesSearch(
+            "Network / Downloads",
+            "Auto-download Wi‑Fi only",
+            "Manual download Wi‑Fi only",
+            "Stream Wi‑Fi only",
+            "Current network",
+            "Wi‑Fi",
+            "Cellular",
+            "mobile data",
+            "Mobilfunk",
+            "Ethernet",
+            "Offline",
+            "Custom User-Agent",
+            "User-Agent",
+            "AntennaPod-iOS",
+            "HTTP proxy",
+            "Proxy",
+            "Proxy host",
+            "Proxy port",
+            "Proxy username",
+            "Proxy password",
+            "HTTP-Proxy",
+            "Network / Downloads settings are locked. Enter the parental PIN to change these toggles.",
+            "Wi‑Fi / Ethernet vs cellular (system path monitor — no VPN or proxy detection). Auto-download Wi‑Fi only defaults on — skips auto enqueue on cellular. Manual downloads allow cellular by default; Manual download Wi‑Fi only refuses user-initiated downloads on cellular and records an error. Stream Wi‑Fi only (default off) blocks network stream URLs on cellular; local offline files still play. Turn a toggle off to allow cellular for that action. Feed refresh (Refresh all, pull-to-refresh, timed interval, and single-podcast refresh) is not limited by these toggles and may use cellular — there is no separate Mobile updates setting.",
+            "Optional override for feed refresh and downloads. Empty uses the app default. Newlines are removed. AVPlayer streaming may still use the system User-Agent. See HTTP proxy for proxy settings.",
+            "Optional HTTP(S) proxy for URLSession clients (feeds, downloads, search, …). AVPlayer streaming may bypass the app proxy. Not VPN detection; not certificate pinning; not SOCKS."
+        ) {
+            networkDownloadsSection
+        }
+        if matchesSearch(
+            "Notifications",
+            "Notify on new episodes",
+            "Notify on download errors",
+            "Notify on download complete",
+            "Notify on sync errors",
+            "Notify when sleep timer ends",
+            "Permission",
+            "Open iOS Settings",
+            "Download errors",
+            "Allowed",
+            "Denied",
+            "Not determined",
+            "Notifies",
+            "Does not notify",
+            "local only",
+            "no push",
+            "APNs",
+            "download complete"
+        ) {
+            notificationsSection
+        }
+        if matchesSearch(
+            "Downloads / Storage",
+            "Delete episode after playing",
+            "Used",
+            "Max storage",
+            "Max downloaded episodes",
+            "Parallel downloads",
+            "Download all unplayed soft cap",
+            "Delete all downloads",
+            "Unlimited",
+            "Custom (MB)",
+            "10 episodes",
+            "25 episodes",
+            "50 episodes",
+            "100 episodes",
+            "200 episodes",
+            "500 episodes",
+            "1 at a time",
+            "2 parallel",
+            "3 parallel",
+            "4 parallel",
+            "5 parallel",
+            "When over the limit, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU by file date). Favorites and queued episodes are never auto-deleted by this budget. Runs after each successful download, when opening Settings, and on launch.",
+            "When over the episode count, played downloads that are not favorited and not queued are deleted first (oldest file first), then unplayed non-favorite non-queued (LRU). Favorites and queued episodes are never auto-deleted by this cap. Runs after each successful download, when opening Settings, and on launch. Separate from the Max storage byte budget.",
+            "Limits how many episode downloads run as active transfers at once (1–5, default 3). Extra downloads wait in memory until a slot frees. Waiting items are not persisted across process death; already-started background URLSession tasks continue after relaunch.",
+            "Limits how many newest unplayed episodes Feed detail Download all unplayed may enqueue at once (10–200, default 50). Always soft-capped — no unlimited. Full-feed eligibility still applies."
+        ) {
+            storageSection
+        }
+        if matchesSearch(
+            "Discovery",
+            "Charts country",
+            "Discover charts count",
+            "charts",
+            "Top lists",
+            "10 podcasts",
+            "25 podcasts",
+            "50 podcasts",
+            "100 podcasts",
+            "API key",
+            "API secret",
+            "Replace keys…",
+            "Clear keys",
+            "Save keys",
+            "Stored in Keychain",
+            "Free API key + secret from podcastindex.org (register / API docs). Stored only in the Keychain — not hardcoded and not shipped with the app. Used by Add podcast → Podcast Index search; Subscribe still follows the feed URL pipeline.",
+            "Used by Home → Discover / Charts and Subscriptions → Discover. Apple iTunes RSS top podcasts (no API key). Automatic uses the device region, or de if unknown.",
+            "How many podcasts the full Discover / Top lists screen loads from Apple iTunes charts. Does not change the Home Discover preview, episode-list or Recently updated Home soft-caps, or Podcast Index search. Default 25. Always capped — no unlimited."
+        ) {
+            podcastIndexDiscoverySection
+        }
+        if matchesSearch(
+            "Sync",
+            "Provider",
+            "Host",
+            "Username",
+            "Password",
+            "Device name",
+            "Device id",
+            "Regenerate device id from name",
+            "Sync now",
+            "Login",
+            "Logout",
+            "Last sync",
+            "Working…",
+            "Logging in…",
+            "gpodder.net",
+            "Nextcloud",
+            "Synced",
+            "Local only",
+            "subscriptions",
+            "episode actions",
+            "bookmarks",
+            "tags",
+            "downloads",
+            "local folder",
+            "Keychain",
+            "additive"
+        ) {
+            gpodderSyncSection
+                .id("settings-sync")
+        }
+        if matchesLibrarySection {
+            librarySettingsSection
+        }
+        if matchesSearch("Privacy", "Parental controls") {
+            Section("Privacy") {
+                NavigationLink {
+                    ParentalControlsSettingsView()
+                } label: {
+                    Label("Parental controls", systemImage: "lock.shield")
+                }
+            }
+        }
+        if matchesSearch(
+            "App Store",
+            "Ask for App Store rating",
+            "Mark-played count",
+            "Prompt attempted",
+            "Reset rating prompt state",
+            "Yes (once)",
+            "Not yet"
+        ) {
+            appStoreRatingSection
+        }
+        if matchesSearch("Siri / Shortcuts", "Siri / Shortcuts (lite): App Intents — Play, Pause, Play/Pause (toggle), Skip Forward, Skip Back — donated via AppShortcutsProvider for Siri / Shortcuts discoverability. Same actions via URL schemes antennapod://play, antennapod://pause, antennapod://toggle, antennapod://skip-forward, antennapod://skip-back. Intents use openAppWhenRun (open the app). Play and Play/Pause play the loaded episode, or after a cold launch the previous run’s unplayed episode shown paused in the mini player. Skip Forward and Skip Back need a loaded episode. Not background-only / no App Group shared store. Not episode or feed deep links. Not CarPlay templates (see CarPlay note).") {
+            siriShortcutsSection
+        }
+        if matchesSearch("Homescreen widget", "Homescreen widget (beta lite): Continue listening shows episode title + podcast + remaining time (wall-clock max(0, duration − position) when duration known; ~ when unknown) from an App Group snapshot. Tap opens antennapod://play. Snapshot may be stale; no live scrubber. Add the widget from the iOS home screen after building with the AntennaPodWidget extension (App Group group.de.danoeh.antennapod.ios).") {
+            homescreenWidgetSection
+        }
+        if matchesSearch("Apple Watch", "Apple Watch (beta lite): Continue listening shows episode title + podcast + remaining time from the same snapshot as the homescreen widget (phone pushes via Watch Connectivity; App Group id group.de.danoeh.antennapod.ios). Play / Open on iPhone remotes antennapod://play on the companion. No independent Watch playback, downloads, or queue — when audio is already playing, use system Now Playing on the Watch. Requires AntennaPodWatch target, Dev Team, and App Group on Mac.") {
+            appleWatchSection
+        }
+        if matchesSearch("CarPlay", "CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).") {
+            carPlaySection
+        }
+        if matchesSearch("About") {
+            Section("About") {
+                NavigationLink {
+                    AboutView()
+                } label: {
+                    Label("About", systemImage: "info.circle")
+                }
+            }
+        }
+        if matchesSearch(
+            "Backup",
+            "Export data backup",
+            "Import data backup",
+            "Include downloaded episode files"
+        ) {
+            DataBackupSection()
+        }
+        if matchesSearch(
+            "Import / Export",
+            "Export OPML",
+            "Save OPML to Files…",
+            "Import OPML",
+            "Export subscriptions as HTML",
+            "Import from Files",
+            "Choose OPML file…",
+            "HTML lists title, feed URL, and episode count",
+            "author, language, categories, and funding",
+            "Local folder podcasts are omitted from OPML and HTML"
+        ) {
+            OpmlImportExportSection()
+        }
+        if isSearchFiltering && !hasAnyMatchingSettingsSection {
+            ContentUnavailableView(
+                "No matching settings",
+                systemImage: "magnifyingglass",
+                description: Text("No settings rows or sections match your search.")
+            )
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(String(localized: "No matching settings"))
+            .accessibilityValue(
+                String(localized: "No settings rows or sections match your search.")
+            )
+            .accessibilityHint(
+                String(localized: "Clear the search field or try another settings term.")
+            )
+        }
+    }
+
+    /// Root list mirroring Android ui/preferences/res/xml/preferences.xml.
+    @ViewBuilder
+    private var settingsRootLinks: some View {
+        Section {
+            settingsLink(.userInterface, "User interface", "paintpalette")
+            settingsLink(.playback, "Playback", "play.circle")
+            settingsLink(.downloads, "Downloads", "arrow.down.circle")
+            settingsLink(.synchronization, "Synchronization", "arrow.triangle.2.circlepath.circle")
+            settingsLink(.importExport, "Storage & import/export", "externaldrive")
+            settingsLink(.notifications, "Notifications", "bell")
+            NavigationLink {
+                ParentalControlsSettingsView()
+            } label: {
+                Label("Parental controls", systemImage: "lock.shield")
+            }
+        }
+        Section {
+            settingsLink(.integrations, "Discovery & integrations", "puzzlepiece.extension")
+            settingsLink(.about, "About", "info.circle")
+        }
+    }
+
+    private func settingsLink(_ page: SettingsPage, _ title: LocalizedStringKey, _ icon: String) -> some View {
+        NavigationLink(value: page) {
+            Label(title, systemImage: icon)
+        }
+    }
+
+    @ViewBuilder
+    private func settingsPage(_ page: SettingsPage) -> some View {
+        switch page {
+        case .userInterface:
+            // preferences_user_interface.xml / UserInterfacePreferencesFragment.java
+            Form {
+                appearanceSection
+                homeSettingsSection
+                librarySettingsSection
+            }
+            .navigationTitle("User interface")
+        case .playback:
+            // preferences_playback.xml / PlaybackPreferencesFragment.java
+            Form {
+                playbackSettingsSection
+                queueSettingsSection
+            }
+            .navigationTitle("Playback")
+        case .downloads:
+            // preferences_downloads.xml, preferences_autodownload.xml, preferences_auto_deletion.xml /
+            // DownloadsPreferencesFragment, AutoDownloadPreferencesFragment, AutomaticDeletionPreferencesFragment
+            Form {
+                refreshSection
+                autoDownloadSection
+                networkDownloadsSection
+            }
+            .navigationTitle("Downloads")
+        case .synchronization:
+            // preferences_synchronization.xml / synchronization/*PreferencesFragment (gpodder + Nextcloud)
+            Form { gpodderSyncSection }
+                .navigationTitle("Synchronization")
+        case .importExport:
+            // preferences_import_export.xml / ImportExportPreferencesFragment.java (+ storage)
+            Form {
+                storageSection
+                DataBackupSection()
+                OpmlImportExportSection()
+            }
+            .navigationTitle("Storage & import/export")
+        case .notifications:
+            // preferences_notifications.xml / NotificationPreferencesFragment.java
+            Form { notificationsSection }
+                .navigationTitle("Notifications")
+        case .integrations:
+            Form {
+                podcastIndexDiscoverySection
+                siriShortcutsSection
+                homescreenWidgetSection
+                appleWatchSection
+                carPlaySection
+                appStoreRatingSection
+            }
+            .navigationTitle("Discovery & integrations")
+        case .about:
+            // preferences_about.xml / about/AboutFragment
+            AboutView()
         }
     }
 
@@ -3138,4 +3236,9 @@ private enum NotificationVoiceOverRole {
     case downloadComplete
     case syncErrors
     case sleepTimer
+}
+
+/// Settings sub-screens, one per Android preferences_*.xml screen.
+enum SettingsPage: Hashable {
+    case userInterface, playback, downloads, synchronization, importExport, notifications, integrations, about
 }
