@@ -68,4 +68,28 @@ enum NowPlayingLogic {
         for b in "\(pixels)|\(url)".utf8 { hash = (hash ^ UInt64(b)) &* 0x100000001b3 }
         return String(format: "%016llx", hash) + ".png"
     }
+
+    // MARK: Disk cache LRU
+
+    struct CacheEntry: Equatable {
+        let name: String
+        let bytes: Int64
+        let modified: Date
+    }
+
+    /// Default disk budget for CarPlay / Now Playing artwork.
+    static let diskCacheLimitBytes: Int64 = 50 * 1024 * 1024
+
+    /// Oldest-first (by mtime; name tiebreak) entries to delete so the total fits `limit`.
+    static func evictions(_ entries: [CacheEntry], limit: Int64) -> [String] {
+        var total = entries.reduce(Int64(0)) { $0 + max(0, $1.bytes) }
+        guard total > limit else { return [] }
+        var out: [String] = []
+        for e in entries.sorted(by: { $0.modified == $1.modified ? $0.name < $1.name : $0.modified < $1.modified }) {
+            guard total > limit else { break }
+            out.append(e.name)
+            total -= max(0, e.bytes)
+        }
+        return out
+    }
 }
