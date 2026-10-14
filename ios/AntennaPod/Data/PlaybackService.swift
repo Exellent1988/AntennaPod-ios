@@ -668,6 +668,29 @@ final class PlaybackService: ObservableObject {
         }
     }
 
+    /// Android `mediaPlayer.skip()` for CarPlay / Android Auto parity: play the next Queue episode.
+    /// `play(next)` runs the usual leave-episode handling (progress persist, smart mark played).
+    /// Returns `false` when nothing is queued after the current episode.
+    @discardableResult
+    func skipToNextEpisode() -> Bool {
+        guard let current = currentEpisode, let next = store?.nextQueueEpisode(after: current.id),
+              next.id != current.id else { return false }
+        return play(episode: next, fileURL: downloads?.localURL(for: next))
+    }
+
+    /// Android `onNextChapter`: jump to the next chapter; on the last chapter / no chapters skip the episode.
+    func skipToNextChapter() {
+        let starts = resolvedSleepTimerChapters.map(\.startTimeSeconds)
+        if let target = NowPlayingLogic.nextChapterStart(starts: starts, at: positionSeconds) {
+            seek(toSeconds: target)
+        } else {
+            skipToNextEpisode()
+        }
+    }
+
+    /// True when the loaded episode has chapters (CarPlay Next chapter button).
+    var hasChaptersForRemote: Bool { !resolvedSleepTimerChapters.isEmpty }
+
     func seek(bySeconds delta: Double) {
         // Android seekForward: a skip that would land at or past a known duration
         // finishes the episode (mark played, continuous next, sleep-timer end).
@@ -2583,7 +2606,14 @@ final class PlaybackService: ObservableObject {
         center.nextTrackCommand.addTarget { [weak self] _ in
             Task { @MainActor in
                 guard let self else { return }
-                self.performHardwareButton(self.settings?.hardwareForwardButton ?? HardwareButtonAction.defaultForward)
+                // Android onSkipToNext: in the car (CarPlay connected) next = skip episode;
+                // otherwise the reassigned hardware Forward button (default fast-forward).
+                switch NowPlayingLogic.nextTrackAction(inCar: AppServices.isCarPlayConnected) {
+                case .skipEpisode:
+                    self.skipToNextEpisode()
+                case .hardwareButton:
+                    self.performHardwareButton(self.settings?.hardwareForwardButton ?? HardwareButtonAction.defaultForward)
+                }
             }
             return .success
         }

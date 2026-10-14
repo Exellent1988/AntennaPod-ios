@@ -21,6 +21,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     ) {
         self.interfaceController = interfaceController
         Task { @MainActor in
+            AppServices.isCarPlayConnected = true
             var ordered: [CPListTemplate] = []
             for tab in CarPlayTab.allCases {
                 let t = self.makeTemplate(tab)
@@ -39,6 +40,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         didDisconnectInterfaceController interfaceController: CPInterfaceController
     ) {
         cancellables.removeAll()
+        Task { @MainActor in AppServices.isCarPlayConnected = false }
         CPNowPlayingTemplate.shared.remove(self)
         episodeLists.removeAll()
         upNextTemplate = nil
@@ -257,10 +259,55 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         np.isUpNextButtonEnabled = true
         np.upNextTitle = String(localized: "Up Next")
         np.isAlbumArtistButtonEnabled = false
-        let rate = CPNowPlayingPlaybackRateButton { _ in
-            Task { @MainActor in AppServices.playback?.cycleToNextSpeedPreset() }
+        refreshNowPlayingButtons()
+        // Rebuild when the episode (chapters) or sleep-timer state changes.
+        if let pb = AppServices.playback {
+            pb.$currentEpisode.map { $0?.id }.removeDuplicates().map { _ in () }
+                .merge(with: pb.$isSleepTimerActive.removeDuplicates().map { _ in () })
+                .receive(on: RunLoop.main)
+                .sink { [weak self] in MainActor.assumeIsolated { self?.refreshNowPlayingButtons() } }
+                .store(in: &cancellables)
         }
-        np.updateNowPlayingButtons([rate])
+    }
+
+    /// Android Auto custom actions: speed, sleep timer, next chapter (with chapters), skip episode.
+    @MainActor private func refreshNowPlayingButtons() {
+        let pb = AppServices.playback
+        let kinds = NowPlayingLogic.nowPlayingButtons(hasChapters: pb?.hasChaptersForRemote ?? false)
+        let buttons: [CPNowPlayingButton] = kinds.compactMap { kind in
+            switch kind {
+            case .rate:
+                return CPNowPlayingPlaybackRateButton { _ in
+                    Task { @MainActor in AppServices.playback?.cycleToNextSpeedPreset() }
+                }
+            case .sleepTimer:
+                let active = pb?.isSleepTimerActive ?? false
+                guard let img = UIImage(systemName: active ? "moon.zzz.fill" : "moon.zzz") else { return nil }
+                let b = CPNowPlayingImageButton(image: img) { _ in
+                    Task { @MainActor in
+                        guard let pb = AppServices.playback else { return }
+                        if pb.isSleepTimerActive {
+                            pb.disableSleepTimer()
+                        } else {
+                            pb.setSleepTimer(minutes: NowPlayingLogic.sleepToggleMinutes(presets: PlaybackService.clockPresetsMinutes))
+                        }
+                    }
+                }
+                b.isSelected = active
+                return b
+            case .nextChapter:
+                guard let img = UIImage(systemName: "text.line.first.and.arrowtriangle.forward") else { return nil }
+                return CPNowPlayingImageButton(image: img) { _ in
+                    Task { @MainActor in AppServices.playback?.skipToNextChapter() }
+                }
+            case .skipEpisode:
+                guard let img = UIImage(systemName: "forward.end.fill") else { return nil }
+                return CPNowPlayingImageButton(image: img) { _ in
+                    Task { @MainActor in AppServices.playback?.skipToNextEpisode() }
+                }
+            }
+        }
+        CPNowPlayingTemplate.shared.updateNowPlayingButtons(buttons)
     }
 
     func nowPlayingTemplateUpNextButtonTapped(_ nowPlayingTemplate: CPNowPlayingTemplate) {
