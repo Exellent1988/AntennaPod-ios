@@ -887,6 +887,24 @@ final class PodcastStore: ObservableObject {
         playbackStates[episodeId]?.positionSeconds ?? 0
     }
 
+    /// Persist Skip silence time saved for an episode (Statistics total).
+    func addSkipSilenceSaved(episodeId: String, seconds: Double) {
+        guard seconds.isFinite, seconds > 0 else { return }
+        var state = playbackState(for: episodeId)
+        state.skipSilenceSavedSeconds = (state.skipSilenceSavedSeconds ?? 0) + seconds
+        playbackStates[episodeId] = state
+    }
+
+    /// Total Skip silence time saved across saved playback states (after the Statistics reset baseline).
+    func totalSkipSilenceSavedSeconds() -> Double {
+        let resetAt = settings?.statisticsResetAtEpochMs ?? 0
+        return playbackStates.values.reduce(0) { sum, state in
+            let stamp = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
+            guard resetAt == 0 || stamp >= resetAt else { return sum }
+            return sum + (state.skipSilenceSavedSeconds ?? 0)
+        }
+    }
+
     /// Add recorded listening time only (position / played untouched). Used when the player is torn down.
     func addListenedTime(episodeId: String, wallSeconds: Double, mediaSeconds: Double) {
         guard wallSeconds.isFinite, wallSeconds > 0 else { return }

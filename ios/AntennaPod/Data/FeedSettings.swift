@@ -50,6 +50,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
     var volumeAdaptation: VolumeAdaptationMode?
     /// Skip silence override; `nil` = Use global (`AppSettings.skipSilenceEnabled`).
     var skipSilence: Bool?
+    /// Skip silence level override (Off / Mild / Medium / Aggressive); `nil` = use `skipSilence` / global.
+    var skipSilenceLevel: SkipSilenceLevel?
     /// Auto-download episode filter (Android FeedFilter: include/exclude terms, min/max duration).
     /// Per-feed only, like Android. `.none` = no filter.
     var episodeFilter: EpisodeFilter
@@ -93,6 +95,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         playbackSpeed: nil,
         volumeAdaptation: nil,
         skipSilence: nil,
+        skipSilenceLevel: nil,
         episodeFilter: .none,
         episodeSort: nil,
         customTitle: nil,
@@ -111,6 +114,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         playbackSpeed: Float? = nil,
         volumeAdaptation: VolumeAdaptationMode? = nil,
         skipSilence: Bool? = nil,
+        skipSilenceLevel: SkipSilenceLevel? = nil,
         episodeFilter: EpisodeFilter = .none,
         episodeSort: FeedEpisodeSort? = nil,
         customTitle: String? = nil,
@@ -127,6 +131,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         self.playbackSpeed = Self.normalizedSpeed(playbackSpeed)
         self.volumeAdaptation = volumeAdaptation
         self.skipSilence = skipSilence
+        self.skipSilenceLevel = skipSilenceLevel
         self.episodeFilter = episodeFilter
         self.episodeSort = episodeSort
         self.customTitle = Self.normalizedCustomTitle(customTitle)
@@ -152,6 +157,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         )
         volumeAdaptation = try? c.decodeIfPresent(VolumeAdaptationMode.self, forKey: .volumeAdaptation)
         skipSilence = try c.decodeIfPresent(Bool.self, forKey: .skipSilence)
+        skipSilenceLevel = try? c.decodeIfPresent(SkipSilenceLevel.self, forKey: .skipSilenceLevel)
         episodeFilter = (try? c.decodeIfPresent(EpisodeFilter.self, forKey: .episodeFilter)) ?? .none
         episodeSort = try c.decodeIfPresent(FeedEpisodeSort.self, forKey: .episodeSort)
         customTitle = Self.normalizedCustomTitle(
@@ -253,7 +259,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case volumeAdaptation, skipSilence, episodeFilter
+        case volumeAdaptation, skipSilence, skipSilenceLevel, episodeFilter
         case autoDownload, keepUpdated, notifyOnNewEpisodes, autoDeleteAfterPlaying, newEpisodeAction
         case skipIntroSeconds, skipOutroSeconds, playbackSpeed, episodeSort, customTitle, privateNote, isPinned
     }
