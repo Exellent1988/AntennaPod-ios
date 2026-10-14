@@ -1,4 +1,5 @@
 import AVFoundation
+import AudioDSP
 import PodcastCore
 import SwiftUI
 import UIKit
@@ -440,224 +441,24 @@ struct FullPlayerView: View {
     }
 
     @ViewBuilder
+    /// Android-style player: the hero (cover, header, seek bar, main controls, bottom bar) fills
+    /// the first screen inside the safe area; details, chapters and shownotes scroll below.
     private func playerContent(episode: PodcastEpisode) -> some View {
         GeometryReader { geo in
-            // Android: cover fills the width (with margins) above the controls.
-            let side = min(geo.size.width - 32, 380)
+            let landscape = PlayerHeroLayout.isLandscape(width: geo.size.width, height: geo.size.height)
+            let side = CGFloat(PlayerHeroLayout.coverSide(width: geo.size.width, height: geo.size.height))
             ScrollView {
                 VStack(spacing: 24) {
-                    mediaSurface(episode: episode, side: side)
-                        .padding(.top, 8)
-                    videoAudioOnlyToggle(episode: episode)
-                        .padding(.horizontal)
-                    // Android: the current chapter sits directly under the cover.
-                    if let chapterTitle = currentChapterTitle {
-                        Text(chapterTitle)
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .lineLimit(2)
-                            .padding(.horizontal)
-                            .accessibilityLabel(String(localized: "Chapter \(chapterTitle)"))
-                    }
-                    VStack(spacing: 6) {
-                        Text(episode.title)
-                            .font(.title2.weight(.semibold))
-                            .multilineTextAlignment(.center)
-                            .lineLimit(3)
-                        if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle) {
-                            Button {
-                                openPodcastFromPlayer()
-                            } label: {
-                                Text(podcastTitle)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(2)
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityLabel(String(localized: "Open podcast"))
-                            .accessibilityValue(podcastTitle)
-                            .accessibilityHint(String(localized: "Opens this episode's podcast in Subscriptions"))
-
-                            episodeMetadataActions(
-                                text: podcastTitle,
-                                copyLabel: String(localized: "Copy podcast title"),
-                                shareLabel: String(localized: "Share podcast title"),
-                                copyHint: String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"),
-                                shareHint: String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"),
-                                copiedMessage: String(localized: "Podcast title copied to the pasteboard.")
-                            )
-                        }
-                        // Item season/episode and itunes:episodeType metadata; hide when missing, never invent.
-                        if let seasonEpisodeCaption = episode.seasonEpisodeCaption {
-                            Text(seasonEpisodeCaption)
-                                .font(.caption.weight(.semibold))
-                                .monospacedDigit()
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color.secondary.opacity(0.15), in: Capsule())
-                                .accessibilityLabel(episode.seasonEpisodeAccessibilityLabel ?? seasonEpisodeCaption)
-                            episodeMetadataActions(
-                                text: seasonEpisodeCaption,
-                                copyLabel: String(localized: "Copy season and episode"),
-                                shareLabel: String(localized: "Share season and episode"),
-                                copyHint: String(localized: "Copies the same season and episode caption shown above to the pasteboard; item metadata only; no numbers invented"),
-                                shareHint: String(localized: "Shares the same season and episode caption shown above as plain text; item metadata only; no numbers invented"),
-                                copiedMessage: String(localized: "Season and episode copied to the pasteboard.")
-                            )
-                        }
-                        if episode.isExplicit {
-                            Text(String(localized: "Explicit"))
-                                .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color.secondary.opacity(0.15), in: Capsule())
-                                .accessibilityLabel(String(localized: "Explicit"))
-                            episodeMetadataActions(
-                                text: String(localized: "Explicit"),
-                                copyLabel: String(localized: "Copy episode explicit badge"),
-                                shareLabel: String(localized: "Share episode explicit badge"),
-                                copyHint: String(localized: "Copies the localized Explicit badge shown above for this episode to the pasteboard; display-only; does not enforce content restrictions"),
-                                shareHint: String(localized: "Shares the localized Explicit badge shown above for this episode as plain text; display-only; does not enforce content restrictions"),
-                                copiedMessage: String(localized: "Episode explicit badge copied to the pasteboard.")
-                            )
-                        }
-                        if let medium = episode.displayMedium {
-                            Text(medium)
-                                .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color.secondary.opacity(0.15), in: Capsule())
-                                .accessibilityLabel(String(localized: "Medium \(medium)"))
-                            episodeMetadataActions(
-                                text: medium,
-                                copyLabel: String(localized: "Copy episode medium"),
-                                shareLabel: String(localized: "Share episode medium"),
-                                copyHint: String(localized: "Copies the same item-provided medium string shown above to the pasteboard; display-only; no playback change or remapping"),
-                                shareHint: String(localized: "Shares the same item-provided medium string shown above as plain text; display-only; no playback change or remapping"),
-                                copiedMessage: String(localized: "Episode medium copied to the pasteboard.")
-                            )
-                        }
-                        if let episodeType = episode.displayEpisodeType {
-                            Text(episodeType)
-                                .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color.secondary.opacity(0.15), in: Capsule())
-                                .accessibilityLabel(episode.episodeTypeAccessibilityLabel ?? episodeType)
-                            episodeMetadataActions(
-                                text: episodeType,
-                                copyLabel: String(localized: "Copy episode type"),
-                                shareLabel: String(localized: "Share episode type"),
-                                copyHint: String(localized: "Copies the same item itunes:episodeType label shown above to the pasteboard; distinct from channel podcast:trailer"),
-                                shareHint: String(localized: "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"),
-                                copiedMessage: String(localized: "Episode type copied to the pasteboard.")
-                            )
-                        }
-                        if let formattedPublishDate {
-                            Text(formattedPublishDate)
-                                .font(.caption.weight(.semibold))
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color.secondary.opacity(0.15), in: Capsule())
-                                .accessibilityLabel(String(localized: "Publish date \(formattedPublishDate)"))
-                            episodeMetadataActions(
-                                text: formattedPublishDate,
-                                copyLabel: String(localized: "Copy episode publish date"),
-                                shareLabel: String(localized: "Share episode publish date"),
-                                copyHint: String(localized: "Copies the same publish-date caption shown above to the pasteboard; known feed metadata only; no date invented"),
-                                shareHint: String(localized: "Shares the same publish-date caption shown above as plain text; known feed metadata only; no date invented"),
-                                copiedMessage: String(localized: "Episode publish date copied to the pasteboard.")
-                            )
-                        }
-                        if let formattedKnownDuration {
-                            Text(formattedKnownDuration)
-                                .font(.caption.weight(.semibold))
-                                .monospacedDigit()
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color.secondary.opacity(0.15), in: Capsule())
-                                .accessibilityLabel(String(localized: "Duration \(formattedKnownDuration)"))
-                            episodeMetadataActions(
-                                text: formattedKnownDuration,
-                                copyLabel: String(localized: "Copy episode duration"),
-                                shareLabel: String(localized: "Share episode duration"),
-                                copyHint: String(localized: "Copies the same duration caption shown above to the pasteboard; feed or known playback metadata only; no length invented"),
-                                shareHint: String(localized: "Shares the same duration caption shown above as plain text; feed or known playback metadata only; no length invented"),
-                                copiedMessage: String(localized: "Episode duration copied to the pasteboard.")
-                            )
-                        }
-                        if let formattedKnownByteSize {
-                            Text(formattedKnownByteSize)
-                                .font(.caption.weight(.semibold))
-                                .monospacedDigit()
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color.secondary.opacity(0.15), in: Capsule())
-                                .accessibilityLabel(String(localized: "Size \(formattedKnownByteSize)"))
-                            episodeMetadataActions(
-                                text: formattedKnownByteSize,
-                                copyLabel: String(localized: "Copy episode file size"),
-                                shareLabel: String(localized: "Share episode file size"),
-                                copyHint: String(localized: "Copies the same file-size caption shown above to the pasteboard; on-disk or feed enclosure metadata only; no size invented"),
-                                shareHint: String(localized: "Shares the same file-size caption shown above as plain text; on-disk or feed enclosure metadata only; no size invented"),
-                                copiedMessage: String(localized: "Episode file size copied to the pasteboard.")
-                            )
-                        }
-                        if let title = EpisodeCopyLinks.trimmedTitle(for: episode) {
-                            episodeMetadataActions(
-                                text: title,
-                                copyLabel: String(localized: "Copy episode title"),
-                                shareLabel: String(localized: "Share episode title"),
-                                copyHint: String(localized: "Copies the trimmed episode title to the pasteboard; hidden when the title is empty; no title invented"),
-                                shareHint: String(localized: "Shares the trimmed episode title as plain text; hidden when the title is empty; no title invented"),
-                                copiedMessage: String(localized: "Episode title copied to the pasteboard.")
-                            )
-                        }
-                        if let titleAndPodcast = EpisodeCopyLinks.trimmedTitleAndPodcast(
-                            episode: episode,
-                            feedTitle: feedDisplayTitle
-                        ) {
-                            episodeMetadataActions(
-                                text: titleAndPodcast,
-                                copyLabel: String(localized: "Copy title and podcast"),
-                                shareLabel: String(localized: "Share title and podcast"),
-                                copyHint: String(localized: "Copies the trimmed episode title and podcast display title as `title — podcast`; hidden unless both are present; no title invented"),
-                                shareHint: String(localized: "Shares the trimmed episode title and podcast display title as `title — podcast` plain text; hidden unless both are present; no title invented"),
-                                copiedMessage: String(localized: "Title and podcast copied to the pasteboard.")
-                            )
-                        }
-                        Label(
-                            playback.isPlayingFromLocalFile ? String(localized: "Playing from download") : String(localized: "Streaming"),
-                            systemImage: playback.isPlayingFromLocalFile ? "internaldrive" : "wifi"
-                        )
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
-                        .accessibilityLabel(playback.isPlayingFromLocalFile ? String(localized: "Playing from download") : String(localized: "Streaming"))
-                        if store.hasEpisodePrivateNote(for: episode.id) {
-                            Button {
-                                showEpisodePrivateNote = true
-                            } label: {
-                                Label(String(localized: "Private note"), systemImage: "note.text")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityLabel(String(localized: "Private note"))
-                            .accessibilityValue(store.episodePrivateNote(for: episode.id) ?? "")
-                            .accessibilityHint(String(localized: "Opens the private note editor for this episode"))
+                    Group {
+                        if landscape {
+                            landscapeHero(episode: episode, side: side)
+                        } else {
+                            portraitHero(episode: episode, side: side)
                         }
                     }
-                    .padding(.horizontal)
+                    .frame(minHeight: geo.size.height)
 
-                    scrubber
-                        .padding(.horizontal)
-
-                    chapterSkipControls
-                        .padding(.horizontal)
-
-                    transportControls
-                        .padding(.horizontal)
+                    episodeDetails(episode: episode)
 
                     // Prefer store episode for link/enclosure fields (post-refresh).
                     secondaryActions(episode: resolvedEpisode ?? episode)
@@ -685,6 +486,344 @@ struct FullPlayerView: View {
             }
             .frame(width: geo.size.width, height: geo.size.height)
         }
+    }
+
+    private func portraitHero(episode: PodcastEpisode, side: CGFloat) -> some View {
+        VStack(spacing: 0) {
+            Spacer(minLength: 8)
+            mediaSurface(episode: episode, side: side)
+            videoAudioOnlyToggle(episode: episode)
+                .padding(.horizontal)
+            Spacer(minLength: 16)
+            playerHeader(episode: episode)
+                .padding(.horizontal, 24)
+            Spacer(minLength: 12)
+            scrubber
+                .padding(.horizontal, 20)
+            mainControls
+                .padding(.top, 4)
+            Spacer(minLength: 12)
+            bottomBar
+                .padding(.horizontal, 24)
+                .padding(.bottom, 8)
+        }
+    }
+
+    private func landscapeHero(episode: PodcastEpisode, side: CGFloat) -> some View {
+        HStack(alignment: .center, spacing: 24) {
+            mediaSurface(episode: episode, side: side)
+            VStack(spacing: 12) {
+                playerHeader(episode: episode)
+                scrubber
+                mainControls
+                bottomBar
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 8)
+    }
+
+    /// Title, podcast (opens the podcast) and the current chapter with previous / next chapter
+    /// buttons beside it (Android's chapter row under the cover).
+    private func playerHeader(episode: PodcastEpisode) -> some View {
+        VStack(spacing: 4) {
+            Text(episode.title)
+                .font(.title3.weight(.semibold))
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .frame(maxWidth: .infinity)
+            if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle) {
+                Button {
+                    openPodcastFromPlayer()
+                } label: {
+                    Text(podcastTitle)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(String(localized: "Open podcast"))
+                .accessibilityValue(podcastTitle)
+                .accessibilityHint(String(localized: "Opens this episode's podcast in Subscriptions"))
+            }
+            if currentChapterTitle != nil || canSkipChapters {
+                HStack(spacing: 12) {
+                    if canSkipChapters {
+                        Button {
+                            seekToChapter(previousChapterTarget)
+                        } label: {
+                            Image(systemName: "backward.end.fill")
+                                .frame(width: 32, height: 32)
+                        }
+                        .disabled(previousChapterTarget == nil)
+                        .accessibilityLabel(String(localized: "Previous chapter"))
+                    }
+                    Text(currentChapterTitle ?? "")
+                        .font(.footnote.weight(.medium))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityLabel(currentChapterTitle.map { String(localized: "Chapter \($0)") } ?? "")
+                    if canSkipChapters {
+                        Button {
+                            seekToChapter(nextChapterTarget)
+                        } label: {
+                            Image(systemName: "forward.end.fill")
+                                .frame(width: 32, height: 32)
+                        }
+                        .disabled(nextChapterTarget == nil)
+                        .accessibilityLabel(String(localized: "Next chapter"))
+                        .accessibilityHint(nextChapterAccessibilityHint)
+                    }
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 2)
+            }
+        }
+    }
+
+    /// Android main row: rewind · play/pause · forward.
+    private var mainControls: some View {
+        HStack(spacing: 44) {
+            seekAndPlayButtons
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+    }
+
+    /// Android bottom bar: playback speed · sleep timer · volume adaptation · Skip silence.
+    private var bottomBar: some View {
+        HStack {
+            speedMenu
+            Spacer(minLength: 8)
+            sleepTimerMenu
+            Spacer(minLength: 8)
+            volumeAdaptationMenu
+            Spacer(minLength: 8)
+            skipSilenceButton
+        }
+        .buttonStyle(.plain)
+        .font(.title3)
+        .foregroundStyle(.primary)
+    }
+
+    /// Per-podcast Volume adaptation for the playing episode (Android sets it per feed).
+    private var volumeAdaptationMenu: some View {
+        let mode = playback.resolvedVolumeAdaptation()
+        return Menu {
+            if let feed {
+                Picker(String(localized: "Volume adaptation"), selection: Binding<VolumeAdaptationMode?>(
+                    get: { store.feedSettings(for: feed.id).volumeAdaptation },
+                    set: { value in store.updateFeedSettings(for: feed.id) { $0.volumeAdaptation = value } }
+                )) {
+                    Text("Use global (\(settings.volumeAdaptationMode.label))").tag(Optional<VolumeAdaptationMode>.none)
+                    ForEach(VolumeAdaptationMode.allCases) { m in
+                        Text(m.label).tag(Optional(m))
+                    }
+                }
+            }
+        } label: {
+            Image(systemName: mode == .off ? "speaker.wave.2" : "speaker.wave.2.fill")
+                .foregroundStyle(mode == .off ? Color.primary : Color.accentColor)
+                .frame(minWidth: 44, minHeight: 44)
+        }
+        .disabled(feed == nil)
+        .accessibilityLabel(String(localized: "Volume adaptation"))
+        .accessibilityValue(mode.label)
+        .accessibilityHint(String(localized: "Sets volume adaptation for this podcast"))
+    }
+
+    /// Global Skip silence toggle; highlighted while it applies to this episode.
+    private var skipSilenceButton: some View {
+        let active = playback.resolvedSkipSilenceEnabled()
+        return Button {
+            playback.toggleSkipSilence()
+        } label: {
+            Image(systemName: playback.isSkippingSilence ? "forward.fill" : "waveform")
+                .foregroundStyle(active ? Color.accentColor : Color.primary)
+                .frame(minWidth: 44, minHeight: 44)
+        }
+        .accessibilityLabel(String(localized: "Skip silence"))
+        .accessibilityValue(active ? String(localized: "On") : String(localized: "Off"))
+        .accessibilityHint(String(localized: "Turns global Skip silence on or off. A podcast with its own Skip silence setting keeps it."))
+    }
+
+    /// Episode metadata copy/share rows, source label and private note (below the hero, like
+    /// Android's episode info below the player). Title and podcast live in `playerHeader`.
+    private func episodeDetails(episode: PodcastEpisode) -> some View {
+        VStack(spacing: 6) {
+            if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle) {
+                episodeMetadataActions(
+                    text: podcastTitle,
+                    copyLabel: String(localized: "Copy podcast title"),
+                    shareLabel: String(localized: "Share podcast title"),
+                    copyHint: String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"),
+                    shareHint: String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"),
+                    copiedMessage: String(localized: "Podcast title copied to the pasteboard.")
+                )
+            }
+            // Item season/episode and itunes:episodeType metadata; hide when missing, never invent.
+            if let seasonEpisodeCaption = episode.seasonEpisodeCaption {
+                Text(seasonEpisodeCaption)
+                    .font(.caption.weight(.semibold))
+                    .monospacedDigit()
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.secondary.opacity(0.15), in: Capsule())
+                    .accessibilityLabel(episode.seasonEpisodeAccessibilityLabel ?? seasonEpisodeCaption)
+                episodeMetadataActions(
+                    text: seasonEpisodeCaption,
+                    copyLabel: String(localized: "Copy season and episode"),
+                    shareLabel: String(localized: "Share season and episode"),
+                    copyHint: String(localized: "Copies the same season and episode caption shown above to the pasteboard; item metadata only; no numbers invented"),
+                    shareHint: String(localized: "Shares the same season and episode caption shown above as plain text; item metadata only; no numbers invented"),
+                    copiedMessage: String(localized: "Season and episode copied to the pasteboard.")
+                )
+            }
+            if episode.isExplicit {
+                Text(String(localized: "Explicit"))
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.secondary.opacity(0.15), in: Capsule())
+                    .accessibilityLabel(String(localized: "Explicit"))
+                episodeMetadataActions(
+                    text: String(localized: "Explicit"),
+                    copyLabel: String(localized: "Copy episode explicit badge"),
+                    shareLabel: String(localized: "Share episode explicit badge"),
+                    copyHint: String(localized: "Copies the localized Explicit badge shown above for this episode to the pasteboard; display-only; does not enforce content restrictions"),
+                    shareHint: String(localized: "Shares the localized Explicit badge shown above for this episode as plain text; display-only; does not enforce content restrictions"),
+                    copiedMessage: String(localized: "Episode explicit badge copied to the pasteboard.")
+                )
+            }
+            if let medium = episode.displayMedium {
+                Text(medium)
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.secondary.opacity(0.15), in: Capsule())
+                    .accessibilityLabel(String(localized: "Medium \(medium)"))
+                episodeMetadataActions(
+                    text: medium,
+                    copyLabel: String(localized: "Copy episode medium"),
+                    shareLabel: String(localized: "Share episode medium"),
+                    copyHint: String(localized: "Copies the same item-provided medium string shown above to the pasteboard; display-only; no playback change or remapping"),
+                    shareHint: String(localized: "Shares the same item-provided medium string shown above as plain text; display-only; no playback change or remapping"),
+                    copiedMessage: String(localized: "Episode medium copied to the pasteboard.")
+                )
+            }
+            if let episodeType = episode.displayEpisodeType {
+                Text(episodeType)
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.secondary.opacity(0.15), in: Capsule())
+                    .accessibilityLabel(episode.episodeTypeAccessibilityLabel ?? episodeType)
+                episodeMetadataActions(
+                    text: episodeType,
+                    copyLabel: String(localized: "Copy episode type"),
+                    shareLabel: String(localized: "Share episode type"),
+                    copyHint: String(localized: "Copies the same item itunes:episodeType label shown above to the pasteboard; distinct from channel podcast:trailer"),
+                    shareHint: String(localized: "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"),
+                    copiedMessage: String(localized: "Episode type copied to the pasteboard.")
+                )
+            }
+            if let formattedPublishDate {
+                Text(formattedPublishDate)
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.secondary.opacity(0.15), in: Capsule())
+                    .accessibilityLabel(String(localized: "Publish date \(formattedPublishDate)"))
+                episodeMetadataActions(
+                    text: formattedPublishDate,
+                    copyLabel: String(localized: "Copy episode publish date"),
+                    shareLabel: String(localized: "Share episode publish date"),
+                    copyHint: String(localized: "Copies the same publish-date caption shown above to the pasteboard; known feed metadata only; no date invented"),
+                    shareHint: String(localized: "Shares the same publish-date caption shown above as plain text; known feed metadata only; no date invented"),
+                    copiedMessage: String(localized: "Episode publish date copied to the pasteboard.")
+                )
+            }
+            if let formattedKnownDuration {
+                Text(formattedKnownDuration)
+                    .font(.caption.weight(.semibold))
+                    .monospacedDigit()
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.secondary.opacity(0.15), in: Capsule())
+                    .accessibilityLabel(String(localized: "Duration \(formattedKnownDuration)"))
+                episodeMetadataActions(
+                    text: formattedKnownDuration,
+                    copyLabel: String(localized: "Copy episode duration"),
+                    shareLabel: String(localized: "Share episode duration"),
+                    copyHint: String(localized: "Copies the same duration caption shown above to the pasteboard; feed or known playback metadata only; no length invented"),
+                    shareHint: String(localized: "Shares the same duration caption shown above as plain text; feed or known playback metadata only; no length invented"),
+                    copiedMessage: String(localized: "Episode duration copied to the pasteboard.")
+                )
+            }
+            if let formattedKnownByteSize {
+                Text(formattedKnownByteSize)
+                    .font(.caption.weight(.semibold))
+                    .monospacedDigit()
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.secondary.opacity(0.15), in: Capsule())
+                    .accessibilityLabel(String(localized: "Size \(formattedKnownByteSize)"))
+                episodeMetadataActions(
+                    text: formattedKnownByteSize,
+                    copyLabel: String(localized: "Copy episode file size"),
+                    shareLabel: String(localized: "Share episode file size"),
+                    copyHint: String(localized: "Copies the same file-size caption shown above to the pasteboard; on-disk or feed enclosure metadata only; no size invented"),
+                    shareHint: String(localized: "Shares the same file-size caption shown above as plain text; on-disk or feed enclosure metadata only; no size invented"),
+                    copiedMessage: String(localized: "Episode file size copied to the pasteboard.")
+                )
+            }
+            if let title = EpisodeCopyLinks.trimmedTitle(for: episode) {
+                episodeMetadataActions(
+                    text: title,
+                    copyLabel: String(localized: "Copy episode title"),
+                    shareLabel: String(localized: "Share episode title"),
+                    copyHint: String(localized: "Copies the trimmed episode title to the pasteboard; hidden when the title is empty; no title invented"),
+                    shareHint: String(localized: "Shares the trimmed episode title as plain text; hidden when the title is empty; no title invented"),
+                    copiedMessage: String(localized: "Episode title copied to the pasteboard.")
+                )
+            }
+            if let titleAndPodcast = EpisodeCopyLinks.trimmedTitleAndPodcast(
+                episode: episode,
+                feedTitle: feedDisplayTitle
+            ) {
+                episodeMetadataActions(
+                    text: titleAndPodcast,
+                    copyLabel: String(localized: "Copy title and podcast"),
+                    shareLabel: String(localized: "Share title and podcast"),
+                    copyHint: String(localized: "Copies the trimmed episode title and podcast display title as `title — podcast`; hidden unless both are present; no title invented"),
+                    shareHint: String(localized: "Shares the trimmed episode title and podcast display title as `title — podcast` plain text; hidden unless both are present; no title invented"),
+                    copiedMessage: String(localized: "Title and podcast copied to the pasteboard.")
+                )
+            }
+            Label(
+                playback.isPlayingFromLocalFile ? String(localized: "Playing from download") : String(localized: "Streaming"),
+                systemImage: playback.isPlayingFromLocalFile ? "internaldrive" : "wifi"
+            )
+            .font(.caption)
+            .foregroundStyle(.tertiary)
+            .accessibilityLabel(playback.isPlayingFromLocalFile ? String(localized: "Playing from download") : String(localized: "Streaming"))
+            if store.hasEpisodePrivateNote(for: episode.id) {
+                Button {
+                    showEpisodePrivateNote = true
+                } label: {
+                    Label(String(localized: "Private note"), systemImage: "note.text")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(String(localized: "Private note"))
+                .accessibilityValue(store.episodePrivateNote(for: episode.id) ?? "")
+                .accessibilityHint(String(localized: "Opens the private note editor for this episode"))
+            }
+        }
+        .padding(.horizontal)
     }
 
     @ViewBuilder
@@ -1433,7 +1572,7 @@ struct FullPlayerView: View {
             playback.seek(bySeconds: -playback.rewindSeconds)
         } label: {
             Image(systemName: AppSettings.skipSystemImage(forward: false, seconds: settings.rewindSeconds))
-                .font(.title2)
+                .font(.system(size: 34))
         }
         .accessibilityLabel(String(localized: "Rewind \(settings.rewindSeconds) seconds"))
 
@@ -1451,7 +1590,7 @@ struct FullPlayerView: View {
             playback.seek(bySeconds: playback.fastForwardSeconds)
         } label: {
             Image(systemName: AppSettings.skipSystemImage(forward: true, seconds: settings.fastForwardSeconds))
-                .font(.title2)
+                .font(.system(size: 34))
         }
         .accessibilityLabel(String(localized: "Forward \(settings.fastForwardSeconds) seconds"))
     }

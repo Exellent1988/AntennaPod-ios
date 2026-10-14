@@ -341,6 +341,11 @@ struct MiniPlayerView: View {
             .sheet(isPresented: $showFullPlayer) {
                 FullPlayerView()
             }
+            #if DEBUG
+            .onReceive(PlayerDebugLaunch.shared.$openFullPlayerToken) { token in
+                if token > 0 { showFullPlayer = true }
+            }
+            #endif
             .onChange(of: subscribeLink.closeFullPlayerToken) { _, token in
                 if token != nil { showFullPlayer = false }
             }
@@ -521,6 +526,11 @@ struct MiniPlayerView: View {
             .sheet(isPresented: $showFullPlayer) {
                 FullPlayerView()
             }
+            #if DEBUG
+            .onReceive(PlayerDebugLaunch.shared.$openFullPlayerToken) { token in
+                if token > 0 { showFullPlayer = true }
+            }
+            #endif
             .onChange(of: subscribeLink.closeFullPlayerToken) { _, token in
                 if token != nil { showFullPlayer = false }
             }
