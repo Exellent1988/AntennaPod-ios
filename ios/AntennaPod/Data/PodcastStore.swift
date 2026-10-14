@@ -887,8 +887,25 @@ final class PodcastStore: ObservableObject {
         playbackStates[episodeId]?.positionSeconds ?? 0
     }
 
+    /// Add recorded listening time only (position / played untouched). Used when the player is torn down.
+    func addListenedTime(episodeId: String, wallSeconds: Double, mediaSeconds: Double) {
+        guard wallSeconds.isFinite, wallSeconds > 0 else { return }
+        var state = playbackState(for: episodeId)
+        state.listenedWallSeconds = (state.listenedWallSeconds ?? 0) + wallSeconds
+        if mediaSeconds.isFinite, mediaSeconds > 0 {
+            state.listenedMediaSeconds = (state.listenedMediaSeconds ?? 0) + mediaSeconds
+        }
+        playbackStates[episodeId] = state
+    }
+
     /// Persist continuous progress while listening (does not flip played).
-    func saveProgress(episodeId: String, positionSeconds: Double, durationSeconds: Double) {
+    func saveProgress(
+        episodeId: String,
+        positionSeconds: Double,
+        durationSeconds: Double,
+        listenedWallDelta: Double = 0,
+        listenedMediaDelta: Double = 0
+    ) {
         // Non-finite position makes JSONEncoder throw; encode then skips the whole playback.json write.
         guard positionSeconds.isFinite else { return }
         var state = playbackState(for: episodeId)
@@ -898,6 +915,12 @@ final class PodcastStore: ObservableObject {
         }
         let nowMs = Int64(Date().timeIntervalSince1970 * 1000)
         state.updatedAtEpochMs = nowMs
+        if listenedWallDelta.isFinite, listenedWallDelta > 0 {
+            state.listenedWallSeconds = (state.listenedWallSeconds ?? 0) + listenedWallDelta
+        }
+        if listenedMediaDelta.isFinite, listenedMediaDelta > 0 {
+            state.listenedMediaSeconds = (state.listenedMediaSeconds ?? 0) + listenedMediaDelta
+        }
         // Stamp History sort key while listening (throttle not needed — didSet already persists).
         if positionSeconds > 1 || state.isPlayed {
             state.lastPlayedAtEpochMs = nowMs
@@ -2687,7 +2710,7 @@ final class PodcastStore: ObservableObject {
     /// Played episodes counted when `isPlayed` and `lastPlayedAt` (else `updatedAt`) falls in range.
     /// Also respects `AppSettings.statisticsResetAtEpochMs` (shared with Statistics).
     /// Favorites “in range” use `favoritedAt` from `favorites.json` (also gated by reset baseline).
-    /// Coarse stamps — not per-session. Wall-clock estimates — not speed-adjusted.
+    /// Coarse stamps — not per-session. Speed-adjusted where recorded (`listenedWallSeconds`), else wall-clock estimates.
     func echoYearSummary(
         in range: StatisticsTimeRange = .thisYear,
         calendar: Calendar = .current,
