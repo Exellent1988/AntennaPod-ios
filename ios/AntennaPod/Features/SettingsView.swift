@@ -619,11 +619,15 @@ struct SettingsView: View {
     /// Root list mirroring Android ui/preferences/res/xml/preferences.xml.
     @ViewBuilder
     private var settingsRootLinks: some View {
+        // Prominent first entry so gpodder / Nextcloud sync stays one tap from the Settings root.
+        Section {
+            settingsLink(.synchronization, "Sync & gpodder", "arrow.triangle.2.circlepath.circle")
+                .accessibilityHint(String(localized: "Opens gpodder.net and Nextcloud sync: login, devices, Import all subscriptions, and Sync now."))
+        }
         Section {
             settingsLink(.userInterface, "User interface", "paintpalette")
             settingsLink(.playback, "Playback", "play.circle")
             settingsLink(.downloads, "Downloads", "arrow.down.circle")
-            settingsLink(.synchronization, "Synchronization", "arrow.triangle.2.circlepath.circle")
             settingsLink(.importExport, "Storage & import/export", "externaldrive")
             settingsLink(.notifications, "Notifications", "bell")
             NavigationLink {
@@ -674,7 +678,7 @@ struct SettingsView: View {
         case .synchronization:
             // preferences_synchronization.xml / synchronization/*PreferencesFragment (gpodder + Nextcloud)
             Form { gpodderSyncSection }
-                .navigationTitle("Synchronization")
+                .navigationTitle(String(localized: "Sync & gpodder"))
         case .importExport:
             // preferences_import_export.xml / ImportExportPreferencesFragment.java (+ storage)
             Form {
