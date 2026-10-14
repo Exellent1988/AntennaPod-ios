@@ -1553,6 +1553,23 @@
         }
       }
     },
+    "Currently playing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Currently playing"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wird gerade abgespielt"
+          }
+        }
+      }
+    },
     "Current PIN": {
       "extractionState": "manual",
       "localizations": {
