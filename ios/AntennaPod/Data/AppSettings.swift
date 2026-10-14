@@ -1684,8 +1684,9 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// Preference for skip-silence (AntennaPod Android / ExoPlayer). Default off.
-    /// **Not applied** on stock `AVPlayer` — needs a custom `AVAudioEngine` graph (would break shared video / Now Playing). Toggle is honest UI + future hook only.
+    /// Global Skip silence (AntennaPod Android). Default off. Per-feed `FeedSettings.skipSilence` wins.
+    /// Applied by `PlaybackService` via the audio pipeline: detected silence plays faster (up to 3×),
+    /// normal speed resumes when sound returns. HLS streams are not analysed.
     @Published var skipSilenceEnabled: Bool {
         didSet {
             UserDefaults.standard.set(skipSilenceEnabled, forKey: Keys.skipSilenceEnabled)
