@@ -12,6 +12,8 @@ struct FullPlayerView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
+    /// Player overflow → Podcast settings (existing PerFeedSettingsView as a sheet).
+    @State private var showPodcastSettings = false
     @State private var isScrubbing = false
     @State private var scrubSeconds: Double = 0
     /// Chapters loaded from Podcast Index JSON when the feed only had a URL.
@@ -211,18 +213,30 @@ struct FullPlayerView: View {
                     }
                     .accessibilityLabel(String(localized: "Close player"))
                 }
+                // Android player overflow menu: Go to podcast · Podcast settings.
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        openPodcastFromPlayer()
+                    Menu {
+                        Button {
+                            openPodcastFromPlayer()
+                        } label: {
+                            Label(String(localized: "Go to podcast"), systemImage: "dot.radiowaves.left.and.right")
+                        }
+                        .accessibilityHint(String(localized: "Opens this episode's podcast in Subscriptions"))
+                        Button {
+                            showPodcastSettings = true
+                        } label: {
+                            Label(String(localized: "Podcast settings"), systemImage: "gearshape")
+                        }
+                        .accessibilityHint(String(localized: "Opens the settings for this episode's podcast"))
                     } label: {
-                        Image(systemName: "dot.radiowaves.left.and.right")
+                        Image(systemName: "ellipsis.circle")
                     }
                     .disabled(feed == nil)
-                    .accessibilityLabel(String(localized: "Open podcast"))
+                    .accessibilityLabel(String(localized: "More options"))
                     .accessibilityHint(
                         feed == nil
                             ? String(localized: "Podcast unavailable")
-                            : String(localized: "Opens this episode's podcast in Subscriptions")
+                            : String(localized: "Go to podcast or open podcast settings")
                     )
                 }
                 if let episode, showsVideoSurface(for: episode) {
@@ -305,6 +319,18 @@ struct FullPlayerView: View {
             // Touch published flags so body re-reads isPossible / isActive.
             _ = playback.pictureInPicture.isPossible
             _ = playback.pictureInPicture.isActive
+        }
+        .sheet(isPresented: $showPodcastSettings) {
+            if let feed {
+                NavigationStack {
+                    PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle ?? feed.title)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Done") { showPodcastSettings = false }
+                            }
+                        }
+                }
+            }
         }
         .sheet(isPresented: $showTranscript) {
             if let episode = resolvedEpisode ?? episode {
