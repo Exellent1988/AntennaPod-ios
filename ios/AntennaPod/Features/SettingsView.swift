@@ -2878,6 +2878,7 @@ struct SettingsView: View {
             .disabled(gpodder.isBusy || gpodder.deviceName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             .accessibilityHint(String(localized: "Creates a new Device id from the current Device name and clears sync cursors so the next Sync now does a full subscription pull. Does not change Device name, does not Sync now immediately, does not log out, and does not unsubscribe local feeds. Disabled while busy or when Device name is empty."))
             if gpodder.isLoggedIn {
+                gpodderDevicesAndImport
                 Button {
                     Task { await gpodder.syncNow(store: store) }
                 } label: {
@@ -2888,7 +2889,7 @@ struct SettingsView: View {
                     }
                 }
                 .disabled(gpodder.isBusy)
-                .accessibilityHint(String(localized: "Syncs http(s) subscription feed URLs only: pulls missing remotes and pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders. Writes Last sync when finished; Login alone does not. Does not invent a full sync."))
+                .accessibilityHint(String(localized: "Syncs http(s) subscription feed URLs (pulls missing remotes, pushes local URLs not on the server; additive — remote removes do not unsubscribe local feeds) and episode play actions (position and played, newest wins, matched by media URL). Does not sync queue, bookmarks, tags, downloads, or local folders. Writes Last sync when finished; Login alone does not."))
                 Button("Logout", role: .destructive) {
                     gpodder.logout()
                 }
@@ -2937,24 +2938,24 @@ struct SettingsView: View {
             }
 
             LabeledContent("Synced") {
-                Text(String(localized: "http(s) subscription feed URLs (additive pull/push)"))
+                Text(String(localized: "http(s) subscription feed URLs (additive pull/push), episode position and played"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.trailing)
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(String(localized: "Synced"))
-            .accessibilityValue(String(localized: "http(s) subscription feed URLs (additive pull/push)"))
+            .accessibilityValue(String(localized: "http(s) subscription feed URLs (additive pull/push), episode position and played"))
 
             LabeledContent("Local only") {
-                Text(String(localized: "Episode actions, queue, favorites, bookmarks, tags, downloads, local folders, playback, archive, inbox"))
+                Text(String(localized: "Queue, favorites, bookmarks, tags, downloads, local folders, archive, inbox"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.trailing)
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(String(localized: "Local only"))
-            .accessibilityValue(String(localized: "Episode actions, queue, favorites, bookmarks, tags, downloads, local folders, playback, archive, inbox"))
+            .accessibilityValue(String(localized: "Queue, favorites, bookmarks, tags, downloads, local folders, archive, inbox"))
 
             Text(gpodderHelpText)
                 .font(.caption)
@@ -2963,6 +2964,61 @@ struct SettingsView: View {
                 .accessibilityValue(gpodderHelpText)
         } header: {
             Text("Sync")
+        }
+    }
+
+    /// Logged-in gpodder controls: device picker / create (gpodder.net), full import with progress + failures.
+    @ViewBuilder
+    private var gpodderDevicesAndImport: some View {
+        if gpodder.provider == .gpodderNet {
+            Picker(String(localized: "Use device"), selection: Binding(
+                get: { gpodder.deviceId },
+                set: { id in
+                    if let device = gpodder.devices.first(where: { $0.id == id }) {
+                        gpodder.selectDevice(device)
+                    }
+                }
+            )) {
+                if !gpodder.devices.contains(where: { $0.id == gpodder.deviceId }) {
+                    Text(String(localized: "This device (new): \(gpodder.deviceId)")).tag(gpodder.deviceId)
+                }
+                ForEach(gpodder.devices) { device in
+                    Text(device.caption.isEmpty ? device.id : "\(device.caption) (\(device.subscriptions))")
+                        .tag(device.id)
+                }
+            }
+            .disabled(gpodder.isBusy)
+            .accessibilityHint(String(localized: "Devices on your gpodder account with their subscription count. Picking one adopts its id and name and resets sync cursors so the next Sync now pulls that device's full list. Does not sync by itself."))
+            Button(String(localized: "Create device from name")) {
+                Task { await gpodder.createDevice() }
+            }
+            .disabled(gpodder.isBusy || gpodder.deviceName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .accessibilityHint(String(localized: "Registers a new device on the server with the current Device name and a fresh id, then reloads the device list. Does not sync subscriptions."))
+            .task { if gpodder.devices.isEmpty { await gpodder.refreshDevices() } }
+        }
+        Button {
+            Task { await gpodder.importAllSubscriptions(store: store) }
+        } label: {
+            Label(String(localized: "Import all subscriptions"), systemImage: "square.and.arrow.down.on.square")
+        }
+        .disabled(gpodder.isBusy)
+        .accessibilityHint(String(localized: "Downloads every subscription on your account (gpodder.net: all devices) and subscribes the ones missing here, skipping duplicates. Never unsubscribes local feeds. Shows progress and per-feed errors."))
+        if let progress = gpodder.importProgress {
+            ProgressView(value: Double(progress.done), total: Double(max(progress.total, 1))) {
+                Text(String(localized: "Subscribing \(progress.done) of \(progress.total)"))
+                    .font(.caption)
+            }
+        }
+        if !gpodder.importFailures.isEmpty {
+            DisclosureGroup(String(localized: "\(gpodder.importFailures.count) feeds failed")) {
+                ForEach(gpodder.importFailures) { failure in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(failure.url).font(.caption2).textSelection(.enabled)
+                        Text(failure.message).font(.caption2).foregroundStyle(.red)
+                    }
+                    .accessibilityElement(children: .combine)
+                }
+            }
         }
     }
 
@@ -2986,9 +3042,9 @@ struct SettingsView: View {
     private var gpodderHelpText: String {
         switch gpodder.provider {
         case .gpodderNet:
-            return String(localized: "Subscriptions only (beta — not full sync): Synced = http(s) podcast feed URLs (pull missing + push local not on server). Merge is additive — remote removes do not unsubscribe local feeds. Password in Keychain (never plaintext Settings/backup). Not synced (local-only): episode actions (play/download/position), queue, favorites, bookmarks, tags, downloads, local folder feeds, playback progress, archive, inbox. Last sync status and errors stay visible here. Default host https://gpodder.net (editable).")
+            return String(localized: "Beta: Import all subscriptions subscribes every feed on your account (all devices). Sync now merges http(s) feed URLs (additive — remote removes do not unsubscribe local feeds) and episode play actions (position / played). Pick an existing device or create one. Password in Keychain (never plaintext Settings/backup). Local-only: queue, favorites, bookmarks, tags, downloads, local folder feeds, archive, inbox. Default host https://gpodder.net (editable, self-hosted servers such as opodsync work too).")
         case .nextcloud:
-            return String(localized: "Nextcloud Gpodder Sync (beta — not full sync): same subscription limits as gpodder.net — additive http(s) feed URLs only; remote removes do not unsubscribe local feeds. Not synced: episode actions, queue, favorites, bookmarks, tags, downloads, local folder feeds, playback, archive, inbox. Enter Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is UI/state only (Nextcloud has no device API). Password in Keychain.")
+            return String(localized: "Nextcloud Gpodder Sync (beta): Import all subscriptions subscribes every feed on the server; Sync now merges http(s) feed URLs (additive — remote removes do not unsubscribe local feeds) and episode play actions (position / played). Local-only: queue, favorites, bookmarks, tags, downloads, local folder feeds, archive, inbox. Enter the Nextcloud server root (e.g. https://cloud.example.com) or the full API root ending in /index.php/apps/gpoddersync/. HTTP Basic — use a Nextcloud app password. Requires the Gpodder Sync app on the server. Nextcloud has no device API, so there is no device list. Password in Keychain.")
         }
     }
 

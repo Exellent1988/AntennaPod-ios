@@ -25860,42 +25860,6 @@
       },
       "comment": "FeedDetail local folder empty accessibility value"
     },
-    "Subscriptions only (beta — not full sync): Synced = http(s) podcast feed URLs (pull missing + push local not on server). Merge is additive — remote removes do not unsubscribe local feeds. Password in Keychain (never plaintext Settings/backup). Not synced (local-only): episode actions (play/download/position), queue, favorites, bookmarks, tags, downloads, local folder feeds, playback progress, archive, inbox. Last sync status and errors stay visible here. Default host https://gpodder.net (editable).": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subscriptions only (beta — not full sync): Synced = http(s) podcast feed URLs (pull missing + push local not on server). Merge is additive — remote removes do not unsubscribe local feeds. Password in Keychain (never plaintext Settings/backup). Not synced (local-only): episode actions (play/download/position), queue, favorites, bookmarks, tags, downloads, local folder feeds, playback progress, archive, inbox. Last sync status and errors stay visible here. Default host https://gpodder.net (editable)."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur Abonnements (Beta — kein voller Sync): Synchronisiert = http(s)-Podcast-Feed-URLs (fehlende holen + lokale pushen, die nicht auf dem Server sind). Merge ist additiv — Remote-Entfernungen deabonnieren lokale Feeds nicht. Passwort im Keychain (nie Klartext in Settings/Backup). Nicht synchronisiert (nur lokal): Episodenaktionen (Play/Download/Position), Warteschlange, Favoriten, Lesezeichen, Tags, Downloads, lokale Ordner-Feeds, Wiedergabefortschritt, Archiv, Inbox. Letzter Sync-Status und Fehler bleiben hier sichtbar. Standard-Host https://gpodder.net (änderbar)."
-          }
-        }
-      },
-      "comment": "gpodder.net Sync coverage help (honesty polish)"
-    },
-    "Nextcloud Gpodder Sync (beta — not full sync): same subscription limits as gpodder.net — additive http(s) feed URLs only; remote removes do not unsubscribe local feeds. Not synced: episode actions, queue, favorites, bookmarks, tags, downloads, local folder feeds, playback, archive, inbox. Enter Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is UI/state only (Nextcloud has no device API). Password in Keychain.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nextcloud Gpodder Sync (beta — not full sync): same subscription limits as gpodder.net — additive http(s) feed URLs only; remote removes do not unsubscribe local feeds. Not synced: episode actions, queue, favorites, bookmarks, tags, downloads, local folder feeds, playback, archive, inbox. Enter Nextcloud base (server root or full API root like https://cloud.example.com/index.php/apps/gpoddersync/). HTTP Basic (app password recommended). Requires the Gpodder Sync app on the server. Device id is UI/state only (Nextcloud has no device API). Password in Keychain."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nextcloud Gpodder Sync (Beta — kein voller Sync): gleiche Abonnement-Grenzen wie gpodder.net — nur additive http(s)-Feed-URLs; Remote-Entfernungen deabonnieren lokal nicht. Nicht synchronisiert: Episodenaktionen, Warteschlange, Favoriten, Lesezeichen, Tags, Downloads, lokale Ordner-Feeds, Wiedergabe, Archiv, Inbox. Nextcloud-Basis eingeben (Server-Root oder voller API-Root wie https://cloud.example.com/index.php/apps/gpoddersync/). HTTP Basic (App-Passwort empfohlen). Braucht die Gpodder-Sync-App auf dem Server. Geräte-ID nur UI/Status (Nextcloud hat keine Geräte-API). Passwort im Keychain."
-          }
-        }
-      },
-      "comment": "Nextcloud Sync coverage help (honesty polish)"
-    },
     "http(s) subscription feed URLs (additive pull/push)": {
       "extractionState": "manual",
       "localizations": {
@@ -25913,24 +25877,6 @@
         }
       },
       "comment": "Sync coverage Synced value"
-    },
-    "Episode actions, queue, favorites, bookmarks, tags, downloads, local folders, playback, archive, inbox": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Episode actions, queue, favorites, bookmarks, tags, downloads, local folders, playback, archive, inbox"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Episodenaktionen, Warteschlange, Favoriten, Lesezeichen, Tags, Downloads, lokale Ordner, Wiedergabe, Archiv, Inbox"
-          }
-        }
-      },
-      "comment": "Sync coverage Local only value"
     },
     "Synced": {
       "extractionState": "manual",
@@ -49228,23 +49174,6 @@
         }
       }
     },
-    "Syncs http(s) subscription feed URLs only: pulls missing remotes and pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders. Writes Last sync when finished; Login alone does not. Does not invent a full sync.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Syncs http(s) subscription feed URLs only: pulls missing remotes and pushes local URLs not on the server. Merge is additive — remote removes do not unsubscribe local feeds. Does not sync episode actions, queue, bookmarks, tags, downloads, or local folders. Writes Last sync when finished; Login alone does not. Does not invent a full sync."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Synchronisiert nur http(s)-Abo-Feed-URLs: holt fehlende Remotes und pusht lokale URLs, die nicht auf dem Server sind. Merge ist additiv — Remote-Entfernungen deabonnieren lokale Feeds nicht. Keine Episodenaktionen, Warteschlange, Lesezeichen, Tags, Downloads oder lokale Ordner. Schreibt Letzter Sync bei Abschluss; alleiniges Anmelden nicht. Erfindet keinen vollständigen Sync."
-          }
-        }
-      }
-    },
     "Logs in and stores the password in the Keychain only — never in Settings backup. Does not run Sync now or write Last sync. Sync remains subscriptions-only and does not invent a full sync. Requires username and password; Nextcloud also needs a host.": {
       "extractionState": "manual",
       "localizations": {
@@ -49836,6 +49765,244 @@
           "stringUnit": {
             "state": "translated",
             "value": "Warteschlange / Favoriten / Lesezeichen / Tags / Downloads: nur lokal"
+          }
+        }
+      }
+    },
+    "Syncs http(s) subscription feed URLs (pulls missing remotes, pushes local URLs not on the server; additive — remote removes do not unsubscribe local feeds) and episode play actions (position and played, newest wins, matched by media URL). Does not sync queue, bookmarks, tags, downloads, or local folders. Writes Last sync when finished; Login alone does not.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Syncs http(s) subscription feed URLs (pulls missing remotes, pushes local URLs not on the server; additive — remote removes do not unsubscribe local feeds) and episode play actions (position and played, newest wins, matched by media URL). Does not sync queue, bookmarks, tags, downloads, or local folders. Writes Last sync when finished; Login alone does not."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisiert http(s)-Feed-URLs der Abos (holt fehlende vom Server, lädt lokale hoch, die dort fehlen; additiv – Entfernungen auf dem Server kündigen lokal nichts) und Episoden-Wiedergabeaktionen (Position und gespielt, neueste gewinnt, Abgleich über Medien-URL). Synchronisiert keine Warteschlange, Lesezeichen, Tags, Downloads oder lokale Ordner. Schreibt „Letzter Sync“ nach Abschluss; Anmelden allein nicht."
+          }
+        }
+      }
+    },
+    "http(s) subscription feed URLs (additive pull/push), episode position and played": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "http(s) subscription feed URLs (additive pull/push), episode position and played"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "http(s)-Feed-URLs der Abos (additiv holen/hochladen), Episodenposition und gespielt"
+          }
+        }
+      }
+    },
+    "Queue, favorites, bookmarks, tags, downloads, local folders, archive, inbox": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Queue, favorites, bookmarks, tags, downloads, local folders, archive, inbox"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange, Favoriten, Lesezeichen, Tags, Downloads, lokale Ordner, Archiv, Eingang"
+          }
+        }
+      }
+    },
+    "Beta: Import all subscriptions subscribes every feed on your account (all devices). Sync now merges http(s) feed URLs (additive — remote removes do not unsubscribe local feeds) and episode play actions (position / played). Pick an existing device or create one. Password in Keychain (never plaintext Settings/backup). Local-only: queue, favorites, bookmarks, tags, downloads, local folder feeds, archive, inbox. Default host https://gpodder.net (editable, self-hosted servers such as opodsync work too).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beta: Import all subscriptions subscribes every feed on your account (all devices). Sync now merges http(s) feed URLs (additive — remote removes do not unsubscribe local feeds) and episode play actions (position / played). Pick an existing device or create one. Password in Keychain (never plaintext Settings/backup). Local-only: queue, favorites, bookmarks, tags, downloads, local folder feeds, archive, inbox. Default host https://gpodder.net (editable, self-hosted servers such as opodsync work too)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beta: „Alle Abos importieren“ abonniert jeden Feed deines Kontos (alle Geräte). „Jetzt synchronisieren“ gleicht http(s)-Feed-URLs (additiv – Entfernungen auf dem Server kündigen lokal nichts) und Episoden-Wiedergabeaktionen (Position / gespielt) ab. Wähle ein vorhandenes Gerät oder erstelle eines. Passwort im Schlüsselbund (nie im Klartext in Einstellungen/Backup). Nur lokal: Warteschlange, Favoriten, Lesezeichen, Tags, Downloads, lokale Ordner-Feeds, Archiv, Eingang. Standard-Host https://gpodder.net (änderbar, selbst gehostete Server wie opodsync gehen auch)."
+          }
+        }
+      }
+    },
+    "Nextcloud Gpodder Sync (beta): Import all subscriptions subscribes every feed on the server; Sync now merges http(s) feed URLs (additive — remote removes do not unsubscribe local feeds) and episode play actions (position / played). Local-only: queue, favorites, bookmarks, tags, downloads, local folder feeds, archive, inbox. Enter the Nextcloud server root (e.g. https://cloud.example.com) or the full API root ending in /index.php/apps/gpoddersync/. HTTP Basic — use a Nextcloud app password. Requires the Gpodder Sync app on the server. Nextcloud has no device API, so there is no device list. Password in Keychain.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud Gpodder Sync (beta): Import all subscriptions subscribes every feed on the server; Sync now merges http(s) feed URLs (additive — remote removes do not unsubscribe local feeds) and episode play actions (position / played). Local-only: queue, favorites, bookmarks, tags, downloads, local folder feeds, archive, inbox. Enter the Nextcloud server root (e.g. https://cloud.example.com) or the full API root ending in /index.php/apps/gpoddersync/. HTTP Basic — use a Nextcloud app password. Requires the Gpodder Sync app on the server. Nextcloud has no device API, so there is no device list. Password in Keychain."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud Gpodder Sync (Beta): „Alle Abos importieren“ abonniert jeden Feed auf dem Server; „Jetzt synchronisieren“ gleicht http(s)-Feed-URLs (additiv – Entfernungen auf dem Server kündigen lokal nichts) und Episoden-Wiedergabeaktionen (Position / gespielt) ab. Nur lokal: Warteschlange, Favoriten, Lesezeichen, Tags, Downloads, lokale Ordner-Feeds, Archiv, Eingang. Gib die Nextcloud-Server-Adresse ein (z. B. https://cloud.example.com) oder den vollständigen API-Pfad mit /index.php/apps/gpoddersync/. HTTP Basic – nutze ein Nextcloud-App-Passwort. Die App „Gpodder Sync“ muss auf dem Server installiert sein. Nextcloud hat keine Geräte-API, daher keine Geräteliste. Passwort im Schlüsselbund."
+          }
+        }
+      }
+    },
+    "Use device": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use device"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerät verwenden"
+          }
+        }
+      }
+    },
+    "This device (new): %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This device (new): %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Gerät (neu): %@"
+          }
+        }
+      }
+    },
+    "Devices on your gpodder account with their subscription count. Picking one adopts its id and name and resets sync cursors so the next Sync now pulls that device's full list. Does not sync by itself.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Devices on your gpodder account with their subscription count. Picking one adopts its id and name and resets sync cursors so the next Sync now pulls that device's full list. Does not sync by itself."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geräte deines gpodder-Kontos mit Anzahl der Abos. Die Auswahl übernimmt ID und Namen und setzt die Sync-Marken zurück, damit der nächste Sync die komplette Liste dieses Geräts holt. Synchronisiert nicht von selbst."
+          }
+        }
+      }
+    },
+    "Create device from name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create device from name"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerät aus Namen erstellen"
+          }
+        }
+      }
+    },
+    "Registers a new device on the server with the current Device name and a fresh id, then reloads the device list. Does not sync subscriptions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registers a new device on the server with the current Device name and a fresh id, then reloads the device list. Does not sync subscriptions."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registriert ein neues Gerät mit dem aktuellen Gerätenamen und einer neuen ID auf dem Server und lädt die Geräteliste neu. Synchronisiert keine Abos."
+          }
+        }
+      }
+    },
+    "Import all subscriptions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import all subscriptions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle Abos importieren"
+          }
+        }
+      }
+    },
+    "Downloads every subscription on your account (gpodder.net: all devices) and subscribes the ones missing here, skipping duplicates. Never unsubscribes local feeds. Shows progress and per-feed errors.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloads every subscription on your account (gpodder.net: all devices) and subscribes the ones missing here, skipping duplicates. Never unsubscribes local feeds. Shows progress and per-feed errors."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lädt alle Abos deines Kontos (gpodder.net: alle Geräte) und abonniert die hier fehlenden, Duplikate werden übersprungen. Kündigt nie lokale Feeds. Zeigt Fortschritt und Fehler pro Feed."
+          }
+        }
+      }
+    },
+    "Subscribing %lld of %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscribing %lld of %lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abonniere %lld von %lld"
+          }
+        }
+      }
+    },
+    "%lld feeds failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld feeds failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Feeds fehlgeschlagen"
           }
         }
       }
