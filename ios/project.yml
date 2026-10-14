@@ -92,6 +92,18 @@ targets:
         WKCompanionAppBundleIdentifier: de.danoeh.antennapod.ios
         WKRunsIndependentlyOfCompanionApp: false
     dependencies: []
+  AntennaPodTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: AntennaPodTests
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: de.danoeh.antennapod.ios.tests
+      GENERATE_INFOPLIST_FILE: YES
+      TEST_HOST: "$(BUILT_PRODUCTS_DIR)/AntennaPod.app/AntennaPod"
+      BUNDLE_LOADER: "$(TEST_HOST)"
+    dependencies:
+      - target: AntennaPod
 schemes:
   AntennaPod:
     build:
@@ -101,3 +113,7 @@ schemes:
         AntennaPodWatch: all
     run:
       config: Debug
+    test:
+      config: Debug
+      targets:
+        - AntennaPodTests
