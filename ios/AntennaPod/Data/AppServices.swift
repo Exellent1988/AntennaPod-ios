@@ -8,4 +8,6 @@ enum AppServices {
     static weak var playback: PlaybackService?
     static weak var downloads: DownloadService?
     static weak var settings: AppSettings?
+    /// True while a CarPlay interface is connected (Android `UI_MODE_TYPE_CAR`: next = skip episode).
+    static var isCarPlayConnected = false
 }
