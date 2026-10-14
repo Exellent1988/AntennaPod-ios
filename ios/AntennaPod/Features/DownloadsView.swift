@@ -2,6 +2,8 @@ import SwiftUI
 import UIKit
 
 struct DownloadsView: View {
+    /// Episode ids picked in Select mode (`EpisodeMultiSelectModifier`).
+    @State private var multiSelection = Set<String>()
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var store: PodcastStore
@@ -375,7 +377,7 @@ struct DownloadsView: View {
 
     // List split from the modifier chain: together they exceed the CI type-checker time limit.
     private var downloadsList: some View {
-        List {
+        List(selection: $multiSelection) {
             if let error = downloads.lastError {
                 Section {
                     HStack(alignment: .top, spacing: 12) {
@@ -515,6 +517,7 @@ struct DownloadsView: View {
                             .buttonStyle(.bordered)
                             .accessibilityLabel(String(localized: "Play"))
                         }
+                        .tag(item.episode.id)
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
                             Button {
                                 store.togglePlayed(item.episode.id)
@@ -580,6 +583,8 @@ struct DownloadsView: View {
                 }
             }
         }
+        // Android multi_select_options.xml: shared Select + batch actions bar.
+        .episodeMultiSelect(selection: $multiSelection, episodes: filteredDownloads.map(\.episode))
     }
 
     // Toolbar split from the body chain: together they exceed the CI type-checker time limit.

@@ -2,6 +2,8 @@ import SwiftUI
 import UIKit
 
 struct FavoritesView: View {
+    /// Episode ids picked in Select mode (`EpisodeMultiSelectModifier`).
+    @State private var multiSelection = Set<String>()
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
@@ -334,7 +336,7 @@ struct FavoritesView: View {
 
     // List split from the modifier chain: together they exceed the CI type-checker time limit.
     private var favoritesList: some View {
-        List {
+        List(selection: $multiSelection) {
             if !items.isEmpty, !favoritesPodcastFeeds.isEmpty || isPodcastFiltering {
                 Section {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -404,6 +406,7 @@ struct FavoritesView: View {
                         dateOverride: Date(timeIntervalSince1970: Double(item.favoritedAtEpochMs) / 1000),
                         dateAccessibilityLabel: String(localized: "Favorited")
                     )
+                    .tag(item.episode.id)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
                             store.toggleFavorite(item.episode.id)
@@ -456,6 +459,8 @@ struct FavoritesView: View {
                 }
             }
         }
+        // Android multi_select_options.xml: shared Select + batch actions bar.
+        .episodeMultiSelect(selection: $multiSelection, episodes: filteredItems.map(\.episode))
     }
 
     // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
