@@ -50788,6 +50788,74 @@
           }
         }
       }
+    },
+    "Nextcloud rejected the login — check the username and password. With two-factor authentication you need an app password (Nextcloud → Settings → Security).": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud rejected the login — check the username and password. With two-factor authentication you need an app password (Nextcloud → Settings → Security)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nextcloud hat die Anmeldung abgelehnt – Benutzername und Passwort prüfen. Mit Zwei-Faktor-Authentifizierung brauchst du ein App-Passwort (Nextcloud → Einstellungen → Sicherheit)."
+          }
+        }
+      }
+    },
+    "Gpodder Sync not found on this Nextcloud (404) — install the Gpodder Sync app or check the server URL.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gpodder Sync not found on this Nextcloud (404) — install the Gpodder Sync app or check the server URL."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gpodder Sync auf dieser Nextcloud nicht gefunden (404) – installiere die App „Gpodder Sync“ oder prüfe die Server-URL."
+          }
+        }
+      }
+    },
+    "The server redirected to a login page — check the URL and use an app password; SSO login pages are not supported.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server redirected to a login page — check the URL and use an app password; SSO login pages are not supported."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Server hat auf eine Anmeldeseite umgeleitet – URL prüfen und ein App-Passwort verwenden; SSO-Anmeldeseiten werden nicht unterstützt."
+          }
+        }
+      }
+    },
+    "Sync server error (HTTP %lld) — tried 3 times, try again later.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync server error (HTTP %lld) — tried 3 times, try again later."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fehler des Sync-Servers (HTTP %lld) – 3 Versuche, bitte später erneut probieren."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

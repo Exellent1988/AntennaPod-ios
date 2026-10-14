@@ -32,6 +32,8 @@ struct GpodderClient {
     var provider: GpodderProvider
 
     private let session: URLSession
+    /// Backoff before retry n (1-based) for transient failures; at most 3 attempts in total.
+    var retryDelaysNanos: [UInt64] = [500_000_000, 1_500_000_000]
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
 
@@ -244,6 +246,18 @@ struct GpodderClient {
 
     @discardableResult
     private func perform(_ request: URLRequest, expectBody: Bool) async throws -> Data {
+        var attempt = 0
+        while true {
+            do {
+                return try await performOnce(request, expectBody: expectBody)
+            } catch let error as GpodderError where error.isTransient && attempt < retryDelaysNanos.count {
+                try await Task.sleep(nanoseconds: retryDelaysNanos[attempt])
+                attempt += 1
+            }
+        }
+    }
+
+    private func performOnce(_ request: URLRequest, expectBody: Bool) async throws -> Data {
         let data: Data
         let response: URLResponse
         do {
@@ -254,6 +268,11 @@ struct GpodderClient {
         guard let http = response as? HTTPURLResponse else {
             throw GpodderError.invalidResponse
         }
+        // URLSession follows redirects; landing on a login page means auth/SSO intercepted the API.
+        if let finalPath = http.url?.path.lowercased(), finalPath.contains("/login"),
+           request.url?.path.lowercased().contains("/login") != true {
+            throw GpodderError.redirectedToLogin
+        }
         switch http.statusCode {
         case 200...299:
             // Wrong Nextcloud path or SSO often answers 200 with an HTML login page.
@@ -263,9 +282,11 @@ struct GpodderClient {
             }
             return data
         case 401, 403:
-            throw GpodderError.unauthorized
+            throw provider == .nextcloud ? GpodderError.nextcloudAuth(http.statusCode) : GpodderError.unauthorized
         case 404:
-            throw GpodderError.notFound
+            throw provider == .nextcloud ? GpodderError.nextcloudAppMissing : GpodderError.notFound
+        case 500...599:
+            throw GpodderError.serverError(http.statusCode)
         default:
             let snippet = String(data: data, encoding: .utf8)?.prefix(200) ?? ""
             throw GpodderError.httpStatus(http.statusCode, String(snippet))
@@ -317,6 +338,10 @@ struct GpodderClient {
         let prefix = GpodderProvider.nextcloudAPIPathPrefix
         var p = path
         while p.hasSuffix("/") { p.removeLast() }
+        // "https://cloud/index.php" or "/nextcloud/index.php/apps" → server root before the app path.
+        for suffix in ["/index.php/apps", "/index.php"] where p.lowercased().hasSuffix(suffix) {
+            p.removeLast(suffix.count)
+        }
         let lower = p.lowercased()
         if lower.contains("gpoddersync") {
             // Already points at (or under) the app — keep as API root.
@@ -452,6 +477,19 @@ enum GpodderError: LocalizedError {
     case notLoggedIn
     case network(URLError)
     case htmlInsteadOfJSON
+    case nextcloudAuth(Int)
+    case nextcloudAppMissing
+    case redirectedToLogin
+    case serverError(Int)
+
+    /// Worth retrying with backoff: 5xx and timeouts / dropped connections. Never auth errors.
+    var isTransient: Bool {
+        switch self {
+        case .serverError: return true
+        case .network(let e): return e.code == .timedOut || e.code == .networkConnectionLost
+        default: return false
+        }
+    }
 
     var errorDescription: String? {
         switch self {
@@ -486,6 +524,14 @@ enum GpodderError: LocalizedError {
             default:
                 return error.localizedDescription
             }
+        case .nextcloudAuth:
+            return String(localized: "Nextcloud rejected the login — check the username and password. With two-factor authentication you need an app password (Nextcloud → Settings → Security).")
+        case .nextcloudAppMissing:
+            return String(localized: "Gpodder Sync not found on this Nextcloud (404) — install the Gpodder Sync app or check the server URL.")
+        case .redirectedToLogin:
+            return String(localized: "The server redirected to a login page — check the URL and use an app password; SSO login pages are not supported.")
+        case .serverError(let code):
+            return String(localized: "Sync server error (HTTP \(code)) — tried 3 times, try again later.")
         case .htmlInsteadOfJSON:
             return String(localized: "Server answered with a web page instead of sync data — check the URL (Nextcloud: is the Gpodder Sync app installed?) and use an app password")
         }
