@@ -403,6 +403,32 @@ struct AllEpisodesView: View {
     }
 
 
+    // Split out of body: the inline chip section pushed the List past the type-checker time limit.
+    @ViewBuilder
+    private var podcastChipsSection: some View {
+        if !catalogItems.isEmpty, !allEpisodesPodcastFeeds.isEmpty || isPodcastFiltering {
+            Section {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(podcastFilterChips) { chip in
+                            AllEpisodesFilterChip(
+                                title: podcastChipTitle(chip),
+                                selected: podcastFilter == chip,
+                                accessibilityHint: String(localized: "Filters the All Episodes list by podcast")
+                            ) {
+                                settings.allEpisodesPodcastFilter = chip.storageValue
+                            }
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            } header: {
+                Text("Podcasts")
+            }
+        }
+    }
+
     var body: some View {
         List {
             Section {
@@ -423,27 +449,7 @@ struct AllEpisodesView: View {
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
 
-            if !catalogItems.isEmpty, !allEpisodesPodcastFeeds.isEmpty || isPodcastFiltering {
-                Section {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(podcastFilterChips) { chip in
-                                AllEpisodesFilterChip(
-                                    title: podcastChipTitle(chip),
-                                    selected: podcastFilter == chip,
-                                    accessibilityHint: String(localized: "Filters the All Episodes list by podcast")
-                                ) {
-                                    settings.allEpisodesPodcastFilter = chip.storageValue
-                                }
-                            }
-                        }
-                        .padding(.vertical, 4)
-                    }
-                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                } header: {
-                    Text("Podcasts")
-                }
-            }
+            podcastChipsSection
 
             // itunes:episodeType chips — within soft-capped catalog; hide when no types present.
             if !catalogItems.isEmpty, showEpisodeTypeFilterChips {
