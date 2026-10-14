@@ -10,6 +10,8 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     private var interfaceController: CPInterfaceController?
     private var tabs: [CarPlayTab: CPListTemplate] = [:]
     private var episodeLists: [(feedId: UUID, template: CPListTemplate)] = []
+    /// Pushed Now Playing → Up Next list (live-refreshed while on the stack).
+    private var upNextTemplate: CPListTemplate?
     private var rendered: [ObjectIdentifier: [[CarPlayRow]]] = [:]
     private var cancellables = Set<AnyCancellable>()
 
@@ -39,6 +41,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         cancellables.removeAll()
         CPNowPlayingTemplate.shared.remove(self)
         episodeLists.removeAll()
+        upNextTemplate = nil
         rendered.removeAll()
         tabs.removeAll()
         self.interfaceController = nil
@@ -119,6 +122,9 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         let stack = interfaceController?.templates ?? []
         episodeLists.removeAll { entry in !stack.contains { $0 === entry.template } }
         for entry in episodeLists { apply([(nil, feedEpisodeRows(entry.feedId, byId: byId))], to: entry.template) }
+        if let t = upNextTemplate {
+            if stack.contains(where: { $0 === t }) { apply([(nil, upNextRows(byId: byId))], to: t) } else { upNextTemplate = nil }
+        }
     }
 
     // MARK: Building
@@ -259,18 +265,23 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
 
     func nowPlayingTemplateUpNextButtonTapped(_ nowPlayingTemplate: CPNowPlayingTemplate) {
         Task { @MainActor in
-            guard let store = AppServices.store else { return }
+            guard AppServices.store != nil else { return }
             let t = CPListTemplate(title: String(localized: "Up Next"), sections: [])
             t.emptyViewTitleVariants = [String(localized: "Queue is empty")]
-            let currentId = AppServices.playback?.currentEpisode?.id
-            let upcoming = CarPlayParity.upNext(queueIds: store.queue.map(\.id), currentId: currentId)
-            let byId = Dictionary(store.queue.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
-            let rows = upcoming.prefix(self.limit).compactMap { byId[$0] }.map {
-                self.row(self.info($0, feed: store.feed(containingEpisodeId: $0.id)))
-            }
+            let rows = self.upNextRows(byId: [:])
             self.apply([(nil, rows)], to: t)
+            self.upNextTemplate = t
             self.interfaceController?.pushTemplate(t, animated: true, completion: nil)
         }
+    }
+
+    @MainActor private func upNextRows(byId: [String: CarPlayEpisodeInfo]) -> [CarPlayRow] {
+        guard let store = AppServices.store else { return [] }
+        let currentId = AppServices.playback?.currentEpisode?.id
+        let queued = Dictionary(store.queue.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        return CarPlayParity.upNext(queueIds: store.queue.map(\.id), currentId: currentId)
+            .prefix(limit).compactMap { queued[$0] }
+            .map { row(byId[$0.id] ?? info($0, feed: store.feed(containingEpisodeId: $0.id))) }
     }
 
     func nowPlayingTemplateAlbumArtistButtonTapped(_ nowPlayingTemplate: CPNowPlayingTemplate) {}
