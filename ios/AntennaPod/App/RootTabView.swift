@@ -23,7 +23,35 @@ struct RootTabView: View {
 
     // Body split from the stream-error alert: one chain this long exceeds the CI type-checker time limit.
     private var rootTabContent: some View {
-        // Tab bar VoiceOver names come from Label titles (Localizable.xcstrings).
+        deepLinkStage(settingsObserversStage(
+            // Tab bar VoiceOver names come from Label titles (Localizable.xcstrings).
+            rootTabs
+            .safeAreaInset(edge: .bottom) {
+                MiniPlayerView()
+            }
+            .task {
+                // Launch: refresh subscribed feeds if the global interval is due.
+                await FeedRefreshCoordinator.refreshAllFeedsIfDue(store: store, settings: settings)
+            }
+            .onChange(of: scenePhase) { _, phase in
+                if phase != .active {
+                    // Relock parental controls when leaving foreground (inactive/background).
+                    playback.persistProgressBeforeBackground()
+                    store.flushDeferredFeedsSave()
+                    // Finish the queued playback.json write before iOS may suspend the app.
+                    PodcastPersistence.flushPendingWrites()
+                    parental.lockSession()
+                    return
+                }
+                Task {
+                    await FeedRefreshCoordinator.refreshAllFeedsIfDue(store: store, settings: settings)
+                }
+            }
+        ))
+    }
+
+    // Split into stages: one modifier chain this long exceeds the CI type-checker time limit.
+    private var rootTabs: some View {
         TabView(selection: $selectedTab) {
             HomeView(selectedTab: $selectedTab)
                 .tabItem {
@@ -65,27 +93,10 @@ struct RootTabView: View {
                 }
                 .tag(RootTab.settings)
         }
-        .safeAreaInset(edge: .bottom) {
-            MiniPlayerView()
-        }
-        .task {
-            // Launch: refresh subscribed feeds if the global interval is due.
-            await FeedRefreshCoordinator.refreshAllFeedsIfDue(store: store, settings: settings)
-        }
-        .onChange(of: scenePhase) { _, phase in
-            if phase != .active {
-                // Relock parental controls when leaving foreground (inactive/background).
-                playback.persistProgressBeforeBackground()
-                store.flushDeferredFeedsSave()
-                // Finish the queued playback.json write before iOS may suspend the app.
-                PodcastPersistence.flushPendingWrites()
-                parental.lockSession()
-                return
-            }
-            Task {
-                await FeedRefreshCoordinator.refreshAllFeedsIfDue(store: store, settings: settings)
-            }
-        }
+    }
+
+    private func settingsObserversStage<Content: View>(_ content: Content) -> some View {
+        content
         .onChange(of: settings.refreshInterval) { _, interval in
             FeedRefreshCoordinator.scheduleBackgroundRefresh(interval: interval)
         }
@@ -120,6 +131,10 @@ struct RootTabView: View {
         .onChange(of: playback.isPlaying) { _, _ in
             playback.applyIdleTimerPolicy()
         }
+    }
+
+    private func deepLinkStage<Content: View>(_ content: Content) -> some View {
+        content
         .onChange(of: notificationDeepLink.inboxOpenToken) { _, token in
             guard token != nil else { return }
             selectedTab = .inbox
