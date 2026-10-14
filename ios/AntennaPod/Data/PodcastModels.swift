@@ -1,4 +1,5 @@
 import Foundation
+import PodcastCore
 
 /// Chapter marker from feed (Podlove Simple Chapters / Podcast Index), remote JSON, or local media-file tags.
 struct PodcastChapter: Identifiable, Hashable, Codable {
@@ -2741,6 +2742,10 @@ struct EpisodePlaybackState: Hashable, Codable {
     /// Last time the user played or marked this episode played (History sort key).
     /// Distinct from `updatedAtEpochMs`, which also bumps on mark-unplayed.
     var lastPlayedAtEpochMs: Int64?
+    /// Recorded wall-clock seconds actually spent listening (speed-adjusted). `nil` in older files.
+    var listenedWallSeconds: Double?
+    /// Recorded media seconds covered while listening (seeks excluded). `nil` in older files.
+    var listenedMediaSeconds: Double?
 
     static func empty(nowMs: Int64 = Int64(Date().timeIntervalSince1970 * 1000)) -> EpisodePlaybackState {
         EpisodePlaybackState(
@@ -2778,6 +2783,8 @@ struct EpisodePlaybackState: Hashable, Codable {
         updatedAtEpochMs = try c.decodeIfPresent(Int64.self, forKey: .updatedAtEpochMs)
             ?? Int64(Date().timeIntervalSince1970 * 1000)
         lastPlayedAtEpochMs = try c.decodeIfPresent(Int64.self, forKey: .lastPlayedAtEpochMs)
+        listenedWallSeconds = try c.decodeIfPresent(Double.self, forKey: .listenedWallSeconds)
+        listenedMediaSeconds = try c.decodeIfPresent(Double.self, forKey: .listenedMediaSeconds)
         // Migrate older `playback.json` without `lastPlayedAtEpochMs`.
         if lastPlayedAtEpochMs == nil, isPlayed || positionSeconds > 0 {
             lastPlayedAtEpochMs = updatedAtEpochMs
@@ -2791,6 +2798,7 @@ struct EpisodePlaybackState: Hashable, Codable {
 
     private enum CodingKeys: String, CodingKey {
         case positionSeconds, durationSeconds, isPlayed, updatedAtEpochMs, lastPlayedAtEpochMs
+        case listenedWallSeconds, listenedMediaSeconds
     }
 }
 
@@ -2946,20 +2954,22 @@ enum ChapterIndexing {
 /// Approximate listening time attributed to one episode from `playback.json`.
 /// Played → `durationSeconds` when known (position is cleared on mark-played);
 /// in-progress → `positionSeconds`. Not cumulative across rewinds / re-listens / speed.
-/// Wall-clock listening estimate from saved playback (not speed-adjusted).
+/// Listening time per episode: recorded speed-adjusted wall time, else the legacy saved-playback estimate.
 /// Played → `durationSeconds` when known (else 0); in-progress → `positionSeconds` when > 1.
 enum ListeningTimeEstimate {
+    /// Recorded listened wall time (speed-adjusted) when available, else the legacy estimate.
     static func seconds(for state: EpisodePlaybackState) -> Double {
-        if state.isPlayed {
-            if state.durationSeconds.isFinite, state.durationSeconds > 0 {
-                return state.durationSeconds
-            }
-            return 0
-        }
-        if state.positionSeconds > 1 {
-            return state.positionSeconds
-        }
-        return 0
+        ListeningTimeRule.seconds(
+            recordedWall: state.listenedWallSeconds,
+            isPlayed: state.isPlayed,
+            durationSeconds: state.durationSeconds,
+            positionSeconds: state.positionSeconds
+        )
+    }
+
+    /// Seconds saved by listening faster than 1× (recorded sessions only).
+    static func secondsSavedBySpeed(for state: EpisodePlaybackState) -> Double {
+        ListeningTimeRule.timeSaved(recordedWall: state.listenedWallSeconds, recordedMedia: state.listenedMediaSeconds)
     }
 
     static func hasMeaningfulData(_ state: EpisodePlaybackState) -> Bool {
