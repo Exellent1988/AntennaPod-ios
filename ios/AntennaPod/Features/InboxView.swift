@@ -731,9 +731,9 @@ struct InboxView: View {
         }
         .confirmationDialog(
             "Remove from queue?",
-            isPresented: Binding(
+            isPresented: Binding<Bool>(
                 get: { episodePendingRemoveFromQueue != nil },
-                set: { if !$0 { episodePendingRemoveFromQueue = nil } }
+                set: { (isPresented: Bool) in if !isPresented { episodePendingRemoveFromQueue = nil } }
             ),
             titleVisibility: .visible,
             presenting: episodePendingRemoveFromQueue

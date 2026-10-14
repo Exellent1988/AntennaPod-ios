@@ -18,6 +18,11 @@ struct RootTabView: View {
     @State private var subscribeLinkPreview: FeedPreviewRequest?
 
     var body: some View {
+        cannotStreamAlertStage(rootTabContent)
+    }
+
+    // Body split from the stream-error alert: one chain this long exceeds the CI type-checker time limit.
+    private var rootTabContent: some View {
         // Tab bar VoiceOver names come from Label titles (Localizable.xcstrings).
         TabView(selection: $selectedTab) {
             HomeView(selectedTab: $selectedTab)
@@ -155,11 +160,15 @@ struct RootTabView: View {
                 }
             }
         }
+    }
+
+    private func cannotStreamAlertStage<Content: View>(_ content: Content) -> some View {
+        content
         .alert(
             "Cannot stream",
-            isPresented: Binding(
+            isPresented: Binding<Bool>(
                 get: { playback.lastError != nil },
-                set: { if !$0 { playback.lastError = nil } }
+                set: { (isPresented: Bool) in if !isPresented { playback.lastError = nil } }
             )
         ) {
             Button("OK", role: .cancel) {
@@ -167,7 +176,7 @@ struct RootTabView: View {
             }
         } message: {
             Text(playback.lastError ?? "")
-        }
+    }
     }
 
     /// Already subscribed → open that podcast (same path as the player's Open podcast);

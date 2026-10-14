@@ -362,9 +362,9 @@ struct MiniPlayerView: View {
             }
             .confirmationDialog(
                 "Remove from queue?",
-                isPresented: Binding(
+                isPresented: Binding<Bool>(
                     get: { episodePendingRemoveFromQueue != nil },
-                    set: { if !$0 { episodePendingRemoveFromQueue = nil } }
+                    set: { (isPresented: Bool) in if !isPresented { episodePendingRemoveFromQueue = nil } }
                 ),
                 titleVisibility: .visible,
                 presenting: episodePendingRemoveFromQueue
@@ -383,9 +383,9 @@ struct MiniPlayerView: View {
             }
             .confirmationDialog(
                 "Delete download?",
-                isPresented: Binding(
+                isPresented: Binding<Bool>(
                     get: { episodePendingDeleteDownload != nil },
-                    set: { if !$0 { episodePendingDeleteDownload = nil } }
+                    set: { (isPresented: Bool) in if !isPresented { episodePendingDeleteDownload = nil } }
                 ),
                 titleVisibility: .visible,
                 presenting: episodePendingDeleteDownload

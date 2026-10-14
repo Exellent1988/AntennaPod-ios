@@ -1040,9 +1040,9 @@ struct QueueView: View {
         }
         .confirmationDialog(
             "Remove from queue?",
-            isPresented: Binding(
+            isPresented: Binding<Bool>(
                 get: { episodePendingRemove != nil },
-                set: { if !$0 { episodePendingRemove = nil } }
+                set: { (isPresented: Bool) in if !isPresented { episodePendingRemove = nil } }
             ),
             titleVisibility: .visible,
             presenting: episodePendingRemove

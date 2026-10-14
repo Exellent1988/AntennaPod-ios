@@ -803,9 +803,9 @@ struct SubscriptionsView: View {
             }
             .confirmationDialog(
                 "Unsubscribe?",
-                isPresented: Binding(
+                isPresented: Binding<Bool>(
                     get: { feedPendingUnsubscribe != nil },
-                    set: { if !$0 { feedPendingUnsubscribe = nil } }
+                    set: { (isPresented: Bool) in if !isPresented { feedPendingUnsubscribe = nil } }
                 ),
                 titleVisibility: .visible,
                 presenting: feedPendingUnsubscribe
