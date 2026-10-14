@@ -137,9 +137,9 @@ struct BookmarksView: View {
         }
         .sensoryFeedback(.success, trigger: copyFeedbackTick)
         .sheet(
-            isPresented: Binding(
+            isPresented: Binding<Bool>(
                 get: { selectedEpisodeId != nil },
-                set: { if !$0 { selectedEpisodeId = nil } }
+                set: { (isPresented: Bool) in if !isPresented { selectedEpisodeId = nil } }
             )
         ) {
             if let selectedEpisodeId {

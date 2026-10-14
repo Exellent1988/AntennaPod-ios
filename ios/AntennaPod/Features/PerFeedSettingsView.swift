@@ -470,9 +470,9 @@ struct PerFeedSettingsView: View {
         }
         .confirmationDialog(
             "Delete tag?",
-            isPresented: Binding(
+            isPresented: Binding<Bool>(
                 get: { tagPendingDelete != nil },
-                set: { if !$0 { tagPendingDelete = nil } }
+                set: { (isPresented: Bool) in if !isPresented { tagPendingDelete = nil } }
             ),
             titleVisibility: .visible
         ) {
