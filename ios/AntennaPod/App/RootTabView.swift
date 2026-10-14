@@ -176,7 +176,7 @@ struct RootTabView: View {
             }
         } message: {
             Text(playback.lastError ?? "")
-    }
+        }
     }
 
     /// Already subscribed → open that podcast (same path as the player's Open podcast);
