@@ -2516,6 +2516,19 @@ final class PlaybackService: ObservableObject {
 
         applyRemoteSkipIntervals()
 
+        // CarPlay Now Playing rate button / Siri "play faster": snap to Settings speed presets.
+        center.changePlaybackRateCommand.isEnabled = true
+        center.changePlaybackRateCommand.addTarget { [weak self] event in
+            guard let rateEvent = event as? MPChangePlaybackRateCommandEvent else { return .commandFailed }
+            let requested = rateEvent.playbackRate
+            Task { @MainActor in
+                guard let self else { return }
+                let supported = NowPlayingLogic.supportedRates(presets: AppSettings.speedPresets, current: self.rate)
+                if let snapped = NowPlayingLogic.nearestRate(requested, supported: supported) { self.setRate(snapped) }
+            }
+            return .success
+        }
+
         // Headset / steering-wheel / lock-screen next & previous: Android "Reassign hardware buttons"
         // (Settings → Forward button / Previous button; defaults fast-forward / rewind).
         center.nextTrackCommand.isEnabled = true
@@ -2563,8 +2576,11 @@ final class PlaybackService: ObservableObject {
 
     func applyRemoteSkipIntervals() {
         let center = MPRemoteCommandCenter.shared()
-        center.skipForwardCommand.preferredIntervals = [NSNumber(value: fastForwardSeconds)]
-        center.skipBackwardCommand.preferredIntervals = [NSNumber(value: rewindSeconds)]
+        let intervals = NowPlayingLogic.skipIntervals(rewind: rewindSeconds, forward: fastForwardSeconds)
+        center.skipForwardCommand.preferredIntervals = [NSNumber(value: intervals.forward)]
+        center.skipBackwardCommand.preferredIntervals = [NSNumber(value: intervals.back)]
+        center.changePlaybackRateCommand.supportedPlaybackRates =
+            NowPlayingLogic.supportedRates(presets: AppSettings.speedPresets, current: rate).map { NSNumber(value: $0) }
     }
 
     private func updateNowPlayingInfo(force: Bool) {
@@ -2585,8 +2601,15 @@ final class PlaybackService: ObservableObject {
 
         var info = [String: Any]()
         info[MPMediaItemPropertyTitle] = episode.title
-        info[MPMediaItemPropertyArtist] = feedName
+        let chapters = resolvedSleepTimerChapters.map { (start: $0.startTimeSeconds, title: $0.title) }
+        let chapter = NowPlayingLogic.chapter(at: positionSeconds, starts: chapters)
+        info[MPMediaItemPropertyArtist] = NowPlayingLogic.artistLine(feedName: feedName, chapterTitle: chapter?.title)
         info[MPMediaItemPropertyAlbumTitle] = feedName
+        info[MPMediaItemPropertyPodcastTitle] = feedName
+        if let chapter {
+            info[MPNowPlayingInfoPropertyChapterNumber] = chapter.index
+            info[MPNowPlayingInfoPropertyChapterCount] = chapter.count
+        }
         info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
         info[MPNowPlayingInfoPropertyIsLiveStream] = false
         if durationSeconds.isFinite, durationSeconds > 0 {
@@ -2640,8 +2663,16 @@ final class PlaybackService: ObservableObject {
         let episodeId = episode.id
         Task {
             do {
-                let (data, _) = try await AppURLSession.shared.data(from: url)
-                guard let image = UIImage(data: data) else { return }
+                // Shared CarPlay artwork cache: aspect-fit into a square (no stretch), disk-cached.
+                let image: UIImage
+                if let cached = await CarPlayArtworkLoader.shared.image(
+                    for: url.absoluteString, pixels: CarPlayArtworkLoader.nowPlayingPixels) {
+                    image = cached
+                } else {
+                    let (data, _) = try await AppURLSession.shared.data(from: url)
+                    guard let raw = UIImage(data: data) else { return }
+                    image = raw
+                }
                 let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
                 await MainActor.run {
                     guard self.currentEpisode?.id == episodeId else { return }
