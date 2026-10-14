@@ -1337,6 +1337,19 @@ struct FeedDetailView: View {
                         .accessibilityLabel(String(localized: "Share podcast"))
                     }
                     Menu {
+                        // Android feedlist.xml refresh_item: refresh this podcast (rescan for local folders).
+                        Button {
+                            Task {
+                                if LocalFolderFeed.isLocalFolderFeed(liveFeed) {
+                                    await rescanLocalFolder()
+                                } else {
+                                    await store.refresh(liveFeed)
+                                }
+                            }
+                        } label: {
+                            Label("Refresh", systemImage: "arrow.clockwise")
+                        }
+                        .accessibilityHint(String(localized: "Checks this podcast for new episodes. No confirmation."))
                         if let url = liveFeed.websiteURL {
                             Button {
                                 openURL(url)
