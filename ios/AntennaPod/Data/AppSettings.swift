@@ -1402,6 +1402,10 @@ final class AppSettings: ObservableObject {
         static let statisticsTimeRange = "settings.statisticsTimeRange"
         /// Epoch ms baseline after Reset statistics; 0 = count all (default).
         static let statisticsResetAtEpochMs = "settings.statisticsResetAtEpochMs"
+        static let subscriptionsDisplayMode = "settings.subscriptionsDisplayMode"
+        static let subscriptionsGridColumns = "settings.subscriptionsGridColumns"
+        static let subscriptionsCounterMode = "settings.subscriptionsCounterMode"
+        static let swipeActions = "settings.swipeActions"
     }
 
     private enum Kind: String {
@@ -2207,6 +2211,36 @@ final class AppSettings: ObservableObject {
     /// Statistics / Echo time range: This week / This month / This year / All time (default).
     /// Filters aggregations by `lastPlayedAt` (else `updatedAt`) within the device-calendar unit.
     /// Shared by Statistics and Echo; persisted + backup. Coarse episode stamps — not per-session listen windows.
+    /// Subscriptions List/Grid (Android subscription_display_list). Persisted (+ backup).
+    @Published var subscriptionsDisplayMode: SubscriptionsDisplayMode {
+        didSet { UserDefaults.standard.set(subscriptionsDisplayMode.rawValue, forKey: Keys.subscriptionsDisplayMode) }
+    }
+    /// Grid columns 2–5 (Android subscription_num_columns). Persisted (+ backup).
+    @Published var subscriptionsGridColumns: Int {
+        didSet { UserDefaults.standard.set(subscriptionsGridColumns, forKey: Keys.subscriptionsGridColumns) }
+    }
+    /// Badge counter (Android subscriptions_counter). Persisted (+ backup).
+    @Published var subscriptionsCounterMode: SubscriptionsCounterMode {
+        didSet { UserDefaults.standard.set(subscriptionsCounterMode.rawValue, forKey: Keys.subscriptionsCounterMode) }
+    }
+    /// Per-list swipe choices keyed `<list>.<leading|trailing>` → `EpisodeSwipeAction` raw value.
+    /// Missing key = Default for this list (Android SwipeActions prefs). Persisted (+ backup).
+    @Published var swipeActions: [String: String] {
+        didSet { UserDefaults.standard.set(swipeActions, forKey: Keys.swipeActions) }
+    }
+
+    func swipeAction(_ list: SwipeList, _ edge: HorizontalEdge) -> EpisodeSwipeAction {
+        swipeActions[list.key(edge)].flatMap(EpisodeSwipeAction.init(rawValue:)) ?? .standard
+    }
+
+    func setSwipeAction(_ action: EpisodeSwipeAction, _ list: SwipeList, _ edge: HorizontalEdge) {
+        if action == .standard {
+            swipeActions.removeValue(forKey: list.key(edge))
+        } else {
+            swipeActions[list.key(edge)] = action.rawValue
+        }
+    }
+
     @Published var statisticsTimeRange: StatisticsTimeRange {
         didSet {
             UserDefaults.standard.set(statisticsTimeRange.rawValue, forKey: Keys.statisticsTimeRange)
@@ -2620,6 +2654,45 @@ final class AppSettings: ObservableObject {
         } else {
             statisticsResetAtEpochMs = 0
         }
+        AppSettings.migrateViewPrefsFromAppStorageOnce()
+        let ud = UserDefaults.standard
+        subscriptionsDisplayMode = SubscriptionsDisplayMode(rawValue: ud.string(forKey: Keys.subscriptionsDisplayMode) ?? "") ?? .list
+        let cols = ud.object(forKey: Keys.subscriptionsGridColumns) as? Int ?? 3
+        subscriptionsGridColumns = min(max(cols, 2), 5)
+        subscriptionsCounterMode = SubscriptionsCounterMode(rawValue: ud.string(forKey: Keys.subscriptionsCounterMode) ?? "") ?? .unplayed
+        swipeActions = ud.dictionary(forKey: Keys.swipeActions) as? [String: String] ?? [:]
+    }
+
+    /// One-time move of the NAV-10 / NAV-17 values that were stored with `@AppStorage`
+    /// (`subscriptions.*`, `swipe.<list>.<edge>`) into the AppSettings keys, then removes the old keys.
+    static func migrateViewPrefsFromAppStorageOnce(_ ud: UserDefaults = .standard) {
+        let flag = "settings.migratedViewPrefsFromAppStorage"
+        guard !ud.bool(forKey: flag) else { return }
+        let moves = [
+            ("subscriptions.displayMode", Keys.subscriptionsDisplayMode),
+            ("subscriptions.gridColumns", Keys.subscriptionsGridColumns),
+            ("subscriptions.counterMode", Keys.subscriptionsCounterMode),
+        ]
+        for (old, new) in moves {
+            if let value = ud.object(forKey: old) {
+                if ud.object(forKey: new) == nil { ud.set(value, forKey: new) }
+                ud.removeObject(forKey: old)
+            }
+        }
+        var swipes = ud.dictionary(forKey: Keys.swipeActions) as? [String: String] ?? [:]
+        for list in SwipeList.allCases {
+            for edge in [HorizontalEdge.leading, .trailing] {
+                let oldKey = "swipe.\(list.key(edge))"
+                if let raw = ud.string(forKey: oldKey) {
+                    if raw != EpisodeSwipeAction.standard.rawValue, swipes[list.key(edge)] == nil {
+                        swipes[list.key(edge)] = raw
+                    }
+                    ud.removeObject(forKey: oldKey)
+                }
+            }
+        }
+        ud.set(swipes, forKey: Keys.swipeActions)
+        ud.set(true, forKey: flag)
     }
 
     /// `true` when interval is not manual and enough time has passed since the last refresh
@@ -2955,7 +3028,11 @@ final class AppSettings: ObservableObject {
             queueFilter: queueFilter.rawValue,
             queuePodcastFilter: queuePodcastFilter,
             statisticsTimeRange: statisticsTimeRange.rawValue,
-            statisticsResetAtEpochMs: statisticsResetAtEpochMs
+            statisticsResetAtEpochMs: statisticsResetAtEpochMs,
+            subscriptionsDisplayMode: subscriptionsDisplayMode.rawValue,
+            subscriptionsGridColumns: subscriptionsGridColumns,
+            subscriptionsCounterMode: subscriptionsCounterMode.rawValue,
+            swipeActions: swipeActions
         )
     }
 
@@ -3181,6 +3258,18 @@ final class AppSettings: ObservableObject {
         if let statsRangeRaw = snap.statisticsTimeRange {
             statisticsTimeRange = StatisticsTimeRange(rawValue: statsRangeRaw) ?? .allTime
         }
+        if let raw = snap.subscriptionsDisplayMode {
+            subscriptionsDisplayMode = SubscriptionsDisplayMode(rawValue: raw) ?? .list
+        }
+        if let cols = snap.subscriptionsGridColumns {
+            subscriptionsGridColumns = min(max(cols, 2), 5)
+        }
+        if let raw = snap.subscriptionsCounterMode {
+            subscriptionsCounterMode = SubscriptionsCounterMode(rawValue: raw) ?? .unplayed
+        }
+        if let swipes = snap.swipeActions {
+            swipeActions = swipes.filter { EpisodeSwipeAction(rawValue: $0.value) != nil }
+        }
         if let resetMs = snap.statisticsResetAtEpochMs {
             statisticsResetAtEpochMs = resetMs
         }
@@ -3340,6 +3429,14 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var statisticsTimeRange: String? = nil
     /// Absent in older backups → 0 (no reset baseline).
     var statisticsResetAtEpochMs: Int64? = nil
+    /// Absent in older backups → list.
+    var subscriptionsDisplayMode: String? = nil
+    /// Absent in older backups → 3.
+    var subscriptionsGridColumns: Int? = nil
+    /// Absent in older backups → unplayed.
+    var subscriptionsCounterMode: String? = nil
+    /// Absent in older backups → every list uses its default swipe buttons.
+    var swipeActions: [String: String]? = nil
 }
 
 extension VolumeAdaptationMode {
