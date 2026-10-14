@@ -50006,6 +50006,550 @@
           }
         }
       }
+    },
+    "(Speed-adjusted listening time where recorded; older episodes use saved duration or position. Optional Reset baseline.)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(Speed-adjusted listening time where recorded; older episodes use saved duration or position. Optional Reset baseline.)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "(Geschwindigkeitsbereinigte Hörzeit, wo aufgezeichnet; ältere Episoden nutzen gespeicherte Dauer oder Position. Optionale Zurücksetzen-Basis.)"
+          }
+        }
+      }
+    },
+    "Applies to automatic downloads of new episodes only. Exclude terms win over include terms. Matching ignores case and accents. Episodes with unknown duration are not filtered by duration.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Applies to automatic downloads of new episodes only. Exclude terms win over include terms. Matching ignores case and accents. Episodes with unknown duration are not filtered by duration."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gilt nur für automatische Downloads neuer Episoden. Ausschlussbegriffe haben Vorrang vor Einschlussbegriffen. Groß-/Kleinschreibung und Akzente werden ignoriert. Episoden mit unbekannter Dauer werden nicht nach Dauer gefiltert."
+          }
+        }
+      }
+    },
+    "Clear episode filter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear episode filter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodenfilter löschen"
+          }
+        }
+      }
+    },
+    "Default volume adaptation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default volume adaptation"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard-Lautstärkeanpassung"
+          }
+        }
+      }
+    },
+    "Detects silence in the audio and plays it faster (up to 3×), then returns to your speed when sound resumes. Podcasts can override this in their settings; the player screen has a quick toggle. HLS streams are not analysed. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detects silence in the audio and plays it faster (up to 3×), then returns to your speed when sound resumes. Podcasts can override this in their settings; the player screen has a quick toggle. HLS streams are not analysed. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erkennt Stille im Audio und spielt sie schneller ab (bis 3×), danach geht es mit deiner Geschwindigkeit weiter, sobald wieder Ton kommt. Podcasts können das in ihren Einstellungen überschreiben; im Player gibt es einen Schnellschalter. HLS-Streams werden nicht analysiert. Standard: aus."
+          }
+        }
+      }
+    },
+    "Episode filter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode filter"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodenfilter"
+          }
+        }
+      }
+    },
+    "Exclude terms": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exclude terms"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausschlussbegriffe"
+          }
+        }
+      }
+    },
+    "Gain applied to every podcast without its own Volume adaptation override. Reductions lower loud shows; boosts raise quiet shows with a soft limiter. Applies immediately. Has no effect on HLS streams.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gain applied to every podcast without its own Volume adaptation override. Reductions lower loud shows; boosts raise quiet shows with a soft limiter. Applies immediately. Has no effect on HLS streams."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verstärkung für alle Podcasts ohne eigene Lautstärkeanpassung. Absenkungen machen laute Sendungen leiser, Anhebungen leise Sendungen lauter (mit sanftem Limiter). Wirkt sofort. Keine Wirkung bei HLS-Streams."
+          }
+        }
+      }
+    },
+    "Heavy boost": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heavy boost"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starke Anhebung"
+          }
+        }
+      }
+    },
+    "Heavy reduction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heavy reduction"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starke Absenkung"
+          }
+        }
+      }
+    },
+    "Include terms": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Include terms"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einschlussbegriffe"
+          }
+        }
+      }
+    },
+    "Light boost": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light boost"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leichte Anhebung"
+          }
+        }
+      }
+    },
+    "Light reduction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light reduction"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leichte Absenkung"
+          }
+        }
+      }
+    },
+    "Medium boost": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medium boost"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mittlere Anhebung"
+          }
+        }
+      }
+    },
+    "Listening time is recorded while you play and is adjusted for playback speed: an hour at 2× counts 30 minutes. Episodes played before this was recorded fall back to saved duration (played) or position (in progress). Does not count streaming with no saved progress. Time range + optional Reset use lastPlayedAt (else updatedAt). History size limit may drop oldest entries and their stats.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listening time is recorded while you play and is adjusted for playback speed: an hour at 2× counts 30 minutes. Episodes played before this was recorded fall back to saved duration (played) or position (in progress). Does not count streaming with no saved progress. Time range + optional Reset use lastPlayedAt (else updatedAt). History size limit may drop oldest entries and their stats."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Hörzeit wird beim Abspielen aufgezeichnet und um die Wiedergabegeschwindigkeit bereinigt: Eine Stunde bei 2× zählt 30 Minuten. Episoden, die vorher gehört wurden, nutzen die gespeicherte Dauer (gespielt) bzw. Position (begonnen). Streaming ohne gespeicherten Fortschritt zählt nicht. Zeitraum und optionales Zurücksetzen nutzen lastPlayedAt (sonst updatedAt). Das Verlaufslimit kann älteste Einträge samt Statistik entfernen."
+          }
+        }
+      }
+    },
+    "Maximum duration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximum duration"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximale Dauer"
+          }
+        }
+      }
+    },
+    "Minimum duration": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minimum duration"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Minimale Dauer"
+          }
+        }
+      }
+    },
+    "Off. Silence plays at normal speed. This is the default. Podcasts with their own Skip silence setting keep it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off. Silence plays at normal speed. This is the default. Podcasts with their own Skip silence setting keep it."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus. Stille wird mit normaler Geschwindigkeit abgespielt. Das ist der Standard. Podcasts mit eigener Einstellung für Stille überspringen behalten diese."
+          }
+        }
+      }
+    },
+    "On. Silent parts play faster, then playback returns to your speed. Podcasts with their own Skip silence setting keep it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On. Silent parts play faster, then playback returns to your speed. Podcasts with their own Skip silence setting keep it."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein. Stille Stellen werden schneller abgespielt, danach geht es mit deiner Geschwindigkeit weiter. Podcasts mit eigener Einstellung für Stille überspringen behalten diese."
+          }
+        }
+      }
+    },
+    "Real gain in the playback audio pipeline (per-podcast override in podcast settings). Reductions: 50% / 20%. Boosts: +6 / +12 / +18 dB with a soft limiter. HLS streams are not processed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Real gain in the playback audio pipeline (per-podcast override in podcast settings). Reductions: 50% / 20%. Boosts: +6 / +12 / +18 dB with a soft limiter. HLS streams are not processed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Echte Verstärkung in der Audio-Pipeline der Wiedergabe (pro Podcast in den Podcast-Einstellungen überschreibbar). Absenkungen: 50 % / 20 %. Anhebungen: +6 / +12 / +18 dB mit sanftem Limiter. HLS-Streams werden nicht verarbeitet."
+          }
+        }
+      }
+    },
+    "Silence skipped: %lld s saved": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Silence skipped: %lld s saved"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stille übersprungen: %lld s gespart"
+          }
+        }
+      }
+    },
+    "Skipping silence…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skipping silence…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stille wird übersprungen…"
+          }
+        }
+      }
+    },
+    "Speeds through silent parts of episodes and returns to your speed when sound resumes. Applies immediately. HLS streams are not analysed. Not Preserve pitch. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speeds through silent parts of episodes and returns to your speed when sound resumes. Applies immediately. HLS streams are not analysed. Not Preserve pitch. Default off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spielt stille Stellen schneller ab und kehrt zu deiner Geschwindigkeit zurück, sobald wieder Ton kommt. Wirkt sofort. HLS-Streams werden nicht analysiert. Nicht Tonhöhe beibehalten. Standard: aus."
+          }
+        }
+      }
+    },
+    "Time you actually spent listening, adjusted for playback speed. Older episodes without recorded listening time use their saved duration or position.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time you actually spent listening, adjusted for playback speed. Older episodes without recorded listening time use their saved duration or position."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tatsächlich gehörte Zeit, bereinigt um die Wiedergabegeschwindigkeit. Ältere Episoden ohne aufgezeichnete Hörzeit nutzen gespeicherte Dauer oder Position."
+          }
+        }
+      }
+    },
+    "Turns global Skip silence on or off. A podcast with its own Skip silence setting keeps it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turns global Skip silence on or off. A podcast with its own Skip silence setting keeps it."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schaltet Stille überspringen global ein oder aus. Ein Podcast mit eigener Einstellung behält diese."
+          }
+        }
+      }
+    },
+    "Use global (%@)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global (%@)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global verwenden (%@)"
+          }
+        }
+      }
+    },
+    "Use global or a per-podcast gain: reduce a loud podcast or boost a quiet one. Applies immediately if an episode from this podcast is playing. HLS streams are not processed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global or a per-podcast gain: reduce a loud podcast or boost a quiet one. Applies immediately if an episode from this podcast is playing. HLS streams are not processed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global verwenden oder eine eigene Verstärkung: einen lauten Podcast leiser oder einen leisen lauter machen. Wirkt sofort, wenn eine Episode dieses Podcasts läuft. HLS-Streams werden nicht verarbeitet."
+          }
+        }
+      }
+    },
+    "Use global, On, or Off for this podcast. When on, silent parts play faster and normal speed resumes when sound returns. Applies immediately if an episode from this podcast is playing.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use global, On, or Off for this podcast. When on, silent parts play faster and normal speed resumes when sound returns. Applies immediately if an episode from this podcast is playing."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global verwenden, Ein oder Aus für diesen Podcast. Wenn ein, werden stille Stellen schneller abgespielt, bei Ton geht es normal weiter. Wirkt sofort, wenn eine Episode dieses Podcasts läuft."
+          }
+        }
+      }
+    },
+    "Words or \"quoted phrases\". Episodes whose title contains one of them are never auto-downloaded.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Words or \"quoted phrases\". Episodes whose title contains one of them are never auto-downloaded."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wörter oder \"Phrasen in Anführungszeichen\". Episoden, deren Titel einen davon enthält, werden nie automatisch geladen."
+          }
+        }
+      }
+    },
+    "Words or \"quoted phrases\". When set, only episodes whose title contains one of them are auto-downloaded.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Words or \"quoted phrases\". When set, only episodes whose title contains one of them are auto-downloaded."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wörter oder \"Phrasen in Anführungszeichen\". Wenn gesetzt, werden nur Episoden automatisch geladen, deren Titel einen davon enthält."
+          }
+        }
+      }
+    },
+    "%@: Off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: Off"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: Aus"
+          }
+        }
+      }
+    },
+    "%@: %lld min": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: %lld min"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@: %lld Min."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
