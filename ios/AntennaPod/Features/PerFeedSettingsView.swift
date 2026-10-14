@@ -140,6 +140,74 @@ struct PerFeedSettingsView: View {
                 Text(String(localized: "When on, this podcast stays above unpinned podcasts on Subscriptions for every sort (Recently updated, Alphabetical, …). Local preference only — not a separate sort mode; not synced to gpodder; cleared when you unsubscribe. Included in iOS JSON backup with other feed settings."))
             }
 
+            // Android FeedSettings order: speed, volume adaptation, skip silence, intro/outro,
+            // auto-download + episode filter, auto-delete, keep updated (PodcastCore.FeedSettingsRow).
+            Section {
+                Picker("Playback speed", selection: playbackSpeedBinding) {
+                    Text("Use global").tag(Optional<Float>.none)
+                    ForEach(AppSettings.speedPresets, id: \.self) { speed in
+                        Text(PlaybackService.formatPlaybackSpeed(speed)).tag(Optional(speed))
+                    }
+                    if let override = current.playbackSpeed, !AppSettings.speedPresets.contains(override) {
+                        Text(PlaybackService.formatPlaybackSpeed(override))
+                            .tag(Optional(override))
+                    }
+                }
+                .accessibilityLabel(String(localized: "Playback speed"))
+                .accessibilityHint(String(localized: "Use global, a preset, or pick Custom… for this podcast’s playback speed. Applied on a fresh episode start and immediately when you change this while an episode from this podcast is playing. Player speed controls stay session-only and do not rewrite this override. Does not rewrite the global Default speed alone. Not Volume boost or Preserve pitch. Changing a preset does not seek or mark played."))
+                .accessibilityValue(playbackSpeedAccessibilityValue)
+                Button(String(localized: "Custom…")) {
+                    showCustomFeedSpeed = true
+                }
+                .accessibilityHint(String(localized: "Opens a sheet to set a custom playback speed for this podcast from 0.50× to 3.00×. Speed applies only after you confirm. Applied on a fresh episode start and immediately if an episode from this podcast is already playing. Does not rewrite the global Default speed alone. Not Volume boost or Preserve pitch."))
+                Text(playbackSpeedHelp)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel(playbackSpeedHelp)
+
+                Picker("Volume adaptation", selection: volumeAdaptationBinding) {
+                    Text("Use global (\(appSettings.volumeAdaptationMode.label))").tag(Optional<VolumeAdaptationMode>.none)
+                    ForEach(VolumeAdaptationMode.allCases) { mode in
+                        Text(mode.label).tag(Optional(mode))
+                    }
+                }
+                .accessibilityHint(String(localized: "Use global or a per-podcast gain: reduce a loud podcast or boost a quiet one. Applies immediately if an episode from this podcast is playing. HLS streams are not processed."))
+
+                Picker("Skip silence", selection: skipSilenceLevelBinding) {
+                    Text("Use global (\(globalSkipSilenceLabel))").tag(Optional<SkipSilenceLevel>.none)
+                    ForEach(SkipSilenceLevel.allCases) { level in
+                        Text(level.label).tag(Optional(level))
+                    }
+                }
+                .accessibilityHint(String(localized: "Use global, On, or Off for this podcast. When on, silent parts play faster and normal speed resumes when sound returns. Applies immediately if an episode from this podcast is playing."))
+
+                Picker("Skip intro", selection: skipIntroBinding) {
+                    Text("Use global").tag(Optional<Int>.none)
+                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
+                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(Optional(secs))
+                    }
+                }
+                .accessibilityLabel(String(localized: "Skip intro"))
+                .accessibilityHint(String(localized: "Use global or a per-podcast override. Applied on a fresh start (position near 0). Changing this does not seek now, start playback, or download. Distinct from Skip outro, Rewind, and Fast-forward."))
+                Text(skipIntroHelp)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                Picker("Skip outro", selection: skipOutroBinding) {
+                    Text("Use global").tag(Optional<Int>.none)
+                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
+                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(Optional(secs))
+                    }
+                }
+                .accessibilityLabel(String(localized: "Skip outro"))
+                .accessibilityHint(String(localized: "Use global or a per-podcast override. Near end, remaining within the value finishes the episode like a natural end when duration is known. Changing this does not mark played now, seek, or download. Distinct from Skip intro and Smart mark as played."))
+                Text(skipOutroHelp)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            } header: {
+                Text("Playback")
+            }
+
             Section {
                 Picker("Auto-download", selection: autoDownloadBinding) {
                     ForEach(PerFeedOverride.allCases) { option in
@@ -152,7 +220,37 @@ struct PerFeedSettingsView: View {
                 Text(autoDownloadHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+            } header: {
+                Text("Downloads")
+            }
 
+            Section {
+                TextField(String(localized: "Include terms"), text: filterBinding(\.includeTerms), axis: .vertical)
+                    .textInputAutocapitalization(.never)
+                    .accessibilityHint(String(localized: "Words or \"quoted phrases\". When set, only episodes whose title contains one of them are auto-downloaded."))
+                TextField(String(localized: "Exclude terms"), text: filterBinding(\.excludeTerms), axis: .vertical)
+                    .textInputAutocapitalization(.never)
+                    .accessibilityHint(String(localized: "Words or \"quoted phrases\". Episodes whose title contains one of them are never auto-downloaded."))
+                Stepper(value: filterMinutesBinding(\.minimumDurationSeconds), in: 0...600, step: 5) {
+                    Text(filterMinutesLabel(String(localized: "Minimum duration"), current.episodeFilter.minimumDurationSeconds))
+                }
+                Stepper(value: filterMinutesBinding(\.maximumDurationSeconds), in: 0...600, step: 5) {
+                    Text(filterMinutesLabel(String(localized: "Maximum duration"), current.episodeFilter.maximumDurationSeconds))
+                }
+                if !current.episodeFilter.isEmpty {
+                    Button(String(localized: "Clear episode filter"), role: .destructive) {
+                        store.updateFeedSettings(for: feedId) { $0.episodeFilter = .none }
+                    }
+                }
+            } header: {
+                Text("Episode filter")
+            } footer: {
+                Text("Applies to automatic downloads of new episodes only. Exclude terms win over include terms. Matching ignores case and accents. Episodes with unknown duration are not filtered by duration.")
+            }
+            // Android greys the filter out while auto-download is off for this podcast.
+            .disabled(!current.allowsAutoDownload(globalEnabled: appSettings.autoDownloadEnabled))
+
+            Section {
                 Picker("Delete after playing", selection: autoDeleteBinding) {
                     ForEach(PerFeedOverride.allCases) { option in
                         Text(option.label).tag(option)
@@ -166,7 +264,7 @@ struct PerFeedSettingsView: View {
                     .foregroundStyle(.secondary)
                     .accessibilityLabel(autoDeleteHelp)
             } header: {
-                Text("Downloads")
+                Text("Auto-delete")
             }
 
             Section {
@@ -221,94 +319,6 @@ struct PerFeedSettingsView: View {
                 Text("Notifications")
             } footer: {
                 Text(String(localized: "Global Notify on new episodes is the master switch. Per-podcast On is ignored while global is off; per-podcast Off silences that feed when global is on. Local UserNotifications only — no push / APNs."))
-            }
-
-            Section {
-                Picker("Skip intro", selection: skipIntroBinding) {
-                    Text("Use global").tag(Optional<Int>.none)
-                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
-                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(Optional(secs))
-                    }
-                }
-                .accessibilityLabel(String(localized: "Skip intro"))
-                .accessibilityHint(String(localized: "Use global or a per-podcast override. Applied on a fresh start (position near 0). Changing this does not seek now, start playback, or download. Distinct from Skip outro, Rewind, and Fast-forward."))
-                Text(skipIntroHelp)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                Picker("Skip outro", selection: skipOutroBinding) {
-                    Text("Use global").tag(Optional<Int>.none)
-                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
-                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(Optional(secs))
-                    }
-                }
-                .accessibilityLabel(String(localized: "Skip outro"))
-                .accessibilityHint(String(localized: "Use global or a per-podcast override. Near end, remaining within the value finishes the episode like a natural end when duration is known. Changing this does not mark played now, seek, or download. Distinct from Skip intro and Smart mark as played."))
-                Text(skipOutroHelp)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                Picker("Playback speed", selection: playbackSpeedBinding) {
-                    Text("Use global").tag(Optional<Float>.none)
-                    ForEach(AppSettings.speedPresets, id: \.self) { speed in
-                        Text(PlaybackService.formatPlaybackSpeed(speed)).tag(Optional(speed))
-                    }
-                    if let override = current.playbackSpeed, !AppSettings.speedPresets.contains(override) {
-                        Text(PlaybackService.formatPlaybackSpeed(override))
-                            .tag(Optional(override))
-                    }
-                }
-                .accessibilityLabel(String(localized: "Playback speed"))
-                .accessibilityHint(String(localized: "Use global, a preset, or pick Custom… for this podcast’s playback speed. Applied on a fresh episode start and immediately when you change this while an episode from this podcast is playing. Player speed controls stay session-only and do not rewrite this override. Does not rewrite the global Default speed alone. Not Volume boost or Preserve pitch. Changing a preset does not seek or mark played."))
-                .accessibilityValue(playbackSpeedAccessibilityValue)
-                Button(String(localized: "Custom…")) {
-                    showCustomFeedSpeed = true
-                }
-                .accessibilityHint(String(localized: "Opens a sheet to set a custom playback speed for this podcast from 0.50× to 3.00×. Speed applies only after you confirm. Applied on a fresh episode start and immediately if an episode from this podcast is already playing. Does not rewrite the global Default speed alone. Not Volume boost or Preserve pitch."))
-                Text(playbackSpeedHelp)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .accessibilityLabel(playbackSpeedHelp)
-                Picker("Volume adaptation", selection: volumeAdaptationBinding) {
-                    Text("Use global (\(appSettings.volumeAdaptationMode.label))").tag(Optional<VolumeAdaptationMode>.none)
-                    ForEach(VolumeAdaptationMode.allCases) { mode in
-                        Text(mode.label).tag(Optional(mode))
-                    }
-                }
-                .accessibilityHint(String(localized: "Use global or a per-podcast gain: reduce a loud podcast or boost a quiet one. Applies immediately if an episode from this podcast is playing. HLS streams are not processed."))
-                Picker("Skip silence", selection: skipSilenceLevelBinding) {
-                    Text("Use global (\(globalSkipSilenceLabel))").tag(Optional<SkipSilenceLevel>.none)
-                    ForEach(SkipSilenceLevel.allCases) { level in
-                        Text(level.label).tag(Optional(level))
-                    }
-                }
-                .accessibilityHint(String(localized: "Use global, On, or Off for this podcast. When on, silent parts play faster and normal speed resumes when sound returns. Applies immediately if an episode from this podcast is playing."))
-            } header: {
-                Text("Playback")
-            }
-
-            Section {
-                TextField(String(localized: "Include terms"), text: filterBinding(\.includeTerms), axis: .vertical)
-                    .textInputAutocapitalization(.never)
-                    .accessibilityHint(String(localized: "Words or \"quoted phrases\". When set, only episodes whose title contains one of them are auto-downloaded."))
-                TextField(String(localized: "Exclude terms"), text: filterBinding(\.excludeTerms), axis: .vertical)
-                    .textInputAutocapitalization(.never)
-                    .accessibilityHint(String(localized: "Words or \"quoted phrases\". Episodes whose title contains one of them are never auto-downloaded."))
-                Stepper(value: filterMinutesBinding(\.minimumDurationSeconds), in: 0...600, step: 5) {
-                    Text(filterMinutesLabel(String(localized: "Minimum duration"), current.episodeFilter.minimumDurationSeconds))
-                }
-                Stepper(value: filterMinutesBinding(\.maximumDurationSeconds), in: 0...600, step: 5) {
-                    Text(filterMinutesLabel(String(localized: "Maximum duration"), current.episodeFilter.maximumDurationSeconds))
-                }
-                if !current.episodeFilter.isEmpty {
-                    Button(String(localized: "Clear episode filter"), role: .destructive) {
-                        store.updateFeedSettings(for: feedId) { $0.episodeFilter = .none }
-                    }
-                }
-            } header: {
-                Text("Episode filter")
-            } footer: {
-                Text("Applies to automatic downloads of new episodes only. Exclude terms win over include terms. Matching ignores case and accents. Episodes with unknown duration are not filtered by duration.")
             }
 
             Section {
