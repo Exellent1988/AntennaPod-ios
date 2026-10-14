@@ -1,5 +1,6 @@
 import AVFoundation
 import AudioDSP
+import PodcastCore
 import Combine
 import Foundation
 import MediaPlayer
@@ -1083,6 +1084,16 @@ final class PlaybackService: ObservableObject {
                 guard self.player === player else { return }
                 guard !self.isSeekHoldActive else { return }
                 guard seconds.isFinite else { return }
+                let now = Date()
+                let playingNow = player.timeControlStatus == .playing
+                if let last = self.lastListenTick {
+                    self.listenAccumulator.tick(
+                        wallDelta: now.timeIntervalSince(last.wall),
+                        mediaDelta: seconds - last.media,
+                        isPlaying: playingNow
+                    )
+                }
+                self.lastListenTick = (now, seconds)
                 self.positionSeconds = max(0, seconds)
                 if let duration = player.currentItem?.duration.seconds, duration.isFinite {
                     self.durationSeconds = duration
@@ -1460,10 +1471,13 @@ final class PlaybackService: ObservableObject {
         } else {
             positionToSave = positionSeconds
         }
+        let listened = listenAccumulator.drain()
         store.saveProgress(
             episodeId: episode.id,
             positionSeconds: positionToSave,
-            durationSeconds: durationSeconds
+            durationSeconds: durationSeconds,
+            listenedWallDelta: listened.wall,
+            listenedMediaDelta: listened.media
         )
     }
 
@@ -1647,6 +1661,13 @@ final class PlaybackService: ObservableObject {
     }
 
     private func tearDownPlayer(clearSleepTimer: Bool) {
+        // Flush listened time to the episode being left before currentEpisode changes.
+        if let episode = currentEpisode {
+            let listened = listenAccumulator.drain()
+            store?.addListenedTime(episodeId: episode.id, wallSeconds: listened.wall, mediaSeconds: listened.media)
+        }
+        lastListenTick = nil
+        listenAccumulator = ListeningSessionAccumulator()
         audioPipeline = nil
         isSkippingSilence = false
         skipSilenceStartedAt = nil
@@ -1733,6 +1754,10 @@ final class PlaybackService: ObservableObject {
     /// Pipeline for the current item; `nil` when nothing is loaded. All tap-based features
     /// (Volume boost, per-feed Volume adaptation, Skip silence analysis) are stages of this one chain.
     private(set) var audioPipeline: PlayerAudioPipeline?
+
+    /// Speed-adjusted listening time for Statistics (wall vs media seconds, flushed with progress).
+    private var listenAccumulator = ListeningSessionAccumulator()
+    private var lastListenTick: (wall: Date, media: Double)?
 
     /// Linear gain applied by the pipeline's gain stage.
     /// Settings **Volume boost** percent / 100 × Volume adaptation factor (soft limiter above unity).

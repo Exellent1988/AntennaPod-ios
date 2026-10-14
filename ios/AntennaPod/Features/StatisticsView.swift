@@ -92,7 +92,7 @@ struct StatisticsView: View {
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel(String(localized: "Approx. listening time"))
                     .accessibilityValue(Self.formatDuration(stats.approximateListenedSeconds))
-                    .accessibilityHint(String(localized: "Wall-clock estimate from saved duration or position, not speed-adjusted"))
+                    .accessibilityHint(String(localized: "Time you actually spent listening, adjusted for playback speed. Older episodes without recorded listening time use their saved duration or position."))
                 } header: {
                     Text("Totals")
                 } footer: {
@@ -229,7 +229,7 @@ struct StatisticsView: View {
     }
 
     private static var approximationFootnote: String {
-        String(localized: "Approximate wall-clock time: played episodes use saved duration (position cleared when marked played); in-progress use saved position. Not speed-adjusted — 1.5× does not shrink totals. Does not count rewinds, re-listens, or streaming with no saved progress. Played with unknown duration contribute 0. Derived from playback.json — no separate cumulative counter. Time range + optional Reset use lastPlayedAt (else updatedAt) — episode-level stamps, not per-session listen windows. History size limit may drop oldest entries and their stats.")
+        String(localized: "Listening time is recorded while you play and is adjusted for playback speed: an hour at 2× counts 30 minutes. Episodes played before this was recorded fall back to saved duration (played) or position (in progress). Does not count streaming with no saved progress. Time range + optional Reset use lastPlayedAt (else updatedAt). History size limit may drop oldest entries and their stats.")
     }
 
     private static var topPodcastsFootnote: String {
@@ -330,7 +330,7 @@ struct StatisticsView: View {
         lines.append("")
         lines.append(
             String(
-                localized: "(Approximate wall-clock — played use saved duration; in-progress use position. Not speed-adjusted. No rewinds, re-listens, or streaming without saved progress. Coarse episode stamps — lastPlayedAt else updatedAt; optional Reset baseline.)"
+                localized: "(Speed-adjusted listening time where recorded; older episodes use saved duration or position. Optional Reset baseline.)"
             )
         )
         return lines.joined(separator: "\n")
