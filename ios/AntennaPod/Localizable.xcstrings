@@ -50720,6 +50720,23 @@
           }
         }
       }
+    },
+    "Auto-delete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-delete"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatisch löschen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
