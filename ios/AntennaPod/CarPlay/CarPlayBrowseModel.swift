@@ -12,29 +12,47 @@ struct CarPlayRow: Equatable {
     var target: Target
 }
 
+/// What a CarPlay list last showed; equal snapshots skip `updateSections`.
+/// Playing id is normalized to rows actually in the list, so unrelated playback changes are no-ops.
+struct CarPlayListSnapshot: Equatable {
+    let rows: [CarPlayRow]
+    let playingEpisodeId: String?
+
+    init(rows: [CarPlayRow], playingEpisodeId: String?) {
+        self.rows = rows
+        let inList = rows.contains { $0.target == .episode(playingEpisodeId ?? "") }
+        self.playingEpisodeId = (playingEpisodeId != nil && inList) ? playingEpisodeId : nil
+    }
+}
+
 enum CarPlayBrowseModel {
     /// CarPlay list templates are capped by `CPListTemplate.maximumItemCount` (typically 12–100);
     /// we cap conservatively and let the template clamp further.
     static let maxRows = 100
+    /// Coalesce bursts (refresh-all, bulk queue edits) into one CarPlay list update.
+    static let refreshDebounceMs = 400
 
     static func subscriptionRows(_ feeds: [PodcastFeed]) -> [CarPlayRow] {
         feeds
             .sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
             .prefix(maxRows)
-            .map { CarPlayRow(title: $0.title, detail: $0.author, imageUrl: $0.imageUrl, target: .feed($0.id)) }
+            .map { CarPlayRow(title: $0.title, detail: $0.author, imageUrl: artworkURL($0.preferredDisplayArtworkURL, $0.imageUrl), target: .feed($0.id)) }
     }
 
     /// Newest first; episodes without a date go last.
-    static func episodeRows(_ episodes: [PodcastEpisode], feedTitle: String? = nil) -> [CarPlayRow] {
+    static func episodeRows(_ episodes: [PodcastEpisode], feedTitle: String? = nil, feedArtwork: String? = nil) -> [CarPlayRow] {
         episodes
             .sorted { newerFirst($0.pubDateEpochMs, $1.pubDateEpochMs) }
             .prefix(maxRows)
-            .map { episodeRow($0, detail: feedTitle) }
+            .map { episodeRow($0, detail: feedTitle, feedArtwork: feedArtwork) }
     }
 
     /// Queue keeps user order.
-    static func queueRows(_ queue: [PodcastEpisode], feedTitleFor: (PodcastEpisode) -> String?) -> [CarPlayRow] {
-        queue.prefix(maxRows).map { episodeRow($0, detail: feedTitleFor($0)) }
+    static func queueRows(_ queue: [PodcastEpisode], feedFor: (PodcastEpisode) -> PodcastFeed?) -> [CarPlayRow] {
+        queue.prefix(maxRows).map { ep in
+            let feed = feedFor(ep)
+            return episodeRow(ep, detail: feed?.title, feedArtwork: feed.flatMap { artworkURL($0.preferredDisplayArtworkURL, $0.imageUrl) })
+        }
     }
 
     static func downloadRows(
@@ -42,16 +60,16 @@ enum CarPlayBrowseModel {
         isDownloaded: (PodcastEpisode) -> Bool
     ) -> [CarPlayRow] {
         var seen = Set<String>()
-        var pairs: [(PodcastEpisode, String)] = []
+        var pairs: [(PodcastEpisode, PodcastFeed)] = []
         for feed in feeds {
             for ep in feed.episodes where isDownloaded(ep) && seen.insert(ep.id).inserted {
-                pairs.append((ep, feed.title))
+                pairs.append((ep, feed))
             }
         }
         return pairs
             .sorted { newerFirst($0.0.pubDateEpochMs, $1.0.pubDateEpochMs) }
             .prefix(maxRows)
-            .map { episodeRow($0.0, detail: $0.1) }
+            .map { episodeRow($0.0, detail: $0.1.title, feedArtwork: artworkURL($0.1.preferredDisplayArtworkURL, $0.1.imageUrl)) }
     }
 
     /// Sort predicate: newer dates first, undated items last.
@@ -66,12 +84,34 @@ enum CarPlayBrowseModel {
         return h > 0 ? String(format: "%d:%02d:%02d", h, m, s) : String(format: "%d:%02d", m, s)
     }
 
-    private static func episodeRow(_ ep: PodcastEpisode, detail: String?) -> CarPlayRow {
+    /// First non-blank http(s) URL among candidates (episode art, then feed art).
+    static func artworkURL(_ candidates: String?...) -> String? {
+        for c in candidates {
+            guard let t = c?.trimmingCharacters(in: .whitespacesAndNewlines), !t.isEmpty,
+                  let scheme = URL(string: t)?.scheme?.lowercased(), scheme == "http" || scheme == "https"
+            else { continue }
+            return t
+        }
+        return nil
+    }
+
+    /// Pixel size to decode artwork at: CarPlay max item image size (points) × screen scale, ≥1.
+    static func artworkPixelSize(maxPoints: Double, scale: Double) -> Int {
+        max(1, Int((maxPoints * max(scale, 1)).rounded(.up)))
+    }
+
+    /// Distinct artwork URLs in row order (one fetch per URL).
+    static func uniqueArtworkURLs(_ rows: [CarPlayRow]) -> [String] {
+        var seen = Set<String>()
+        return rows.compactMap(\.imageUrl).filter { seen.insert($0).inserted }
+    }
+
+    private static func episodeRow(_ ep: PodcastEpisode, detail: String?, feedArtwork: String? = nil) -> CarPlayRow {
         let parts = [detail, durationText(ep.durationSeconds)].compactMap { $0 }.filter { !$0.isEmpty }
         return CarPlayRow(
             title: ep.title,
             detail: parts.isEmpty ? nil : parts.joined(separator: " · "),
-            imageUrl: nil,
+            imageUrl: artworkURL(ep.preferredPodcastImagesArtworkURL, feedArtwork),
             target: .episode(ep.id)
         )
     }
