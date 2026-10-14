@@ -146,7 +146,7 @@ struct OpmlImportExportSection: View {
         }
         .fileExporter(
             isPresented: $showFileExporter,
-            document: $exportDocument,
+            document: exportDocument,
             contentType: .opml,
             defaultFilename: exportDefaultName
         ) { result in

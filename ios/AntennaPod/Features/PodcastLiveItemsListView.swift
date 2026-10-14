@@ -70,10 +70,13 @@ struct PodcastLiveItemsListView: View {
         // Exact displayed captions — Copy/Share must match these strings; never invent an end.
         let startCaption = String(localized: "Starts \(startText)")
         let endCaption: String? = endText.map { String(localized: "Ends \($0)") }
-        var detailLines = [statusText]
-        if let titleText { detailLines.append(titleText) }
-        detailLines.append(startCaption)
-        if let endCaption { detailLines.append(endCaption) }
+        let detailLines: [String] = {
+            var lines = [statusText]
+            if let titleText { lines.append(titleText) }
+            lines.append(startCaption)
+            if let endCaption { lines.append(endCaption) }
+            return lines
+        }()
         let detailsText = detailLines.joined(separator: "\n")
         let linkURL = item.linkURL
         let contentLinks = item.openableContentLinks

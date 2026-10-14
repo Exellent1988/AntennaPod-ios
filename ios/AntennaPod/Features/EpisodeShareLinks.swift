@@ -45,7 +45,7 @@ enum EpisodeShareLinks {
         positionSeconds: Double?,
         feedDisplayTitle: String? = nil
     ) -> some View {
-        let shownFeedTitle = {
+        let shownFeedTitle: String? = {
             let trimmed = feedDisplayTitle?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
             if !trimmed.isEmpty { return trimmed }
             return feed?.title
@@ -110,7 +110,8 @@ enum EpisodeShareLinks {
         return ShareLink(
             item: item,
             subject: Text(message),
-            message: Text(message)
+            message: Text(message),
+            preview: SharePreview(message)
         ) {
             Label("Share media URL", systemImage: "square.and.arrow.up")
         }

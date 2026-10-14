@@ -2452,27 +2452,28 @@ final class AppSettings: ObservableObject {
         customUserAgent = AppUserAgent.sanitize(
             UserDefaults.standard.string(forKey: Keys.customUserAgent) ?? ""
         )
-        if UserDefaults.standard.object(forKey: Keys.httpProxyEnabled) != nil {
-            httpProxyEnabled = UserDefaults.standard.bool(forKey: Keys.httpProxyEnabled)
-        } else {
-            httpProxyEnabled = false
-        }
-        httpProxyHost = AppHTTPProxy.sanitizeHost(
+        let initialProxyEnabled = UserDefaults.standard.object(forKey: Keys.httpProxyEnabled) != nil
+            ? UserDefaults.standard.bool(forKey: Keys.httpProxyEnabled)
+            : false
+        let initialProxyHost = AppHTTPProxy.sanitizeHost(
             UserDefaults.standard.string(forKey: Keys.httpProxyHost) ?? ""
         )
-        if UserDefaults.standard.object(forKey: Keys.httpProxyPort) != nil {
-            httpProxyPort = UserDefaults.standard.integer(forKey: Keys.httpProxyPort)
-        } else {
-            httpProxyPort = AppHTTPProxy.defaultPort
-        }
-        httpProxyUsername = AppHTTPProxy.sanitizeUsername(
+        let initialProxyPort = UserDefaults.standard.object(forKey: Keys.httpProxyPort) != nil
+            ? UserDefaults.standard.integer(forKey: Keys.httpProxyPort)
+            : AppHTTPProxy.defaultPort
+        let initialProxyUsername = AppHTTPProxy.sanitizeUsername(
             UserDefaults.standard.string(forKey: Keys.httpProxyUsername) ?? ""
         )
+        httpProxyEnabled = initialProxyEnabled
+        httpProxyHost = initialProxyHost
+        httpProxyPort = initialProxyPort
+        httpProxyUsername = initialProxyUsername
         // didSet does not run during init — seed UserDefaults so AppHTTPProxy.resolved matches in-memory prefs.
-        UserDefaults.standard.set(httpProxyEnabled, forKey: Keys.httpProxyEnabled)
-        UserDefaults.standard.set(httpProxyHost, forKey: Keys.httpProxyHost)
-        UserDefaults.standard.set(httpProxyPort, forKey: Keys.httpProxyPort)
-        UserDefaults.standard.set(httpProxyUsername, forKey: Keys.httpProxyUsername)
+        // Uses locals: reading `self` here is invalid before all stored properties are initialized.
+        UserDefaults.standard.set(initialProxyEnabled, forKey: Keys.httpProxyEnabled)
+        UserDefaults.standard.set(initialProxyHost, forKey: Keys.httpProxyHost)
+        UserDefaults.standard.set(initialProxyPort, forKey: Keys.httpProxyPort)
+        UserDefaults.standard.set(initialProxyUsername, forKey: Keys.httpProxyUsername)
         if UserDefaults.standard.object(forKey: Keys.keepScreenOnWhilePlaying) != nil {
             keepScreenOnWhilePlaying = UserDefaults.standard.bool(forKey: Keys.keepScreenOnWhilePlaying)
         } else {

@@ -1423,12 +1423,12 @@ struct FullPlayerView: View {
                 showCustomPlaybackSpeed = true
             }
             .accessibilityHint(String(localized: "Opens a sheet to set a custom session playback speed from 0.50× to 3.00×. Speed applies only after you confirm. Optional Also set as default. Does not change a per-podcast speed override by itself. Not Volume boost or Preserve pitch."))
-        } primaryAction: {
-            playback.cycleToNextSpeedPreset()
         } label: {
             Text(PlaybackService.formatPlaybackSpeed(playback.rate))
                 .font(.subheadline.weight(.semibold).monospacedDigit())
                 .frame(minWidth: 44)
+        } primaryAction: {
+            playback.cycleToNextSpeedPreset()
         }
         .accessibilityLabel("\(String(localized: "Playback speed")) \(PlaybackService.formatPlaybackSpeed(playback.rate))")
         .accessibilityHint(String(localized: "Cycles the session playback speed through presets. Does not change Default speed or this podcast’s speed override. Long-press for the full list and Custom…. Not Volume boost or Preserve pitch."))

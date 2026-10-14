@@ -696,3 +696,26 @@ struct HistoryView: View {
     }
 }
 
+
+/// Podcast filter chip for History (same style as Archived/Favorites/Inbox chips).
+private struct HistoryPodcastFilterChip: View {
+    let title: String
+    let selected: Bool
+    let accessibilityHint: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline.weight(selected ? .semibold : .regular))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(selected ? Color.accentColor : Color.secondary.opacity(0.15), in: Capsule())
+                .foregroundStyle(selected ? Color.white : Color.primary)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(title)
+        .accessibilityHint(accessibilityHint)
+        .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+}

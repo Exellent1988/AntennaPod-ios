@@ -7,6 +7,7 @@ import UIKit
 /// never invents; `file://` / `local-folder` omitted). Emits nothing when neither URL is usable.
 /// Pasteboard helpers shared with Full player / Shownotes / EpisodeRow callers.
 /// Used by Full player secondary (via helpers) + mini player ⋯ (via `labelStyle`).
+@MainActor
 enum EpisodeCopyLinks {
     /// Feed or saved playback duration used by EpisodeRow metadata captions.
     /// A live player duration can be supplied by callers that have media metadata; never invents.
