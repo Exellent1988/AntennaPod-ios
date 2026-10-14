@@ -1114,8 +1114,8 @@ final class PlaybackService: ObservableObject {
                 }
                 // play() is documented to set rate to 1.0. Re-apply the session/feed
                 // speed once the item is actually playing, or a 1.5× label still plays at 1×.
-                if playing, abs(player.rate - self.rate) > 0.01 {
-                    player.rate = self.rate
+                if playing, abs(player.rate - self.effectivePlayerRate) > 0.01 {
+                    player.rate = self.effectivePlayerRate
                 }
                 self.isPlaying = playing
                 self.updateNowPlayingInfo(force: true)
@@ -1648,6 +1648,8 @@ final class PlaybackService: ObservableObject {
 
     private func tearDownPlayer(clearSleepTimer: Bool) {
         audioPipeline = nil
+        isSkippingSilence = false
+        skipSilenceStartedAt = nil
         clearSoundbiteEndMarker()
         if clearSleepTimer {
             disableSleepTimer()
@@ -1750,10 +1752,65 @@ final class PlaybackService: ObservableObject {
     /// Push current Settings / FeedSettings into the live pipeline stages (cheap; no item rebuild).
     func refreshAudioPipelineParameters() {
         audioPipeline?.gain.gain = resolvedPipelineGain()
+        audioPipeline?.silence.isEnabled = resolvedSkipSilenceEnabled()
+    }
+
+    // MARK: Skip silence
+
+    /// `true` while the pipeline detects silence and playback runs faster (player-screen indicator).
+    @Published private(set) var isSkippingSilence = false
+    /// Wall-clock seconds saved by Skip silence in this app session (all episodes).
+    @Published private(set) var skipSilenceSecondsSaved: Double = 0
+    private var skipSilenceStartedAt: Date?
+
+    /// Per-feed Skip silence override, else global (Android: per-feed + global prefs).
+    func resolvedSkipSilenceEnabled() -> Bool {
+        let global = settings?.skipSilenceEnabled ?? false
+        guard let episode = currentEpisode, let store,
+              let feed = store.feed(containingEpisodeId: episode.id) else { return global }
+        return SkipSilenceRate.isEnabled(feedOverride: store.feedSettings(for: feed.id).skipSilence, global: global)
+    }
+
+    /// Player-screen toggle: flips the global preference (same as Android's player dialog).
+    func toggleSkipSilence() {
+        settings?.skipSilenceEnabled.toggle()
+        refreshAudioPipelineParameters()
+    }
+
+    /// Rate to hand AVPlayer: session/feed speed, sped up during detected silence.
+    /// `rate` (the user-facing speed) is never changed by Skip silence.
+    var effectivePlayerRate: Float {
+        let maxRate: Float = (player?.currentItem?.canPlayFastForward ?? false) ? Self.customPlaybackSpeedRange.upperBound : 2
+        return SkipSilenceRate.effectiveRate(base: rate, isSkipping: isSkippingSilence, maxRate: maxRate)
+    }
+
+    private func handleSilenceStateChange(_ skipping: Bool, pipeline: PlayerAudioPipeline) {
+        guard audioPipeline === pipeline, isSkippingSilence != skipping else { return }
+        if skipping {
+            skipSilenceStartedAt = Date()
+        } else if let start = skipSilenceStartedAt {
+            // Wall time at fast rate t covered t·fast media seconds, which would take t·fast/base.
+            let wall = Date().timeIntervalSince(start)
+            let fast = effectivePlayerRate
+            skipSilenceSecondsSaved += SkipSilenceRate.timeSaved(mediaSeconds: wall * Double(fast), base: rate, fastRate: fast)
+            skipSilenceStartedAt = nil
+        }
+        isSkippingSilence = skipping
+        guard let player, player.timeControlStatus == .playing else { return }
+        player.rate = effectivePlayerRate
     }
 
     /// Hook for features that add stages to a freshly created pipeline (before the tap is attached).
     private func configureAudioPipelineStages(_ pipeline: PlayerAudioPipeline) {
+        isSkippingSilence = false
+        skipSilenceStartedAt = nil
+        pipeline.silence.onChange = { [weak self, weak pipeline] skipping in
+            // Audio thread → main actor.
+            Task { @MainActor [weak self] in
+                guard let self, let pipeline else { return }
+                self.handleSilenceStateChange(skipping, pipeline: pipeline)
+            }
+        }
     }
 
     /// Attach a new pipeline tap to `item`. Taps do not run for HLS / protected items — features on

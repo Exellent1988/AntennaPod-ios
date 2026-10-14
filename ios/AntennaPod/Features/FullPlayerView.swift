@@ -1403,6 +1403,23 @@ struct FullPlayerView: View {
 
     private var speedMenu: some View {
         Menu {
+            Button {
+                playback.toggleSkipSilence()
+            } label: {
+                Label(
+                    String(localized: "Skip silence"),
+                    systemImage: settings.skipSilenceEnabled ? "checkmark.circle.fill" : "circle"
+                )
+            }
+            .accessibilityValue(settings.skipSilenceEnabled ? String(localized: "On") : String(localized: "Off"))
+            .accessibilityHint(String(localized: "Turns global Skip silence on or off. A podcast with its own Skip silence setting keeps it."))
+            if playback.isSkippingSilence {
+                Text("Skipping silence…")
+            }
+            if playback.skipSilenceSecondsSaved >= 1 {
+                Text("Silence skipped: \(Int(playback.skipSilenceSecondsSaved)) s saved")
+            }
+            Divider()
             ForEach(AppSettings.speedPresets, id: \.self) { speed in
                 Button {
                     playback.setRate(speed)
