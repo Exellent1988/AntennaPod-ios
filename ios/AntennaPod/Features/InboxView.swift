@@ -483,53 +483,59 @@ struct InboxView: View {
                     EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
                     .tag(item.episode.id)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button {
-                                store.playNext(
-                                    item.episode,
-                                    currentlyPlayingId: playback.currentEpisode?.id
-                                )
-                            } label: {
-                                Label("Play Next", systemImage: "text.insert")
-                            }
-                            .tint(.teal)
-                            .accessibilityHint(
-                                String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
-                            )
-                            if store.isInQueue(item.episode.id) {
-                                Button(role: .destructive) {
-                                    episodePendingRemoveFromQueue = item.episode
-                                } label: {
-                                    Label("Remove from queue", systemImage: "minus.circle")
-                                }
-                                .accessibilityHint(
-                                    String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
-                                )
-                            } else {
+                            // Android SwipeActions: user-configurable; Default keeps these buttons.
+                            SwipeSlot(.inbox, .trailing, episode: item.episode) {
                                 Button {
-                                    store.enqueue(item.episode)
+                                    store.playNext(
+                                        item.episode,
+                                        currentlyPlayingId: playback.currentEpisode?.id
+                                    )
                                 } label: {
-                                    Label("Add to queue", systemImage: "text.append")
+                                    Label("Play Next", systemImage: "text.insert")
                                 }
-                                .tint(.purple)
+                                .tint(.teal)
                                 .accessibilityHint(
-                                    String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
+                                    String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
                                 )
+                                if store.isInQueue(item.episode.id) {
+                                    Button(role: .destructive) {
+                                        episodePendingRemoveFromQueue = item.episode
+                                    } label: {
+                                        Label("Remove from queue", systemImage: "minus.circle")
+                                    }
+                                    .accessibilityHint(
+                                        String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
+                                    )
+                                } else {
+                                    Button {
+                                        store.enqueue(item.episode)
+                                    } label: {
+                                        Label("Add to queue", systemImage: "text.append")
+                                    }
+                                    .tint(.purple)
+                                    .accessibilityHint(
+                                        String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
+                                    )
+                                }
+                                Button {
+                                    store.archive(item.episode.id)
+                                } label: {
+                                    Label("Archive", systemImage: "archivebox")
+                                }
+                                .tint(.orange)
                             }
-                            Button {
-                                store.archive(item.episode.id)
-                            } label: {
-                                Label("Archive", systemImage: "archivebox")
-                            }
-                            .tint(.orange)
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                            Button {
-                                store.markPlayed(item.episode.id)
-                            } label: {
-                                Label("Mark played", systemImage: "checkmark.circle")
+                            // Android SwipeActions: user-configurable; Default keeps these buttons.
+                            SwipeSlot(.inbox, .leading, episode: item.episode) {
+                                Button {
+                                    store.markPlayed(item.episode.id)
+                                } label: {
+                                    Label("Mark played", systemImage: "checkmark.circle")
+                                }
+                                .tint(.blue)
+                                .accessibilityHint(String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled."))
                             }
-                            .tint(.blue)
-                            .accessibilityHint(String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled."))
                         }
                 }
             }

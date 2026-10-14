@@ -657,6 +657,14 @@ struct SettingsView: View {
                 appearanceSection
                 homeSettingsSection
                 librarySettingsSection
+                // preferences_swipe.xml / SwipeActionsDialog
+                Section {
+                    NavigationLink {
+                        SwipeActionsSettingsView()
+                    } label: {
+                        Label("Swipe actions", systemImage: "hand.draw")
+                    }
+                }
             }
             .navigationTitle("User interface")
         case .playback:

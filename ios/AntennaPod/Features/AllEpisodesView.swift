@@ -514,36 +514,42 @@ struct AllEpisodesView: View {
                     EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
                     .tag(item.episode.id)
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button {
-                                store.toggleArchived(item.episode.id)
-                            } label: {
-                                Label(
-                                    store.isArchived(item.episode.id)
-                                        ? String(localized: "Restore")
-                                        : String(localized: "Archive"),
-                                    systemImage: store.isArchived(item.episode.id)
-                                        ? "arrow.uturn.backward" : "archivebox"
-                                )
+                            // Android SwipeActions: user-configurable; Default keeps these buttons.
+                            SwipeSlot(.episodes, .trailing, episode: item.episode) {
+                                Button {
+                                    store.toggleArchived(item.episode.id)
+                                } label: {
+                                    Label(
+                                        store.isArchived(item.episode.id)
+                                            ? String(localized: "Restore")
+                                            : String(localized: "Archive"),
+                                        systemImage: store.isArchived(item.episode.id)
+                                            ? "arrow.uturn.backward" : "archivebox"
+                                    )
+                                }
+                                .tint(store.isArchived(item.episode.id) ? .green : .orange)
                             }
-                            .tint(store.isArchived(item.episode.id) ? .green : .orange)
                         }
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                            Button {
-                                store.togglePlayed(item.episode.id)
-                            } label: {
-                                Label(
+                            // Android SwipeActions: user-configurable; Default keeps these buttons.
+                            SwipeSlot(.episodes, .leading, episode: item.episode) {
+                                Button {
+                                    store.togglePlayed(item.episode.id)
+                                } label: {
+                                    Label(
+                                        store.isPlayed(item.episode.id)
+                                            ? String(localized: "Mark unplayed")
+                                            : String(localized: "Mark played"),
+                                        systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
+                                    )
+                                }
+                                .tint(.blue)
+                                .accessibilityHint(
                                     store.isPlayed(item.episode.id)
-                                        ? String(localized: "Mark unplayed")
-                                        : String(localized: "Mark played"),
-                                    systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
+                                        ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
+                                        : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
                                 )
                             }
-                            .tint(.blue)
-                            .accessibilityHint(
-                                store.isPlayed(item.episode.id)
-                                    ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
-                                    : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
-                            )
                         }
                 }
             }
