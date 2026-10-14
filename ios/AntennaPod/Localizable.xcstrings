@@ -50720,6 +50720,40 @@
           }
         }
       }
+    },
+    "Opens the Settings tab, including Sync & gpodder.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the Settings tab, including Sync & gpodder."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den Einstellungen-Tab, inklusive Sync & gpodder."
+          }
+        }
+      }
+    },
+    "Nothing here yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing here yet"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nichts da"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
