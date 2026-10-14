@@ -93,6 +93,15 @@ struct StatisticsView: View {
                     .accessibilityLabel(String(localized: "Approx. listening time"))
                     .accessibilityValue(Self.formatDuration(stats.approximateListenedSeconds))
                     .accessibilityHint(String(localized: "Time you actually spent listening, adjusted for playback speed. Older episodes without recorded listening time use their saved duration or position."))
+                    let silenceSaved = store.totalSkipSilenceSavedSeconds()
+                    if silenceSaved >= 1 {
+                        LabeledContent("Time saved by Skip silence") {
+                            Text(Self.formatDuration(silenceSaved))
+                                .foregroundStyle(.secondary)
+                        }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityHint(String(localized: "Listening time saved by playing silence faster, across all time since the last Reset. Not filtered by time range."))
+                    }
                 } header: {
                     Text("Totals")
                 } footer: {

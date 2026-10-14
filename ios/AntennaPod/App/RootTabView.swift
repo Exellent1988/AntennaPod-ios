@@ -121,6 +121,9 @@ struct RootTabView: View {
         .onChange(of: settings.skipSilenceEnabled) { _, _ in
             playback.refreshAudioPipelineParameters()
         }
+        .onChange(of: settings.skipSilenceLevel) { _, _ in
+            playback.refreshAudioPipelineParameters()
+        }
         .onChange(of: settings.volumeAdaptationMode) { _, _ in
             playback.refreshAudioPipelineParameters()
         }

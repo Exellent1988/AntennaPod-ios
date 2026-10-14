@@ -83,6 +83,18 @@ public final class SilenceAnalysisStage: AudioBlockProcessor {
         self.detector = detector
     }
 
+    /// Swap detector thresholds (level change). Resets state; reports the end of an active skip.
+    public func configure(_ newDetector: SilenceDetector) {
+        lock.lock()
+        let same = detector.thresholdDB == newDetector.thresholdDB
+            && detector.releaseDB == newDetector.releaseDB
+            && detector.minimumSilence == newDetector.minimumSilence
+        let wasSkipping = detector.isSkipping
+        if !same { detector = newDetector }
+        lock.unlock()
+        if !same, wasSkipping { onChange?(false) }
+    }
+
     public var isEnabled: Bool {
         get { lock.lock(); defer { lock.unlock() }; return _enabled }
         set {
