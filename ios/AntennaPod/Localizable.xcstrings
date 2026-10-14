@@ -50941,6 +50941,23 @@
           }
         }
       }
+    },
+    "Checks this podcast for new episodes. No confirmation.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checks this podcast for new episodes. No confirmation."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sucht nach neuen Episoden dieses Podcasts. Ohne Bestätigung."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
