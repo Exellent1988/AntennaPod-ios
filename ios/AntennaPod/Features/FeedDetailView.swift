@@ -3016,6 +3016,40 @@ struct EpisodeRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            episodeInfoBlock
+
+            episodeActionBar
+        }
+        .padding(.vertical, 4)
+        .opacity(store.isArchived(episode.id) ? 0.55 : 1)
+        .contextMenu {
+            episodeContextMenuItems
+        }
+        .navigationDestination(isPresented: $showEpisodeDetail) {
+            EpisodeDetailPager(episode: episode)
+        }
+        .sheet(isPresented: $showDescription) {
+            EpisodeDescriptionSheetView(episode: episode, feedTitle: feedTitle)
+        }
+        .sheet(isPresented: $showEpisodePrivateNote) {
+            EpisodePrivateNoteSheet(episodeId: episode.id)
+                .environmentObject(store)
+        }
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
+    }
+
+    /// Title, metadata, and VoiceOver summary. Split out of `body` so CI type-checks the row in time.
+    @ViewBuilder
+    private var episodeInfoBlock: some View {
+        Group {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(alignment: .firstTextBaseline) {
                     Text(episode.title)
@@ -3132,7 +3166,13 @@ struct EpisodeRow: View {
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(episodeAccessibilityLabel)
             .accessibilityAddTraits(.isStaticText)
+        }
+    }
 
+    /// Inline action buttons. Split out of `body` so CI type-checks the row in time.
+    @ViewBuilder
+    private var episodeActionBar: some View {
+        Group {
             HStack {
                 Button {
                     playback.play(episode: episode)
@@ -3242,9 +3282,12 @@ struct EpisodeRow: View {
             }
             .labelStyle(.iconOnly)
         }
-        .padding(.vertical, 4)
-        .opacity(store.isArchived(episode.id) ? 0.55 : 1)
-        .contextMenu {
+    }
+
+    /// Long-press menu items. Split out of `body` so CI type-checks the row in time.
+    @ViewBuilder
+    private var episodeContextMenuItems: some View {
+        Group {
             Button {
                 playback.playFromBeginning(episode: episode)
             } label: {
@@ -3564,26 +3607,8 @@ struct EpisodeRow: View {
                 Label("Shownotes", systemImage: "doc.text")
             }
         }
-        .navigationDestination(isPresented: $showEpisodeDetail) {
-            EpisodeDetailPager(episode: episode)
-        }
-        .sheet(isPresented: $showDescription) {
-            EpisodeDescriptionSheetView(episode: episode, feedTitle: feedTitle)
-        }
-        .sheet(isPresented: $showEpisodePrivateNote) {
-            EpisodePrivateNoteSheet(episodeId: episode.id)
-                .environmentObject(store)
-        }
-        .alert(
-            String(localized: "Copied"),
-            isPresented: $showCopiedAlert
-        ) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(copiedAlertMessage)
-        }
-        .sensoryFeedback(.success, trigger: copyURLFeedbackTick)
     }
+
 
     private func copyEpisodeLink(_ url: URL) {
         copiedAlertMessage = EpisodeCopyLinks.copyEpisodeLink(url)
