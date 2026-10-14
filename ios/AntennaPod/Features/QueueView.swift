@@ -534,6 +534,298 @@ struct QueueView: View {
         }
     }
 
+    // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
+    @ToolbarContentBuilder
+    private var queueToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                settings.queueLocked.toggle()
+            } label: {
+                Label(
+                    settings.queueLocked
+                        ? String(localized: "Unlock queue")
+                        : String(localized: "Lock queue"),
+                    systemImage: settings.queueLocked ? "lock.fill" : "lock.open"
+                )
+            }
+            .accessibilityLabel(
+                settings.queueLocked
+                    ? String(localized: "Unlock queue")
+                    : String(localized: "Lock queue")
+            )
+            .accessibilityHint(
+                settings.queueLocked
+                    ? String(localized: "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom. Clear queue, Play random, Mark all as played or unplayed, Archive all, Copy queue, Share queue, Play Next, and adding episodes to the queue already work while locked.")
+                    : String(localized: "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom. Does not block Clear queue, Play random, Mark all as played or unplayed, Archive all, Copy queue, Share queue, Play Next, or adding episodes to the queue.")
+            )
+            .accessibilityAddTraits(.isButton)
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            EditButton()
+                // Hide reorder while filtering or locked — filtered IndexSet ≠ full queue; lock = no manual reorder.
+                .disabled(store.queue.isEmpty || !canReorder)
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Button {
+                    copyQueue()
+                } label: {
+                    Label("Copy queue", systemImage: "doc.plaintext")
+                }
+                // Full persisted queue (not chip/search). Queue lock does **not** disable.
+                .disabled(!canExportQueue)
+                .accessibilityLabel(String(localized: "Copy queue"))
+                .accessibilityHint(
+                    String(localized: "Copies the full queue list to the pasteboard")
+                )
+
+                ShareLink(
+                    item: queueShareText,
+                    subject: Text(String(localized: "Queue"))
+                ) {
+                    Label("Share queue", systemImage: "square.and.arrow.up")
+                }
+                // Same gates as Copy queue — full queue; lock does not block.
+                .disabled(!canExportQueue)
+                .accessibilityLabel(String(localized: "Share queue"))
+                .accessibilityHint(
+                    String(localized: "Opens the system share sheet with the full queue list")
+                )
+
+                Button {
+                    playRandomEpisode()
+                } label: {
+                    Label("Play random", systemImage: "shuffle")
+                }
+                // Play random: uniform among full-queue playable; prefer unplayed; no confirm.
+                // Distinct from Shuffle (reorder). Queue lock does **not** disable.
+                .disabled(playRandomCandidates.isEmpty)
+                .accessibilityLabel(String(localized: "Play random"))
+                .accessibilityHint(String(localized: "Plays a random episode from the full queue with playable media. Prefers unplayed when any remain. Does not reorder the queue — that is Shuffle. Queue lock does not block this. No confirmation."))
+
+                Button {
+                    // Always confirm before shuffleQueue() — reorders the full list.
+                    showShuffleQueueConfirm = true
+                } label: {
+                    Label("Shuffle", systemImage: "shuffle")
+                }
+                // Shuffle always targets the full queue (not the filtered subset).
+                // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                .disabled(!canShuffle)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then randomly reorders the entire queue, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.")
+                )
+                Button {
+                    // Always confirm before shuffleQueueKeepingPlayingFirst — full-list shuffle + pin playing.
+                    showShuffleKeepPlayingFirstConfirm = true
+                } label: {
+                    Label("Shuffle (keep playing first)", systemImage: "shuffle")
+                }
+                // Same gates as plain Shuffle: full queue, locked blocks, count < 2 disabled.
+                // Reuses shuffleQueue + moveQueueItemToTop; if nothing playing / not queued → plain shuffle.
+                .disabled(!canShuffle)
+                .accessibilityLabel(String(localized: "Shuffle keep playing first"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then shuffles the entire queue and keeps the currently playing episode first when it is in the queue. If nothing is playing or that episode is not queued, behaves like Shuffle. Does not stop playback, change progress, mark played, or delete downloads.")
+                )
+                Button {
+                    // Always confirm before reverseQueue() — reorders the full list.
+                    showReverseQueueConfirm = true
+                } label: {
+                    Label("Reverse order", systemImage: "arrow.up.arrow.down")
+                }
+                // Reverse always targets the full queue (not the filtered subset).
+                // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                .disabled(!canReverse)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then reverses the entire queue order, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.")
+                )
+                Button {
+                    // Always confirm before sortQueueByPublishDate — reorders the full list.
+                    showSortNewestQueueConfirm = true
+                } label: {
+                    Label("Newest first", systemImage: "calendar")
+                }
+                // Sort always targets the full queue (not the filtered subset).
+                // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                .disabled(!canSortByDate)
+                .accessibilityLabel(String(localized: "Sort newest first"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then sorts the entire queue by publish date, newest first. Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads.")
+                )
+                Button {
+                    // Always confirm before sortQueueByPublishDate — reorders the full list.
+                    showSortOldestQueueConfirm = true
+                } label: {
+                    Label("Oldest first", systemImage: "calendar")
+                }
+                // Sort always targets the full queue (not the filtered subset).
+                // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                .disabled(!canSortByDate)
+                .accessibilityLabel(String(localized: "Sort oldest first"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then sorts the entire queue by publish date, oldest first. Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads.")
+                )
+                Button {
+                    // Always confirm before sortQueueByDuration — reorders the full list.
+                    showSortShortestQueueConfirm = true
+                } label: {
+                    Label("Shortest first", systemImage: "timer")
+                }
+                // Sort always targets the full queue (not the filtered subset).
+                // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                .disabled(!canSortByDuration)
+                .accessibilityLabel(String(localized: "Sort shortest first"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then sorts the entire queue by known duration, shortest first. Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads.")
+                )
+                Button {
+                    // Always confirm before sortQueueByDuration — reorders the full list.
+                    showSortLongestQueueConfirm = true
+                } label: {
+                    Label("Longest first", systemImage: "timer")
+                }
+                // Sort always targets the full queue (not the filtered subset).
+                // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                .disabled(!canSortByDuration)
+                .accessibilityLabel(String(localized: "Sort longest first"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then sorts the entire queue by known duration, longest first. Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads.")
+                )
+                Button {
+                    // Always confirm before sortQueueByTitle — reorders the full list.
+                    showSortTitleAZQueueConfirm = true
+                } label: {
+                    Label("Title A–Z", systemImage: "textformat.abc")
+                }
+                // Sort always targets the full queue (not the filtered subset).
+                // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                .disabled(!canSortByTitle)
+                .accessibilityLabel(String(localized: "Sort title A–Z"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then sorts the entire queue by title, A to Z. Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads.")
+                )
+                Button {
+                    // Always confirm before sortQueueByTitle — reorders the full list.
+                    showSortTitleZAQueueConfirm = true
+                } label: {
+                    Label("Title Z–A", systemImage: "textformat.abc")
+                }
+                // Sort always targets the full queue (not the filtered subset).
+                // Blocked when Queue locked (reorder-only) or fewer than 2 items.
+                .disabled(!canSortByTitle)
+                .accessibilityLabel(String(localized: "Sort title Z–A"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then sorts the entire queue by title, Z to A. Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads.")
+                )
+                Button {
+                    // Reuse moveQueueItemToTop — no seek/stop; no confirm (single-item reorder).
+                    if let current = playback.currentEpisode {
+                        store.moveQueueItemToTop(current)
+                    }
+                } label: {
+                    Label("Move playing to top", systemImage: "arrow.up.to.line")
+                }
+                // Enabled only when current episode is queued and not already first;
+                // blocked when Queue locked (reorder-only, same as Shuffle/Reverse/Sort/Move to top).
+                .disabled(!canMovePlayingToTop)
+                .accessibilityLabel(String(localized: "Move playing to top"))
+                .accessibilityHint(
+                    String(localized: "Moves the currently playing episode to the start of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation.")
+                )
+                Button {
+                    // Reuse moveQueueItemToBottom — no seek/stop; no confirm (single-item reorder).
+                    if let current = playback.currentEpisode {
+                        store.moveQueueItemToBottom(current)
+                    }
+                } label: {
+                    Label("Move playing to bottom", systemImage: "arrow.down.to.line")
+                }
+                // Enabled only when current episode is queued and not already last;
+                // blocked when Queue locked (reorder-only, same gate as Move playing to top).
+                .disabled(!canMovePlayingToBottom)
+                .accessibilityLabel(String(localized: "Move playing to bottom"))
+                .accessibilityHint(
+                    String(localized: "Moves the currently playing episode to the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation.")
+                )
+                Button {
+                    // Always confirm before markAllQueuePlayed() — never bulk-mark from the menu alone.
+                    showMarkAllQueuePlayedConfirm = true
+                } label: {
+                    Label("Mark all as played", systemImage: "checkmark.circle")
+                }
+                // Mark all targets the full queue (not the filtered subset), skipping archived
+                // unplayed episodes. Queue lock does not block this playback-state action.
+                .disabled(markAllQueuePlayedCandidatesCount == 0)
+                .accessibilityLabel(String(localized: "Mark all as played"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the full queue as played. They leave the queue. Ignores played, podcast, and search filters. Auto-delete after playing still applies when enabled.")
+                )
+
+                Button {
+                    // Always confirm before markAllQueueUnplayed() — never bulk-mark from the menu alone.
+                    showMarkAllQueueUnplayedConfirm = true
+                } label: {
+                    Label("Mark all as unplayed", systemImage: "circle")
+                }
+                // Mark all targets the full queue, including archived played episodes;
+                // Queue lock does not block this playback-state action.
+                .disabled(markAllQueueUnplayedCandidatesCount == 0)
+                .accessibilityLabel(String(localized: "Mark all as unplayed"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then marks played episodes in the full queue as unplayed, including archived. Ignores played, podcast, and search filters. Does not delete downloads, remove episodes from the queue, stop playback, or unarchive.")
+                )
+
+                Button {
+                    // Always confirm before archiveAllQueue() — never bulk-archive from the menu alone.
+                    showArchiveAllQueueConfirm = true
+                } label: {
+                    Label("Archive all", systemImage: "archivebox")
+                }
+                // Archive targets the full queue (not the played/podcast/search filtered subset).
+                // Queue lock does not block this archive-state action.
+                .disabled(archiveAllQueueCandidatesCount == 0)
+                .accessibilityLabel(String(localized: "Archive all"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then archives non-archived episodes in the full queue, not only the current played, podcast, or search filters. Archived does not mean played. Does not remove episodes from the queue, mark played, delete downloads, or stop playback.")
+                )
+
+                Button(role: .destructive) {
+                    // Always confirm before removePlayedFromQueue() — never remove from the menu alone.
+                    showRemovePlayedConfirm = true
+                } label: {
+                    Label("Remove played", systemImage: "checkmark.circle")
+                }
+                // Remove played always targets the full queue (not the filtered subset).
+                // Queue lock does **not** disable — reorder-only lock (same as Clear queue).
+                .disabled(!canRemovePlayed)
+                .accessibilityLabel(String(localized: "Remove played"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then removes played episodes from the entire queue, not only the current filter. Does not stop playback, change progress, unmark played, or delete downloads.")
+                )
+                Button(role: .destructive) {
+                    // Always confirm before clearQueue() — never clear from the menu alone.
+                    showClearQueueConfirm = true
+                } label: {
+                    Label("Clear queue", systemImage: "trash")
+                }
+                // Clear always targets the full queue (not the filtered subset).
+                // Queue lock does **not** disable Clear — reorder-only lock (Android parity).
+                .disabled(store.queue.isEmpty)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then removes every episode from the entire queue, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads.")
+                )
+            } label: {
+                Label("Queue actions", systemImage: "ellipsis.circle")
+            }
+            .disabled(store.queue.isEmpty)
+            .accessibilityLabel(String(localized: "Queue actions"))
+            .accessibilityHint(
+                String(localized: "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, mark all as played, mark all as unplayed, archive all, remove played, or clear the entire queue")
+            )
+        }
+    }
+
     var body: some View {
         NavigationStack {
             queueList
@@ -563,295 +855,7 @@ struct QueueView: View {
             .onDisappear {
                 debounceTask?.cancel()
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        settings.queueLocked.toggle()
-                    } label: {
-                        Label(
-                            settings.queueLocked
-                                ? String(localized: "Unlock queue")
-                                : String(localized: "Lock queue"),
-                            systemImage: settings.queueLocked ? "lock.fill" : "lock.open"
-                        )
-                    }
-                    .accessibilityLabel(
-                        settings.queueLocked
-                            ? String(localized: "Unlock queue")
-                            : String(localized: "Lock queue")
-                    )
-                    .accessibilityHint(
-                        settings.queueLocked
-                            ? String(localized: "Allows drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom. Clear queue, Play random, Mark all as played or unplayed, Archive all, Copy queue, Share queue, Play Next, and adding episodes to the queue already work while locked.")
-                            : String(localized: "Disables drag reorder, Shuffle, Shuffle keep playing first, Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom. Does not block Clear queue, Play random, Mark all as played or unplayed, Archive all, Copy queue, Share queue, Play Next, or adding episodes to the queue.")
-                    )
-                    .accessibilityAddTraits(.isButton)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    EditButton()
-                        // Hide reorder while filtering or locked — filtered IndexSet ≠ full queue; lock = no manual reorder.
-                        .disabled(store.queue.isEmpty || !canReorder)
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        Button {
-                            copyQueue()
-                        } label: {
-                            Label("Copy queue", systemImage: "doc.plaintext")
-                        }
-                        // Full persisted queue (not chip/search). Queue lock does **not** disable.
-                        .disabled(!canExportQueue)
-                        .accessibilityLabel(String(localized: "Copy queue"))
-                        .accessibilityHint(
-                            String(localized: "Copies the full queue list to the pasteboard")
-                        )
-
-                        ShareLink(
-                            item: queueShareText,
-                            subject: Text(String(localized: "Queue"))
-                        ) {
-                            Label("Share queue", systemImage: "square.and.arrow.up")
-                        }
-                        // Same gates as Copy queue — full queue; lock does not block.
-                        .disabled(!canExportQueue)
-                        .accessibilityLabel(String(localized: "Share queue"))
-                        .accessibilityHint(
-                            String(localized: "Opens the system share sheet with the full queue list")
-                        )
-
-                        Button {
-                            playRandomEpisode()
-                        } label: {
-                            Label("Play random", systemImage: "shuffle")
-                        }
-                        // Play random: uniform among full-queue playable; prefer unplayed; no confirm.
-                        // Distinct from Shuffle (reorder). Queue lock does **not** disable.
-                        .disabled(playRandomCandidates.isEmpty)
-                        .accessibilityLabel(String(localized: "Play random"))
-                        .accessibilityHint(String(localized: "Plays a random episode from the full queue with playable media. Prefers unplayed when any remain. Does not reorder the queue — that is Shuffle. Queue lock does not block this. No confirmation."))
-
-                        Button {
-                            // Always confirm before shuffleQueue() — reorders the full list.
-                            showShuffleQueueConfirm = true
-                        } label: {
-                            Label("Shuffle", systemImage: "shuffle")
-                        }
-                        // Shuffle always targets the full queue (not the filtered subset).
-                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
-                        .disabled(!canShuffle)
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then randomly reorders the entire queue, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.")
-                        )
-                        Button {
-                            // Always confirm before shuffleQueueKeepingPlayingFirst — full-list shuffle + pin playing.
-                            showShuffleKeepPlayingFirstConfirm = true
-                        } label: {
-                            Label("Shuffle (keep playing first)", systemImage: "shuffle")
-                        }
-                        // Same gates as plain Shuffle: full queue, locked blocks, count < 2 disabled.
-                        // Reuses shuffleQueue + moveQueueItemToTop; if nothing playing / not queued → plain shuffle.
-                        .disabled(!canShuffle)
-                        .accessibilityLabel(String(localized: "Shuffle keep playing first"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then shuffles the entire queue and keeps the currently playing episode first when it is in the queue. If nothing is playing or that episode is not queued, behaves like Shuffle. Does not stop playback, change progress, mark played, or delete downloads.")
-                        )
-                        Button {
-                            // Always confirm before reverseQueue() — reorders the full list.
-                            showReverseQueueConfirm = true
-                        } label: {
-                            Label("Reverse order", systemImage: "arrow.up.arrow.down")
-                        }
-                        // Reverse always targets the full queue (not the filtered subset).
-                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
-                        .disabled(!canReverse)
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then reverses the entire queue order, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list.")
-                        )
-                        Button {
-                            // Always confirm before sortQueueByPublishDate — reorders the full list.
-                            showSortNewestQueueConfirm = true
-                        } label: {
-                            Label("Newest first", systemImage: "calendar")
-                        }
-                        // Sort always targets the full queue (not the filtered subset).
-                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
-                        .disabled(!canSortByDate)
-                        .accessibilityLabel(String(localized: "Sort newest first"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by publish date, newest first. Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads.")
-                        )
-                        Button {
-                            // Always confirm before sortQueueByPublishDate — reorders the full list.
-                            showSortOldestQueueConfirm = true
-                        } label: {
-                            Label("Oldest first", systemImage: "calendar")
-                        }
-                        // Sort always targets the full queue (not the filtered subset).
-                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
-                        .disabled(!canSortByDate)
-                        .accessibilityLabel(String(localized: "Sort oldest first"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by publish date, oldest first. Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads.")
-                        )
-                        Button {
-                            // Always confirm before sortQueueByDuration — reorders the full list.
-                            showSortShortestQueueConfirm = true
-                        } label: {
-                            Label("Shortest first", systemImage: "timer")
-                        }
-                        // Sort always targets the full queue (not the filtered subset).
-                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
-                        .disabled(!canSortByDuration)
-                        .accessibilityLabel(String(localized: "Sort shortest first"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by known duration, shortest first. Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads.")
-                        )
-                        Button {
-                            // Always confirm before sortQueueByDuration — reorders the full list.
-                            showSortLongestQueueConfirm = true
-                        } label: {
-                            Label("Longest first", systemImage: "timer")
-                        }
-                        // Sort always targets the full queue (not the filtered subset).
-                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
-                        .disabled(!canSortByDuration)
-                        .accessibilityLabel(String(localized: "Sort longest first"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by known duration, longest first. Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads.")
-                        )
-                        Button {
-                            // Always confirm before sortQueueByTitle — reorders the full list.
-                            showSortTitleAZQueueConfirm = true
-                        } label: {
-                            Label("Title A–Z", systemImage: "textformat.abc")
-                        }
-                        // Sort always targets the full queue (not the filtered subset).
-                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
-                        .disabled(!canSortByTitle)
-                        .accessibilityLabel(String(localized: "Sort title A–Z"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by title, A to Z. Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads.")
-                        )
-                        Button {
-                            // Always confirm before sortQueueByTitle — reorders the full list.
-                            showSortTitleZAQueueConfirm = true
-                        } label: {
-                            Label("Title Z–A", systemImage: "textformat.abc")
-                        }
-                        // Sort always targets the full queue (not the filtered subset).
-                        // Blocked when Queue locked (reorder-only) or fewer than 2 items.
-                        .disabled(!canSortByTitle)
-                        .accessibilityLabel(String(localized: "Sort title Z–A"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then sorts the entire queue by title, Z to A. Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads.")
-                        )
-                        Button {
-                            // Reuse moveQueueItemToTop — no seek/stop; no confirm (single-item reorder).
-                            if let current = playback.currentEpisode {
-                                store.moveQueueItemToTop(current)
-                            }
-                        } label: {
-                            Label("Move playing to top", systemImage: "arrow.up.to.line")
-                        }
-                        // Enabled only when current episode is queued and not already first;
-                        // blocked when Queue locked (reorder-only, same as Shuffle/Reverse/Sort/Move to top).
-                        .disabled(!canMovePlayingToTop)
-                        .accessibilityLabel(String(localized: "Move playing to top"))
-                        .accessibilityHint(
-                            String(localized: "Moves the currently playing episode to the start of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation.")
-                        )
-                        Button {
-                            // Reuse moveQueueItemToBottom — no seek/stop; no confirm (single-item reorder).
-                            if let current = playback.currentEpisode {
-                                store.moveQueueItemToBottom(current)
-                            }
-                        } label: {
-                            Label("Move playing to bottom", systemImage: "arrow.down.to.line")
-                        }
-                        // Enabled only when current episode is queued and not already last;
-                        // blocked when Queue locked (reorder-only, same gate as Move playing to top).
-                        .disabled(!canMovePlayingToBottom)
-                        .accessibilityLabel(String(localized: "Move playing to bottom"))
-                        .accessibilityHint(
-                            String(localized: "Moves the currently playing episode to the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation.")
-                        )
-                        Button {
-                            // Always confirm before markAllQueuePlayed() — never bulk-mark from the menu alone.
-                            showMarkAllQueuePlayedConfirm = true
-                        } label: {
-                            Label("Mark all as played", systemImage: "checkmark.circle")
-                        }
-                        // Mark all targets the full queue (not the filtered subset), skipping archived
-                        // unplayed episodes. Queue lock does not block this playback-state action.
-                        .disabled(markAllQueuePlayedCandidatesCount == 0)
-                        .accessibilityLabel(String(localized: "Mark all as played"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the full queue as played. They leave the queue. Ignores played, podcast, and search filters. Auto-delete after playing still applies when enabled.")
-                        )
-
-                        Button {
-                            // Always confirm before markAllQueueUnplayed() — never bulk-mark from the menu alone.
-                            showMarkAllQueueUnplayedConfirm = true
-                        } label: {
-                            Label("Mark all as unplayed", systemImage: "circle")
-                        }
-                        // Mark all targets the full queue, including archived played episodes;
-                        // Queue lock does not block this playback-state action.
-                        .disabled(markAllQueueUnplayedCandidatesCount == 0)
-                        .accessibilityLabel(String(localized: "Mark all as unplayed"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then marks played episodes in the full queue as unplayed, including archived. Ignores played, podcast, and search filters. Does not delete downloads, remove episodes from the queue, stop playback, or unarchive.")
-                        )
-
-                        Button {
-                            // Always confirm before archiveAllQueue() — never bulk-archive from the menu alone.
-                            showArchiveAllQueueConfirm = true
-                        } label: {
-                            Label("Archive all", systemImage: "archivebox")
-                        }
-                        // Archive targets the full queue (not the played/podcast/search filtered subset).
-                        // Queue lock does not block this archive-state action.
-                        .disabled(archiveAllQueueCandidatesCount == 0)
-                        .accessibilityLabel(String(localized: "Archive all"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then archives non-archived episodes in the full queue, not only the current played, podcast, or search filters. Archived does not mean played. Does not remove episodes from the queue, mark played, delete downloads, or stop playback.")
-                        )
-
-                        Button(role: .destructive) {
-                            // Always confirm before removePlayedFromQueue() — never remove from the menu alone.
-                            showRemovePlayedConfirm = true
-                        } label: {
-                            Label("Remove played", systemImage: "checkmark.circle")
-                        }
-                        // Remove played always targets the full queue (not the filtered subset).
-                        // Queue lock does **not** disable — reorder-only lock (same as Clear queue).
-                        .disabled(!canRemovePlayed)
-                        .accessibilityLabel(String(localized: "Remove played"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then removes played episodes from the entire queue, not only the current filter. Does not stop playback, change progress, unmark played, or delete downloads.")
-                        )
-                        Button(role: .destructive) {
-                            // Always confirm before clearQueue() — never clear from the menu alone.
-                            showClearQueueConfirm = true
-                        } label: {
-                            Label("Clear queue", systemImage: "trash")
-                        }
-                        // Clear always targets the full queue (not the filtered subset).
-                        // Queue lock does **not** disable Clear — reorder-only lock (Android parity).
-                        .disabled(store.queue.isEmpty)
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then removes every episode from the entire queue, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads.")
-                        )
-                    } label: {
-                        Label("Queue actions", systemImage: "ellipsis.circle")
-                    }
-                    .disabled(store.queue.isEmpty)
-                    .accessibilityLabel(String(localized: "Queue actions"))
-                    .accessibilityHint(
-                        String(localized: "Copy queue, share queue, play random, shuffle, shuffle keep playing first, reverse, sort by date, sort by duration, sort by title, move playing to top, move playing to bottom, mark all as played, mark all as unplayed, archive all, remove played, or clear the entire queue")
-                    )
-                }
-            }
+            .toolbar { queueToolbar }
             .alert(
                 String(localized: "Copied"),
                 isPresented: $showCopiedAlert

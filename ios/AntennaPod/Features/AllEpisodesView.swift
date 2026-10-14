@@ -547,123 +547,127 @@ struct AllEpisodesView: View {
         }
     }
 
+    // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
+    @ToolbarContentBuilder
+    private var allEpisodesToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Menu {
+                Picker(selection: $settings.allEpisodesSort) {
+                    ForEach(AllEpisodesSort.allCases) { sort in
+                        Label(sort.label, systemImage: sort.systemImage)
+                            .tag(sort)
+                    }
+                } label: {
+                    Text("Sort")
+                }
+            } label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
+            }
+            .accessibilityLabel(String(localized: "Sort all episodes"))
+            .accessibilityValue(settings.allEpisodesSort.label)
+            .accessibilityHint(String(localized: "Orders the All Episodes list within the newest-500 soft cap. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Does not pull older episodes beyond the cap."))
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Button {
+                    copyAllEpisodes()
+                } label: {
+                    Label("Copy all episodes", systemImage: "doc.plaintext")
+                }
+                // Soft-capped All Episodes catalog (not status/podcast/type/UI sort/search).
+                .disabled(!canExportAllEpisodes)
+                .accessibilityLabel(String(localized: "Copy all episodes"))
+                .accessibilityHint(
+                    String(localized: "Copies the newest-500 All Episodes catalog to the pasteboard")
+                )
+
+                ShareLink(
+                    item: allEpisodesShareText,
+                    subject: Text(String(localized: "Episodes"))
+                ) {
+                    Label("Share all episodes", systemImage: "square.and.arrow.up")
+                }
+                // Same gates as Copy all episodes — soft-capped catalog.
+                .disabled(!canExportAllEpisodes)
+                .accessibilityLabel(String(localized: "Share all episodes"))
+                .accessibilityHint(
+                    String(localized: "Opens the system share sheet with the newest-500 All Episodes catalog")
+                )
+
+                Button {
+                    playRandomEpisode()
+                } label: {
+                    Label("Play random", systemImage: "shuffle")
+                }
+                .disabled(playRandomCandidates.isEmpty)
+                .accessibilityLabel(String(localized: "Play random"))
+                .accessibilityHint(String(localized: "Plays a random episode from the newest-500 All Episodes catalog with playable media. Prefers unplayed when any remain. Ignores status, podcast, episode type, search, and sort filters. Does not pull older episodes beyond the soft cap. Does not reorder All Episodes. No confirmation."))
+
+                Button {
+                    showEnqueueAllConfirm = true
+                } label: {
+                    Label("Add all to queue", systemImage: "text.append")
+                }
+                .disabled(enqueueAllEpisodesCandidatesCount == 0)
+                .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the soft-capped All Episodes catalog (newest 500 by publish date) that are not already queued, newest first within that cap, including played and archived. Ignores status, podcast, type, and search filters. Queue lock does not block enqueue."))
+
+                Button {
+                    showEnqueueAllUnplayedConfirm = true
+                } label: {
+                    Label("Add all unplayed to queue", systemImage: "text.badge.plus")
+                }
+                .disabled(enqueueAllUnplayedEpisodesCandidatesCount == 0)
+                .accessibilityLabel(String(localized: "Add all unplayed to queue"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from the soft-capped All Episodes catalog (newest 500 by publish date) that are not already queued, newest first within that cap. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived.")
+                )
+
+                Button {
+                    showMarkAllPlayedConfirm = true
+                } label: {
+                    Label("Mark all as played", systemImage: "checkmark.circle")
+                }
+                .disabled(markAllEpisodesPlayedCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the newest-500 All Episodes catalog as played. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Auto-delete after playing still applies when enabled.")
+                )
+
+                Button {
+                    showMarkAllUnplayedConfirm = true
+                } label: {
+                    Label("Mark all as unplayed", systemImage: "circle")
+                }
+                .disabled(markAllEpisodesUnplayedCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then marks played episodes in the newest-500 All Episodes catalog as unplayed, including archived episodes. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Does not delete downloads, remove episodes from the queue, stop playback, or unarchive.")
+                )
+
+                Button {
+                    showArchiveAllConfirm = true
+                } label: {
+                    Label("Archive all", systemImage: "archivebox")
+                }
+                .disabled(archiveAllEpisodesCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then archives non-archived episodes in the newest-500 All Episodes catalog. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
+                )
+            } label: {
+                Label("Episodes actions", systemImage: "ellipsis.circle")
+            }
+            // Menu stays available when soft-capped catalog non-empty so each action can disable per eligibility.
+            .disabled(catalogItems.isEmpty)
+            .accessibilityLabel(String(localized: "Episodes actions"))
+            .accessibilityHint(
+                String(localized: "Copy all episodes, share all episodes, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, or archive all")
+            )
+        }
+    }
+
     var body: some View {
         allEpisodesList
         .navigationTitle("Episodes")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Menu {
-                    Picker(selection: $settings.allEpisodesSort) {
-                        ForEach(AllEpisodesSort.allCases) { sort in
-                            Label(sort.label, systemImage: sort.systemImage)
-                                .tag(sort)
-                        }
-                    } label: {
-                        Text("Sort")
-                    }
-                } label: {
-                    Label("Sort", systemImage: "arrow.up.arrow.down")
-                }
-                .accessibilityLabel(String(localized: "Sort all episodes"))
-                .accessibilityValue(settings.allEpisodesSort.label)
-                .accessibilityHint(String(localized: "Orders the All Episodes list within the newest-500 soft cap. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Does not pull older episodes beyond the cap."))
-            }
-            ToolbarItem(placement: .primaryAction) {
-                Menu {
-                    Button {
-                        copyAllEpisodes()
-                    } label: {
-                        Label("Copy all episodes", systemImage: "doc.plaintext")
-                    }
-                    // Soft-capped All Episodes catalog (not status/podcast/type/UI sort/search).
-                    .disabled(!canExportAllEpisodes)
-                    .accessibilityLabel(String(localized: "Copy all episodes"))
-                    .accessibilityHint(
-                        String(localized: "Copies the newest-500 All Episodes catalog to the pasteboard")
-                    )
-
-                    ShareLink(
-                        item: allEpisodesShareText,
-                        subject: Text(String(localized: "Episodes"))
-                    ) {
-                        Label("Share all episodes", systemImage: "square.and.arrow.up")
-                    }
-                    // Same gates as Copy all episodes — soft-capped catalog.
-                    .disabled(!canExportAllEpisodes)
-                    .accessibilityLabel(String(localized: "Share all episodes"))
-                    .accessibilityHint(
-                        String(localized: "Opens the system share sheet with the newest-500 All Episodes catalog")
-                    )
-
-                    Button {
-                        playRandomEpisode()
-                    } label: {
-                        Label("Play random", systemImage: "shuffle")
-                    }
-                    .disabled(playRandomCandidates.isEmpty)
-                    .accessibilityLabel(String(localized: "Play random"))
-                    .accessibilityHint(String(localized: "Plays a random episode from the newest-500 All Episodes catalog with playable media. Prefers unplayed when any remain. Ignores status, podcast, episode type, search, and sort filters. Does not pull older episodes beyond the soft cap. Does not reorder All Episodes. No confirmation."))
-
-                    Button {
-                        showEnqueueAllConfirm = true
-                    } label: {
-                        Label("Add all to queue", systemImage: "text.append")
-                    }
-                    .disabled(enqueueAllEpisodesCandidatesCount == 0)
-                    .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the soft-capped All Episodes catalog (newest 500 by publish date) that are not already queued, newest first within that cap, including played and archived. Ignores status, podcast, type, and search filters. Queue lock does not block enqueue."))
-
-                    Button {
-                        showEnqueueAllUnplayedConfirm = true
-                    } label: {
-                        Label("Add all unplayed to queue", systemImage: "text.badge.plus")
-                    }
-                    .disabled(enqueueAllUnplayedEpisodesCandidatesCount == 0)
-                    .accessibilityLabel(String(localized: "Add all unplayed to queue"))
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from the soft-capped All Episodes catalog (newest 500 by publish date) that are not already queued, newest first within that cap. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived.")
-                    )
-
-                    Button {
-                        showMarkAllPlayedConfirm = true
-                    } label: {
-                        Label("Mark all as played", systemImage: "checkmark.circle")
-                    }
-                    .disabled(markAllEpisodesPlayedCandidatesCount == 0)
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the newest-500 All Episodes catalog as played. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Auto-delete after playing still applies when enabled.")
-                    )
-
-                    Button {
-                        showMarkAllUnplayedConfirm = true
-                    } label: {
-                        Label("Mark all as unplayed", systemImage: "circle")
-                    }
-                    .disabled(markAllEpisodesUnplayedCandidatesCount == 0)
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then marks played episodes in the newest-500 All Episodes catalog as unplayed, including archived episodes. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Does not delete downloads, remove episodes from the queue, stop playback, or unarchive.")
-                    )
-
-                    Button {
-                        showArchiveAllConfirm = true
-                    } label: {
-                        Label("Archive all", systemImage: "archivebox")
-                    }
-                    .disabled(archiveAllEpisodesCandidatesCount == 0)
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then archives non-archived episodes in the newest-500 All Episodes catalog. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
-                    )
-                } label: {
-                    Label("Episodes actions", systemImage: "ellipsis.circle")
-                }
-                // Menu stays available when soft-capped catalog non-empty so each action can disable per eligibility.
-                .disabled(catalogItems.isEmpty)
-                .accessibilityLabel(String(localized: "Episodes actions"))
-                .accessibilityHint(
-                    String(localized: "Copy all episodes, share all episodes, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, or archive all")
-                )
-            }
-        }
+        .toolbar { allEpisodesToolbar }
         .searchable(text: $searchText, prompt: "Search all episodes")
         .onAppear {
             releaseAllEpisodesPodcastFilterIfFeedGone()

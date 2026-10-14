@@ -458,6 +458,132 @@ struct FavoritesView: View {
         }
     }
 
+    // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
+    @ToolbarContentBuilder
+    private var favoritesToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Menu {
+                Picker(selection: $settings.favoritesSort) {
+                    ForEach(FavoritesSort.allCases) { sort in
+                        Label(sort.label, systemImage: sort.systemImage)
+                            .tag(sort)
+                    }
+                } label: {
+                    Text("Sort")
+                }
+            } label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
+            }
+            .accessibilityLabel(String(localized: "Sort favorites"))
+            .accessibilityHint(String(localized: "Orders the Favorites list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home Favorites preview stays newest-first."))
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Button {
+                    copyFavorites()
+                } label: {
+                    Label("Copy favorites", systemImage: "doc.plaintext")
+                }
+                // Full Favorites catalog (not podcast/search/UI sort).
+                .disabled(!canExportFavorites)
+                .accessibilityLabel(String(localized: "Copy favorites"))
+                .accessibilityHint(
+                    String(localized: "Copies the full favorites list to the pasteboard")
+                )
+
+                ShareLink(
+                    item: favoritesShareText,
+                    subject: Text(String(localized: "Favorites"))
+                ) {
+                    Label("Share favorites", systemImage: "square.and.arrow.up")
+                }
+                // Same gates as Copy favorites — full catalog.
+                .disabled(!canExportFavorites)
+                .accessibilityLabel(String(localized: "Share favorites"))
+                .accessibilityHint(
+                    String(localized: "Opens the system share sheet with the full favorites list")
+                )
+
+                Button {
+                    playRandomEpisode()
+                } label: {
+                    Label("Play random", systemImage: "shuffle")
+                }
+                .disabled(playRandomCandidates.isEmpty)
+                .accessibilityLabel(String(localized: "Play random"))
+                .accessibilityHint(String(localized: "Plays a random episode from the full Favorites catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not reorder Favorites. No confirmation."))
+
+                Button {
+                    showEnqueueAllConfirm = true
+                } label: {
+                    Label("Add all to queue", systemImage: "text.append")
+                }
+                .disabled(enqueueAllFavoritesCandidatesCount == 0)
+                .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full Favorites catalog that are not already queued, newest favorited first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue."))
+
+                Button {
+                    showEnqueueAllUnplayedConfirm = true
+                } label: {
+                    Label("Add all unplayed to queue", systemImage: "text.badge.plus")
+                }
+                .disabled(enqueueAllUnplayedFavoritesCandidatesCount == 0)
+                .accessibilityLabel(String(localized: "Add all unplayed to queue"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from the full Favorites catalog that are not already queued, newest favorited first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived.")
+                )
+
+                Button {
+                    showMarkAllPlayedConfirm = true
+                } label: {
+                    Label("Mark all as played", systemImage: "checkmark.circle")
+                }
+                .disabled(markAllFavoritesPlayedCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the full Favorites catalog as played, newest favorited first. Ignores podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not clear Favorites, unfavorite episodes, or delete downloads itself.")
+                )
+
+                Button {
+                    showMarkAllUnplayedConfirm = true
+                } label: {
+                    Label("Mark all as unplayed", systemImage: "circle")
+                }
+                .disabled(markAllFavoritesUnplayedCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then marks played episodes, including archived, in the full Favorites catalog as unplayed. Ignores podcast, search, and sort filters. Does not delete download files, clear the queue, stop playback, or unarchive episodes.")
+                )
+
+                Button {
+                    showArchiveAllConfirm = true
+                } label: {
+                    Label("Archive all", systemImage: "archivebox")
+                }
+                .disabled(archiveAllFavoritesCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then archives non-archived episodes in the full Favorites catalog, newest favorited first. Ignores podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
+                )
+
+                Button(role: .destructive) {
+                    showClearFavoritesConfirm = true
+                } label: {
+                    Label("Clear favorites", systemImage: "trash")
+                }
+                // Clear always targets the full favorites list (not the filtered subset).
+                .disabled(items.isEmpty)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then removes every episode from the full Favorites catalog. Ignores podcast, search, and sort filters. Does not delete downloads, archive, mark played, or clear the queue.")
+                )
+            } label: {
+                Label("Favorites actions", systemImage: "ellipsis.circle")
+            }
+            // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
+            .disabled(items.isEmpty)
+            .accessibilityLabel(String(localized: "Favorites actions"))
+            .accessibilityHint(
+                String(localized: "Copy favorites, share favorites, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, archive all, or clear favorites")
+            )
+        }
+    }
+
     var body: some View {
         favoritesList
         .navigationTitle("Favorites")
@@ -475,129 +601,7 @@ struct FavoritesView: View {
         .onDisappear {
             debounceTask?.cancel()
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Menu {
-                    Picker(selection: $settings.favoritesSort) {
-                        ForEach(FavoritesSort.allCases) { sort in
-                            Label(sort.label, systemImage: sort.systemImage)
-                                .tag(sort)
-                        }
-                    } label: {
-                        Text("Sort")
-                    }
-                } label: {
-                    Label("Sort", systemImage: "arrow.up.arrow.down")
-                }
-                .accessibilityLabel(String(localized: "Sort favorites"))
-                .accessibilityHint(String(localized: "Orders the Favorites list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home Favorites preview stays newest-first."))
-            }
-            ToolbarItem(placement: .primaryAction) {
-                Menu {
-                    Button {
-                        copyFavorites()
-                    } label: {
-                        Label("Copy favorites", systemImage: "doc.plaintext")
-                    }
-                    // Full Favorites catalog (not podcast/search/UI sort).
-                    .disabled(!canExportFavorites)
-                    .accessibilityLabel(String(localized: "Copy favorites"))
-                    .accessibilityHint(
-                        String(localized: "Copies the full favorites list to the pasteboard")
-                    )
-
-                    ShareLink(
-                        item: favoritesShareText,
-                        subject: Text(String(localized: "Favorites"))
-                    ) {
-                        Label("Share favorites", systemImage: "square.and.arrow.up")
-                    }
-                    // Same gates as Copy favorites — full catalog.
-                    .disabled(!canExportFavorites)
-                    .accessibilityLabel(String(localized: "Share favorites"))
-                    .accessibilityHint(
-                        String(localized: "Opens the system share sheet with the full favorites list")
-                    )
-
-                    Button {
-                        playRandomEpisode()
-                    } label: {
-                        Label("Play random", systemImage: "shuffle")
-                    }
-                    .disabled(playRandomCandidates.isEmpty)
-                    .accessibilityLabel(String(localized: "Play random"))
-                    .accessibilityHint(String(localized: "Plays a random episode from the full Favorites catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not reorder Favorites. No confirmation."))
-
-                    Button {
-                        showEnqueueAllConfirm = true
-                    } label: {
-                        Label("Add all to queue", systemImage: "text.append")
-                    }
-                    .disabled(enqueueAllFavoritesCandidatesCount == 0)
-                    .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full Favorites catalog that are not already queued, newest favorited first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue."))
-
-                    Button {
-                        showEnqueueAllUnplayedConfirm = true
-                    } label: {
-                        Label("Add all unplayed to queue", systemImage: "text.badge.plus")
-                    }
-                    .disabled(enqueueAllUnplayedFavoritesCandidatesCount == 0)
-                    .accessibilityLabel(String(localized: "Add all unplayed to queue"))
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from the full Favorites catalog that are not already queued, newest favorited first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived.")
-                    )
-
-                    Button {
-                        showMarkAllPlayedConfirm = true
-                    } label: {
-                        Label("Mark all as played", systemImage: "checkmark.circle")
-                    }
-                    .disabled(markAllFavoritesPlayedCandidatesCount == 0)
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the full Favorites catalog as played, newest favorited first. Ignores podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not clear Favorites, unfavorite episodes, or delete downloads itself.")
-                    )
-
-                    Button {
-                        showMarkAllUnplayedConfirm = true
-                    } label: {
-                        Label("Mark all as unplayed", systemImage: "circle")
-                    }
-                    .disabled(markAllFavoritesUnplayedCandidatesCount == 0)
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then marks played episodes, including archived, in the full Favorites catalog as unplayed. Ignores podcast, search, and sort filters. Does not delete download files, clear the queue, stop playback, or unarchive episodes.")
-                    )
-
-                    Button {
-                        showArchiveAllConfirm = true
-                    } label: {
-                        Label("Archive all", systemImage: "archivebox")
-                    }
-                    .disabled(archiveAllFavoritesCandidatesCount == 0)
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then archives non-archived episodes in the full Favorites catalog, newest favorited first. Ignores podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
-                    )
-
-                    Button(role: .destructive) {
-                        showClearFavoritesConfirm = true
-                    } label: {
-                        Label("Clear favorites", systemImage: "trash")
-                    }
-                    // Clear always targets the full favorites list (not the filtered subset).
-                    .disabled(items.isEmpty)
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then removes every episode from the full Favorites catalog. Ignores podcast, search, and sort filters. Does not delete downloads, archive, mark played, or clear the queue.")
-                    )
-                } label: {
-                    Label("Favorites actions", systemImage: "ellipsis.circle")
-                }
-                // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
-                .disabled(items.isEmpty)
-                .accessibilityLabel(String(localized: "Favorites actions"))
-                .accessibilityHint(
-                    String(localized: "Copy favorites, share favorites, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, archive all, or clear favorites")
-                )
-            }
-        }
+        .toolbar { favoritesToolbar }
         .alert(
             String(localized: "Copied"),
             isPresented: $showCopiedAlert

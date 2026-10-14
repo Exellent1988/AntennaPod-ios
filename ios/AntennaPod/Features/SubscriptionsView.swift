@@ -559,6 +559,121 @@ struct SubscriptionsView: View {
         }
     }
 
+    // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
+    @ToolbarContentBuilder
+    private var subscriptionsToolbar: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            Button {
+                Task { await store.refreshAllFeeds() }
+            } label: {
+                if store.isLoading {
+                    ProgressView()
+                } else {
+                    Image(systemName: "arrow.clockwise")
+                }
+            }
+            .disabled(store.isLoading || store.feeds.isEmpty)
+            .accessibilityLabel(String(localized: "Refresh all"))
+            .accessibilityHint(
+                String(localized: "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone. Uses the full subscriptions library, not search or filter. Feed refresh is not limited by the Wi‑Fi-only toggles and may use cellular. Does not invent episodes; Auto-download may enqueue newly appeared ones after successful refreshes. Distinct from Rescan folder.")
+            )
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Button {
+                if parental.needsPINForAddDiscover {
+                    showAddPINGate = true
+                } else {
+                    showAdd = true
+                }
+            } label: {
+                Image(systemName: parental.needsPINForAddDiscover ? "plus.circle" : "plus")
+            }
+            .accessibilityLabel(
+                parental.needsPINForAddDiscover
+                    ? String(localized: "Add podcast (PIN required)")
+                    : String(localized: "Add podcast")
+            )
+        }
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                showOpmlSheet = true
+            } label: {
+                Image(systemName: "arrow.up.arrow.down.square")
+            }
+            .accessibilityLabel(String(localized: "Import or export OPML"))
+        }
+        ToolbarItem(placement: .topBarLeading) {
+            Menu {
+                Picker(selection: $settings.subscriptionsSort) {
+                    ForEach(SubscriptionsSort.allCases) { sort in
+                        Label(sort.label, systemImage: sort.systemImage)
+                            .tag(sort)
+                    }
+                } label: {
+                    Text("Sort")
+                }
+            } label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
+            }
+            .accessibilityLabel(String(localized: "Sort subscriptions"))
+            .accessibilityValue(subscriptionsSortAccessibilityValue)
+            .accessibilityHint(subscriptionsSortAccessibilityHint)
+        }
+        ToolbarItem(placement: .topBarLeading) {
+            Menu {
+                Button {
+                    copySubscriptions()
+                } label: {
+                    Label("Copy subscriptions", systemImage: "doc.plaintext")
+                }
+                // Full library (not search/category/language/tag/Pinned/UI sort/pin partition).
+                .disabled(!canExportSubscriptions)
+                .accessibilityLabel(String(localized: "Copy subscriptions"))
+                .accessibilityHint(
+                    String(localized: "Copies the full subscriptions list to the pasteboard as plain text. Not OPML. Ignores search and filters.")
+                )
+
+                ShareLink(
+                    item: subscriptionsShareText,
+                    subject: Text(String(localized: "Subscriptions"))
+                ) {
+                    Label("Share subscriptions", systemImage: "square.and.arrow.up")
+                }
+                // Same gates as Copy subscriptions — full library plain text.
+                .disabled(!canExportSubscriptions)
+                .accessibilityLabel(String(localized: "Share subscriptions"))
+                .accessibilityHint(
+                    String(localized: "Opens the system share sheet with the full subscriptions list as plain text. Not OPML. Ignores search and filters.")
+                )
+
+                Button {
+                    showUnpinAllConfirm = true
+                } label: {
+                    Label("Unpin all", systemImage: "pin.slash")
+                }
+                .disabled(pinnedSubscriptionCount == 0)
+                .accessibilityLabel(String(localized: "Unpin all"))
+                .accessibilityHint(String(localized: "Clears Keep at top for every pinned podcast. Does not unsubscribe, change tags, or change sort preference."))
+            } label: {
+                Label("Subscriptions actions", systemImage: "ellipsis.circle")
+            }
+            .accessibilityLabel(String(localized: "Subscriptions actions"))
+            .accessibilityHint(
+                String(localized: "Copy subscriptions, share subscriptions, or unpin all")
+            )
+            .disabled(store.feeds.isEmpty)
+        }
+        ToolbarItem(placement: .topBarLeading) {
+            NavigationLink {
+                ManageTagsView()
+            } label: {
+                Image(systemName: "tag")
+            }
+            .accessibilityLabel(String(localized: "Manage tags"))
+            .accessibilityHint(String(localized: "Opens Manage tags to rename or delete tag labels across all podcasts. Rename updates every podcast using that name. Delete removes the tag from those podcasts but does not unsubscribe or delete downloads. Does not export OPML, start sync, or change playback."))
+        }
+    }
+
     var body: some View {
         NavigationStack(path: $path) {
             subscriptionsList
@@ -576,118 +691,7 @@ struct SubscriptionsView: View {
             .refreshable {
                 await store.refreshAllFeeds()
             }
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        Task { await store.refreshAllFeeds() }
-                    } label: {
-                        if store.isLoading {
-                            ProgressView()
-                        } else {
-                            Image(systemName: "arrow.clockwise")
-                        }
-                    }
-                    .disabled(store.isLoading || store.feeds.isEmpty)
-                    .accessibilityLabel(String(localized: "Refresh all"))
-                    .accessibilityHint(
-                        String(localized: "Refreshes every subscribed podcast that participates in Keep updated. Podcasts set to Keep updated Never are skipped; swipe Refresh on a row still refreshes that podcast alone. Uses the full subscriptions library, not search or filter. Feed refresh is not limited by the Wi‑Fi-only toggles and may use cellular. Does not invent episodes; Auto-download may enqueue newly appeared ones after successful refreshes. Distinct from Rescan folder.")
-                    )
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        if parental.needsPINForAddDiscover {
-                            showAddPINGate = true
-                        } else {
-                            showAdd = true
-                        }
-                    } label: {
-                        Image(systemName: parental.needsPINForAddDiscover ? "plus.circle" : "plus")
-                    }
-                    .accessibilityLabel(
-                        parental.needsPINForAddDiscover
-                            ? String(localized: "Add podcast (PIN required)")
-                            : String(localized: "Add podcast")
-                    )
-                }
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        showOpmlSheet = true
-                    } label: {
-                        Image(systemName: "arrow.up.arrow.down.square")
-                    }
-                    .accessibilityLabel(String(localized: "Import or export OPML"))
-                }
-                ToolbarItem(placement: .topBarLeading) {
-                    Menu {
-                        Picker(selection: $settings.subscriptionsSort) {
-                            ForEach(SubscriptionsSort.allCases) { sort in
-                                Label(sort.label, systemImage: sort.systemImage)
-                                    .tag(sort)
-                            }
-                        } label: {
-                            Text("Sort")
-                        }
-                    } label: {
-                        Label("Sort", systemImage: "arrow.up.arrow.down")
-                    }
-                    .accessibilityLabel(String(localized: "Sort subscriptions"))
-                    .accessibilityValue(subscriptionsSortAccessibilityValue)
-                    .accessibilityHint(subscriptionsSortAccessibilityHint)
-                }
-                ToolbarItem(placement: .topBarLeading) {
-                    Menu {
-                        Button {
-                            copySubscriptions()
-                        } label: {
-                            Label("Copy subscriptions", systemImage: "doc.plaintext")
-                        }
-                        // Full library (not search/category/language/tag/Pinned/UI sort/pin partition).
-                        .disabled(!canExportSubscriptions)
-                        .accessibilityLabel(String(localized: "Copy subscriptions"))
-                        .accessibilityHint(
-                            String(localized: "Copies the full subscriptions list to the pasteboard as plain text. Not OPML. Ignores search and filters.")
-                        )
-
-                        ShareLink(
-                            item: subscriptionsShareText,
-                            subject: Text(String(localized: "Subscriptions"))
-                        ) {
-                            Label("Share subscriptions", systemImage: "square.and.arrow.up")
-                        }
-                        // Same gates as Copy subscriptions — full library plain text.
-                        .disabled(!canExportSubscriptions)
-                        .accessibilityLabel(String(localized: "Share subscriptions"))
-                        .accessibilityHint(
-                            String(localized: "Opens the system share sheet with the full subscriptions list as plain text. Not OPML. Ignores search and filters.")
-                        )
-
-                        Button {
-                            showUnpinAllConfirm = true
-                        } label: {
-                            Label("Unpin all", systemImage: "pin.slash")
-                        }
-                        .disabled(pinnedSubscriptionCount == 0)
-                        .accessibilityLabel(String(localized: "Unpin all"))
-                        .accessibilityHint(String(localized: "Clears Keep at top for every pinned podcast. Does not unsubscribe, change tags, or change sort preference."))
-                    } label: {
-                        Label("Subscriptions actions", systemImage: "ellipsis.circle")
-                    }
-                    .accessibilityLabel(String(localized: "Subscriptions actions"))
-                    .accessibilityHint(
-                        String(localized: "Copy subscriptions, share subscriptions, or unpin all")
-                    )
-                    .disabled(store.feeds.isEmpty)
-                }
-                ToolbarItem(placement: .topBarLeading) {
-                    NavigationLink {
-                        ManageTagsView()
-                    } label: {
-                        Image(systemName: "tag")
-                    }
-                    .accessibilityLabel(String(localized: "Manage tags"))
-                    .accessibilityHint(String(localized: "Opens Manage tags to rename or delete tag labels across all podcasts. Rename updates every podcast using that name. Delete removes the tag from those podcasts but does not unsubscribe or delete downloads. Does not export OPML, start sync, or change playback."))
-                }
-            }
+            .toolbar { subscriptionsToolbar }
             .sheet(isPresented: $showAdd) {
                 AddFeedView()
             }
