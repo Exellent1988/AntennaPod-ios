@@ -429,7 +429,8 @@ struct AllEpisodesView: View {
         }
     }
 
-    var body: some View {
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var allEpisodesList: some View {
         List {
             Section {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -544,6 +545,10 @@ struct AllEpisodesView: View {
                 }
             }
         }
+    }
+
+    var body: some View {
+        allEpisodesList
         .navigationTitle("Episodes")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
