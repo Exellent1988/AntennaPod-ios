@@ -1,4 +1,5 @@
 import AVFoundation
+import PodcastCore
 import SwiftUI
 import UIKit
 
@@ -415,13 +416,24 @@ struct FullPlayerView: View {
     @ViewBuilder
     private func playerContent(episode: PodcastEpisode) -> some View {
         GeometryReader { geo in
-            let side = min(geo.size.width - 48, 320)
+            // Android: cover fills the width (with margins) above the controls.
+            let side = min(geo.size.width - 32, 380)
             ScrollView {
                 VStack(spacing: 24) {
                     mediaSurface(episode: episode, side: side)
                         .padding(.top, 8)
                     videoAudioOnlyToggle(episode: episode)
                         .padding(.horizontal)
+                    // Android: the current chapter sits directly under the cover.
+                    if let chapterTitle = currentChapterTitle {
+                        Text(chapterTitle)
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
+                            .padding(.horizontal)
+                            .accessibilityLabel(String(localized: "Chapter \(chapterTitle)"))
+                    }
                     VStack(spacing: 6) {
                         Text(episode.title)
                             .font(.title2.weight(.semibold))
@@ -588,14 +600,6 @@ struct FullPlayerView: View {
                                 shareHint: String(localized: "Shares the trimmed episode title and podcast display title as `title — podcast` plain text; hidden unless both are present; no title invented"),
                                 copiedMessage: String(localized: "Title and podcast copied to the pasteboard.")
                             )
-                        }
-                        if let chapterTitle = currentChapterTitle {
-                            Text(chapterTitle)
-                                .font(.subheadline.weight(.medium))
-                                .foregroundStyle(.secondary)
-                                .multilineTextAlignment(.center)
-                                .lineLimit(2)
-                                .accessibilityLabel(String(localized: "Chapter \(chapterTitle)"))
                         }
                         Label(
                             playback.isPlayingFromLocalFile ? String(localized: "Playing from download") : String(localized: "Streaming"),
@@ -1105,6 +1109,27 @@ struct FullPlayerView: View {
             .accessibilityHint(String(localized: "Video is currently shown in Picture in Picture."))
     }
 
+    /// Chapter dividers on the seek bar (Android ChapterSeekBar). Decorative; no hit testing.
+    private var chapterMarksOverlay: some View {
+        GeometryReader { geo in
+            let marks = ChapterMarks.fractions(
+                starts: chapters.map(\.startTimeSeconds),
+                duration: playback.durationSeconds
+            )
+            // Slider track has ~14 pt thumb inset on each side.
+            let inset: CGFloat = 14
+            let width = max(0, geo.size.width - inset * 2)
+            ForEach(marks, id: \.self) { fraction in
+                Rectangle()
+                    .fill(Color(uiColor: .systemBackground))
+                    .frame(width: 2, height: 6)
+                    .position(x: inset + width * CGFloat(fraction), y: geo.size.height / 2)
+            }
+        }
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+    }
+
     private var scrubber: some View {
         VStack(spacing: 6) {
             Slider(
@@ -1125,6 +1150,7 @@ struct FullPlayerView: View {
                     }
                 }
             )
+            .overlay { chapterMarksOverlay }
             .accessibilityLabel(String(localized: "Playback position"))
             .accessibilityValue(playbackPositionAccessibilityValue)
             .accessibilityHint(playbackPositionAccessibilityHint)
@@ -1349,26 +1375,27 @@ struct FullPlayerView: View {
     /// fall back to a row of seek and play controls above a row with sleep timer and speed.
     private var transportControls: some View {
         ViewThatFits(in: .horizontal) {
+            // Android order: speed · rewind · play/pause · forward · sleep timer.
             HStack(spacing: 28) {
-                sleepTimerMenu
+                speedMenu
                 seekAndPlayButtons
-                speedMenu
-            }
-            VStack(spacing: 16) {
-                HStack(spacing: 28) {
-                    seekAndPlayButtons
-                }
-                HStack(spacing: 28) {
-                    sleepTimerMenu
-                    speedMenu
-                }
-            }
-            VStack(spacing: 16) {
-                HStack(spacing: 28) {
-                    seekAndPlayButtons
-                }
                 sleepTimerMenu
+            }
+            VStack(spacing: 16) {
+                HStack(spacing: 28) {
+                    seekAndPlayButtons
+                }
+                HStack(spacing: 28) {
+                    speedMenu
+                    sleepTimerMenu
+                }
+            }
+            VStack(spacing: 16) {
+                HStack(spacing: 28) {
+                    seekAndPlayButtons
+                }
                 speedMenu
+                sleepTimerMenu
             }
         }
         .buttonStyle(.plain)
@@ -1388,7 +1415,9 @@ struct FullPlayerView: View {
             playback.togglePlayPause()
         } label: {
             Image(systemName: playback.isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                .font(.system(size: 64))
+                .font(.system(size: 72))
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(Color.accentColor)
         }
         .accessibilityLabel(playback.isPlaying ? String(localized: "Pause") : String(localized: "Play"))
 
@@ -1443,7 +1472,9 @@ struct FullPlayerView: View {
         } label: {
             Text(PlaybackService.formatPlaybackSpeed(playback.rate))
                 .font(.subheadline.weight(.semibold).monospacedDigit())
-                .frame(minWidth: 44)
+                .frame(minWidth: 44, minHeight: 32)
+                .padding(.horizontal, 6)
+                .overlay(Capsule().stroke(Color.secondary.opacity(0.6), lineWidth: 1.5))
         } primaryAction: {
             playback.cycleToNextSpeedPreset()
         }
