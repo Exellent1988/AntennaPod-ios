@@ -1771,7 +1771,7 @@ final class PlaybackService: ObservableObject {
         let global = settings?.volumeAdaptationMode ?? .off
         guard let episode = currentEpisode, let store,
               let feed = store.feed(containingEpisodeId: episode.id) else { return global }
-        return VolumeAdaptationMode.resolved(feed: store.feedSettings(for: feed.id).volumeAdaptation, global: global)
+        return store.feedSettings(for: feed.id).resolvedVolumeAdaptation(global: global)
     }
 
     /// Push current Settings / FeedSettings into the live pipeline stages (cheap; no item rebuild).
@@ -1795,14 +1795,11 @@ final class PlaybackService: ObservableObject {
     func resolvedSkipSilenceLevel() -> SkipSilenceLevel {
         let globalOn = settings?.skipSilenceEnabled ?? false
         let globalLevel = settings?.skipSilenceLevel ?? .medium
-        var feedSettings: FeedSettings?
+        var feedSettings = FeedSettings.default
         if let episode = currentEpisode, let store, let feed = store.feed(containingEpisodeId: episode.id) {
             feedSettings = store.feedSettings(for: feed.id)
         }
-        return SkipSilenceLevel.resolved(
-            feedLevel: feedSettings?.skipSilenceLevel, feedEnabled: feedSettings?.skipSilence,
-            globalEnabled: globalOn, globalLevel: globalLevel
-        )
+        return feedSettings.resolvedSkipSilenceLevel(globalEnabled: globalOn, globalLevel: globalLevel)
     }
 
     func resolvedSkipSilenceEnabled() -> Bool { resolvedSkipSilenceLevel() != .off }

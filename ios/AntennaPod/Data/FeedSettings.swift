@@ -223,6 +223,26 @@ struct FeedSettings: Hashable, Codable, Equatable {
         playbackSpeed ?? global
     }
 
+    /// Volume adaptation for this feed: override if set, else the global default.
+    func resolvedVolumeAdaptation(global: VolumeAdaptationMode) -> VolumeAdaptationMode {
+        VolumeAdaptationMode.resolved(feed: volumeAdaptation, global: global)
+    }
+
+    /// Skip silence for this feed: per-feed level, else per-feed on/off (on = global level),
+    /// else the global switch + level. `.off` means Skip silence is disabled.
+    func resolvedSkipSilenceLevel(globalEnabled: Bool, globalLevel: SkipSilenceLevel) -> SkipSilenceLevel {
+        SkipSilenceLevel.resolved(
+            feedLevel: skipSilenceLevel, feedEnabled: skipSilence,
+            globalEnabled: globalEnabled, globalLevel: globalLevel
+        )
+    }
+
+    /// Android `FeedFilter.shouldAutoDownload`: this feed's include/exclude terms and duration
+    /// bounds. Android has no global episode filter, so an unset filter allows everything.
+    func allowsAutoDownloadEpisode(title: String, durationSeconds: Double) -> Bool {
+        episodeFilter.allows(title: title, durationSeconds: durationSeconds)
+    }
+
     /// Feed detail episode sort: override if set, else global `AppSettings.feedEpisodeSort`.
     func resolvedEpisodeSort(global: FeedEpisodeSort) -> FeedEpisodeSort {
         episodeSort ?? global
