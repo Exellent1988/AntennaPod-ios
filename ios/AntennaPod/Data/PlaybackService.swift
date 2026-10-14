@@ -350,7 +350,7 @@ final class PlaybackService: ObservableObject {
         // Sleep-timer fade uses player.volume (0…1). Soft boost (>100%) uses AVAudioMix on the item.
         newPlayer.volume = sleepVolume
         player = newPlayer
-        applyVolumeBoost(to: item)
+        installAudioPipeline(on: item)
         applyVideoAsAudioOnlyPolicy(to: item)
         observe(player: newPlayer, item: item)
 
@@ -1646,6 +1646,7 @@ final class PlaybackService: ObservableObject {
     }
 
     private func tearDownPlayer(clearSleepTimer: Bool) {
+        audioPipeline = nil
         clearSoundbiteEndMarker()
         if clearSleepTimer {
             disableSleepTimer()
@@ -1705,8 +1706,7 @@ final class PlaybackService: ObservableObject {
     /// Re-apply soft **Volume boost** (`AVMutableAudioMix` track volume) after Settings changes
     /// while a player item is loaded. No-op when nothing is loaded.
     func applyVolumeBoost() {
-        guard let item = player?.currentItem else { return }
-        applyVolumeBoost(to: item)
+        refreshAudioPipelineParameters()
     }
 
     /// Re-apply video-track enable/disable after Settings **Play video as audio only** changes
@@ -1725,55 +1725,44 @@ final class PlaybackService: ObservableObject {
         item.audioTimePitchAlgorithm = preserve ? .timeDomain : .varispeed
     }
 
-    /// Soft volume boost via `AVMutableAudioMix` track volume (Settings **Volume boost** percent / 100).
-    ///
-    /// - **100%** → clear mix (unity / no soft gain).
-    /// - **>100%** (up to 300%) → `setVolume(factor, at: .zero)` on each audio track. Apple documents
-    ///   mix volume in 0…1; values above 1.0 are used here as **software gain** and **may clip / distort**.
-    /// - Sleep-timer fade remains on `AVPlayer.volume` (0…1) and multiplies with the mix.
-    /// - Keeps stock `AVPlayer` (video / PiP / Now Playing). **Not** ReplayGain / loudness normalization /
-    ///   Android `LoudnessEnhancer`. **Not** `AVAudioEngine` (would break those surfaces).
-    /// - Some streams (notably HLS) may ignore `audioMix` — boost then has no effect for that item.
-    private func applyVolumeBoost(to item: AVPlayerItem) {
+    // MARK: - Shared audio pipeline (MTAudioProcessingTap → AudioDSP chain)
+
+    /// Pipeline for the current item; `nil` when nothing is loaded. All tap-based features
+    /// (Volume boost, per-feed Volume adaptation, Skip silence analysis) are stages of this one chain.
+    private(set) var audioPipeline: PlayerAudioPipeline?
+
+    /// Linear gain applied by the pipeline's gain stage.
+    /// Settings **Volume boost** percent / 100 (soft limiter above unity, so no hard clipping).
+    func resolvedPipelineGain() -> Float {
         let percent = AppSettings.clampVolumeBoostPercent(settings?.volumeBoostPercent ?? 100)
-        let factor = Float(percent) / 100.0
-        if factor <= 1.001 {
-            item.audioMix = nil
-            player?.volume = sleepVolume
-            return
-        }
+        return Float(percent) / 100.0
+    }
+
+    /// Push current Settings / FeedSettings into the live pipeline stages (cheap; no item rebuild).
+    func refreshAudioPipelineParameters() {
+        audioPipeline?.gain.gain = resolvedPipelineGain()
+    }
+
+    /// Hook for features that add stages to a freshly created pipeline (before the tap is attached).
+    private func configureAudioPipelineStages(_ pipeline: PlayerAudioPipeline) {
+    }
+
+    /// Attach a new pipeline tap to `item`. Taps do not run for HLS / protected items — features on
+    /// the pipeline then have no effect for that item (playback itself is unaffected).
+    private func installAudioPipeline(on item: AVPlayerItem) {
+        let pipeline = PlayerAudioPipeline()
+        audioPipeline = pipeline
+        configureAudioPipelineStages(pipeline)
+        refreshAudioPipelineParameters()
+        player?.volume = sleepVolume
         Task { @MainActor [weak self] in
-            guard let self, self.player?.currentItem === item else { return }
-            let livePercent = AppSettings.clampVolumeBoostPercent(self.settings?.volumeBoostPercent ?? 100)
-            let liveFactor = Float(livePercent) / 100.0
-            if liveFactor <= 1.001 {
-                item.audioMix = nil
-                self.player?.volume = self.sleepVolume
-                return
-            }
+            guard let self else { return }
             do {
                 let tracks = try await item.asset.loadTracks(withMediaType: .audio)
-                guard self.player?.currentItem === item else { return }
-                guard !tracks.isEmpty else {
-                    // No audio tracks yet / unsupported for mix — leave unity (no fake boost).
-                    item.audioMix = nil
-                    self.player?.volume = self.sleepVolume
-                    return
-                }
-                var params: [AVAudioMixInputParameters] = []
-                for track in tracks {
-                    let p = AVMutableAudioMixInputParameters(track: track)
-                    p.setVolume(liveFactor, at: .zero)
-                    params.append(p)
-                }
-                let mix = AVMutableAudioMix()
-                mix.inputParameters = params
-                item.audioMix = mix
-                // Sleep fade stays on player.volume; boost is on the mix.
-                self.player?.volume = self.sleepVolume
+                guard self.player?.currentItem === item, self.audioPipeline === pipeline else { return }
+                item.audioMix = pipeline.makeAudioMix(for: tracks)
             } catch {
                 item.audioMix = nil
-                self.player?.volume = self.sleepVolume
             }
         }
     }
