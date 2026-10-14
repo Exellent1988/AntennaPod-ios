@@ -1313,6 +1313,392 @@ struct FeedDetailView: View {
         }
     }
 
+    /// Feed detail toolbar, split out of `feedDetailCore` so CI type-checks it in time.
+    @ToolbarContentBuilder
+    private var feedDetailToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Menu {
+                Picker(selection: feedEpisodeSortBinding) {
+                    ForEach(FeedEpisodeSort.allCases) { sort in
+                        Label(sort.label, systemImage: sort.systemImage)
+                            .tag(sort)
+                    }
+                } label: {
+                    Text("Sort")
+                }
+            } label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
+            }
+            .accessibilityLabel(String(localized: "Sort episodes"))
+            .accessibilityValue(resolvedEpisodeSort.label)
+            .accessibilityHint(String(localized: "Orders this podcast’s episode list only: Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A. Saved per podcast — same override as Podcast settings → Episode sort. Serial may auto-set Oldest first once when unset; itunes:type capsule stays display-only. Does not rewrite the global Feed episode sort alone. Changing this does not reorder other podcasts or start a refresh."))
+        }
+        ToolbarItem(placement: .primaryAction) {
+            HStack(spacing: 12) {
+                if hasReadableFeedDescription {
+                    Button {
+                        showFeedDescription = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                    }
+                    .accessibilityLabel(String(localized: "Podcast description"))
+                    .accessibilityHint(String(localized: "Opens the podcast description from the feed"))
+                }
+                if let url = liveFeed.shareURL {
+                    ShareLink(
+                        item: url,
+                        subject: Text(feedDisplayTitle),
+                        message: Text(feedDisplayTitle)
+                    ) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    .accessibilityLabel(String(localized: "Share podcast"))
+                }
+                Menu {
+                    if let url = liveFeed.websiteURL {
+                        Button {
+                            openURL(url)
+                        } label: {
+                            Label("Open podcast website", systemImage: "safari")
+                        }
+                        .accessibilityLabel(String(localized: "Open podcast website"))
+                        .accessibilityHint(String(localized: "Opens the feed-provided podcast website http(s) link in the system browser — not an in-app WebView. No confirmation. Never uses the feed RSS URL or an episode webpage. Distinct from Open episode website, Copy podcast website, and Share podcast website. Does not subscribe, download, or change playback."))
+
+                        Button {
+                            copyPodcastWebsiteURL(url)
+                        } label: {
+                            Label("Copy podcast website", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy podcast website"))
+                        .accessibilityHint(
+                            String(localized: "Copies the feed-provided podcast website URL to the pasteboard. No confirmation. Never uses the feed RSS URL, an episode webpage, funding URL, or discussion link. Distinct from Open podcast website, Share podcast website, and Copy feed URL. Does not open a browser, subscribe, or download.")
+                        )
+
+                        ShareLink(
+                            item: url,
+                            subject: Text(feedDisplayTitle),
+                            message: Text(feedDisplayTitle)
+                        ) {
+                            Label("Share podcast website", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share podcast website"))
+                        .accessibilityHint(
+                            String(localized: "Opens the system share sheet with the feed-provided podcast website URL. Never uses the feed RSS URL, an episode webpage, funding URL, or discussion link. Distinct from Open podcast website, Copy podcast website, and Share feed URL. Sharing is your choice and does not subscribe or download.")
+                        )
+                    }
+
+                    if let url = liveFeed.fundingURL {
+                        Button {
+                            openURL(url)
+                        } label: {
+                            Label(liveFeed.supportActionTitle, systemImage: "heart.circle")
+                        }
+                        .accessibilityLabel(liveFeed.supportAccessibilityLabel)
+                        .accessibilityHint(
+                            String(localized: "Opens the feed-provided funding or support http(s) page in the system browser — not an in-app WebView. No confirmation. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from Copy funding URL, Share funding URL, and Open podcast website. Does not subscribe, download, or change playback.")
+                        )
+
+                        Button {
+                            copyFundingURL(url)
+                        } label: {
+                            Label("Copy funding URL", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy funding URL"))
+                        .accessibilityHint(
+                            String(localized: "Copies the feed-provided funding or support page URL to the pasteboard. No confirmation. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from opening the funding page, Share funding URL, and Copy feed URL. Does not open a browser, subscribe, or download.")
+                        )
+
+                        ShareLink(
+                            item: url,
+                            subject: Text(feedDisplayTitle),
+                            message: Text("\(feedDisplayTitle) — \(liveFeed.supportActionTitle)")
+                        ) {
+                            Label("Share funding URL", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share funding URL"))
+                        .accessibilityHint(
+                            String(localized: "Opens the system share sheet with the feed-provided funding or support page URL. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from opening the funding page, Copy funding URL, and Share feed URL. Sharing is your choice and does not subscribe or download.")
+                        )
+
+                        if let label = liveFeed.displayFundingLabel {
+                            Button {
+                                copyFundingLabel(label)
+                            } label: {
+                                Label("Copy funding label", systemImage: "doc.on.doc")
+                            }
+                            .accessibilityLabel(String(localized: "Copy funding label"))
+                            .accessibilityHint(
+                                String(localized: "Copies the exact feed-provided funding label shown in the Support action to the pasteboard; does not process payments")
+                            )
+
+                            ShareLink(
+                                item: label,
+                                subject: Text(feedDisplayTitle)
+                            ) {
+                                Label("Share funding label", systemImage: "square.and.arrow.up")
+                            }
+                            .accessibilityLabel(String(localized: "Share funding label"))
+                            .accessibilityHint(
+                                String(localized: "Shares the exact feed-provided funding label shown in the Support action as plain text; does not process payments")
+                            )
+                        }
+                    }
+
+                    if let interact = liveFeed.preferredSocialInteract,
+                       let url = interact.discussionURL {
+                        if let accountId = interact.displayAccountId {
+                            Button {
+                                copyDiscussAccountId(accountId)
+                            } label: {
+                                Label("Copy discuss account ID", systemImage: "doc.on.doc")
+                            }
+                            .accessibilityLabel(String(localized: "Copy discuss account ID"))
+                            .accessibilityHint(
+                                String(localized: "Copies the displayed feed-provided discussion account ID as plain text; does not post as you")
+                            )
+
+                            ShareLink(
+                                item: accountId,
+                                subject: Text(feedDisplayTitle),
+                                message: Text("\(feedDisplayTitle) — \(String(localized: "Discuss account ID"))")
+                            ) {
+                                Label("Share discuss account ID", systemImage: "square.and.arrow.up")
+                            }
+                            .accessibilityLabel(String(localized: "Share discuss account ID"))
+                            .accessibilityHint(
+                                String(localized: "Shares the displayed feed-provided discussion account ID as plain text; does not post as you")
+                            )
+                        }
+
+                        if let protocolText = interact.displayProtocol {
+                            Button {
+                                copyDiscussProtocol(protocolText)
+                            } label: {
+                                Label("Copy discuss protocol", systemImage: "doc.on.doc")
+                            }
+                            .accessibilityLabel(String(localized: "Copy discuss protocol"))
+                            .accessibilityHint(
+                                String(localized: "Copies the displayed feed-provided discussion protocol to the pasteboard; does not post as you")
+                            )
+
+                            ShareLink(item: protocolText) {
+                                Label("Share discuss protocol", systemImage: "square.and.arrow.up")
+                            }
+                            .accessibilityLabel(String(localized: "Share discuss protocol"))
+                            .accessibilityHint(
+                                String(localized: "Shares the displayed feed-provided discussion protocol as plain text; does not post as you")
+                            )
+                        }
+
+                        Button {
+                            openURL(url)
+                        } label: {
+                            Label("Discuss", systemImage: "bubble.left.and.bubble.right")
+                        }
+                        .accessibilityLabel(String(localized: "Discuss"))
+                        .accessibilityHint(String(localized: "Opens the feed-provided discussion http(s) link in the system browser — not an in-app WebView. No confirmation. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Copy discuss URL, Share discuss URL, and Open podcast website. Does not subscribe, download, or change playback."))
+
+                        Button {
+                            copyDiscussURL(url)
+                        } label: {
+                            Label("Copy discuss URL", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy discuss URL"))
+                        .accessibilityHint(
+                            String(localized: "Copies the feed-provided discussion URL to the pasteboard. No confirmation. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Discuss, Share discuss URL, and Copy feed URL. Does not open a browser, subscribe, or download.")
+                        )
+
+                        ShareLink(
+                            item: url,
+                            subject: Text(feedDisplayTitle),
+                            message: Text("\(feedDisplayTitle) — \(String(localized: "Discuss"))")
+                        ) {
+                            Label("Share discuss URL", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share discuss URL"))
+                        .accessibilityHint(
+                            String(localized: "Opens the system share sheet with the feed-provided discussion URL. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Discuss, Copy discuss URL, and Share feed URL. Sharing is your choice and does not subscribe or download.")
+                        )
+                    }
+
+                    if let title = EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle) {
+                        Button {
+                            copyPodcastTitle(title)
+                        } label: {
+                            Label("Copy podcast title", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy podcast title"))
+                        .accessibilityHint(String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"))
+
+                        ShareLink(item: title, subject: Text(title)) {
+                            Label("Share podcast title", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share podcast title"))
+                        .accessibilityHint(String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"))
+                    }
+
+                    Button {
+                        copyFeedURL()
+                    } label: {
+                        Label("Copy feed URL", systemImage: "doc.on.doc")
+                    }
+                    .disabled(!canCopyFeedURL)
+                    .accessibilityLabel(String(localized: "Copy feed URL"))
+                    .accessibilityHint(String(localized: "Copies the feed RSS or Atom URL to the pasteboard. No confirmation. Disabled for local-folder podcasts and empty URLs. Distinct from the podcast website, funding, and discussion links, and from Share feed URL. Does not subscribe, refresh, or open a browser."))
+
+                    if let url = feedURLShareURL {
+                        ShareLink(
+                            item: url,
+                            subject: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))"),
+                            message: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))")
+                        ) {
+                            Label("Share feed URL", systemImage: "square.and.arrow.up")
+                        }
+                        .disabled(!canCopyFeedURL)
+                        .accessibilityLabel(String(localized: "Share feed URL"))
+                        .accessibilityHint(
+                            String(localized: "Opens the system share sheet with the feed RSS or Atom URL. Disabled for local-folder podcasts and empty URLs. Distinct from the podcast website, funding, and discussion links, and from Copy feed URL. Sharing is your choice and does not subscribe, refresh, or open a browser.")
+                        )
+                    } else {
+                        ShareLink(
+                            item: feedURLShareString,
+                            subject: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))"),
+                            message: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))")
+                        ) {
+                            Label("Share feed URL", systemImage: "square.and.arrow.up")
+                        }
+                        .disabled(!canCopyFeedURL)
+                        .accessibilityLabel(String(localized: "Share feed URL"))
+                        .accessibilityHint(
+                            String(localized: "Opens the system share sheet with the raw feed URL string when it is not available as a URL object. Disabled for local-folder podcasts and empty URLs. Distinct from the podcast website, funding, and discussion links, and from Copy feed URL. Sharing is your choice and does not subscribe, refresh, or open a browser.")
+                        )
+                    }
+
+                    if let guid = displayPodcastGuid {
+                        Button {
+                            copyPodcastGuid()
+                        } label: {
+                            Label("Copy podcast GUID", systemImage: "number")
+                        }
+                        .accessibilityLabel(String(localized: "Copy podcast GUID"))
+                        .accessibilityHint(String(localized: "Copies the feed-provided podcast GUID to the pasteboard as plain text. No confirmation. Distinct from the podcast, feed URL, website, funding, and discussion copies, and from Share podcast GUID. Does not open a link, change subscriptions, or invent a GUID when missing."))
+
+                        ShareLink(
+                            item: guid,
+                            subject: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))"),
+                            message: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))")
+                        ) {
+                            Label("Share podcast GUID", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share podcast GUID"))
+                        .accessibilityHint(
+                            String(localized: "Shares the feed-provided podcast GUID as plain text; distinct from the podcast, feed URL, website, funding, and discussion shares")
+                        )
+                    }
+
+                    Button {
+                        playRandomEpisode()
+                    } label: {
+                        Label("Play random", systemImage: "shuffle")
+                    }
+                    .disabled(playRandomCandidates.isEmpty)
+                    .accessibilityLabel(String(localized: "Play random"))
+                    .accessibilityHint(String(localized: "Plays a random non-archived episode from this podcast’s full catalog with playable media. Prefers unplayed when any remain. Ignores status, episode type, and search filters. Does not reorder the feed list. No confirmation."))
+
+                    Button {
+                        store.togglePinned(feedId: liveFeed.id)
+                    } label: {
+                        if store.isPinned(feedId: liveFeed.id) {
+                            Label("Don’t keep at top", systemImage: "pin.slash")
+                        } else {
+                            Label("Keep at top", systemImage: "pin")
+                        }
+                    }
+                    .accessibilityLabel(
+                        store.isPinned(feedId: liveFeed.id)
+                            ? String(localized: "Don’t keep at top")
+                            : String(localized: "Keep at top")
+                    )
+                    .accessibilityHint(String(localized: "Pins or unpins this podcast above unpinned ones on Subscriptions for every sort (Recently updated, Alphabetical, and others). Not a separate sort mode. Local preference only — not synced to gpodder. Included in iOS JSON backup with other feed settings. Cleared when you unsubscribe. Does not unsubscribe, change tags, or change the Subscriptions sort preference. Toggles immediately. No confirmation."))
+
+                    Button {
+                        showDownloadAllConfirm = true
+                    } label: {
+                        Label("Download all unplayed", systemImage: "arrow.down.circle")
+                    }
+                    .disabled(downloadAllCandidates.isEmpty)
+                    .accessibilityLabel(String(localized: "Download all unplayed"))
+                    .accessibilityHint(downloadAllAccessibilityHint)
+
+                    Button {
+                        showMarkAllPlayedConfirm = true
+                    } label: {
+                        Label("Mark all as played", systemImage: "checkmark.circle")
+                    }
+                    .disabled(markAllPlayedCandidates.isEmpty)
+                    .accessibilityHint(String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in this podcast’s full feed catalog as played. Ignores status, episode type, search, and sort filters. Does not archive; Auto-delete after playing still applies when enabled."))
+
+                    Button {
+                        showMarkAllUnplayedConfirm = true
+                    } label: {
+                        Label("Mark all as unplayed", systemImage: "circle")
+                    }
+                    .disabled(markAllUnplayedCandidates.isEmpty)
+                    .accessibilityHint(String(localized: "Asks for confirmation, then marks played episodes in this podcast’s full feed catalog as unplayed, including archived. Ignores status, episode type, search, and sort filters. Does not delete downloads, remove from queue, stop playback, or unarchive."))
+
+                    Button {
+                        showArchiveAllConfirm = true
+                    } label: {
+                        Label("Archive all", systemImage: "archivebox")
+                    }
+                    .disabled(archiveAllFeedCandidatesCount == 0)
+                    .accessibilityLabel(String(localized: "Archive all"))
+                    .accessibilityHint(String(localized: "Asks for confirmation, then archives non-archived episodes in this podcast’s full feed catalog. Ignores status, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue. Distinct from global Archive all actions."))
+
+                    Button {
+                        showEnqueueAllUnplayedConfirm = true
+                    } label: {
+                        Label("Add all unplayed to queue", systemImage: "text.badge.plus")
+                    }
+                    .disabled(enqueueAllUnplayedFromFeedCandidates.isEmpty)
+                    .accessibilityLabel(String(localized: "Add all unplayed to queue"))
+                    .accessibilityHint(String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from this podcast’s full feed catalog that are not already queued, in this podcast’s episode sort order. Ignores status, episode type, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived."))
+
+                    Button {
+                        showEnqueueAllConfirm = true
+                    } label: {
+                        Label("Add all to queue", systemImage: "text.append")
+                    }
+                    .disabled(enqueueAllFromFeedCandidatesCount == 0)
+                    .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from this podcast’s full feed catalog that are not already queued, newest publish date first, including played and archived. Ignores status, episode type, search, and sort filters. Queue lock does not block enqueue."))
+
+                    Button(role: .destructive) {
+                        showDeleteDownloadsConfirm = true
+                    } label: {
+                        Label("Delete downloads", systemImage: "externaldrive.badge.minus")
+                    }
+                    .disabled(deleteFeedDownloadsEligible.isEmpty)
+                    .accessibilityHint(String(localized: "Asks for confirmation, then deletes this podcast’s offline files, skipping favorites. Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Delete all downloads."))
+
+                    Button(role: .destructive) {
+                        showUnsubscribeConfirm = true
+                    } label: {
+                        Label("Unsubscribe", systemImage: "trash")
+                    }
+                    .accessibilityHint(String(localized: "Asks for confirmation, then removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. When this feed has offline downloads, you can keep them or delete only this feed’s files including favorites. Does not clear other podcasts’ downloads."))
+                } label: {
+                    Label("Feed actions", systemImage: "ellipsis.circle")
+                }
+                Button {
+                    showPerFeedSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
+                }
+                .accessibilityLabel(String(localized: "Podcast settings"))
+            }
+        }
+    }
+
     @ViewBuilder
     private var feedDetailCore: some View {
         List {
@@ -1330,387 +1716,7 @@ struct FeedDetailView: View {
             debounceTask?.cancel()
         }
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Menu {
-                    Picker(selection: feedEpisodeSortBinding) {
-                        ForEach(FeedEpisodeSort.allCases) { sort in
-                            Label(sort.label, systemImage: sort.systemImage)
-                                .tag(sort)
-                        }
-                    } label: {
-                        Text("Sort")
-                    }
-                } label: {
-                    Label("Sort", systemImage: "arrow.up.arrow.down")
-                }
-                .accessibilityLabel(String(localized: "Sort episodes"))
-                .accessibilityValue(resolvedEpisodeSort.label)
-                .accessibilityHint(String(localized: "Orders this podcast’s episode list only: Newest first, Oldest first, Shortest first, Longest first, Title A–Z, or Title Z–A. Saved per podcast — same override as Podcast settings → Episode sort. Serial may auto-set Oldest first once when unset; itunes:type capsule stays display-only. Does not rewrite the global Feed episode sort alone. Changing this does not reorder other podcasts or start a refresh."))
-            }
-            ToolbarItem(placement: .primaryAction) {
-                HStack(spacing: 12) {
-                    if hasReadableFeedDescription {
-                        Button {
-                            showFeedDescription = true
-                        } label: {
-                            Image(systemName: "info.circle")
-                        }
-                        .accessibilityLabel(String(localized: "Podcast description"))
-                        .accessibilityHint(String(localized: "Opens the podcast description from the feed"))
-                    }
-                    if let url = liveFeed.shareURL {
-                        ShareLink(
-                            item: url,
-                            subject: Text(feedDisplayTitle),
-                            message: Text(feedDisplayTitle)
-                        ) {
-                            Image(systemName: "square.and.arrow.up")
-                        }
-                        .accessibilityLabel(String(localized: "Share podcast"))
-                    }
-                    Menu {
-                        if let url = liveFeed.websiteURL {
-                            Button {
-                                openURL(url)
-                            } label: {
-                                Label("Open podcast website", systemImage: "safari")
-                            }
-                            .accessibilityLabel(String(localized: "Open podcast website"))
-                            .accessibilityHint(String(localized: "Opens the feed-provided podcast website http(s) link in the system browser — not an in-app WebView. No confirmation. Never uses the feed RSS URL or an episode webpage. Distinct from Open episode website, Copy podcast website, and Share podcast website. Does not subscribe, download, or change playback."))
-
-                            Button {
-                                copyPodcastWebsiteURL(url)
-                            } label: {
-                                Label("Copy podcast website", systemImage: "doc.on.doc")
-                            }
-                            .accessibilityLabel(String(localized: "Copy podcast website"))
-                            .accessibilityHint(
-                                String(localized: "Copies the feed-provided podcast website URL to the pasteboard. No confirmation. Never uses the feed RSS URL, an episode webpage, funding URL, or discussion link. Distinct from Open podcast website, Share podcast website, and Copy feed URL. Does not open a browser, subscribe, or download.")
-                            )
-
-                            ShareLink(
-                                item: url,
-                                subject: Text(feedDisplayTitle),
-                                message: Text(feedDisplayTitle)
-                            ) {
-                                Label("Share podcast website", systemImage: "square.and.arrow.up")
-                            }
-                            .accessibilityLabel(String(localized: "Share podcast website"))
-                            .accessibilityHint(
-                                String(localized: "Opens the system share sheet with the feed-provided podcast website URL. Never uses the feed RSS URL, an episode webpage, funding URL, or discussion link. Distinct from Open podcast website, Copy podcast website, and Share feed URL. Sharing is your choice and does not subscribe or download.")
-                            )
-                        }
-
-                        if let url = liveFeed.fundingURL {
-                            Button {
-                                openURL(url)
-                            } label: {
-                                Label(liveFeed.supportActionTitle, systemImage: "heart.circle")
-                            }
-                            .accessibilityLabel(liveFeed.supportAccessibilityLabel)
-                            .accessibilityHint(
-                                String(localized: "Opens the feed-provided funding or support http(s) page in the system browser — not an in-app WebView. No confirmation. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from Copy funding URL, Share funding URL, and Open podcast website. Does not subscribe, download, or change playback.")
-                            )
-
-                            Button {
-                                copyFundingURL(url)
-                            } label: {
-                                Label("Copy funding URL", systemImage: "doc.on.doc")
-                            }
-                            .accessibilityLabel(String(localized: "Copy funding URL"))
-                            .accessibilityHint(
-                                String(localized: "Copies the feed-provided funding or support page URL to the pasteboard. No confirmation. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from opening the funding page, Share funding URL, and Copy feed URL. Does not open a browser, subscribe, or download.")
-                            )
-
-                            ShareLink(
-                                item: url,
-                                subject: Text(feedDisplayTitle),
-                                message: Text("\(feedDisplayTitle) — \(liveFeed.supportActionTitle)")
-                            ) {
-                                Label("Share funding URL", systemImage: "square.and.arrow.up")
-                            }
-                            .accessibilityLabel(String(localized: "Share funding URL"))
-                            .accessibilityHint(
-                                String(localized: "Opens the system share sheet with the feed-provided funding or support page URL. Does not process payments. Never uses the feed RSS URL, podcast website, or discussion link. Distinct from opening the funding page, Copy funding URL, and Share feed URL. Sharing is your choice and does not subscribe or download.")
-                            )
-
-                            if let label = liveFeed.displayFundingLabel {
-                                Button {
-                                    copyFundingLabel(label)
-                                } label: {
-                                    Label("Copy funding label", systemImage: "doc.on.doc")
-                                }
-                                .accessibilityLabel(String(localized: "Copy funding label"))
-                                .accessibilityHint(
-                                    String(localized: "Copies the exact feed-provided funding label shown in the Support action to the pasteboard; does not process payments")
-                                )
-
-                                ShareLink(
-                                    item: label,
-                                    subject: Text(feedDisplayTitle)
-                                ) {
-                                    Label("Share funding label", systemImage: "square.and.arrow.up")
-                                }
-                                .accessibilityLabel(String(localized: "Share funding label"))
-                                .accessibilityHint(
-                                    String(localized: "Shares the exact feed-provided funding label shown in the Support action as plain text; does not process payments")
-                                )
-                            }
-                        }
-
-                        if let interact = liveFeed.preferredSocialInteract,
-                           let url = interact.discussionURL {
-                            if let accountId = interact.displayAccountId {
-                                Button {
-                                    copyDiscussAccountId(accountId)
-                                } label: {
-                                    Label("Copy discuss account ID", systemImage: "doc.on.doc")
-                                }
-                                .accessibilityLabel(String(localized: "Copy discuss account ID"))
-                                .accessibilityHint(
-                                    String(localized: "Copies the displayed feed-provided discussion account ID as plain text; does not post as you")
-                                )
-
-                                ShareLink(
-                                    item: accountId,
-                                    subject: Text(feedDisplayTitle),
-                                    message: Text("\(feedDisplayTitle) — \(String(localized: "Discuss account ID"))")
-                                ) {
-                                    Label("Share discuss account ID", systemImage: "square.and.arrow.up")
-                                }
-                                .accessibilityLabel(String(localized: "Share discuss account ID"))
-                                .accessibilityHint(
-                                    String(localized: "Shares the displayed feed-provided discussion account ID as plain text; does not post as you")
-                                )
-                            }
-
-                            if let protocolText = interact.displayProtocol {
-                                Button {
-                                    copyDiscussProtocol(protocolText)
-                                } label: {
-                                    Label("Copy discuss protocol", systemImage: "doc.on.doc")
-                                }
-                                .accessibilityLabel(String(localized: "Copy discuss protocol"))
-                                .accessibilityHint(
-                                    String(localized: "Copies the displayed feed-provided discussion protocol to the pasteboard; does not post as you")
-                                )
-
-                                ShareLink(item: protocolText) {
-                                    Label("Share discuss protocol", systemImage: "square.and.arrow.up")
-                                }
-                                .accessibilityLabel(String(localized: "Share discuss protocol"))
-                                .accessibilityHint(
-                                    String(localized: "Shares the displayed feed-provided discussion protocol as plain text; does not post as you")
-                                )
-                            }
-
-                            Button {
-                                openURL(url)
-                            } label: {
-                                Label("Discuss", systemImage: "bubble.left.and.bubble.right")
-                            }
-                            .accessibilityLabel(String(localized: "Discuss"))
-                            .accessibilityHint(String(localized: "Opens the feed-provided discussion http(s) link in the system browser — not an in-app WebView. No confirmation. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Copy discuss URL, Share discuss URL, and Open podcast website. Does not subscribe, download, or change playback."))
-
-                            Button {
-                                copyDiscussURL(url)
-                            } label: {
-                                Label("Copy discuss URL", systemImage: "doc.on.doc")
-                            }
-                            .accessibilityLabel(String(localized: "Copy discuss URL"))
-                            .accessibilityHint(
-                                String(localized: "Copies the feed-provided discussion URL to the pasteboard. No confirmation. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Discuss, Share discuss URL, and Copy feed URL. Does not open a browser, subscribe, or download.")
-                            )
-
-                            ShareLink(
-                                item: url,
-                                subject: Text(feedDisplayTitle),
-                                message: Text("\(feedDisplayTitle) — \(String(localized: "Discuss"))")
-                            ) {
-                                Label("Share discuss URL", systemImage: "square.and.arrow.up")
-                            }
-                            .accessibilityLabel(String(localized: "Share discuss URL"))
-                            .accessibilityHint(
-                                String(localized: "Opens the system share sheet with the feed-provided discussion URL. Does not post as you. Never uses the feed RSS URL or the podcast website. Distinct from Discuss, Copy discuss URL, and Share feed URL. Sharing is your choice and does not subscribe or download.")
-                            )
-                        }
-
-                        if let title = EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle) {
-                            Button {
-                                copyPodcastTitle(title)
-                            } label: {
-                                Label("Copy podcast title", systemImage: "doc.on.doc")
-                            }
-                            .accessibilityLabel(String(localized: "Copy podcast title"))
-                            .accessibilityHint(String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"))
-
-                            ShareLink(item: title, subject: Text(title)) {
-                                Label("Share podcast title", systemImage: "square.and.arrow.up")
-                            }
-                            .accessibilityLabel(String(localized: "Share podcast title"))
-                            .accessibilityHint(String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"))
-                        }
-
-                        Button {
-                            copyFeedURL()
-                        } label: {
-                            Label("Copy feed URL", systemImage: "doc.on.doc")
-                        }
-                        .disabled(!canCopyFeedURL)
-                        .accessibilityLabel(String(localized: "Copy feed URL"))
-                        .accessibilityHint(String(localized: "Copies the feed RSS or Atom URL to the pasteboard. No confirmation. Disabled for local-folder podcasts and empty URLs. Distinct from the podcast website, funding, and discussion links, and from Share feed URL. Does not subscribe, refresh, or open a browser."))
-
-                        if let url = feedURLShareURL {
-                            ShareLink(
-                                item: url,
-                                subject: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))"),
-                                message: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))")
-                            ) {
-                                Label("Share feed URL", systemImage: "square.and.arrow.up")
-                            }
-                            .disabled(!canCopyFeedURL)
-                            .accessibilityLabel(String(localized: "Share feed URL"))
-                            .accessibilityHint(
-                                String(localized: "Opens the system share sheet with the feed RSS or Atom URL. Disabled for local-folder podcasts and empty URLs. Distinct from the podcast website, funding, and discussion links, and from Copy feed URL. Sharing is your choice and does not subscribe, refresh, or open a browser.")
-                            )
-                        } else {
-                            ShareLink(
-                                item: feedURLShareString,
-                                subject: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))"),
-                                message: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))")
-                            ) {
-                                Label("Share feed URL", systemImage: "square.and.arrow.up")
-                            }
-                            .disabled(!canCopyFeedURL)
-                            .accessibilityLabel(String(localized: "Share feed URL"))
-                            .accessibilityHint(
-                                String(localized: "Opens the system share sheet with the raw feed URL string when it is not available as a URL object. Disabled for local-folder podcasts and empty URLs. Distinct from the podcast website, funding, and discussion links, and from Copy feed URL. Sharing is your choice and does not subscribe, refresh, or open a browser.")
-                            )
-                        }
-
-                        if let guid = displayPodcastGuid {
-                            Button {
-                                copyPodcastGuid()
-                            } label: {
-                                Label("Copy podcast GUID", systemImage: "number")
-                            }
-                            .accessibilityLabel(String(localized: "Copy podcast GUID"))
-                            .accessibilityHint(String(localized: "Copies the feed-provided podcast GUID to the pasteboard as plain text. No confirmation. Distinct from the podcast, feed URL, website, funding, and discussion copies, and from Share podcast GUID. Does not open a link, change subscriptions, or invent a GUID when missing."))
-
-                            ShareLink(
-                                item: guid,
-                                subject: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))"),
-                                message: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))")
-                            ) {
-                                Label("Share podcast GUID", systemImage: "square.and.arrow.up")
-                            }
-                            .accessibilityLabel(String(localized: "Share podcast GUID"))
-                            .accessibilityHint(
-                                String(localized: "Shares the feed-provided podcast GUID as plain text; distinct from the podcast, feed URL, website, funding, and discussion shares")
-                            )
-                        }
-
-                        Button {
-                            playRandomEpisode()
-                        } label: {
-                            Label("Play random", systemImage: "shuffle")
-                        }
-                        .disabled(playRandomCandidates.isEmpty)
-                        .accessibilityLabel(String(localized: "Play random"))
-                        .accessibilityHint(String(localized: "Plays a random non-archived episode from this podcast’s full catalog with playable media. Prefers unplayed when any remain. Ignores status, episode type, and search filters. Does not reorder the feed list. No confirmation."))
-
-                        Button {
-                            store.togglePinned(feedId: liveFeed.id)
-                        } label: {
-                            if store.isPinned(feedId: liveFeed.id) {
-                                Label("Don’t keep at top", systemImage: "pin.slash")
-                            } else {
-                                Label("Keep at top", systemImage: "pin")
-                            }
-                        }
-                        .accessibilityLabel(
-                            store.isPinned(feedId: liveFeed.id)
-                                ? String(localized: "Don’t keep at top")
-                                : String(localized: "Keep at top")
-                        )
-                        .accessibilityHint(String(localized: "Pins or unpins this podcast above unpinned ones on Subscriptions for every sort (Recently updated, Alphabetical, and others). Not a separate sort mode. Local preference only — not synced to gpodder. Included in iOS JSON backup with other feed settings. Cleared when you unsubscribe. Does not unsubscribe, change tags, or change the Subscriptions sort preference. Toggles immediately. No confirmation."))
-
-                        Button {
-                            showDownloadAllConfirm = true
-                        } label: {
-                            Label("Download all unplayed", systemImage: "arrow.down.circle")
-                        }
-                        .disabled(downloadAllCandidates.isEmpty)
-                        .accessibilityLabel(String(localized: "Download all unplayed"))
-                        .accessibilityHint(downloadAllAccessibilityHint)
-
-                        Button {
-                            showMarkAllPlayedConfirm = true
-                        } label: {
-                            Label("Mark all as played", systemImage: "checkmark.circle")
-                        }
-                        .disabled(markAllPlayedCandidates.isEmpty)
-                        .accessibilityHint(String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in this podcast’s full feed catalog as played. Ignores status, episode type, search, and sort filters. Does not archive; Auto-delete after playing still applies when enabled."))
-
-                        Button {
-                            showMarkAllUnplayedConfirm = true
-                        } label: {
-                            Label("Mark all as unplayed", systemImage: "circle")
-                        }
-                        .disabled(markAllUnplayedCandidates.isEmpty)
-                        .accessibilityHint(String(localized: "Asks for confirmation, then marks played episodes in this podcast’s full feed catalog as unplayed, including archived. Ignores status, episode type, search, and sort filters. Does not delete downloads, remove from queue, stop playback, or unarchive."))
-
-                        Button {
-                            showArchiveAllConfirm = true
-                        } label: {
-                            Label("Archive all", systemImage: "archivebox")
-                        }
-                        .disabled(archiveAllFeedCandidatesCount == 0)
-                        .accessibilityLabel(String(localized: "Archive all"))
-                        .accessibilityHint(String(localized: "Asks for confirmation, then archives non-archived episodes in this podcast’s full feed catalog. Ignores status, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue. Distinct from global Archive all actions."))
-
-                        Button {
-                            showEnqueueAllUnplayedConfirm = true
-                        } label: {
-                            Label("Add all unplayed to queue", systemImage: "text.badge.plus")
-                        }
-                        .disabled(enqueueAllUnplayedFromFeedCandidates.isEmpty)
-                        .accessibilityLabel(String(localized: "Add all unplayed to queue"))
-                        .accessibilityHint(String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from this podcast’s full feed catalog that are not already queued, in this podcast’s episode sort order. Ignores status, episode type, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived."))
-
-                        Button {
-                            showEnqueueAllConfirm = true
-                        } label: {
-                            Label("Add all to queue", systemImage: "text.append")
-                        }
-                        .disabled(enqueueAllFromFeedCandidatesCount == 0)
-                        .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from this podcast’s full feed catalog that are not already queued, newest publish date first, including played and archived. Ignores status, episode type, search, and sort filters. Queue lock does not block enqueue."))
-
-                        Button(role: .destructive) {
-                            showDeleteDownloadsConfirm = true
-                        } label: {
-                            Label("Delete downloads", systemImage: "externaldrive.badge.minus")
-                        }
-                        .disabled(deleteFeedDownloadsEligible.isEmpty)
-                        .accessibilityHint(String(localized: "Asks for confirmation, then deletes this podcast’s offline files, skipping favorites. Local files only — keeps played status, queue, favorites, and archive. Distinct from Unsubscribe, Delete played downloads, and Delete all downloads."))
-
-                        Button(role: .destructive) {
-                            showUnsubscribeConfirm = true
-                        } label: {
-                            Label("Unsubscribe", systemImage: "trash")
-                        }
-                        .accessibilityHint(String(localized: "Asks for confirmation, then removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. When this feed has offline downloads, you can keep them or delete only this feed’s files including favorites. Does not clear other podcasts’ downloads."))
-                    } label: {
-                        Label("Feed actions", systemImage: "ellipsis.circle")
-                    }
-                    Button {
-                        showPerFeedSettings = true
-                    } label: {
-                        Image(systemName: "gearshape")
-                    }
-                    .accessibilityLabel(String(localized: "Podcast settings"))
-                }
-            }
+            feedDetailToolbar
         }
         .confirmationDialog(
             "Download all unplayed?",
