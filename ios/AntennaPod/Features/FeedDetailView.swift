@@ -2968,6 +2968,7 @@ struct EpisodeRow: View {
 
     @State private var showDescription = false
     @State private var showEpisodePrivateNote = false
+    @State private var showEpisodeDetail = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyURLFeedbackTick = 0
@@ -3506,6 +3507,13 @@ struct EpisodeRow: View {
                     .accessibilityHint(String(localized: "Places this episode at the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."))
                 }
             }
+            // Android ItemFragment: open the episode page (swipe for neighbouring episodes).
+            Button {
+                showEpisodeDetail = true
+            } label: {
+                Label("Episode details", systemImage: "info.circle")
+            }
+            .accessibilityHint(String(localized: "Opens the episode page. Swipe left or right there for the neighbouring episodes of this podcast."))
             // Android feeditemlist_context.xml extras shared by every list (remove from queue, delete, reset).
             EpisodeContextMenu(episode: episode)
             Button {
@@ -3523,6 +3531,9 @@ struct EpisodeRow: View {
             } label: {
                 Label("Shownotes", systemImage: "doc.text")
             }
+        }
+        .navigationDestination(isPresented: $showEpisodeDetail) {
+            EpisodeDetailPager(episode: episode)
         }
         .sheet(isPresented: $showDescription) {
             EpisodeDescriptionSheetView(episode: episode, feedTitle: feedTitle)

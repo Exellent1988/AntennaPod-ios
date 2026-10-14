@@ -50856,6 +50856,57 @@
           }
         }
       }
+    },
+    "Episode details": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode details"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodendetails"
+          }
+        }
+      }
+    },
+    "No shownotes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No shownotes"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Shownotes"
+          }
+        }
+      }
+    },
+    "Opens the episode page. Swipe left or right there for the neighbouring episodes of this podcast.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens the episode page. Swipe left or right there for the neighbouring episodes of this podcast."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet die Episodenseite. Dort nach links oder rechts wischen für die benachbarten Episoden dieses Podcasts."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
