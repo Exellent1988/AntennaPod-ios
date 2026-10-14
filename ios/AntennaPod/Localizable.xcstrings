@@ -50737,6 +50737,74 @@
           }
         }
       }
+    },
+    "Reset playback position": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset playback position"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiedergabeposition zurücksetzen"
+          }
+        }
+      }
+    },
+    "Removes this episode from the queue. No confirmation. Does not delete the download or change progress.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes this episode from the queue. No confirmation. Does not delete the download or change progress."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entfernt diese Episode aus der Warteschlange. Ohne Bestätigung. Löscht nicht den Download und ändert nicht den Fortschritt."
+          }
+        }
+      }
+    },
+    "Deletes the downloaded file for this episode. No confirmation. Keeps the episode, its progress and its queue place.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes the downloaded file for this episode. No confirmation. Keeps the episode, its progress and its queue place."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht die heruntergeladene Datei dieser Episode. Ohne Bestätigung. Episode, Fortschritt und Platz in der Warteschlange bleiben erhalten."
+          }
+        }
+      }
+    },
+    "Sets the saved position of this episode back to the start. No confirmation. Does not mark played or unplayed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets the saved position of this episode back to the start. No confirmation. Does not mark played or unplayed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt die gespeicherte Position dieser Episode an den Anfang zurück. Ohne Bestätigung. Markiert nicht als gehört oder ungehört."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
