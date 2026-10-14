@@ -10,6 +10,8 @@ struct CarPlayRow: Equatable {
     var detail: String?
     var imageUrl: String?
     var target: Target
+    /// `CPListItem.playbackProgress` (0…1).
+    var progress: Double = 0
 }
 
 /// What a CarPlay list last showed; equal snapshots skip `updateSections`.
