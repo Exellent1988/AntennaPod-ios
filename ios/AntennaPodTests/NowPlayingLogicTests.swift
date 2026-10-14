@@ -63,3 +63,28 @@ final class NowPlayingLogicTests: XCTestCase {
         XCTAssertEqual(CarPlayParity.upNext(queueIds: ["a"], currentId: "a"), [])
     }
 }
+
+final class ArtworkDiskCacheLRUTests: XCTestCase {
+    private func e(_ n: String, _ b: Int64, _ t: TimeInterval) -> NowPlayingLogic.CacheEntry {
+        .init(name: n, bytes: b, modified: Date(timeIntervalSince1970: t))
+    }
+
+    func testUnderLimitEvictsNothing() {
+        XCTAssertEqual(NowPlayingLogic.evictions([e("a", 10, 1), e("b", 10, 2)], limit: 20), [])
+    }
+
+    func testEvictsOldestUntilUnderLimit() {
+        let entries = [e("new", 40, 30), e("old", 40, 10), e("mid", 40, 20)]
+        XCTAssertEqual(NowPlayingLogic.evictions(entries, limit: 80), ["old"])
+        XCTAssertEqual(NowPlayingLogic.evictions(entries, limit: 50), ["old", "mid"])
+        XCTAssertEqual(NowPlayingLogic.evictions(entries, limit: 0), ["old", "mid", "new"])
+    }
+
+    func testTieBreaksByName() {
+        XCTAssertEqual(NowPlayingLogic.evictions([e("b", 10, 1), e("a", 10, 1)], limit: 10), ["a"])
+    }
+
+    func testDefaultLimitIs50MB() {
+        XCTAssertEqual(NowPlayingLogic.diskCacheLimitBytes, 52_428_800)
+    }
+}
