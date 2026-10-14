@@ -651,7 +651,7 @@ struct HomeView: View {
             }
             .navigationTitle("Home")
             .toolbar {
-                // Settings sits in the iPhone tab bar's "More" overflow (6 tabs), so offer a direct gear here.
+                // Settings is not a tab (5 tabs, no system More); the gear opens it as a sheet.
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         selectedTab = .settings
@@ -660,6 +660,9 @@ struct HomeView: View {
                     }
                     .accessibilityLabel(String(localized: "Settings"))
                     .accessibilityHint(String(localized: "Opens Settings, including Sync & gpodder."))
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    HomeToolbarMenu()
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
