@@ -95,26 +95,26 @@ public enum AudioLevel {
 public final class GainStage: AudioBlockProcessor {
     private let lock = NSLock()
     private var _gain: Float = 1
+    /// Gain actually applied at the end of the last block (audio thread); ramps toward `gain`.
+    private var applied: Float = 1
 
-    public init(gain: Float = 1) { _gain = gain }
+    public init(gain: Float = 1) {
+        _gain = gain
+        applied = gain
+    }
 
+    /// Target gain. Changes are ramped over one block instead of jumping (no clicks).
     public var gain: Float {
         get { lock.lock(); defer { lock.unlock() }; return _gain }
         set { lock.lock(); _gain = max(0, newValue); lock.unlock() }
     }
 
     public func process(_ block: inout AudioBlock) {
-        let g = gain
-        if abs(g - 1) < 0.0001 { return }
-        let limit = g > 1
-        for ch in block.channels {
-            let n = min(block.frameCount, ch.count)
-            for i in 0..<n {
-                var s = ch[i] * g
-                if limit { s = GainStage.softClip(s) }
-                ch[i] = s
-            }
-        }
+        let target = gain
+        let from = applied
+        applied = target
+        if abs(from - 1) < 0.0001, abs(target - 1) < 0.0001 { return }
+        GainRamp.apply(&block, from: from, to: target, limit: max(from, target) > 1)
     }
 
     /// Linear below 0.8, smooth tanh knee to ±1 above.

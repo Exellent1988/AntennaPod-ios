@@ -1777,6 +1777,7 @@ final class PlaybackService: ObservableObject {
     /// Push current Settings / FeedSettings into the live pipeline stages (cheap; no item rebuild).
     func refreshAudioPipelineParameters() {
         audioPipeline?.gain.gain = resolvedPipelineGain()
+        audioPipeline?.loudness.configure(resolvedVolumeAdaptation().loudnessProfile)
         let level = resolvedSkipSilenceLevel()
         audioPipeline?.silence.configure(level.detector)
         audioPipeline?.silence.isEnabled = level != .off

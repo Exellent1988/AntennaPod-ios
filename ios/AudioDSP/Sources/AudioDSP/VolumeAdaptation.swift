@@ -30,8 +30,9 @@ public enum VolumeAdaptationMode: String, CaseIterable, Codable, Hashable, Ident
         feed ?? global
     }
 
-    /// Combined pipeline gain: Volume boost percent (100 = unity) × adaptation factor.
+    /// Static pipeline gain: Volume boost percent (100 = unity) × reduction factor.
+    /// Boost modes are handled by `LoudnessEnhancerStage` (adaptive makeup gain) instead.
     public static func pipelineGain(boostPercent: Int, mode: VolumeAdaptationMode) -> Float {
-        Float(max(0, boostPercent)) / 100 * mode.gainFactor
+        Float(max(0, boostPercent)) / 100 * mode.staticGainFactor
     }
 }
