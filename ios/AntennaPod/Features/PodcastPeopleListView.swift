@@ -73,8 +73,8 @@ struct PodcastPeopleListView: View {
 
         let url = person.profileURL
         let detailsText = [name, role].compactMap { $0 }.joined(separator: " · ")
-        let copyText = person.href?.trimmingCharacters(in: .whitespacesAndNewlines)
-            .flatMap { $0.isEmpty ? nil : $0 }
+        let trimmedHref = person.href?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let copyText: String? = (trimmedHref?.isEmpty ?? true) ? nil : trimmedHref
 
         VStack(alignment: .leading, spacing: 4) {
             if let url {

@@ -1810,7 +1810,7 @@ final class PodcastStore: ObservableObject {
     /// Mark every unplayed, non-archived episode in one feed as played (bulk).
     /// Snapshots eligible ids first, then calls `markPlayed` per id so auto-delete-after-playing
     /// and queue removal side effects still apply. Feed-scoped only; does not archive.
-    func markAllPlayed(inFeedId feedId: String) {
+    func markAllPlayed(inFeedId feedId: UUID) {
         guard let feed = feeds.first(where: { $0.id == feedId }) else { return }
         let ids = feed.episodes
             .filter { !isPlayed($0.id) && !isArchived($0.id) }
@@ -1826,7 +1826,7 @@ final class PodcastStore: ObservableObject {
     /// search, or sort filters. Existing archive timestamps are preserved and all new timestamps
     /// are persisted in one `archivedAtById` write. Archiving does not mark played, delete
     /// downloads, clear the queue, or change playback. Callers must confirm first.
-    func archiveAll(inFeedId feedId: String) {
+    func archiveAll(inFeedId feedId: UUID) {
         guard let feed = feeds.first(where: { $0.id == feedId }) else { return }
         let ids = feed.episodes
             .filter { !isArchived($0.id) }
@@ -1845,7 +1845,7 @@ final class PodcastStore: ObservableObject {
 
     /// Number of non-archived episodes in one feed's full stored catalog.
     /// This deliberately ignores Feed detail status, episode-type, search, and sort filters.
-    func archiveAllCandidateCount(inFeedId feedId: String) -> Int {
+    func archiveAllCandidateCount(inFeedId feedId: UUID) -> Int {
         feeds.first(where: { $0.id == feedId })?.episodes
             .filter { !isArchived($0.id) }
             .count ?? 0
@@ -1857,7 +1857,7 @@ final class PodcastStore: ObservableObject {
     /// Snapshots eligible ids first, then calls `markUnplayed` per id (same as per-row:
     /// does **not** delete downloads, remove queue, stop playback, or unarchive).
     /// Feed-scoped only. Callers must confirm first (Feed detail toolbar).
-    func markAllUnplayed(inFeedId feedId: String) {
+    func markAllUnplayed(inFeedId feedId: UUID) {
         guard let feed = feeds.first(where: { $0.id == feedId }) else { return }
         let ids = feed.episodes
             .filter { isPlayed($0.id) }

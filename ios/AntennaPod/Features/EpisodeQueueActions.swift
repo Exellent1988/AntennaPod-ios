@@ -10,6 +10,7 @@ import SwiftUI
 /// - **Move playing to bottom** → `moveQueueItemToBottom` when queued, not last, unlocked
 ///
 /// Nested `Menu` keeps the mini ⋯ root from overcrowding (same labels/symbols/a11y as Full).
+@MainActor
 enum EpisodeQueueActions {
     /// True when Play Next would leave queue order unchanged (already in the play-next slot).
     static func isAlreadyNextInQueue(

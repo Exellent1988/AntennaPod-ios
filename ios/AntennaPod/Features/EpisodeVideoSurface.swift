@@ -41,6 +41,7 @@ struct EpisodeVideoSurface: UIViewRepresentable {
         coordinator.dismantle(host: uiView)
     }
 
+    @MainActor
     final class Coordinator {
         func bind(session: PictureInPictureSession?, host: PlayerContainerView) {
             session?.attach(to: host)

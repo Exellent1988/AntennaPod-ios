@@ -106,27 +106,30 @@ final class GpodderSyncService: ObservableObject {
 
     init() {
         let providerRaw = UserDefaults.standard.string(forKey: Keys.provider) ?? GpodderProvider.gpodderNet.rawValue
-        provider = GpodderProvider(rawValue: providerRaw) ?? .gpodderNet
+        let initialProvider = GpodderProvider(rawValue: providerRaw) ?? .gpodderNet
+        provider = initialProvider
         let storedHost = UserDefaults.standard.string(forKey: Keys.host)
         if let storedHost, !storedHost.isEmpty {
             host = storedHost
         } else {
-            host = provider == .gpodderNet ? Self.defaultHost : ""
+            host = initialProvider == .gpodderNet ? Self.defaultHost : ""
         }
-        username = UserDefaults.standard.string(forKey: Keys.username) ?? ""
+        let initialUsername = UserDefaults.standard.string(forKey: Keys.username) ?? ""
+        username = initialUsername
         let storedName = UserDefaults.standard.string(forKey: Keys.deviceName)
         let defaultName = "AntennaPod iOS"
-        deviceName = (storedName?.isEmpty == false) ? storedName! : defaultName
+        let initialDeviceName = (storedName?.isEmpty == false) ? storedName! : defaultName
+        deviceName = initialDeviceName
         if let storedId = UserDefaults.standard.string(forKey: Keys.deviceId), !storedId.isEmpty {
             deviceId = storedId
         } else {
-            let generated = Self.makeInitialDeviceId(caption: deviceName)
+            let generated = Self.makeInitialDeviceId(caption: initialDeviceName)
             deviceId = generated
             UserDefaults.standard.set(generated, forKey: Keys.deviceId)
         }
         isLoggedIn = UserDefaults.standard.bool(forKey: Keys.isLoggedIn)
             && GpodderKeychain.loadPassword() != nil
-            && !username.isEmpty
+            && !initialUsername.isEmpty
         if UserDefaults.standard.object(forKey: Keys.lastSyncAt) != nil {
             lastSyncAt = Date(timeIntervalSince1970: UserDefaults.standard.double(forKey: Keys.lastSyncAt))
         } else {

@@ -1497,7 +1497,7 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
             return
         }
         // Authenticated HTTP(S) proxy (optional username/password).
-        if challenge.protectionSpace.isProxy {
+        if challenge.protectionSpace.isProxy() {
             guard let proxy = AppHTTPProxy.resolved(), proxy.hasCredentials else {
                 completionHandler(.performDefaultHandling, nil)
                 return
@@ -1516,8 +1516,9 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
         }
         let challengeHost = challenge.protectionSpace.host.lowercased()
         // Keychain is thread-safe; feedId on the mapping is not a secret (password never persisted here).
-        let feedId = mapping.feedId
-            ?? owner?.store?.feed(containingEpisodeId: mapping.episode.id)?.id
+        // Store lookup is main-actor isolated; resolve the feed id there when the mapping lacks it,
+        // then answer the challenge (completionHandler may be called asynchronously).
+        let answer: (UUID?) -> Void = { feedId in
         let creds: FeedHttpBasicCredentials? = {
             guard let feedId,
                   let c = FeedHttpBasicAuthKeychain.load(for: feedId),
@@ -1543,6 +1544,15 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
             persistence: .forSession
         )
         completionHandler(.useCredential, credential)
+        }
+        if let feedId = mapping.feedId {
+            answer(feedId)
+        } else {
+            let episodeId = mapping.episode.id
+            Task { @MainActor [weak self] in
+                answer(self?.owner?.store?.feed(containingEpisodeId: episodeId)?.id)
+            }
+        }
     }
 
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {

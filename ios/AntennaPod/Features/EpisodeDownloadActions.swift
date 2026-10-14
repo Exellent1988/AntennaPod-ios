@@ -9,6 +9,7 @@ import SwiftUI
 ///   file only — keeps played / queue / favorites)
 ///
 /// Hidden for local-folder / `file://` enclosures (`canManageDownload`).
+@MainActor
 enum EpisodeDownloadActions {
     /// True when the episode has a remote enclosure (not a local-folder `file://`).
     static func canManageDownload(for episode: PodcastEpisode) -> Bool {

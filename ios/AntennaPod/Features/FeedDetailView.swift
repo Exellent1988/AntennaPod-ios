@@ -610,7 +610,13 @@ struct FeedDetailView: View {
         )
     }
 
+    // Split into stages: one modifier chain this long exceeds the type-checker time limit.
     var body: some View {
+        feedDetailFeedbackStage(feedDetailAlertsStage(feedDetailCore))
+    }
+
+    @ViewBuilder
+    private var feedDetailCore: some View {
         List {
             if LocalFolderFeed.isLocalFolderFeed(liveFeed) {
                 Section {
@@ -1824,9 +1830,9 @@ struct FeedDetailView: View {
         }
         .confirmationDialog(
             "Remove from queue?",
-            isPresented: Binding(
+            isPresented: Binding<Bool>(
                 get: { episodePendingRemoveFromQueue != nil },
-                set: { if !$0 { episodePendingRemoveFromQueue = nil } }
+                set: { (isPresented: Bool) in if !isPresented { episodePendingRemoveFromQueue = nil } }
             ),
             titleVisibility: .visible,
             presenting: episodePendingRemoveFromQueue
@@ -1843,6 +1849,10 @@ struct FeedDetailView: View {
                 "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
             )
         }
+    }
+
+    private func feedDetailAlertsStage<Content: View>(_ content: Content) -> some View {
+        content
         .alert(
             String(localized: "Copied"),
             isPresented: $showFeedURLCopied
@@ -2067,6 +2077,10 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Last refreshed timestamp copied to the pasteboard."))
         }
+    }
+
+    private func feedDetailFeedbackStage<Content: View>(_ content: Content) -> some View {
+        content
         .sensoryFeedback(.success, trigger: copyFeedURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingURLFeedbackTick)
         .sensoryFeedback(.success, trigger: copyFundingLabelFeedbackTick)

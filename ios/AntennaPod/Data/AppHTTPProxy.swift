@@ -119,9 +119,10 @@ enum AppHTTPProxy {
             kCFNetworkProxiesHTTPEnable: true,
             kCFNetworkProxiesHTTPProxy: r.host,
             kCFNetworkProxiesHTTPPort: r.port,
-            kCFNetworkProxiesHTTPSEnable: true,
-            kCFNetworkProxiesHTTPSProxy: r.host,
-            kCFNetworkProxiesHTTPSPort: r.port,
+            // HTTPS proxy keys are macOS-only symbols; use their CFNetwork string values on iOS.
+            "HTTPSEnable": true,
+            "HTTPSProxy": r.host,
+            "HTTPSPort": r.port,
         ]
         if !r.username.isEmpty {
             dict[kCFProxyUsernameKey] = r.username
