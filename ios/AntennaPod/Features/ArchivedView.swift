@@ -312,7 +312,8 @@ struct ArchivedView: View {
         }
     }
 
-    var body: some View {
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var archivedList: some View {
         List {
             if !items.isEmpty, !archivedPodcastFeeds.isEmpty || isPodcastFiltering {
                 Section {
@@ -395,6 +396,10 @@ struct ArchivedView: View {
                 }
             }
         }
+    }
+
+    var body: some View {
+        archivedList
         .navigationTitle("Archived")
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: "Search archived")

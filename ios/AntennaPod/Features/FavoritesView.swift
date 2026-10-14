@@ -332,7 +332,8 @@ struct FavoritesView: View {
     }
 
 
-    var body: some View {
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var favoritesList: some View {
         List {
             if !items.isEmpty, !favoritesPodcastFeeds.isEmpty || isPodcastFiltering {
                 Section {
@@ -455,6 +456,10 @@ struct FavoritesView: View {
                 }
             }
         }
+    }
+
+    var body: some View {
+        favoritesList
         .navigationTitle("Favorites")
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: "Search favorites")

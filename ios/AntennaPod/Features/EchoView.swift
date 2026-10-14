@@ -27,7 +27,8 @@ struct EchoView: View {
         settings.statisticsResetAtEpochMs > 0
     }
 
-    var body: some View {
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var echoList: some View {
         List {
             Section {
                 Picker(selection: $settings.statisticsTimeRange) {
@@ -160,6 +161,10 @@ struct EchoView: View {
                 }
             }
         }
+    }
+
+    var body: some View {
+        echoList
         .navigationTitle("Echo")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

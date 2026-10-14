@@ -338,7 +338,8 @@ struct HistoryView: View {
     }
 
 
-    var body: some View {
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var historyList: some View {
         List {
             // Filter, search, and sort the history once per body (it is unlimited by default and
             // the body reruns on every 0.5s playback tick); the bar, its VoiceOver label, and
@@ -463,6 +464,10 @@ struct HistoryView: View {
                 }
             }
         }
+    }
+
+    var body: some View {
+        historyList
         .navigationTitle("History")
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: "Search history")

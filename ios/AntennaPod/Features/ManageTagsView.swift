@@ -48,7 +48,8 @@ struct ManageTagsView: View {
         return base.filter { $0.localizedSearchContains(q) }
     }
 
-    var body: some View {
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var manageTagsList: some View {
         List {
             if allTags.isEmpty {
                 ContentUnavailableView(
@@ -78,6 +79,10 @@ struct ManageTagsView: View {
                 }
             }
         }
+    }
+
+    var body: some View {
+        manageTagsList
         .navigationTitle("Manage tags")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

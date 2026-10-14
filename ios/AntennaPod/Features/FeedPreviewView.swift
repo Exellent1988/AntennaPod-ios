@@ -135,7 +135,8 @@ struct FeedPreviewView: View {
         return parts.joined(separator: ", ")
     }
 
-    var body: some View {
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var feedPreviewList: some View {
         List {
             Section {
                 header
@@ -290,6 +291,10 @@ struct FeedPreviewView: View {
                 }
             }
         }
+    }
+
+    var body: some View {
+        feedPreviewList
         .listStyle(.insetGrouped)
         .navigationTitle("Preview")
         .navigationBarTitleDisplayMode(.inline)

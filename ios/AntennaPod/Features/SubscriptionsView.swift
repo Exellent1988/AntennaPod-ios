@@ -372,191 +372,196 @@ struct SubscriptionsView: View {
         )
     }
 
-    var body: some View {
-        NavigationStack(path: $path) {
-            List {
-                // One pass over every feed's episodes per body (the body reruns on each 0.5s
-                // playback tick); the info bar and every row read this same map.
-                let remainingByFeedId = unplayedRemainingByFeedId
-                let remainingSummary = subscriptionsRemainingSummary(remainingByFeedId)
-                // AntennaPod-like subscriptions info bar (unplayed remaining over visible feeds).
-                // Per-feed remaining also on each row (same map); unique feeds when grouped by tag.
-                if let remainingLabel = subscriptionsRemainingInfoLabel(remainingSummary) {
-                    Section {
-                        Text(remainingLabel)
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                            .monospacedDigit()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .accessibilityElement(children: .ignore)
-                            .accessibilityLabel(subscriptionsRemainingAccessibilityLabel(remainingSummary))
-                            .accessibilityHint(subscriptionsRemainingAccessibilityHint)
-                    }
-                    .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+    // List split from the modifier chain: together they exceed the CI type-checker time limit.
+    private var subscriptionsList: some View {
+        List {
+            // One pass over every feed's episodes per body (the body reruns on each 0.5s
+            // playback tick); the info bar and every row read this same map.
+            let remainingByFeedId = unplayedRemainingByFeedId
+            let remainingSummary = subscriptionsRemainingSummary(remainingByFeedId)
+            // AntennaPod-like subscriptions info bar (unplayed remaining over visible feeds).
+            // Per-feed remaining also on each row (same map); unique feeds when grouped by tag.
+            if let remainingLabel = subscriptionsRemainingInfoLabel(remainingSummary) {
+                Section {
+                    Text(remainingLabel)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(subscriptionsRemainingAccessibilityLabel(remainingSummary))
+                        .accessibilityHint(subscriptionsRemainingAccessibilityHint)
                 }
+                .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
+            }
 
-                Section("Library") {
-                    NavigationLink {
-                        AllEpisodesView()
-                    } label: {
-                        Label("Episodes", systemImage: "list.bullet.rectangle")
+            Section("Library") {
+                NavigationLink {
+                    AllEpisodesView()
+                } label: {
+                    Label("Episodes", systemImage: "list.bullet.rectangle")
+                }
+                NavigationLink {
+                    FavoritesView()
+                } label: {
+                    Label("Favorites", systemImage: "star")
+                }
+                NavigationLink {
+                    BookmarksView()
+                } label: {
+                    Label("Bookmarks", systemImage: "bookmark")
+                }
+                NavigationLink {
+                    ArchivedView()
+                } label: {
+                    Label("Archived", systemImage: "archivebox")
+                }
+                NavigationLink {
+                    HistoryView()
+                } label: {
+                    Label("History", systemImage: "clock.arrow.circlepath")
+                }
+                NavigationLink {
+                    StatisticsView()
+                } label: {
+                    Label("Statistics", systemImage: "chart.bar.doc.horizontal")
+                }
+                NavigationLink {
+                    EchoView()
+                } label: {
+                    Label("Echo", systemImage: "sparkles.rectangle.stack")
+                }
+                Button {
+                    if parental.needsPINForAddDiscover {
+                        showDiscoverPINGate = true
+                    } else {
+                        navigateToDiscover = true
                     }
-                    NavigationLink {
-                        FavoritesView()
-                    } label: {
-                        Label("Favorites", systemImage: "star")
-                    }
-                    NavigationLink {
-                        BookmarksView()
-                    } label: {
-                        Label("Bookmarks", systemImage: "bookmark")
-                    }
-                    NavigationLink {
-                        ArchivedView()
-                    } label: {
-                        Label("Archived", systemImage: "archivebox")
-                    }
-                    NavigationLink {
-                        HistoryView()
-                    } label: {
-                        Label("History", systemImage: "clock.arrow.circlepath")
-                    }
-                    NavigationLink {
-                        StatisticsView()
-                    } label: {
-                        Label("Statistics", systemImage: "chart.bar.doc.horizontal")
-                    }
-                    NavigationLink {
-                        EchoView()
-                    } label: {
-                        Label("Echo", systemImage: "sparkles.rectangle.stack")
-                    }
-                    Button {
+                } label: {
+                    HStack {
+                        Label("Discover", systemImage: "chart.bar")
+                        Spacer()
                         if parental.needsPINForAddDiscover {
-                            showDiscoverPINGate = true
-                        } else {
-                            navigateToDiscover = true
+                            Image(systemName: "lock.fill")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
-                    } label: {
-                        HStack {
-                            Label("Discover", systemImage: "chart.bar")
-                            Spacer()
-                            if parental.needsPINForAddDiscover {
-                                Image(systemName: "lock.fill")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Image(systemName: "chevron.right")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.tertiary)
-                        }
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.tertiary)
                     }
-                    .tint(.primary)
                 }
+                .tint(.primary)
+            }
 
-                if !store.feeds.isEmpty, !libraryCategories.isEmpty || isCategoryFiltering {
-                    Section {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(categoryFilterChips) { chip in
-                                    TagFilterChip(
-                                        title: chip.label,
-                                        selected: categoryFilter == chip,
-                                        accessibilityHint: String(localized: "Filters the Subscriptions list by category")
-                                    ) {
-                                        settings.subscriptionsCategoryFilter = chip.storageValue
-                                    }
+            if !store.feeds.isEmpty, !libraryCategories.isEmpty || isCategoryFiltering {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(categoryFilterChips) { chip in
+                                TagFilterChip(
+                                    title: chip.label,
+                                    selected: categoryFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the Subscriptions list by category")
+                                ) {
+                                    settings.subscriptionsCategoryFilter = chip.storageValue
                                 }
                             }
-                            .padding(.vertical, 4)
                         }
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                    } header: {
-                        Text("Categories")
+                        .padding(.vertical, 4)
                     }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                } header: {
+                    Text("Categories")
                 }
+            }
 
-                if !store.feeds.isEmpty, !libraryLanguages.isEmpty || isLanguageFiltering {
-                    Section {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(languageFilterChips) { chip in
-                                    TagFilterChip(
-                                        title: chip.label,
-                                        selected: languageFilter == chip,
-                                        accessibilityHint: String(localized: "Filters the Subscriptions list by language")
-                                    ) {
-                                        settings.subscriptionsLanguageFilter = chip.storageValue
-                                    }
+            if !store.feeds.isEmpty, !libraryLanguages.isEmpty || isLanguageFiltering {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(languageFilterChips) { chip in
+                                TagFilterChip(
+                                    title: chip.label,
+                                    selected: languageFilter == chip,
+                                    accessibilityHint: String(localized: "Filters the Subscriptions list by language")
+                                ) {
+                                    settings.subscriptionsLanguageFilter = chip.storageValue
                                 }
                             }
-                            .padding(.vertical, 4)
                         }
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                    } header: {
-                        Text("Languages")
+                        .padding(.vertical, 4)
                     }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                } header: {
+                    Text("Languages")
                 }
+            }
 
-                if !store.feeds.isEmpty, !store.allTags.isEmpty || hasAnyPinnedSubscription || tagFilter != .all {
-                    Section {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(filterChips) { chip in
-                                    TagFilterChip(
-                                        title: chip.label,
-                                        selected: tagFilter == chip,
-                                        accessibilityHint: chipAccessibilityHint(chip)
-                                    ) {
-                                        tagFilter = chip
-                                    }
+            if !store.feeds.isEmpty, !store.allTags.isEmpty || hasAnyPinnedSubscription || tagFilter != .all {
+                Section {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(filterChips) { chip in
+                                TagFilterChip(
+                                    title: chip.label,
+                                    selected: tagFilter == chip,
+                                    accessibilityHint: chipAccessibilityHint(chip)
+                                ) {
+                                    tagFilter = chip
                                 }
                             }
-                            .padding(.vertical, 4)
                         }
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-
-                        // Group by tag only for All (Pinned / tag / Untagged stay flat — same gate as grouping).
-                        if tagFilter == .all {
-                            Toggle("Group by tag", isOn: $groupByTag)
-                                .accessibilityLabel(String(localized: "Group by tag"))
-                                .accessibilityValue(groupByTagAccessibilityValue)
-                                .accessibilityHint(groupByTagAccessibilityHint)
-                        }
-                    } header: {
-                        Text("Tags")
+                        .padding(.vertical, 4)
                     }
-                }
+                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
 
-                if store.feeds.isEmpty {
-                    ContentUnavailableView(
-                        "No subscriptions",
-                        systemImage: "dot.radiowaves.left.and.right",
-                        description: Text("Search Apple Podcasts, open Discover for charts, add by feed URL, pick a local Folder, or import an OPML file from Files (Add podcast → OPML).")
-                    )
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel(String(localized: "No subscriptions"))
-                    .accessibilityValue(subscriptionsEmptyStateAccessibilityValue)
-                } else if tagFilteredFeeds.isEmpty {
-                    ContentUnavailableView(
-                        "No matching podcasts",
-                        systemImage: "magnifyingglass",
-                        description: Text(subscriptionsEmptyFilterMessage)
-                    )
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel(String(localized: "No matching podcasts"))
-                    .accessibilityValue(subscriptionsEmptyStateAccessibilityValue)
-                    .accessibilityHint(subscriptionsNoMatchAccessibilityHint)
-                } else {
-                    ForEach(groupedSections, id: \.title) { section in
-                        Section(section.title) {
-                            ForEach(section.feeds) { feed in
-                                feedRow(feed, summary: remainingByFeedId[feed.id])
-                            }
+                    // Group by tag only for All (Pinned / tag / Untagged stay flat — same gate as grouping).
+                    if tagFilter == .all {
+                        Toggle("Group by tag", isOn: $groupByTag)
+                            .accessibilityLabel(String(localized: "Group by tag"))
+                            .accessibilityValue(groupByTagAccessibilityValue)
+                            .accessibilityHint(groupByTagAccessibilityHint)
+                    }
+                } header: {
+                    Text("Tags")
+                }
+            }
+
+            if store.feeds.isEmpty {
+                ContentUnavailableView(
+                    "No subscriptions",
+                    systemImage: "dot.radiowaves.left.and.right",
+                    description: Text("Search Apple Podcasts, open Discover for charts, add by feed URL, pick a local Folder, or import an OPML file from Files (Add podcast → OPML).")
+                )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No subscriptions"))
+                .accessibilityValue(subscriptionsEmptyStateAccessibilityValue)
+            } else if tagFilteredFeeds.isEmpty {
+                ContentUnavailableView(
+                    "No matching podcasts",
+                    systemImage: "magnifyingglass",
+                    description: Text(subscriptionsEmptyFilterMessage)
+                )
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel(String(localized: "No matching podcasts"))
+                .accessibilityValue(subscriptionsEmptyStateAccessibilityValue)
+                .accessibilityHint(subscriptionsNoMatchAccessibilityHint)
+            } else {
+                ForEach(groupedSections, id: \.title) { section in
+                    Section(section.title) {
+                        ForEach(section.feeds) { feed in
+                            feedRow(feed, summary: remainingByFeedId[feed.id])
                         }
                     }
                 }
             }
+        }
+    }
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            subscriptionsList
             .navigationTitle("Subscriptions")
             .searchable(text: $searchText, prompt: "Search subscriptions")
             .onChange(of: searchText) { _, newValue in
