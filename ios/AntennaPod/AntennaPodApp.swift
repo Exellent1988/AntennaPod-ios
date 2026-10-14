@@ -18,6 +18,10 @@ struct AntennaPodApp: App {
         let gpodder = GpodderSyncService()
         let parental = ParentalControls()
         playback.store = store
+        AppServices.store = store
+        AppServices.playback = playback
+        AppServices.downloads = downloads
+        AppServices.settings = settings
         playback.downloads = downloads
         playback.settings = settings
         downloads.store = store
