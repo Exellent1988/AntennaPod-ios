@@ -49686,6 +49686,159 @@
           }
         }
       }
+    },
+    "Device created: %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Device created: %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerät erstellt: %@"
+          }
+        }
+      }
+    },
+    "Device creation failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Device creation failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerät konnte nicht erstellt werden"
+          }
+        }
+      }
+    },
+    "Device selected: %@ — run Sync now": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Device selected: %@ — run Sync now"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gerät gewählt: %@ – jetzt „Jetzt synchronisieren“ ausführen"
+          }
+        }
+      }
+    },
+    "Import failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "Import: %lld on server · %lld subscribed · %lld already local · %lld failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import: %lld on server · %lld subscribed · %lld already local · %lld failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import: %lld auf dem Server · %lld abonniert · %lld schon lokal · %lld fehlgeschlagen"
+          }
+        }
+      }
+    },
+    "Importing subscriptions…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importing subscriptions…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abos werden importiert…"
+          }
+        }
+      }
+    },
+    "Logged in — run Import all subscriptions or Sync now": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logged in — run Import all subscriptions or Sync now"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Angemeldet – jetzt „Alle Abos importieren“ oder „Jetzt synchronisieren“ ausführen"
+          }
+        }
+      }
+    },
+    "episodes: %lld updated from server, %lld uploaded": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "episodes: %lld updated from server, %lld uploaded"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden: %lld vom Server aktualisiert, %lld hochgeladen"
+          }
+        }
+      }
+    },
+    "queue / favorites / bookmarks / tags / downloads: local-only": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "queue / favorites / bookmarks / tags / downloads: local-only"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warteschlange / Favoriten / Lesezeichen / Tags / Downloads: nur lokal"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

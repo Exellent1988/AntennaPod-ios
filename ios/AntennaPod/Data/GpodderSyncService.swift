@@ -1,9 +1,10 @@
 import Foundation
 
 /// gpodder.net / Nextcloud Gpodder Sync prefs + orchestration.
-/// **Honest coverage (beta):** syncs **http(s) subscription feed URLs only** (additive pull/push).
-/// Does **not** sync episode actions, queue, favorites, bookmarks, tags, downloads,
-/// local folder feeds (`local-folder://`), playback progress, archive, or inbox.
+/// **Honest coverage (beta):** syncs **http(s) subscription feed URLs** (additive pull/push,
+/// plus a one-shot account-wide import) and **episode play actions** (position / played) for
+/// episodes whose media URL matches. Does **not** sync queue, favorites, bookmarks, tags,
+/// downloads, local folder feeds (`local-folder://`), archive, or inbox.
 /// Password lives in Keychain only — never UserDefaults / backup JSON.
 @MainActor
 final class GpodderSyncService: ObservableObject {
@@ -22,6 +23,10 @@ final class GpodderSyncService: ObservableObject {
         static let subscriptionTimestamp = "gpodder.subscriptionTimestamp"
         /// URLs known to be on the server for this device (additive merge helper).
         static let knownRemoteURLs = "gpodder.knownRemoteURLs"
+        /// Server cursor for GET episode actions.
+        static let episodeActionsTimestamp = "gpodder.episodeActionsTimestamp"
+        /// Local epoch ms of the last successful episode-action upload.
+        static let episodeUploadCursorMs = "gpodder.episodeUploadCursorMs"
     }
 
     /// gpodder.net (API2) vs Nextcloud Gpodder Sync (different path root).
@@ -79,6 +84,15 @@ final class GpodderSyncService: ObservableObject {
 
     @Published var isBusy = false
 
+    /// gpodder.net devices on the account (empty for Nextcloud, which has no device API).
+    @Published private(set) var devices: [GpodderDevice] = []
+
+    /// Subscription import progress (`done` of `total` feeds), nil when idle.
+    @Published private(set) var importProgress: (done: Int, total: Int)?
+
+    /// Feeds that failed during the last import or sync (URL + error), shown in Settings.
+    @Published private(set) var importFailures: [GpodderImportFailure] = []
+
     /// Wired from `AntennaPodApp` for sync-error local notifications.
     weak var settings: AppSettings?
 
@@ -92,6 +106,23 @@ final class GpodderSyncService: ObservableObject {
         set {
             UserDefaults.standard.set(Double(newValue), forKey: Keys.subscriptionTimestamp)
         }
+    }
+
+    private var episodeActionsTimestamp: Int64 {
+        get { Int64(UserDefaults.standard.double(forKey: Keys.episodeActionsTimestamp)) }
+        set { UserDefaults.standard.set(Double(newValue), forKey: Keys.episodeActionsTimestamp) }
+    }
+
+    private var episodeUploadCursorMs: Int64 {
+        get { Int64(UserDefaults.standard.double(forKey: Keys.episodeUploadCursorMs)) }
+        set { UserDefaults.standard.set(Double(newValue), forKey: Keys.episodeUploadCursorMs) }
+    }
+
+    private func resetCursors() {
+        subscriptionTimestamp = 0
+        knownRemoteURLs = []
+        episodeActionsTimestamp = 0
+        episodeUploadCursorMs = 0
     }
 
     private var knownRemoteURLs: Set<String> {
@@ -145,8 +176,48 @@ final class GpodderSyncService: ObservableObject {
     func regenerateDeviceIdFromName() {
         deviceId = GpodderClient.sanitizeDeviceId(from: deviceName)
         // Force a full subscription pull next sync (new device id).
-        subscriptionTimestamp = 0
-        knownRemoteURLs = []
+        resetCursors()
+    }
+
+    /// Use an existing gpodder.net device (from `devices`): adopts its id + caption and
+    /// resets cursors so the next sync pulls that device's full subscription list.
+    func selectDevice(_ device: GpodderDevice) {
+        guard device.id != deviceId else { return }
+        deviceId = device.id
+        if !device.caption.isEmpty { deviceName = device.caption }
+        resetCursors()
+        lastSyncStatus = String(localized: "Device selected: \(device.caption.isEmpty ? device.id : device.caption) — run Sync now")
+    }
+
+    /// Create (or rename) this device on the server from `deviceName`, with a fresh id.
+    func createDevice() async {
+        guard !isBusy, isLoggedIn, let password = GpodderKeychain.loadPassword() else { return }
+        isBusy = true
+        defer { isBusy = false }
+        deviceId = Self.makeInitialDeviceId(caption: deviceName)
+        resetCursors()
+        do {
+            let client = try makeClient(password: password)
+            try await client.login()
+            try await client.updateDevice(caption: deviceName.isEmpty ? "AntennaPod iOS" : deviceName, type: "mobile")
+            devices = (try? await client.listDevices()) ?? devices
+            lastSyncError = nil
+            lastSyncStatus = String(localized: "Device created: \(deviceId)")
+        } catch {
+            recordFailure(error: error.localizedDescription, status: String(localized: "Device creation failed"))
+        }
+    }
+
+    /// Reload the gpodder.net device list (no-op for Nextcloud).
+    func refreshDevices() async {
+        guard isLoggedIn, provider == .gpodderNet, let password = GpodderKeychain.loadPassword() else { return }
+        do {
+            let client = try makeClient(password: password)
+            try await client.login()
+            devices = try await client.listDevices()
+        } catch {
+            lastSyncError = error.localizedDescription
+        }
     }
 
     /// Switch provider preset: logs out and applies default host (gpodder.net) or clears for Nextcloud.
@@ -166,8 +237,8 @@ final class GpodderSyncService: ObservableObject {
                 host = ""
             }
         }
-        subscriptionTimestamp = 0
-        knownRemoteURLs = []
+        resetCursors()
+        devices = []
         lastSyncStatus = String(localized: "Provider: \(newProvider.label)")
     }
 
@@ -200,14 +271,16 @@ final class GpodderSyncService: ObservableObject {
         username = user
 
         do {
-            try GpodderKeychain.savePassword(pass)
+            // Validate first; only a working password is written to the Keychain.
             let client = try makeClient(password: pass)
             try await client.login()
             try await client.updateDevice(caption: deviceName.isEmpty ? "AntennaPod iOS" : deviceName, type: "mobile")
+            try GpodderKeychain.savePassword(pass)
+            devices = (try? await client.listDevices()) ?? []
             isLoggedIn = true
             passwordDraft = ""
             lastSyncError = nil
-            lastSyncStatus = String(localized: "Logged in — subscriptions only (not full sync)")
+            lastSyncStatus = String(localized: "Logged in — run Import all subscriptions or Sync now")
         } catch {
             isLoggedIn = false
             recordFailure(
@@ -222,11 +295,74 @@ final class GpodderSyncService: ObservableObject {
         GpodderKeychain.deletePassword()
         isLoggedIn = false
         passwordDraft = ""
-        subscriptionTimestamp = 0
-        knownRemoteURLs = []
+        resetCursors()
+        devices = []
+        importFailures = []
         lastSyncError = nil
         lastSyncStatus = String(localized: "Logged out")
         // Keep host / username / device id+name so re-login is easy.
+    }
+
+    // MARK: - Import
+
+    /// One-shot import of **every** subscription on the account (gpodder.net: all devices;
+    /// Nextcloud: full list). Subscribes missing http(s) feeds, deduped against local feeds
+    /// and within the list, with per-feed progress and errors. Never unsubscribes anything.
+    func importAllSubscriptions(store: PodcastStore) async {
+        guard !isBusy else { return }
+        guard isLoggedIn, let password = GpodderKeychain.loadPassword() else {
+            recordFailure(
+                error: GpodderError.notLoggedIn.localizedDescription,
+                status: String(localized: "Not logged in"),
+                notificationTitle: String(localized: "Not logged in")
+            )
+            return
+        }
+        isBusy = true
+        lastSyncError = nil
+        lastSyncStatus = String(localized: "Importing subscriptions…")
+        defer { isBusy = false }
+        do {
+            let client = try makeClient(password: password)
+            try await client.login()
+            let remote = try await client.getAllSubscriptionURLs()
+            let result = await subscribeMissing(remote, store: store)
+            var remoteKeys = knownRemoteURLs
+            for url in remote { remoteKeys.insert(Self.normalizeFeedURL(url)) }
+            knownRemoteURLs = remoteKeys
+            lastSyncAt = Date()
+            lastSyncStatus = String(localized: "Import: \(remote.count) on server · \(result.subscribed) subscribed · \(result.skipped) already local · \(result.failures.count) failed")
+            if let first = result.failures.first {
+                recordFailure(error: "\(first.url): \(first.message)", status: lastSyncStatus)
+            }
+        } catch {
+            recordFailure(error: error.localizedDescription, status: String(localized: "Import failed"))
+        }
+    }
+
+    /// Subscribe every not-yet-local http(s) URL; updates `importProgress` / `importFailures`.
+    private func subscribeMissing(
+        _ remote: [String],
+        store: PodcastStore
+    ) async -> (subscribed: Int, skipped: Int, failures: [GpodderImportFailure]) {
+        let todo = GpodderSyncLogic.urlsToImport(remote: remote, localFeedURLs: store.feeds.map(\.feedUrl))
+        let distinctRemote = Set(remote.map(Self.normalizeFeedURL).filter { $0.hasPrefix("http") }).count
+        var failures: [GpodderImportFailure] = []
+        var subscribed = 0
+        importFailures = []
+        importProgress = todo.isEmpty ? nil : (0, todo.count)
+        for (index, url) in todo.enumerated() {
+            do {
+                try await store.subscribeQuietly(feedUrl: url)
+                subscribed += 1
+            } catch {
+                failures.append(GpodderImportFailure(url: url, message: error.localizedDescription))
+            }
+            importProgress = (index + 1, todo.count)
+        }
+        importProgress = nil
+        importFailures = failures
+        return (subscribed, max(0, distinctRemote - todo.count), failures)
     }
 
     // MARK: - Sync
@@ -286,23 +422,11 @@ final class GpodderSyncService: ObservableObject {
                 }
             }
 
-            // Pull: subscribe missing (reuse subscribeQuietly / FeedRepository pipeline).
-            // Equality uses the lowercased key; the request URL keeps path/query case.
-            var subscribed = 0
-            var subscribeFailures: [String] = []
+            // Pull: subscribe missing (deduped, per-feed progress + errors).
             let localNormalized = Set(store.feeds.map { Self.normalizeFeedURL($0.feedUrl) }.filter { !$0.isEmpty })
-            for raw in changes.add {
-                let fetchURL = Self.syncFeedURL(raw)
-                let key = Self.normalizeFeedURL(fetchURL)
-                guard key.hasPrefix("http") else { continue }
-                if localNormalized.contains(key) { continue }
-                do {
-                    try await store.subscribeQuietly(feedUrl: fetchURL)
-                    subscribed += 1
-                } catch {
-                    subscribeFailures.append("\(fetchURL): \(error.localizedDescription)")
-                }
-            }
+            let pulled = await subscribeMissing(changes.add, store: store)
+            let subscribed = pulled.subscribed
+            let subscribeFailures = pulled.failures.map { "\($0.url): \($0.message)" }
 
             // Remote removes are intentionally ignored locally (additive merge).
             let ignoredRemoves = changes.remove.filter {
@@ -342,6 +466,8 @@ final class GpodderSyncService: ObservableObject {
 
             knownRemoteURLs = remote
             subscriptionTimestamp = uploadTimestamp
+
+            let episodeResult = try await syncEpisodeActions(client: client, store: store)
             lastSyncAt = Date()
 
             let localFolderOmitted = store.feeds.filter { LocalFolderFeed.isLocalFolderFeed($0) }.count
@@ -359,7 +485,8 @@ final class GpodderSyncService: ObservableObject {
             if !subscribeFailures.isEmpty {
                 parts.append(String(localized: "\(subscribeFailures.count) subscribe error(s)"))
             }
-            parts.append(String(localized: "episode actions / queue / bookmarks / tags / downloads: local-only"))
+            parts.append(String(localized: "episodes: \(episodeResult.applied) updated from server, \(episodeResult.uploaded) uploaded"))
+            parts.append(String(localized: "queue / favorites / bookmarks / tags / downloads: local-only"))
             lastSyncStatus = parts.joined(separator: " · ")
             if let first = subscribeFailures.first {
                 // Sync completed with subscribe errors — still surface + notify.
@@ -372,6 +499,53 @@ final class GpodderSyncService: ObservableObject {
         }
     }
 
+
+    /// Download remote play actions → apply newer position / played locally; upload local
+    /// changes since the last cursor. Computed before applying so remote updates are not echoed.
+    private func syncEpisodeActions(
+        client: GpodderClient,
+        store: PodcastStore
+    ) async throws -> (applied: Int, uploaded: Int) {
+        let started = Int64(Date().timeIntervalSince1970 * 1000)
+        let remote = try await client.getEpisodeActions(since: episodeActionsTimestamp)
+        var refs: [GpodderSyncLogic.EpisodeRef] = []
+        for feed in store.feeds where !LocalFolderFeed.isLocalFolderFeed(feed) {
+            for episode in feed.episodes {
+                refs.append(.init(episodeId: episode.id, feedUrl: feed.feedUrl, mediaUrl: episode.downloadUrl))
+            }
+        }
+        let updates = GpodderSyncLogic.remoteUpdates(
+            actions: remote.actions, refs: refs, localStates: store.playbackStates
+        )
+        let updatedIds = Set(updates.map(\.episodeId))
+        let outgoing = GpodderSyncLogic.localActions(
+            refs: refs, localStates: store.playbackStates,
+            sinceMs: episodeUploadCursorMs, deviceId: deviceId
+        ).filter { !updatedIds.contains($0.guid ?? "") }
+
+        for update in updates {
+            if update.isPlayed, !store.isPlayed(update.episodeId) {
+                store.markPlayed(update.episodeId)
+            }
+            var state = store.playbackState(for: update.episodeId)
+            state.isPlayed = state.isPlayed || update.isPlayed
+            if !update.isPlayed { state.positionSeconds = update.positionSeconds }
+            if update.durationSeconds > 0 { state.durationSeconds = update.durationSeconds }
+            state.updatedAtEpochMs = update.updatedAtEpochMs
+            if update.isPlayed || update.positionSeconds > 1 {
+                state.lastPlayedAtEpochMs = max(state.lastPlayedAtEpochMs ?? 0, update.updatedAtEpochMs)
+            }
+            store.playbackStates[update.episodeId] = state
+        }
+
+        var timestamp = remote.timestamp
+        if !outgoing.isEmpty, let ts = try await client.uploadEpisodeActions(outgoing) {
+            timestamp = max(timestamp, ts)
+        }
+        episodeActionsTimestamp = timestamp
+        episodeUploadCursorMs = started
+        return (updates.count, outgoing.count)
+    }
 
     /// Persist failure + optional local notification (Settings toggle + permission).
     /// `notificationTitle` is the banner title (Login failed / Not logged in / Sync failed default).
@@ -424,7 +598,7 @@ final class GpodderSyncService: ObservableObject {
 
     /// Feed URL to fetch or upload: trim, drop trailing slashes, lowercase the scheme only.
     /// Path, host, and query keep their original case so case-sensitive paths and tokens survive sync.
-    static func syncFeedURL(_ raw: String) -> String {
+    nonisolated static func syncFeedURL(_ raw: String) -> String {
         var s = raw.trimmingCharacters(in: .whitespacesAndNewlines)
         while s.hasSuffix("/") { s.removeLast() }
         if let schemeSep = s.range(of: "://") {
@@ -436,7 +610,7 @@ final class GpodderSyncService: ObservableObject {
 
     /// Equality key only (trim, strip trailing slashes, lowercase the whole URL).
     /// Never pass this to subscribe or upload — use `syncFeedURL` for the real request.
-    static func normalizeFeedURL(_ raw: String) -> String {
+    nonisolated static func normalizeFeedURL(_ raw: String) -> String {
         syncFeedURL(raw).lowercased()
     }
 
@@ -487,6 +661,13 @@ final class GpodderSyncService: ObservableObject {
             lastSyncStatus = String(localized: "Restored from backup — re-enter password to login (Keychain secret not in backup)")
         }
     }
+}
+
+/// One feed that could not be subscribed during gpodder import / sync.
+struct GpodderImportFailure: Identifiable, Hashable {
+    var id: String { url }
+    let url: String
+    let message: String
 }
 
 /// Codable gpodder prefs blob (`gpodder-prefs.json`). Password is never serialized.
