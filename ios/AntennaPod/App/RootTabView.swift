@@ -2,7 +2,7 @@ import SwiftUI
 
 /// String raw values so the selection can live in `@SceneStorage` (Android: NavDrawerFragment PREF_LAST_FRAGMENT_TAG).
 enum RootTab: String, Hashable {
-    case home, inbox, subscriptions, queue, downloads, settings
+    case home, inbox, subscriptions, queue, downloads, episodes, history, settings
 }
 
 struct RootTabView: View {
@@ -89,6 +89,17 @@ struct RootTabView: View {
                 // Full completed catalog (`DownloadService.downloads`), not chip/search or in-progress.
                 // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
                 .badge(downloads.downloads.count)
+            // Android drawer items AllEpisodesFragment / PlaybackHistoryFragment; iOS shows them under More.
+            NavigationStack { AllEpisodesView() }
+                .tabItem {
+                    Label("Episodes", systemImage: "list.bullet.rectangle")
+                }
+                .tag(RootTab.episodes)
+            NavigationStack { HistoryView() }
+                .tabItem {
+                    Label("History", systemImage: "clock.arrow.circlepath")
+                }
+                .tag(RootTab.history)
             SettingsView()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape")
