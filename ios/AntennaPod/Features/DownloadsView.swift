@@ -877,9 +877,9 @@ struct DownloadsView: View {
             }
             .confirmationDialog(
                 "Delete download?",
-                isPresented: Binding(
+                isPresented: Binding<Bool>(
                     get: { episodePendingDelete != nil },
-                    set: { if !$0 { episodePendingDelete = nil } }
+                    set: { (isPresented: Bool) in if !isPresented { episodePendingDelete = nil } }
                 ),
                 titleVisibility: .visible,
                 presenting: episodePendingDelete
@@ -898,9 +898,9 @@ struct DownloadsView: View {
             }
             .confirmationDialog(
                 "Remove from queue?",
-                isPresented: Binding(
+                isPresented: Binding<Bool>(
                     get: { episodePendingRemoveFromQueue != nil },
-                    set: { if !$0 { episodePendingRemoveFromQueue = nil } }
+                    set: { (isPresented: Bool) in if !isPresented { episodePendingRemoveFromQueue = nil } }
                 ),
                 titleVisibility: .visible,
                 presenting: episodePendingRemoveFromQueue
