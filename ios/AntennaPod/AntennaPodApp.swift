@@ -72,6 +72,9 @@ struct AntennaPodApp: App {
                 .onAppear {
                     // Re-attach in case a cold-start intent queued before init finished wiring.
                     PlaybackDeepLinkRouter.shared.attach(playback: playback)
+                    #if DEBUG
+                    PlayerDebugLaunch.shared.runIfRequested(store: store, playback: playback)
+                    #endif
                 }
         }
         .commands {

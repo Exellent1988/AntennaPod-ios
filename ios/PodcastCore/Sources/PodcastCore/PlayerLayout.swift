@@ -59,3 +59,26 @@ public enum FeedSettingsGroup: String, CaseIterable, Sendable {
         return seen
     }
 }
+
+/// Full player hero sizing (Android: large square cover above the controls).
+public enum PlayerHeroLayout {
+    /// Vertical space the portrait controls need below the cover (header, seek bar, main row, bottom bar).
+    public static let portraitControlsHeight: Double = 330
+    public static let minimumCover: Double = 120
+    public static let maximumCover: Double = 520
+
+    /// Landscape when wider than tall.
+    public static func isLandscape(width: Double, height: Double) -> Bool { width > height }
+
+    /// Cover edge length for the available content size (safe area already excluded).
+    public static func coverSide(width: Double, height: Double) -> Double {
+        guard width > 0, height > 0 else { return minimumCover }
+        let side: Double
+        if isLandscape(width: width, height: height) {
+            side = min(height - 32, width * 0.42)
+        } else {
+            side = min(width - 48, height - portraitControlsHeight)
+        }
+        return min(max(side, minimumCover), maximumCover)
+    }
+}
