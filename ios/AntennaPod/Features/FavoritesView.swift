@@ -584,24 +584,9 @@ struct FavoritesView: View {
         }
     }
 
-    var body: some View {
-        favoritesList
-        .navigationTitle("Favorites")
-        .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $searchText, prompt: "Search favorites")
-        .onChange(of: searchText) { _, newValue in
-            scheduleFilter(for: newValue)
-        }
-        .onAppear {
-            releaseFavoritesPodcastFilterIfFeedGone()
-        }
-        .onChange(of: store.feeds.map(\.id)) { _, _ in
-            releaseFavoritesPodcastFilterIfFeedGone()
-        }
-        .onDisappear {
-            debounceTask?.cancel()
-        }
-        .toolbar { favoritesToolbar }
+    // Dialog chain split into stages: one chain this long exceeds the CI type-checker time limit.
+    private func favoritesDialogsStageA<Content: View>(_ content: Content) -> some View {
+        content
         .alert(
             String(localized: "Copied"),
             isPresented: $showCopiedAlert
@@ -635,6 +620,10 @@ struct FavoritesView: View {
         } message: {
             Text("Appends \(enqueueAllUnplayedFavoritesCandidatesCount) unplayed, non-archived favorite episodes to the end of the queue (newest favorited first). Already queued, played, and archived episodes are skipped. Uses the full Favorites catalog (same as Clear favorites), not the podcast, search, or sort filter. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived episodes.")
         }
+    }
+
+    private func favoritesDialogsStageB<Content: View>(_ content: Content) -> some View {
+        content
         .confirmationDialog(
             "Mark all as played?",
             isPresented: $showMarkAllPlayedConfirm,
@@ -683,6 +672,28 @@ struct FavoritesView: View {
         } message: {
             Text("Removes \(items.count) episodes from favorites. Does not delete downloads, archive, mark played, or clear the queue.")
         }
+    }
+
+    var body: some View {
+        favoritesDialogsStageB(favoritesDialogsStageA(
+            favoritesList
+            .navigationTitle("Favorites")
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchText, prompt: "Search favorites")
+            .onChange(of: searchText) { _, newValue in
+                scheduleFilter(for: newValue)
+            }
+            .onAppear {
+                releaseFavoritesPodcastFilterIfFeedGone()
+            }
+            .onChange(of: store.feeds.map(\.id)) { _, _ in
+                releaseFavoritesPodcastFilterIfFeedGone()
+            }
+            .onDisappear {
+                debounceTask?.cancel()
+            }
+            .toolbar { favoritesToolbar }
+        ))
     }
 
     /// Pasteboard copy of the **full** Favorites catalog (not podcast/search/UI sort). Read-only.

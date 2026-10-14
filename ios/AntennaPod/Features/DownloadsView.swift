@@ -749,183 +749,194 @@ struct DownloadsView: View {
         }
     }
 
+    // Dialog chain split into stages: one chain this long exceeds the CI type-checker time limit.
+    private func downloadsDialogsStageA<Content: View>(_ content: Content) -> some View {
+        content
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
+        .confirmationDialog(
+            "Add all to queue?",
+            isPresented: $showEnqueueAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all to queue") {
+                store.enqueueAllDownloads()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllDownloadsCandidatesCount) downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue.")
+        }
+        .confirmationDialog(
+            "Add all unplayed to queue?",
+            isPresented: $showEnqueueAllUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all unplayed to queue") {
+                store.enqueueAllUnplayedDownloads()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllUnplayedDownloadsCandidatesCount) unplayed, non-archived downloaded episode(s) to the end of the queue (catalog order — oldest completed first). Already queued, played, and archived episodes are skipped. Uses the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived downloads.")
+        }
+        .confirmationDialog(
+            "Mark all as played?",
+            isPresented: $showMarkAllPlayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as played") {
+                store.markAllDownloadsPlayed()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Marks \(markAllDownloadsPlayedCandidatesCount) unplayed, non-archived downloaded episode(s) as played. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not itself clear downloads."
+            )
+        }
+        .confirmationDialog(
+            "Mark all as unplayed?",
+            isPresented: $showMarkAllUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as unplayed") {
+                store.markAllDownloadsUnplayed()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Marks \(markAllDownloadsUnplayedCandidatesCount) played downloaded episode(s), including archived episodes, as unplayed. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Does not delete download files, clear the queue, stop playback, or unarchive episodes."
+            )
+        }
+    }
+
+    private func downloadsDialogsStageB<Content: View>(_ content: Content) -> some View {
+        content
+        .confirmationDialog(
+            "Archive all?",
+            isPresented: $showArchiveAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Archive all") {
+                store.archiveAllDownloads()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Archives \(archiveAllDownloadsCandidatesCount) non-archived downloaded episode(s) in the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing."
+            )
+        }
+        .confirmationDialog(
+            "Cancel all downloads?",
+            isPresented: $showCancelAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Cancel all downloads") {
+                downloads.cancelAllInFlightDownloads()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Cancels \(downloads.cancelAllInFlightCount) in-progress or waiting download(s). Stops active transfers and clears the waiting queue. Does not delete completed offline files."
+            )
+        }
+        .confirmationDialog(
+            "Delete played downloads?",
+            isPresented: $showDeletePlayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Delete played downloads", role: .destructive) {
+                downloads.deletePlayedDownloads(store: store)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Deletes \(playedDownloadsForDelete.count) played offline file(s) (\(playedDownloadsDeleteSizeLabel)). Keeps unplayed downloads and favorites. Played episodes that are still queued can lose their offline file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads."
+            )
+        }
+        .confirmationDialog(
+            "Delete all downloads?",
+            isPresented: $showDeleteAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Delete all downloads", role: .destructive) {
+                downloads.deleteAllDownloads()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Deletes \(downloads.downloads.count) completed offline file(s) (\(deleteAllDownloadsSizeLabel)), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Queued episodes and the episode playing from a download can lose their offline file (queue membership stays; playback continues from the stream). Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
+            )
+        }
+        .confirmationDialog(
+            "Delete download?",
+            isPresented: Binding<Bool>(
+                get: { episodePendingDelete != nil },
+                set: { (isPresented: Bool) in if !isPresented { episodePendingDelete = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: episodePendingDelete
+        ) { episode in
+            Button("Delete download", role: .destructive) {
+                downloads.delete(episode)
+                episodePendingDelete = nil
+            }
+            Button("Cancel", role: .cancel) {
+                episodePendingDelete = nil
+            }
+        } message: { episode in
+            Text(
+                "Delete download for \"\(episode.title)\"? Removes the local offline file only. Keeps played status, queue membership, favorites, and archive state."
+            )
+        }
+        .confirmationDialog(
+            "Remove from queue?",
+            isPresented: Binding<Bool>(
+                get: { episodePendingRemoveFromQueue != nil },
+                set: { (isPresented: Bool) in if !isPresented { episodePendingRemoveFromQueue = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: episodePendingRemoveFromQueue
+        ) { episode in
+            Button("Remove from queue", role: .destructive) {
+                store.removeFromQueue(episode)
+                episodePendingRemoveFromQueue = nil
+            }
+            Button("Cancel", role: .cancel) {
+                episodePendingRemoveFromQueue = nil
+            }
+        } message: { episode in
+            Text(
+                "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
+            )
+        }
+    }
+
     var body: some View {
         NavigationStack {
-            downloadsList
-            .navigationTitle("Downloads")
-            .searchable(text: $searchText, prompt: "Search downloads")
-            .onChange(of: searchText) { _, newValue in
-                scheduleFilter(for: newValue)
-            }
-            .onAppear {
-                releaseDownloadsPodcastFilterIfFeedGone()
-            }
-            .onChange(of: store.feeds.map(\.id)) { _, _ in
-                releaseDownloadsPodcastFilterIfFeedGone()
-            }
-            .onDisappear {
-                debounceTask?.cancel()
-            }
-            .toolbar { downloadsToolbar }
-            .alert(
-                String(localized: "Copied"),
-                isPresented: $showCopiedAlert
-            ) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(copiedAlertMessage)
-            }
-            .sensoryFeedback(.success, trigger: copyFeedbackTick)
-            .confirmationDialog(
-                "Add all to queue?",
-                isPresented: $showEnqueueAllConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Add all to queue") {
-                    store.enqueueAllDownloads()
+            downloadsDialogsStageB(downloadsDialogsStageA(
+                downloadsList
+                .navigationTitle("Downloads")
+                .searchable(text: $searchText, prompt: "Search downloads")
+                .onChange(of: searchText) { _, newValue in
+                    scheduleFilter(for: newValue)
                 }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Appends \(enqueueAllDownloadsCandidatesCount) downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue.")
-            }
-            .confirmationDialog(
-                "Add all unplayed to queue?",
-                isPresented: $showEnqueueAllUnplayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Add all unplayed to queue") {
-                    store.enqueueAllUnplayedDownloads()
+                .onAppear {
+                    releaseDownloadsPodcastFilterIfFeedGone()
                 }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Appends \(enqueueAllUnplayedDownloadsCandidatesCount) unplayed, non-archived downloaded episode(s) to the end of the queue (catalog order — oldest completed first). Already queued, played, and archived episodes are skipped. Uses the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived downloads.")
-            }
-            .confirmationDialog(
-                "Mark all as played?",
-                isPresented: $showMarkAllPlayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Mark all as played") {
-                    store.markAllDownloadsPlayed()
+                .onChange(of: store.feeds.map(\.id)) { _, _ in
+                    releaseDownloadsPodcastFilterIfFeedGone()
                 }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Marks \(markAllDownloadsPlayedCandidatesCount) unplayed, non-archived downloaded episode(s) as played. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not itself clear downloads."
-                )
-            }
-            .confirmationDialog(
-                "Mark all as unplayed?",
-                isPresented: $showMarkAllUnplayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Mark all as unplayed") {
-                    store.markAllDownloadsUnplayed()
+                .onDisappear {
+                    debounceTask?.cancel()
                 }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Marks \(markAllDownloadsUnplayedCandidatesCount) played downloaded episode(s), including archived episodes, as unplayed. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Does not delete download files, clear the queue, stop playback, or unarchive episodes."
-                )
-            }
-            .confirmationDialog(
-                "Archive all?",
-                isPresented: $showArchiveAllConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Archive all") {
-                    store.archiveAllDownloads()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Archives \(archiveAllDownloadsCandidatesCount) non-archived downloaded episode(s) in the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing."
-                )
-            }
-            .confirmationDialog(
-                "Cancel all downloads?",
-                isPresented: $showCancelAllConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Cancel all downloads") {
-                    downloads.cancelAllInFlightDownloads()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Cancels \(downloads.cancelAllInFlightCount) in-progress or waiting download(s). Stops active transfers and clears the waiting queue. Does not delete completed offline files."
-                )
-            }
-            .confirmationDialog(
-                "Delete played downloads?",
-                isPresented: $showDeletePlayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Delete played downloads", role: .destructive) {
-                    downloads.deletePlayedDownloads(store: store)
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Deletes \(playedDownloadsForDelete.count) played offline file(s) (\(playedDownloadsDeleteSizeLabel)). Keeps unplayed downloads and favorites. Played episodes that are still queued can lose their offline file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads."
-                )
-            }
-            .confirmationDialog(
-                "Delete all downloads?",
-                isPresented: $showDeleteAllConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Delete all downloads", role: .destructive) {
-                    downloads.deleteAllDownloads()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(deleteAllDownloadsSizeLabel)), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Queued episodes and the episode playing from a download can lose their offline file (queue membership stays; playback continues from the stream). Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
-                )
-            }
-            .confirmationDialog(
-                "Delete download?",
-                isPresented: Binding<Bool>(
-                    get: { episodePendingDelete != nil },
-                    set: { (isPresented: Bool) in if !isPresented { episodePendingDelete = nil } }
-                ),
-                titleVisibility: .visible,
-                presenting: episodePendingDelete
-            ) { episode in
-                Button("Delete download", role: .destructive) {
-                    downloads.delete(episode)
-                    episodePendingDelete = nil
-                }
-                Button("Cancel", role: .cancel) {
-                    episodePendingDelete = nil
-                }
-            } message: { episode in
-                Text(
-                    "Delete download for \"\(episode.title)\"? Removes the local offline file only. Keeps played status, queue membership, favorites, and archive state."
-                )
-            }
-            .confirmationDialog(
-                "Remove from queue?",
-                isPresented: Binding<Bool>(
-                    get: { episodePendingRemoveFromQueue != nil },
-                    set: { (isPresented: Bool) in if !isPresented { episodePendingRemoveFromQueue = nil } }
-                ),
-                titleVisibility: .visible,
-                presenting: episodePendingRemoveFromQueue
-            ) { episode in
-                Button("Remove from queue", role: .destructive) {
-                    store.removeFromQueue(episode)
-                    episodePendingRemoveFromQueue = nil
-                }
-                Button("Cancel", role: .cancel) {
-                    episodePendingRemoveFromQueue = nil
-                }
-            } message: { episode in
-                Text(
-                    "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
-                )
-            }
+                .toolbar { downloadsToolbar }
+            ))
         }
     }
 

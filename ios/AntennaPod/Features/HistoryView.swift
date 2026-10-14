@@ -579,24 +579,9 @@ struct HistoryView: View {
         }
     }
 
-    var body: some View {
-        historyList
-        .navigationTitle("History")
-        .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $searchText, prompt: "Search history")
-        .onChange(of: searchText) { _, newValue in
-            scheduleFilter(for: newValue)
-        }
-        .onAppear {
-            releaseHistoryPodcastFilterIfFeedGone()
-        }
-        .onChange(of: store.feeds.map(\.id)) { _, _ in
-            releaseHistoryPodcastFilterIfFeedGone()
-        }
-        .onDisappear {
-            debounceTask?.cancel()
-        }
-        .toolbar { historyToolbar }
+    // Dialog chain split into stages: one chain this long exceeds the CI type-checker time limit.
+    private func historyDialogsStageA<Content: View>(_ content: Content) -> some View {
+        content
         .alert(
             String(localized: "Copied"),
             isPresented: $showCopiedAlert
@@ -630,6 +615,10 @@ struct HistoryView: View {
         } message: {
             Text("Marks \(markAllHistoryPlayedCandidatesCount) unplayed, non-archived History episode(s) as played. Uses the full History catalog (newest last-played first), not the podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not clear History, remove episodes from the catalog, or delete downloads itself.")
         }
+    }
+
+    private func historyDialogsStageB<Content: View>(_ content: Content) -> some View {
+        content
         .confirmationDialog(
             "Mark all as unplayed?",
             isPresented: $showMarkAllUnplayedConfirm,
@@ -666,6 +655,28 @@ struct HistoryView: View {
         } message: {
             Text("Removes \(items.count) episodes from history. Their played status and saved playback positions are cleared too, so they count as unplayed again. Does not unsubscribe, delete downloads, or clear the queue.")
         }
+    }
+
+    var body: some View {
+        historyDialogsStageB(historyDialogsStageA(
+            historyList
+            .navigationTitle("History")
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchText, prompt: "Search history")
+            .onChange(of: searchText) { _, newValue in
+                scheduleFilter(for: newValue)
+            }
+            .onAppear {
+                releaseHistoryPodcastFilterIfFeedGone()
+            }
+            .onChange(of: store.feeds.map(\.id)) { _, _ in
+                releaseHistoryPodcastFilterIfFeedGone()
+            }
+            .onDisappear {
+                debounceTask?.cancel()
+            }
+            .toolbar { historyToolbar }
+        ))
     }
 
     /// Pasteboard copy of the **full** History catalog (not podcast/search/UI sort). Read-only.

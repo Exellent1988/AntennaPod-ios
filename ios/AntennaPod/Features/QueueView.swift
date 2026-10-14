@@ -826,262 +826,273 @@ struct QueueView: View {
         }
     }
 
+    // Dialog chain split into stages: one chain this long exceeds the CI type-checker time limit.
+    private func queueDialogsStageA<Content: View>(_ content: Content) -> some View {
+        content
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
+        .confirmationDialog(
+            "Mark all as played?",
+            isPresented: $showMarkAllQueuePlayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as played") {
+                store.markAllQueuePlayed()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Marks \(markAllQueuePlayedCandidatesCount) unplayed, non-archived episodes in the full queue as played. They leave the queue, and auto-delete after playing still applies when enabled. This ignores the Queue played/podcast/search filters."
+            )
+        }
+        .confirmationDialog(
+            "Mark all as unplayed?",
+            isPresented: $showMarkAllQueueUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as unplayed") {
+                store.markAllQueueUnplayed()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Marks \(markAllQueueUnplayedCandidatesCount) played episodes in the full queue as unplayed, including archived episodes. This does not delete downloads, remove episodes from the queue, stop playback, or unarchive episodes. It ignores the Queue played/podcast/search filters."
+            )
+        }
+        .confirmationDialog(
+            "Archive all?",
+            isPresented: $showArchiveAllQueueConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Archive all") {
+                store.archiveAllQueue()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Archives \(archiveAllQueueCandidatesCount) non-archived episode(s) in the full queue (not only the current played/podcast/search filters). Archived does not mean played. Does not remove episodes from the queue, mark played, delete downloads, or stop playback."
+            )
+        }
+        .confirmationDialog(
+            "Remove played?",
+            isPresented: $showRemovePlayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Remove played", role: .destructive) {
+                store.removePlayedFromQueue()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Removes \(playedInFullQueueCount) played episodes from the entire queue (not only the current filter). Does not stop playback, change progress, unmark played, or delete downloads."
+            )
+        }
+        .confirmationDialog(
+            "Clear queue?",
+            isPresented: $showClearQueueConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Clear queue", role: .destructive) {
+                store.clearQueue()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Removes \(store.queue.count) episodes from the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads."
+            )
+        }
+        .confirmationDialog(
+            "Shuffle queue?",
+            isPresented: $showShuffleQueueConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Shuffle") {
+                store.shuffleQueue()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Randomly reorders all \(store.queue.count) episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+            )
+        }
+        .confirmationDialog(
+            "Shuffle queue (keep playing first)?",
+            isPresented: $showShuffleKeepPlayingFirstConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Shuffle (keep playing first)") {
+                store.shuffleQueueKeepingPlayingFirst(currentEpisode: playback.currentEpisode)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Randomly reorders all \(store.queue.count) episodes in the entire queue (not only the current filter), then moves the currently playing episode to the start when it is in the queue. If nothing is playing or the current episode is not queued, behaves like Shuffle. Does not stop playback, change progress, mark played, or delete downloads."
+            )
+        }
+    }
+
+    private func queueDialogsStageB<Content: View>(_ content: Content) -> some View {
+        content
+        .confirmationDialog(
+            "Reverse queue?",
+            isPresented: $showReverseQueueConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Reverse order") {
+                store.reverseQueue()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Reverses all \(store.queue.count) episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+            )
+        }
+        .confirmationDialog(
+            "Sort queue newest first?",
+            isPresented: $showSortNewestQueueConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Newest first") {
+                store.sortQueueByPublishDate(newestFirst: true)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Sorts all \(store.queue.count) episodes in the entire queue by publish date, newest first (not only the current filter). Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+            )
+        }
+        .confirmationDialog(
+            "Sort queue oldest first?",
+            isPresented: $showSortOldestQueueConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Oldest first") {
+                store.sortQueueByPublishDate(newestFirst: false)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Sorts all \(store.queue.count) episodes in the entire queue by publish date, oldest first (not only the current filter). Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+            )
+        }
+        .confirmationDialog(
+            "Sort queue shortest first?",
+            isPresented: $showSortShortestQueueConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Shortest first") {
+                store.sortQueueByDuration(shortestFirst: true)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Sorts all \(store.queue.count) episodes in the entire queue by known duration, shortest first (not only the current filter). Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+            )
+        }
+        .confirmationDialog(
+            "Sort queue longest first?",
+            isPresented: $showSortLongestQueueConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Longest first") {
+                store.sortQueueByDuration(shortestFirst: false)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Sorts all \(store.queue.count) episodes in the entire queue by known duration, longest first (not only the current filter). Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+            )
+        }
+        .confirmationDialog(
+            "Sort queue title A–Z?",
+            isPresented: $showSortTitleAZQueueConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Title A–Z") {
+                store.sortQueueByTitle(ascending: true)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Sorts all \(store.queue.count) episodes in the entire queue by title, A to Z (not only the current filter). Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+            )
+        }
+        .confirmationDialog(
+            "Sort queue title Z–A?",
+            isPresented: $showSortTitleZAQueueConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Title Z–A") {
+                store.sortQueueByTitle(ascending: false)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Sorts all \(store.queue.count) episodes in the entire queue by title, Z to A (not only the current filter). Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
+            )
+        }
+        .confirmationDialog(
+            "Remove from queue?",
+            isPresented: Binding(
+                get: { episodePendingRemove != nil },
+                set: { if !$0 { episodePendingRemove = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: episodePendingRemove
+        ) { episode in
+            Button("Remove from queue", role: .destructive) {
+                store.removeFromQueue(episode)
+                episodePendingRemove = nil
+            }
+            Button("Cancel", role: .cancel) {
+                episodePendingRemove = nil
+            }
+        } message: { episode in
+            Text(
+                "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
+            )
+        }
+    }
+
     var body: some View {
         NavigationStack {
-            queueList
-            .navigationTitle("Queue")
-            .searchable(text: $searchText, prompt: "Search queue")
-            .onChange(of: searchText) { _, newValue in
-                scheduleFilter(for: newValue)
-            }
-            .onChange(of: isFiltering) { _, filtering in
-                // Drag reorder uses full-queue indices; leave Edit while a chip/podcast/search filter is active.
-                if filtering {
-                    editMode?.wrappedValue = .inactive
+            queueDialogsStageB(queueDialogsStageA(
+                queueList
+                .navigationTitle("Queue")
+                .searchable(text: $searchText, prompt: "Search queue")
+                .onChange(of: searchText) { _, newValue in
+                    scheduleFilter(for: newValue)
                 }
-            }
-            .onChange(of: settings.queueLocked) { _, locked in
-                // Leave Edit when locking so drag handles disappear immediately.
-                if locked {
-                    editMode?.wrappedValue = .inactive
+                .onChange(of: isFiltering) { _, filtering in
+                    // Drag reorder uses full-queue indices; leave Edit while a chip/podcast/search filter is active.
+                    if filtering {
+                        editMode?.wrappedValue = .inactive
+                    }
                 }
-            }
-            .onAppear {
-                releaseQueuePodcastFilterIfFeedGone()
-            }
-            .onChange(of: store.feeds.map(\.id)) { _, _ in
-                releaseQueuePodcastFilterIfFeedGone()
-            }
-            .onDisappear {
-                debounceTask?.cancel()
-            }
-            .toolbar { queueToolbar }
-            .alert(
-                String(localized: "Copied"),
-                isPresented: $showCopiedAlert
-            ) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(copiedAlertMessage)
-            }
-            .sensoryFeedback(.success, trigger: copyFeedbackTick)
-            .confirmationDialog(
-                "Mark all as played?",
-                isPresented: $showMarkAllQueuePlayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Mark all as played") {
-                    store.markAllQueuePlayed()
+                .onChange(of: settings.queueLocked) { _, locked in
+                    // Leave Edit when locking so drag handles disappear immediately.
+                    if locked {
+                        editMode?.wrappedValue = .inactive
+                    }
                 }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Marks \(markAllQueuePlayedCandidatesCount) unplayed, non-archived episodes in the full queue as played. They leave the queue, and auto-delete after playing still applies when enabled. This ignores the Queue played/podcast/search filters."
-                )
-            }
-            .confirmationDialog(
-                "Mark all as unplayed?",
-                isPresented: $showMarkAllQueueUnplayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Mark all as unplayed") {
-                    store.markAllQueueUnplayed()
+                .onAppear {
+                    releaseQueuePodcastFilterIfFeedGone()
                 }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Marks \(markAllQueueUnplayedCandidatesCount) played episodes in the full queue as unplayed, including archived episodes. This does not delete downloads, remove episodes from the queue, stop playback, or unarchive episodes. It ignores the Queue played/podcast/search filters."
-                )
-            }
-            .confirmationDialog(
-                "Archive all?",
-                isPresented: $showArchiveAllQueueConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Archive all") {
-                    store.archiveAllQueue()
+                .onChange(of: store.feeds.map(\.id)) { _, _ in
+                    releaseQueuePodcastFilterIfFeedGone()
                 }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Archives \(archiveAllQueueCandidatesCount) non-archived episode(s) in the full queue (not only the current played/podcast/search filters). Archived does not mean played. Does not remove episodes from the queue, mark played, delete downloads, or stop playback."
-                )
-            }
-            .confirmationDialog(
-                "Remove played?",
-                isPresented: $showRemovePlayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Remove played", role: .destructive) {
-                    store.removePlayedFromQueue()
+                .onDisappear {
+                    debounceTask?.cancel()
                 }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Removes \(playedInFullQueueCount) played episodes from the entire queue (not only the current filter). Does not stop playback, change progress, unmark played, or delete downloads."
-                )
-            }
-            .confirmationDialog(
-                "Clear queue?",
-                isPresented: $showClearQueueConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Clear queue", role: .destructive) {
-                    store.clearQueue()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Removes \(store.queue.count) episodes from the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads."
-                )
-            }
-            .confirmationDialog(
-                "Shuffle queue?",
-                isPresented: $showShuffleQueueConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Shuffle") {
-                    store.shuffleQueue()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Randomly reorders all \(store.queue.count) episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
-                )
-            }
-            .confirmationDialog(
-                "Shuffle queue (keep playing first)?",
-                isPresented: $showShuffleKeepPlayingFirstConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Shuffle (keep playing first)") {
-                    store.shuffleQueueKeepingPlayingFirst(currentEpisode: playback.currentEpisode)
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Randomly reorders all \(store.queue.count) episodes in the entire queue (not only the current filter), then moves the currently playing episode to the start when it is in the queue. If nothing is playing or the current episode is not queued, behaves like Shuffle. Does not stop playback, change progress, mark played, or delete downloads."
-                )
-            }
-            .confirmationDialog(
-                "Reverse queue?",
-                isPresented: $showReverseQueueConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Reverse order") {
-                    store.reverseQueue()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Reverses all \(store.queue.count) episodes in the entire queue (not only the current filter). Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
-                )
-            }
-            .confirmationDialog(
-                "Sort queue newest first?",
-                isPresented: $showSortNewestQueueConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Newest first") {
-                    store.sortQueueByPublishDate(newestFirst: true)
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Sorts all \(store.queue.count) episodes in the entire queue by publish date, newest first (not only the current filter). Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
-                )
-            }
-            .confirmationDialog(
-                "Sort queue oldest first?",
-                isPresented: $showSortOldestQueueConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Oldest first") {
-                    store.sortQueueByPublishDate(newestFirst: false)
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Sorts all \(store.queue.count) episodes in the entire queue by publish date, oldest first (not only the current filter). Episodes without a date go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
-                )
-            }
-            .confirmationDialog(
-                "Sort queue shortest first?",
-                isPresented: $showSortShortestQueueConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Shortest first") {
-                    store.sortQueueByDuration(shortestFirst: true)
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Sorts all \(store.queue.count) episodes in the entire queue by known duration, shortest first (not only the current filter). Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
-                )
-            }
-            .confirmationDialog(
-                "Sort queue longest first?",
-                isPresented: $showSortLongestQueueConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Longest first") {
-                    store.sortQueueByDuration(shortestFirst: false)
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Sorts all \(store.queue.count) episodes in the entire queue by known duration, longest first (not only the current filter). Duration from feed or saved playback when known; episodes with unknown duration go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
-                )
-            }
-            .confirmationDialog(
-                "Sort queue title A–Z?",
-                isPresented: $showSortTitleAZQueueConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Title A–Z") {
-                    store.sortQueueByTitle(ascending: true)
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Sorts all \(store.queue.count) episodes in the entire queue by title, A to Z (not only the current filter). Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
-                )
-            }
-            .confirmationDialog(
-                "Sort queue title Z–A?",
-                isPresented: $showSortTitleZAQueueConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Title Z–A") {
-                    store.sortQueueByTitle(ascending: false)
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Sorts all \(store.queue.count) episodes in the entire queue by title, Z to A (not only the current filter). Empty titles go last. Does not stop playback, change progress, mark played, or delete downloads. The currently playing episode stays the same item and moves with its place in the list."
-                )
-            }
-            .confirmationDialog(
-                "Remove from queue?",
-                isPresented: Binding(
-                    get: { episodePendingRemove != nil },
-                    set: { if !$0 { episodePendingRemove = nil } }
-                ),
-                titleVisibility: .visible,
-                presenting: episodePendingRemove
-            ) { episode in
-                Button("Remove from queue", role: .destructive) {
-                    store.removeFromQueue(episode)
-                    episodePendingRemove = nil
-                }
-                Button("Cancel", role: .cancel) {
-                    episodePendingRemove = nil
-                }
-            } message: { episode in
-                Text(
-                    "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
-                )
-            }
+                .toolbar { queueToolbar }
+            ))
         }
     }
 

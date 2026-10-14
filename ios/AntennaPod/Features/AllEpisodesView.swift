@@ -663,18 +663,9 @@ struct AllEpisodesView: View {
         }
     }
 
-    var body: some View {
-        allEpisodesList
-        .navigationTitle("Episodes")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar { allEpisodesToolbar }
-        .searchable(text: $searchText, prompt: "Search all episodes")
-        .onAppear {
-            releaseAllEpisodesPodcastFilterIfFeedGone()
-        }
-        .onChange(of: store.feeds.map(\.id)) { _, _ in
-            releaseAllEpisodesPodcastFilterIfFeedGone()
-        }
+    // Dialog chain split into stages: one chain this long exceeds the CI type-checker time limit.
+    private func allEpisodesDialogsStageA<Content: View>(_ content: Content) -> some View {
+        content
         .alert(
             String(localized: "Copied"),
             isPresented: $showCopiedAlert
@@ -708,6 +699,10 @@ struct AllEpisodesView: View {
         } message: {
             Text("Appends \(enqueueAllUnplayedEpisodesCandidatesCount) unplayed, non-archived episodes to the end of the queue (newest first within the newest-500 soft cap). Already queued, played, and archived episodes are skipped. Uses the soft-capped All Episodes catalog (newest 500 by publish date), not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived episodes.")
         }
+    }
+
+    private func allEpisodesDialogsStageB<Content: View>(_ content: Content) -> some View {
+        content
         .confirmationDialog(
             "Mark all as played?",
             isPresented: $showMarkAllPlayedConfirm,
@@ -744,6 +739,22 @@ struct AllEpisodesView: View {
         } message: {
             Text("Archives \(archiveAllEpisodesCandidatesCount) non-archived episodes in the newest-500 All Episodes catalog by publish date, not the status, podcast, type, sort, or search filter; older episodes beyond the soft cap are not included. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
         }
+    }
+
+    var body: some View {
+        allEpisodesDialogsStageB(allEpisodesDialogsStageA(
+            allEpisodesList
+            .navigationTitle("Episodes")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { allEpisodesToolbar }
+            .searchable(text: $searchText, prompt: "Search all episodes")
+            .onAppear {
+                releaseAllEpisodesPodcastFilterIfFeedGone()
+            }
+            .onChange(of: store.feeds.map(\.id)) { _, _ in
+                releaseAllEpisodesPodcastFilterIfFeedGone()
+            }
+        ))
     }
 
     /// Pasteboard copy of the **soft-capped** All Episodes catalog (not status/podcast/type/UI sort/search).
