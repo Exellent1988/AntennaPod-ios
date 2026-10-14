@@ -1,4 +1,5 @@
 import AudioDSP
+import PodcastCore
 import SwiftUI
 
 /// Per-subscription overrides (Display name / Private note / Keep at top / Auto-download / Auto-delete after play / Keep updated / New episodes / Notifications / Skip intro·outro / Speed / Episode sort) + HTTP Basic auth (Keychain) + tags.
@@ -283,6 +284,30 @@ struct PerFeedSettingsView: View {
                 .accessibilityHint(String(localized: "Use global, On, or Off for this podcast. When on, silent parts play faster and normal speed resumes when sound returns. Applies immediately if an episode from this podcast is playing."))
             } header: {
                 Text("Playback")
+            }
+
+            Section {
+                TextField(String(localized: "Include terms"), text: filterBinding(\.includeTerms), axis: .vertical)
+                    .textInputAutocapitalization(.never)
+                    .accessibilityHint(String(localized: "Words or \"quoted phrases\". When set, only episodes whose title contains one of them are auto-downloaded."))
+                TextField(String(localized: "Exclude terms"), text: filterBinding(\.excludeTerms), axis: .vertical)
+                    .textInputAutocapitalization(.never)
+                    .accessibilityHint(String(localized: "Words or \"quoted phrases\". Episodes whose title contains one of them are never auto-downloaded."))
+                Stepper(value: filterMinutesBinding(\.minimumDurationSeconds), in: 0...600, step: 5) {
+                    Text(filterMinutesLabel(String(localized: "Minimum duration"), current.episodeFilter.minimumDurationSeconds))
+                }
+                Stepper(value: filterMinutesBinding(\.maximumDurationSeconds), in: 0...600, step: 5) {
+                    Text(filterMinutesLabel(String(localized: "Maximum duration"), current.episodeFilter.maximumDurationSeconds))
+                }
+                if !current.episodeFilter.isEmpty {
+                    Button(String(localized: "Clear episode filter"), role: .destructive) {
+                        store.updateFeedSettings(for: feedId) { $0.episodeFilter = .none }
+                    }
+                }
+            } header: {
+                Text("Episode filter")
+            } footer: {
+                Text("Applies to automatic downloads of new episodes only. Exclude terms win over include terms. Matching ignores case and accents. Episodes with unknown duration are not filtered by duration.")
             }
 
             Section {
@@ -765,6 +790,30 @@ struct PerFeedSettingsView: View {
                 store.updateFeedSettings(for: feedId) { $0.skipOutroSeconds = value }
             }
         )
+    }
+
+    private func filterBinding(_ key: WritableKeyPath<EpisodeFilter, String>) -> Binding<String> {
+        Binding(
+            get: { current.episodeFilter[keyPath: key] },
+            set: { value in
+                store.updateFeedSettings(for: feedId) { $0.episodeFilter[keyPath: key] = value }
+            }
+        )
+    }
+
+    private func filterMinutesBinding(_ key: WritableKeyPath<EpisodeFilter, Int>) -> Binding<Int> {
+        Binding(
+            get: { current.episodeFilter[keyPath: key] / 60 },
+            set: { minutes in
+                store.updateFeedSettings(for: feedId) { $0.episodeFilter[keyPath: key] = max(0, minutes) * 60 }
+            }
+        )
+    }
+
+    private func filterMinutesLabel(_ title: String, _ seconds: Int) -> String {
+        seconds == 0
+            ? String(localized: "\(title): Off")
+            : String(localized: "\(title): \(seconds / 60) min")
     }
 
     private var skipSilenceBinding: Binding<Bool?> {

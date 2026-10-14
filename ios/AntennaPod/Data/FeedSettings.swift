@@ -1,4 +1,5 @@
 import AudioDSP
+import PodcastCore
 import Foundation
 
 /// Tri-state override for per-subscription preferences (Android-style Use global / Always / Never).
@@ -49,6 +50,9 @@ struct FeedSettings: Hashable, Codable, Equatable {
     var volumeAdaptation: VolumeAdaptationMode?
     /// Skip silence override; `nil` = Use global (`AppSettings.skipSilenceEnabled`).
     var skipSilence: Bool?
+    /// Auto-download episode filter (Android FeedFilter: include/exclude terms, min/max duration).
+    /// Per-feed only, like Android. `.none` = no filter.
+    var episodeFilter: EpisodeFilter
     /// Feed detail episode list sort override; `nil` = Use global (`AppSettings.feedEpisodeSort`).
     /// Newest / Oldest by pubDate; Shortest / Longest by known duration (unknown last).
     /// Capsule itunes:type is display-only; a separate one-shot may set this to `.oldestFirst` when type is serial and this is still nil (never override a user-chosen value; never touch global).
@@ -89,6 +93,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         playbackSpeed: nil,
         volumeAdaptation: nil,
         skipSilence: nil,
+        episodeFilter: .none,
         episodeSort: nil,
         customTitle: nil,
         privateNote: nil,
@@ -106,6 +111,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         playbackSpeed: Float? = nil,
         volumeAdaptation: VolumeAdaptationMode? = nil,
         skipSilence: Bool? = nil,
+        episodeFilter: EpisodeFilter = .none,
         episodeSort: FeedEpisodeSort? = nil,
         customTitle: String? = nil,
         privateNote: String? = nil,
@@ -121,6 +127,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         self.playbackSpeed = Self.normalizedSpeed(playbackSpeed)
         self.volumeAdaptation = volumeAdaptation
         self.skipSilence = skipSilence
+        self.episodeFilter = episodeFilter
         self.episodeSort = episodeSort
         self.customTitle = Self.normalizedCustomTitle(customTitle)
         self.privateNote = Self.normalizedPrivateNote(privateNote)
@@ -145,6 +152,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         )
         volumeAdaptation = try? c.decodeIfPresent(VolumeAdaptationMode.self, forKey: .volumeAdaptation)
         skipSilence = try c.decodeIfPresent(Bool.self, forKey: .skipSilence)
+        episodeFilter = (try? c.decodeIfPresent(EpisodeFilter.self, forKey: .episodeFilter)) ?? .none
         episodeSort = try c.decodeIfPresent(FeedEpisodeSort.self, forKey: .episodeSort)
         customTitle = Self.normalizedCustomTitle(
             try c.decodeIfPresent(String.self, forKey: .customTitle)
@@ -245,7 +253,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case volumeAdaptation, skipSilence
+        case volumeAdaptation, skipSilence, episodeFilter
         case autoDownload, keepUpdated, notifyOnNewEpisodes, autoDeleteAfterPlaying, newEpisodeAction
         case skipIntroSeconds, skipOutroSeconds, playbackSpeed, episodeSort, customTitle, privateNote, isPinned
     }
