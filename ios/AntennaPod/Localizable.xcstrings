@@ -50584,6 +50584,142 @@
           }
         }
       }
+    },
+    "Aggressive": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggressive"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggressiv"
+          }
+        }
+      }
+    },
+    "Medium": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Medium"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mittel"
+          }
+        }
+      }
+    },
+    "Mild": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mild"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sanft"
+          }
+        }
+      }
+    },
+    "Listening time saved by playing silence faster, across all time since the last Reset. Not filtered by time range.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listening time saved by playing silence faster, across all time since the last Reset. Not filtered by time range."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hörzeit, die durch schnelleres Abspielen von Stille gespart wurde, seit dem letzten Zurücksetzen. Nicht nach Zeitraum gefiltert."
+          }
+        }
+      }
+    },
+    "Mild keeps natural pauses and speeds silence up 2×. Medium skips pauses longer than about a third of a second at 3×. Aggressive also skips short pauses at up to 4×. Podcasts can choose their own level.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mild keeps natural pauses and speeds silence up 2×. Medium skips pauses longer than about a third of a second at 3×. Aggressive also skips short pauses at up to 4×. Podcasts can choose their own level."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sanft behält natürliche Pausen und spielt Stille 2× ab. Mittel überspringt Pausen ab etwa einer Drittelsekunde mit 3×. Aggressiv überspringt auch kurze Pausen mit bis zu 4×. Podcasts können eine eigene Stufe wählen."
+          }
+        }
+      }
+    },
+    "Real gain in the playback audio pipeline (per-podcast override in podcast settings). Reductions: 50% / 20%. Boosts raise quiet speech toward a target level by up to +6 / +12 / +18 dB, adapting smoothly and holding during pauses, with a soft limiter. HLS streams are not processed.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Real gain in the playback audio pipeline (per-podcast override in podcast settings). Reductions: 50% / 20%. Boosts raise quiet speech toward a target level by up to +6 / +12 / +18 dB, adapting smoothly and holding during pauses, with a soft limiter. HLS streams are not processed."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Echte Verstärkung in der Audio-Pipeline der Wiedergabe (pro Podcast in den Podcast-Einstellungen überschreibbar). Absenkungen: 50 % / 20 %. Anhebungen heben leise Sprache um bis zu +6 / +12 / +18 dB auf einen Zielpegel an, passen sich sanft an, halten in Pausen und nutzen einen sanften Limiter. HLS-Streams werden nicht verarbeitet."
+          }
+        }
+      }
+    },
+    "Skip silence level": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip silence level"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stufe für Stille überspringen"
+          }
+        }
+      }
+    },
+    "Time saved by Skip silence": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time saved by Skip silence"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durch Stille überspringen gespart"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
