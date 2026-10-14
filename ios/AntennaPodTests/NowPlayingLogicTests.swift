@@ -88,3 +88,32 @@ final class ArtworkDiskCacheLRUTests: XCTestCase {
         XCTAssertEqual(NowPlayingLogic.diskCacheLimitBytes, 52_428_800)
     }
 }
+
+final class AndroidAutoSkipParityTests: XCTestCase {
+    func testNextTrackMatchesAndroidCarMode() {
+        XCTAssertEqual(NowPlayingLogic.nextTrackAction(inCar: true), .skipEpisode)
+        XCTAssertEqual(NowPlayingLogic.nextTrackAction(inCar: false), .seekForward)
+        XCTAssertEqual(NowPlayingLogic.previousTrackAction(), .seekBack)
+    }
+
+    func testNextChapterStart() {
+        let starts: [Double] = [120, 0, 60]
+        XCTAssertEqual(NowPlayingLogic.nextChapterStart(starts: starts, at: 10), 60)
+        XCTAssertEqual(NowPlayingLogic.nextChapterStart(starts: starts, at: 60), 120)
+        XCTAssertNil(NowPlayingLogic.nextChapterStart(starts: starts, at: 130))
+        XCTAssertNil(NowPlayingLogic.nextChapterStart(starts: [], at: 0))
+        XCTAssertEqual(NowPlayingLogic.nextChapterStart(starts: [30, 90], at: 5), 30)
+    }
+
+    func testSleepToggleMinutes() {
+        XCTAssertEqual(NowPlayingLogic.sleepToggleMinutes(presets: [5, 10, 15, 30]), 15)
+        XCTAssertEqual(NowPlayingLogic.sleepToggleMinutes(presets: [20, 40]), 20)
+        XCTAssertEqual(NowPlayingLogic.sleepToggleMinutes(presets: []), 15)
+    }
+
+    func testNowPlayingButtonsOrderAndLimit() {
+        XCTAssertEqual(NowPlayingLogic.nowPlayingButtons(hasChapters: true), [.rate, .sleepTimer, .nextChapter, .skipEpisode])
+        XCTAssertEqual(NowPlayingLogic.nowPlayingButtons(hasChapters: false), [.rate, .sleepTimer, .skipEpisode])
+        XCTAssertLessThanOrEqual(NowPlayingLogic.nowPlayingButtons(hasChapters: true).count, 5)
+    }
+}
