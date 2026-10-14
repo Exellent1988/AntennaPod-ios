@@ -65,9 +65,12 @@ enum AutoDownloadCoordinator {
             guard store.feedSettings(for: feed.id).allowsAutoDownload(globalEnabled: globalOn) else {
                 continue
             }
+            let filter = store.feedSettings(for: feed.id).episodeFilter
             candidates.append(
                 contentsOf: eligibleNewEpisodes(
-                    newcomers: batch.episodes,
+                    newcomers: batch.episodes.filter {
+                        filter.allows(title: $0.title, durationSeconds: $0.durationSeconds)
+                    },
                     store: store,
                     downloads: downloads,
                     cap: cap
