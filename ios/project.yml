@@ -42,6 +42,9 @@ targets:
       CODE_SIGN_ENTITLEMENTS: AntennaPod/AntennaPod.entitlements
     entitlements:
       path: AntennaPod/AntennaPod.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.de.danoeh.antennapod.ios
     dependencies:
       - package: AudioDSP
       - package: PodcastCore
@@ -69,6 +72,9 @@ targets:
       TARGETED_DEVICE_FAMILY: "1,2"
     entitlements:
       path: AntennaPodWidget/AntennaPodWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.de.danoeh.antennapod.ios
     dependencies: []
   AntennaPodWatch:
     type: application
@@ -91,6 +97,9 @@ targets:
       SDKROOT: watchos
     entitlements:
       path: AntennaPodWatch/AntennaPodWatch.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.de.danoeh.antennapod.ios
     info:
       path: AntennaPodWatch/Info.plist
       properties:
