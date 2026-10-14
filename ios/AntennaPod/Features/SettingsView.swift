@@ -278,6 +278,9 @@ struct SettingsView: View {
             settingsDialogsStageB(settingsDialogsStageA(
                 ScrollViewReader { proxy in
                 Form {
+                    if searchText.isEmpty {
+                        gpodderSyncEntrySection
+                    }
                     if matchesAppearanceSection {
                         appearanceSection
                     }
@@ -2813,6 +2816,19 @@ struct SettingsView: View {
     }
 
     @ViewBuilder
+    /// Prominent top entry so gpodder / Nextcloud sync is easy to find (the inline Sync section stays for search).
+    private var gpodderSyncEntrySection: some View {
+        Section {
+            NavigationLink {
+                Form { gpodderSyncSection }
+                    .navigationTitle(String(localized: "Sync & gpodder"))
+            } label: {
+                Label(String(localized: "Sync & gpodder"), systemImage: "arrow.triangle.2.circlepath.circle")
+            }
+            .accessibilityHint(String(localized: "Opens gpodder.net and Nextcloud sync: login, devices, Import all subscriptions, and Sync now."))
+        }
+    }
+
     private var gpodderSyncSection: some View {
         Section {
             Picker("Provider", selection: Binding(

@@ -50006,6 +50006,40 @@
           }
         }
       }
+    },
+    "Sync & gpodder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync & gpodder"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync & gpodder"
+          }
+        }
+      }
+    },
+    "Opens gpodder.net and Nextcloud sync: login, devices, Import all subscriptions, and Sync now.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opens gpodder.net and Nextcloud sync: login, devices, Import all subscriptions, and Sync now."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffnet den Sync mit gpodder.net und Nextcloud: Anmeldung, Geräte, Alle Abos importieren und Jetzt synchronisieren."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
