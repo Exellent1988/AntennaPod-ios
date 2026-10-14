@@ -7,6 +7,9 @@ struct SubscriptionsView: View {
     @EnvironmentObject private var parental: ParentalControls
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
+    @AppStorage(SubscriptionsDisplayKeys.mode) private var displayMode: SubscriptionsDisplayMode = .list
+    @AppStorage(SubscriptionsDisplayKeys.columns) private var gridColumns: Int = 3
+    @AppStorage(SubscriptionsDisplayKeys.counter) private var counterMode: SubscriptionsCounterMode = .unplayed
     @Environment(\.openURL) private var openURL
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
     @State private var path = NavigationPath()
@@ -552,8 +555,12 @@ struct SubscriptionsView: View {
             } else {
                 ForEach(groupedSections, id: \.title) { section in
                     Section(section.title) {
-                        ForEach(section.feeds) { feed in
-                            feedRow(feed, summary: remainingByFeedId[feed.id])
+                        if displayMode == .grid {
+                            feedGrid(section.feeds, remaining: remainingByFeedId)
+                        } else {
+                            ForEach(section.feeds) { feed in
+                                feedRow(feed, summary: remainingByFeedId[feed.id])
+                            }
                         }
                     }
                 }
@@ -613,6 +620,30 @@ struct SubscriptionsView: View {
                     }
                 } label: {
                     Text("Sort")
+                }
+                // Android subscriptions.xml: display list/grid, number of columns, counter.
+                Picker(selection: $displayMode) {
+                    ForEach(SubscriptionsDisplayMode.allCases) { mode in
+                        Text(mode.label).tag(mode)
+                    }
+                } label: {
+                    Text("Display")
+                }
+                if displayMode == .grid {
+                    Picker(selection: $gridColumns) {
+                        ForEach(2...5, id: \.self) { n in
+                            Text("\(n) columns").tag(n)
+                        }
+                    } label: {
+                        Text("Number of columns")
+                    }
+                }
+                Picker(selection: $counterMode) {
+                    ForEach(SubscriptionsCounterMode.allCases) { mode in
+                        Text(mode.label).tag(mode)
+                    }
+                } label: {
+                    Text("Counter")
                 }
             } label: {
                 Label("Sort", systemImage: "arrow.up.arrow.down")
@@ -1017,6 +1048,49 @@ struct SubscriptionsView: View {
         }
     }
 
+    /// Badge number for the chosen counter mode (Android subscriptions_counter).
+    private func counterValue(_ feed: PodcastFeed, unplayed: Int) -> Int {
+        switch counterMode {
+        case .none: return 0
+        case .unplayed: return unplayed
+        case .downloaded:
+            let ids = Set(feed.episodes.map(\.id))
+            return downloads.downloads.filter { ids.contains($0.episode.id) }.count
+        }
+    }
+
+    /// Android grid mode (subscription_num_columns): cover cells, same tap/long-press targets as rows.
+    private func feedGrid(_ feeds: [PodcastFeed], remaining: [UUID: FeedUnplayedRemainingSummary]) -> some View {
+        LazyVGrid(
+            columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: min(max(gridColumns, 2), 5)),
+            spacing: 12
+        ) {
+            ForEach(feeds) { feed in
+                NavigationLink(value: feed) {
+                    SubscriptionGridCell(
+                        feed: feed,
+                        title: feedDisplayTitle(feed),
+                        count: counterValue(feed, unplayed: remaining[feed.id]?.unplayedCount ?? 0)
+                    )
+                }
+                .buttonStyle(.plain)
+                .contextMenu {
+                    Button {
+                        feedForSettings = feed
+                    } label: {
+                        Label("Podcast settings", systemImage: "gearshape")
+                    }
+                    Button {
+                        store.togglePinned(feedId: feed.id)
+                    } label: {
+                        Label(store.isPinned(feedId: feed.id) ? String(localized: "Don’t keep at top") : String(localized: "Keep at top"), systemImage: "pin")
+                    }
+                }
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
     @ViewBuilder
     private func feedRow(_ feed: PodcastFeed, summary: FeedUnplayedRemainingSummary?) -> some View {
         let unplayed = summary?.unplayedCount ?? 0
@@ -1146,11 +1220,12 @@ struct SubscriptionsView: View {
                 // AntennaPod-like unplayed badge + per-feed remaining; both hidden when 0 unplayed.
                 // Remaining text also hidden when all durations unknown (badge still shows count).
                 VStack(alignment: .trailing, spacing: 4) {
-                    if unplayed > 0 {
-                        Text("\(unplayed)")
+                    let badge = counterValue(feed, unplayed: unplayed)
+                    if badge > 0 {
+                        Text("\(badge)")
                             .font(.caption.weight(.semibold).monospacedDigit())
                             .foregroundStyle(.white)
-                            .padding(.horizontal, unplayed >= 10 ? 7 : 0)
+                            .padding(.horizontal, badge >= 10 ? 7 : 0)
                             .frame(minWidth: 22, minHeight: 22)
                             .background(Color.accentColor, in: Capsule())
                             .accessibilityHidden(true)
