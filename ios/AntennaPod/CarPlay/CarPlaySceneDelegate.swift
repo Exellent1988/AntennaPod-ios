@@ -2,18 +2,15 @@ import CarPlay
 import Combine
 import UIKit
 
-/// CarPlay audio app: tab bar with Subscriptions / Queue / Downloads, episode lists, Now Playing.
-/// Lists update live (debounced) when feeds, queue, downloads, or the current episode change.
+/// CarPlay audio app mirroring the Android Auto browse tree (`PlaybackService.loadChildrenSynchronous`):
+/// Queue (with a "Currently playing" section), Downloads, Episodes, Subscriptions → podcast episodes.
+/// Lists update live (debounced) and show artwork, progress, and the playing indicator.
 /// Requires the `com.apple.developer.carplay-audio` entitlement (Apple-granted) to appear in CarPlay.
 final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
     private var interfaceController: CPInterfaceController?
-    private var subscriptions: CPListTemplate?
-    private var queue: CPListTemplate?
-    private var downloads: CPListTemplate?
-    /// Pushed podcast episode lists, keyed by template identity.
+    private var tabs: [CarPlayTab: CPListTemplate] = [:]
     private var episodeLists: [(feedId: UUID, template: CPListTemplate)] = []
-    /// Last rendered rows per template, to skip no-op updateSections.
-    private var rendered: [ObjectIdentifier: CarPlayListSnapshot] = [:]
+    private var rendered: [ObjectIdentifier: [[CarPlayRow]]] = [:]
     private var cancellables = Set<AnyCancellable>()
 
     func templateApplicationScene(
@@ -22,12 +19,14 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
     ) {
         self.interfaceController = interfaceController
         Task { @MainActor in
-            let subs = self.makeTemplate(title: String(localized: "Subscriptions"), icon: "square.stack", empty: String(localized: "No subscriptions"))
-            let queue = self.makeTemplate(title: String(localized: "Queue"), icon: "list.bullet", empty: String(localized: "Queue is empty"))
-            let dls = self.makeTemplate(title: String(localized: "Downloads"), icon: "arrow.down.circle", empty: String(localized: "No downloads"))
-            self.subscriptions = subs; self.queue = queue; self.downloads = dls
+            var ordered: [CPListTemplate] = []
+            for tab in CarPlayTab.allCases {
+                let t = self.makeTemplate(tab)
+                self.tabs[tab] = t
+                ordered.append(t)
+            }
             self.reloadAll()
-            interfaceController.setRootTemplate(CPTabBarTemplate(templates: [subs, queue, dls]), animated: false, completion: nil)
+            interfaceController.setRootTemplate(CPTabBarTemplate(templates: ordered), animated: false, completion: nil)
             self.observeStores()
         }
     }
@@ -39,7 +38,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         cancellables.removeAll()
         episodeLists.removeAll()
         rendered.removeAll()
-        subscriptions = nil; queue = nil; downloads = nil
+        tabs.removeAll()
         self.interfaceController = nil
     }
 
@@ -50,6 +49,9 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         if let store = AppServices.store {
             signals.append(store.$feeds.map { _ in () }.eraseToAnyPublisher())
             signals.append(store.$queue.map { _ in () }.eraseToAnyPublisher())
+            signals.append(store.$playbackStates.map { _ in () }.eraseToAnyPublisher())
+            signals.append(store.$favoriteAtById.map { _ in () }.eraseToAnyPublisher())
+            signals.append(store.$archivedAtById.map { _ in () }.eraseToAnyPublisher())
         }
         if let dl = AppServices.downloads {
             signals.append(dl.$downloads.map { _ in () }.eraseToAnyPublisher())
@@ -57,60 +59,149 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         if let pb = AppServices.playback {
             signals.append(pb.$currentEpisode.map { $0?.id }.removeDuplicates().map { _ in () }.eraseToAnyPublisher())
         }
+        if let settings = AppServices.settings {
+            signals.append(settings.objectWillChange.map { _ in () }.eraseToAnyPublisher())
+        }
         Publishers.MergeMany(signals)
             .debounce(for: .milliseconds(CarPlayBrowseModel.refreshDebounceMs), scheduler: RunLoop.main)
             .sink { [weak self] in MainActor.assumeIsolated { self?.reloadAll() } }
             .store(in: &cancellables)
     }
 
+    @MainActor private var limit: Int { CarPlayParity.itemLimit(templateMax: Int(CPListTemplate.maximumItemCount)) }
+
     @MainActor private func reloadAll() {
         guard let store = AppServices.store else { return }
-        let dl = AppServices.downloads
-        if let t = subscriptions { apply(CarPlayBrowseModel.subscriptionRows(store.feeds), to: t) }
-        if let t = queue {
-            apply(CarPlayBrowseModel.queueRows(store.queue) { ep in
-                store.feeds.first { $0.episodes.contains { $0.id == ep.id } }
-            }, to: t)
+        let settings = AppServices.settings
+        let all = allEpisodeInfos()
+        let byId = Dictionary(all.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let playingId = AppServices.playback?.currentEpisode?.id
+
+        if let t = tabs[.queue] {
+            var sections: [(String?, [CarPlayRow])] = []
+            if let pid = playingId, let cur = byId[pid] ?? AppServices.playback?.currentEpisode.map({ info($0, feed: nil) }) {
+                sections.append((String(localized: "Currently playing"), [row(cur)]))
+            }
+            let q = store.queue.prefix(limit).map { byId[$0.id] ?? info($0, feed: nil) }
+            sections.append((sections.isEmpty ? nil : String(localized: "Queue"), q.map { row($0) }))
+            apply(sections, to: t)
         }
-        if let t = downloads {
-            apply(CarPlayBrowseModel.downloadRows(feeds: store.feeds) { dl?.isDownloaded($0) ?? false }, to: t)
+        if let t = tabs[.downloads] {
+            let rows = CarPlayParity.downloads(all, sort: settings?.downloadsSort ?? .newestFirst, limit: limit).map { row($0) }
+            apply([(nil, rows)], to: t)
         }
-        // Drop lists no longer on the stack; refresh the rest.
+        if let t = tabs[.episodes] {
+            let rows = CarPlayParity.episodes(
+                all, filter: settings?.allEpisodesFilter ?? .all, sort: settings?.allEpisodesSort ?? .newestFirst, limit: limit
+            ).map { row($0) }
+            apply([(nil, rows)], to: t)
+        }
+        if let t = tabs[.subscriptions] {
+            let unplayed = store.unplayedCountsByFeedId()
+            let infos = store.feeds.map {
+                CarPlayParity.FeedInfo(id: $0.id, title: store.displayTitle(for: $0), author: $0.author,
+                                       unplayedCount: unplayed[$0.id] ?? 0, lastRefreshedEpochMs: $0.lastRefreshedAtEpochMs)
+            }
+            let feedsById = Dictionary(store.feeds.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+            let rows = CarPlayParity.feeds(infos, sort: settings?.subscriptionsSort ?? .alphabetical, limit: limit).map { f in
+                let feed = feedsById[f.id]
+                return CarPlayRow(
+                    title: f.title,
+                    detail: f.unplayedCount > 0 ? String(localized: "\(f.unplayedCount) unplayed") : f.author,
+                    imageUrl: feed.flatMap { CarPlayBrowseModel.artworkURL($0.preferredDisplayArtworkURL, $0.imageUrl) },
+                    target: .feed(f.id)
+                )
+            }
+            apply([(nil, rows)], to: t)
+        }
         let stack = interfaceController?.templates ?? []
         episodeLists.removeAll { entry in !stack.contains { $0 === entry.template } }
-        for entry in episodeLists { apply(episodeRows(feedId: entry.feedId), to: entry.template) }
+        for entry in episodeLists { apply([(nil, feedEpisodeRows(entry.feedId, byId: byId))], to: entry.template) }
     }
 
-    @MainActor private func apply(_ rows: [CarPlayRow], to template: CPListTemplate) {
+    // MARK: Building
+
+    @MainActor private func info(_ ep: PodcastEpisode, feed: PodcastFeed?) -> CarPlayEpisodeInfo {
+        let store = AppServices.store
+        let dl = AppServices.downloads
+        let item = dl?.downloads.first { $0.id == ep.id }
+        return CarPlayEpisodeInfo(
+            id: ep.id,
+            title: ep.title,
+            feedTitle: feed.map { store?.displayTitle(for: $0) ?? $0.title } ?? "",
+            artwork: CarPlayBrowseModel.artworkURL(
+                ep.preferredPodcastImagesArtworkURL, feed?.preferredDisplayArtworkURL, feed?.imageUrl),
+            pubDateEpochMs: ep.pubDateEpochMs,
+            durationSeconds: ep.durationSeconds,
+            positionSeconds: store?.positionSeconds(for: ep.id) ?? 0,
+            isPlayed: store?.isPlayed(ep.id) ?? false,
+            isArchived: store?.isArchived(ep.id) ?? false,
+            isFavorite: store?.isFavorite(ep.id) ?? false,
+            isDownloaded: dl?.isDownloaded(ep) ?? false,
+            downloadedAtEpochMs: item?.downloadedAtEpochMs,
+            byteSize: item?.knownByteSize()
+        )
+    }
+
+    @MainActor private func allEpisodeInfos() -> [CarPlayEpisodeInfo] {
+        var seen = Set<String>()
+        var out: [CarPlayEpisodeInfo] = []
+        for feed in AppServices.store?.feeds ?? [] {
+            for ep in feed.episodes where seen.insert(ep.id).inserted { out.append(info(ep, feed: feed)) }
+        }
+        return out
+    }
+
+    @MainActor private func feedEpisodeRows(_ feedId: UUID, byId: [String: CarPlayEpisodeInfo]) -> [CarPlayRow] {
+        let feed = AppServices.store?.feeds.first { $0.id == feedId }
+        let infos = (feed?.episodes ?? []).map { byId[$0.id] ?? info($0, feed: feed) }
+        return CarPlayParity.sorted(infos, by: .newestFirst).prefix(limit).map { row($0, showFeed: false) }
+    }
+
+    private func row(_ e: CarPlayEpisodeInfo, showFeed: Bool = true) -> CarPlayRow {
+        CarPlayRow(title: e.title, detail: CarPlayParity.detail(e, showFeed: showFeed), imageUrl: e.artwork,
+                   target: .episode(e.id), progress: CarPlayParity.progress(e))
+    }
+
+    @MainActor private func apply(_ sections: [(String?, [CarPlayRow])], to template: CPListTemplate) {
         let key = ObjectIdentifier(template)
         let playingId = AppServices.playback?.currentEpisode?.id
-        let snapshot = CarPlayListSnapshot(rows: rows, playingEpisodeId: playingId)
-        guard rendered[key] != snapshot else { return }
-        rendered[key] = snapshot
-        template.updateSections([CPListSection(items: rows.map { listItem($0, playingId: playingId) })])
+        // Fold the playing marker into rows so indicator changes trigger an update.
+        let marked = sections.map { $0.1.map { r -> CarPlayRow in
+            var r = r
+            if case .episode(let id) = r.target, id == playingId { r.detail = "▶︎" + (r.detail ?? "") }
+            return r
+        } }
+        guard rendered[key] != marked else { return }
+        rendered[key] = marked
+        template.updateSections(sections.map { header, rows in
+            CPListSection(items: rows.map { listItem($0, playingId: playingId) }, header: header, sectionIndexTitle: nil)
+        })
     }
 
     // MARK: Templates
 
-    @MainActor private func makeTemplate(title: String, icon: String, empty: String) -> CPListTemplate {
+    @MainActor private func makeTemplate(_ tab: CarPlayTab) -> CPListTemplate {
+        let spec: (String, String, String)
+        switch tab {
+        case .queue: spec = (String(localized: "Queue"), "list.bullet", String(localized: "Queue is empty"))
+        case .downloads: spec = (String(localized: "Downloads"), "arrow.down.circle", String(localized: "No downloads"))
+        case .episodes: spec = (String(localized: "Episodes"), "dot.radiowaves.up.forward", String(localized: "No episodes"))
+        case .subscriptions: spec = (String(localized: "Subscriptions"), "square.stack", String(localized: "No subscriptions"))
+        }
+        let (title, icon, empty) = spec
         let t = CPListTemplate(title: title, sections: [])
         t.tabImage = UIImage(systemName: icon)
         t.emptyViewTitleVariants = [empty]
         return t
     }
 
-    @MainActor private func episodeRows(feedId: UUID) -> [CarPlayRow] {
-        let feed = AppServices.store?.feeds.first { $0.id == feedId }
-        return CarPlayBrowseModel.episodeRows(
-            feed?.episodes ?? [],
-            feedArtwork: feed.flatMap { CarPlayBrowseModel.artworkURL($0.preferredDisplayArtworkURL, $0.imageUrl) }
-        )
-    }
-
     @MainActor private func pushEpisodes(feedId: UUID) {
-        let title = AppServices.store?.feeds.first { $0.id == feedId }?.title ?? ""
+        let store = AppServices.store
+        let title = store?.displayTitle(forFeedId: feedId) ?? ""
         let t = CPListTemplate(title: title, sections: [])
-        apply(episodeRows(feedId: feedId), to: t)
+        t.emptyViewTitleVariants = [String(localized: "No episodes")]
+        apply([(nil, feedEpisodeRows(feedId, byId: [:]))], to: t)
         episodeLists.append((feedId, t))
         interfaceController?.pushTemplate(t, animated: true, completion: nil)
     }
@@ -135,6 +226,8 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             }
         case .episode(let id):
             item.isPlaying = (id == playingId)
+            item.playingIndicatorLocation = .trailing
+            item.playbackProgress = CGFloat(row.progress)
             item.handler = { [weak self] _, completion in
                 Task { @MainActor in
                     self?.play(episodeId: id)
@@ -149,7 +242,8 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
 
     @MainActor private func play(episodeId: String) {
         guard let store = AppServices.store, let playback = AppServices.playback else { return }
-        let episode = store.queue.first { $0.id == episodeId }
+        let episode = (playback.currentEpisode?.id == episodeId ? playback.currentEpisode : nil)
+            ?? store.queue.first { $0.id == episodeId }
             ?? store.feeds.lazy.flatMap(\.episodes).first { $0.id == episodeId }
         guard let episode else { return }
         let fileURL = AppServices.downloads?.localURL(for: episode)
