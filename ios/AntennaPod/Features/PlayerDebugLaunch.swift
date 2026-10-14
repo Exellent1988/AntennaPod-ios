@@ -1,11 +1,12 @@
 #if DEBUG
 import Foundation
+import UIKit
 
 /// DEBUG-only launch hook for screenshots / UI checks of the full player.
 ///
 /// `-APDebugPlayer YES` subscribes to a sample feed (`-APDebugFeedURL <url>` overrides),
 /// loads its newest episode, seeks to `-APDebugPosition` seconds (default 754), pauses, and asks
-/// the mini player to open the full player. Not compiled into Release builds.
+/// the mini player to open the full player. `-APDebugLandscape YES` rotates to landscape. Not compiled into Release builds.
 @MainActor
 final class PlayerDebugLaunch: ObservableObject {
     static let shared = PlayerDebugLaunch()
@@ -33,6 +34,11 @@ final class PlayerDebugLaunch: ObservableObject {
             try? await Task.sleep(nanoseconds: 1_500_000_000)
             if playback.isPlaying { playback.togglePlayPause() }
             openFullPlayerToken += 1
+            // `-APDebugLandscape YES`: rotate for landscape screenshots (headless simulator).
+            if defaults.bool(forKey: "APDebugLandscape"),
+               let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                scene.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight)) { _ in }
+            }
         }
     }
 }
