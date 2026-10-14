@@ -817,7 +817,7 @@ struct SettingsView: View {
     private var matchesPlaybackSkipSilence: Bool {
         matchesSearch(
             "Skip silence",
-            "Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off."
+            "Detects silence and plays it faster, then returns to your speed. Per-podcast override; player toggle. HLS not analysed. Default off."
         )
     }
 
@@ -1347,7 +1347,7 @@ struct SettingsView: View {
                     .accessibilityLabel(String(localized: "Skip silence"))
                     .accessibilityValue(skipSilenceAccessibilityValue)
                     .accessibilityHint(skipSilenceAccessibilityHint)
-                Text("Preference only — **not applied** on stock `AVPlayer`. Android skip-silence needs a custom `AVAudioEngine` / player-node graph; wiring that would break the shared video surface, Now Playing, and rate path. Enabling this toggle has no playback effect in this beta. Default off.")
+                Text("Detects silence in the audio and plays it faster (up to 3×), then returns to your speed when sound resumes. Podcasts can override this in their settings; the player screen has a quick toggle. HLS streams are not analysed. Default off.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -1498,13 +1498,13 @@ struct SettingsView: View {
     /// Stock AVPlayer does not skip silence in this beta, so On must not sound like it works.
     private var skipSilenceAccessibilityValue: String {
         if settings.skipSilenceEnabled {
-            return String(localized: "On. The preference is saved, but silence is not skipped on stock AVPlayer in this beta. Turning this on does not change playback, speed, or downloads, and it is not Preserve pitch.")
+            return String(localized: "On. Silent parts play faster, then playback returns to your speed. Podcasts with their own Skip silence setting keep it.")
         }
-        return String(localized: "Off. Silence is not skipped. This is the default. Turning this off does not change playback, and no skipped-silence time is invented.")
+        return String(localized: "Off. Silence plays at normal speed. This is the default. Podcasts with their own Skip silence setting keep it.")
     }
 
     private var skipSilenceAccessibilityHint: String {
-        String(localized: "Saved preference only. This beta does not skip silence on stock AVPlayer, because a custom audio engine would break the video surface, Now Playing, and playback rate. Turning the switch does not change playback, speed, or downloads, and no skipped-silence time is invented. Not Preserve pitch. Default off.")
+        String(localized: "Speeds through silent parts of episodes and returns to your speed when sound resumes. Applies immediately. HLS streams are not analysed. Not Preserve pitch. Default off.")
     }
 
     /// VoiceOver for Settings → Preserve pitch. On is stock AVPlayer time-domain

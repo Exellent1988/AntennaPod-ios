@@ -13,8 +13,11 @@ final class PlayerAudioPipeline {
     let chain = AudioProcessingChain()
     /// Global soft gain stage (Settings Volume boost and per-feed Volume adaptation multiply here).
     let gain = GainStage()
+    /// Skip-silence analysis; runs before gain so levels ignore Volume boost / adaptation.
+    let silence = SilenceAnalysisStage()
 
     init() {
+        chain.append(silence)
         chain.append(gain)
     }
 
