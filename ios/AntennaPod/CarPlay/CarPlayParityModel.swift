@@ -58,6 +58,12 @@ enum CarPlayParity {
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
+    /// Up Next: queue items after the current episode; whole queue when current is not queued.
+    static func upNext(queueIds: [String], currentId: String?) -> [String] {
+        guard let currentId, let idx = queueIds.firstIndex(of: currentId) else { return queueIds }
+        return Array(queueIds[(idx + 1)...])
+    }
+
     // MARK: Episodes tab — All Episodes filter + sort (Android: getPrefFilterAllEpisodes / getAllEpisodesSortOrder)
 
     static func episodes(_ all: [CarPlayEpisodeInfo], filter: AllEpisodesFilter, sort: AllEpisodesSort, limit: Int) -> [CarPlayEpisodeInfo] {
