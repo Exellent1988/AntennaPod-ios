@@ -615,9 +615,10 @@ struct FeedDetailView: View {
         feedDetailFeedbackStage(feedDetailAlertsStage(feedDetailCore))
     }
 
+    /// Channel author / language / refresh / medium / type / flags / guid / categories. Split out of `feedDetailCore` so CI type-checks the list in time.
     @ViewBuilder
-    private var feedDetailCore: some View {
-        List {
+    private var feedChannelInfoRows: some View {
+        Group {
             if LocalFolderFeed.isLocalFolderFeed(liveFeed) {
                 Section {
                     Label("Local folder feed", systemImage: "folder.fill")
@@ -1003,6 +1004,13 @@ struct FeedDetailView: View {
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
+        }
+    }
+
+    /// Channel podcast:* namespace extras (person, location, value, trailer, live, txt, license, images, podroll, publisher). Split out of `feedDetailCore` so CI type-checks the list in time.
+    @ViewBuilder
+    private var feedChannelExtrasRows: some View {
+        Group {
             // Channel podcast:person — name + role when set; http(s) href → system browser; hide when none.
             if !displayPeople.isEmpty {
                 Section {
@@ -1090,6 +1098,13 @@ struct FeedDetailView: View {
                 }
                 .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
             }
+        }
+    }
+
+    /// Private note, tags, actions, and episode type filter chips. Split out of `feedDetailCore` so CI type-checks the list in time.
+    @ViewBuilder
+    private var feedNoteTagFilterRows: some View {
+        Group {
             // Local private note indicator — hide when empty; tap opens per-feed settings (uncrowded).
             if let note = feedPrivateNote {
                 Section {
@@ -1161,6 +1176,13 @@ struct FeedDetailView: View {
                 }
             }
 
+        }
+    }
+
+    /// Remaining-time info bar and the Episodes section. Split out of `feedDetailCore` so CI type-checks the list in time.
+    @ViewBuilder
+    private var feedEpisodeRows: some View {
+        Group {
             // Sort + filter + search the whole feed once per body (the body reruns on each 0.5s
             // playback tick); the info bar, its VoiceOver label, and the list share this result.
             let visibleEpisodes = filteredEpisodes
@@ -1288,6 +1310,16 @@ struct FeedDetailView: View {
                     }
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private var feedDetailCore: some View {
+        List {
+            feedChannelInfoRows
+            feedChannelExtrasRows
+            feedNoteTagFilterRows
+            feedEpisodeRows
         }
         .navigationTitle(feedDisplayTitle)
         .searchable(text: $searchText, prompt: "Search episodes")
