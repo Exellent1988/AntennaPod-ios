@@ -1063,14 +1063,16 @@ struct SubscriptionsView: View {
             spacing: 12
         ) {
             ForEach(feeds) { feed in
-                NavigationLink(value: feed) {
-                    SubscriptionGridCell(
-                        feed: feed,
-                        title: feedDisplayTitle(feed),
-                        count: counterValue(feed, unplayed: remaining[feed.id]?.unplayedCount ?? 0)
-                    )
+                SubscriptionGridCell(
+                    feed: feed,
+                    title: feedDisplayTitle(feed),
+                    count: counterValue(feed, unplayed: remaining[feed.id]?.unplayedCount ?? 0)
+                )
+                // Invisible link over the cell: a visible NavigationLink in a List row adds a chevron per cell.
+                .overlay {
+                    NavigationLink(value: feed) { Color.clear }
+                        .opacity(0)
                 }
-                .buttonStyle(.plain)
                 .contextMenu {
                     Button {
                         feedForSettings = feed
