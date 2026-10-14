@@ -763,19 +763,7 @@ struct FeedDetailView: View {
             }
             // Channel podcast:medium when present — raw feed string; hide when missing (never invent/remap; display-only).
             if let medium = displayMedium {
-                Section {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(medium)
-                            .font(.caption.weight(.semibold))
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.secondary.opacity(0.2), in: Capsule())
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .accessibilityLabel(String(localized: "Medium \(medium)"))
-                        mediumActions(medium)
-                    }
-                }
-                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                mediumSection(medium)
             }
             // Channel itunes:type when present — Episodic/Serial (localized) or raw; hide when missing (never invent).
             // Capsule is display-only; Serial may one-shot set per-feed Oldest first when episodeSort is still nil.
@@ -2461,6 +2449,24 @@ struct FeedDetailView: View {
         UIPasteboard.general.string = text
         copyLastRefreshedFeedbackTick += 1
         showLastRefreshedCopied = true
+    }
+
+    /// Channel medium capsule + actions, split out so CI type-checks the list body in time.
+    private func mediumSection(_ medium: String) -> some View {
+        let label: String = String(localized: "Medium \(medium)")
+        return Section {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(medium)
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.secondary.opacity(0.2), in: Capsule())
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityLabel(label)
+                mediumActions(medium)
+            }
+        }
+        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
     }
 
     @ViewBuilder
