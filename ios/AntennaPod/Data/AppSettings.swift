@@ -1,3 +1,4 @@
+import AudioDSP
 import Foundation
 import SwiftUI
 
@@ -1348,6 +1349,7 @@ final class AppSettings: ObservableObject {
         static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
         static let volumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
         static let volumeBoostPercent = "settings.volumeBoostPercent"
+        static let volumeAdaptationMode = "settings.volumeAdaptationMode"
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
         static let stereoToMonoEnabled = "settings.stereoToMonoEnabled"
         static let preservePitchEnabled = "settings.preservePitchEnabled"
@@ -1671,6 +1673,14 @@ final class AppSettings: ObservableObject {
                 return
             }
             UserDefaults.standard.set(volumeBoostPercent, forKey: Keys.volumeBoostPercent)
+        }
+    }
+
+    /// Global default for per-podcast **Volume adaptation** (pipeline gain; Android VolumeAdaptionSetting).
+    /// Default `.off`. A per-feed `FeedSettings.volumeAdaptation` override wins.
+    @Published var volumeAdaptationMode: VolumeAdaptationMode {
+        didSet {
+            UserDefaults.standard.set(volumeAdaptationMode.rawValue, forKey: Keys.volumeAdaptationMode)
         }
     }
 
@@ -2431,6 +2441,8 @@ final class AppSettings: ObservableObject {
             // Default 100%: no soft gain / unity mix.
             volumeBoostPercent = Self.defaultVolumeBoostPercent
         }
+        volumeAdaptationMode = UserDefaults.standard.string(forKey: Keys.volumeAdaptationMode)
+            .flatMap(VolumeAdaptationMode.init(rawValue:)) ?? .off
         if UserDefaults.standard.object(forKey: Keys.skipSilenceEnabled) != nil {
             skipSilenceEnabled = UserDefaults.standard.bool(forKey: Keys.skipSilenceEnabled)
         } else {
@@ -3309,4 +3321,18 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var statisticsTimeRange: String? = nil
     /// Absent in older backups → 0 (no reset baseline).
     var statisticsResetAtEpochMs: Int64? = nil
+}
+
+extension VolumeAdaptationMode {
+    /// Android-style labels for the Volume adaptation pickers.
+    var label: String {
+        switch self {
+        case .off: return String(localized: "Off")
+        case .lightReduction: return String(localized: "Light reduction")
+        case .heavyReduction: return String(localized: "Heavy reduction")
+        case .lightBoost: return String(localized: "Light boost")
+        case .mediumBoost: return String(localized: "Medium boost")
+        case .heavyBoost: return String(localized: "Heavy boost")
+        }
+    }
 }
