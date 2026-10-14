@@ -554,6 +554,14 @@ struct InboxView: View {
         }
         ToolbarItem(placement: .primaryAction) {
             Menu {
+                // Android menu refresh_item: refresh every subscribed feed from the toolbar.
+                Button {
+                    Task { await store.refreshAllFeeds() }
+                } label: {
+                    Label("Refresh", systemImage: "arrow.clockwise")
+                }
+                .accessibilityHint(String(localized: "Refreshes all subscribed podcasts, same as pull to refresh."))
+
                 Button {
                     copyInbox()
                 } label: {

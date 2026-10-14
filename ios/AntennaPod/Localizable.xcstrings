@@ -50805,6 +50805,40 @@
           }
         }
       }
+    },
+    "Refreshes all subscribed podcasts. Does not change the queue order.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refreshes all subscribed podcasts. Does not change the queue order."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert alle abonnierten Podcasts. Ändert die Reihenfolge der Warteschlange nicht."
+          }
+        }
+      }
+    },
+    "Refreshes all subscribed podcasts, same as pull to refresh.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refreshes all subscribed podcasts, same as pull to refresh."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktualisiert alle abonnierten Podcasts, wie Ziehen zum Aktualisieren."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
