@@ -624,6 +624,7 @@ struct HomeView: View {
             List {
                 ForEach(settings.visibleHomeSections) { sectionId in
                     homeSection(for: sectionId)
+                    emptySectionPlaceholder(for: sectionId)
                 }
 
                 if isSearchFiltering && !hasVisibleLibraryContent {
@@ -729,6 +730,36 @@ struct HomeView: View {
             return String(localized: "Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Or use Discover for Apple Charts. Customize sections under Settings → Home layout.")
         }
         return String(localized: "Subscribe to podcasts to see continue listening, new episodes, your queue, and recently updated feeds here. Customize sections under Settings → Home layout.")
+    }
+
+    /// Whether a section has preview rows (empty sections render nothing in `homeSection`).
+    private func sectionHasContent(_ id: HomeSectionId) -> Bool {
+        switch id {
+        case .discover: return true
+        case .continueListening: return !continueItems.isEmpty
+        case .inbox: return !inboxItems.isEmpty
+        case .queue: return !queueItems.isEmpty
+        case .recentlyUpdated: return !recentFeeds.isEmpty
+        case .favorites: return !favoriteItems.isEmpty
+        case .downloads: return !downloadItems.isEmpty
+        case .history: return !historyItems.isEmpty
+        case .archived: return !archivedItems.isEmpty
+        }
+    }
+
+    /// Visible-but-empty sections show their header, so Home layout show/hide/reorder is
+    /// visible even with an empty library (previously every empty section vanished).
+    @ViewBuilder
+    private func emptySectionPlaceholder(for id: HomeSectionId) -> some View {
+        if !isSearchFiltering, !sectionHasContent(id) {
+            Section {
+                Text(String(localized: "Nothing here yet"))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            } header: {
+                sectionHeader(id.label, systemImage: id.systemImage)
+            }
+        }
     }
 
     @ViewBuilder
