@@ -3,6 +3,12 @@ options:
   bundleIdPrefix: de.danoeh
   deploymentTarget:
     iOS: "17.0"
+    watchOS: "10.0"
+  developmentRegion: en
+  knownRegions:
+    - en
+    - de
+    - Base
   createIntermediateGroups: true
 settings:
   SWIFT_VERSION: "5.0"
@@ -13,6 +19,7 @@ targets:
     platform: iOS
     sources:
       - path: AntennaPod
+      - path: Shared
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: de.danoeh.antennapod.ios
       PRODUCT_NAME: AntennaPod
@@ -20,4 +27,77 @@ targets:
       GENERATE_INFOPLIST_FILE: YES
       INFOPLIST_KEY_CFBundleDisplayName: AntennaPod
       INFOPLIST_KEY_UILaunchScreen_Generation: YES
+      # iPad is targeted (TARGETED_DEVICE_FAMILY 1,2): upload validation requires all four iPad
+      # orientations for multitasking; iPhone keeps the UIKit default (no upside down).
+      INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+      INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
       ENABLE_PREVIEWS: YES
+      MARKETING_VERSION: "0.1.0"
+      CURRENT_PROJECT_VERSION: "1"
+      CODE_SIGN_ENTITLEMENTS: AntennaPod/AntennaPod.entitlements
+    entitlements:
+      path: AntennaPod/AntennaPod.entitlements
+    dependencies:
+      - target: AntennaPodWidget
+        embed: true
+      - target: AntennaPodWatch
+        embed: true
+  AntennaPodWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: AntennaPodWidget
+      - path: Shared
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: de.danoeh.antennapod.ios.AntennaPodWidget
+      PRODUCT_NAME: AntennaPodWidget
+      INFOPLIST_FILE: AntennaPodWidget/Info.plist
+      GENERATE_INFOPLIST_FILE: YES
+      INFOPLIST_KEY_CFBundleDisplayName: AntennaPod
+      LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"
+      SKIP_INSTALL: YES
+      MARKETING_VERSION: "0.1.0"
+      CURRENT_PROJECT_VERSION: "1"
+      CODE_SIGN_ENTITLEMENTS: AntennaPodWidget/AntennaPodWidget.entitlements
+      TARGETED_DEVICE_FAMILY: "1,2"
+    entitlements:
+      path: AntennaPodWidget/AntennaPodWidget.entitlements
+    dependencies: []
+  AntennaPodWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - path: AntennaPodWatch
+      - path: Shared
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: de.danoeh.antennapod.ios.watchkitapp
+      PRODUCT_NAME: AntennaPodWatch
+      INFOPLIST_FILE: AntennaPodWatch/Info.plist
+      GENERATE_INFOPLIST_FILE: YES
+      INFOPLIST_KEY_CFBundleDisplayName: AntennaPod
+      INFOPLIST_KEY_WKCompanionAppBundleIdentifier: de.danoeh.antennapod.ios
+      SKIP_INSTALL: YES
+      MARKETING_VERSION: "0.1.0"
+      CURRENT_PROJECT_VERSION: "1"
+      CODE_SIGN_ENTITLEMENTS: AntennaPodWatch/AntennaPodWatch.entitlements
+      TARGETED_DEVICE_FAMILY: "4"
+      SDKROOT: watchos
+    entitlements:
+      path: AntennaPodWatch/AntennaPodWatch.entitlements
+    info:
+      path: AntennaPodWatch/Info.plist
+      properties:
+        CFBundleDisplayName: AntennaPod
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: de.danoeh.antennapod.ios
+        WKRunsIndependentlyOfCompanionApp: false
+    dependencies: []
+schemes:
+  AntennaPod:
+    build:
+      targets:
+        AntennaPod: all
+        AntennaPodWidget: all
+        AntennaPodWatch: all
+    run:
+      config: Debug
