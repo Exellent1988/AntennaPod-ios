@@ -2894,6 +2894,7 @@ final class AppSettings: ObservableObject {
             playVideoAsAudioOnly: playVideoAsAudioOnly,
             volumeAdaptationEnabled: volumeAdaptationEnabled,
             volumeBoostPercent: volumeBoostPercent,
+            volumeAdaptationMode: volumeAdaptationMode.rawValue,
             skipSilenceEnabled: skipSilenceEnabled,
             stereoToMonoEnabled: stereoToMonoEnabled,
             preservePitchEnabled: preservePitchEnabled,
@@ -3019,6 +3020,7 @@ final class AppSettings: ObservableObject {
         volumeBoostPercent = Self.clampVolumeBoostPercent(
             snap.volumeBoostPercent ?? Self.defaultVolumeBoostPercent
         )
+        volumeAdaptationMode = snap.volumeAdaptationMode.flatMap(VolumeAdaptationMode.init(rawValue:)) ?? .off
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
         stereoToMonoEnabled = snap.stereoToMonoEnabled ?? false
         preservePitchEnabled = snap.preservePitchEnabled ?? true
@@ -3221,7 +3223,9 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var volumeAdaptationEnabled: Bool? = false
     /// Absent in older backups → treated as 100 (unity / no soft boost).
     var volumeBoostPercent: Int? = 100
-    /// Absent in older backups → treated as off (preference only; no AVPlayer skip).
+    /// Global Volume adaptation (`VolumeAdaptationMode.rawValue`). Absent in older backups → off.
+    var volumeAdaptationMode: String? = nil
+    /// Absent in older backups → treated as off.
     var skipSilenceEnabled: Bool? = false
     /// Absent in older backups → treated as off (stereo / system default channel count).
     var stereoToMonoEnabled: Bool? = false
