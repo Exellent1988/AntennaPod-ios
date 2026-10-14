@@ -398,6 +398,91 @@ struct ArchivedView: View {
         }
     }
 
+    // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
+    @ToolbarContentBuilder
+    private var archivedToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Menu {
+                Picker(selection: $settings.archivedSort) {
+                    ForEach(ArchivedSort.allCases) { sort in
+                        Label(sort.label, systemImage: sort.systemImage)
+                            .tag(sort)
+                    }
+                } label: {
+                    Text("Sort")
+                }
+            } label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
+            }
+            .accessibilityLabel(String(localized: "Sort archived"))
+            .accessibilityHint(String(localized: "Orders the Archived list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Restore all stays full catalog."))
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Button {
+                    copyArchived()
+                } label: {
+                    Label("Copy archived", systemImage: "doc.plaintext")
+                }
+                // Full Archived catalog (not podcast/search/UI sort).
+                .disabled(!canExportArchived)
+                .accessibilityLabel(String(localized: "Copy archived"))
+                .accessibilityHint(
+                    String(localized: "Copies the full archived list to the pasteboard")
+                )
+
+                ShareLink(
+                    item: archivedShareText,
+                    subject: Text(String(localized: "Archived"))
+                ) {
+                    Label("Share archived", systemImage: "square.and.arrow.up")
+                }
+                // Same gates as Copy archived — full catalog.
+                .disabled(!canExportArchived)
+                .accessibilityLabel(String(localized: "Share archived"))
+                .accessibilityHint(
+                    String(localized: "Opens the system share sheet with the full archived list")
+                )
+
+                Button {
+                    playRandomEpisode()
+                } label: {
+                    Label("Play random", systemImage: "shuffle")
+                }
+                .disabled(playRandomCandidates.isEmpty)
+                .accessibilityLabel(String(localized: "Play random"))
+                .accessibilityHint(String(localized: "Plays a random episode from the full Archived catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not restore or unarchive. Does not reorder Archived. No confirmation."))
+
+                Button {
+                    showEnqueueAllConfirm = true
+                } label: {
+                    Label("Add all to queue", systemImage: "text.append")
+                }
+                .disabled(enqueueAllArchivedCandidatesCount == 0)
+                .accessibilityHint(String(localized: "Asks for confirmation, then appends archived episodes from the full Archived catalog that are not already queued, newest archived first. Ignores podcast, search, and sort filters. Does not restore or unarchive. Queue lock does not block enqueue."))
+
+                Button {
+                    showRestoreAllConfirm = true
+                } label: {
+                    Label("Restore all", systemImage: "arrow.uturn.backward")
+                }
+                // Restore all always targets the full archived list (not the filtered subset).
+                .disabled(items.isEmpty)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then restores every episode in the full Archived catalog. Ignores podcast, search, and sort filters. Does not mark unplayed or delete downloads.")
+                )
+            } label: {
+                Label("Archived actions", systemImage: "ellipsis.circle")
+            }
+            // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
+            .disabled(items.isEmpty)
+            .accessibilityLabel(String(localized: "Archived actions"))
+            .accessibilityHint(
+                String(localized: "Copy archived, share archived, play random, add all to queue, or restore all")
+            )
+        }
+    }
+
     var body: some View {
         archivedList
         .navigationTitle("Archived")
@@ -415,88 +500,7 @@ struct ArchivedView: View {
         .onDisappear {
             debounceTask?.cancel()
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Menu {
-                    Picker(selection: $settings.archivedSort) {
-                        ForEach(ArchivedSort.allCases) { sort in
-                            Label(sort.label, systemImage: sort.systemImage)
-                                .tag(sort)
-                        }
-                    } label: {
-                        Text("Sort")
-                    }
-                } label: {
-                    Label("Sort", systemImage: "arrow.up.arrow.down")
-                }
-                .accessibilityLabel(String(localized: "Sort archived"))
-                .accessibilityHint(String(localized: "Orders the Archived list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Restore all stays full catalog."))
-            }
-            ToolbarItem(placement: .primaryAction) {
-                Menu {
-                    Button {
-                        copyArchived()
-                    } label: {
-                        Label("Copy archived", systemImage: "doc.plaintext")
-                    }
-                    // Full Archived catalog (not podcast/search/UI sort).
-                    .disabled(!canExportArchived)
-                    .accessibilityLabel(String(localized: "Copy archived"))
-                    .accessibilityHint(
-                        String(localized: "Copies the full archived list to the pasteboard")
-                    )
-
-                    ShareLink(
-                        item: archivedShareText,
-                        subject: Text(String(localized: "Archived"))
-                    ) {
-                        Label("Share archived", systemImage: "square.and.arrow.up")
-                    }
-                    // Same gates as Copy archived — full catalog.
-                    .disabled(!canExportArchived)
-                    .accessibilityLabel(String(localized: "Share archived"))
-                    .accessibilityHint(
-                        String(localized: "Opens the system share sheet with the full archived list")
-                    )
-
-                    Button {
-                        playRandomEpisode()
-                    } label: {
-                        Label("Play random", systemImage: "shuffle")
-                    }
-                    .disabled(playRandomCandidates.isEmpty)
-                    .accessibilityLabel(String(localized: "Play random"))
-                    .accessibilityHint(String(localized: "Plays a random episode from the full Archived catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not restore or unarchive. Does not reorder Archived. No confirmation."))
-
-                    Button {
-                        showEnqueueAllConfirm = true
-                    } label: {
-                        Label("Add all to queue", systemImage: "text.append")
-                    }
-                    .disabled(enqueueAllArchivedCandidatesCount == 0)
-                    .accessibilityHint(String(localized: "Asks for confirmation, then appends archived episodes from the full Archived catalog that are not already queued, newest archived first. Ignores podcast, search, and sort filters. Does not restore or unarchive. Queue lock does not block enqueue."))
-
-                    Button {
-                        showRestoreAllConfirm = true
-                    } label: {
-                        Label("Restore all", systemImage: "arrow.uturn.backward")
-                    }
-                    // Restore all always targets the full archived list (not the filtered subset).
-                    .disabled(items.isEmpty)
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then restores every episode in the full Archived catalog. Ignores podcast, search, and sort filters. Does not mark unplayed or delete downloads.")
-                    )
-                } label: {
-                    Label("Archived actions", systemImage: "ellipsis.circle")
-                }
-                // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
-                .disabled(items.isEmpty)
-                .accessibilityLabel(String(localized: "Archived actions"))
-                .accessibilityHint(
-                    String(localized: "Copy archived, share archived, play random, add all to queue, or restore all")
-                )
-            }
-        }
+        .toolbar { archivedToolbar }
         .alert(
             String(localized: "Copied"),
             isPresented: $showCopiedAlert

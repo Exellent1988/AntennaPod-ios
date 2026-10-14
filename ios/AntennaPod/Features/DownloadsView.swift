@@ -582,346 +582,361 @@ struct DownloadsView: View {
         }
     }
 
+    // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
+    @ToolbarContentBuilder
+    private var downloadsToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Menu {
+                Picker(selection: $settings.downloadsSort) {
+                    ForEach(DownloadsSort.allCases) { sort in
+                        Label(sort.label, systemImage: sort.systemImage)
+                            .tag(sort)
+                    }
+                } label: {
+                    Text("Sort")
+                }
+            } label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
+            }
+            .accessibilityLabel(String(localized: "Sort downloads"))
+            .accessibilityHint(String(localized: "Orders the Downloads list. Largest and Smallest use known size; Title A–Z / Z–A by title; empty or unknown last. Does not change eviction order."))
+        }
+        ToolbarItem(placement: .status) {
+            if !downloads.downloads.isEmpty, downloads.storageUsage.fileCount > 0 {
+                Text(downloads.storageUsage.usedFormatted)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                    .accessibilityLabel(
+                        String(localized: "Total downloads size \(downloads.storageUsage.usedFormatted)")
+                    )
+            }
+        }
+        ToolbarItem(placement: .topBarTrailing) {
+            NavigationLink {
+                DownloadErrorsView()
+            } label: {
+                Label("Errors", systemImage: "exclamationmark.bubble")
+            }
+            .accessibilityLabel(String(localized: "Download errors"))
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Button {
+                    copyDownloads()
+                } label: {
+                    Label("Copy downloads", systemImage: "doc.plaintext")
+                }
+                // Full completed Downloads catalog (not chip/search/UI sort).
+                .disabled(!canExportDownloads)
+                .accessibilityLabel(String(localized: "Copy downloads"))
+                .accessibilityHint(
+                    String(localized: "Copies the full downloads list to the pasteboard")
+                )
+
+                ShareLink(
+                    item: downloadsShareText,
+                    subject: Text(String(localized: "Downloads"))
+                ) {
+                    Label("Share downloads", systemImage: "square.and.arrow.up")
+                }
+                // Same gates as Copy downloads — full catalog.
+                .disabled(!canExportDownloads)
+                .accessibilityLabel(String(localized: "Share downloads"))
+                .accessibilityHint(
+                    String(localized: "Opens the system share sheet with the full downloads list")
+                )
+
+                Button {
+                    playRandomEpisode()
+                } label: {
+                    Label("Play random", systemImage: "shuffle")
+                }
+                .disabled(playRandomCandidates.isEmpty)
+                .accessibilityLabel(String(localized: "Play random"))
+                .accessibilityHint(String(localized: "Plays a random episode from the full completed Downloads catalog with a local file. Prefers unplayed when any remain. Ignores played-status, podcast, search, and sort filters. Does not reorder Downloads. No confirmation."))
+
+                Button {
+                    showEnqueueAllConfirm = true
+                } label: {
+                    Label("Add all to queue", systemImage: "text.append")
+                }
+                .disabled(enqueueAllDownloadsCandidatesCount == 0)
+                .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full completed Downloads catalog that are not already queued, oldest completed first. Ignores played-status, podcast, search, and sort filters. Queue lock does not block enqueue."))
+
+                Button {
+                    showEnqueueAllUnplayedConfirm = true
+                } label: {
+                    Label("Add all unplayed to queue", systemImage: "text.badge.plus")
+                }
+                .disabled(enqueueAllUnplayedDownloadsCandidatesCount == 0)
+                .accessibilityLabel(String(localized: "Add all unplayed to queue"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from the full completed Downloads catalog that are not already queued, oldest completed first. Ignores chip, podcast, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived downloads.")
+                )
+
+                Button {
+                    showMarkAllPlayedConfirm = true
+                } label: {
+                    Label("Mark all as played", systemImage: "checkmark.circle")
+                }
+                .disabled(markAllDownloadsPlayedCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the full completed Downloads catalog as played. Ignores chip, podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not itself clear downloads.")
+                )
+
+                Button {
+                    showMarkAllUnplayedConfirm = true
+                } label: {
+                    Label("Mark all as unplayed", systemImage: "circle")
+                }
+                .disabled(markAllDownloadsUnplayedCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then marks played episodes, including archived, in the full completed Downloads catalog as unplayed. Ignores chip, podcast, search, and sort filters. Does not delete download files, clear the queue, stop playback, or unarchive episodes.")
+                )
+
+                Button {
+                    showArchiveAllConfirm = true
+                } label: {
+                    Label("Archive all", systemImage: "archivebox")
+                }
+                .disabled(archiveAllDownloadsCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then archives non-archived episodes in the full completed Downloads catalog. Ignores chip, podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing.")
+                )
+
+                Button {
+                    showCancelAllConfirm = true
+                } label: {
+                    Label("Cancel all downloads", systemImage: "xmark.circle")
+                }
+                .disabled(downloads.cancelAllInFlightCount == 0)
+                .accessibilityHint(String(localized: "Asks for confirmation, then cancels in-progress and waiting downloads. Stops active transfers and clears the waiting queue. Does not delete completed offline files."))
+
+                Button(role: .destructive) {
+                    showDeletePlayedConfirm = true
+                } label: {
+                    Label("Delete played downloads", systemImage: "trash")
+                }
+                .disabled(playedDownloadsForDelete.isEmpty)
+                .accessibilityLabel(String(localized: "Delete played downloads"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then deletes played offline files in the full Downloads catalog. Keeps unplayed downloads and favorites. Queued played episodes can lose their file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads.")
+                )
+
+                Button(role: .destructive) {
+                    showDeleteAllConfirm = true
+                } label: {
+                    Label("Delete all downloads", systemImage: "trash.fill")
+                }
+                .disabled(downloads.downloads.isEmpty)
+                .accessibilityLabel(String(localized: "Delete all downloads"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then deletes every completed offline file in the full Downloads catalog, including favorites. Ignores chip and search filters. Queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream. Local files only — keeps played status, queue, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue.")
+                )
+            } label: {
+                Label("Downloads actions", systemImage: "ellipsis.circle")
+            }
+            // Menu available when completed catalog is non-empty **or** anything is in-flight /
+            // waiting (Cancel all). Copy / Share / Play random / Add all / Cancel all / Delete
+            // played / Mark all as played / Mark all as unplayed / Delete all downloads each disable independently — same honesty as Favorites /
+            // History / Archived Copy / Share.
+            .disabled(downloads.downloads.isEmpty && downloads.cancelAllInFlightCount == 0)
+            .accessibilityLabel(String(localized: "Downloads actions"))
+            .accessibilityHint(
+                String(localized: "Copy downloads, share downloads, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, archive all, cancel all downloads, delete played downloads, or delete all downloads")
+            )
+        }
+    }
+
+    // Dialog chain split into stages: one chain this long exceeds the CI type-checker time limit.
+    private func downloadsDialogsStageA<Content: View>(_ content: Content) -> some View {
+        content
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
+        .confirmationDialog(
+            "Add all to queue?",
+            isPresented: $showEnqueueAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all to queue") {
+                store.enqueueAllDownloads()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllDownloadsCandidatesCount) downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue.")
+        }
+        .confirmationDialog(
+            "Add all unplayed to queue?",
+            isPresented: $showEnqueueAllUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all unplayed to queue") {
+                store.enqueueAllUnplayedDownloads()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllUnplayedDownloadsCandidatesCount) unplayed, non-archived downloaded episode(s) to the end of the queue (catalog order — oldest completed first). Already queued, played, and archived episodes are skipped. Uses the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived downloads.")
+        }
+        .confirmationDialog(
+            "Mark all as played?",
+            isPresented: $showMarkAllPlayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as played") {
+                store.markAllDownloadsPlayed()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Marks \(markAllDownloadsPlayedCandidatesCount) unplayed, non-archived downloaded episode(s) as played. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not itself clear downloads."
+            )
+        }
+        .confirmationDialog(
+            "Mark all as unplayed?",
+            isPresented: $showMarkAllUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as unplayed") {
+                store.markAllDownloadsUnplayed()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Marks \(markAllDownloadsUnplayedCandidatesCount) played downloaded episode(s), including archived episodes, as unplayed. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Does not delete download files, clear the queue, stop playback, or unarchive episodes."
+            )
+        }
+    }
+
+    private func downloadsDialogsStageB<Content: View>(_ content: Content) -> some View {
+        content
+        .confirmationDialog(
+            "Archive all?",
+            isPresented: $showArchiveAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Archive all") {
+                store.archiveAllDownloads()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Archives \(archiveAllDownloadsCandidatesCount) non-archived downloaded episode(s) in the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing."
+            )
+        }
+        .confirmationDialog(
+            "Cancel all downloads?",
+            isPresented: $showCancelAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Cancel all downloads") {
+                downloads.cancelAllInFlightDownloads()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Cancels \(downloads.cancelAllInFlightCount) in-progress or waiting download(s). Stops active transfers and clears the waiting queue. Does not delete completed offline files."
+            )
+        }
+        .confirmationDialog(
+            "Delete played downloads?",
+            isPresented: $showDeletePlayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Delete played downloads", role: .destructive) {
+                downloads.deletePlayedDownloads(store: store)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Deletes \(playedDownloadsForDelete.count) played offline file(s) (\(playedDownloadsDeleteSizeLabel)). Keeps unplayed downloads and favorites. Played episodes that are still queued can lose their offline file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads."
+            )
+        }
+        .confirmationDialog(
+            "Delete all downloads?",
+            isPresented: $showDeleteAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Delete all downloads", role: .destructive) {
+                downloads.deleteAllDownloads()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                "Deletes \(downloads.downloads.count) completed offline file(s) (\(deleteAllDownloadsSizeLabel)), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Queued episodes and the episode playing from a download can lose their offline file (queue membership stays; playback continues from the stream). Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
+            )
+        }
+        .confirmationDialog(
+            "Delete download?",
+            isPresented: Binding<Bool>(
+                get: { episodePendingDelete != nil },
+                set: { (isPresented: Bool) in if !isPresented { episodePendingDelete = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: episodePendingDelete
+        ) { episode in
+            Button("Delete download", role: .destructive) {
+                downloads.delete(episode)
+                episodePendingDelete = nil
+            }
+            Button("Cancel", role: .cancel) {
+                episodePendingDelete = nil
+            }
+        } message: { episode in
+            Text(
+                "Delete download for \"\(episode.title)\"? Removes the local offline file only. Keeps played status, queue membership, favorites, and archive state."
+            )
+        }
+        .confirmationDialog(
+            "Remove from queue?",
+            isPresented: Binding<Bool>(
+                get: { episodePendingRemoveFromQueue != nil },
+                set: { (isPresented: Bool) in if !isPresented { episodePendingRemoveFromQueue = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: episodePendingRemoveFromQueue
+        ) { episode in
+            Button("Remove from queue", role: .destructive) {
+                store.removeFromQueue(episode)
+                episodePendingRemoveFromQueue = nil
+            }
+            Button("Cancel", role: .cancel) {
+                episodePendingRemoveFromQueue = nil
+            }
+        } message: { episode in
+            Text(
+                "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
+            )
+        }
+    }
+
     var body: some View {
         NavigationStack {
-            downloadsList
-            .navigationTitle("Downloads")
-            .searchable(text: $searchText, prompt: "Search downloads")
-            .onChange(of: searchText) { _, newValue in
-                scheduleFilter(for: newValue)
-            }
-            .onAppear {
-                releaseDownloadsPodcastFilterIfFeedGone()
-            }
-            .onChange(of: store.feeds.map(\.id)) { _, _ in
-                releaseDownloadsPodcastFilterIfFeedGone()
-            }
-            .onDisappear {
-                debounceTask?.cancel()
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Menu {
-                        Picker(selection: $settings.downloadsSort) {
-                            ForEach(DownloadsSort.allCases) { sort in
-                                Label(sort.label, systemImage: sort.systemImage)
-                                    .tag(sort)
-                            }
-                        } label: {
-                            Text("Sort")
-                        }
-                    } label: {
-                        Label("Sort", systemImage: "arrow.up.arrow.down")
-                    }
-                    .accessibilityLabel(String(localized: "Sort downloads"))
-                    .accessibilityHint(String(localized: "Orders the Downloads list. Largest and Smallest use known size; Title A–Z / Z–A by title; empty or unknown last. Does not change eviction order."))
+            downloadsDialogsStageB(downloadsDialogsStageA(
+                downloadsList
+                .navigationTitle("Downloads")
+                .searchable(text: $searchText, prompt: "Search downloads")
+                .onChange(of: searchText) { _, newValue in
+                    scheduleFilter(for: newValue)
                 }
-                ToolbarItem(placement: .status) {
-                    if !downloads.downloads.isEmpty, downloads.storageUsage.fileCount > 0 {
-                        Text(downloads.storageUsage.usedFormatted)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .monospacedDigit()
-                            .accessibilityLabel(
-                                String(localized: "Total downloads size \(downloads.storageUsage.usedFormatted)")
-                            )
-                    }
+                .onAppear {
+                    releaseDownloadsPodcastFilterIfFeedGone()
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        DownloadErrorsView()
-                    } label: {
-                        Label("Errors", systemImage: "exclamationmark.bubble")
-                    }
-                    .accessibilityLabel(String(localized: "Download errors"))
+                .onChange(of: store.feeds.map(\.id)) { _, _ in
+                    releaseDownloadsPodcastFilterIfFeedGone()
                 }
-                ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        Button {
-                            copyDownloads()
-                        } label: {
-                            Label("Copy downloads", systemImage: "doc.plaintext")
-                        }
-                        // Full completed Downloads catalog (not chip/search/UI sort).
-                        .disabled(!canExportDownloads)
-                        .accessibilityLabel(String(localized: "Copy downloads"))
-                        .accessibilityHint(
-                            String(localized: "Copies the full downloads list to the pasteboard")
-                        )
-
-                        ShareLink(
-                            item: downloadsShareText,
-                            subject: Text(String(localized: "Downloads"))
-                        ) {
-                            Label("Share downloads", systemImage: "square.and.arrow.up")
-                        }
-                        // Same gates as Copy downloads — full catalog.
-                        .disabled(!canExportDownloads)
-                        .accessibilityLabel(String(localized: "Share downloads"))
-                        .accessibilityHint(
-                            String(localized: "Opens the system share sheet with the full downloads list")
-                        )
-
-                        Button {
-                            playRandomEpisode()
-                        } label: {
-                            Label("Play random", systemImage: "shuffle")
-                        }
-                        .disabled(playRandomCandidates.isEmpty)
-                        .accessibilityLabel(String(localized: "Play random"))
-                        .accessibilityHint(String(localized: "Plays a random episode from the full completed Downloads catalog with a local file. Prefers unplayed when any remain. Ignores played-status, podcast, search, and sort filters. Does not reorder Downloads. No confirmation."))
-
-                        Button {
-                            showEnqueueAllConfirm = true
-                        } label: {
-                            Label("Add all to queue", systemImage: "text.append")
-                        }
-                        .disabled(enqueueAllDownloadsCandidatesCount == 0)
-                        .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full completed Downloads catalog that are not already queued, oldest completed first. Ignores played-status, podcast, search, and sort filters. Queue lock does not block enqueue."))
-
-                        Button {
-                            showEnqueueAllUnplayedConfirm = true
-                        } label: {
-                            Label("Add all unplayed to queue", systemImage: "text.badge.plus")
-                        }
-                        .disabled(enqueueAllUnplayedDownloadsCandidatesCount == 0)
-                        .accessibilityLabel(String(localized: "Add all unplayed to queue"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from the full completed Downloads catalog that are not already queued, oldest completed first. Ignores chip, podcast, search, and sort filters. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived downloads.")
-                        )
-
-                        Button {
-                            showMarkAllPlayedConfirm = true
-                        } label: {
-                            Label("Mark all as played", systemImage: "checkmark.circle")
-                        }
-                        .disabled(markAllDownloadsPlayedCandidatesCount == 0)
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the full completed Downloads catalog as played. Ignores chip, podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not itself clear downloads.")
-                        )
-
-                        Button {
-                            showMarkAllUnplayedConfirm = true
-                        } label: {
-                            Label("Mark all as unplayed", systemImage: "circle")
-                        }
-                        .disabled(markAllDownloadsUnplayedCandidatesCount == 0)
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then marks played episodes, including archived, in the full completed Downloads catalog as unplayed. Ignores chip, podcast, search, and sort filters. Does not delete download files, clear the queue, stop playback, or unarchive episodes.")
-                        )
-
-                        Button {
-                            showArchiveAllConfirm = true
-                        } label: {
-                            Label("Archive all", systemImage: "archivebox")
-                        }
-                        .disabled(archiveAllDownloadsCandidatesCount == 0)
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then archives non-archived episodes in the full completed Downloads catalog. Ignores chip, podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing.")
-                        )
-
-                        Button {
-                            showCancelAllConfirm = true
-                        } label: {
-                            Label("Cancel all downloads", systemImage: "xmark.circle")
-                        }
-                        .disabled(downloads.cancelAllInFlightCount == 0)
-                        .accessibilityHint(String(localized: "Asks for confirmation, then cancels in-progress and waiting downloads. Stops active transfers and clears the waiting queue. Does not delete completed offline files."))
-
-                        Button(role: .destructive) {
-                            showDeletePlayedConfirm = true
-                        } label: {
-                            Label("Delete played downloads", systemImage: "trash")
-                        }
-                        .disabled(playedDownloadsForDelete.isEmpty)
-                        .accessibilityLabel(String(localized: "Delete played downloads"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then deletes played offline files in the full Downloads catalog. Keeps unplayed downloads and favorites. Queued played episodes can lose their file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads.")
-                        )
-
-                        Button(role: .destructive) {
-                            showDeleteAllConfirm = true
-                        } label: {
-                            Label("Delete all downloads", systemImage: "trash.fill")
-                        }
-                        .disabled(downloads.downloads.isEmpty)
-                        .accessibilityLabel(String(localized: "Delete all downloads"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then deletes every completed offline file in the full Downloads catalog, including favorites. Ignores chip and search filters. Queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream. Local files only — keeps played status, queue, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue.")
-                        )
-                    } label: {
-                        Label("Downloads actions", systemImage: "ellipsis.circle")
-                    }
-                    // Menu available when completed catalog is non-empty **or** anything is in-flight /
-                    // waiting (Cancel all). Copy / Share / Play random / Add all / Cancel all / Delete
-                    // played / Mark all as played / Mark all as unplayed / Delete all downloads each disable independently — same honesty as Favorites /
-                    // History / Archived Copy / Share.
-                    .disabled(downloads.downloads.isEmpty && downloads.cancelAllInFlightCount == 0)
-                    .accessibilityLabel(String(localized: "Downloads actions"))
-                    .accessibilityHint(
-                        String(localized: "Copy downloads, share downloads, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, archive all, cancel all downloads, delete played downloads, or delete all downloads")
-                    )
+                .onDisappear {
+                    debounceTask?.cancel()
                 }
-            }
-            .alert(
-                String(localized: "Copied"),
-                isPresented: $showCopiedAlert
-            ) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(copiedAlertMessage)
-            }
-            .sensoryFeedback(.success, trigger: copyFeedbackTick)
-            .confirmationDialog(
-                "Add all to queue?",
-                isPresented: $showEnqueueAllConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Add all to queue") {
-                    store.enqueueAllDownloads()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Appends \(enqueueAllDownloadsCandidatesCount) downloaded episodes to the end of the queue (catalog order — oldest completed first). Already queued episodes are skipped. Uses the full Downloads catalog (same as Delete played downloads), not the chip/search filter. Queue lock does not block enqueue.")
-            }
-            .confirmationDialog(
-                "Add all unplayed to queue?",
-                isPresented: $showEnqueueAllUnplayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Add all unplayed to queue") {
-                    store.enqueueAllUnplayedDownloads()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Appends \(enqueueAllUnplayedDownloadsCandidatesCount) unplayed, non-archived downloaded episode(s) to the end of the queue (catalog order — oldest completed first). Already queued, played, and archived episodes are skipped. Uses the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Queue lock does not block enqueue. Distinct from Add all to queue, which also includes played and archived downloads.")
-            }
-            .confirmationDialog(
-                "Mark all as played?",
-                isPresented: $showMarkAllPlayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Mark all as played") {
-                    store.markAllDownloadsPlayed()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Marks \(markAllDownloadsPlayedCandidatesCount) unplayed, non-archived downloaded episode(s) as played. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not itself clear downloads."
-                )
-            }
-            .confirmationDialog(
-                "Mark all as unplayed?",
-                isPresented: $showMarkAllUnplayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Mark all as unplayed") {
-                    store.markAllDownloadsUnplayed()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Marks \(markAllDownloadsUnplayedCandidatesCount) played downloaded episode(s), including archived episodes, as unplayed. Uses the full completed Downloads catalog — not the chip, podcast, search, or sort filter. Does not delete download files, clear the queue, stop playback, or unarchive episodes."
-                )
-            }
-            .confirmationDialog(
-                "Archive all?",
-                isPresented: $showArchiveAllConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Archive all") {
-                    store.archiveAllDownloads()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Archives \(archiveAllDownloadsCandidatesCount) non-archived downloaded episode(s) in the full completed Downloads catalog, not the chip, podcast, search, or sort filter. Archived does not mean played. Does not mark played, delete download files, clear the queue, or trigger auto-delete after playing."
-                )
-            }
-            .confirmationDialog(
-                "Cancel all downloads?",
-                isPresented: $showCancelAllConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Cancel all downloads") {
-                    downloads.cancelAllInFlightDownloads()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Cancels \(downloads.cancelAllInFlightCount) in-progress or waiting download(s). Stops active transfers and clears the waiting queue. Does not delete completed offline files."
-                )
-            }
-            .confirmationDialog(
-                "Delete played downloads?",
-                isPresented: $showDeletePlayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Delete played downloads", role: .destructive) {
-                    downloads.deletePlayedDownloads(store: store)
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Deletes \(playedDownloadsForDelete.count) played offline file(s) (\(playedDownloadsDeleteSizeLabel)). Keeps unplayed downloads and favorites. Played episodes that are still queued can lose their offline file while staying in the queue. Does not mark unplayed, clear the queue, or delete all downloads."
-                )
-            }
-            .confirmationDialog(
-                "Delete all downloads?",
-                isPresented: $showDeleteAllConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Delete all downloads", role: .destructive) {
-                    downloads.deleteAllDownloads()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text(
-                    "Deletes \(downloads.downloads.count) completed offline file(s) (\(deleteAllDownloadsSizeLabel)), including favorited downloads. Uses the full Downloads catalog — not the chip/search filter. Queued episodes and the episode playing from a download can lose their offline file (queue membership stays; playback continues from the stream). Local files only — keeps played status, queue membership, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue."
-                )
-            }
-            .confirmationDialog(
-                "Delete download?",
-                isPresented: Binding<Bool>(
-                    get: { episodePendingDelete != nil },
-                    set: { (isPresented: Bool) in if !isPresented { episodePendingDelete = nil } }
-                ),
-                titleVisibility: .visible,
-                presenting: episodePendingDelete
-            ) { episode in
-                Button("Delete download", role: .destructive) {
-                    downloads.delete(episode)
-                    episodePendingDelete = nil
-                }
-                Button("Cancel", role: .cancel) {
-                    episodePendingDelete = nil
-                }
-            } message: { episode in
-                Text(
-                    "Delete download for \"\(episode.title)\"? Removes the local offline file only. Keeps played status, queue membership, favorites, and archive state."
-                )
-            }
-            .confirmationDialog(
-                "Remove from queue?",
-                isPresented: Binding<Bool>(
-                    get: { episodePendingRemoveFromQueue != nil },
-                    set: { (isPresented: Bool) in if !isPresented { episodePendingRemoveFromQueue = nil } }
-                ),
-                titleVisibility: .visible,
-                presenting: episodePendingRemoveFromQueue
-            ) { episode in
-                Button("Remove from queue", role: .destructive) {
-                    store.removeFromQueue(episode)
-                    episodePendingRemoveFromQueue = nil
-                }
-                Button("Cancel", role: .cancel) {
-                    episodePendingRemoveFromQueue = nil
-                }
-            } message: { episode in
-                Text(
-                    "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
-                )
-            }
+                .toolbar { downloadsToolbar }
+            ))
         }
     }
 

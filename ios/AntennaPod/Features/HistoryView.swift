@@ -466,133 +466,122 @@ struct HistoryView: View {
         }
     }
 
-    var body: some View {
-        historyList
-        .navigationTitle("History")
-        .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $searchText, prompt: "Search history")
-        .onChange(of: searchText) { _, newValue in
-            scheduleFilter(for: newValue)
-        }
-        .onAppear {
-            releaseHistoryPodcastFilterIfFeedGone()
-        }
-        .onChange(of: store.feeds.map(\.id)) { _, _ in
-            releaseHistoryPodcastFilterIfFeedGone()
-        }
-        .onDisappear {
-            debounceTask?.cancel()
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Menu {
-                    Picker(selection: $settings.historySort) {
-                        ForEach(HistorySort.allCases) { sort in
-                            Label(sort.label, systemImage: sort.systemImage)
-                                .tag(sort)
-                        }
-                    } label: {
-                        Text("Sort")
+    // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
+    @ToolbarContentBuilder
+    private var historyToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Menu {
+                Picker(selection: $settings.historySort) {
+                    ForEach(HistorySort.allCases) { sort in
+                        Label(sort.label, systemImage: sort.systemImage)
+                            .tag(sort)
                     }
                 } label: {
-                    Label("Sort", systemImage: "arrow.up.arrow.down")
+                    Text("Sort")
                 }
-                .accessibilityLabel(String(localized: "Sort history"))
-                .accessibilityHint(String(localized: "Orders the History list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home Continue preview stays newest-first."))
+            } label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
             }
-            ToolbarItem(placement: .primaryAction) {
-                Menu {
-                    Button {
-                        copyHistory()
-                    } label: {
-                        Label("Copy history", systemImage: "doc.plaintext")
-                    }
-                    // Full History catalog (not podcast/search/UI sort).
-                    .disabled(!canExportHistory)
-                    .accessibilityLabel(String(localized: "Copy history"))
-                    .accessibilityHint(
-                        String(localized: "Copies the full history list to the pasteboard")
-                    )
-
-                    ShareLink(
-                        item: historyShareText,
-                        subject: Text(String(localized: "History"))
-                    ) {
-                        Label("Share history", systemImage: "square.and.arrow.up")
-                    }
-                    // Same gates as Copy history — full catalog.
-                    .disabled(!canExportHistory)
-                    .accessibilityLabel(String(localized: "Share history"))
-                    .accessibilityHint(
-                        String(localized: "Opens the system share sheet with the full history list")
-                    )
-
-                    Button {
-                        playRandomEpisode()
-                    } label: {
-                        Label("Play random", systemImage: "shuffle")
-                    }
-                    .disabled(playRandomCandidates.isEmpty)
-                    .accessibilityLabel(String(localized: "Play random"))
-                    .accessibilityHint(String(localized: "Plays a random episode from the full History catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not reorder History. No confirmation."))
-
-                    Button {
-                        showEnqueueAllConfirm = true
-                    } label: {
-                        Label("Add all to queue", systemImage: "text.append")
-                    }
-                    .disabled(enqueueAllHistoryCandidatesCount == 0)
-                    .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full History catalog that are not already queued, newest last-played first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue."))
-
-                    Button {
-                        showMarkAllPlayedConfirm = true
-                    } label: {
-                        Label("Mark all as played", systemImage: "checkmark.circle")
-                    }
-                    .disabled(markAllHistoryPlayedCandidatesCount == 0)
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the full History catalog as played, newest last-played first. Ignores podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not clear History, remove episodes from the catalog, or delete downloads itself.")
-                    )
-
-                    Button {
-                        showMarkAllUnplayedConfirm = true
-                    } label: {
-                        Label("Mark all as unplayed", systemImage: "circle")
-                    }
-                    .disabled(markAllHistoryUnplayedCandidatesCount == 0)
-                    .accessibilityHint(String(localized: "Asks for confirmation, then marks played episodes in the full History catalog as unplayed. Ignores podcast, search, and sort filters. Episodes leave History when no progress remains — same as per-row Mark unplayed. Does not delete downloads, clear the queue, or stop playback."))
-
-                    Button {
-                        showArchiveAllConfirm = true
-                    } label: {
-                        Label("Archive all", systemImage: "archivebox")
-                    }
-                    .disabled(archiveAllHistoryCandidatesCount == 0)
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then archives non-archived episodes in the full History catalog, newest last-played first. Ignores podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
-                    )
-
-                    Button(role: .destructive) {
-                        showClearHistoryConfirm = true
-                    } label: {
-                        Label("Clear history", systemImage: "trash")
-                    }
-                    // Clear always targets the full history list (not the filtered subset).
-                    .disabled(items.isEmpty)
-                    .accessibilityHint(
-                        String(localized: "Asks for confirmation, then removes every episode from the full History catalog and clears their played status and saved playback positions so they count as unplayed again. Ignores podcast, search, and sort filters. Does not unsubscribe, delete downloads, or clear the queue.")
-                    )
+            .accessibilityLabel(String(localized: "Sort history"))
+            .accessibilityHint(String(localized: "Orders the History list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home Continue preview stays newest-first."))
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Button {
+                    copyHistory()
                 } label: {
-                    Label("History actions", systemImage: "ellipsis.circle")
+                    Label("Copy history", systemImage: "doc.plaintext")
                 }
-                // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
-                .disabled(items.isEmpty)
-                .accessibilityLabel(String(localized: "History actions"))
+                // Full History catalog (not podcast/search/UI sort).
+                .disabled(!canExportHistory)
+                .accessibilityLabel(String(localized: "Copy history"))
                 .accessibilityHint(
-                    String(localized: "Copy history, share history, play random, add all to queue, mark all as played, mark all as unplayed, archive all, or clear history")
+                    String(localized: "Copies the full history list to the pasteboard")
                 )
+
+                ShareLink(
+                    item: historyShareText,
+                    subject: Text(String(localized: "History"))
+                ) {
+                    Label("Share history", systemImage: "square.and.arrow.up")
+                }
+                // Same gates as Copy history — full catalog.
+                .disabled(!canExportHistory)
+                .accessibilityLabel(String(localized: "Share history"))
+                .accessibilityHint(
+                    String(localized: "Opens the system share sheet with the full history list")
+                )
+
+                Button {
+                    playRandomEpisode()
+                } label: {
+                    Label("Play random", systemImage: "shuffle")
+                }
+                .disabled(playRandomCandidates.isEmpty)
+                .accessibilityLabel(String(localized: "Play random"))
+                .accessibilityHint(String(localized: "Plays a random episode from the full History catalog with playable media. Prefers unplayed when any remain. Ignores podcast, search, and sort filters. Does not reorder History. No confirmation."))
+
+                Button {
+                    showEnqueueAllConfirm = true
+                } label: {
+                    Label("Add all to queue", systemImage: "text.append")
+                }
+                .disabled(enqueueAllHistoryCandidatesCount == 0)
+                .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full History catalog that are not already queued, newest last-played first. Ignores podcast, search, and sort filters. Queue lock does not block enqueue."))
+
+                Button {
+                    showMarkAllPlayedConfirm = true
+                } label: {
+                    Label("Mark all as played", systemImage: "checkmark.circle")
+                }
+                .disabled(markAllHistoryPlayedCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then marks unplayed, non-archived episodes in the full History catalog as played, newest last-played first. Ignores podcast, search, and sort filters. Auto-delete after playing still applies when enabled; does not clear History, remove episodes from the catalog, or delete downloads itself.")
+                )
+
+                Button {
+                    showMarkAllUnplayedConfirm = true
+                } label: {
+                    Label("Mark all as unplayed", systemImage: "circle")
+                }
+                .disabled(markAllHistoryUnplayedCandidatesCount == 0)
+                .accessibilityHint(String(localized: "Asks for confirmation, then marks played episodes in the full History catalog as unplayed. Ignores podcast, search, and sort filters. Episodes leave History when no progress remains — same as per-row Mark unplayed. Does not delete downloads, clear the queue, or stop playback."))
+
+                Button {
+                    showArchiveAllConfirm = true
+                } label: {
+                    Label("Archive all", systemImage: "archivebox")
+                }
+                .disabled(archiveAllHistoryCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then archives non-archived episodes in the full History catalog, newest last-played first. Ignores podcast, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
+                )
+
+                Button(role: .destructive) {
+                    showClearHistoryConfirm = true
+                } label: {
+                    Label("Clear history", systemImage: "trash")
+                }
+                // Clear always targets the full history list (not the filtered subset).
+                .disabled(items.isEmpty)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then removes every episode from the full History catalog and clears their played status and saved playback positions so they count as unplayed again. Ignores podcast, search, and sort filters. Does not unsubscribe, delete downloads, or clear the queue.")
+                )
+            } label: {
+                Label("History actions", systemImage: "ellipsis.circle")
             }
+            // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
+            .disabled(items.isEmpty)
+            .accessibilityLabel(String(localized: "History actions"))
+            .accessibilityHint(
+                String(localized: "Copy history, share history, play random, add all to queue, mark all as played, mark all as unplayed, archive all, or clear history")
+            )
         }
+    }
+
+    // Dialog chain split into stages: one chain this long exceeds the CI type-checker time limit.
+    private func historyDialogsStageA<Content: View>(_ content: Content) -> some View {
+        content
         .alert(
             String(localized: "Copied"),
             isPresented: $showCopiedAlert
@@ -626,6 +615,10 @@ struct HistoryView: View {
         } message: {
             Text("Marks \(markAllHistoryPlayedCandidatesCount) unplayed, non-archived History episode(s) as played. Uses the full History catalog (newest last-played first), not the podcast, search, or sort filter. Auto-delete after playing still applies when enabled; this does not clear History, remove episodes from the catalog, or delete downloads itself.")
         }
+    }
+
+    private func historyDialogsStageB<Content: View>(_ content: Content) -> some View {
+        content
         .confirmationDialog(
             "Mark all as unplayed?",
             isPresented: $showMarkAllUnplayedConfirm,
@@ -662,6 +655,28 @@ struct HistoryView: View {
         } message: {
             Text("Removes \(items.count) episodes from history. Their played status and saved playback positions are cleared too, so they count as unplayed again. Does not unsubscribe, delete downloads, or clear the queue.")
         }
+    }
+
+    var body: some View {
+        historyDialogsStageB(historyDialogsStageA(
+            historyList
+            .navigationTitle("History")
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchText, prompt: "Search history")
+            .onChange(of: searchText) { _, newValue in
+                scheduleFilter(for: newValue)
+            }
+            .onAppear {
+                releaseHistoryPodcastFilterIfFeedGone()
+            }
+            .onChange(of: store.feeds.map(\.id)) { _, _ in
+                releaseHistoryPodcastFilterIfFeedGone()
+            }
+            .onDisappear {
+                debounceTask?.cancel()
+            }
+            .toolbar { historyToolbar }
+        ))
     }
 
     /// Pasteboard copy of the **full** History catalog (not podcast/search/UI sort). Read-only.

@@ -533,254 +533,269 @@ struct InboxView: View {
         }
     }
 
+    // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
+    @ToolbarContentBuilder
+    private var inboxToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Menu {
+                Picker(selection: $settings.inboxSort) {
+                    ForEach(InboxSort.allCases) { sort in
+                        Label(sort.label, systemImage: sort.systemImage)
+                            .tag(sort)
+                    }
+                } label: {
+                    Text("Sort")
+                }
+            } label: {
+                Label("Sort", systemImage: "arrow.up.arrow.down")
+            }
+            .accessibilityLabel(String(localized: "Sort inbox"))
+            .accessibilityHint(String(localized: "Orders the Inbox list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home New preview stays newest-first."))
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Button {
+                    copyInbox()
+                } label: {
+                    Label("Copy inbox", systemImage: "doc.plaintext")
+                }
+                // Full Inbox catalog (not podcast/type/UI sort/library search).
+                .disabled(!canExportInbox)
+                .accessibilityLabel(String(localized: "Copy inbox"))
+                .accessibilityHint(
+                    String(localized: "Copies the full inbox list to the pasteboard")
+                )
+
+                ShareLink(
+                    item: inboxShareText,
+                    subject: Text(String(localized: "Inbox"))
+                ) {
+                    Label("Share inbox", systemImage: "square.and.arrow.up")
+                }
+                // Same gates as Copy inbox — full catalog.
+                .disabled(!canExportInbox)
+                .accessibilityLabel(String(localized: "Share inbox"))
+                .accessibilityHint(
+                    String(localized: "Opens the system share sheet with the full inbox list")
+                )
+
+                Button {
+                    playRandomEpisode()
+                } label: {
+                    Label("Play random", systemImage: "shuffle")
+                }
+                .disabled(playRandomCandidates.isEmpty)
+                .accessibilityLabel(String(localized: "Play random"))
+                .accessibilityHint(String(localized: "Plays a random episode from the full Inbox catalog with playable media. Prefers unplayed when any remain. Ignores podcast, episode type, search, and sort filters. Does not reorder Inbox. No confirmation."))
+
+                Button {
+                    showEnqueueAllConfirm = true
+                } label: {
+                    Label("Add all to queue", systemImage: "text.append")
+                }
+                .disabled(enqueueAllInboxCandidatesCount == 0)
+                .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full Inbox catalog that are not already queued, newest first. Ignores podcast, episode type, search, and sort filters. Queue lock does not block enqueue."))
+
+                Button {
+                    showEnqueueAllUnplayedConfirm = true
+                } label: {
+                    Label("Add all unplayed to queue", systemImage: "text.badge.plus")
+                }
+                .disabled(enqueueAllUnplayedInboxCandidatesCount == 0)
+                .accessibilityLabel(String(localized: "Add all unplayed to queue"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from the full current Inbox catalog that are not already queued, newest first. Ignores podcast, episode type, search, and sort filters. Inbox is already unplayed-only in normal operation, so this may match Add all to queue. Queue lock does not block enqueue.")
+                )
+
+                Button {
+                    showMarkAllPlayedConfirm = true
+                } label: {
+                    Label("Mark all as played", systemImage: "checkmark.circle")
+                }
+                // Full Inbox catalog — not the podcast/type/search/sort filtered subset.
+                .disabled(store.inboxEpisodes.isEmpty)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then marks Inbox episodes as played using the full Inbox catalog. Episodes leave the Inbox. Ignores podcast, episode type, search, and sort filters. Auto-delete after playing still applies when enabled.")
+                )
+
+                Button {
+                    showMarkAllUnplayedConfirm = true
+                } label: {
+                    Label("Mark all as unplayed", systemImage: "circle")
+                }
+                // Played episodes are no longer in `inboxEpisodes`; use the full catalog count.
+                .disabled(markAllInboxUnplayedCandidatesCount == 0)
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then marks played episodes from the full stored feed catalog behind Inbox as unplayed, including archived episodes. Ignores podcast, episode type, search, and sort filters. Does not delete downloads, clear the queue, stop playback, or unarchive episodes.")
+                )
+
+                Button {
+                    showArchiveAllConfirm = true
+                } label: {
+                    Label("Archive all", systemImage: "archivebox")
+                }
+                // Full Inbox catalog — not the podcast/type-chip filtered subset.
+                .disabled(archiveAllInboxCandidatesCount == 0)
+                .accessibilityLabel(String(localized: "Archive all"))
+                .accessibilityHint(
+                    String(localized: "Asks for confirmation, then archives non-archived episodes in the full Inbox catalog, newest first. Ignores podcast, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
+                )
+            } label: {
+                Label("Inbox actions", systemImage: "ellipsis.circle")
+            }
+            // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
+            // Disabled while library search replaces Inbox rows (full-catalog actions only).
+            .disabled((store.inboxEpisodes.isEmpty && markAllInboxUnplayedCandidatesCount == 0) || isSearching)
+            .accessibilityLabel(String(localized: "Inbox actions"))
+            .accessibilityHint(
+                String(localized: "Copy inbox, share inbox, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, or archive all")
+            )
+        }
+    }
+
+    // Dialog chain split into stages: one chain this long exceeds the CI type-checker time limit.
+    private func inboxDialogsStageA<Content: View>(_ content: Content) -> some View {
+        content
+        .alert(
+            String(localized: "Copied"),
+            isPresented: $showCopiedAlert
+        ) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(copiedAlertMessage)
+        }
+        .sensoryFeedback(.success, trigger: copyFeedbackTick)
+        .confirmationDialog(
+            "Add all to queue?",
+            isPresented: $showEnqueueAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all to queue") {
+                store.enqueueAllInbox()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllInboxCandidatesCount) Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full current-Inbox catalog (same as Mark all as played / Archive all), not library search or the podcast filter. Queue lock does not block enqueue.")
+        }
+        .confirmationDialog(
+            "Add all unplayed to queue?",
+            isPresented: $showEnqueueAllUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Add all unplayed to queue") {
+                store.enqueueAllUnplayedInbox()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Appends \(enqueueAllUnplayedInboxCandidatesCount) unplayed, non-archived Inbox episode(s) to the end of the queue (newest first). Already queued, played, and archived episodes are skipped. Uses the full current Inbox catalog, not the podcast, episode type, search, or sort filter. Inbox is already unplayed-only in normal operation, so this may match Add all to queue. Queue lock does not block enqueue.")
+        }
+    }
+
+    private func inboxDialogsStageB<Content: View>(_ content: Content) -> some View {
+        content
+        .confirmationDialog(
+            "Mark all as played?",
+            isPresented: $showMarkAllPlayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as played") {
+                store.markAllInboxPlayed()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Marks \(store.inboxEpisodes.count) Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog, not the podcast, episode type, search, or sort filter.")
+        }
+        .confirmationDialog(
+            "Mark all as unplayed?",
+            isPresented: $showMarkAllUnplayedConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Mark all as unplayed") {
+                store.markAllInboxUnplayed()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Marks \(markAllInboxUnplayedCandidatesCount) played episodes from the full stored feed catalog behind Inbox as unplayed, including archived episodes. Uses the catalog scope, not the podcast, episode type, search, or sort filter. Does not delete downloads, clear the queue, stop playback, or unarchive episodes.")
+        }
+        .confirmationDialog(
+            "Archive all?",
+            isPresented: $showArchiveAllConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Archive all") {
+                store.archiveAllInbox()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Archives \(archiveAllInboxCandidatesCount) non-archived Inbox episode(s) in the full Inbox catalog (newest first), not the podcast, episode type, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
+        }
+        .confirmationDialog(
+            "Remove from queue?",
+            isPresented: Binding(
+                get: { episodePendingRemoveFromQueue != nil },
+                set: { if !$0 { episodePendingRemoveFromQueue = nil } }
+            ),
+            titleVisibility: .visible,
+            presenting: episodePendingRemoveFromQueue
+        ) { episode in
+            Button("Remove from queue", role: .destructive) {
+                store.removeFromQueue(episode)
+                episodePendingRemoveFromQueue = nil
+            }
+            Button("Cancel", role: .cancel) {
+                episodePendingRemoveFromQueue = nil
+            }
+        } message: { episode in
+            Text(
+                "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
+            )
+        }
+        .navigationDestination(for: PodcastFeed.self) { feed in
+            FeedDetailView(feed: feed)
+        }
+        .searchable(text: $searchText, prompt: "Search library")
+        .onChange(of: searchText) { _, newValue in
+            scheduleFilter(for: newValue)
+        }
+        .onAppear {
+            releaseInboxPodcastFilterIfFeedGone()
+        }
+        .onChange(of: store.feeds.map(\.id)) { _, _ in
+            releaseInboxPodcastFilterIfFeedGone()
+        }
+        .onDisappear {
+            debounceTask?.cancel()
+        }
+        .refreshable {
+            await store.refreshAllFeeds()
+        }
+        .overlay {
+            if store.isLoading {
+                ProgressView(store.refreshProgressLabel)
+                    .padding()
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+                    .accessibilityLabel(store.refreshProgressLabel)
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            if let error = store.lastError {
+                Text(error)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity)
+                    .padding(8)
+                    .background(.ultraThinMaterial)
+            }
+        }
+    }
+
     var body: some View {
         NavigationStack {
-            inboxList
-            .navigationTitle("Inbox")
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Menu {
-                        Picker(selection: $settings.inboxSort) {
-                            ForEach(InboxSort.allCases) { sort in
-                                Label(sort.label, systemImage: sort.systemImage)
-                                    .tag(sort)
-                            }
-                        } label: {
-                            Text("Sort")
-                        }
-                    } label: {
-                        Label("Sort", systemImage: "arrow.up.arrow.down")
-                    }
-                    .accessibilityLabel(String(localized: "Sort inbox"))
-                    .accessibilityHint(String(localized: "Orders the Inbox list. Shortest and Longest use known duration; Title A–Z / Z–A by title; empty or unknown last. Home New preview stays newest-first."))
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        Button {
-                            copyInbox()
-                        } label: {
-                            Label("Copy inbox", systemImage: "doc.plaintext")
-                        }
-                        // Full Inbox catalog (not podcast/type/UI sort/library search).
-                        .disabled(!canExportInbox)
-                        .accessibilityLabel(String(localized: "Copy inbox"))
-                        .accessibilityHint(
-                            String(localized: "Copies the full inbox list to the pasteboard")
-                        )
-
-                        ShareLink(
-                            item: inboxShareText,
-                            subject: Text(String(localized: "Inbox"))
-                        ) {
-                            Label("Share inbox", systemImage: "square.and.arrow.up")
-                        }
-                        // Same gates as Copy inbox — full catalog.
-                        .disabled(!canExportInbox)
-                        .accessibilityLabel(String(localized: "Share inbox"))
-                        .accessibilityHint(
-                            String(localized: "Opens the system share sheet with the full inbox list")
-                        )
-
-                        Button {
-                            playRandomEpisode()
-                        } label: {
-                            Label("Play random", systemImage: "shuffle")
-                        }
-                        .disabled(playRandomCandidates.isEmpty)
-                        .accessibilityLabel(String(localized: "Play random"))
-                        .accessibilityHint(String(localized: "Plays a random episode from the full Inbox catalog with playable media. Prefers unplayed when any remain. Ignores podcast, episode type, search, and sort filters. Does not reorder Inbox. No confirmation."))
-
-                        Button {
-                            showEnqueueAllConfirm = true
-                        } label: {
-                            Label("Add all to queue", systemImage: "text.append")
-                        }
-                        .disabled(enqueueAllInboxCandidatesCount == 0)
-                        .accessibilityHint(String(localized: "Asks for confirmation, then appends episodes from the full Inbox catalog that are not already queued, newest first. Ignores podcast, episode type, search, and sort filters. Queue lock does not block enqueue."))
-
-                        Button {
-                            showEnqueueAllUnplayedConfirm = true
-                        } label: {
-                            Label("Add all unplayed to queue", systemImage: "text.badge.plus")
-                        }
-                        .disabled(enqueueAllUnplayedInboxCandidatesCount == 0)
-                        .accessibilityLabel(String(localized: "Add all unplayed to queue"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then appends unplayed, non-archived episodes from the full current Inbox catalog that are not already queued, newest first. Ignores podcast, episode type, search, and sort filters. Inbox is already unplayed-only in normal operation, so this may match Add all to queue. Queue lock does not block enqueue.")
-                        )
-
-                        Button {
-                            showMarkAllPlayedConfirm = true
-                        } label: {
-                            Label("Mark all as played", systemImage: "checkmark.circle")
-                        }
-                        // Full Inbox catalog — not the podcast/type/search/sort filtered subset.
-                        .disabled(store.inboxEpisodes.isEmpty)
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then marks Inbox episodes as played using the full Inbox catalog. Episodes leave the Inbox. Ignores podcast, episode type, search, and sort filters. Auto-delete after playing still applies when enabled.")
-                        )
-
-                        Button {
-                            showMarkAllUnplayedConfirm = true
-                        } label: {
-                            Label("Mark all as unplayed", systemImage: "circle")
-                        }
-                        // Played episodes are no longer in `inboxEpisodes`; use the full catalog count.
-                        .disabled(markAllInboxUnplayedCandidatesCount == 0)
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then marks played episodes from the full stored feed catalog behind Inbox as unplayed, including archived episodes. Ignores podcast, episode type, search, and sort filters. Does not delete downloads, clear the queue, stop playback, or unarchive episodes.")
-                        )
-
-                        Button {
-                            showArchiveAllConfirm = true
-                        } label: {
-                            Label("Archive all", systemImage: "archivebox")
-                        }
-                        // Full Inbox catalog — not the podcast/type-chip filtered subset.
-                        .disabled(archiveAllInboxCandidatesCount == 0)
-                        .accessibilityLabel(String(localized: "Archive all"))
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then archives non-archived episodes in the full Inbox catalog, newest first. Ignores podcast, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
-                        )
-                    } label: {
-                        Label("Inbox actions", systemImage: "ellipsis.circle")
-                    }
-                    // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
-                    // Disabled while library search replaces Inbox rows (full-catalog actions only).
-                    .disabled((store.inboxEpisodes.isEmpty && markAllInboxUnplayedCandidatesCount == 0) || isSearching)
-                    .accessibilityLabel(String(localized: "Inbox actions"))
-                    .accessibilityHint(
-                        String(localized: "Copy inbox, share inbox, play random, add all to queue, add all unplayed to queue, mark all as played, mark all as unplayed, or archive all")
-                    )
-                }
-            }
-            .alert(
-                String(localized: "Copied"),
-                isPresented: $showCopiedAlert
-            ) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text(copiedAlertMessage)
-            }
-            .sensoryFeedback(.success, trigger: copyFeedbackTick)
-            .confirmationDialog(
-                "Add all to queue?",
-                isPresented: $showEnqueueAllConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Add all to queue") {
-                    store.enqueueAllInbox()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Appends \(enqueueAllInboxCandidatesCount) Inbox episodes to the end of the queue (newest first). Already queued episodes are skipped. Uses the full current-Inbox catalog (same as Mark all as played / Archive all), not library search or the podcast filter. Queue lock does not block enqueue.")
-            }
-            .confirmationDialog(
-                "Add all unplayed to queue?",
-                isPresented: $showEnqueueAllUnplayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Add all unplayed to queue") {
-                    store.enqueueAllUnplayedInbox()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Appends \(enqueueAllUnplayedInboxCandidatesCount) unplayed, non-archived Inbox episode(s) to the end of the queue (newest first). Already queued, played, and archived episodes are skipped. Uses the full current Inbox catalog, not the podcast, episode type, search, or sort filter. Inbox is already unplayed-only in normal operation, so this may match Add all to queue. Queue lock does not block enqueue.")
-            }
-            .confirmationDialog(
-                "Mark all as played?",
-                isPresented: $showMarkAllPlayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Mark all as played") {
-                    store.markAllInboxPlayed()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Marks \(store.inboxEpisodes.count) Inbox episodes as played. Episodes leave the Inbox; auto-delete after playing still applies when enabled. Uses the full Inbox catalog, not the podcast, episode type, search, or sort filter.")
-            }
-            .confirmationDialog(
-                "Mark all as unplayed?",
-                isPresented: $showMarkAllUnplayedConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Mark all as unplayed") {
-                    store.markAllInboxUnplayed()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Marks \(markAllInboxUnplayedCandidatesCount) played episodes from the full stored feed catalog behind Inbox as unplayed, including archived episodes. Uses the catalog scope, not the podcast, episode type, search, or sort filter. Does not delete downloads, clear the queue, stop playback, or unarchive episodes.")
-            }
-            .confirmationDialog(
-                "Archive all?",
-                isPresented: $showArchiveAllConfirm,
-                titleVisibility: .visible
-            ) {
-                Button("Archive all") {
-                    store.archiveAllInbox()
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Archives \(archiveAllInboxCandidatesCount) non-archived Inbox episode(s) in the full Inbox catalog (newest first), not the podcast, episode type, search, or sort filter. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
-            }
-            .confirmationDialog(
-                "Remove from queue?",
-                isPresented: Binding(
-                    get: { episodePendingRemoveFromQueue != nil },
-                    set: { if !$0 { episodePendingRemoveFromQueue = nil } }
-                ),
-                titleVisibility: .visible,
-                presenting: episodePendingRemoveFromQueue
-            ) { episode in
-                Button("Remove from queue", role: .destructive) {
-                    store.removeFromQueue(episode)
-                    episodePendingRemoveFromQueue = nil
-                }
-                Button("Cancel", role: .cancel) {
-                    episodePendingRemoveFromQueue = nil
-                }
-            } message: { episode in
-                Text(
-                    "Remove \"\(episode.title)\" from the queue? Removes from the queue only. Does not delete the download, mark played, or stop playback."
-                )
-            }
-            .navigationDestination(for: PodcastFeed.self) { feed in
-                FeedDetailView(feed: feed)
-            }
-            .searchable(text: $searchText, prompt: "Search library")
-            .onChange(of: searchText) { _, newValue in
-                scheduleFilter(for: newValue)
-            }
-            .onAppear {
-                releaseInboxPodcastFilterIfFeedGone()
-            }
-            .onChange(of: store.feeds.map(\.id)) { _, _ in
-                releaseInboxPodcastFilterIfFeedGone()
-            }
-            .onDisappear {
-                debounceTask?.cancel()
-            }
-            .refreshable {
-                await store.refreshAllFeeds()
-            }
-            .overlay {
-                if store.isLoading {
-                    ProgressView(store.refreshProgressLabel)
-                        .padding()
-                        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
-                        .accessibilityLabel(store.refreshProgressLabel)
-                }
-            }
-            .safeAreaInset(edge: .bottom) {
-                if let error = store.lastError {
-                    Text(error)
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                        .frame(maxWidth: .infinity)
-                        .padding(8)
-                        .background(.ultraThinMaterial)
-                }
-            }
+            inboxDialogsStageB(inboxDialogsStageA(
+                inboxList
+                .navigationTitle("Inbox")
+                .toolbar { inboxToolbar }
+            ))
         }
     }
 
