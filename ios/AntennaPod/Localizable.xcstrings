@@ -50687,19 +50687,19 @@
         }
       }
     },
-    "Opens the Settings tab, including Sync & gpodder.": {
+    "Opens Settings, including Sync & gpodder.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Opens the Settings tab, including Sync & gpodder."
+            "value": "Opens Settings, including Sync & gpodder."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Öffnet den Einstellungen-Tab, inklusive Sync & gpodder."
+            "value": "Öffnet die Einstellungen, inklusive Sync & gpodder."
           }
         }
       }

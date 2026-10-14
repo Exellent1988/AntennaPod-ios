@@ -659,7 +659,7 @@ struct HomeView: View {
                         Image(systemName: "gearshape")
                     }
                     .accessibilityLabel(String(localized: "Settings"))
-                    .accessibilityHint(String(localized: "Opens the Settings tab, including Sync & gpodder."))
+                    .accessibilityHint(String(localized: "Opens Settings, including Sync & gpodder."))
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
