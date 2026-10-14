@@ -137,9 +137,6 @@ struct RootTabView: View {
         .onChange(of: settings.fastForwardSeconds) { _, _ in
             playback.applyRemoteSkipIntervals()
         }
-        .onChange(of: settings.volumeAdaptationEnabled) { _, _ in
-            playback.applyAudioSessionConfiguration()
-        }
         .onChange(of: settings.stereoToMonoEnabled) { _, _ in
             playback.applyAudioSessionConfiguration()
         }

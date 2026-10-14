@@ -1781,7 +1781,14 @@ final class PlaybackService: ObservableObject {
         let level = resolvedSkipSilenceLevel()
         audioPipeline?.silence.configure(level.detector)
         audioPipeline?.silence.isEnabled = level != .off
+        // Volume adaptation also selects the spoken-audio session mode; re-activate only on a change.
+        if lastSessionUsedSpokenAudio != nil, lastSessionUsedSpokenAudio != (resolvedVolumeAdaptation() != .off) {
+            applyAudioSessionConfiguration()
+        }
     }
+
+    /// Whether the last activated session asked for spoken audio (`nil` before the first activation).
+    private var lastSessionUsedSpokenAudio: Bool?
 
     // MARK: Skip silence
 
@@ -1939,11 +1946,11 @@ final class PlaybackService: ObservableObject {
     }
 
     /// Choose session mode from Settings + current media:
-    /// - Volume adaptation on → `.spokenAudio` (speech-oriented; **not** Android loudness gain)
+    /// - Volume adaptation (global or this podcast's override) not off → `.spokenAudio` (speech-oriented)
     /// - Off + video surface path → `.moviePlayback`
     /// - Off + audio / audio-only video → `.default`
     private func preferredAudioSessionMode() -> AVAudioSession.Mode {
-        if settings?.volumeAdaptationEnabled == true {
+        if resolvedVolumeAdaptation() != .off {
             return .spokenAudio
         }
         if let episode = currentEpisode, episode.isVideo, settings?.playVideoAsAudioOnly != true {
@@ -1955,6 +1962,7 @@ final class PlaybackService: ObservableObject {
     private func activateSession() {
         let session = AVAudioSession.sharedInstance()
         let mode = preferredAudioSessionMode()
+        lastSessionUsedSpokenAudio = mode == .spokenAudio
         do {
             try session.setCategory(.playback, mode: mode, options: [])
             applyPreferredOutputChannelCount(on: session)
@@ -1963,7 +1971,7 @@ final class PlaybackService: ObservableObject {
             // `.spokenAudio` should work with `.playback`; if the mode is rejected, fall back to `.voiceChat`
             // when volume adaptation is on, else `.default`.
             let fallback: AVAudioSession.Mode =
-                settings?.volumeAdaptationEnabled == true ? .voiceChat : .default
+                resolvedVolumeAdaptation() != .off ? .voiceChat : .default
             do {
                 try session.setCategory(.playback, mode: fallback, options: [])
                 applyPreferredOutputChannelCount(on: session)

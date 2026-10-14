@@ -5349,23 +5349,6 @@
         }
       }
     },
-    "Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Optimize for speech via the iOS `AVAudioSession` mode (`.spokenAudio`, or `.voiceChat` fallback). When off, audio uses `.default` and video (surface shown) uses `.moviePlayback`. This is a **session mode**, not Android's LoudnessEnhancer gain curve. Default off."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sprachanpassung über den iOS-`AVAudioSession`-Modus (`.spokenAudio`, Fallback `.voiceChat`). Aus: Audio nutzt `.default`, Video (sichtbare Fläche) `.moviePlayback`. Das ist ein **Session-Modus**, keine Android-LoudnessEnhancer-Kurve. Standard aus."
-          }
-        }
-      }
-    },
     "Options": {
       "extractionState": "manual",
       "localizations": {
@@ -43921,40 +43904,6 @@
         }
       }
     },
-    "On. This is not the default. The audio session uses spoken-audio mode for speech, or voice-chat if spoken-audio is refused. It does not raise loudness, apply ReplayGain, or change Volume boost. When an episode is paused, changing this does not activate the session or interrupt other apps; it applies on the next play. Video with a visible surface still uses movie playback when this is off. Not Volume boost, Skip silence, or Preserve pitch.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "On. This is not the default. The audio session uses spoken-audio mode for speech, or voice-chat if spoken-audio is refused. It does not raise loudness, apply ReplayGain, or change Volume boost. When an episode is paused, changing this does not activate the session or interrupt other apps; it applies on the next play. Video with a visible surface still uses movie playback when this is off. Not Volume boost, Skip silence, or Preserve pitch."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "An. Das ist nicht die Voreinstellung. Die Audiositzung nutzt den Spoken-Audio-Modus für Sprache, oder Voice-Chat, wenn Spoken-Audio abgelehnt wird. Es erhöht nicht die Lautstärke, wendet kein ReplayGain an und ändert nicht den Lautstärke-Boost. Wenn eine Episode pausiert ist, aktiviert das Umschalten die Sitzung nicht und unterbricht keine anderen Apps; es gilt beim nächsten Abspielen. Video mit sichtbarer Fläche nutzt bei Aus weiterhin Film-Wiedergabe. Nicht Lautstärke-Boost, Stille überspringen oder Tonhöhe beibehalten."
-          }
-        }
-      }
-    },
-    "Off. This is the default. Audio uses the default session mode, and video with a visible surface uses movie playback. Turning this off does not change Volume boost, start playback, seek, or download. Not Android LoudnessEnhancer.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Off. This is the default. Audio uses the default session mode, and video with a visible surface uses movie playback. Turning this off does not change Volume boost, start playback, seek, or download. Not Android LoudnessEnhancer."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aus. Das ist die Voreinstellung. Audio nutzt den Standard-Sitzungsmodus, und Video mit sichtbarer Fläche nutzt Film-Wiedergabe. Ausschalten ändert nicht den Lautstärke-Boost, startet keine Wiedergabe, sucht nicht und lädt nichts herunter. Nicht Android LoudnessEnhancer."
-          }
-        }
-      }
-    },
     "Off. This is not the default. Leaving or stopping never smart-marks. Only a natural end or an explicit Mark played counts. Near-end scrub alone does not mark played. Changing this does not mark the loaded episode, seek, start playback, or download. It is seconds remaining only, not a percent threshold, and not Skip outro.": {
       "extractionState": "manual",
       "localizations": {
@@ -49106,23 +49055,6 @@
         }
       }
     },
-    "On sets spoken-audio session mode for speech, or voice-chat if spoken-audio is refused — not loudness gain, ReplayGain, Volume boost, Skip silence, or Preserve pitch. Off uses the default session mode, and video with a visible surface uses movie playback. Default off. When paused, changing this does not activate the session or interrupt other apps; it applies on the next play. The switch does not start playback, seek, or download. Not Android LoudnessEnhancer.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "On sets spoken-audio session mode for speech, or voice-chat if spoken-audio is refused — not loudness gain, ReplayGain, Volume boost, Skip silence, or Preserve pitch. Off uses the default session mode, and video with a visible surface uses movie playback. Default off. When paused, changing this does not activate the session or interrupt other apps; it applies on the next play. The switch does not start playback, seek, or download. Not Android LoudnessEnhancer."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "An setzt den Spoken-Audio-Sitzungsmodus für Sprache, oder Voice-Chat, wenn Spoken-Audio abgelehnt wird — keine Lautstärkeverstärkung, kein ReplayGain, kein Lautstärke-Boost, kein Stille überspringen und kein Tonhöhe beibehalten. Aus nutzt den Standard-Sitzungsmodus, und Video mit sichtbarer Fläche nutzt Film-Wiedergabe. Standard aus. Wenn pausiert, aktiviert das Umschalten die Sitzung nicht und unterbricht keine anderen Apps; es gilt beim nächsten Abspielen. Der Schalter startet keine Wiedergabe, sucht nicht und lädt nichts herunter. Nicht Android LoudnessEnhancer."
-          }
-        }
-      }
-    },
     "Saved preference only. This beta does not skip silence on stock AVPlayer, because a custom audio engine would break the video surface, Now Playing, and playback rate. Turning the switch does not change playback, speed, or downloads, and no skipped-silence time is invented. Not Preserve pitch. Default off.": {
       "extractionState": "manual",
       "localizations": {
@@ -50619,19 +50551,19 @@
         }
       }
     },
-    "Real gain in the playback audio pipeline (per-podcast override in podcast settings). Reductions: 50% / 20%. Boosts raise quiet speech toward a target level by up to +6 / +12 / +18 dB, adapting smoothly and holding during pauses, with a soft limiter. HLS streams are not processed.": {
+    "Real gain in the playback audio pipeline (per-podcast override in podcast settings). Reductions: 50% / 20%. Boosts raise quiet speech toward a target level by up to +6 / +12 / +18 dB, adapting smoothly and holding during pauses, with a soft limiter. Any mode other than Off also optimizes the iOS audio session for speech. HLS streams are not processed.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Real gain in the playback audio pipeline (per-podcast override in podcast settings). Reductions: 50% / 20%. Boosts raise quiet speech toward a target level by up to +6 / +12 / +18 dB, adapting smoothly and holding during pauses, with a soft limiter. HLS streams are not processed."
+            "value": "Real gain in the playback audio pipeline (per-podcast override in podcast settings). Reductions: 50% / 20%. Boosts raise quiet speech toward a target level by up to +6 / +12 / +18 dB, adapting smoothly and holding during pauses, with a soft limiter. Any mode other than Off also optimizes the iOS audio session for speech. HLS streams are not processed."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Echte Verstärkung in der Audio-Pipeline der Wiedergabe (pro Podcast in den Podcast-Einstellungen überschreibbar). Absenkungen: 50 % / 20 %. Anhebungen heben leise Sprache um bis zu +6 / +12 / +18 dB auf einen Zielpegel an, passen sich sanft an, halten in Pausen und nutzen einen sanften Limiter. HLS-Streams werden nicht verarbeitet."
+            "value": "Echte Verstärkung in der Audio-Pipeline der Wiedergabe (pro Podcast in den Podcast-Einstellungen überschreibbar). Absenkungen: 50 % / 20 %. Anhebungen heben leise Sprache um bis zu +6 / +12 / +18 dB auf einen Zielpegel an, passen sich sanft an, halten in Pausen und nutzen einen sanften Limiter. Jeder Modus außer Aus optimiert zusätzlich die iOS-Audiositzung für Sprache. HLS-Streams werden nicht verarbeitet."
           }
         }
       }

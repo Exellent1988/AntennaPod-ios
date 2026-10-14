@@ -1347,7 +1347,8 @@ final class AppSettings: ObservableObject {
         static let discoverChartsLimit = "settings.discovery.chartsLimit"
         static let askForAppStoreRating = "settings.askForAppStoreRating"
         static let playVideoAsAudioOnly = "settings.playVideoAsAudioOnly"
-        static let volumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
+        /// Legacy on/off switch (iOS spoken-audio session mode). Read once for migration, then removed.
+        static let legacyVolumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
         static let volumeBoostPercent = "settings.volumeBoostPercent"
         static let volumeAdaptationMode = "settings.volumeAdaptationMode"
         static let skipSilenceLevel = "settings.skipSilenceLevel"
@@ -1657,14 +1658,6 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    /// When true, `PlaybackService` sets `AVAudioSession` mode to `.spokenAudio` (speech-oriented session mode).
-    /// Default off. This is an **iOS session mode**, not Android's LoudnessEnhancer gain curve.
-    @Published var volumeAdaptationEnabled: Bool {
-        didSet {
-            UserDefaults.standard.set(volumeAdaptationEnabled, forKey: Keys.volumeAdaptationEnabled)
-        }
-    }
-
     /// Soft volume boost percent for `PlaybackService` via `AVMutableAudioMix` track volume (100 = unity, up to 300).
     /// Default **100** (no boost). Values above 100 amplify and **may clip / distort**.
     /// Stock `AVPlayer` only — **not** Android `LoudnessEnhancer`, **not** ReplayGain / loudness normalization,
@@ -1679,6 +1672,17 @@ final class AppSettings: ObservableObject {
             }
             UserDefaults.standard.set(volumeBoostPercent, forKey: Keys.volumeBoostPercent)
         }
+    }
+
+    /// Merges the legacy Volume adaptation switch into the single mode (UserDefaults and backups).
+    /// A stored non-off mode always wins. Otherwise legacy **on** → `.lightBoost`: the old switch
+    /// meant "optimize for speech" without lowering volume, and a light boost is the gentlest mode
+    /// that keeps that meaning (any non-off mode also selects the spoken-audio session mode).
+    /// Legacy off / absent → the stored mode, or `.off`.
+    nonisolated static func migratedVolumeAdaptationMode(storedMode: String?, legacyEnabled: Bool?) -> VolumeAdaptationMode {
+        let stored = storedMode.flatMap(VolumeAdaptationMode.init(rawValue:)) ?? .off
+        if stored == .off, legacyEnabled == true { return .lightBoost }
+        return stored
     }
 
     /// Global default for per-podcast **Volume adaptation** (pipeline gain; Android VolumeAdaptionSetting).
@@ -2470,12 +2474,6 @@ final class AppSettings: ObservableObject {
             // Default off: show video surface + keep video tracks enabled when the episode is video.
             playVideoAsAudioOnly = false
         }
-        if UserDefaults.standard.object(forKey: Keys.volumeAdaptationEnabled) != nil {
-            volumeAdaptationEnabled = UserDefaults.standard.bool(forKey: Keys.volumeAdaptationEnabled)
-        } else {
-            // Default off: use .default / .moviePlayback session mode (not spokenAudio).
-            volumeAdaptationEnabled = false
-        }
         if UserDefaults.standard.object(forKey: Keys.volumeBoostPercent) != nil {
             volumeBoostPercent = Self.clampVolumeBoostPercent(
                 UserDefaults.standard.integer(forKey: Keys.volumeBoostPercent)
@@ -2484,8 +2482,16 @@ final class AppSettings: ObservableObject {
             // Default 100%: no soft gain / unity mix.
             volumeBoostPercent = Self.defaultVolumeBoostPercent
         }
-        volumeAdaptationMode = UserDefaults.standard.string(forKey: Keys.volumeAdaptationMode)
-            .flatMap(VolumeAdaptationMode.init(rawValue:)) ?? .off
+        let legacyVolumeAdaptation = UserDefaults.standard.object(forKey: Keys.legacyVolumeAdaptationEnabled) as? Bool
+        volumeAdaptationMode = Self.migratedVolumeAdaptationMode(
+            storedMode: UserDefaults.standard.string(forKey: Keys.volumeAdaptationMode),
+            legacyEnabled: legacyVolumeAdaptation
+        )
+        if legacyVolumeAdaptation != nil {
+            // One-time migration: persist the merged mode and drop the old switch.
+            UserDefaults.standard.set(volumeAdaptationMode.rawValue, forKey: Keys.volumeAdaptationMode)
+            UserDefaults.standard.removeObject(forKey: Keys.legacyVolumeAdaptationEnabled)
+        }
         skipSilenceLevel = UserDefaults.standard.string(forKey: Keys.skipSilenceLevel)
             .flatMap(SkipSilenceLevel.init(rawValue:)).flatMap { $0 == .off ? nil : $0 } ?? .medium
         if UserDefaults.standard.object(forKey: Keys.skipSilenceEnabled) != nil {
@@ -2975,7 +2981,6 @@ final class AppSettings: ObservableObject {
             sleepTimerFadeEnabled: sleepTimerFadeEnabled,
             askForAppStoreRating: askForAppStoreRating,
             playVideoAsAudioOnly: playVideoAsAudioOnly,
-            volumeAdaptationEnabled: volumeAdaptationEnabled,
             volumeBoostPercent: volumeBoostPercent,
             volumeAdaptationMode: volumeAdaptationMode.rawValue,
             skipSilenceLevel: skipSilenceLevel.rawValue,
@@ -3104,11 +3109,12 @@ final class AppSettings: ObservableObject {
         sleepTimerFadeEnabled = snap.sleepTimerFadeEnabled ?? true
         askForAppStoreRating = snap.askForAppStoreRating ?? true
         playVideoAsAudioOnly = snap.playVideoAsAudioOnly ?? false
-        volumeAdaptationEnabled = snap.volumeAdaptationEnabled ?? false
         volumeBoostPercent = Self.clampVolumeBoostPercent(
             snap.volumeBoostPercent ?? Self.defaultVolumeBoostPercent
         )
-        volumeAdaptationMode = snap.volumeAdaptationMode.flatMap(VolumeAdaptationMode.init(rawValue:)) ?? .off
+        volumeAdaptationMode = Self.migratedVolumeAdaptationMode(
+            storedMode: snap.volumeAdaptationMode, legacyEnabled: snap.volumeAdaptationEnabled
+        )
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
         skipSilenceLevel = snap.skipSilenceLevel.flatMap(SkipSilenceLevel.init(rawValue:)).flatMap { $0 == .off ? nil : $0 } ?? .medium
         stereoToMonoEnabled = snap.stereoToMonoEnabled ?? false
@@ -3320,8 +3326,9 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var askForAppStoreRating: Bool? = true
     /// Absent in older backups → treated as off (show video when detected).
     var playVideoAsAudioOnly: Bool? = false
-    /// Absent in older backups → treated as off (default / moviePlayback session mode).
-    var volumeAdaptationEnabled: Bool? = false
+    /// Legacy Volume adaptation switch (spoken-audio session mode). Only read from older backups
+    /// for migration (`AppSettings.migratedVolumeAdaptationMode`); new backups never write it.
+    var volumeAdaptationEnabled: Bool? = nil
     /// Absent in older backups → treated as 100 (unity / no soft boost).
     var volumeBoostPercent: Int? = 100
     /// Global Volume adaptation (`VolumeAdaptationMode.rawValue`). Absent in older backups → off.
