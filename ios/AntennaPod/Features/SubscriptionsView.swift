@@ -13,6 +13,8 @@ struct SubscriptionsView: View {
     @State private var lastHandledFeedOpenToken: UUID?
     @State private var showAdd = false
     @State private var showOpmlSheet = false
+    /// Podcast whose per-podcast settings sheet is open (Android FeedSettingsFragment from the subscription list).
+    @State private var feedForSettings: PodcastFeed?
     @State private var showAddPINGate = false
     @State private var showDiscoverPINGate = false
     @State private var navigateToDiscover = false
@@ -695,6 +697,16 @@ struct SubscriptionsView: View {
             .sheet(isPresented: $showAdd) {
                 AddFeedView()
             }
+            .sheet(item: $feedForSettings) { feed in
+                NavigationStack {
+                    PerFeedSettingsView(feedId: feed.id, feedTitle: feedDisplayTitle(feed))
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Done") { feedForSettings = nil }
+                            }
+                        }
+                }
+            }
             .navigationDestination(isPresented: $navigateToDiscover) {
                 TopListsView()
             }
@@ -1166,6 +1178,12 @@ struct SubscriptionsView: View {
                 Label("Unsubscribe", systemImage: "trash")
             }
             .accessibilityHint(String(localized: "Asks for confirmation, then removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. When this feed has offline downloads, you can keep them or delete only this feed’s files including favorites. Does not clear other podcasts’ downloads."))
+            Button {
+                feedForSettings = feed
+            } label: {
+                Label("Podcast settings", systemImage: "gearshape")
+            }
+            .tint(.gray)
         }
         .swipeActions(edge: .leading) {
             Button {
@@ -1207,6 +1225,7 @@ struct SubscriptionsView: View {
             isPinned: store.isPinned(feedId: feed.id),
             openURL: openURL,
             onTogglePin: { store.togglePinned(feedId: feed.id) },
+            onOpenSettings: { feedForSettings = feed },
             onCopyPodcastTitle: { title in
                 copiedAlertMessage = EpisodeCopyLinks.copyPodcastTitle(title)
                 copyFeedbackTick += 1
@@ -1337,10 +1356,17 @@ private struct SubscriptionRowContextMenu: ViewModifier {
     let isPinned: Bool
     let openURL: OpenURLAction
     let onTogglePin: () -> Void
+    let onOpenSettings: () -> Void
     let onCopyPodcastTitle: (String) -> Void
 
     func body(content: Content) -> some View {
         content.contextMenu {
+            // Android nav_feed_context / FeedSettingsFragment: per-podcast settings from the list.
+            Button {
+                onOpenSettings()
+            } label: {
+                Label("Podcast settings", systemImage: "gearshape")
+            }
             Button {
                 onTogglePin()
             } label: {
