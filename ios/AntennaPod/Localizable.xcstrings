@@ -1145,19 +1145,19 @@
         }
       }
     },
-    "CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).": {
+    "CarPlay (beta): tab bar with Subscriptions (tap a podcast for its episodes), Queue, and Downloads. Lists update while open and show podcast/episode artwork. Tapping an episode plays it (offline file when downloaded) and opens CarPlay Now Playing — play/pause/skip/seek use the Settings intervals; next/previous → skip. Needs Apple's CarPlay audio entitlement in the signed build. No search or voice browsing. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone).": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "CarPlay (honest partial): appears via system Now Playing when audio is playing — MPNowPlayingInfoCenter + remote play/pause/skip/seek (Settings intervals; next/previous → skip). Info.plist already has UIBackgroundModes audio; AVAudioSession category .playback. No custom CarPlay templates / CPTemplate scene / CarPlay entitlement. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone)."
+            "value": "CarPlay (beta): tab bar with Subscriptions (tap a podcast for its episodes), Queue, and Downloads. Lists update while open and show podcast/episode artwork. Tapping an episode plays it (offline file when downloaded) and opens CarPlay Now Playing — play/pause/skip/seek use the Settings intervals; next/previous → skip. Needs Apple's CarPlay audio entitlement in the signed build. No search or voice browsing. Apple Watch companion is a separate beta-lite target (Continue listening + Play on iPhone)."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "CarPlay (ehrlich partiell): erscheint über System-Now-Playing bei laufender Wiedergabe — MPNowPlayingInfoCenter + Remote Play/Pause/Skip/Seek (Einstellungen-Intervalle; weiter/zurück → Skip). Info.plist hat bereits UIBackgroundModes audio; AVAudioSession .playback. Keine eigenen CarPlay-Templates / CPTemplate-Szene / CarPlay-Entitlement. Apple-Watch-Companion ist ein separates Beta-lite-Target (Weiterhören + Play auf iPhone)."
+            "value": "CarPlay (Beta): Tab-Leiste mit Abos (Podcast antippen für Episoden), Warteschlange und Downloads. Listen aktualisieren sich, solange sie offen sind, und zeigen Podcast-/Episoden-Artwork. Eine Episode antippen spielt sie ab (Offline-Datei, falls geladen) und öffnet CarPlay Now Playing — Play/Pause/Skip/Seek nutzen die Einstellungen-Intervalle; weiter/zurück → Skip. Benötigt Apples CarPlay-Audio-Entitlement im signierten Build. Keine Suche oder Sprach-Navigation. Apple-Watch-Companion ist ein separates Beta-lite-Target (Weiterhören + Play auf iPhone)."
           }
         }
       }
@@ -44040,19 +44040,19 @@
         }
       }
     },
-    "Honest partial. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings intervals. Next and previous skip by those intervals. Background audio and the playback session are already set. There are no custom CarPlay templates, no CarPlay scene, and no CarPlay entitlement in this beta. Apple Watch Continue listening is a separate beta-lite target and is not CarPlay.": {
+    "Beta. CarPlay shows Subscriptions, Queue, and Downloads lists that update while open, with podcast and episode artwork. Tapping a podcast opens its episodes; tapping an episode plays it and opens Now Playing, with play, pause, skip, and seek using the Settings intervals. Next and previous skip by those intervals. Requires Apple's CarPlay audio entitlement. No search or voice browsing. Apple Watch Continue listening is a separate beta-lite target and is not CarPlay.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Honest partial. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings intervals. Next and previous skip by those intervals. Background audio and the playback session are already set. There are no custom CarPlay templates, no CarPlay scene, and no CarPlay entitlement in this beta. Apple Watch Continue listening is a separate beta-lite target and is not CarPlay."
+            "value": "Beta. CarPlay shows Subscriptions, Queue, and Downloads lists that update while open, with podcast and episode artwork. Tapping a podcast opens its episodes; tapping an episode plays it and opens Now Playing, with play, pause, skip, and seek using the Settings intervals. Next and previous skip by those intervals. Requires Apple's CarPlay audio entitlement. No search or voice browsing. Apple Watch Continue listening is a separate beta-lite target and is not CarPlay."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ehrlicher Teilumfang. Wenn Audio läuft, zeigt CarPlay die System-Jetzt-läuft-Ansicht mit Wiedergabe, Pause, Springen und Suchen anhand der Einstellungsintervalle. Weiter und Zurück springen um diese Intervalle. Hintergrundaudio und die Wiedergabesitzung sind bereits gesetzt. In dieser Beta gibt es keine eigenen CarPlay-Vorlagen, keine CarPlay-Szene und keine CarPlay-Berechtigung. Apple Watch Weiterhören ist ein separates Beta-Lite-Ziel und nicht CarPlay."
+            "value": "Beta. CarPlay zeigt die Listen Abos, Warteschlange und Downloads, die sich aktualisieren, solange sie offen sind, mit Podcast- und Episoden-Artwork. Ein Podcast öffnet seine Episoden; eine Episode wird abgespielt und öffnet Now Playing, mit Play, Pause, Skip und Seek in den Einstellungen-Intervallen. Weiter und zurück springen um diese Intervalle. Benötigt Apples CarPlay-Audio-Entitlement. Keine Suche oder Sprach-Navigation. Apple-Watch-Weiterhören ist ein separates Beta-lite-Target und nicht CarPlay."
           }
         }
       }
@@ -49378,19 +49378,19 @@
         }
       }
     },
-    "Read-only note. This screen does not turn CarPlay on or off, start playback, or install templates. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings Rewind and Fast-forward intervals — next and previous skip by those intervals. No custom CarPlay templates, scene, or entitlement in this beta. Background audio is already set. Not Siri Shortcuts, the homescreen widget, or Apple Watch.": {
+    "Read-only note. This screen does not turn CarPlay on or off or start playback. In the car, browse Subscriptions, Queue, and Downloads, then tap an episode to play it in Now Playing — next and previous skip by the Settings Rewind and Fast-forward intervals. Requires Apple's CarPlay audio entitlement. Not Siri Shortcuts, the homescreen widget, or Apple Watch.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Read-only note. This screen does not turn CarPlay on or off, start playback, or install templates. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings Rewind and Fast-forward intervals — next and previous skip by those intervals. No custom CarPlay templates, scene, or entitlement in this beta. Background audio is already set. Not Siri Shortcuts, the homescreen widget, or Apple Watch."
+            "value": "Read-only note. This screen does not turn CarPlay on or off or start playback. In the car, browse Subscriptions, Queue, and Downloads, then tap an episode to play it in Now Playing — next and previous skip by the Settings Rewind and Fast-forward intervals. Requires Apple's CarPlay audio entitlement. Not Siri Shortcuts, the homescreen widget, or Apple Watch."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nur Hinweis zum Lesen. Dieser Bildschirm schaltet CarPlay nicht ein oder aus, startet keine Wiedergabe und installiert keine Vorlagen. Wenn Audio läuft, zeigt CarPlay die System-Jetzt-läuft-Ansicht mit Wiedergabe, Pause, Springen und Suchen anhand der Einstellungen-Zurückspulen- und Vorspulen-Intervalle — Weiter und Zurück springen um diese Intervalle. In dieser Beta keine eigenen CarPlay-Vorlagen, keine CarPlay-Szene und keine CarPlay-Berechtigung. Hintergrundaudio ist bereits gesetzt. Nicht Siri Shortcuts, das Homescreen-Widget oder Apple Watch."
+            "value": "Nur-Lese-Hinweis. Dieser Bildschirm schaltet CarPlay nicht ein oder aus und startet keine Wiedergabe. Im Auto Abos, Warteschlange und Downloads durchsuchen und eine Episode antippen, um sie in Now Playing abzuspielen — weiter und zurück springen um die Einstellungen-Intervalle für Zurück- und Vorspulen. Benötigt Apples CarPlay-Audio-Entitlement. Nicht Siri-Kurzbefehle, das Homescreen-Widget oder Apple Watch."
           }
         }
       }
