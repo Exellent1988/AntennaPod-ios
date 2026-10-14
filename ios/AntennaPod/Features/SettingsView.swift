@@ -2983,7 +2983,7 @@ struct SettingsView: View {
                     Text(String(localized: "This device (new): \(gpodder.deviceId)")).tag(gpodder.deviceId)
                 }
                 ForEach(gpodder.devices) { device in
-                    Text(device.caption.isEmpty ? device.id : "\(device.caption) (\(device.subscriptions))")
+                    Text(verbatim: device.caption.isEmpty ? device.id : "\(device.caption) (\(device.subscriptions))")
                         .tag(device.id)
                 }
             }
