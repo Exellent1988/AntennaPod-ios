@@ -388,8 +388,8 @@ struct SettingsView: View {
             "Last refresh",
             "Never",
             "New episodes",
-            "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).",
-            "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. Background App Refresh is stubbed until Info.plist adds fetch."
+            "Feeds refresh only when you pull to refresh (Inbox) or refresh a podcast. With a timed interval, iOS also refreshes feeds in the background when Background App Refresh is on in iOS Settings; iOS decides when, so there is no guaranteed interval.",
+            "When you open the app (launch or return to foreground), all subscriptions refresh if this interval has elapsed. Applies globally to every feed. iOS also refreshes feeds in the background when Background App Refresh is on in iOS Settings; iOS decides when, so there is no guaranteed interval."
         ) {
             refreshSection
         }
@@ -1902,9 +1902,9 @@ struct SettingsView: View {
 
     private var refreshHelpText: String {
         if settings.refreshInterval == .manual {
-            return String(localized: "Feeds refresh when you pull to refresh (Subscriptions, Home, or Inbox), use Refresh all, or refresh a podcast alone. Bulk refresh skips Keep updated Never; swipe or Feed detail refresh still works for those podcasts. Background App Refresh is not enabled in this beta (Info.plist has no fetch mode).")
+            return String(localized: "Feeds refresh when you pull to refresh (Subscriptions, Home, or Inbox), use Refresh all, or refresh a podcast alone. Bulk refresh skips Keep updated Never; swipe or Feed detail refresh still works for those podcasts. With a timed interval, iOS also refreshes feeds in the background when Background App Refresh is on in iOS Settings; iOS decides when, so there is no guaranteed interval.")
         }
-        return String(localized: "When you open the app (launch or return to foreground), subscriptions refresh if this interval has elapsed, except podcasts set to Keep updated Never. Same bulk path as Refresh all and pull-to-refresh. Manual single-podcast refresh still works for Never feeds. Background App Refresh is stubbed until Info.plist adds fetch.")
+        return String(localized: "When you open the app (launch or return to foreground), subscriptions refresh if this interval has elapsed, except podcasts set to Keep updated Never. Same bulk path as Refresh all and pull-to-refresh. Manual single-podcast refresh still works for Never feeds. iOS also refreshes feeds in the background when Background App Refresh is on in iOS Settings; iOS decides when, so there is no guaranteed interval.")
     }
 
     /// VoiceOver for Settings → Last refresh. Never means no bulk refresh has finished;
@@ -1921,7 +1921,7 @@ struct SettingsView: View {
     }
 
     private var lastRefreshAccessibilityHint: String {
-        String(localized: "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. The stamp is written when Refresh all finishes, even if some podcasts failed. This is not each podcast's Last refreshed time, and no timestamp is invented. iOS Background App Refresh is not enabled in this beta.")
+        String(localized: "Pull to refresh on Subscriptions, Home, or Inbox, or use Refresh all — Keep updated Never podcasts are skipped. A timed interval also checks when you open the app. The stamp is written when Refresh all finishes, even if some podcasts failed. This is not each podcast's Last refreshed time, and no timestamp is invented. With a timed interval, iOS also refreshes feeds in the background when Background App Refresh is on in iOS Settings; iOS decides when, so there is no guaranteed interval.")
     }
 
     /// VoiceOver for Settings → Refresh interval. Timed checks run on launch/foreground only —
@@ -1930,15 +1930,15 @@ struct SettingsView: View {
         let label = settings.refreshInterval.label
         switch settings.refreshInterval {
         case .manual:
-            return String(localized: "Manual only. This is the default. Subscriptions refresh when you pull to refresh on Subscriptions, Home, or Inbox, use Refresh all, or refresh one podcast. There is no timed check when you open the app. Keep updated Never podcasts are skipped on Refresh all and pull-to-refresh; a single-podcast refresh still works. iOS Background App Refresh is not enabled in this beta. Changing this does not refresh now, download, or invent new episodes.")
+            return String(localized: "Manual only. This is the default. Subscriptions refresh when you pull to refresh on Subscriptions, Home, or Inbox, use Refresh all, or refresh one podcast. There is no timed check when you open the app. Keep updated Never podcasts are skipped on Refresh all and pull-to-refresh; a single-podcast refresh still works. With Manual only, iOS Background App Refresh is not used. Changing this does not refresh now, download, or invent new episodes.")
         case .oneHour, .fourHours, .twelveHours, .twentyFourHours:
             let head = String(format: String(localized: "%@. This is not the default of Manual only."), locale: .current, label)
-            return head + " " + String(localized: "When you open the app or return to the foreground, subscriptions refresh if this interval has elapsed since the last bulk refresh finished. Same bulk path as Refresh all and pull-to-refresh. Keep updated Never podcasts are skipped on those bulk paths; a single-podcast refresh still works. This is not iOS Background App Refresh — nothing runs while the app is fully quit. Changing this does not refresh now, download, or invent new episodes.")
+            return head + " " + String(localized: "When you open the app or return to the foreground, subscriptions refresh if this interval has elapsed since the last bulk refresh finished. Same bulk path as Refresh all and pull-to-refresh. Keep updated Never podcasts are skipped on those bulk paths; a single-podcast refresh still works. iOS also refreshes feeds in the background when Background App Refresh is on in iOS Settings; iOS decides when, so there is no guaranteed interval. Changing this does not refresh now, download, or invent new episodes.")
         }
     }
 
     private var refreshIntervalAccessibilityHint: String {
-        String(localized: "Choices are Manual only, Every 1 hour, Every 4 hours, Every 12 hours, and Every 24 hours. The default is Manual only. Timed intervals check only when you open the app or return to the foreground — not as iOS Background App Refresh, and nothing runs while the app is fully quit. Same bulk path as Refresh all and pull-to-refresh. Keep updated Never skips those bulk paths; single-podcast refresh still works. Changing the picker does not refresh now, download, or invent new episodes.")
+        String(localized: "Choices are Manual only, Every 1 hour, Every 4 hours, Every 12 hours, and Every 24 hours. The default is Manual only. Timed intervals check when you open the app or return to the foreground; iOS also refreshes feeds in the background when Background App Refresh is on in iOS Settings; iOS decides when, so there is no guaranteed interval. Same bulk path as Refresh all and pull-to-refresh. Keep updated Never skips those bulk paths; single-podcast refresh still works. Changing the picker does not refresh now, download, or invent new episodes.")
     }
 
 
