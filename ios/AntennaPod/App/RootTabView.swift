@@ -1,6 +1,7 @@
 import SwiftUI
 
-enum RootTab: Hashable {
+/// String raw values so the selection can live in `@SceneStorage` (Android: NavDrawerFragment PREF_LAST_FRAGMENT_TAG).
+enum RootTab: String, Hashable {
     case home, inbox, subscriptions, queue, downloads, settings
 }
 
@@ -13,7 +14,8 @@ struct RootTabView: View {
     @Environment(\.scenePhase) private var scenePhase
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
     @ObservedObject private var subscribeLink = SubscribeLinkRouter.shared
-    @State private var selectedTab: RootTab = .home
+    /// Restores the last selected tab on relaunch, like Android `saveLastNavFragment`; defaults to Home.
+    @SceneStorage("rootTab.selected") private var selectedTab: RootTab = .home
     /// Feed preview for an incoming subscribe link (`SubscribeLinkRouter`).
     @State private var subscribeLinkPreview: FeedPreviewRequest?
 
