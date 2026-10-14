@@ -18,6 +18,10 @@ struct AntennaPodApp: App {
         let gpodder = GpodderSyncService()
         let parental = ParentalControls()
         playback.store = store
+        AppServices.store = store
+        AppServices.playback = playback
+        AppServices.downloads = downloads
+        AppServices.settings = settings
         playback.downloads = downloads
         playback.settings = settings
         downloads.store = store
@@ -37,7 +41,7 @@ struct AntennaPodApp: App {
         store.publishWidgetSnapshot()
         // Apple Watch companion: WCSession for snapshot push + play remote.
         WatchCompanionBridge.shared.activateIfNeeded()
-        // BGAppRefreshTask stub — Info.plist has no `fetch` mode (see FeedRefreshCoordinator).
+        // BGAppRefreshTask for feed updates (Info.plist fetch + permitted identifier).
         FeedRefreshCoordinator.registerBackgroundRefreshIfNeeded()
         // NWPathMonitor for Network / Downloads Wi‑Fi-only gates (auto / manual / stream).
         AutoDownloadCoordinator.startNetworkMonitoringIfNeeded()
