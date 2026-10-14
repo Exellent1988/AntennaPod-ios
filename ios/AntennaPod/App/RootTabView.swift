@@ -118,6 +118,9 @@ struct RootTabView: View {
         .onChange(of: settings.volumeBoostPercent) { _, _ in
             playback.applyVolumeBoost()
         }
+        .onChange(of: settings.volumeAdaptationMode) { _, _ in
+            playback.refreshAudioPipelineParameters()
+        }
         .onChange(of: settings.sleepTimerFadeEnabled) { _, _ in
             playback.applySleepTimerFadePreference()
         }

@@ -276,6 +276,8 @@ final class PodcastStore: ObservableObject {
         }
         // Mirror Android SpeedPresetChangedEvent: only when playbackSpeed actually changes.
         // Other feed prefs must not clobber a temporary player session rate.
+        // Pipeline stages (volume adaptation, skip silence) read FeedSettings live; cheap refresh.
+        playback?.refreshAudioPipelineParameters()
         if previousSpeed != settings.playbackSpeed {
             playback?.applyEffectivePlaybackSpeedIfCurrent(feedId: feedId)
         }

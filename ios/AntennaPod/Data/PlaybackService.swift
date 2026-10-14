@@ -1,4 +1,5 @@
 import AVFoundation
+import AudioDSP
 import Combine
 import Foundation
 import MediaPlayer
@@ -1732,10 +1733,18 @@ final class PlaybackService: ObservableObject {
     private(set) var audioPipeline: PlayerAudioPipeline?
 
     /// Linear gain applied by the pipeline's gain stage.
-    /// Settings **Volume boost** percent / 100 (soft limiter above unity, so no hard clipping).
+    /// Settings **Volume boost** percent / 100 × Volume adaptation factor (soft limiter above unity).
     func resolvedPipelineGain() -> Float {
         let percent = AppSettings.clampVolumeBoostPercent(settings?.volumeBoostPercent ?? 100)
-        return Float(percent) / 100.0
+        return VolumeAdaptationMode.pipelineGain(boostPercent: percent, mode: resolvedVolumeAdaptation())
+    }
+
+    /// Per-feed Volume adaptation override, else the global default (Android: per-feed setting).
+    func resolvedVolumeAdaptation() -> VolumeAdaptationMode {
+        let global = settings?.volumeAdaptationMode ?? .off
+        guard let episode = currentEpisode, let store,
+              let feed = store.feed(containingEpisodeId: episode.id) else { return global }
+        return VolumeAdaptationMode.resolved(feed: store.feedSettings(for: feed.id).volumeAdaptation, global: global)
     }
 
     /// Push current Settings / FeedSettings into the live pipeline stages (cheap; no item rebuild).
