@@ -15,9 +15,12 @@ final class PlayerAudioPipeline {
     let gain = GainStage()
     /// Skip-silence analysis; runs before gain so levels ignore Volume boost / adaptation.
     let silence = SilenceAnalysisStage()
+    /// Adaptive makeup gain for Volume adaptation boost modes (LoudnessEnhancer-like).
+    let loudness = LoudnessEnhancerStage()
 
     init() {
         chain.append(silence)
+        chain.append(loudness)
         chain.append(gain)
     }
 
