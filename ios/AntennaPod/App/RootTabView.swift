@@ -50,6 +50,7 @@ struct RootTabView: View {
             .task {
                 // Launch: refresh subscribed feeds if the global interval is due.
                 await FeedRefreshCoordinator.refreshAllFeedsIfDue(store: store, settings: settings)
+                FeedRefreshCoordinator.scheduleBackgroundRefresh(interval: settings.refreshInterval)
             }
             .onChange(of: scenePhase) { _, phase in
                 if phase != .active {
