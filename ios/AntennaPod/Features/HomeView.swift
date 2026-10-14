@@ -650,6 +650,15 @@ struct HomeView: View {
             }
             .navigationTitle("Home")
             .toolbar {
+                // Settings left the tab bar (max 5 tabs, no system More); Android opens it from the drawer.
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        selectedTab = .settings
+                    } label: {
+                        Image(systemName: "gearshape")
+                    }
+                    .accessibilityLabel(String(localized: "Settings"))
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
                         HomeLayoutSettingsView()

@@ -18,6 +18,10 @@ struct RootTabView: View {
     @SceneStorage("rootTab.selected") private var selectedTab: RootTab = .home
     /// Feed preview for an incoming subscribe link (`SubscribeLinkRouter`).
     @State private var subscribeLinkPreview: FeedPreviewRequest?
+    /// `.settings` is not a tab: selecting it (Home gear, sync deep link) opens Settings as a sheet.
+    @State private var showSettings = false
+    /// Bumped when the active tab is tapped again; a new id pops that tab back to its root screen.
+    @State private var tabRootResets: [RootTab: Int] = [:]
 
     var body: some View {
         cannotStreamAlertStage(rootTabContent)
@@ -28,6 +32,18 @@ struct RootTabView: View {
         deepLinkStage(settingsObserversStage(
             // Tab bar VoiceOver names come from Label titles (Localizable.xcstrings).
             rootTabs
+            .onChange(of: selectedTab) { previous, tab in
+                guard tab == .settings else { return }
+                selectedTab = previous == .settings ? .home : previous
+                showSettings = true
+            }
+            .onAppear {
+                // A pre-change SceneStorage value can still hold the old Settings tab.
+                if selectedTab == .settings { selectedTab = .home }
+            }
+            .sheet(isPresented: $showSettings) {
+                SettingsView()
+            }
             .safeAreaInset(edge: .bottom) {
                 MiniPlayerView()
             }
@@ -52,15 +68,28 @@ struct RootTabView: View {
         ))
     }
 
+    /// Re-tapping the active tab pops it to root, like Android's bottom nav reselect.
+    private var tabSelection: Binding<RootTab> {
+        Binding(
+            get: { selectedTab },
+            set: { tab in
+                if tab == selectedTab { tabRootResets[tab, default: 0] += 1 }
+                selectedTab = tab
+            }
+        )
+    }
+
     // Split into stages: one modifier chain this long exceeds the CI type-checker time limit.
     private var rootTabs: some View {
-        TabView(selection: $selectedTab) {
+        TabView(selection: tabSelection) {
             HomeView(selectedTab: $selectedTab)
+                .id(tabRootResets[.home, default: 0])
                 .tabItem {
                     Label("Home", systemImage: "house.fill")
                 }
                 .tag(RootTab.home)
             InboxView()
+                .id(tabRootResets[.inbox, default: 0])
                 .tabItem {
                     Label("Inbox", systemImage: "tray.fill")
                 }
@@ -69,11 +98,13 @@ struct RootTabView: View {
                 // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
                 .badge(store.inboxEpisodes.count)
             SubscriptionsView()
+                .id(tabRootResets[.subscriptions, default: 0])
                 .tabItem {
                     Label("Subscriptions", systemImage: "square.stack.fill")
                 }
                 .tag(RootTab.subscriptions)
             QueueView()
+                .id(tabRootResets[.queue, default: 0])
                 .tabItem {
                     Label("Queue", systemImage: "list.bullet")
                 }
@@ -82,6 +113,7 @@ struct RootTabView: View {
                 // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
                 .badge(store.queue.count)
             DownloadsView()
+                .id(tabRootResets[.downloads, default: 0])
                 .tabItem {
                     Label("Downloads", systemImage: "arrow.down.circle")
                 }
@@ -89,11 +121,6 @@ struct RootTabView: View {
                 // Full completed catalog (`DownloadService.downloads`), not chip/search or in-progress.
                 // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
                 .badge(downloads.downloads.count)
-            SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape")
-                }
-                .tag(RootTab.settings)
         }
     }
 
