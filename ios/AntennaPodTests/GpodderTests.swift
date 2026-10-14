@@ -265,3 +265,115 @@ final class GpodderRemovalAndParallelImportTests: XCTestCase {
         XCTAssertEqual(errors.map(\.0), ["https://f3.example/rss", "https://f7.example/rss"])
     }
 }
+
+final class GpodderNextcloudHardeningTests: XCTestCase {
+    private var session: URLSession!
+
+    override func setUp() {
+        super.setUp()
+        let config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [MockURLProtocol.self]
+        session = URLSession(configuration: config)
+        MockURLProtocol.requests = []
+        MockURLProtocol.handler = nil
+    }
+
+    private func nextcloud(_ host: String = "https://cloud.example.com") throws -> GpodderClient {
+        var c = try GpodderClient(host: host, username: "axel", password: "pw", deviceId: "",
+                                  provider: .nextcloud, session: session)
+        c.retryDelaysNanos = [0, 0]
+        return c
+    }
+
+    private func status(_ code: Int, url: String? = nil) {
+        MockURLProtocol.handler = { request in
+            let u = url.flatMap(URL.init(string:)) ?? request.url!
+            return (HTTPURLResponse(url: u, statusCode: code, httpVersion: nil,
+                                    headerFields: ["Content-Type": "application/json"])!,
+                    Data(#"{"add":[],"remove":[],"timestamp":1}"#.utf8))
+        }
+    }
+
+    func testNormalizesIndexPhpTrailingSlashAndScheme() {
+        let cases = [
+            "cloud.example.com": "https://cloud.example.com/index.php/apps/gpoddersync/",
+            "https://cloud.example.com/": "https://cloud.example.com/index.php/apps/gpoddersync/",
+            "https://cloud.example.com/index.php": "https://cloud.example.com/index.php/apps/gpoddersync/",
+            "https://cloud.example.com/index.php/": "https://cloud.example.com/index.php/apps/gpoddersync/",
+            "https://h.example/nc/index.php/apps": "https://h.example/nc/index.php/apps/gpoddersync/",
+            " https://cloud.example.com/index.php/apps/gpoddersync/ ": "https://cloud.example.com/index.php/apps/gpoddersync/",
+        ]
+        for (input, expected) in cases {
+            XCTAssertEqual(GpodderClient.normalizeBaseURL(input, provider: .nextcloud)?.absoluteString, expected, input)
+        }
+    }
+
+    func testAuthErrorsAreNextcloudSpecificAndNotRetried() async throws {
+        for code in [401, 403] {
+            MockURLProtocol.requests = []
+            status(code)
+            do {
+                _ = try await nextcloud().getSubscriptionChanges(since: 0)
+                XCTFail("expected error")
+            } catch GpodderError.nextcloudAuth(let c) {
+                XCTAssertEqual(c, code)
+            } catch { XCTFail("\(error)") }
+            XCTAssertEqual(MockURLProtocol.requests.count, 1)
+        }
+        let message = GpodderError.nextcloudAuth(401).localizedDescription
+        XCTAssertTrue(message.contains("app password") || message.contains("App-Passwort"), message)
+    }
+
+    func testNotFoundMeansAppMissing() async throws {
+        status(404)
+        do {
+            _ = try await nextcloud().getSubscriptionChanges(since: 0)
+            XCTFail("expected error")
+        } catch GpodderError.nextcloudAppMissing {
+        } catch { XCTFail("\(error)") }
+    }
+
+    func testRedirectToLoginDetected() async throws {
+        status(200, url: "https://cloud.example.com/index.php/login?redirect_url=x")
+        do {
+            _ = try await nextcloud().getSubscriptionChanges(since: 0)
+            XCTFail("expected error")
+        } catch GpodderError.redirectedToLogin {
+        } catch { XCTFail("\(error)") }
+    }
+
+    func testRetriesTransient5xxThenSucceeds() async throws {
+        var calls = 0
+        MockURLProtocol.handler = { request in
+            calls += 1
+            let code = calls < 3 ? 503 : 200
+            return (HTTPURLResponse(url: request.url!, statusCode: code, httpVersion: nil,
+                                    headerFields: ["Content-Type": "application/json"])!,
+                    Data(#"{"add":["https://a/f"],"remove":[],"timestamp":2}"#.utf8))
+        }
+        let changes = try await nextcloud().getSubscriptionChanges(since: 0)
+        XCTAssertEqual(changes.add, ["https://a/f"])
+        XCTAssertEqual(calls, 3)
+    }
+
+    func testGivesUpAfterThreeAttempts() async throws {
+        status(502)
+        do {
+            _ = try await nextcloud().getSubscriptionChanges(since: 0)
+            XCTFail("expected error")
+        } catch GpodderError.serverError(let c) {
+            XCTAssertEqual(c, 502)
+        } catch { XCTFail("\(error)") }
+        XCTAssertEqual(MockURLProtocol.requests.count, 3)
+    }
+
+    func testTimeoutRetriedButUnknownHostNot() async throws {
+        MockURLProtocol.handler = { _ in throw URLError(.timedOut) }
+        do { _ = try await nextcloud().getSubscriptionChanges(since: 0); XCTFail() } catch {}
+        XCTAssertEqual(MockURLProtocol.requests.count, 3)
+        MockURLProtocol.requests = []
+        MockURLProtocol.handler = { _ in throw URLError(.cannotFindHost) }
+        do { _ = try await nextcloud().getSubscriptionChanges(since: 0); XCTFail() } catch {}
+        XCTAssertEqual(MockURLProtocol.requests.count, 1)
+    }
+}
