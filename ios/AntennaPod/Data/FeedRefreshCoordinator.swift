@@ -1,37 +1,63 @@
+import BackgroundTasks
 import Foundation
 
-/// Coordinates automatic feed refresh (foreground due-check + optional BG stub).
+/// Coordinates automatic feed refresh (foreground due-check + BGAppRefreshTask).
 ///
-/// **Background App Refresh:** Info.plist currently only lists `UIBackgroundModes` → `audio`
-/// (playback / background downloads). It does **not** include `fetch`, nor
-/// `BGTaskSchedulerPermittedIdentifiers`. Registering `BGAppRefreshTask` without those
-/// keys would never run (and can crash at schedule time). This type therefore **stubs**
-/// BG registration — call sites document the gap; enable later by adding `fetch` +
-/// permitted identifiers, then implementing `registerBackgroundRefreshIfNeeded()`.
+/// Info.plist lists `UIBackgroundModes` `fetch` and `BGTaskSchedulerPermittedIdentifiers`
+/// containing `backgroundTaskIdentifier`. iOS decides when (or whether) the task runs;
+/// `earliestBeginDate` is only a lower bound.
 @MainActor
 enum FeedRefreshCoordinator {
-    /// Task id reserved for a future BGAppRefreshTask (must match Info.plist when enabled).
+    /// Must match Info.plist `BGTaskSchedulerPermittedIdentifiers`.
     static let backgroundTaskIdentifier = "de.danoeh.antennapod.ios.refresh"
 
-    /// Whether Info.plist / entitlements already allow BGAppRefreshTask registration.
-    /// Always `false` for this beta slice (no `fetch` mode).
-    static var isBackgroundRefreshConfigured: Bool { false }
-
-    /// Prevents overlapping auto-refresh from launch `.task` + foreground `onChange`.
-    private static var isAutoRefreshInFlight = false
-
-    /// No-op stub. Does not call `BGTaskScheduler` (would require Info.plist changes).
-    static func registerBackgroundRefreshIfNeeded() {
-        // Stubbed: UIBackgroundModes lacks `fetch`; BGTaskSchedulerPermittedIdentifiers absent.
-        // When enabling: import BackgroundTasks, register `backgroundTaskIdentifier`,
-        // schedule BGAppRefreshTaskRequest, and in the handler call store.refreshAllFeeds()
-        // then markFeedRefreshCompleted() / setTaskCompleted.
+    static var isBackgroundRefreshConfigured: Bool {
+        let ids = Bundle.main.object(forInfoDictionaryKey: "BGTaskSchedulerPermittedIdentifiers") as? [String] ?? []
+        return ids.contains(backgroundTaskIdentifier)
     }
 
-    /// Schedule next BG refresh — stubbed (see `isBackgroundRefreshConfigured`).
+    /// Prevents overlapping auto-refresh from launch `.task` + foreground `onChange` + BG task.
+    private static var isAutoRefreshInFlight = false
+    private static var didRegister = false
+
+    /// Must run before the app finishes launching (called from `AntennaPodApp.init`).
+    static func registerBackgroundRefreshIfNeeded() {
+        guard !didRegister, isBackgroundRefreshConfigured else { return }
+        didRegister = BGTaskScheduler.shared.register(forTaskWithIdentifier: backgroundTaskIdentifier, using: .main) { task in
+            guard let task = task as? BGAppRefreshTask else { task.setTaskCompleted(success: false); return }
+            MainActor.assumeIsolated { handle(task) }
+        }
+    }
+
+    /// Earliest begin date for the next BG refresh; `nil` = do not schedule (manual interval).
+    nonisolated static func nextBeginDate(interval: FeedRefreshInterval, lastRefresh: Date?, now: Date = Date()) -> Date? {
+        guard let seconds = interval.timeInterval else { return nil }
+        guard let last = lastRefresh else { return now }
+        return max(now, last.addingTimeInterval(seconds))
+    }
+
+    /// Replace any pending request with one matching the interval (cancels on Manual).
     static func scheduleBackgroundRefresh(interval: FeedRefreshInterval) {
-        _ = interval
-        // Stubbed until Info.plist allows BGAppRefreshTask.
+        guard didRegister else { return }
+        BGTaskScheduler.shared.cancel(taskRequestWithIdentifier: backgroundTaskIdentifier)
+        guard let begin = nextBeginDate(interval: interval, lastRefresh: AppServices.settings?.lastFeedRefreshAt) else { return }
+        let request = BGAppRefreshTaskRequest(identifier: backgroundTaskIdentifier)
+        request.earliestBeginDate = begin
+        do { try BGTaskScheduler.shared.submit(request) } catch {
+            // Simulator / Background App Refresh disabled: foreground due-check still applies.
+        }
+    }
+
+    private static func handle(_ task: BGAppRefreshTask) {
+        guard let store = AppServices.store, let settings = AppServices.settings else {
+            task.setTaskCompleted(success: false); return
+        }
+        let work = Task { @MainActor in
+            await refreshAllFeedsIfDue(store: store, settings: settings)
+            scheduleBackgroundRefresh(interval: settings.refreshInterval)
+            task.setTaskCompleted(success: !Task.isCancelled)
+        }
+        task.expirationHandler = { work.cancel() }
     }
 
     /// If the global refresh interval is due, refresh all feeds (`refreshAllFeeds` stamps completion).
