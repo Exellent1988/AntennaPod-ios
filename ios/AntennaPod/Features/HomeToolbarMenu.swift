@@ -4,9 +4,25 @@ import SwiftUI
 /// (action_search, refresh_item, homesettings_items).
 struct HomeToolbarMenu: View {
     @EnvironmentObject private var store: PodcastStore
+    @EnvironmentObject private var parental: ParentalControls
+    @State private var showAdd = false
+    @State private var showAddPINGate = false
 
     var body: some View {
         Menu {
+            // Android drawer "Add podcast" → AddFeedFragment; same PIN gate as Subscriptions +.
+            Button {
+                if parental.needsPINForAddDiscover {
+                    showAddPINGate = true
+                } else {
+                    showAdd = true
+                }
+            } label: {
+                Label(
+                    parental.needsPINForAddDiscover ? String(localized: "Add podcast (PIN required)") : String(localized: "Add podcast"),
+                    systemImage: "plus"
+                )
+            }
             // home.xml refresh_item
             Button {
                 Task { await store.refreshAllFeeds() }
@@ -22,6 +38,24 @@ struct HomeToolbarMenu: View {
             }
         } label: {
             Label("Home actions", systemImage: "ellipsis.circle")
+        }
+        .sheet(isPresented: $showAdd) {
+            AddFeedView()
+        }
+        .sheet(isPresented: $showAddPINGate) {
+            ParentalPINPromptSheet(
+                title: String(localized: "Parental controls"),
+                message: String(localized: "Enter your PIN to add or discover podcasts."),
+                onCancel: { showAddPINGate = false },
+                onSuccess: { pin in
+                    if parental.unlockSession(with: pin) {
+                        showAddPINGate = false
+                        showAdd = true
+                        return true
+                    }
+                    return false
+                }
+            )
         }
     }
 }
