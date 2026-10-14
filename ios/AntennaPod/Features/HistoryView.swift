@@ -2,6 +2,8 @@ import SwiftUI
 import UIKit
 
 struct HistoryView: View {
+    /// Episode ids picked in Select mode (`EpisodeMultiSelectModifier`).
+    @State private var multiSelection = Set<String>()
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
@@ -340,7 +342,7 @@ struct HistoryView: View {
 
     // List split from the modifier chain: together they exceed the CI type-checker time limit.
     private var historyList: some View {
-        List {
+        List(selection: $multiSelection) {
             // Filter, search, and sort the history once per body (it is unlimited by default and
             // the body reruns on every 0.5s playback tick); the bar, its VoiceOver label, and
             // the rows share it.
@@ -416,6 +418,7 @@ struct HistoryView: View {
                         dateOverride: Date(timeIntervalSince1970: Double(item.lastPlayedAtEpochMs) / 1000),
                         dateAccessibilityLabel: String(localized: "Last played")
                     )
+                    .tag(item.episode.id)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button(role: .destructive) {
                             store.removeFromHistory(item.episode.id)
@@ -464,6 +467,8 @@ struct HistoryView: View {
                 }
             }
         }
+        // Android multi_select_options.xml: shared Select + batch actions bar.
+        .episodeMultiSelect(selection: $multiSelection, episodes: filteredItems.map(\.episode))
     }
 
     // Toolbar split from the body chain: together they exceed the CI type-checker time limit.

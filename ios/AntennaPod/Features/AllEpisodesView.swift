@@ -2,6 +2,8 @@ import SwiftUI
 import UIKit
 
 struct AllEpisodesView: View {
+    /// Episode ids picked in Select mode (`EpisodeMultiSelectModifier`).
+    @State private var multiSelection = Set<String>()
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var settings: AppSettings
@@ -431,7 +433,7 @@ struct AllEpisodesView: View {
 
     // List split from the modifier chain: together they exceed the CI type-checker time limit.
     private var allEpisodesList: some View {
-        List {
+        List(selection: $multiSelection) {
             Section {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
@@ -510,6 +512,7 @@ struct AllEpisodesView: View {
             } else {
                 ForEach(items) { item in
                     EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
+                    .tag(item.episode.id)
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button {
                                 store.toggleArchived(item.episode.id)
@@ -545,6 +548,8 @@ struct AllEpisodesView: View {
                 }
             }
         }
+        // Android multi_select_options.xml: shared Select + batch actions bar.
+        .episodeMultiSelect(selection: $multiSelection, episodes: items.map(\.episode))
     }
 
     // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
