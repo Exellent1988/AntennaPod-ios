@@ -51315,6 +51315,23 @@
           }
         }
       }
+    },
+    "Home actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home-Aktionen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
