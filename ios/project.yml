@@ -42,12 +42,13 @@ targets:
       ENABLE_PREVIEWS: YES
       MARKETING_VERSION: "0.1.0"
       CURRENT_PROJECT_VERSION: "1"
-      CODE_SIGN_ENTITLEMENTS: AntennaPod/AntennaPod.entitlements
-    entitlements:
-      path: AntennaPod/AntennaPod.entitlements
-      properties:
-        com.apple.security.application-groups:
-          - group.de.danoeh.antennapod.ios
+      # CarPlay audio entitlement is opt-in (Apple must grant it; default builds sign without it).
+      # Opt in: `xcodebuild … AP_CARPLAY_ENTITLEMENTS_SUFFIX=-CarPlay`, or set it in Xcode build settings.
+      # AntennaPod-CarPlay.entitlements is hand-maintained (not generated) = default keys + carplay-audio.
+      AP_CARPLAY_ENTITLEMENTS_SUFFIX: ""
+      CODE_SIGN_ENTITLEMENTS: AntennaPod/AntennaPod$(AP_CARPLAY_ENTITLEMENTS_SUFFIX).entitlements
+    # No `entitlements:` key here on purpose: XcodeGen would overwrite CODE_SIGN_ENTITLEMENTS with a
+    # fixed path. Both app entitlements files are hand-maintained.
     dependencies:
       - package: AudioDSP
       - package: PodcastCore
@@ -75,9 +76,6 @@ targets:
       TARGETED_DEVICE_FAMILY: "1,2"
     entitlements:
       path: AntennaPodWidget/AntennaPodWidget.entitlements
-      properties:
-        com.apple.security.application-groups:
-          - group.de.danoeh.antennapod.ios
     dependencies: []
   AntennaPodWatch:
     type: application
@@ -100,9 +98,6 @@ targets:
       SDKROOT: watchos
     entitlements:
       path: AntennaPodWatch/AntennaPodWatch.entitlements
-      properties:
-        com.apple.security.application-groups:
-          - group.de.danoeh.antennapod.ios
     info:
       path: AntennaPodWatch/Info.plist
       properties:
