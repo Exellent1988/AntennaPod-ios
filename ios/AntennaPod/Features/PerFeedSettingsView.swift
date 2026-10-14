@@ -1,3 +1,4 @@
+import AudioDSP
 import SwiftUI
 
 /// Per-subscription overrides (Display name / Private note / Keep at top / Auto-download / Auto-delete after play / Keep updated / New episodes / Notifications / Skip intro·outro / Speed / Episode sort) + HTTP Basic auth (Keychain) + tags.
@@ -267,6 +268,13 @@ struct PerFeedSettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .accessibilityLabel(playbackSpeedHelp)
+                Picker("Volume adaptation", selection: volumeAdaptationBinding) {
+                    Text("Use global (\(appSettings.volumeAdaptationMode.label))").tag(Optional<VolumeAdaptationMode>.none)
+                    ForEach(VolumeAdaptationMode.allCases) { mode in
+                        Text(mode.label).tag(Optional(mode))
+                    }
+                }
+                .accessibilityHint(String(localized: "Use global or a per-podcast gain: reduce a loud podcast or boost a quiet one. Applies immediately if an episode from this podcast is playing. HLS streams are not processed."))
             } header: {
                 Text("Playback")
             }
@@ -749,6 +757,15 @@ struct PerFeedSettingsView: View {
             get: { current.skipOutroSeconds },
             set: { value in
                 store.updateFeedSettings(for: feedId) { $0.skipOutroSeconds = value }
+            }
+        )
+    }
+
+    private var volumeAdaptationBinding: Binding<VolumeAdaptationMode?> {
+        Binding(
+            get: { current.volumeAdaptation },
+            set: { value in
+                store.updateFeedSettings(for: feedId) { $0.volumeAdaptation = value }
             }
         )
     }
