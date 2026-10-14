@@ -420,33 +420,39 @@ struct HistoryView: View {
                     )
                     .tag(item.episode.id)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            store.removeFromHistory(item.episode.id)
-                        } label: {
-                            Label("Remove", systemImage: "trash")
-                        }
-                        .accessibilityLabel(String(localized: "Remove from History"))
-                        .accessibilityHint(
-                            String(localized: "Removes this episode from History by clearing its played status and saved playback position so it counts as unplayed again. No confirmation. Does not unsubscribe, delete downloads, clear the queue, or remove favorites.")
-                        )
-                    }
-                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                        Button {
-                            store.togglePlayed(item.episode.id)
-                        } label: {
-                            Label(
-                                store.isPlayed(item.episode.id)
-                                    ? String(localized: "Mark unplayed")
-                                    : String(localized: "Mark played"),
-                                systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
+                        // Android SwipeActions: user-configurable; Default keeps these buttons.
+                        SwipeSlot(.history, .trailing, episode: item.episode) {
+                            Button(role: .destructive) {
+                                store.removeFromHistory(item.episode.id)
+                            } label: {
+                                Label("Remove", systemImage: "trash")
+                            }
+                            .accessibilityLabel(String(localized: "Remove from History"))
+                            .accessibilityHint(
+                                String(localized: "Removes this episode from History by clearing its played status and saved playback position so it counts as unplayed again. No confirmation. Does not unsubscribe, delete downloads, clear the queue, or remove favorites.")
                             )
                         }
-                        .tint(.blue)
-                        .accessibilityHint(
-                            store.isPlayed(item.episode.id)
-                                ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
-                                : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
-                        )
+                    }
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        // Android SwipeActions: user-configurable; Default keeps these buttons.
+                        SwipeSlot(.history, .leading, episode: item.episode) {
+                            Button {
+                                store.togglePlayed(item.episode.id)
+                            } label: {
+                                Label(
+                                    store.isPlayed(item.episode.id)
+                                        ? String(localized: "Mark unplayed")
+                                        : String(localized: "Mark played"),
+                                    systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
+                                )
+                            }
+                            .tint(.blue)
+                            .accessibilityHint(
+                                store.isPlayed(item.episode.id)
+                                    ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
+                                    : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
+                            )
+                        }
                     }
                 }
                 if let limit = settings.historySizeLimit.entryLimit {

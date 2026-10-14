@@ -519,65 +519,71 @@ struct DownloadsView: View {
                         }
                         .tag(item.episode.id)
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                            Button {
-                                store.togglePlayed(item.episode.id)
-                            } label: {
-                                Label(
+                            // Android SwipeActions: user-configurable; Default keeps these buttons.
+                            SwipeSlot(.downloads, .leading, episode: item.episode) {
+                                Button {
+                                    store.togglePlayed(item.episode.id)
+                                } label: {
+                                    Label(
+                                        store.isPlayed(item.episode.id)
+                                            ? String(localized: "Mark unplayed")
+                                            : String(localized: "Mark played"),
+                                        systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
+                                    )
+                                }
+                                .tint(.blue)
+                                .accessibilityHint(
                                     store.isPlayed(item.episode.id)
-                                        ? String(localized: "Mark unplayed")
-                                        : String(localized: "Mark played"),
-                                    systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
+                                        ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
+                                        : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
                                 )
                             }
-                            .tint(.blue)
-                            .accessibilityHint(
-                                store.isPlayed(item.episode.id)
-                                    ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
-                                    : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
-                            )
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button {
-                                store.playNext(
-                                    item.episode,
-                                    currentlyPlayingId: playback.currentEpisode?.id
-                                )
-                            } label: {
-                                Label("Play Next", systemImage: "text.insert")
-                            }
-                            .tint(.teal)
-                            .accessibilityHint(
-                                String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
-                            )
-                            if store.isInQueue(item.episode.id) {
-                                Button(role: .destructive) {
-                                    episodePendingRemoveFromQueue = item.episode
-                                } label: {
-                                    Label("Remove from queue", systemImage: "minus.circle")
-                                }
-                                .accessibilityHint(
-                                    String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
-                                )
-                            } else {
+                            // Android SwipeActions: user-configurable; Default keeps these buttons.
+                            SwipeSlot(.downloads, .trailing, episode: item.episode) {
                                 Button {
-                                    store.enqueue(item.episode)
+                                    store.playNext(
+                                        item.episode,
+                                        currentlyPlayingId: playback.currentEpisode?.id
+                                    )
                                 } label: {
-                                    Label("Add to queue", systemImage: "text.append")
+                                    Label("Play Next", systemImage: "text.insert")
                                 }
-                                .tint(.purple)
+                                .tint(.teal)
                                 .accessibilityHint(
-                                    String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
+                                    String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
+                                )
+                                if store.isInQueue(item.episode.id) {
+                                    Button(role: .destructive) {
+                                        episodePendingRemoveFromQueue = item.episode
+                                    } label: {
+                                        Label("Remove from queue", systemImage: "minus.circle")
+                                    }
+                                    .accessibilityHint(
+                                        String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
+                                    )
+                                } else {
+                                    Button {
+                                        store.enqueue(item.episode)
+                                    } label: {
+                                        Label("Add to queue", systemImage: "text.append")
+                                    }
+                                    .tint(.purple)
+                                    .accessibilityHint(
+                                        String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
+                                    )
+                                }
+                                Button(role: .destructive) {
+                                    episodePendingDelete = item.episode
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                                .accessibilityLabel(String(localized: "Delete download"))
+                                .accessibilityHint(
+                                    String(localized: "Asks for confirmation, then deletes the local offline file for this episode; keeps played status, queue membership, favorites, and archive state")
                                 )
                             }
-                            Button(role: .destructive) {
-                                episodePendingDelete = item.episode
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                            .accessibilityLabel(String(localized: "Delete download"))
-                            .accessibilityHint(
-                                String(localized: "Asks for confirmation, then deletes the local offline file for this episode; keeps played status, queue membership, favorites, and archive state")
-                            )
                         }
                     }
                 }

@@ -1242,69 +1242,75 @@ struct FeedDetailView: View {
                     ForEach(visibleEpisodes) { episode in
                         EpisodeRow(episode: episode, feedTitle: feedDisplayTitle)
                             .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                                Button {
-                                    store.togglePlayed(episode.id)
-                                } label: {
-                                    Label(
+                                // Android SwipeActions: user-configurable; Default keeps these buttons.
+                                SwipeSlot(.feed, .leading, episode: episode) {
+                                    Button {
+                                        store.togglePlayed(episode.id)
+                                    } label: {
+                                        Label(
+                                            store.isPlayed(episode.id)
+                                                ? String(localized: "Mark unplayed")
+                                                : String(localized: "Mark played"),
+                                            systemImage: store.isPlayed(episode.id) ? "circle" : "checkmark.circle"
+                                        )
+                                    }
+                                    .tint(.blue)
+                                    .accessibilityHint(
                                         store.isPlayed(episode.id)
-                                            ? String(localized: "Mark unplayed")
-                                            : String(localized: "Mark played"),
-                                        systemImage: store.isPlayed(episode.id) ? "circle" : "checkmark.circle"
+                                            ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
+                                            : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
                                     )
+                                    Button {
+                                        store.toggleArchived(episode.id)
+                                    } label: {
+                                        Label(
+                                            store.isArchived(episode.id) ? String(localized: "Restore") : String(localized: "Archive"),
+                                            systemImage: store.isArchived(episode.id) ? "arrow.uturn.backward" : "archivebox"
+                                        )
+                                    }
+                                    .tint(store.isArchived(episode.id) ? .green : .orange)
                                 }
-                                .tint(.blue)
-                                .accessibilityHint(
-                                    store.isPlayed(episode.id)
-                                        ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
-                                        : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
-                                )
-                                Button {
-                                    store.toggleArchived(episode.id)
-                                } label: {
-                                    Label(
-                                        store.isArchived(episode.id) ? String(localized: "Restore") : String(localized: "Archive"),
-                                        systemImage: store.isArchived(episode.id) ? "arrow.uturn.backward" : "archivebox"
-                                    )
-                                }
-                                .tint(store.isArchived(episode.id) ? .green : .orange)
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                Button {
-                                    store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
-                                } label: {
-                                    Label("Play Next", systemImage: "text.insert")
-                                }
-                                .tint(.teal)
-                                .accessibilityHint(
-                                    String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
-                                )
-                                if store.isInQueue(episode.id) {
-                                    Button(role: .destructive) {
-                                        episodePendingRemoveFromQueue = episode
-                                    } label: {
-                                        Label("Remove from queue", systemImage: "minus.circle")
-                                    }
-                                    .accessibilityHint(
-                                        String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
-                                    )
-                                } else {
+                                // Android SwipeActions: user-configurable; Default keeps these buttons.
+                                SwipeSlot(.feed, .trailing, episode: episode) {
                                     Button {
-                                        store.enqueue(episode)
+                                        store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
                                     } label: {
-                                        Label("Queue", systemImage: "text.append")
+                                        Label("Play Next", systemImage: "text.insert")
                                     }
-                                    .tint(.purple)
-                                }
-                                if let url = episode.shareURL(feed: liveFeed) {
-                                    ShareLink(
-                                        item: url,
-                                        subject: Text(episode.title),
-                                        message: Text(episode.shareMessage(feedTitle: feedDisplayTitle))
-                                    ) {
-                                        Label("Share", systemImage: "square.and.arrow.up")
+                                    .tint(.teal)
+                                    .accessibilityHint(
+                                        String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
+                                    )
+                                    if store.isInQueue(episode.id) {
+                                        Button(role: .destructive) {
+                                            episodePendingRemoveFromQueue = episode
+                                        } label: {
+                                            Label("Remove from queue", systemImage: "minus.circle")
+                                        }
+                                        .accessibilityHint(
+                                            String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
+                                        )
+                                    } else {
+                                        Button {
+                                            store.enqueue(episode)
+                                        } label: {
+                                            Label("Queue", systemImage: "text.append")
+                                        }
+                                        .tint(.purple)
                                     }
-                                    .tint(.indigo)
-                                    .accessibilityLabel(String(localized: "Share episode"))
+                                    if let url = episode.shareURL(feed: liveFeed) {
+                                        ShareLink(
+                                            item: url,
+                                            subject: Text(episode.title),
+                                            message: Text(episode.shareMessage(feedTitle: feedDisplayTitle))
+                                        ) {
+                                            Label("Share", systemImage: "square.and.arrow.up")
+                                        }
+                                        .tint(.indigo)
+                                        .accessibilityLabel(String(localized: "Share episode"))
+                                    }
                                 }
                             }
                     }

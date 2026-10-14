@@ -476,54 +476,60 @@ struct QueueView: View {
                         feedTitle: store.displayTitle(containingEpisodeId: episode.id)
                     )
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            // Same path as Full Player Remove from queue — confirm first.
-                            episodePendingRemove = episode
-                        } label: {
-                            Label("Remove", systemImage: "minus.circle")
+                        // Android SwipeActions: user-configurable; Default keeps these buttons.
+                        SwipeSlot(.queue, .trailing, episode: episode) {
+                            Button(role: .destructive) {
+                                // Same path as Full Player Remove from queue — confirm first.
+                                episodePendingRemove = episode
+                            } label: {
+                                Label("Remove", systemImage: "minus.circle")
+                            }
+                            .accessibilityHint(
+                                String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
+                            )
                         }
-                        .accessibilityHint(
-                            String(localized: "Asks for confirmation, then removes this episode from the queue only. Does not delete the download, mark played, or stop playback.")
-                        )
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                        Button {
-                            store.togglePlayed(episode.id)
-                        } label: {
-                            Label(
+                        // Android SwipeActions: user-configurable; Default keeps these buttons.
+                        SwipeSlot(.queue, .leading, episode: episode) {
+                            Button {
+                                store.togglePlayed(episode.id)
+                            } label: {
+                                Label(
+                                    store.isPlayed(episode.id)
+                                        ? String(localized: "Mark unplayed")
+                                        : String(localized: "Mark played"),
+                                    systemImage: store.isPlayed(episode.id) ? "circle" : "checkmark.circle"
+                                )
+                            }
+                            .tint(.blue)
+                            .accessibilityHint(
                                 store.isPlayed(episode.id)
-                                    ? String(localized: "Mark unplayed")
-                                    : String(localized: "Mark played"),
-                                systemImage: store.isPlayed(episode.id) ? "circle" : "checkmark.circle"
+                                    ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
+                                    : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
                             )
-                        }
-                        .tint(.blue)
-                        .accessibilityHint(
-                            store.isPlayed(episode.id)
-                                ? String(localized: "Marks this episode as unplayed. No confirmation. Does not delete downloads, remove from queue, or stop playback.")
-                                : String(localized: "Marks this episode as played. No confirmation. Removes it from the queue. May reset playback position and auto-delete the download when those settings are enabled.")
-                        )
-                        Button {
-                            // Archived episodes stay in the queue, so this swipe must undo
-                            // as well as archive — same toggle as the row button. A one-way
-                            // archive() leaves the action labeled Archive and does nothing.
-                            store.toggleArchived(episode.id)
-                        } label: {
-                            Label(
+                            Button {
+                                // Archived episodes stay in the queue, so this swipe must undo
+                                // as well as archive — same toggle as the row button. A one-way
+                                // archive() leaves the action labeled Archive and does nothing.
+                                store.toggleArchived(episode.id)
+                            } label: {
+                                Label(
+                                    store.isArchived(episode.id)
+                                        ? String(localized: "Restore")
+                                        : String(localized: "Archive"),
+                                    systemImage: store.isArchived(episode.id)
+                                        ? "arrow.uturn.backward"
+                                        : "archivebox"
+                                )
+                            }
+                            .tint(store.isArchived(episode.id) ? .green : .orange)
+                            .accessibilityHint(
                                 store.isArchived(episode.id)
-                                    ? String(localized: "Restore")
-                                    : String(localized: "Archive"),
-                                systemImage: store.isArchived(episode.id)
-                                    ? "arrow.uturn.backward"
-                                    : "archivebox"
+                                    ? String(localized: "Restores this episode from the archive. No confirmation. Does not delete downloads, remove from queue, unfavorite, or mark played.")
+                                    : String(localized: "Archives this episode and hides it from Inbox without marking it played. No confirmation. Does not delete downloads, remove from queue, or unfavorite.")
                             )
                         }
-                        .tint(store.isArchived(episode.id) ? .green : .orange)
-                        .accessibilityHint(
-                            store.isArchived(episode.id)
-                                ? String(localized: "Restores this episode from the archive. No confirmation. Does not delete downloads, remove from queue, unfavorite, or mark played.")
-                                : String(localized: "Archives this episode and hides it from Inbox without marking it played. No confirmation. Does not delete downloads, remove from queue, or unfavorite.")
-                        )
                     }
                 }
                 .onMove(perform: canReorder ? { source, destination in
