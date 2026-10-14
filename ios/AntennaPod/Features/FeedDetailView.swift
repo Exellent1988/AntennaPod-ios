@@ -1701,6 +1701,11 @@ struct FeedDetailView: View {
 
     @ViewBuilder
     private var feedDetailCore: some View {
+        feedConfirmDialogsStageB(feedConfirmDialogsStageA(feedDetailList))
+    }
+
+    /// List + toolbar; confirmation dialogs are staged separately so CI type-checks them in time.
+    private var feedDetailList: some View {
         List {
             feedChannelInfoRows
             feedChannelExtrasRows
@@ -1718,6 +1723,10 @@ struct FeedDetailView: View {
         .toolbar {
             feedDetailToolbar
         }
+    }
+
+    private func feedConfirmDialogsStageA<Content: View>(_ content: Content) -> some View {
+        content
         .confirmationDialog(
             "Download all unplayed?",
             isPresented: $showDownloadAllConfirm,
@@ -1789,6 +1798,10 @@ struct FeedDetailView: View {
                 "Appends \(enqueueAllUnplayedFromFeedCandidates.count) unplayed episodes from this podcast to the end of the queue in this podcast’s episode sort order (per-feed or global). Played, archived, and already queued episodes are skipped. Uses the full feed episode catalog (same honesty as Download all unplayed / Mark all as played), not the chip or search filter. Queue lock does not block enqueue."
             )
         }
+    }
+
+    private func feedConfirmDialogsStageB<Content: View>(_ content: Content) -> some View {
+        content
         .confirmationDialog(
             "Add all to queue?",
             isPresented: $showEnqueueAllConfirm,
