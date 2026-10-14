@@ -46,6 +46,7 @@ private enum StorageLimitPickerChoice: String, CaseIterable, Identifiable {
 /// Settings tab: preferences Form with `.searchable` filter on section/row titles (+ footnotes where listed).
 /// Empty sections hide while filtering; empty state when no matches. NavigationLinks stay live for visible rows.
 struct SettingsView: View {
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
@@ -528,6 +529,12 @@ struct SettingsView: View {
                     }
                 }
                 .navigationTitle("Settings")
+                // Settings is presented as a sheet from Home (RootTabView), not a tab.
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { dismiss() }
+                    }
+                }
                 .searchable(text: $searchText, prompt: "Search settings")
                 .onChange(of: searchText) { _, newValue in
                     scheduleFilter(for: newValue)
