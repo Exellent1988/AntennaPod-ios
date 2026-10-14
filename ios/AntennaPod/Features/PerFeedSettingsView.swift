@@ -275,6 +275,12 @@ struct PerFeedSettingsView: View {
                     }
                 }
                 .accessibilityHint(String(localized: "Use global or a per-podcast gain: reduce a loud podcast or boost a quiet one. Applies immediately if an episode from this podcast is playing. HLS streams are not processed."))
+                Picker("Skip silence", selection: skipSilenceBinding) {
+                    Text("Use global (\(appSettings.skipSilenceEnabled ? String(localized: "On") : String(localized: "Off")))").tag(Optional<Bool>.none)
+                    Text("On").tag(Optional(true))
+                    Text("Off").tag(Optional(false))
+                }
+                .accessibilityHint(String(localized: "Use global, On, or Off for this podcast. When on, silent parts play faster and normal speed resumes when sound returns. Applies immediately if an episode from this podcast is playing."))
             } header: {
                 Text("Playback")
             }
@@ -757,6 +763,15 @@ struct PerFeedSettingsView: View {
             get: { current.skipOutroSeconds },
             set: { value in
                 store.updateFeedSettings(for: feedId) { $0.skipOutroSeconds = value }
+            }
+        )
+    }
+
+    private var skipSilenceBinding: Binding<Bool?> {
+        Binding(
+            get: { current.skipSilence },
+            set: { value in
+                store.updateFeedSettings(for: feedId) { $0.skipSilence = value }
             }
         )
     }
