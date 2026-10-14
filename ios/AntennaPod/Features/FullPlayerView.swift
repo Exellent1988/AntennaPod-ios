@@ -185,8 +185,6 @@ struct FullPlayerView: View {
                         playerContent(episode: episode)
                     } else {
                         playerContent(episode: episode)
-                            .searchable(text: $chapterSearchText, prompt: "Search chapters")
-                            .modifier(MinimizedSearchToolbar())
                             .onChange(of: chapterSearchText) { _, newValue in
                                 scheduleChapterFilter(for: newValue)
                             }
@@ -896,6 +894,26 @@ struct FullPlayerView: View {
                         String(localized: "Opens the system share sheet with the episode title and full chapter table of contents. Ignores the chapters search filter. Does not fetch remote or media chapters.")
                     )
                 }
+                // Inline chapter search (a `.searchable` bar floated over the player controls on iOS 26).
+                HStack {
+                    Image(systemName: "magnifyingglass")
+                        .foregroundStyle(.secondary)
+                    TextField(String(localized: "Search chapters"), text: $chapterSearchText)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                    if !chapterSearchText.isEmpty {
+                        Button {
+                            chapterSearchText = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(String(localized: "Clear search"))
+                    }
+                }
+                .padding(8)
+                .background(Color.secondary.opacity(0.12), in: RoundedRectangle(cornerRadius: 10))
                 if isFilteringChapters && filteredChapterIndices.isEmpty {
                     ContentUnavailableView(
                         "No matching chapters",
@@ -2127,17 +2145,5 @@ struct FullPlayerView: View {
             return String(format: "-%d:%02d:%02d", h, m, s)
         }
         return String(format: "-%d:%02d", m, s)
-    }
-}
-
-/// iOS 26 puts `.searchable` at the bottom, over the player controls; collapse it into a
-/// toolbar button there. Earlier iOS keeps the default (navigation bar drawer).
-private struct MinimizedSearchToolbar: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 26.0, *) {
-            content.searchToolbarBehavior(.minimize)
-        } else {
-            content
-        }
     }
 }
