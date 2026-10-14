@@ -40,6 +40,7 @@ struct RootTabView: View {
             .onAppear {
                 // A pre-change SceneStorage value can still hold the old Settings tab.
                 if selectedTab == .settings { selectedTab = .home }
+                applyDebugLaunchArguments()
             }
             .sheet(isPresented: $showSettings) {
                 SettingsView()
@@ -250,5 +251,20 @@ struct RootTabView: View {
                 subscribeLinkPreview = FeedPreviewRequest(feedUrl: feedUrl)
             }
         }
+    }
+
+    /// Simulator screenshots: `-APDebugTab <home|inbox|subscriptions|queue|downloads>` picks the start
+    /// tab, `-APDebugOpenSettings` opens the Settings sheet. Compiled out of release builds.
+    private func applyDebugLaunchArguments() {
+        #if DEBUG
+        let args = ProcessInfo.processInfo.arguments
+        if let i = args.firstIndex(of: "-APDebugTab"), i + 1 < args.count,
+           let tab = RootTab(rawValue: args[i + 1]), tab != .settings {
+            selectedTab = tab
+        }
+        if args.contains("-APDebugOpenSettings") {
+            showSettings = true
+        }
+        #endif
     }
 }
