@@ -28,12 +28,6 @@ enum SubscriptionsCounterMode: String, CaseIterable, Identifiable {
     }
 }
 
-enum SubscriptionsDisplayKeys {
-    static let mode = "subscriptions.displayMode"
-    static let columns = "subscriptions.gridColumns"
-    static let counter = "subscriptions.counterMode"
-}
-
 /// Grid cell: cover art, title, counter badge (Android SubscriptionViewHolder grid layout).
 struct SubscriptionGridCell: View {
     let feed: PodcastFeed

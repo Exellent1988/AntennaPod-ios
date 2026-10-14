@@ -7,9 +7,6 @@ struct SubscriptionsView: View {
     @EnvironmentObject private var parental: ParentalControls
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var downloads: DownloadService
-    @AppStorage(SubscriptionsDisplayKeys.mode) private var displayMode: SubscriptionsDisplayMode = .list
-    @AppStorage(SubscriptionsDisplayKeys.columns) private var gridColumns: Int = 3
-    @AppStorage(SubscriptionsDisplayKeys.counter) private var counterMode: SubscriptionsCounterMode = .unplayed
     @Environment(\.openURL) private var openURL
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
     @State private var path = NavigationPath()
@@ -555,7 +552,7 @@ struct SubscriptionsView: View {
             } else {
                 ForEach(groupedSections, id: \.title) { section in
                     Section(section.title) {
-                        if displayMode == .grid {
+                        if settings.subscriptionsDisplayMode == .grid {
                             feedGrid(section.feeds, remaining: remainingByFeedId)
                         } else {
                             ForEach(section.feeds) { feed in
@@ -622,15 +619,15 @@ struct SubscriptionsView: View {
                     Text("Sort")
                 }
                 // Android subscriptions.xml: display list/grid, number of columns, counter.
-                Picker(selection: $displayMode) {
+                Picker(selection: $settings.subscriptionsDisplayMode) {
                     ForEach(SubscriptionsDisplayMode.allCases) { mode in
                         Text(mode.label).tag(mode)
                     }
                 } label: {
                     Text("Display")
                 }
-                if displayMode == .grid {
-                    Picker(selection: $gridColumns) {
+                if settings.subscriptionsDisplayMode == .grid {
+                    Picker(selection: $settings.subscriptionsGridColumns) {
                         ForEach(2...5, id: \.self) { n in
                             Text("\(n) columns").tag(n)
                         }
@@ -638,7 +635,7 @@ struct SubscriptionsView: View {
                         Text("Number of columns")
                     }
                 }
-                Picker(selection: $counterMode) {
+                Picker(selection: $settings.subscriptionsCounterMode) {
                     ForEach(SubscriptionsCounterMode.allCases) { mode in
                         Text(mode.label).tag(mode)
                     }
@@ -1050,7 +1047,7 @@ struct SubscriptionsView: View {
 
     /// Badge number for the chosen counter mode (Android subscriptions_counter).
     private func counterValue(_ feed: PodcastFeed, unplayed: Int) -> Int {
-        switch counterMode {
+        switch settings.subscriptionsCounterMode {
         case .none: return 0
         case .unplayed: return unplayed
         case .downloaded:
@@ -1062,7 +1059,7 @@ struct SubscriptionsView: View {
     /// Android grid mode (subscription_num_columns): cover cells, same tap/long-press targets as rows.
     private func feedGrid(_ feeds: [PodcastFeed], remaining: [UUID: FeedUnplayedRemainingSummary]) -> some View {
         LazyVGrid(
-            columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: min(max(gridColumns, 2), 5)),
+            columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: min(max(settings.subscriptionsGridColumns, 2), 5)),
             spacing: 12
         ) {
             ForEach(feeds) { feed in

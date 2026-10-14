@@ -40,7 +40,8 @@ enum SwipeList: String, CaseIterable, Identifiable {
     }
 
     func key(_ edge: HorizontalEdge) -> String {
-        "swipe.\(rawValue).\(edge == .leading ? "leading" : "trailing")"
+        // AppSettings.swipeActions key; the pre-AppSettings @AppStorage key was "swipe." + this.
+        "\(rawValue).\(edge == .leading ? "leading" : "trailing")"
     }
 }
 
@@ -48,17 +49,20 @@ enum SwipeList: String, CaseIterable, Identifiable {
 struct SwipeSlot<Standard: View>: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var downloads: DownloadService
-    @AppStorage private var raw: String
+    @EnvironmentObject private var settings: AppSettings
+    let list: SwipeList
+    let edge: HorizontalEdge
     let episode: PodcastEpisode
     let standard: Standard
 
     init(_ list: SwipeList, _ edge: HorizontalEdge, episode: PodcastEpisode, @ViewBuilder standard: () -> Standard) {
-        _raw = AppStorage(wrappedValue: EpisodeSwipeAction.standard.rawValue, list.key(edge))
+        self.list = list
+        self.edge = edge
         self.episode = episode
         self.standard = standard()
     }
 
-    private var action: EpisodeSwipeAction { EpisodeSwipeAction(rawValue: raw) ?? .standard }
+    private var action: EpisodeSwipeAction { settings.swipeAction(list, edge) }
 
     var body: some View {
         switch action {
@@ -125,40 +129,32 @@ struct SwipeSlot<Standard: View>: View {
 
 /// Settings → User interface → Swipe actions (Android SwipeActionsDialog per screen).
 struct SwipeActionsSettingsView: View {
+    @EnvironmentObject private var settings: AppSettings
+
     var body: some View {
         Form {
             ForEach(SwipeList.allCases) { list in
                 Section(list.label) {
-                    SwipeActionPicker(title: String(localized: "Swipe right"), key: list.key(.leading))
-                    SwipeActionPicker(title: String(localized: "Swipe left"), key: list.key(.trailing))
+                    picker(String(localized: "Swipe right"), list, .leading)
+                    picker(String(localized: "Swipe left"), list, .trailing)
                 }
             }
             Section {
                 Button("Reset to defaults", role: .destructive) {
-                    for list in SwipeList.allCases {
-                        UserDefaults.standard.removeObject(forKey: list.key(.leading))
-                        UserDefaults.standard.removeObject(forKey: list.key(.trailing))
-                    }
+                    settings.swipeActions = [:]
                 }
             }
         }
         .navigationTitle("Swipe actions")
     }
-}
 
-private struct SwipeActionPicker: View {
-    let title: String
-    @AppStorage private var raw: String
-
-    init(title: String, key: String) {
-        self.title = title
-        _raw = AppStorage(wrappedValue: EpisodeSwipeAction.standard.rawValue, key)
-    }
-
-    var body: some View {
-        Picker(title, selection: $raw) {
+    private func picker(_ title: String, _ list: SwipeList, _ edge: HorizontalEdge) -> some View {
+        Picker(title, selection: Binding(
+            get: { settings.swipeAction(list, edge) },
+            set: { settings.setSwipeAction($0, list, edge) }
+        )) {
             ForEach(EpisodeSwipeAction.allCases) { action in
-                Text(action.label).tag(action.rawValue)
+                Text(action.label).tag(action)
             }
         }
     }
