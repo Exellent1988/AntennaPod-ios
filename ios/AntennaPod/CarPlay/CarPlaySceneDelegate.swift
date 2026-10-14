@@ -6,7 +6,7 @@ import UIKit
 /// Queue (with a "Currently playing" section), Downloads, Episodes, Subscriptions → podcast episodes.
 /// Lists update live (debounced) and show artwork, progress, and the playing indicator.
 /// Requires the `com.apple.developer.carplay-audio` entitlement (Apple-granted) to appear in CarPlay.
-final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate {
+final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate, CPNowPlayingTemplateObserver {
     private var interfaceController: CPInterfaceController?
     private var tabs: [CarPlayTab: CPListTemplate] = [:]
     private var episodeLists: [(feedId: UUID, template: CPListTemplate)] = []
@@ -26,6 +26,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
                 ordered.append(t)
             }
             self.reloadAll()
+            self.configureNowPlaying()
             interfaceController.setRootTemplate(CPTabBarTemplate(templates: ordered), animated: false, completion: nil)
             self.observeStores()
         }
@@ -36,6 +37,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         didDisconnectInterfaceController interfaceController: CPInterfaceController
     ) {
         cancellables.removeAll()
+        CPNowPlayingTemplate.shared.remove(self)
         episodeLists.removeAll()
         rendered.removeAll()
         tabs.removeAll()
@@ -174,6 +176,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         } }
         guard rendered[key] != marked else { return }
         rendered[key] = marked
+        CarPlayArtworkLoader.shared.prefetch(CarPlayBrowseModel.uniqueArtworkURLs(sections.flatMap(\.1)))
         template.updateSections(sections.map { header, rows in
             CPListSection(items: rows.map { listItem($0, playingId: playingId) }, header: header, sectionIndexTitle: nil)
         })
@@ -237,6 +240,40 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         }
         return item
     }
+
+    // MARK: Now Playing
+
+    /// Rate button (cycles Settings speed presets, like the app's speed chip) and Up Next → Queue.
+    /// Skip ± buttons come from MPRemoteCommandCenter skip commands (Settings intervals).
+    @MainActor private func configureNowPlaying() {
+        let np = CPNowPlayingTemplate.shared
+        np.add(self)
+        np.isUpNextButtonEnabled = true
+        np.upNextTitle = String(localized: "Up Next")
+        np.isAlbumArtistButtonEnabled = false
+        let rate = CPNowPlayingPlaybackRateButton { _ in
+            Task { @MainActor in AppServices.playback?.cycleToNextSpeedPreset() }
+        }
+        np.updateNowPlayingButtons([rate])
+    }
+
+    func nowPlayingTemplateUpNextButtonTapped(_ nowPlayingTemplate: CPNowPlayingTemplate) {
+        Task { @MainActor in
+            guard let store = AppServices.store else { return }
+            let t = CPListTemplate(title: String(localized: "Up Next"), sections: [])
+            t.emptyViewTitleVariants = [String(localized: "Queue is empty")]
+            let currentId = AppServices.playback?.currentEpisode?.id
+            let upcoming = CarPlayParity.upNext(queueIds: store.queue.map(\.id), currentId: currentId)
+            let byId = Dictionary(store.queue.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+            let rows = upcoming.prefix(self.limit).compactMap { byId[$0] }.map {
+                self.row(self.info($0, feed: store.feed(containingEpisodeId: $0.id)))
+            }
+            self.apply([(nil, rows)], to: t)
+            self.interfaceController?.pushTemplate(t, animated: true, completion: nil)
+        }
+    }
+
+    func nowPlayingTemplateAlbumArtistButtonTapped(_ nowPlayingTemplate: CPNowPlayingTemplate) {}
 
     // MARK: Playback
 
