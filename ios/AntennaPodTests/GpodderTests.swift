@@ -233,3 +233,35 @@ final class GpodderSyncLogicTests: XCTestCase {
         XCTAssertNil(GpodderEpisodeAction.parseTimestamp("yesterday"))
     }
 }
+
+final class GpodderRemovalAndParallelImportTests: XCTestCase {
+    func testRemoteRemovalUnsubscribesMatchingLocalFeeds() {
+        let urls = GpodderSyncLogic.feedsToUnsubscribe(
+            remove: ["https://A.example/feed/", "https://b.example/feed", "https://gone.example/rss"],
+            add: ["https://b.example/feed"],
+            localFeedURLs: ["https://a.example/feed", "https://b.example/feed", "https://keep.example/rss"]
+        )
+        XCTAssertEqual(urls, ["https://a.example/feed"])
+    }
+
+    func testRunBoundedLimitsConcurrencyAndKeepsPerItemErrors() async {
+        actor Counter {
+            var current = 0
+            var peak = 0
+            func enter() { current += 1; peak = max(peak, current) }
+            func leave() { current -= 1 }
+        }
+        let counter = Counter()
+        let items = (0..<12).map { "https://f\($0).example/rss" }
+        let errors = await GpodderSyncLogic.runBounded(items, maxConcurrent: 4, operation: { url in
+            await counter.enter()
+            try? await Task.sleep(nanoseconds: 20_000_000)
+            await counter.leave()
+            if url.contains("f3.") || url.contains("f7.") { throw URLError(.badServerResponse) }
+        })
+        let peak = await counter.peak
+        XCTAssertLessThanOrEqual(peak, 4)
+        XCTAssertGreaterThan(peak, 1)
+        XCTAssertEqual(errors.map(\.0), ["https://f3.example/rss", "https://f7.example/rss"])
+    }
+}

@@ -19,6 +19,53 @@ enum GpodderSyncLogic {
         return result
     }
 
+    /// Local feed URLs to unsubscribe for a server `remove` list (incremental sync only).
+    /// A URL that is also in `add` is kept (re-subscribed on another device in the same window).
+    static func feedsToUnsubscribe(remove: [String], add: [String], localFeedURLs: [String]) -> [String] {
+        let addKeys = Set(add.map(GpodderSyncService.normalizeFeedURL))
+        let removeKeys = Set(remove.map(GpodderSyncService.normalizeFeedURL).filter { !$0.isEmpty })
+            .subtracting(addKeys)
+        return localFeedURLs.filter { removeKeys.contains(GpodderSyncService.normalizeFeedURL($0)) }
+    }
+
+    /// Runs `operation` for every item with at most `maxConcurrent` in flight.
+    /// Returns per-item errors (item, message) in input order; `progress(done)` after each item.
+    static func runBounded(
+        _ items: [String],
+        maxConcurrent: Int,
+        operation: @escaping @Sendable (String) async throws -> Void,
+        progress: @escaping @Sendable (Int) async -> Void = { _ in }
+    ) async -> [(String, String)] {
+        let limit = max(1, maxConcurrent)
+        var errors: [Int: (String, String)] = [:]
+        var done = 0
+        await withTaskGroup(of: (Int, String?).self) { group in
+            var next = 0
+            func addNext() {
+                guard next < items.count else { return }
+                let index = next
+                let item = items[index]
+                next += 1
+                group.addTask {
+                    do {
+                        try await operation(item)
+                        return (index, nil)
+                    } catch {
+                        return (index, error.localizedDescription)
+                    }
+                }
+            }
+            for _ in 0..<min(limit, items.count) { addNext() }
+            while let (index, message) = await group.next() {
+                if let message { errors[index] = (items[index], message) }
+                done += 1
+                await progress(done)
+                addNext()
+            }
+        }
+        return errors.keys.sorted().compactMap { errors[$0] }
+    }
+
     /// Local episode identity for matching gpodder actions (`podcast` feed URL + `episode` media URL, or guid).
     struct EpisodeRef: Equatable {
         var episodeId: String

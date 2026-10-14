@@ -2935,7 +2935,7 @@ struct SettingsView: View {
                     }
                 }
                 .disabled(gpodder.isBusy)
-                .accessibilityHint(String(localized: "Syncs http(s) subscription feed URLs (pulls missing remotes, pushes local URLs not on the server; additive — remote removes do not unsubscribe local feeds) and episode play actions (position and played, newest wins, matched by media URL). Does not sync queue, bookmarks, tags, downloads, or local folders. Writes Last sync when finished; Login alone does not."))
+                .accessibilityHint(String(localized: "Syncs http(s) subscription feed URLs (pulls missing remotes, pushes local URLs not on the server; feeds removed on the server are unsubscribed here, downloads stay) and episode play actions (position and played, newest wins, matched by media URL). Does not sync queue, bookmarks, tags, downloads, or local folders. Writes Last sync when finished; Login alone does not."))
                 Button("Logout", role: .destructive) {
                     gpodder.logout()
                 }
@@ -3088,9 +3088,9 @@ struct SettingsView: View {
     private var gpodderHelpText: String {
         switch gpodder.provider {
         case .gpodderNet:
-            return String(localized: "Beta: Import all subscriptions subscribes every feed on your account (all devices). Sync now merges http(s) feed URLs (additive — remote removes do not unsubscribe local feeds) and episode play actions (position / played). Pick an existing device or create one. Password in Keychain (never plaintext Settings/backup). Local-only: queue, favorites, bookmarks, tags, downloads, local folder feeds, archive, inbox. Default host https://gpodder.net (editable, self-hosted servers such as opodsync work too).")
+            return String(localized: "Beta: Import all subscriptions subscribes every feed on your account (all devices). Sync now merges http(s) feed URLs (feeds removed on the server are unsubscribed here, downloads stay) and episode play actions (position / played). Pick an existing device or create one. Password in Keychain (never plaintext Settings/backup). Local-only: queue, favorites, bookmarks, tags, downloads, local folder feeds, archive, inbox. Default host https://gpodder.net (editable, self-hosted servers such as opodsync work too).")
         case .nextcloud:
-            return String(localized: "Nextcloud Gpodder Sync (beta): Import all subscriptions subscribes every feed on the server; Sync now merges http(s) feed URLs (additive — remote removes do not unsubscribe local feeds) and episode play actions (position / played). Local-only: queue, favorites, bookmarks, tags, downloads, local folder feeds, archive, inbox. Enter the Nextcloud server root (e.g. https://cloud.example.com) or the full API root ending in /index.php/apps/gpoddersync/. HTTP Basic — use a Nextcloud app password. Requires the Gpodder Sync app on the server. Nextcloud has no device API, so there is no device list. Password in Keychain.")
+            return String(localized: "Nextcloud Gpodder Sync (beta): Import all subscriptions subscribes every feed on the server; Sync now merges http(s) feed URLs (feeds removed on the server are unsubscribed here, downloads stay) and episode play actions (position / played). Local-only: queue, favorites, bookmarks, tags, downloads, local folder feeds, archive, inbox. Enter the Nextcloud server root (e.g. https://cloud.example.com) or the full API root ending in /index.php/apps/gpoddersync/. HTTP Basic — use a Nextcloud app password. Requires the Gpodder Sync app on the server. Nextcloud has no device API, so there is no device list. Password in Keychain.")
         }
     }
 

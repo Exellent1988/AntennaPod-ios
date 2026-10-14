@@ -9,6 +9,8 @@ import Foundation
 @MainActor
 final class GpodderSyncService: ObservableObject {
     static let defaultHost = "https://gpodder.net"
+    /// Max feeds fetched at once during import / sync pull.
+    static let importConcurrency = 5
 
     private enum Keys {
         static let provider = "gpodder.provider"
@@ -351,15 +353,20 @@ final class GpodderSyncService: ObservableObject {
         var subscribed = 0
         importFailures = []
         importProgress = todo.isEmpty ? nil : (0, todo.count)
-        for (index, url) in todo.enumerated() {
-            do {
-                try await store.subscribeQuietly(feedUrl: url)
-                subscribed += 1
-            } catch {
-                failures.append(GpodderImportFailure(url: url, message: error.localizedDescription))
+        // Bounded parallel fetches (feed download + parse dominate); merges stay on the MainActor.
+        let total = todo.count
+        let errors = await GpodderSyncLogic.runBounded(
+            todo,
+            maxConcurrent: Self.importConcurrency,
+            operation: { url in
+                _ = try await store.subscribeQuietly(feedUrl: url)
+            },
+            progress: { [weak self] done in
+                await MainActor.run { self?.importProgress = (done, total) }
             }
-            importProgress = (index + 1, todo.count)
-        }
+        )
+        failures = errors.map { GpodderImportFailure(url: $0.0, message: $0.1) }
+        subscribed = todo.count - failures.count
         importProgress = nil
         importFailures = failures
         return (subscribed, max(0, distinctRemote - todo.count), failures)
@@ -428,10 +435,20 @@ final class GpodderSyncService: ObservableObject {
             let subscribed = pulled.subscribed
             let subscribeFailures = pulled.failures.map { "\($0.url): \($0.message)" }
 
-            // Remote removes are intentionally ignored locally (additive merge).
-            let ignoredRemoves = changes.remove.filter {
-                let n = Self.normalizeFeedURL($0)
-                return !n.isEmpty && localNormalized.contains(n)
+            // Remote removes unsubscribe locally on incremental syncs (since > 0). Uses the normal
+            // unsubscribe flow, which keeps downloaded files. A first sync has no meaningful remove list.
+            _ = localNormalized
+            var removedLocally = 0
+            if since > 0 {
+                let urls = GpodderSyncLogic.feedsToUnsubscribe(
+                    remove: changes.remove, add: changes.add, localFeedURLs: store.feeds.map(\.feedUrl)
+                )
+                for url in urls {
+                    if let feed = store.feeds.first(where: { $0.feedUrl == url }) {
+                        store.unsubscribe(feed)
+                        removedLocally += 1
+                    }
+                }
             }
 
             // Push: local http(s) URLs not known on server. Upload the original
@@ -476,8 +493,8 @@ final class GpodderSyncService: ObservableObject {
             parts.append(String(localized: "pulled \(changes.add.count) remote add(s)"))
             if subscribed > 0 { parts.append(String(localized: "subscribed \(subscribed) new")) }
             if !toUpload.isEmpty { parts.append(String(localized: "pushed \(toUpload.count) local http(s)")) }
-            if !ignoredRemoves.isEmpty {
-                parts.append(String(localized: "ignored \(ignoredRemoves.count) remote remove(s) (additive)"))
+            if removedLocally > 0 {
+                parts.append(String(localized: "unsubscribed \(removedLocally) removed on server"))
             }
             if localFolderOmitted > 0 {
                 parts.append(String(localized: "omitted \(localFolderOmitted) local folder feed(s)"))
