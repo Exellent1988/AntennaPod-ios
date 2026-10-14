@@ -2943,20 +2943,6 @@ struct SettingsView: View {
         String(localized: "Read-only note. This screen does not turn CarPlay on or off, start playback, or install templates. When audio is playing, CarPlay shows system Now Playing with play, pause, skip, and seek using the Settings Rewind and Fast-forward intervals — next and previous skip by those intervals. No custom CarPlay templates, scene, or entitlement in this beta. Background audio is already set. Not Siri Shortcuts, the homescreen widget, or Apple Watch.")
     }
 
-    @ViewBuilder
-    /// Prominent top entry so gpodder / Nextcloud sync is easy to find (the inline Sync section stays for search).
-    private var gpodderSyncEntrySection: some View {
-        Section {
-            NavigationLink {
-                Form { gpodderSyncSection }
-                    .navigationTitle(String(localized: "Sync & gpodder"))
-            } label: {
-                Label(String(localized: "Sync & gpodder"), systemImage: "arrow.triangle.2.circlepath.circle")
-            }
-            .accessibilityHint(String(localized: "Opens gpodder.net and Nextcloud sync: login, devices, Import all subscriptions, and Sync now."))
-        }
-    }
-
     private var gpodderSyncSection: some View {
         Section {
             Picker("Provider", selection: Binding(
