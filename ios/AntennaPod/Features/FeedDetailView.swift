@@ -3493,6 +3493,8 @@ struct EpisodeRow: View {
                     .accessibilityHint(String(localized: "Places this episode at the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."))
                 }
             }
+            // Android feeditemlist_context.xml extras shared by every list (remove from queue, delete, reset).
+            EpisodeContextMenu(episode: episode)
             Button {
                 showEpisodePrivateNote = true
             } label: {
