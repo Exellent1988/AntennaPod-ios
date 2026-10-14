@@ -1350,6 +1350,7 @@ final class AppSettings: ObservableObject {
         static let volumeAdaptationEnabled = "settings.volumeAdaptationEnabled"
         static let volumeBoostPercent = "settings.volumeBoostPercent"
         static let volumeAdaptationMode = "settings.volumeAdaptationMode"
+        static let skipSilenceLevel = "settings.skipSilenceLevel"
         static let skipSilenceEnabled = "settings.skipSilenceEnabled"
         static let stereoToMonoEnabled = "settings.stereoToMonoEnabled"
         static let preservePitchEnabled = "settings.preservePitchEnabled"
@@ -1681,6 +1682,13 @@ final class AppSettings: ObservableObject {
     @Published var volumeAdaptationMode: VolumeAdaptationMode {
         didSet {
             UserDefaults.standard.set(volumeAdaptationMode.rawValue, forKey: Keys.volumeAdaptationMode)
+        }
+    }
+
+    /// Global Skip silence aggressiveness used when Skip silence is on (Mild / Medium / Aggressive). Default Medium.
+    @Published var skipSilenceLevel: SkipSilenceLevel {
+        didSet {
+            UserDefaults.standard.set(skipSilenceLevel.rawValue, forKey: Keys.skipSilenceLevel)
         }
     }
 
@@ -2444,6 +2452,8 @@ final class AppSettings: ObservableObject {
         }
         volumeAdaptationMode = UserDefaults.standard.string(forKey: Keys.volumeAdaptationMode)
             .flatMap(VolumeAdaptationMode.init(rawValue:)) ?? .off
+        skipSilenceLevel = UserDefaults.standard.string(forKey: Keys.skipSilenceLevel)
+            .flatMap(SkipSilenceLevel.init(rawValue:)).flatMap { $0 == .off ? nil : $0 } ?? .medium
         if UserDefaults.standard.object(forKey: Keys.skipSilenceEnabled) != nil {
             skipSilenceEnabled = UserDefaults.standard.bool(forKey: Keys.skipSilenceEnabled)
         } else {
@@ -2895,6 +2905,7 @@ final class AppSettings: ObservableObject {
             volumeAdaptationEnabled: volumeAdaptationEnabled,
             volumeBoostPercent: volumeBoostPercent,
             volumeAdaptationMode: volumeAdaptationMode.rawValue,
+            skipSilenceLevel: skipSilenceLevel.rawValue,
             skipSilenceEnabled: skipSilenceEnabled,
             stereoToMonoEnabled: stereoToMonoEnabled,
             preservePitchEnabled: preservePitchEnabled,
@@ -3022,6 +3033,7 @@ final class AppSettings: ObservableObject {
         )
         volumeAdaptationMode = snap.volumeAdaptationMode.flatMap(VolumeAdaptationMode.init(rawValue:)) ?? .off
         skipSilenceEnabled = snap.skipSilenceEnabled ?? false
+        skipSilenceLevel = snap.skipSilenceLevel.flatMap(SkipSilenceLevel.init(rawValue:)).flatMap { $0 == .off ? nil : $0 } ?? .medium
         stereoToMonoEnabled = snap.stereoToMonoEnabled ?? false
         preservePitchEnabled = snap.preservePitchEnabled ?? true
         customUserAgent = AppUserAgent.sanitize(snap.customUserAgent ?? "")
@@ -3225,6 +3237,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var volumeBoostPercent: Int? = 100
     /// Global Volume adaptation (`VolumeAdaptationMode.rawValue`). Absent in older backups → off.
     var volumeAdaptationMode: String? = nil
+    /// Global Skip silence level (`SkipSilenceLevel.rawValue`). Absent in older backups → medium.
+    var skipSilenceLevel: String? = nil
     /// Absent in older backups → treated as off.
     var skipSilenceEnabled: Bool? = false
     /// Absent in older backups → treated as off (stereo / system default channel count).
@@ -3338,6 +3352,17 @@ extension VolumeAdaptationMode {
         case .lightBoost: return String(localized: "Light boost")
         case .mediumBoost: return String(localized: "Medium boost")
         case .heavyBoost: return String(localized: "Heavy boost")
+        }
+    }
+}
+
+extension SkipSilenceLevel {
+    var label: String {
+        switch self {
+        case .off: return String(localized: "Off")
+        case .mild: return String(localized: "Mild")
+        case .medium: return String(localized: "Medium")
+        case .aggressive: return String(localized: "Aggressive")
         }
     }
 }

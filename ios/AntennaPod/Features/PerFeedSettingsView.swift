@@ -276,10 +276,11 @@ struct PerFeedSettingsView: View {
                     }
                 }
                 .accessibilityHint(String(localized: "Use global or a per-podcast gain: reduce a loud podcast or boost a quiet one. Applies immediately if an episode from this podcast is playing. HLS streams are not processed."))
-                Picker("Skip silence", selection: skipSilenceBinding) {
-                    Text("Use global (\(globalSkipSilenceLabel))").tag(Optional<Bool>.none)
-                    Text("On").tag(Optional(true))
-                    Text("Off").tag(Optional(false))
+                Picker("Skip silence", selection: skipSilenceLevelBinding) {
+                    Text("Use global (\(globalSkipSilenceLabel))").tag(Optional<SkipSilenceLevel>.none)
+                    ForEach(SkipSilenceLevel.allCases) { level in
+                        Text(level.label).tag(Optional(level))
+                    }
                 }
                 .accessibilityHint(String(localized: "Use global, On, or Off for this podcast. When on, silent parts play faster and normal speed resumes when sound returns. Applies immediately if an episode from this podcast is playing."))
             } header: {
@@ -817,7 +818,24 @@ struct PerFeedSettingsView: View {
     }
 
     private var globalSkipSilenceLabel: String {
-        appSettings.skipSilenceEnabled ? String(localized: "On") : String(localized: "Off")
+        appSettings.skipSilenceEnabled ? appSettings.skipSilenceLevel.label : String(localized: "Off")
+    }
+
+    /// Writes the level and clears the older on/off override so the level is the single source.
+    private var skipSilenceLevelBinding: Binding<SkipSilenceLevel?> {
+        Binding(
+            get: {
+                if let level = current.skipSilenceLevel { return level }
+                if let on = current.skipSilence { return on ? appSettings.skipSilenceLevel : .off }
+                return nil
+            },
+            set: { value in
+                store.updateFeedSettings(for: feedId) {
+                    $0.skipSilenceLevel = value
+                    $0.skipSilence = nil
+                }
+            }
+        )
     }
 
     private var skipSilenceBinding: Binding<Bool?> {

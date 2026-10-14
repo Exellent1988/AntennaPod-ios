@@ -1777,7 +1777,9 @@ final class PlaybackService: ObservableObject {
     /// Push current Settings / FeedSettings into the live pipeline stages (cheap; no item rebuild).
     func refreshAudioPipelineParameters() {
         audioPipeline?.gain.gain = resolvedPipelineGain()
-        audioPipeline?.silence.isEnabled = resolvedSkipSilenceEnabled()
+        let level = resolvedSkipSilenceLevel()
+        audioPipeline?.silence.configure(level.detector)
+        audioPipeline?.silence.isEnabled = level != .off
     }
 
     // MARK: Skip silence
@@ -1788,13 +1790,23 @@ final class PlaybackService: ObservableObject {
     @Published private(set) var skipSilenceSecondsSaved: Double = 0
     private var skipSilenceStartedAt: Date?
 
-    /// Per-feed Skip silence override, else global (Android: per-feed + global prefs).
-    func resolvedSkipSilenceEnabled() -> Bool {
-        let global = settings?.skipSilenceEnabled ?? false
-        guard let episode = currentEpisode, let store,
-              let feed = store.feed(containingEpisodeId: episode.id) else { return global }
-        return SkipSilenceRate.isEnabled(feedOverride: store.feedSettings(for: feed.id).skipSilence, global: global)
+    /// Per-feed Skip silence level / on-off override, else global switch + level.
+    func resolvedSkipSilenceLevel() -> SkipSilenceLevel {
+        let globalOn = settings?.skipSilenceEnabled ?? false
+        let globalLevel = settings?.skipSilenceLevel ?? .medium
+        var feedSettings: FeedSettings?
+        if let episode = currentEpisode, let store, let feed = store.feed(containingEpisodeId: episode.id) {
+            feedSettings = store.feedSettings(for: feed.id)
+        }
+        return SkipSilenceLevel.resolved(
+            feedLevel: feedSettings?.skipSilenceLevel, feedEnabled: feedSettings?.skipSilence,
+            globalEnabled: globalOn, globalLevel: globalLevel
+        )
     }
+
+    func resolvedSkipSilenceEnabled() -> Bool { resolvedSkipSilenceLevel() != .off }
+
+    private var silenceRampTask: Task<Void, Never>?
 
     /// Player-screen toggle: flips the global preference (same as Android's player dialog).
     func toggleSkipSilence() {
@@ -1805,8 +1817,10 @@ final class PlaybackService: ObservableObject {
     /// Rate to hand AVPlayer: session/feed speed, sped up during detected silence.
     /// `rate` (the user-facing speed) is never changed by Skip silence.
     var effectivePlayerRate: Float {
-        let maxRate: Float = (player?.currentItem?.canPlayFastForward ?? false) ? Self.customPlaybackSpeedRange.upperBound : 2
-        return SkipSilenceRate.effectiveRate(base: rate, isSkipping: isSkippingSilence, maxRate: maxRate)
+        let maxRate: Float = (player?.currentItem?.canPlayFastForward ?? false) ? 4 : 2
+        guard isSkippingSilence else { return rate }
+        let speedup = resolvedSkipSilenceLevel().speedup
+        return max(rate, min(rate * speedup, maxRate))
     }
 
     private func handleSilenceStateChange(_ skipping: Bool, pipeline: PlayerAudioPipeline) {
@@ -1817,18 +1831,37 @@ final class PlaybackService: ObservableObject {
             // Wall time at fast rate t covered t·fast media seconds, which would take t·fast/base.
             let wall = Date().timeIntervalSince(start)
             let fast = effectivePlayerRate
-            skipSilenceSecondsSaved += SkipSilenceRate.timeSaved(mediaSeconds: wall * Double(fast), base: rate, fastRate: fast)
+            let saved = SkipSilenceRate.timeSaved(mediaSeconds: wall * Double(fast), base: rate, fastRate: fast)
+            skipSilenceSecondsSaved += saved
+            if let episode = currentEpisode {
+                store?.addSkipSilenceSaved(episodeId: episode.id, seconds: saved)
+            }
             skipSilenceStartedAt = nil
         }
         isSkippingSilence = skipping
+        rampPlayerRate(to: effectivePlayerRate)
+    }
+
+    /// Ramp AVPlayer.rate toward `target` in ≤0.5× steps every 30 ms (no audible jump).
+    private func rampPlayerRate(to target: Float) {
+        silenceRampTask?.cancel()
         guard let player, player.timeControlStatus == .playing else { return }
-        player.rate = effectivePlayerRate
+        let steps = RateRamp.steps(from: player.rate, to: target, maxStep: 0.5)
+        silenceRampTask = Task { @MainActor [weak self, weak player] in
+            for step in steps {
+                guard let self, let player, !Task.isCancelled, self.player === player,
+                      player.timeControlStatus == .playing else { return }
+                player.rate = step
+                try? await Task.sleep(nanoseconds: 30_000_000)
+            }
+        }
     }
 
     /// Hook for features that add stages to a freshly created pipeline (before the tap is attached).
     private func configureAudioPipelineStages(_ pipeline: PlayerAudioPipeline) {
         isSkippingSilence = false
         skipSilenceStartedAt = nil
+        silenceRampTask?.cancel()
         pipeline.silence.onChange = { [weak self, weak pipeline] skipping in
             // Audio thread → main actor.
             Task { @MainActor [weak self] in

@@ -1344,6 +1344,13 @@ struct SettingsView: View {
             }
             if matchesPlaybackSkipSilence {
                 Toggle("Skip silence", isOn: $settings.skipSilenceEnabled)
+                Picker("Skip silence level", selection: $settings.skipSilenceLevel) {
+                    ForEach(SkipSilenceLevel.activeLevels) { level in
+                        Text(level.label).tag(level)
+                    }
+                }
+                .disabled(!settings.skipSilenceEnabled)
+                .accessibilityHint(String(localized: "Mild keeps natural pauses and speeds silence up 2×. Medium skips pauses longer than about a third of a second at 3×. Aggressive also skips short pauses at up to 4×. Podcasts can choose their own level."))
                     .accessibilityLabel(String(localized: "Skip silence"))
                     .accessibilityValue(skipSilenceAccessibilityValue)
                     .accessibilityHint(skipSilenceAccessibilityHint)
