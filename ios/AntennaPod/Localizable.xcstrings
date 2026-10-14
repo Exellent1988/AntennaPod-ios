@@ -49601,6 +49601,91 @@
           }
         }
       }
+    },
+    "No internet connection": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No internet connection"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Internetverbindung"
+          }
+        }
+      }
+    },
+    "Sync server not found — check the host URL": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync server not found — check the host URL"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync-Server nicht gefunden – Host-URL prüfen"
+          }
+        }
+      }
+    },
+    "Sync server not reachable (connection refused or timed out)": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync server not reachable (connection refused or timed out)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync-Server nicht erreichbar (Verbindung abgelehnt oder Zeitüberschreitung)"
+          }
+        }
+      }
+    },
+    "TLS/certificate error on sync server": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TLS/certificate error on sync server"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TLS-/Zertifikatsfehler beim Sync-Server"
+          }
+        }
+      }
+    },
+    "Server answered with a web page instead of sync data — check the URL (Nextcloud: is the Gpodder Sync app installed?) and use an app password": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server answered with a web page instead of sync data — check the URL (Nextcloud: is the Gpodder Sync app installed?) and use an app password"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Server hat eine Webseite statt Sync-Daten geliefert – URL prüfen (Nextcloud: ist die App „Gpodder Sync“ installiert?) und ein App-Passwort verwenden"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
