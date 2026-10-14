@@ -13,6 +13,8 @@ options:
 packages:
   AudioDSP:
     path: AudioDSP
+  PodcastCore:
+    path: PodcastCore
 settings:
   SWIFT_VERSION: "5.0"
   TARGETED_DEVICE_FAMILY: "1,2"
@@ -42,6 +44,7 @@ targets:
       path: AntennaPod/AntennaPod.entitlements
     dependencies:
       - package: AudioDSP
+      - package: PodcastCore
       - target: AntennaPodWidget
         embed: true
       - target: AntennaPodWatch
