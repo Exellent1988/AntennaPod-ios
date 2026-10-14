@@ -627,7 +627,7 @@ struct DownloadsView: View {
             NavigationLink {
                 DownloadErrorsView()
             } label: {
-                Label("Errors", systemImage: "exclamationmark.bubble")
+                Label("Download log", systemImage: "exclamationmark.bubble")
             }
             .accessibilityLabel(String(localized: "Download errors"))
         }
@@ -1090,6 +1090,17 @@ struct DownloadErrorsView: View {
         }
     }
 
+    /// Completed downloads still on disk, newest first, filtered by the same search (capped at 100).
+    private var completedLog: [DownloadedEpisode] {
+        let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let sorted = downloads.downloads.sorted { ($0.downloadedAtEpochMs ?? 0) > ($1.downloadedAtEpochMs ?? 0) }
+        let matched = q.isEmpty ? sorted : sorted.filter {
+            $0.episode.title.lowercased().contains(q)
+                || store.displayTitle(containingEpisodeId: $0.episode.id).lowercased().contains(q)
+        }
+        return Array(matched.prefix(100))
+    }
+
     var body: some View {
         List {
             if allErrors.isEmpty {
@@ -1119,8 +1130,32 @@ struct DownloadErrorsView: View {
                     DownloadErrorRow(entry: entry)
                 }
             }
+            // Android DownloadLogFragment also lists successful downloads. iOS has no success
+            // log, so this shows the completed files still on disk, newest first.
+            if !completedLog.isEmpty {
+                Section("Completed") {
+                    ForEach(completedLog) { item in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Label(item.episode.title, systemImage: "checkmark.circle.fill")
+                                .font(.subheadline)
+                                .lineLimit(2)
+                            HStack(spacing: 6) {
+                                Text(store.displayTitle(containingEpisodeId: item.episode.id))
+                                    .lineLimit(1)
+                                if let ms = item.downloadedAtEpochMs {
+                                    Text("·").accessibilityHidden(true)
+                                    Text(Date(timeIntervalSince1970: Double(ms) / 1000), style: .relative)
+                                }
+                            }
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        }
+                        .accessibilityElement(children: .combine)
+                    }
+                }
+            }
         }
-        .navigationTitle("Download errors")
+        .navigationTitle("Download log")
         .navigationBarTitleDisplayMode(.inline)
         .searchable(text: $searchText, prompt: "Search download errors")
         .onChange(of: searchText) { _, newValue in
