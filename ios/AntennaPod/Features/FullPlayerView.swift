@@ -658,7 +658,6 @@ struct FullPlayerView: View {
     }
 
     @ViewBuilder
-    @ViewBuilder
     private var chaptersSection: some View {
         let chaptersEpisode = resolvedEpisode ?? episode
         let showChaptersURL = chaptersEpisode?.hasPodcastIndexChapterURL == true
