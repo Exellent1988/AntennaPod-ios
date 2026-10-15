@@ -1036,7 +1036,7 @@ final class PodcastStore: ObservableObject {
     func totalSkipSilenceSavedSeconds() -> Double {
         let resetAt = settings?.statisticsResetAtEpochMs ?? 0
         return playbackStates.values.reduce(0) { sum, state in
-            let stamp = episode.lastPlayedAtEpochMs
+            let stamp = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
             guard resetAt == 0 || stamp >= resetAt else { return sum }
             return sum + (state.skipSilenceSavedSeconds ?? 0)
         }
@@ -2833,7 +2833,7 @@ final class PodcastStore: ObservableObject {
         let items: [(epochMs: Int64, seconds: Double)] = historyEpisodes.compactMap { episode in
             let state = playbackState(for: episode.id)
             guard ListeningTimeEstimate.hasMeaningfulData(state) else { return nil }
-            let stamp = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
+            let stamp = episode.lastPlayedAtEpochMs
             if resetAt > 0, stamp < resetAt { return nil }
             return (stamp, ListeningTimeEstimate.seconds(for: state, includeMarkedPlayed: includeMarked))
         }
