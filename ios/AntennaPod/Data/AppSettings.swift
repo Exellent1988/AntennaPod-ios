@@ -1436,6 +1436,7 @@ final class AppSettings: ObservableObject {
         static let subscriptionsGridColumns = "settings.subscriptionsGridColumns"
         static let subscriptionsGridShowTitles = "settings.subscriptionsGridShowTitles"
         static let subscriptionsCounterMode = "settings.subscriptionsCounterMode"
+        static let subscriptionsCounterModeDefaultMigrated = "settings.subscriptionsCounterModeDefaultMigrated"
         static let swipeActions = "settings.swipeActions"
     }
 
@@ -2861,12 +2862,33 @@ final class AppSettings: ObservableObject {
             // Pin the first-launch choice: the fresh-install check is false from the second launch on.
             ud.set(subscriptionsGridShowTitles, forKey: Keys.subscriptionsGridShowTitles)
         }
-        subscriptionsCounterMode = SubscriptionsCounterMode(rawValue: ud.string(forKey: Keys.subscriptionsCounterMode) ?? "") ?? .unplayed
+        subscriptionsCounterMode = Self.migrateCounterModeDefaultOnce(ud)
         let storedSwipes = ud.dictionary(forKey: Keys.swipeActions) as? [String: String]
         swipeActions = Self.initialSwipeActions(stored: storedSwipes, isFreshInstall: isFreshInstall)
         if (storedSwipes ?? [:]).isEmpty, !swipeActions.isEmpty {
             ud.set(swipeActions, forKey: Keys.swipeActions)
         }
+    }
+
+    /// Counter mode at launch. Android default is SHOW_NEW (UserPreferences.getFeedCounterSetting,
+    /// PREF_DRAWER_FEED_COUNTER default FeedCounter.SHOW_NEW).
+    ///
+    /// Implicit vs explicit: `subscriptionsCounterMode`'s didSet is the only writer of the key (Picker,
+    /// backup restore, and the one-time @AppStorage move, which only copies a value that was set). The
+    /// init assignment does not fire didSet, so a user who never picked a mode has **no stored value** and
+    /// ran on the old implicit `.unplayed` (= !played && !archived, which is exactly today's `.new`).
+    /// Once (flag below): no stored value -> store `.new`, so new installs and implicit users get Neu and
+    /// implicit users keep their numbers. Any stored value (explicit, incl. "unplayed") is kept.
+    static func migrateCounterModeDefaultOnce(_ ud: UserDefaults) -> SubscriptionsCounterMode {
+        let stored = ud.string(forKey: Keys.subscriptionsCounterMode).flatMap(SubscriptionsCounterMode.init(rawValue:))
+        if !ud.bool(forKey: Keys.subscriptionsCounterModeDefaultMigrated) {
+            ud.set(true, forKey: Keys.subscriptionsCounterModeDefaultMigrated)
+            if stored == nil {
+                ud.set(SubscriptionsCounterMode.new.rawValue, forKey: Keys.subscriptionsCounterMode)
+                return .new
+            }
+        }
+        return stored ?? .new
     }
 
     /// Android pref_show_subscription_title defaults to false (UserPreferences.shouldShowSubscriptionTitle).
@@ -3583,7 +3605,7 @@ final class AppSettings: ObservableObject {
             subscriptionsGridShowTitles = showTitles
         }
         if let raw = snap.subscriptionsCounterMode {
-            subscriptionsCounterMode = SubscriptionsCounterMode(rawValue: raw) ?? .unplayed
+            subscriptionsCounterMode = SubscriptionsCounterMode(rawValue: raw) ?? .new
         }
         if let swipes = snap.swipeActions {
             swipeActions = swipes.filter { EpisodeSwipeAction(rawValue: $0.value) != nil }
