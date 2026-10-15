@@ -342,8 +342,8 @@ struct MiniPlayerView: View {
                 FullPlayerView()
             }
             #if DEBUG
-            .onReceive(PlayerDebugLaunch.shared.$openFullPlayerToken) { token in
-                if token > 0 { showFullPlayer = true }
+            .onReceive(PlayerDebugLaunch.shared.openFullPlayer) { _ in
+                showFullPlayer = true
             }
             #endif
             .onChange(of: subscribeLink.closeFullPlayerToken) { _, token in
@@ -527,8 +527,8 @@ struct MiniPlayerView: View {
                 FullPlayerView()
             }
             #if DEBUG
-            .onReceive(PlayerDebugLaunch.shared.$openFullPlayerToken) { token in
-                if token > 0 { showFullPlayer = true }
+            .onReceive(PlayerDebugLaunch.shared.openFullPlayer) { _ in
+                showFullPlayer = true
             }
             #endif
             .onChange(of: subscribeLink.closeFullPlayerToken) { _, token in

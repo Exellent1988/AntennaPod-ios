@@ -1,6 +1,7 @@
 #if DEBUG
 import Foundation
 import UIKit
+import Combine
 
 /// DEBUG-only launch hook for screenshots / UI checks of the full player.
 ///
@@ -10,7 +11,9 @@ import UIKit
 @MainActor
 final class PlayerDebugLaunch: ObservableObject {
     static let shared = PlayerDebugLaunch()
-    @Published private(set) var openFullPlayerToken = 0
+    /// Fires once per request. A `@Published` counter replayed its last value to every new subscriber, so a
+    /// re-created mini player re-opened the full player after a deep link had closed it.
+    let openFullPlayer = PassthroughSubject<Void, Never>()
     private var didRun = false
 
     static var isRequested: Bool { UserDefaults.standard.bool(forKey: "APDebugPlayer") }
@@ -33,7 +36,7 @@ final class PlayerDebugLaunch: ObservableObject {
             playback.seek(toSeconds: position)
             try? await Task.sleep(nanoseconds: 1_500_000_000)
             if playback.isPlaying { playback.togglePlayPause() }
-            openFullPlayerToken += 1
+            openFullPlayer.send()
             // `-APDebugLandscape YES`: rotate for landscape screenshots (headless simulator).
             if defaults.bool(forKey: "APDebugLandscape"),
                let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
