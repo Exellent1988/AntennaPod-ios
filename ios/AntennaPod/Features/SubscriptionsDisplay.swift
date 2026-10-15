@@ -33,6 +33,8 @@ struct SubscriptionGridCell: View {
     let feed: PodcastFeed
     let title: String
     let count: Int
+    /// Android pref_show_subscription_title; VoiceOver keeps the title either way.
+    var showTitle: Bool = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -50,10 +52,12 @@ struct SubscriptionGridCell: View {
                         .padding(4)
                 }
             }
-            Text(title)
-                .font(.caption)
-                .lineLimit(2)
-                .foregroundStyle(.primary)
+            if showTitle {
+                Text(title)
+                    .font(.caption)
+                    .lineLimit(2)
+                    .foregroundStyle(.primary)
+            }
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(count > 0 ? "\(title), \(count)" : title)

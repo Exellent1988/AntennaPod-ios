@@ -532,6 +532,8 @@ struct SubscriptionsView: View {
                     } label: {
                         Text("Number of columns")
                     }
+                    // Android subscriptions.xml pref_show_subscription_title.
+                    Toggle("Show podcast titles", isOn: $settings.subscriptionsGridShowTitles)
                 }
                 Picker(selection: $settings.subscriptionsCounterMode) {
                     ForEach(SubscriptionsCounterMode.allCases) { mode in
@@ -1016,7 +1018,8 @@ struct SubscriptionsView: View {
                 SubscriptionGridCell(
                     feed: feed,
                     title: feedDisplayTitle(feed),
-                    count: counterValue(feed, unplayed: remaining[feed.id]?.unplayedCount ?? 0)
+                    count: counterValue(feed, unplayed: remaining[feed.id]?.unplayedCount ?? 0),
+                    showTitle: settings.subscriptionsGridShowTitles
                 )
                 // Invisible link over the cell: a visible NavigationLink in a List row adds a chevron per cell.
                 .overlay {

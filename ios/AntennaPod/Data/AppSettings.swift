@@ -1425,6 +1425,7 @@ final class AppSettings: ObservableObject {
         static let statisticsResetAtEpochMs = "settings.statisticsResetAtEpochMs"
         static let subscriptionsDisplayMode = "settings.subscriptionsDisplayMode"
         static let subscriptionsGridColumns = "settings.subscriptionsGridColumns"
+        static let subscriptionsGridShowTitles = "settings.subscriptionsGridShowTitles"
         static let subscriptionsCounterMode = "settings.subscriptionsCounterMode"
         static let swipeActions = "settings.swipeActions"
     }
@@ -2361,6 +2362,11 @@ final class AppSettings: ObservableObject {
     @Published var subscriptionsGridColumns: Int {
         didSet { UserDefaults.standard.set(subscriptionsGridColumns, forKey: Keys.subscriptionsGridColumns) }
     }
+    /// Grid: show the podcast title under the cover (Android pref_show_subscription_title, default on).
+    /// Persisted; not in the JSON backup yet.
+    @Published var subscriptionsGridShowTitles: Bool {
+        didSet { UserDefaults.standard.set(subscriptionsGridShowTitles, forKey: Keys.subscriptionsGridShowTitles) }
+    }
     /// Badge counter (Android subscriptions_counter). Persisted (+ backup).
     @Published var subscriptionsCounterMode: SubscriptionsCounterMode {
         didSet { UserDefaults.standard.set(subscriptionsCounterMode.rawValue, forKey: Keys.subscriptionsCounterMode) }
@@ -2825,6 +2831,7 @@ final class AppSettings: ObservableObject {
         subscriptionsDisplayMode = SubscriptionsDisplayMode(rawValue: ud.string(forKey: Keys.subscriptionsDisplayMode) ?? "") ?? .list
         let cols = ud.object(forKey: Keys.subscriptionsGridColumns) as? Int ?? 3
         subscriptionsGridColumns = min(max(cols, 2), 5)
+        subscriptionsGridShowTitles = ud.object(forKey: Keys.subscriptionsGridShowTitles) as? Bool ?? true
         subscriptionsCounterMode = SubscriptionsCounterMode(rawValue: ud.string(forKey: Keys.subscriptionsCounterMode) ?? "") ?? .unplayed
         let storedSwipes = ud.dictionary(forKey: Keys.swipeActions) as? [String: String]
         swipeActions = Self.initialSwipeActions(stored: storedSwipes, isFreshInstall: isFreshInstall)

@@ -24215,6 +24215,23 @@
         }
       }
     },
+    "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item, and skips favorited / starred episodes. Per-podcast Feed settings can override with Always / Never.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When an episode is marked played (manual or when playback finishes), its offline file is deleted via DownloadService. The episode row and played status stay. Skips while that local file is still the active player item, and skips favorited / starred episodes. Per-podcast Feed settings can override with Always / Never."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn eine Episode als gehört markiert wird (manuell oder nach Wiedergabeende), wird die Offline-Datei über DownloadService gelöscht. Episodenzeile und Gehört-Status bleiben. Überspringt, solange diese lokale Datei noch das aktive Player-Element ist, und überspringt favorisierte / mit Stern markierte Episoden. Per-Podcast-Feed-Einstellungen können mit Immer / Nie überschreiben."
+          }
+        }
+      }
+    },
     "When enabled, offline files are removed after an episode is marked played. Episode metadata and played status are kept. Per-podcast Feed settings can still Always delete for one feed.": {
       "extractionState": "manual",
       "localizations": {
@@ -53045,6 +53062,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tags bearbeiten"
+          }
+        }
+      }
+    },
+    "Show podcast titles": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Titel anzeigen"
           }
         }
       }
