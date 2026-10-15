@@ -12,6 +12,8 @@ struct CarPlayRow: Equatable {
     var target: Target
     /// `CPListItem.playbackProgress` (0…1).
     var progress: Double = 0
+    /// Feed the episode row belongs to, so a tap plays that feed's copy of a duplicate GUID.
+    var feedId: UUID? = nil
 }
 
 /// What a CarPlay list last showed; equal snapshots skip `updateSections`.
