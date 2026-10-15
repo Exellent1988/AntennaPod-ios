@@ -2480,6 +2480,7 @@ final class AppSettings: ObservableObject {
 
     init() {
         let isFreshInstall = Self.isFreshInstall()
+        Self.migrateEnqueueDownloadedDefault(hasExistingData: Self.hasExistingAppData())
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
         let accentRaw = UserDefaults.standard.string(forKey: Keys.accentColor) ?? AppAccentColor.system.rawValue
@@ -2848,6 +2849,23 @@ final class AppSettings: ObservableObject {
     /// First launch after installing: no saved library and AppSettings has never run (its one-time
     /// view-prefs migration marker is written on every launch path). Other services may already have
     /// written their own keys (proxy, gpodder device id) before AppSettings exists, so those don't count.
+    /// Enqueue downloaded: Android default (on) for new installs only; existing installs get off.
+    /// Writes the key only when it is missing, so a stored choice is never overwritten.
+    static func migrateEnqueueDownloadedDefault(_ ud: UserDefaults = .standard, hasExistingData: Bool) {
+        if let value = QueueAutoPolicy.migratedEnqueueDownloaded(
+            keyPresent: ud.object(forKey: Keys.enqueueDownloaded) != nil, hasExistingData: hasExistingData) {
+            ud.set(value, forKey: Keys.enqueueDownloaded)
+        }
+    }
+
+    /// Existing install: saved library (subscriptions/episodes) or any earlier AppSettings key.
+    static func hasExistingAppData(_ ud: UserDefaults = .standard, hasStoredFeeds: Bool = PodcastPersistence.hasStoredFeeds) -> Bool {
+        if hasStoredFeeds { return true }
+        return ud.dictionaryRepresentation().keys.contains {
+            $0.hasPrefix("settings.") && $0 != Keys.enqueueDownloaded
+        }
+    }
+
     private static func isFreshInstall() -> Bool {
         if PodcastPersistence.hasStoredFeeds { return false }
         return UserDefaults.standard.object(forKey: "settings.migratedViewPrefsFromAppStorage") == nil

@@ -14,6 +14,14 @@ public enum QueueAutoPolicy {
     public static let defaultEnqueueDownloaded = true
     public static let defaultDeleteRemovesFromQueue = false
 
+    /// Value to write for a missing Enqueue downloaded key on launch. Android's default (on) only
+    /// applies to new installs; an existing install updating to this version keeps its previous
+    /// behaviour (off). `nil` = the key is already set, leave it alone.
+    public static func migratedEnqueueDownloaded(keyPresent: Bool, hasExistingData: Bool) -> Bool? {
+        if keyPresent { return nil }
+        return hasExistingData ? false : defaultEnqueueDownloaded
+    }
+
     /// Add to queue when a download is requested.
     public static func enqueueOnDownloadRequest(enabled: Bool, alreadyQueued: Bool, alreadyDownloaded: Bool) -> Bool {
         enabled && !alreadyQueued && !alreadyDownloaded

@@ -25,4 +25,11 @@ final class QueueAutoPolicyTests: XCTestCase {
         XCTAssertFalse(QueueAutoPolicy.removeOnDelete(enabled: false, isQueued: true))
         XCTAssertFalse(QueueAutoPolicy.removeOnDelete(enabled: true, isQueued: false))
     }
+
+    func testEnqueueDownloadedMigration() {
+        XCTAssertEqual(QueueAutoPolicy.migratedEnqueueDownloaded(keyPresent: false, hasExistingData: false), true, "new install: Android default on")
+        XCTAssertEqual(QueueAutoPolicy.migratedEnqueueDownloaded(keyPresent: false, hasExistingData: true), false, "update: keep previous behaviour off")
+        XCTAssertNil(QueueAutoPolicy.migratedEnqueueDownloaded(keyPresent: true, hasExistingData: true))
+        XCTAssertNil(QueueAutoPolicy.migratedEnqueueDownloaded(keyPresent: true, hasExistingData: false))
+    }
 }
