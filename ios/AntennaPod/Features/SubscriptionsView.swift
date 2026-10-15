@@ -477,6 +477,9 @@ struct SubscriptionsView: View {
                     Section(section.title) {
                         if effectiveDisplayMode == .grid {
                             feedGrid(section.feeds, remaining: remainingByFeedId)
+                                // One List row holding the whole grid: never a List selection row (no
+                                // edit-mode circle / indent); cells toggle via feedGridSelectable.
+                                .selectionDisabled()
                         } else {
                             ForEach(section.feeds) { feed in
                                 feedRow(feed, summary: remainingByFeedId[feed.id])
