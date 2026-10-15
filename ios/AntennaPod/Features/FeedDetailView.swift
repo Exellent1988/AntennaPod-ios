@@ -699,7 +699,8 @@ struct FeedDetailView: View {
                             Button {
                                 copyAuthor(author)
                             } label: {
-                                Label("Copy author", systemImage: "doc.on.doc")
+                                Label("Copy", systemImage: "doc.on.doc")
+                                    .lineLimit(1)
                                     .font(.subheadline)
                             }
                             .accessibilityLabel(String(localized: "Copy author"))
@@ -711,7 +712,8 @@ struct FeedDetailView: View {
                                 item: author,
                                 subject: Text(feedDisplayTitle)
                             ) {
-                                Label("Share author", systemImage: "square.and.arrow.up")
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .lineLimit(1)
                                     .font(.subheadline)
                             }
                             .accessibilityLabel(String(localized: "Share author"))
@@ -737,7 +739,8 @@ struct FeedDetailView: View {
                             Button {
                                 copyLanguage(language)
                             } label: {
-                                Label("Copy language", systemImage: "doc.on.doc")
+                                Label("Copy", systemImage: "doc.on.doc")
+                                    .lineLimit(1)
                                     .font(.subheadline)
                             }
                             .accessibilityLabel(String(localized: "Copy language"))
@@ -749,7 +752,8 @@ struct FeedDetailView: View {
                                 item: language,
                                 subject: Text(feedDisplayTitle)
                             ) {
-                                Label("Share language", systemImage: "square.and.arrow.up")
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .lineLimit(1)
                                     .font(.subheadline)
                             }
                             .accessibilityLabel(String(localized: "Share language"))
@@ -775,7 +779,8 @@ struct FeedDetailView: View {
                         Button {
                             copyLastRefreshed(lastRefreshedShareText)
                         } label: {
-                            Label("Copy last refreshed timestamp", systemImage: "doc.on.doc")
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .lineLimit(1)
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Copy last refreshed timestamp"))
@@ -784,7 +789,8 @@ struct FeedDetailView: View {
                         )
 
                         ShareLink(item: lastRefreshedShareText, subject: Text(feedDisplayTitle)) {
-                            Label("Share last refreshed timestamp", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Share last refreshed timestamp"))
@@ -898,7 +904,8 @@ struct FeedDetailView: View {
                                     Button {
                                         copyLockedOwner(owner)
                                     } label: {
-                                        Label("Copy locked owner", systemImage: "doc.on.doc")
+                                        Label("Copy", systemImage: "doc.on.doc")
+                                            .lineLimit(1)
                                             .font(.subheadline)
                                     }
                                     .accessibilityLabel(String(localized: "Copy locked owner"))
@@ -909,7 +916,8 @@ struct FeedDetailView: View {
                                             item: url,
                                             subject: Text(feedDisplayTitle)
                                         ) {
-                                            Label("Share locked owner", systemImage: "square.and.arrow.up")
+                                            Label("Share", systemImage: "square.and.arrow.up")
+                                                .lineLimit(1)
                                                 .font(.subheadline)
                                         }
                                         .accessibilityLabel(String(localized: "Share locked owner"))
@@ -919,7 +927,8 @@ struct FeedDetailView: View {
                                             item: owner,
                                             subject: Text(feedDisplayTitle)
                                         ) {
-                                            Label("Share locked owner", systemImage: "square.and.arrow.up")
+                                            Label("Share", systemImage: "square.and.arrow.up")
+                                                .lineLimit(1)
                                                 .font(.subheadline)
                                         }
                                         .accessibilityLabel(String(localized: "Share locked owner"))
@@ -971,7 +980,8 @@ struct FeedDetailView: View {
                             Button {
                                 copyPodcastGuid()
                             } label: {
-                                Label("Copy podcast GUID", systemImage: "doc.on.doc")
+                                Label("Copy", systemImage: "doc.on.doc")
+                                    .lineLimit(1)
                                     .font(.subheadline)
                             }
                             .accessibilityLabel(String(localized: "Copy podcast GUID"))
@@ -982,7 +992,8 @@ struct FeedDetailView: View {
                                 subject: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))"),
                                 message: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))")
                             ) {
-                                Label("Share podcast GUID", systemImage: "square.and.arrow.up")
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .lineLimit(1)
                                     .font(.subheadline)
                             }
                             .accessibilityLabel(String(localized: "Share podcast GUID"))
@@ -1011,7 +1022,8 @@ struct FeedDetailView: View {
                             Button {
                                 copyCategories()
                             } label: {
-                                Label("Copy categories", systemImage: "doc.on.doc")
+                                Label("Copy", systemImage: "doc.on.doc")
+                                    .lineLimit(1)
                                     .font(.subheadline)
                             }
                             .accessibilityLabel(String(localized: "Copy categories"))
@@ -1023,7 +1035,8 @@ struct FeedDetailView: View {
                                 item: displayCategoriesShareText,
                                 subject: Text(feedDisplayTitle)
                             ) {
-                                Label("Share categories", systemImage: "square.and.arrow.up")
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .lineLimit(1)
                                     .font(.subheadline)
                             }
                             .accessibilityLabel(String(localized: "Share categories"))
@@ -1421,7 +1434,8 @@ struct FeedDetailView: View {
                         Button {
                             copyPodcastWebsiteURL(url)
                         } label: {
-                            Label("Copy podcast website", systemImage: "doc.on.doc")
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .lineLimit(1)
                         }
                         .accessibilityLabel(String(localized: "Copy podcast website"))
                         .accessibilityHint(
@@ -1433,7 +1447,8 @@ struct FeedDetailView: View {
                             subject: Text(feedDisplayTitle),
                             message: Text(feedDisplayTitle)
                         ) {
-                            Label("Share podcast website", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                         }
                         .accessibilityLabel(String(localized: "Share podcast website"))
                         .accessibilityHint(
@@ -1455,7 +1470,8 @@ struct FeedDetailView: View {
                         Button {
                             copyFundingURL(url)
                         } label: {
-                            Label("Copy funding URL", systemImage: "doc.on.doc")
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .lineLimit(1)
                         }
                         .accessibilityLabel(String(localized: "Copy funding URL"))
                         .accessibilityHint(
@@ -1467,7 +1483,8 @@ struct FeedDetailView: View {
                             subject: Text(feedDisplayTitle),
                             message: Text("\(feedDisplayTitle) — \(liveFeed.supportActionTitle)")
                         ) {
-                            Label("Share funding URL", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                         }
                         .accessibilityLabel(String(localized: "Share funding URL"))
                         .accessibilityHint(
@@ -1478,7 +1495,8 @@ struct FeedDetailView: View {
                             Button {
                                 copyFundingLabel(label)
                             } label: {
-                                Label("Copy funding label", systemImage: "doc.on.doc")
+                                Label("Copy", systemImage: "doc.on.doc")
+                                    .lineLimit(1)
                             }
                             .accessibilityLabel(String(localized: "Copy funding label"))
                             .accessibilityHint(
@@ -1489,7 +1507,8 @@ struct FeedDetailView: View {
                                 item: label,
                                 subject: Text(feedDisplayTitle)
                             ) {
-                                Label("Share funding label", systemImage: "square.and.arrow.up")
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .lineLimit(1)
                             }
                             .accessibilityLabel(String(localized: "Share funding label"))
                             .accessibilityHint(
@@ -1504,7 +1523,8 @@ struct FeedDetailView: View {
                             Button {
                                 copyDiscussAccountId(accountId)
                             } label: {
-                                Label("Copy discuss account ID", systemImage: "doc.on.doc")
+                                Label("Copy", systemImage: "doc.on.doc")
+                                    .lineLimit(1)
                             }
                             .accessibilityLabel(String(localized: "Copy discuss account ID"))
                             .accessibilityHint(
@@ -1516,7 +1536,8 @@ struct FeedDetailView: View {
                                 subject: Text(feedDisplayTitle),
                                 message: Text("\(feedDisplayTitle) — \(String(localized: "Discuss account ID"))")
                             ) {
-                                Label("Share discuss account ID", systemImage: "square.and.arrow.up")
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .lineLimit(1)
                             }
                             .accessibilityLabel(String(localized: "Share discuss account ID"))
                             .accessibilityHint(
@@ -1528,7 +1549,8 @@ struct FeedDetailView: View {
                             Button {
                                 copyDiscussProtocol(protocolText)
                             } label: {
-                                Label("Copy discuss protocol", systemImage: "doc.on.doc")
+                                Label("Copy", systemImage: "doc.on.doc")
+                                    .lineLimit(1)
                             }
                             .accessibilityLabel(String(localized: "Copy discuss protocol"))
                             .accessibilityHint(
@@ -1536,7 +1558,8 @@ struct FeedDetailView: View {
                             )
 
                             ShareLink(item: protocolText) {
-                                Label("Share discuss protocol", systemImage: "square.and.arrow.up")
+                                Label("Share", systemImage: "square.and.arrow.up")
+                                    .lineLimit(1)
                             }
                             .accessibilityLabel(String(localized: "Share discuss protocol"))
                             .accessibilityHint(
@@ -1555,7 +1578,8 @@ struct FeedDetailView: View {
                         Button {
                             copyDiscussURL(url)
                         } label: {
-                            Label("Copy discuss URL", systemImage: "doc.on.doc")
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .lineLimit(1)
                         }
                         .accessibilityLabel(String(localized: "Copy discuss URL"))
                         .accessibilityHint(
@@ -1567,7 +1591,8 @@ struct FeedDetailView: View {
                             subject: Text(feedDisplayTitle),
                             message: Text("\(feedDisplayTitle) — \(String(localized: "Discuss"))")
                         ) {
-                            Label("Share discuss URL", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                         }
                         .accessibilityLabel(String(localized: "Share discuss URL"))
                         .accessibilityHint(
@@ -1579,13 +1604,15 @@ struct FeedDetailView: View {
                         Button {
                             copyPodcastTitle(title)
                         } label: {
-                            Label("Copy podcast title", systemImage: "doc.on.doc")
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .lineLimit(1)
                         }
                         .accessibilityLabel(String(localized: "Copy podcast title"))
                         .accessibilityHint(String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"))
 
                         ShareLink(item: title, subject: Text(title)) {
-                            Label("Share podcast title", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                         }
                         .accessibilityLabel(String(localized: "Share podcast title"))
                         .accessibilityHint(String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"))
@@ -1594,7 +1621,8 @@ struct FeedDetailView: View {
                     Button {
                         copyFeedURL()
                     } label: {
-                        Label("Copy feed URL", systemImage: "doc.on.doc")
+                        Label("Copy", systemImage: "doc.on.doc")
+                            .lineLimit(1)
                     }
                     .disabled(!canCopyFeedURL)
                     .accessibilityLabel(String(localized: "Copy feed URL"))
@@ -1606,7 +1634,8 @@ struct FeedDetailView: View {
                             subject: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))"),
                             message: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))")
                         ) {
-                            Label("Share feed URL", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                         }
                         .disabled(!canCopyFeedURL)
                         .accessibilityLabel(String(localized: "Share feed URL"))
@@ -1619,7 +1648,8 @@ struct FeedDetailView: View {
                             subject: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))"),
                             message: Text("\(feedDisplayTitle) — \(String(localized: "Feed URL"))")
                         ) {
-                            Label("Share feed URL", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                         }
                         .disabled(!canCopyFeedURL)
                         .accessibilityLabel(String(localized: "Share feed URL"))
@@ -1632,7 +1662,8 @@ struct FeedDetailView: View {
                         Button {
                             copyPodcastGuid()
                         } label: {
-                            Label("Copy podcast GUID", systemImage: "number")
+                            Label("Copy", systemImage: "number")
+                                .lineLimit(1)
                         }
                         .accessibilityLabel(String(localized: "Copy podcast GUID"))
                         .accessibilityHint(String(localized: "Copies the feed-provided podcast GUID to the pasteboard as plain text. No confirmation. Distinct from the podcast, feed URL, website, funding, and discussion copies, and from Share podcast GUID. Does not open a link, change subscriptions, or invent a GUID when missing."))
@@ -1642,7 +1673,8 @@ struct FeedDetailView: View {
                             subject: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))"),
                             message: Text("\(feedDisplayTitle) — \(String(localized: "Podcast GUID"))")
                         ) {
-                            Label("Share podcast GUID", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                         }
                         .accessibilityLabel(String(localized: "Share podcast GUID"))
                         .accessibilityHint(
@@ -2355,7 +2387,8 @@ struct FeedDetailView: View {
                     Button {
                         copyUpdateFrequency(text)
                     } label: {
-                        Label("Copy update frequency", systemImage: "doc.on.doc")
+                        Label("Copy", systemImage: "doc.on.doc")
+                            .lineLimit(1)
                             .font(.subheadline)
                     }
                     .accessibilityLabel(String(localized: "Copy update frequency"))
@@ -2367,7 +2400,8 @@ struct FeedDetailView: View {
                         item: text,
                         subject: Text(feedDisplayTitle)
                     ) {
-                        Label("Share update frequency", systemImage: "square.and.arrow.up")
+                        Label("Share", systemImage: "square.and.arrow.up")
+                            .lineLimit(1)
                             .font(.subheadline)
                     }
                     .accessibilityLabel(String(localized: "Share update frequency"))
@@ -2383,7 +2417,8 @@ struct FeedDetailView: View {
                     Button {
                         copyUpdateFrequencyRrule(caption)
                     } label: {
-                        Label("Copy recurrence", systemImage: "doc.on.doc")
+                        Label("Copy", systemImage: "doc.on.doc")
+                            .lineLimit(1)
                             .font(.subheadline)
                     }
                     .accessibilityLabel(String(localized: "Copy recurrence"))
@@ -2395,7 +2430,8 @@ struct FeedDetailView: View {
                         item: caption,
                         subject: Text(feedDisplayTitle)
                     ) {
-                        Label("Share recurrence", systemImage: "square.and.arrow.up")
+                        Label("Share", systemImage: "square.and.arrow.up")
+                            .lineLimit(1)
                             .font(.subheadline)
                     }
                     .accessibilityLabel(String(localized: "Share recurrence"))
@@ -2411,7 +2447,8 @@ struct FeedDetailView: View {
                     Button {
                         copyUpdateFrequencyDtstart(caption)
                     } label: {
-                        Label("Copy start timestamp", systemImage: "doc.on.doc")
+                        Label("Copy", systemImage: "doc.on.doc")
+                            .lineLimit(1)
                             .font(.subheadline)
                     }
                     .accessibilityLabel(String(localized: "Copy start timestamp"))
@@ -2423,7 +2460,8 @@ struct FeedDetailView: View {
                         item: caption,
                         subject: Text(feedDisplayTitle)
                     ) {
-                        Label("Share start timestamp", systemImage: "square.and.arrow.up")
+                        Label("Share", systemImage: "square.and.arrow.up")
+                            .lineLimit(1)
                             .font(.subheadline)
                     }
                     .accessibilityLabel(String(localized: "Share start timestamp"))
@@ -2459,7 +2497,8 @@ struct FeedDetailView: View {
             Button {
                 copyItunesComplete()
             } label: {
-                Label("Copy complete claim", systemImage: "doc.on.doc")
+                Label("Copy", systemImage: "doc.on.doc")
+                    .lineLimit(1)
                     .font(.subheadline)
             }
             .accessibilityLabel(String(localized: "Copy complete claim"))
@@ -2471,7 +2510,8 @@ struct FeedDetailView: View {
                 item: displayItunesCompleteShareText,
                 subject: Text(feedDisplayTitle)
             ) {
-                Label("Share complete claim", systemImage: "square.and.arrow.up")
+                Label("Share", systemImage: "square.and.arrow.up")
+                    .lineLimit(1)
                     .font(.subheadline)
             }
             .accessibilityLabel(String(localized: "Share complete claim"))
@@ -2493,7 +2533,8 @@ struct FeedDetailView: View {
             Button {
                 copyExplicit()
             } label: {
-                Label("Copy explicit badge", systemImage: "doc.on.doc")
+                Label("Copy", systemImage: "doc.on.doc")
+                    .lineLimit(1)
                     .font(.subheadline)
             }
             .accessibilityLabel(String(localized: "Copy explicit badge"))
@@ -2505,7 +2546,8 @@ struct FeedDetailView: View {
                 item: displayExplicitShareText,
                 subject: Text(feedDisplayTitle)
             ) {
-                Label("Share explicit badge", systemImage: "square.and.arrow.up")
+                Label("Share", systemImage: "square.and.arrow.up")
+                    .lineLimit(1)
                     .font(.subheadline)
             }
             .accessibilityLabel(String(localized: "Share explicit badge"))
@@ -2527,7 +2569,8 @@ struct FeedDetailView: View {
             Button {
                 copyBlocked()
             } label: {
-                Label("Copy blocked claim", systemImage: "doc.on.doc")
+                Label("Copy", systemImage: "doc.on.doc")
+                    .lineLimit(1)
                     .font(.subheadline)
             }
             .accessibilityLabel(String(localized: "Copy blocked claim"))
@@ -2539,7 +2582,8 @@ struct FeedDetailView: View {
                 item: displayBlockedShareText,
                 subject: Text(feedDisplayTitle)
             ) {
-                Label("Share blocked claim", systemImage: "square.and.arrow.up")
+                Label("Share", systemImage: "square.and.arrow.up")
+                    .lineLimit(1)
                     .font(.subheadline)
             }
             .accessibilityLabel(String(localized: "Share blocked claim"))
@@ -2585,7 +2629,8 @@ struct FeedDetailView: View {
             Button {
                 copyMedium(medium)
             } label: {
-                Label("Copy medium", systemImage: "doc.on.doc")
+                Label("Copy", systemImage: "doc.on.doc")
+                    .lineLimit(1)
                     .font(.subheadline)
             }
             .accessibilityLabel(String(localized: "Copy medium"))
@@ -2597,7 +2642,8 @@ struct FeedDetailView: View {
                 item: medium,
                 subject: Text(feedDisplayTitle)
             ) {
-                Label("Share medium", systemImage: "square.and.arrow.up")
+                Label("Share", systemImage: "square.and.arrow.up")
+                    .lineLimit(1)
                     .font(.subheadline)
             }
             .accessibilityLabel(String(localized: "Share medium"))
@@ -2619,7 +2665,8 @@ struct FeedDetailView: View {
             Button {
                 copyItunesType(itunesType)
             } label: {
-                Label("Copy podcast type", systemImage: "doc.on.doc")
+                Label("Copy", systemImage: "doc.on.doc")
+                    .lineLimit(1)
                     .font(.subheadline)
             }
             .accessibilityLabel(String(localized: "Copy podcast type"))
@@ -2631,7 +2678,8 @@ struct FeedDetailView: View {
                 item: itunesType,
                 subject: Text(feedDisplayTitle)
             ) {
-                Label("Share podcast type", systemImage: "square.and.arrow.up")
+                Label("Share", systemImage: "square.and.arrow.up")
+                    .lineLimit(1)
                     .font(.subheadline)
             }
             .accessibilityLabel(String(localized: "Share podcast type"))
@@ -2735,7 +2783,8 @@ struct FeedDetailView: View {
                         Button {
                             copyTrailerType(type)
                         } label: {
-                            Label("Copy trailer type", systemImage: "doc.on.doc")
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .lineLimit(1)
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Copy trailer type"))
@@ -2748,7 +2797,8 @@ struct FeedDetailView: View {
                             subject: Text(title),
                             message: Text(String(localized: "Podcast trailer type from the feed."))
                         ) {
-                            Label("Share trailer type", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Share trailer type"))
@@ -2774,7 +2824,8 @@ struct FeedDetailView: View {
                         Button {
                             copyTrailerLength(length)
                         } label: {
-                            Label("Copy trailer size", systemImage: "doc.on.doc")
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .lineLimit(1)
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Copy trailer size"))
@@ -2787,7 +2838,8 @@ struct FeedDetailView: View {
                             subject: Text(title),
                             message: Text(String(localized: "Podcast trailer size from the feed."))
                         ) {
-                            Label("Share trailer size", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Share trailer size"))
@@ -2802,7 +2854,8 @@ struct FeedDetailView: View {
                 Button {
                     copyTrailerTitle(title)
                 } label: {
-                    Label("Copy trailer title", systemImage: "doc.on.doc")
+                    Label("Copy", systemImage: "doc.on.doc")
+                        .lineLimit(1)
                         .font(.subheadline)
                 }
                 .accessibilityLabel(String(localized: "Copy trailer title"))
@@ -2811,7 +2864,8 @@ struct FeedDetailView: View {
                 )
 
                 ShareLink(item: title) {
-                    Label("Share trailer title", systemImage: "square.and.arrow.up")
+                    Label("Share", systemImage: "square.and.arrow.up")
+                        .lineLimit(1)
                         .font(.subheadline)
                 }
                 .accessibilityLabel(String(localized: "Share trailer title"))
@@ -2839,7 +2893,8 @@ struct FeedDetailView: View {
                         Button {
                             copyTrailerPubDate(pubDate)
                         } label: {
-                            Label("Copy trailer publication date", systemImage: "doc.on.doc")
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .lineLimit(1)
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Copy trailer publication date"))
@@ -2852,7 +2907,8 @@ struct FeedDetailView: View {
                             subject: Text(title),
                             message: Text(String(localized: "Podcast trailer publication date from the feed."))
                         ) {
-                            Label("Share trailer publication date", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Share trailer publication date"))
@@ -2875,7 +2931,8 @@ struct FeedDetailView: View {
                         Button {
                             copyTrailerSeason(seasonText)
                         } label: {
-                            Label("Copy trailer season", systemImage: "doc.on.doc")
+                            Label("Copy", systemImage: "doc.on.doc")
+                                .lineLimit(1)
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Copy trailer season"))
@@ -2888,7 +2945,8 @@ struct FeedDetailView: View {
                             subject: Text(title),
                             message: Text(String(localized: "Podcast trailer season from the feed."))
                         ) {
-                            Label("Share trailer season", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
+                                .lineLimit(1)
                                 .font(.subheadline)
                         }
                         .accessibilityLabel(String(localized: "Share trailer season"))
@@ -2924,7 +2982,8 @@ struct FeedDetailView: View {
                     Button {
                         copyTrailerURL(url)
                     } label: {
-                        Label("Copy trailer URL", systemImage: "doc.on.doc")
+                        Label("Copy", systemImage: "doc.on.doc")
+                            .lineLimit(1)
                             .font(.subheadline)
                     }
                     .accessibilityLabel(String(localized: "Copy trailer URL"))
@@ -2935,7 +2994,8 @@ struct FeedDetailView: View {
                         subject: Text(title),
                         message: Text(String(localized: "Podcast trailer URL from the feed."))
                     ) {
-                        Label("Share trailer URL", systemImage: "square.and.arrow.up")
+                        Label("Share", systemImage: "square.and.arrow.up")
+                            .lineLimit(1)
                             .font(.subheadline)
                     }
                     .accessibilityLabel(String(localized: "Share trailer URL"))
