@@ -490,6 +490,7 @@ struct DownloadsView: View {
                 Section {
                     ForEach(filteredDownloads) { item in
                         HStack {
+                            EpisodeArtworkThumbnail(episode: item.episode, size: 48)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(item.episode.title)
                                     .font(.headline)

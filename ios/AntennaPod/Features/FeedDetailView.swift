@@ -3046,7 +3046,10 @@ struct EpisodeRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            episodeInfoBlock
+            HStack(alignment: .top, spacing: 12) {
+                EpisodeArtworkThumbnail(episode: episode)
+                episodeInfoBlock
+            }
                 // Android EpisodeItemListAdapter: tapping the row opens ItemPagerFragment; buttons keep their own taps.
                 .contentShape(Rectangle())
                 .onTapGesture { if editMode?.wrappedValue.isEditing != true { showEpisodeDetail = true } }

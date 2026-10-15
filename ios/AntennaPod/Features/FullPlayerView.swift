@@ -69,10 +69,9 @@ struct FullPlayerView: View {
 
     /// Prefer item `podcast:images`/`podcast:image`, then channel variants / classic `imageUrl`. One URL only — no eager multi-download.
     private var preferredArtworkURLString: String? {
-        if let ep = resolvedEpisode, let fromItem = ep.preferredPodcastImagesArtworkURL {
-            return fromItem
-        }
-        return feed?.preferredDisplayArtworkURL
+        guard let ep = resolvedEpisode else { return feed?.preferredDisplayArtworkURL }
+        // Item podcast:images, then item itunes:image, then podcast artwork (same order as Now Playing).
+        return ep.artworkURL(feed: feed)
     }
 
     /// Feed (inline PSC or fetched Podcast Index) preferred; else media-file chapters.

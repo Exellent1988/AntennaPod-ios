@@ -213,6 +213,7 @@ struct EpisodeDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
+                EpisodeArtworkThumbnail(episode: episode, size: 96)
                 Text(episode.title)
                     .font(.title3.weight(.semibold))
                     .accessibilityAddTraits(.isHeader)
