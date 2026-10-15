@@ -54376,6 +54376,296 @@
         }
       }
     },
+    "Date (new → old)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datum (neu → alt)"
+          }
+        }
+      }
+    },
+    "Date (old → new)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datum (alt → neu)"
+          }
+        }
+      }
+    },
+    "Duration (short → long)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dauer (kurz → lang)"
+          }
+        }
+      }
+    },
+    "Duration (long → short)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dauer (lang → kurz)"
+          }
+        }
+      }
+    },
+    "Episode title (A → Z)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodentitel (A → Z)"
+          }
+        }
+      }
+    },
+    "Episode title (Z → A)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodentitel (Z → A)"
+          }
+        }
+      }
+    },
+    "Size (small → large)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Größe (klein → groß)"
+          }
+        }
+      }
+    },
+    "Size (large → small)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Größe (groß → klein)"
+          }
+        }
+      }
+    },
+    "Podcast title (A → Z)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Titel (A → Z)"
+          }
+        }
+      }
+    },
+    "Podcast title (Z → A)": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast-Titel (Z → A)"
+          }
+        }
+      }
+    },
+    "Paused": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausiert"
+          }
+        }
+      }
+    },
+    "Not paused": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht pausiert"
+          }
+        }
+      }
+    },
+    "Not downloaded": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht heruntergeladen"
+          }
+        }
+      }
+    },
+    "Queued": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In der Warteschlange"
+          }
+        }
+      }
+    },
+    "Not queued": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht in der Warteschlange"
+          }
+        }
+      }
+    },
+    "Not favorite": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kein Favorit"
+          }
+        }
+      }
+    },
+    "Has media": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hat Mediendatei"
+          }
+        }
+      }
+    },
+    "No media": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Mediendatei"
+          }
+        }
+      }
+    },
+    "Has chapters": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hat Kapitel"
+          }
+        }
+      }
+    },
+    "No chapters": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Kapitel"
+          }
+        }
+      }
+    },
+    "Filter": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter"
+          }
+        }
+      }
+    },
+    "Screen default": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard dieser Ansicht"
+          }
+        }
+      }
+    },
+    "Choose at most one per row. All chosen conditions must match. Applies on top of the chips above the list.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pro Zeile höchstens eine Auswahl. Alle gewählten Bedingungen müssen zutreffen. Gilt zusätzlich zu den Chips über der Liste."
+          }
+        }
+      }
+    },
+    "Unknown dates, durations and sizes are listed last.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbekannte Daten, Dauern und Größen stehen am Ende."
+          }
+        }
+      }
+    },
+    "Reset filter and sort": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter und Sortierung zurücksetzen"
+          }
+        }
+      }
+    },
+    "Filter and sort": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filtern und sortieren"
+          }
+        }
+      }
+    },
+    "Keep sorted": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortiert halten"
+          }
+        }
+      }
+    },
+    "Order": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reihenfolge"
+          }
+        }
+      }
+    },
+    "When on, the queue stays sorted by the chosen order after every change and manual reordering is off.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, bleibt die Warteschlange nach jeder Änderung in der gewählten Reihenfolge sortiert und manuelles Umsortieren ist aus."
+          }
+        }
+      }
+    },
     "Last refresh failed": {
       "extractionState": "manual",
       "localizations": {

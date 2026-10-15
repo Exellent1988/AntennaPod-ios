@@ -356,6 +356,10 @@ struct FeedDetailView: View {
     /// note, or any bookmark note via `PodcastStore.episodeMatchesLibraryQuery` (same fields as
     /// library search; **not** chapters / transcripts).
     private var filteredEpisodes: [PodcastEpisode] {
+        settings.listOptions(forFeed: feed.id).apply(filteredEpisodesBeforeListOptions) { store.listFacts(for: $0) }
+    }
+
+    private var filteredEpisodesBeforeListOptions: [PodcastEpisode] {
         var base = sortedEpisodes
         switch settings.feedEpisodeFilter {
         case .all:
@@ -1843,6 +1847,10 @@ struct FeedDetailView: View {
         .toolbar {
             feedDetailToolbar
         }
+        .episodeListFilterToolbar(feedDisplayTitle, options: Binding(
+            get: { settings.listOptions(forFeed: feed.id) },
+            set: { settings.setListOptions($0, forFeed: feed.id) }
+        ))
         #if DEBUG
         .onAppear {
             if ProcessInfo.processInfo.arguments.contains("-APDebugOpenFeedSettings") { showPerFeedSettings = true }

@@ -23,6 +23,11 @@ final class PodcastStore: ObservableObject {
     private var feedsSaveIsPending = false
     @Published var queue: [PodcastEpisode] = [] {
         didSet {
+            // Android Queue "Keep sorted" (assigning inside didSet does not re-enter it).
+            if settings?.queueKeepSortedOrder != nil {
+                let sorted = keptSortedQueue(queue)
+                if sorted.map(\.id) != queue.map(\.id) { queue = sorted }
+            }
             PodcastPersistence.saveQueue(queue)
             // Queue-only copies join `historyEpisodes`; clear before the widget snapshot reads it.
             historyEpisodesCache = nil

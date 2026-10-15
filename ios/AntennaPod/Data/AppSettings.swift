@@ -1387,6 +1387,10 @@ final class AppSettings: ObservableObject {
         static let feedDownloadUnplayedSoftCap = "settings.feedDownloadUnplayedSoftCap"
         static let autoDownloadWifiOnly = "settings.autoDownload.wifiOnly"
         static let autoDownloadOnBattery = "settings.autoDownload.onBattery"
+        static let allEpisodesListOptions = "settings.listOptions.allEpisodes"
+        static let inboxListOptions = "settings.listOptions.inbox"
+        static let feedListOptions = "settings.listOptions.feeds"
+        static let queueKeepSortedOrder = "settings.queueKeepSortedOrder"
         static let manualDownloadWifiOnly = "settings.manualDownload.wifiOnly"
         static let streamWifiOnly = "settings.stream.wifiOnly"
         static let playbackSourcePreference = "settings.playbackSourcePreference"
@@ -1597,6 +1601,33 @@ final class AppSettings: ObservableObject {
     /// Android `prefEnableAutoDownloadOnBattery` "Download when not charging" (default on).
     /// Off → automatic downloads start only while the device is charging or full. Checked when
     /// automatic downloads are queued / started; a transfer already running is not stopped.
+    /// Android Episodes filter dialog + sort (remembered for this screen). Applied after the chips.
+    @Published var allEpisodesListOptions: EpisodeListOptions {
+        didSet { UserDefaults.standard.set(allEpisodesListOptions.encoded(), forKey: Keys.allEpisodesListOptions) }
+    }
+
+    /// Android Inbox sort (Inbox has no filter dialog on Android). `sort == nil` → `inboxSort`.
+    @Published var inboxListOptions: EpisodeListOptions {
+        didSet { UserDefaults.standard.set(inboxListOptions.encoded(), forKey: Keys.inboxListOptions) }
+    }
+
+    /// Android stores the episode filter + sort **per feed** (`FeedPreferences` / `Feed.sortOrder`).
+    /// Keyed by feed UUID string; missing → global `feedEpisodeSort` / `feedEpisodeFilter`.
+    @Published var feedListOptions: [String: EpisodeListOptions] {
+        didSet { UserDefaults.standard.set(try? JSONEncoder().encode(feedListOptions), forKey: Keys.feedListOptions) }
+    }
+
+    func listOptions(forFeed id: UUID) -> EpisodeListOptions { feedListOptions[id.uuidString] ?? .init() }
+    func setListOptions(_ options: EpisodeListOptions, forFeed id: UUID) {
+        feedListOptions[id.uuidString] = options.isDefault ? nil : options
+    }
+
+    /// Android Queue "Keep sorted": `nil` = off (manual order). On re-sorts after every queue change
+    /// and disables manual reorder.
+    @Published var queueKeepSortedOrder: EpisodeListSortOrder? {
+        didSet { UserDefaults.standard.set(queueKeepSortedOrder?.rawValue, forKey: Keys.queueKeepSortedOrder) }
+    }
+
     @Published var autoDownloadOnBattery: Bool {
         didSet { UserDefaults.standard.set(autoDownloadOnBattery, forKey: Keys.autoDownloadOnBattery) }
     }
@@ -2679,6 +2710,11 @@ final class AppSettings: ObservableObject {
         let feedDlSoftCapRaw = UserDefaults.standard.object(forKey: Keys.feedDownloadUnplayedSoftCap) as? Int
             ?? FeedDownloadUnplayedSoftCap.fifty.rawValue
         feedDownloadUnplayedSoftCap = FeedDownloadUnplayedSoftCap(rawValue: feedDlSoftCapRaw) ?? .fifty
+        allEpisodesListOptions = EpisodeListOptions.decode(UserDefaults.standard.data(forKey: Keys.allEpisodesListOptions))
+        inboxListOptions = EpisodeListOptions.decode(UserDefaults.standard.data(forKey: Keys.inboxListOptions))
+        feedListOptions = UserDefaults.standard.data(forKey: Keys.feedListOptions)
+            .flatMap { try? JSONDecoder().decode([String: EpisodeListOptions].self, from: $0) } ?? [:]
+        queueKeepSortedOrder = UserDefaults.standard.string(forKey: Keys.queueKeepSortedOrder).flatMap(EpisodeListSortOrder.init(rawValue:))
         autoDownloadOnBattery = UserDefaults.standard.object(forKey: Keys.autoDownloadOnBattery) as? Bool
             ?? AutoDownloadParity.defaultDownloadOnBattery
         mobileUpdateTypes = Self.loadMobileUpdateTypes()
@@ -3377,6 +3413,10 @@ final class AppSettings: ObservableObject {
             feedDownloadUnplayedSoftCap: feedDownloadUnplayedSoftCap.rawValue,
             autoDownloadWifiOnly: autoDownloadWifiOnly,
             autoDownloadOnBattery: autoDownloadOnBattery,
+            allEpisodesListOptions: allEpisodesListOptions,
+            inboxListOptions: inboxListOptions,
+            feedListOptions: feedListOptions,
+            queueKeepSortedOrder: queueKeepSortedOrder?.rawValue ?? "",
             manualDownloadWifiOnly: manualDownloadWifiOnly,
             streamWifiOnly: streamWifiOnly,
             mobileUpdateTypes: MobileUpdateTypes.encode(mobileUpdateTypes),
@@ -3529,6 +3569,10 @@ final class AppSettings: ObservableObject {
             ) ?? .fifty
         autoDownloadWifiOnly = snap.autoDownloadWifiOnly
         if let onBattery = snap.autoDownloadOnBattery { autoDownloadOnBattery = onBattery }
+        if let o = snap.allEpisodesListOptions { allEpisodesListOptions = o }
+        if let o = snap.inboxListOptions { inboxListOptions = o }
+        if let o = snap.feedListOptions { feedListOptions = o }
+        if let raw = snap.queueKeepSortedOrder { queueKeepSortedOrder = EpisodeListSortOrder(rawValue: raw) }
         manualDownloadWifiOnly = snap.manualDownloadWifiOnly
         streamWifiOnly = snap.streamWifiOnly
         if let types = snap.mobileUpdateTypes { mobileUpdateTypes = MobileUpdateTypes.decode(types) }
@@ -3780,6 +3824,12 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var autoDownloadWifiOnly: Bool
     /// Android prefEnableAutoDownloadOnBattery. Absent in older backups → unchanged.
     var autoDownloadOnBattery: Bool? = nil
+    /// Android list filter / sort options (absent in older backups → unchanged).
+    var allEpisodesListOptions: EpisodeListOptions? = nil
+    var inboxListOptions: EpisodeListOptions? = nil
+    var feedListOptions: [String: EpisodeListOptions]? = nil
+    /// "" = Keep sorted off.
+    var queueKeepSortedOrder: String? = nil
     var manualDownloadWifiOnly: Bool
     var streamWifiOnly: Bool
     /// Android prefMobileUpdateTypes raw values. Absent in older backups → the three Wi‑Fi-only

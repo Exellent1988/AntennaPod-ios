@@ -59,6 +59,7 @@ struct AntennaPodApp: App {
         WindowGroup {
             RootTabView()
                 .modifier(MobileRefreshPromptModifier())
+                .modifier(ListFilterDebugOverlay())
                 .environmentObject(store)
                 .environmentObject(playback)
                 .environmentObject(downloads)
