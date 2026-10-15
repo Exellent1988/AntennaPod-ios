@@ -2945,8 +2945,13 @@ final class AppSettings: ObservableObject {
             // Pin the first-launch choice (the fresh-install check is false from the second launch on).
             ud.set(displayMode.rawValue, forKey: Keys.subscriptionsDisplayMode)
         }
-        let cols = ud.object(forKey: Keys.subscriptionsGridColumns) as? Int ?? 3
+        let storedCols = ud.object(forKey: Keys.subscriptionsGridColumns) as? Int
+        // Android subscriptions_default_num_of_columns: 5 on tablets (values-sw600dp), 3 on phones — for new
+        // installs; existing users keep the old default 3. Pinned on first launch.
+        let cols = storedCols ?? (isFreshInstall
+            ? SubscriptionsDisplayMode.defaultGridColumns(isPad: UIDevice.current.userInterfaceIdiom == .pad) : 3)
         subscriptionsGridColumns = min(max(cols, 2), 5)
+        if storedCols == nil { ud.set(min(max(cols, 2), 5), forKey: Keys.subscriptionsGridColumns) }
         let storedGridTitles = ud.object(forKey: Keys.subscriptionsGridShowTitles) as? Bool
         let gridShowTitles = Self.initialGridShowTitles(stored: storedGridTitles, isFreshInstall: isFreshInstall)
         subscriptionsGridShowTitles = gridShowTitles

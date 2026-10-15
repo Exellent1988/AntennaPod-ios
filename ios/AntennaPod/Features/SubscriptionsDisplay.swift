@@ -30,6 +30,12 @@ enum SubscriptionsDisplayMode: String, CaseIterable, Identifiable {
         n <= 1 ? (.list, min(max(gridColumns, 2), 5)) : (.grid, min(n, 5))
     }
 
+    /// Android values-sw600dp/integers.xml subscriptions_default_num_of_columns = 5 (tablet), else 3.
+    static func defaultGridColumns(isPad: Bool) -> Int { isPad ? 5 : 3 }
+
+    /// Android SubscriptionFragment.setColumnNumber: list mode uses 2 columns on tablets.
+    static func listColumns(isRegularWidth: Bool) -> Int { isRegularWidth ? 2 : 1 }
+
     /// Android default: getDefaultNumOfColumns() = 3 on phones (5 on sw600dp), i.e. a grid. New installs
     /// start in the grid; existing users keep their saved (or the old list) mode.
     static func initial(stored: String?, isFreshInstall: Bool) -> SubscriptionsDisplayMode {

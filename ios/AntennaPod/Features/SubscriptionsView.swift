@@ -31,6 +31,7 @@ struct SubscriptionsView: View {
     @State private var feedForTags: PodcastFeed?
     /// Android FeedMultiSelectActionHandler selection (list mode only).
     @State private var feedSelection = Set<UUID>()
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showUnpinAllConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
@@ -483,6 +484,12 @@ struct SubscriptionsView: View {
                                 // Android fragment_subscriptions.xml: the grid sits directly on the screen
                                 // background (no inset card around the covers).
                                 .listRowBackground(Color.clear)
+                                .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
+                        } else if SubscriptionsDisplayMode.listColumns(isRegularWidth: horizontalSizeClass == .regular) == 2 {
+                            // Android SubscriptionFragment.setColumnNumber: list on a tablet = 2-column grid
+                            // of list items (columns == 1 && default 5 → GridLayoutManager(2)).
+                            feedTwoColumnList(section.feeds)
+                                .selectionDisabled()
                                 .listRowInsets(EdgeInsets(top: 4, leading: 12, bottom: 4, trailing: 12))
                         } else {
                             ForEach(section.feeds) { feed in
@@ -1025,6 +1032,46 @@ struct SubscriptionsView: View {
     /// Android FeedCounter rules via PodcastCore FeedCounterRule (PodDBAdapter.getFeedCounters).
     private func counterValue(_ feed: PodcastFeed, unplayed _: Int) -> Int {
         settings.subscriptionsCounterMode.counter(for: feed, store: store, downloads: downloads)
+    }
+
+    /// iPad list mode: two columns of compact rows (cover, title, counter), same tap / select / long-press
+    /// targets as the grid. Swipe actions need List rows, so they are not offered in this layout.
+    private func feedTwoColumnList(_ feeds: [PodcastFeed]) -> some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 8) {
+            ForEach(feeds) { feed in
+                HStack(spacing: 12) {
+                    SubscriptionGridCell.feedArtwork(feed)
+                        .frame(width: 56, height: 56)
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    Text(feedDisplayTitle(feed))
+                        .font(.headline)
+                        .lineLimit(2)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    if feed.lastRefreshError != nil {
+                        SubscriptionRefreshFailedIcon()
+                    }
+                    let count = counterValue(feed, unplayed: 0)
+                    if count > 0 {
+                        Text(count.formatted())
+                            .font(.subheadline.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 4)
+                .contentShape(Rectangle())
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(SubscriptionRefreshFailedIcon.accessibilityLabel(
+                    title: feedDisplayTitle(feed), count: counterValue(feed, unplayed: 0), failed: feed.lastRefreshError != nil))
+                .accessibilityAddTraits(.isButton)
+                .overlay {
+                    NavigationLink(value: feed) { Color.clear }
+                        .opacity(0)
+                }
+                .feedGridSelectable(selection: $feedSelection, feedId: feed.id)
+                .modifier(feedContextMenu(feed))
+            }
+        }
+        .padding(.vertical, 4)
     }
 
     /// Android grid mode (subscription_num_columns): cover cells, same tap/long-press targets as rows.
