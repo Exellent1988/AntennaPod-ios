@@ -228,6 +228,19 @@ struct FullPlayerView: View {
                             Label(String(localized: "Podcast settings"), systemImage: "gearshape")
                         }
                         .accessibilityHint(String(localized: "Opens the settings for this episode's podcast"))
+                        // Android has nothing below the controls; podcast-title copy/share live here.
+                        if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle) {
+                            Button {
+                                copyEpisodeMetadata(podcastTitle, message: String(localized: "Podcast title copied to the pasteboard."))
+                            } label: {
+                                Label(String(localized: "Copy podcast title"), systemImage: "doc.on.doc")
+                            }
+                            .accessibilityHint(String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"))
+                            ShareLink(item: podcastTitle, subject: Text(episode?.title ?? "")) {
+                                Label(String(localized: "Share podcast title"), systemImage: "square.and.arrow.up")
+                            }
+                            .accessibilityHint(String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"))
+                        }
                         Button {
                             playback.skipToNextEpisode()
                         } label: {
@@ -529,7 +542,8 @@ struct FullPlayerView: View {
     }
 
     private func portraitHero(episode: PodcastEpisode, side: CGFloat) -> some View {
-        VStack(spacing: 0) {
+        let compact = side < 260
+        return VStack(spacing: 0) {
             Spacer(minLength: 8)
             mediaSurface(episode: episode, side: side)
             videoAudioOnlyToggle(episode: episode)
@@ -544,8 +558,10 @@ struct FullPlayerView: View {
                 .padding(.top, 4)
             Spacer(minLength: 12)
             bottomBar
-                .padding(.horizontal, 24)
-                .padding(.bottom, 8)
+                .padding(.horizontal, compact ? 16 : 24)
+                // Safe area is already excluded; keep the row (and the speed capsule) off the edge
+                // on devices without a home indicator (iPhone SE) too.
+                .padding(.bottom, CGFloat(PlayerHeroLayout.bottomBarInset))
         }
     }
 
@@ -693,16 +709,6 @@ struct FullPlayerView: View {
     /// Android's episode info below the player). Title and podcast live in `playerHeader`.
     private func episodeDetails(episode: PodcastEpisode) -> some View {
         VStack(spacing: 6) {
-            if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle) {
-                episodeMetadataActions(
-                    text: podcastTitle,
-                    copyLabel: String(localized: "Copy podcast title"),
-                    shareLabel: String(localized: "Share podcast title"),
-                    copyHint: String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"),
-                    shareHint: String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"),
-                    copiedMessage: String(localized: "Podcast title copied to the pasteboard.")
-                )
-            }
             // Item season/episode and itunes:episodeType metadata; hide when missing, never invent.
             if let seasonEpisodeCaption = episode.seasonEpisodeCaption {
                 Text(seasonEpisodeCaption)
@@ -1334,48 +1340,34 @@ struct FullPlayerView: View {
             .accessibilityHint(String(localized: "Video is currently shown in Picture in Picture."))
     }
 
-    /// Chapter dividers on the seek bar (Android ChapterSeekBar). Decorative; no hit testing.
-    private var chapterMarksOverlay: some View {
-        GeometryReader { geo in
-            let marks = ChapterMarks.fractions(
-                starts: chapters.map(\.startTimeSeconds),
-                duration: playback.durationSeconds
-            )
-            // Slider track has ~14 pt thumb inset on each side.
-            let inset: CGFloat = 14
-            let width = max(0, geo.size.width - inset * 2)
-            ForEach(marks, id: \.self) { fraction in
-                Rectangle()
-                    .fill(Color(uiColor: .systemBackground))
-                    .frame(width: 2, height: 6)
-                    .position(x: inset + width * CGFloat(fraction), y: geo.size.height / 2)
-            }
-        }
-        .allowsHitTesting(false)
-        .accessibilityHidden(true)
+    private var seekRange: Double {
+        let d = playback.durationSeconds
+        return max(d.isFinite && d > 0 ? d : max(displayPosition, 1), 1)
+    }
+
+    private var seekFraction: Double {
+        SeekBarGeometry.clampedFraction(displayPosition / seekRange)
     }
 
     private var scrubber: some View {
         VStack(spacing: 6) {
-            Slider(
-                value: Binding(
-                    get: { displayPosition },
-                    set: { scrubSeconds = $0 }
+            SeekBar(
+                fraction: seekFraction,
+                chapterFractions: ChapterMarks.fractions(
+                    starts: chapters.map(\.startTimeSeconds),
+                    duration: playback.durationSeconds
                 ),
-                in: 0...max(playback.durationSeconds.isFinite && playback.durationSeconds > 0
-                    ? playback.durationSeconds
-                    : max(displayPosition, 1), 1),
-                onEditingChanged: { editing in
-                    if editing {
+                onScrub: { fraction in
+                    if !isScrubbing {
                         isScrubbing = true
-                        scrubSeconds = playback.positionSeconds
-                    } else {
-                        playback.seek(toSeconds: scrubSeconds)
-                        isScrubbing = false
                     }
+                    scrubSeconds = fraction * seekRange
+                },
+                onEnd: { fraction in
+                    playback.seek(toSeconds: fraction * seekRange)
+                    isScrubbing = false
                 }
             )
-            .overlay { chapterMarksOverlay }
             .accessibilityLabel(String(localized: "Playback position"))
             .accessibilityValue(playbackPositionAccessibilityValue)
             .accessibilityHint(playbackPositionAccessibilityHint)

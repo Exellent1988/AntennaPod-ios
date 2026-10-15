@@ -63,8 +63,10 @@ public enum FeedSettingsGroup: String, CaseIterable, Sendable {
 /// Full player hero sizing (Android: large square cover above the controls).
 public enum PlayerHeroLayout {
     /// Vertical space the portrait controls need below the cover (header, seek bar, main row, bottom bar).
-    public static let portraitControlsHeight: Double = 330
+    public static let portraitControlsHeight: Double = 380
     public static let minimumCover: Double = 120
+    /// Gap under the bottom bar (speed · sleep · audio · visualizer) so it never touches the edge.
+    public static let bottomBarInset: Double = 24
     public static let maximumCover: Double = 520
 
     /// Landscape when wider than tall.
@@ -80,5 +82,36 @@ public enum PlayerHeroLayout {
             side = min(width - 48, height - portraitControlsHeight)
         }
         return min(max(side, minimumCover), maximumCover)
+    }
+}
+
+/// Android-style seek bar: thin track, small round thumb. Track runs from thumb centre at 0 to
+/// thumb centre at 1, so chapter ticks and the thumb share one coordinate system.
+public enum SeekBarGeometry {
+    public static let thumbDiameter: Double = 14
+    public static let trackHeight: Double = 4
+    /// Touch target height (thumb is small, the hit area is not).
+    public static let hitHeight: Double = 44
+
+    public static func clampedFraction(_ f: Double) -> Double {
+        guard f.isFinite else { return 0 }
+        return min(max(f, 0), 1)
+    }
+
+    /// Usable track length between the thumb centres at 0 and 1.
+    public static func trackLength(width: Double) -> Double {
+        max(0, width - thumbDiameter)
+    }
+
+    /// x of the thumb centre / a chapter tick for a fraction.
+    public static func x(forFraction f: Double, width: Double) -> Double {
+        thumbDiameter / 2 + trackLength(width: width) * clampedFraction(f)
+    }
+
+    /// Fraction for a touch location.
+    public static func fraction(forX x: Double, width: Double) -> Double {
+        let len = trackLength(width: width)
+        guard len > 0 else { return 0 }
+        return clampedFraction((x - thumbDiameter / 2) / len)
     }
 }
