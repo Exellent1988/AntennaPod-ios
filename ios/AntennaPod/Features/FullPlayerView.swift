@@ -228,6 +228,12 @@ struct FullPlayerView: View {
                             Label(String(localized: "Podcast settings"), systemImage: "gearshape")
                         }
                         .accessibilityHint(String(localized: "Opens the settings for this episode's podcast"))
+                        Button {
+                            playback.skipToNextEpisode()
+                        } label: {
+                            Label(String(localized: "Skip episode"), systemImage: "forward.end.alt")
+                        }
+                        .accessibilityHint(String(localized: "Ends this episode and plays the next one; counts toward an episode sleep timer"))
                     } label: {
                         Image(systemName: "ellipsis.circle")
                     }
@@ -322,7 +328,8 @@ struct FullPlayerView: View {
         }
         #if DEBUG
         // Screenshots: `-APDebugSleepTimerSheet` opens the Sleep timer sheet; with
-        // `-APDebugSleepTimerMinutes <n>` a clock timer is started first (active state).
+        // `-APDebugSleepTimerMinutes <n>` a clock timer is started first (active state);
+        // `-APDebugSleepTimerEpisodes <n>` starts an episode timer instead.
         .task {
             let args = ProcessInfo.processInfo.arguments
             guard args.contains("-APDebugSleepTimerSheet") else { return }
@@ -330,6 +337,9 @@ struct FullPlayerView: View {
             try? await Task.sleep(nanoseconds: 4_000_000_000)
             if let i = args.firstIndex(of: "-APDebugSleepTimerMinutes"), i + 1 < args.count, let m = Int(args[i + 1]) {
                 playback.setSleepTimer(minutes: m, remember: false)
+            }
+            if let i = args.firstIndex(of: "-APDebugSleepTimerEpisodes"), i + 1 < args.count, let n = Int(args[i + 1]) {
+                playback.setSleepTimer(episodes: n, remember: false)
             }
             showSleepTimerSheet = true
         }
@@ -1723,7 +1733,7 @@ struct FullPlayerView: View {
         switch playback.sleepTimerMode {
         case .clock:
             return String(localized: "Extend +\(minutes) min")
-        case .endOfEpisode, .endOfChapter, .endOfQueue:
+        case .endOfEpisode, .endOfChapter, .endOfQueue, .episodes:
             return String(localized: "Switch to \(minutes) min clock")
         case nil:
             return String(localized: "Extend +\(minutes) min")
@@ -1734,7 +1744,7 @@ struct FullPlayerView: View {
         switch playback.sleepTimerMode {
         case .clock:
             return String(localized: "Adds \(minutes) minutes to the remaining clock sleep timer.")
-        case .endOfEpisode, .endOfChapter, .endOfQueue:
+        case .endOfEpisode, .endOfChapter, .endOfQueue, .episodes:
             return String(localized: "Replaces End of episode, End of chapter, or End of queue with a \(minutes)-minute clock sleep timer.")
         case nil:
             return String(localized: "Sets a \(minutes)-minute clock sleep timer.")

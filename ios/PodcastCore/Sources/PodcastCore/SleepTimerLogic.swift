@@ -70,3 +70,56 @@ public enum SleepTimerLogic {
 
     private static func wrap(_ hour: Int) -> Int { ((hour % 24) + 24) % 24 }
 }
+
+/// Android `EpisodeSleepTimer` (SleepTimerType.EPISODES): stop after N finished episodes.
+/// An episode counts when it ends naturally, by Skip ending, or by a manual skip to the next
+/// episode (Android `episodeFinishedPlayback` on end or skip); opening another episode does not.
+public struct EpisodeSleepCounter: Equatable, Sendable {
+    /// Sheet stepper range (Android takes any positive number; 1…20 covers real use).
+    public static let range: ClosedRange<Int> = 1...20
+    /// Android `SleepTimerDialog` extend buttons for the episode type: +1 / +2 / +3.
+    public static let extendSteps = [1, 2, 3]
+
+    public private(set) var initial: Int
+    public private(set) var remaining: Int
+
+    public init(episodes: Int) {
+        let n = Self.clamp(episodes)
+        initial = n
+        remaining = n
+    }
+
+    /// Android `isEndingThisEpisode`: the current episode is the last one (fade / vibrate here).
+    public var isOnLastEpisode: Bool { remaining == 1 }
+
+    /// Records a finished episode. Returns `true` when playback may continue to the next one
+    /// (Android `shouldContinueToNextEpisode`: episodes left > 0).
+    @discardableResult
+    public mutating func episodeFinished() -> Bool {
+        remaining = max(0, remaining - 1)
+        return remaining > 0
+    }
+
+    public mutating func extend(by episodes: Int) {
+        guard episodes > 0 else { return }
+        remaining = min(remaining + episodes, Self.range.upperBound * 2)
+    }
+
+    /// Shake to reset: back to the initial count.
+    public mutating func reset() { remaining = initial }
+
+    /// Time left on the last episode (for fade / warning); `nil` when not on the last episode
+    /// or the duration is unknown.
+    public func lastEpisodeRemainingSeconds(position: Double, duration: Double) -> Double? {
+        guard isOnLastEpisode, duration.isFinite, duration > 0, position.isFinite else { return nil }
+        return max(0, duration - position)
+    }
+
+    public static func clamp(_ episodes: Int) -> Int { min(max(episodes, range.lowerBound), range.upperBound) }
+}
+
+/// Android `SleepTimerType`: the sheet remembers which kind was used last.
+public enum SleepTimerKind: String, Codable, CaseIterable, Sendable {
+    case clock
+    case episodes
+}

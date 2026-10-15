@@ -728,7 +728,7 @@ struct MiniPlayerView: View {
         switch playback.sleepTimerMode {
         case .clock:
             return String(localized: "Extend +\(minutes) min")
-        case .endOfEpisode, .endOfChapter, .endOfQueue:
+        case .endOfEpisode, .endOfChapter, .endOfQueue, .episodes:
             return String(localized: "Switch to \(minutes) min clock")
         case nil:
             return String(localized: "Extend +\(minutes) min")
@@ -739,7 +739,7 @@ struct MiniPlayerView: View {
         switch playback.sleepTimerMode {
         case .clock:
             return String(localized: "Adds \(minutes) minutes to the remaining clock sleep timer.")
-        case .endOfEpisode, .endOfChapter, .endOfQueue:
+        case .endOfEpisode, .endOfChapter, .endOfQueue, .episodes:
             return String(localized: "Replaces End of episode, End of chapter, or End of queue with a \(minutes)-minute clock sleep timer.")
         case nil:
             return String(localized: "Sets a \(minutes)-minute clock sleep timer.")

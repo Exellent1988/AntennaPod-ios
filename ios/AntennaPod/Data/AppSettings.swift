@@ -1350,6 +1350,8 @@ final class AppSettings: ObservableObject {
         static let sleepTimerAutoEnableFromHour = "settings.sleepTimerAutoEnableFromHour"
         static let sleepTimerAutoEnableToHour = "settings.sleepTimerAutoEnableToHour"
         static let lastSleepTimerMinutes = "settings.lastSleepTimerMinutes"
+        static let lastSleepTimerEpisodes = "settings.lastSleepTimerEpisodes"
+        static let sleepTimerKind = "settings.sleepTimerKind"
         static let chartsCountryCode = "settings.chartsCountryCode"
         static let discoverChartsLimit = "settings.discovery.chartsLimit"
         static let askForAppStoreRating = "settings.askForAppStoreRating"
@@ -1668,6 +1670,20 @@ final class AppSettings: ObservableObject {
     @Published var lastSleepTimerMinutes: Int {
         didSet {
             UserDefaults.standard.set(lastSleepTimerMinutes, forKey: Keys.lastSleepTimerMinutes)
+        }
+    }
+
+    /// Android `LastValue` for the episode type (default 1).
+    @Published var lastSleepTimerEpisodes: Int {
+        didSet {
+            UserDefaults.standard.set(lastSleepTimerEpisodes, forKey: Keys.lastSleepTimerEpisodes)
+        }
+    }
+
+    /// Android `sleepTimerType` (CLOCK / EPISODES): last kind used; auto-enable starts this kind.
+    @Published var sleepTimerKind: SleepTimerKind {
+        didSet {
+            UserDefaults.standard.set(sleepTimerKind.rawValue, forKey: Keys.sleepTimerKind)
         }
     }
 
@@ -2524,6 +2540,8 @@ final class AppSettings: ObservableObject {
         sleepTimerAutoEnableFromHour = Self.clampHour(UserDefaults.standard.object(forKey: Keys.sleepTimerAutoEnableFromHour) as? Int ?? SleepTimerLogic.defaultAutoEnableFromHour)
         sleepTimerAutoEnableToHour = Self.clampHour(UserDefaults.standard.object(forKey: Keys.sleepTimerAutoEnableToHour) as? Int ?? SleepTimerLogic.defaultAutoEnableToHour)
         lastSleepTimerMinutes = Self.clampSleepMinutes(UserDefaults.standard.object(forKey: Keys.lastSleepTimerMinutes) as? Int ?? 15)
+        lastSleepTimerEpisodes = EpisodeSleepCounter.clamp(UserDefaults.standard.object(forKey: Keys.lastSleepTimerEpisodes) as? Int ?? 1)
+        sleepTimerKind = SleepTimerKind(rawValue: UserDefaults.standard.string(forKey: Keys.sleepTimerKind) ?? "") ?? .clock
         if UserDefaults.standard.object(forKey: Keys.askForAppStoreRating) != nil {
             askForAppStoreRating = UserDefaults.standard.bool(forKey: Keys.askForAppStoreRating)
         } else {
@@ -3046,6 +3064,8 @@ final class AppSettings: ObservableObject {
             sleepTimerAutoEnableFromHour: sleepTimerAutoEnableFromHour,
             sleepTimerAutoEnableToHour: sleepTimerAutoEnableToHour,
             lastSleepTimerMinutes: lastSleepTimerMinutes,
+            lastSleepTimerEpisodes: lastSleepTimerEpisodes,
+            sleepTimerKind: sleepTimerKind.rawValue,
             askForAppStoreRating: askForAppStoreRating,
             playVideoAsAudioOnly: playVideoAsAudioOnly,
             volumeBoostPercent: volumeBoostPercent,
@@ -3180,6 +3200,8 @@ final class AppSettings: ObservableObject {
         sleepTimerAutoEnableFromHour = Self.clampHour(snap.sleepTimerAutoEnableFromHour ?? SleepTimerLogic.defaultAutoEnableFromHour)
         sleepTimerAutoEnableToHour = Self.clampHour(snap.sleepTimerAutoEnableToHour ?? SleepTimerLogic.defaultAutoEnableToHour)
         lastSleepTimerMinutes = Self.clampSleepMinutes(snap.lastSleepTimerMinutes ?? 15)
+        lastSleepTimerEpisodes = EpisodeSleepCounter.clamp(snap.lastSleepTimerEpisodes ?? 1)
+        sleepTimerKind = snap.sleepTimerKind.flatMap(SleepTimerKind.init(rawValue:)) ?? .clock
         askForAppStoreRating = snap.askForAppStoreRating ?? true
         playVideoAsAudioOnly = snap.playVideoAsAudioOnly ?? false
         volumeBoostPercent = Self.clampVolumeBoostPercent(
@@ -3407,6 +3429,10 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var sleepTimerAutoEnableToHour: Int? = nil
     /// Absent in older backups → Android default.
     var lastSleepTimerMinutes: Int? = nil
+    /// Absent in older backups → 1 (Android default).
+    var lastSleepTimerEpisodes: Int? = nil
+    /// `clock` / `episodes`; absent in older backups → clock.
+    var sleepTimerKind: String? = nil
     /// Absent in older backups → treated as on (default).
     var askForAppStoreRating: Bool? = true
     /// Absent in older backups → treated as off (show video when detected).

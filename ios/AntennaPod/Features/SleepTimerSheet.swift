@@ -10,6 +10,8 @@ struct SleepTimerSheet: View {
     @EnvironmentObject private var store: PodcastStore
     @Environment(\.dismiss) private var dismiss
     @State private var minutesText = ""
+    @State private var kind: SleepTimerKind = .clock
+    @State private var episodes = 1
 
     private var range: ClosedRange<Int> { PlaybackService.customSleepTimerMinutesRange }
     private var parsedMinutes: Int? {
@@ -34,7 +36,11 @@ struct SleepTimerSheet: View {
                     Button(String(localized: "Done")) { dismiss() }
                 }
             }
-            .onAppear { minutesText = String(settings.lastSleepTimerMinutes) }
+            .onAppear {
+                minutesText = String(settings.lastSleepTimerMinutes)
+                episodes = settings.lastSleepTimerEpisodes
+                kind = settings.sleepTimerKind
+            }
         }
         .presentationDetents([.large])
     }
@@ -53,6 +59,18 @@ struct SleepTimerSheet: View {
             if playback.sleepTimerWasAutoEnabled {
                 Text(String(localized: "Turned on automatically (Auto-enable)."))
                     .font(.caption).foregroundStyle(.secondary)
+            }
+            if playback.sleepTimerMode == .episodes {
+                HStack(spacing: 8) {
+                    ForEach(EpisodeSleepCounter.extendSteps, id: \.self) { count in
+                        Button(String(format: String(localized: "+%lld ep."), count)) {
+                            playback.extendSleepTimer(byEpisodes: count)
+                        }
+                        .buttonStyle(.bordered)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityLabel(String(format: String(localized: "Extend by %lld episodes"), count))
+                    }
+                }
             }
             HStack(spacing: 8) {
                 ForEach(SleepTimerLogic.extendMinutes, id: \.self) { minutes in
@@ -78,6 +96,10 @@ struct SleepTimerSheet: View {
         case .endOfEpisode: return String(localized: "End of episode")
         case .endOfChapter: return String(localized: "End of chapter")
         case .endOfQueue: return String(localized: "End of queue")
+        case .episodes:
+            let left = playback.sleepTimerEpisodeCounter?.remaining ?? 0
+            return left == 1 ? String(localized: "Last episode")
+                : String(format: String(localized: "%lld episodes left"), left)
         default: return playback.sleepTimerStatusLabel ?? String(localized: "Sleep timer")
         }
     }
@@ -86,6 +108,43 @@ struct SleepTimerSheet: View {
 
     private var startSection: some View {
         Section {
+            Picker(String(localized: "Timer type"), selection: $kind) {
+                Text(String(localized: "Minutes")).tag(SleepTimerKind.clock)
+                Text(String(localized: "Episodes")).tag(SleepTimerKind.episodes)
+            }
+            .pickerStyle(.segmented)
+            if kind == .episodes {
+                episodesStartRows
+            } else {
+                clockStartRows
+            }
+            Button(String(localized: "End of episode")) { playback.setSleepTimerEndOfEpisode(); dismiss() }
+            Button(String(localized: "End of chapter")) { playback.setSleepTimerEndOfChapter(); dismiss() }
+                .disabled(!playback.canSetSleepTimerEndOfChapter)
+            Button(String(localized: "End of queue")) { playback.setSleepTimerEndOfQueue(); dismiss() }
+                .disabled(!canEndOfQueue)
+        } header: {
+            Text(String(localized: "Set sleep timer"))
+        }
+    }
+
+    /// Android episode type: stop after N episodes (ended, Skip ending or skipped).
+    @ViewBuilder private var episodesStartRows: some View {
+        HStack {
+            Stepper(value: $episodes, in: EpisodeSleepCounter.range) {
+                Text(episodes == 1 ? String(localized: "1 episode")
+                     : String(format: String(localized: "%lld episodes"), episodes))
+                    .monospacedDigit()
+            }
+            .accessibilityHint(String(localized: "Playback stops after this many episodes have finished or been skipped."))
+            Button(String(localized: "Start")) { playback.setSleepTimer(episodes: episodes); dismiss() }
+                .buttonStyle(.borderedProminent)
+        }
+        Text(String(localized: "Keeps playing the next episode (continuous playback) and stops after the last one."))
+            .font(.caption).foregroundStyle(.secondary)
+    }
+
+    @ViewBuilder private var clockStartRows: some View {
             HStack {
                 TextField(String(localized: "Minutes"), text: $minutesText)
                     .keyboardType(.numberPad)
@@ -110,14 +169,6 @@ struct SleepTimerSheet: View {
                     }
                 }
             }
-            Button(String(localized: "End of episode")) { playback.setSleepTimerEndOfEpisode(); dismiss() }
-            Button(String(localized: "End of chapter")) { playback.setSleepTimerEndOfChapter(); dismiss() }
-                .disabled(!playback.canSetSleepTimerEndOfChapter)
-            Button(String(localized: "End of queue")) { playback.setSleepTimerEndOfQueue(); dismiss() }
-                .disabled(!canEndOfQueue)
-        } header: {
-            Text(String(localized: "Set sleep timer"))
-        }
     }
 
     private var canEndOfQueue: Bool {
@@ -165,6 +216,14 @@ struct SleepTimerOptionRows: View {
 
     private var autoEnableSummary: String {
         let from = settings.sleepTimerAutoEnableFromHour, to = settings.sleepTimerAutoEnableToHour
+        if settings.sleepTimerKind == .episodes {
+            if from == to {
+                return String(format: String(localized: "Starts a %lld-episode timer whenever playback starts."),
+                              settings.lastSleepTimerEpisodes)
+            }
+            return String(format: String(localized: "Starts a %lld-episode timer when playback starts between %@ and %@."),
+                          settings.lastSleepTimerEpisodes, Self.hourLabel(from), Self.hourLabel(to))
+        }
         if from == to {
             return String(format: String(localized: "Starts a %lld-minute timer whenever playback starts."),
                           settings.lastSleepTimerMinutes)

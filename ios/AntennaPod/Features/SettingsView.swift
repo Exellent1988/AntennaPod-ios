@@ -939,7 +939,7 @@ struct SettingsView: View {
     private var matchesPlaybackVolumeBoost: Bool {
         matchesSearch(
             "Volume boost",
-            "Soft gain via `AVMutableAudioMix` track volume (100% = unity, up to 300%). Above 100% may clip or distort. Not ReplayGain / loudness normalization / Android LoudnessEnhancer. Keeps stock AVPlayer (video / PiP / Now Playing). Some streams (e.g. HLS) may ignore audioMix. Sleep-timer fade still uses player volume. Default 100%."
+            "Soft gain in the playback audio pipeline (100% = unity, up to 300%). Above 100% may clip or distort. Not ReplayGain / loudness normalization / Android LoudnessEnhancer. Keeps stock AVPlayer (video / PiP / Now Playing). The sleep-timer fade runs in the same pipeline, after the boost, so the two are independent; HLS streams fall back to player volume for the fade and may ignore the boost. Default 100%."
         )
     }
 
@@ -1457,7 +1457,7 @@ struct SettingsView: View {
                 .accessibilityLabel(String(localized: "Volume boost"))
                 .accessibilityValue(volumeBoostAccessibilityValue)
                 .accessibilityHint(volumeBoostAccessibilityHint)
-                Text("Soft gain via `AVMutableAudioMix` track volume (100% = unity, up to 300%). Above 100% may clip or distort. Not ReplayGain / loudness normalization / Android LoudnessEnhancer. Keeps stock AVPlayer (video / PiP / Now Playing). Some streams (e.g. HLS) may ignore audioMix. Sleep-timer fade still uses player volume. Default 100%.")
+                Text("Soft gain in the playback audio pipeline (100% = unity, up to 300%). Above 100% may clip or distort. Not ReplayGain / loudness normalization / Android LoudnessEnhancer. Keeps stock AVPlayer (video / PiP / Now Playing). The sleep-timer fade runs in the same pipeline, after the boost, so the two are independent; HLS streams fall back to player volume for the fade and may ignore the boost. Default 100%.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -1837,7 +1837,7 @@ struct SettingsView: View {
     }
 
     private var skipIntroAccessibilityHint: String {
-        String(localized: "Presets are Off, 5, 10, 15, 30, and 60 seconds. The default is Off. Off never seeks on a fresh start. Any other value seeks forward once to that many seconds only when the saved position is about 0. Play from beginning does not skip the intro. Resuming past about 1 second does not skip the intro. Changing the picker does not seek now, start playback, or download. Feed detail can override this for one podcast. Not Rewind, Fast-forward, Skip outro, Skip silence, or Rewind after pause.")
+        String(localized: "Presets are Off, 5, 10, 15, 30, and 60 seconds; Custom… accepts any number of seconds. The default is Off. Off never seeks on a fresh start. Any other value seeks forward once to that many seconds only when the saved position is about 0. Play from beginning does not skip the intro. Resuming past about 1 second does not skip the intro. Changing the picker does not seek now, start playback, or download. Feed detail can override this for one podcast. Not Rewind, Fast-forward, Skip outro, Skip silence, or Rewind after pause.")
     }
 
     /// VoiceOver for Settings → Skip outro. Off is the default. A non-zero value
@@ -1855,7 +1855,7 @@ struct SettingsView: View {
     }
 
     private var skipOutroAccessibilityHint: String {
-        String(localized: "Presets are Off, 5, 10, 15, 30, and 60 seconds. The default is Off. Off never finishes early. Any other value finishes once per play session when remaining time is within that window, duration is known, and playback is past 1 second, the same as a natural end. Continuous playback chooses what plays next. Changing the picker does not mark played now, seek, start playback, or download. Feed detail can override this for one podcast. Not Smart mark as played, Skip intro, Skip silence, or Rewind after pause.")
+        String(localized: "Presets are Off, 5, 10, 15, 30, and 60 seconds; Custom… accepts any number of seconds. The default is Off. Off never finishes early. Any other value finishes once per play session when remaining time is within that window, duration is known, and playback is past 1 second, the same as a natural end. Continuous playback chooses what plays next. Changing the picker does not mark played now, seek, start playback, or download. Feed detail can override this for one podcast. Not Smart mark as played, Skip intro, Skip silence, or Rewind after pause.")
     }
 
     /// VoiceOver for Settings → Show remaining time. Off is the default and
@@ -1898,18 +1898,18 @@ struct SettingsView: View {
         let label = AppSettings.volumeBoostLabel(percent)
         if percent <= AppSettings.defaultVolumeBoostPercent {
             return String(
-                format: String(localized: "%@. This is the default. No soft gain is applied, and the audio mix stays at unity. If an episode is already loaded, this clears that mix on the current item. If nothing is loaded, it is saved for the next one. Above 100% would be software gain and may clip or distort. This does not start playback, seek, change playback speed, or download. Sleep-timer fade still uses player volume and is separate. Not Volume adaptation, ReplayGain, loudness normalization, Android LoudnessEnhancer, or an audio engine. Some streams, including HLS, may ignore the audio mix. If the item has no audio tracks, or the tracks cannot be read, no boost is invented. Stock AVPlayer keeps video, Picture in Picture, and Now Playing."),
+                format: String(localized: "%@. This is the default. No soft gain is applied, and the audio mix stays at unity. If an episode is already loaded, this clears that mix on the current item. If nothing is loaded, it is saved for the next one. Above 100% would be software gain and may clip or distort. This does not start playback, seek, change playback speed, or download. The sleep-timer fade runs in the audio pipeline and is separate from the boost; HLS streams fade with player volume. Not Volume adaptation, ReplayGain, loudness normalization, Android LoudnessEnhancer, or an audio engine. Some streams, including HLS, may ignore the audio mix. If the item has no audio tracks, or the tracks cannot be read, no boost is invented. Stock AVPlayer keeps video, Picture in Picture, and Now Playing."),
                 label
             )
         }
         return String(
-            format: String(localized: "%@. This is not the default of 100%. Soft gain is software volume on the audio mix, using this percent divided by 100, and it may clip or distort. If an episode is already loaded and its audio tracks can be read, this applies to that item. If nothing is loaded, or there are no audio tracks, or the tracks cannot be read, nothing is boosted and no louder result is invented. This does not start playback, seek, change playback speed, or download. Sleep-timer fade still uses player volume and multiplies with the mix. Not Volume adaptation, ReplayGain, loudness normalization, Android LoudnessEnhancer, or an audio engine. Some streams, including HLS, may ignore the audio mix, so the boost then has no effect. Stock AVPlayer keeps video, Picture in Picture, and Now Playing."),
+            format: String(localized: "%@. This is not the default of 100%. Soft gain is software volume on the audio mix, using this percent divided by 100, and it may clip or distort. If an episode is already loaded and its audio tracks can be read, this applies to that item. If nothing is loaded, or there are no audio tracks, or the tracks cannot be read, nothing is boosted and no louder result is invented. This does not start playback, seek, change playback speed, or download. The sleep-timer fade runs in the audio pipeline after the boost and does not change it; HLS streams fade with player volume. Not Volume adaptation, ReplayGain, loudness normalization, Android LoudnessEnhancer, or an audio engine. Some streams, including HLS, may ignore the audio mix, so the boost then has no effect. Stock AVPlayer keeps video, Picture in Picture, and Now Playing."),
             label
         )
     }
 
     private var volumeBoostAccessibilityHint: String {
-        String(localized: "Presets are 100%, 125%, 150%, 175%, 200%, 250%, and 300%. There is no custom percent. The default is 100%, which is unity and clears the audio mix. Above 100% is soft gain and may clip or distort. Changing this applies to a loaded item only when its audio tracks can be read; otherwise it is saved and no boost is invented. Some streams, including HLS, may ignore the audio mix. Stock AVPlayer keeps video, Picture in Picture, and Now Playing. It does not start playback, seek, change playback speed, or download. Not Volume adaptation, Preserve pitch, Skip silence, ReplayGain, loudness normalization, LoudnessEnhancer, or an audio engine. Sleep-timer fade stays on player volume and multiplies with the mix.")
+        String(localized: "Presets are 100%, 125%, 150%, 175%, 200%, 250%, and 300%. There is no custom percent. The default is 100%, which is unity and clears the audio mix. Above 100% is soft gain and may clip or distort. Changing this applies to a loaded item only when its audio tracks can be read; otherwise it is saved and no boost is invented. Some streams, including HLS, may ignore the audio mix. Stock AVPlayer keeps video, Picture in Picture, and Now Playing. It does not start playback, seek, change playback speed, or download. Not Volume adaptation, Preserve pitch, Skip silence, ReplayGain, loudness normalization, LoudnessEnhancer, or an audio engine. The sleep-timer fade runs in the audio pipeline and is independent of the boost; HLS streams fade with player volume.")
     }
 
     /// VoiceOver for Settings → Default speed. 1.0× is the default.
