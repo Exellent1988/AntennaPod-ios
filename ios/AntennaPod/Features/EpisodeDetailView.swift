@@ -77,7 +77,9 @@ struct EpisodeDetailPager: View {
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .navigationTitle(current.title)
+        // Android ItemFragment's toolbar has no title; the page header shows the full title, so the
+        // truncated duplicate in the nav bar is dropped (VoiceOver still gets it from the header).
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
             if all.count > 1, let pos = all.firstIndex(where: { $0.id == selectedId }) {
