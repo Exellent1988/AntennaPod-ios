@@ -2006,7 +2006,21 @@ struct FeedDetailView: View {
         }
     }
 
+    /// The alerts are split into small type-erased stages: one function chaining ~28 `.alert`s
+    /// built a SwiftUI type so deep that opening a podcast overflowed the main-thread stack
+    /// (device crash logs 07:35/07:40/07:46: EXC_BAD_ACCESS "Thread stack size exceeded" in
+    /// feedDetailAlertsStage / swift_getOpaqueTypeMetadata).
     private func feedDetailAlertsStage<Content: View>(_ content: Content) -> some View {
+        var view = AnyView(content)
+        view = feedDetailAlerts1(view)
+        view = feedDetailAlerts2(view)
+        view = feedDetailAlerts3(view)
+        view = feedDetailAlerts4(view)
+        return view
+    }
+
+    private func feedDetailAlerts1(_ content: AnyView) -> AnyView {
+        AnyView(
         content
         .alert(
             String(localized: "Copied"),
@@ -2064,6 +2078,12 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Discuss URL copied to the pasteboard."))
         }
+        )
+    }
+
+    private func feedDetailAlerts2(_ content: AnyView) -> AnyView {
+        AnyView(
+        content
         .alert(
             String(localized: "Copied"),
             isPresented: $showDiscussProtocolCopied
@@ -2120,6 +2140,12 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Trailer type copied to the pasteboard."))
         }
+        )
+    }
+
+    private func feedDetailAlerts3(_ content: AnyView) -> AnyView {
+        AnyView(
+        content
         .alert(
             String(localized: "Copied"),
             isPresented: $showTrailerLengthCopied
@@ -2176,6 +2202,12 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Podcast type copied to the pasteboard."))
         }
+        )
+    }
+
+    private func feedDetailAlerts4(_ content: AnyView) -> AnyView {
+        AnyView(
+        content
         .alert(
             String(localized: "Copied"),
             isPresented: $showUpdateFrequencyCopied
@@ -2232,6 +2264,8 @@ struct FeedDetailView: View {
         } message: {
             Text(String(localized: "Last refreshed timestamp copied to the pasteboard."))
         }
+    
+        )
     }
 
     private func feedDetailFeedbackStage<Content: View>(_ content: Content) -> some View {
