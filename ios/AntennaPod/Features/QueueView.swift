@@ -548,6 +548,10 @@ struct QueueView: View {
         // Select replaces the old Edit button: the same edit mode shows the checkmarks and, when the queue
         // is unlocked and unfiltered, the drag handles.
         .episodeMultiSelect(selection: $multiSelection, episodes: filteredQueue, queueActions: true)
+        // Android SwipeRefreshLayout (QueueFragment / AllEpisodesFragment): pull to refresh all feeds.
+        .refreshable {
+            await store.refreshAllFeeds()
+        }
     }
 
     // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
