@@ -1,3 +1,4 @@
+import PodcastCore
 import SwiftUI
 import UIKit
 
@@ -35,6 +36,10 @@ struct InboxView: View {
     /// Does not mutate `PodcastStore.inboxEpisodes` (Home New preview stays newest-first).
     /// Used for current-Inbox bulk Mark all as played / Archive all counts.
     private var sortedItems: [InboxEpisode] {
+        settings.inboxListOptions.apply(sortedItemsBeforeListOptions) { store.listFacts(for: $0.episode, feedTitle: $0.feedTitle) }
+    }
+
+    private var sortedItemsBeforeListOptions: [InboxEpisode] {
         store.inboxEpisodes.sorted { lhs, rhs in
             switch settings.inboxSort {
             case .newestFirst:
@@ -824,6 +829,7 @@ struct InboxView: View {
                 inboxList
                 .navigationTitle("Inbox")
                 .toolbar { inboxToolbar }
+                .episodeListFilterToolbar(String(localized: "Inbox"), options: $settings.inboxListOptions, allowsFilter: false)
             ))
         }
     }

@@ -60,7 +60,7 @@ struct QueueView: View {
 
     /// Drag / Edit reorder allowed only when unlocked and not filtering.
     private var canReorder: Bool {
-        !settings.queueLocked && !isFiltering
+        !settings.queueLocked && !isFiltering && settings.queueKeepSortedOrder == nil
     }
 
     /// Shuffle always targets the **full** persisted queue (not chip/search). Allowed when unlocked
@@ -1119,6 +1119,7 @@ struct QueueView: View {
                     debounceTask?.cancel()
                 }
                 .toolbar { queueToolbar }
+                .queueKeepSortedToolbar()
             ))
         }
     }

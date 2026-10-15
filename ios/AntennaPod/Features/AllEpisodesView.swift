@@ -1,3 +1,4 @@
+import PodcastCore
 import SwiftUI
 import UIKit
 
@@ -198,6 +199,10 @@ struct AllEpisodesView: View {
     /// = display title). View-only — soft-cap / status / podcast / type chips / Play random / Add all
     /// stay soft-cap catalog scoped. **Not** chapters / transcripts.
     private var items: [InboxEpisode] {
+        settings.allEpisodesListOptions.apply(itemsBeforeListOptions) { store.listFacts(for: $0.episode, feedTitle: $0.feedTitle) }
+    }
+
+    private var itemsBeforeListOptions: [InboxEpisode] {
         var base = store.allEpisodes.sorted { lhs, rhs in
             switch settings.allEpisodesSort {
             case .newestFirst:
@@ -776,6 +781,7 @@ struct AllEpisodesView: View {
             .navigationTitle("Episodes")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { allEpisodesToolbar }
+            .episodeListFilterToolbar(String(localized: "Episodes"), options: $settings.allEpisodesListOptions)
             .searchable(text: $searchText, prompt: "Search all episodes")
             .onAppear {
                 releaseAllEpisodesPodcastFilterIfFeedGone()
