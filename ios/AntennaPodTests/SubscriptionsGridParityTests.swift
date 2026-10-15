@@ -39,4 +39,11 @@ final class SubscriptionsGridParityTests: XCTestCase {
         XCTAssertEqual(FeedGridSelectionModifier.cardInset(selecting: true, selected: false), 0)
         XCTAssertEqual(FeedGridSelectionModifier.cardInset(selecting: false, selected: true), 0)
     }
+
+    func testTabletDefaultsLikeAndroidSw600dp() {
+        XCTAssertEqual(SubscriptionsDisplayMode.defaultGridColumns(isPad: true), 5)
+        XCTAssertEqual(SubscriptionsDisplayMode.defaultGridColumns(isPad: false), 3)
+        XCTAssertEqual(SubscriptionsDisplayMode.listColumns(isRegularWidth: true), 2)
+        XCTAssertEqual(SubscriptionsDisplayMode.listColumns(isRegularWidth: false), 1)
+    }
 }
