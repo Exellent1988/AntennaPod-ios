@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import PodcastCore
 
@@ -36,14 +37,44 @@ final class PodcastStore: ObservableObject {
         }
     }
     /// Episode id → position / played. Published so episode rows refresh.
-    @Published var playbackStates: [String: EpisodePlaybackState] = [:] {
-        didSet {
-            PodcastPersistence.savePlaybackStates(playbackStates)
-            // Played state decides `inboxEpisodes` membership; `historyEpisodes` is built from it.
-            inboxEpisodesCache = nil
-            historyEpisodesCache = nil
+    /// Not `@Published`: the setter publishes, while steady-playback progress saves go through
+    /// `saveProgress`'s quiet path (Android: list rows show stored `FeedMedia.position`, refreshed on
+    /// pause / stop / episode change; see `NowPlayingListState`).
+    var playbackStates: [String: EpisodePlaybackState] {
+        get { playbackStatesStorage }
+        set {
+            objectWillChange.send()
+            playbackStatesStorage = newValue
+            quietProgressPending = false
+            playbackStatesDidChange()
         }
     }
+    private var playbackStatesStorage: [String: EpisodePlaybackState] = [:]
+
+    private func playbackStatesDidChange() {
+        PodcastPersistence.savePlaybackStates(playbackStatesStorage)
+        // Played state decides `inboxEpisodes` membership; `historyEpisodes` is built from it.
+        inboxEpisodesCache = nil
+        historyEpisodesCache = nil
+        listDataRevision &+= 1
+    }
+
+    /// Episode whose periodic progress saves stay quiet (set while it plays; `NowPlayingListState`).
+    var quietProgressEpisodeId: String?
+    private var quietProgressPending = false
+
+    /// Publish quietly saved progress once (pause / stop / episode change).
+    func publishQuietProgress() {
+        guard quietProgressPending else { return }
+        quietProgressPending = false
+        objectWillChange.send()
+        inboxEpisodesCache = nil
+        historyEpisodesCache = nil
+        listDataRevision &+= 1
+    }
+
+    /// Bumped on every published data change; keys per-redraw caches (counters, totals).
+    private(set) var listDataRevision = 0
     /// Per-subscription overrides keyed by feed id (`feed-settings.json`).
     @Published var feedSettingsById: [UUID: FeedSettings] = [:] {
         didSet {
@@ -114,6 +145,8 @@ final class PodcastStore: ObservableObject {
     private var pendingAutoDeleteIds: Set<String> = []
 
     private let repository = FeedRepository()
+    private var revisionSink: AnyCancellable?
+    private var unplayedRemainingCache: (key: [AnyHashable], value: [UUID: FeedUnplayedRemainingSummary])?
 
     init() {
         feeds = PodcastPersistence.loadFeeds()
@@ -125,6 +158,7 @@ final class PodcastStore: ObservableObject {
         bookmarksByEpisodeId = PodcastPersistence.loadBookmarks()
         episodePrivateNotesById = PodcastPersistence.loadEpisodePrivateNotes()
         tagsByFeedId = PodcastPersistence.loadFeedTags()
+        revisionSink = objectWillChange.sink { [weak self] _ in self?.listDataRevision &+= 1 }
         mergeDuplicateFeeds()
         LocalFolderBookmarkStore.reloadFromPersistence()
         rescanLocalFolderFeedsBestEffort()
@@ -1092,6 +1126,17 @@ final class PodcastStore: ObservableObject {
         if positionSeconds > 1 || state.isPlayed {
             state.lastPlayedAtEpochMs = nowMs
         }
+        // Steady playback of the loaded episode: save without re-rendering every list. Only when
+        // nothing list-visible beyond progress changes (played flag, History membership).
+        if quietProgressEpisodeId == episodeId,
+           let old = playbackStatesStorage[episodeId],
+           old.isPlayed == state.isPlayed,
+           old.lastPlayedAtEpochMs != nil {
+            playbackStatesStorage[episodeId] = state
+            quietProgressPending = true
+            PodcastPersistence.savePlaybackStates(playbackStatesStorage)
+            return
+        }
         playbackStates[episodeId] = state
         trimHistoryToSizeLimitIfNeeded()
         publishWidgetSnapshot()
@@ -1547,12 +1592,17 @@ final class PodcastStore: ObservableObject {
     private(set) var unplayedRemainingComputeCount = 0
 
     func unplayedRemainingByFeedId() -> [UUID: FeedUnplayedRemainingSummary] {
+        let currentId = playback?.currentEpisode?.id
+        // Stored progress of the loaded episode (not the live tick): cached per data revision.
+        let livePos = currentId.map { positionSeconds(for: $0) } ?? 0
+        let liveDur = currentId.map { playbackState(for: $0).durationSeconds } ?? 0
+        let key: [AnyHashable] = [listDataRevision, currentId ?? "", livePos, liveDur,
+                                  settings?.remainingTimeRespectsSpeed ?? false, settings?.defaultPlaybackSpeed ?? 1]
+        if let cache = unplayedRemainingCache, cache.key == key { return cache.value }
         unplayedRemainingComputeCount += 1
         var result: [UUID: FeedUnplayedRemainingSummary] = [:]
         result.reserveCapacity(feeds.count)
-        let currentId = playback?.currentEpisode?.id
-        let liveDur = playback?.durationSeconds ?? 0
-        let livePos = playback?.positionSeconds ?? 0
+        defer { unplayedRemainingCache = (key, result) }
         let speedClosure = remainingTimeEffectivePlaybackSpeedClosure()
         for feed in feeds {
             let episodes = feed.episodes.filter { !isPlayed($0.id) && !isArchived($0.id) }

@@ -9,6 +9,7 @@ struct AntennaPodApp: App {
     @StateObject private var settings: AppSettings
     @StateObject private var gpodder: GpodderSyncService
     @StateObject private var parental: ParentalControls
+    @StateObject private var nowPlaying: NowPlayingListState
 
     init() {
         let store = PodcastStore()
@@ -53,6 +54,7 @@ struct AntennaPodApp: App {
         _settings = StateObject(wrappedValue: settings)
         _gpodder = StateObject(wrappedValue: gpodder)
         _parental = StateObject(wrappedValue: parental)
+        _nowPlaying = StateObject(wrappedValue: NowPlayingListState(playback: playback, store: store))
     }
 
     var body: some Scene {
@@ -66,6 +68,7 @@ struct AntennaPodApp: App {
                 .environmentObject(settings)
                 .environmentObject(gpodder)
                 .environmentObject(parental)
+                .environmentObject(nowPlaying)
                 .preferredColorScheme(settings.theme.colorScheme)
                 .modifier(OptionalAccentTint(tint: settings.accentColor.tintColor))
                 .onOpenURL { url in

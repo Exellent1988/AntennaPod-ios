@@ -9,7 +9,9 @@ struct DownloadsView: View {
     @State private var detailEpisode: PodcastEpisode?
     @Environment(\.editMode) private var editMode
     @EnvironmentObject private var downloads: DownloadService
-    @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var nowPlaying: NowPlayingListState
+    // Not observed: list rows show stored progress (Android FeedMedia.position), see NowPlayingListState.
+    private var playback: PlaybackService { nowPlaying.playback }
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
 
@@ -366,8 +368,8 @@ struct DownloadsView: View {
         EpisodeRemainingTime.summarize(
             episodes: filteredDownloads.map(\.episode),
             currentEpisodeId: playback.currentEpisode?.id,
-            liveDurationSeconds: playback.durationSeconds,
-            livePositionSeconds: playback.positionSeconds,
+            liveDurationSeconds: nowPlaying.storedDurationSeconds,
+            livePositionSeconds: nowPlaying.storedPositionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
             savedPositionSeconds: { store.positionSeconds(for: $0) },

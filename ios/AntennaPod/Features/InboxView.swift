@@ -7,7 +7,9 @@ struct InboxView: View {
     @State private var showSwipeActionsSheet = false
     @State private var multiSelection = Set<String>()
     @EnvironmentObject private var store: PodcastStore
-    @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var nowPlaying: NowPlayingListState
+    // Not observed: list rows show stored progress (Android FeedMedia.position), see NowPlayingListState.
+    private var playback: PlaybackService { nowPlaying.playback }
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var settings: AppSettings
 
@@ -314,8 +316,8 @@ struct InboxView: View {
         EpisodeRemainingTime.summarize(
             episodes: visibleItems.map(\.episode),
             currentEpisodeId: playback.currentEpisode?.id,
-            liveDurationSeconds: playback.durationSeconds,
-            livePositionSeconds: playback.positionSeconds,
+            liveDurationSeconds: nowPlaying.storedDurationSeconds,
+            livePositionSeconds: nowPlaying.storedPositionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
             savedPositionSeconds: { store.positionSeconds(for: $0) },

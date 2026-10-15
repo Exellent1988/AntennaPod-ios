@@ -23,7 +23,9 @@ struct EpisodeContextMenu: View {
     enum Part { case removeFromQueue, download, resetPosition }
 
     @EnvironmentObject private var store: PodcastStore
-    @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var nowPlaying: NowPlayingListState
+    // Not observed: list rows show stored progress (Android FeedMedia.position), see NowPlayingListState.
+    private var playback: PlaybackService { nowPlaying.playback }
     @EnvironmentObject private var downloads: DownloadService
     let episode: PodcastEpisode
     let part: Part

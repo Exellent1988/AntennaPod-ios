@@ -14,14 +14,30 @@ final class NowPlayingListState: ObservableObject {
     init(playback: PlaybackService, store: PodcastStore?) {
         self.playback = playback
         self.store = store
-        // Baseline: lists re-render on every PlaybackService change (incl. each 0.5 s tick).
-        playback.objectWillChange
-            .sink { [weak self] _ in self?.objectWillChange.send() }
+        // Only episode change and play / pause reach the lists, never the 0.5 s position tick.
+        playback.$currentEpisode.map { $0?.id }
+            .combineLatest(playback.$isPlaying)
+            .removeDuplicates { $0 == $1 }
+            .sink { [weak self] id, playing in
+                // @Published fires before the value is stored: apply on the next turn.
+                DispatchQueue.main.async { self?.updateNowPlaying(episodeId: id, isPlaying: playing) }
+            }
             .store(in: &cancellables)
     }
 
+    private var lastEpisodeId: String?
+    private var lastIsPlaying = false
+
     /// Called from the playback publishers (and tests) when the loaded episode or play state changes.
-    func updateNowPlaying(episodeId: String?, isPlaying: Bool) {}
+    /// While an episode plays its periodic saves stay quiet; pause / stop / switch publishes them once.
+    func updateNowPlaying(episodeId: String?, isPlaying: Bool) {
+        let changed = episodeId != lastEpisodeId || isPlaying != lastIsPlaying
+        lastEpisodeId = episodeId
+        lastIsPlaying = isPlaying
+        store?.quietProgressEpisodeId = isPlaying ? episodeId : nil
+        store?.publishQuietProgress()
+        if changed { objectWillChange.send() }
+    }
 
     /// Stored position of the loaded episode (what list rows / totals show).
     var storedPositionSeconds: Double {

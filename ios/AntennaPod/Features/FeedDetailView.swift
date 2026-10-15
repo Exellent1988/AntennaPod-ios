@@ -4,7 +4,9 @@ import UIKit
 
 struct FeedDetailView: View {
     @EnvironmentObject private var store: PodcastStore
-    @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var nowPlaying: NowPlayingListState
+    // Not observed: list rows show stored progress (Android FeedMedia.position), see NowPlayingListState.
+    private var playback: PlaybackService { nowPlaying.playback }
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.openURL) private var openURL
@@ -467,8 +469,8 @@ struct FeedDetailView: View {
         EpisodeRemainingTime.summarize(
             episodes: visibleEpisodes,
             currentEpisodeId: playback.currentEpisode?.id,
-            liveDurationSeconds: playback.durationSeconds,
-            livePositionSeconds: playback.positionSeconds,
+            liveDurationSeconds: nowPlaying.storedDurationSeconds,
+            livePositionSeconds: nowPlaying.storedPositionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
             savedPositionSeconds: { store.positionSeconds(for: $0) },
@@ -3201,7 +3203,9 @@ private struct FlowTagRow: View {
 
 struct EpisodeRow: View {
     @EnvironmentObject private var store: PodcastStore
-    @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var nowPlaying: NowPlayingListState
+    // Not observed: list rows show stored progress (Android FeedMedia.position), see NowPlayingListState.
+    private var playback: PlaybackService { nowPlaying.playback }
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.openURL) private var openURL
@@ -3941,8 +3945,8 @@ struct EpisodeRow: View {
     /// Other episodes, and a non-finite live value, stay on `playback.json`.
     /// Do not take the greater of the two: an unsaved rewind must not jump forward.
     private var displayPositionSeconds: Double {
-        if playback.currentEpisode?.id == episode.id, playback.positionSeconds.isFinite {
-            return max(0, playback.positionSeconds)
+        if playback.currentEpisode?.id == episode.id, nowPlaying.storedPositionSeconds.isFinite {
+            return max(0, nowPlaying.storedPositionSeconds)
         }
         return state.positionSeconds
     }
@@ -3954,9 +3958,9 @@ struct EpisodeRow: View {
             return known
         }
         if playback.currentEpisode?.id == episode.id,
-           playback.durationSeconds.isFinite,
-           playback.durationSeconds > 0 {
-            return playback.durationSeconds
+           nowPlaying.storedDurationSeconds.isFinite,
+           nowPlaying.storedDurationSeconds > 0 {
+            return nowPlaying.storedDurationSeconds
         }
         return nil
     }

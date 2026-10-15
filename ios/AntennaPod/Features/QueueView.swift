@@ -3,7 +3,9 @@ import UIKit
 
 struct QueueView: View {
     @EnvironmentObject private var store: PodcastStore
-    @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var nowPlaying: NowPlayingListState
+    // Not observed: list rows show stored progress (Android FeedMedia.position), see NowPlayingListState.
+    private var playback: PlaybackService { nowPlaying.playback }
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.editMode) private var editMode
@@ -357,8 +359,8 @@ struct QueueView: View {
         EpisodeRemainingTime.summarize(
             episodes: filteredQueue,
             currentEpisodeId: playback.currentEpisode?.id,
-            liveDurationSeconds: playback.durationSeconds,
-            livePositionSeconds: playback.positionSeconds,
+            liveDurationSeconds: nowPlaying.storedDurationSeconds,
+            livePositionSeconds: nowPlaying.storedPositionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
             savedPositionSeconds: { store.positionSeconds(for: $0) },

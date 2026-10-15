@@ -237,7 +237,17 @@ final class DownloadService: ObservableObject {
         return dir
     }()
 
-    @Published var downloads: [DownloadedEpisode] = []
+    @Published var downloads: [DownloadedEpisode] = [] {
+        didSet { downloadIndexCache = nil }
+    }
+    /// Episode id → download, rebuilt once per `downloads` change (rows asked per redraw).
+    private var downloadIndexCache: [String: DownloadedEpisode]?
+    private var downloadIndex: [String: DownloadedEpisode] {
+        if let c = downloadIndexCache { return c }
+        let built = Dictionary(downloads.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        downloadIndexCache = built
+        return built
+    }
     @Published var inProgress: Set<String> = []
     /// Episode ids in the in-memory waiting FIFO (accepted, not yet a live `URLSession` task).
     /// Subset of `inProgress`. Published so episode rows can say Waiting instead of Downloading.
@@ -409,11 +419,11 @@ final class DownloadService: ObservableObject {
     }
 
     func downloadedItem(forEpisodeId id: String) -> DownloadedEpisode? {
-        downloads.first(where: { $0.id == id })
+        downloadIndex[id]
     }
 
     func localURL(for episode: PodcastEpisode) -> URL? {
-        if let item = downloads.first(where: { $0.id == episode.id }) {
+        if let item = downloadIndex[episode.id] {
             let url = item.localFileURL
             if FileManager.default.fileExists(atPath: url.path) {
                 return url

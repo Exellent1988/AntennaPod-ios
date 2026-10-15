@@ -3,7 +3,9 @@ import SwiftUI
 /// Local library search results (subscriptions + episodes). Not iTunes / online discovery.
 struct LibrarySearchResultsView: View {
     @EnvironmentObject private var store: PodcastStore
-    @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var nowPlaying: NowPlayingListState
+    // Not observed: list rows show stored progress (Android FeedMedia.position), see NowPlayingListState.
+    private var playback: PlaybackService { nowPlaying.playback }
     @EnvironmentObject private var settings: AppSettings
     let query: String
 
@@ -62,8 +64,8 @@ struct LibrarySearchResultsView: View {
         EpisodeRemainingTime.summarize(
             episodes: episodes.map(\.episode),
             currentEpisodeId: playback.currentEpisode?.id,
-            liveDurationSeconds: playback.durationSeconds,
-            livePositionSeconds: playback.positionSeconds,
+            liveDurationSeconds: nowPlaying.storedDurationSeconds,
+            livePositionSeconds: nowPlaying.storedPositionSeconds,
             isPlayed: { store.isPlayed($0) },
             savedDurationSeconds: { store.playbackState(for: $0).durationSeconds },
             savedPositionSeconds: { store.positionSeconds(for: $0) },

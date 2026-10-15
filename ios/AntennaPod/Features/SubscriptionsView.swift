@@ -5,7 +5,9 @@ struct SubscriptionsView: View {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var settings: AppSettings
     @EnvironmentObject private var parental: ParentalControls
-    @EnvironmentObject private var playback: PlaybackService
+    @EnvironmentObject private var nowPlaying: NowPlayingListState
+    // Not observed: list rows show stored progress (Android FeedMedia.position), see NowPlayingListState.
+    private var playback: PlaybackService { nowPlaying.playback }
     @EnvironmentObject private var downloads: DownloadService
     @Environment(\.openURL) private var openURL
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
@@ -228,8 +230,8 @@ struct SubscriptionsView: View {
     /// same weak `playback` for duration/position).
     private var unplayedRemainingByFeedId: [UUID: FeedUnplayedRemainingSummary] {
         _ = playback.currentEpisode?.id
-        _ = playback.positionSeconds
-        _ = playback.durationSeconds
+        _ = nowPlaying.storedPositionSeconds
+        _ = nowPlaying.storedDurationSeconds
         // Observe remaining-time speed prefs so per-feed / list bars refresh when toggled.
         _ = settings.remainingTimeRespectsSpeed
         _ = settings.defaultPlaybackSpeed
