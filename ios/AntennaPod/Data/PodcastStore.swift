@@ -1948,6 +1948,19 @@ final class PodcastStore: ObservableObject {
         }
     }
 
+    /// Android FeedItemMenuHandler `canRemoveFromInbox` (`item.isNew()`): the episode is in the Inbox
+    /// (subscribed, unplayed, not archived — same rule as `inboxEpisodes`).
+    func isInInbox(_ episodeId: String) -> Bool {
+        feed(containingEpisodeId: episodeId) != nil && !isPlayed(episodeId) && !isArchived(episodeId)
+    }
+
+    /// Android `remove_inbox_item` (removeNewFlag): leaving the Inbox on iOS means archiving.
+    /// Played state, queue and downloads are unchanged.
+    func removeFromInbox(_ episodeId: String) {
+        guard isInInbox(episodeId) else { return }
+        archive(episodeId)
+    }
+
     /// Archive every episode currently in the Inbox list (bulk).
     func archiveAllInbox() {
         let ids = inboxEpisodes.map(\.episode.id)

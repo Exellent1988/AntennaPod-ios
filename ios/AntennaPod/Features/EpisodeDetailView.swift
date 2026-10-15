@@ -115,6 +115,12 @@ struct EpisodeDetailActionsMenu: View {
     var body: some View {
         let feed = store.feed(containingEpisodeId: episode.id)
         Menu {
+            // Android feeditem_options skip_episode_item: only for the episode that is playing.
+            if playback.isPlaying, playback.currentEpisode?.id == episode.id {
+                Button { playback.skipToNextEpisode() } label: {
+                    Label("Skip episode", systemImage: "forward.end")
+                }
+            }
             Button {
                 _ = playback.play(episode: episode)
             } label: {
@@ -136,6 +142,12 @@ struct EpisodeDetailActionsMenu: View {
             } else {
                 Button { store.enqueue(episode) } label: {
                     Label("Add to queue", systemImage: "text.append")
+                }
+            }
+            // Android feeditem_options remove_inbox_item: visible when item.isNew().
+            if store.isInInbox(episode.id) {
+                Button { store.removeFromInbox(episode.id) } label: {
+                    Label("Remove from inbox", systemImage: "tray.and.arrow.up")
                 }
             }
             Button { store.togglePlayed(episode.id) } label: {
