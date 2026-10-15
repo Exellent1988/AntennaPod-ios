@@ -55,3 +55,33 @@ final class PlayerHeroLayoutTests: XCTestCase {
         XCTAssertEqual(PlayerHeroLayout.coverSide(width: 0, height: 0), PlayerHeroLayout.minimumCover)
     }
 }
+
+final class SeekBarGeometryTests: XCTestCase {
+    func testThumbIsSmallAndRound() {
+        XCTAssertLessThanOrEqual(SeekBarGeometry.thumbDiameter, 16)
+        XCTAssertGreaterThanOrEqual(SeekBarGeometry.hitHeight, 44)
+    }
+
+    func testEndsSitAtThumbCentres() {
+        XCTAssertEqual(SeekBarGeometry.x(forFraction: 0, width: 300), 7)
+        XCTAssertEqual(SeekBarGeometry.x(forFraction: 1, width: 300), 293)
+    }
+
+    func testChapterTickAndThumbShareCoordinates() {
+        for f in [0.0, 0.1, 0.37, 0.5, 0.99, 1.0] {
+            let x = SeekBarGeometry.x(forFraction: f, width: 327)
+            XCTAssertEqual(SeekBarGeometry.fraction(forX: x, width: 327), f, accuracy: 1e-9)
+        }
+    }
+
+    func testClampsOutsideAndNonFinite() {
+        XCTAssertEqual(SeekBarGeometry.fraction(forX: -50, width: 300), 0)
+        XCTAssertEqual(SeekBarGeometry.fraction(forX: 900, width: 300), 1)
+        XCTAssertEqual(SeekBarGeometry.clampedFraction(.nan), 0)
+        XCTAssertEqual(SeekBarGeometry.fraction(forX: 10, width: 5), 0)
+    }
+
+    func testBottomBarInsetKeepsRowOffTheEdge() {
+        XCTAssertGreaterThanOrEqual(PlayerHeroLayout.bottomBarInset, 12)
+    }
+}
