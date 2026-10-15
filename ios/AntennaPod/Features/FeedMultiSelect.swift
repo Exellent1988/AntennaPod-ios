@@ -11,6 +11,8 @@ struct FeedMultiSelectModifier: ViewModifier {
     @Binding var selection: Set<UUID>
     /// Feeds the list currently shows; selection is resolved against these.
     let feeds: [PodcastFeed]
+    /// Reports Select mode to the screen (Subscriptions hides its "+" button while selecting).
+    var onSelectingChange: ((Bool) -> Void)? = nil
     @State private var editMode: EditMode = .inactive
     @State private var confirmUnsubscribe = false
     @State private var confirmInboxRemoval = false
@@ -31,6 +33,7 @@ struct FeedMultiSelectModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .environment(\.editMode, $editMode)
+            .onChange(of: editMode.isEditing) { _, selecting in onSelectingChange?(selecting) }
             #if DEBUG
             // Screenshots: -APDebugSelectFirstFeed enters selection with the first podcast selected.
             .task {
@@ -170,8 +173,9 @@ struct FeedMultiSelectModifier: ViewModifier {
 
 extension View {
     /// Android FeedMultiSelectActionHandler for the Subscriptions list.
-    func feedMultiSelect(selection: Binding<Set<UUID>>, feeds: [PodcastFeed]) -> some View {
-        modifier(FeedMultiSelectModifier(selection: selection, feeds: feeds))
+    func feedMultiSelect(selection: Binding<Set<UUID>>, feeds: [PodcastFeed],
+                         onSelectingChange: ((Bool) -> Void)? = nil) -> some View {
+        modifier(FeedMultiSelectModifier(selection: selection, feeds: feeds, onSelectingChange: onSelectingChange))
     }
 }
 

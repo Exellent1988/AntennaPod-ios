@@ -31,6 +31,7 @@ struct SubscriptionsView: View {
     @State private var feedForTags: PodcastFeed?
     /// Android FeedMultiSelectActionHandler selection (list mode only).
     @State private var feedSelection = Set<UUID>()
+    @State private var isSelectingFeeds = false
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var showUnpinAllConfirm = false
     @State private var showCopiedAlert = false
@@ -502,14 +503,8 @@ struct SubscriptionsView: View {
             }
         }
         .tabRootList(.subscriptions)
-        // Android fragment_subscriptions.xml subscriptions_add FAB. A bottom safe-area inset (not an overlay:
-        // the List frame runs under the mini player) keeps it above the mini player (TabMiniPlayerInset) and
-        // the tab bar, and lets the last row scroll clear of it.
-        .safeAreaInset(edge: .bottom, alignment: .trailing, spacing: 0) {
-            SubscriptionsAddButton(addLocked: parental.needsPINForAddDiscover) { showAdd = true }
-        }
         // Android FeedMultiSelectActionHandler: Select + Actions menu, in list and grid mode.
-        .feedMultiSelect(selection: $feedSelection, feeds: tagFilteredFeeds)
+        .feedMultiSelect(selection: $feedSelection, feeds: tagFilteredFeeds) { isSelectingFeeds = $0 }
     }
 
     // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
@@ -668,6 +663,18 @@ struct SubscriptionsView: View {
     }
 
     var body: some View {
+        subscriptionsStack
+            // Android fragment_subscriptions.xml subscriptions_add FAB. Inset on the NavigationStack (SwiftUI
+            // layout) so it sits above the mini player (TabMiniPlayerInset) and the tab bar; an inset or
+            // overlay on the List itself ended up under the mini player. Only on the Subscriptions root.
+            .safeAreaInset(edge: .bottom, alignment: .trailing, spacing: 0) {
+                if path.isEmpty {
+                    SubscriptionsAddButton(addLocked: parental.needsPINForAddDiscover, selecting: isSelectingFeeds) { showAdd = true }
+                }
+            }
+    }
+
+    private var subscriptionsStack: some View {
         NavigationStack(path: $path) {
             subscriptionsList
             .navigationTitle("Subscriptions")
@@ -1579,15 +1586,15 @@ private struct TagFilterChip: View {
 /// instead) and while parental controls lock Add/Discover; Add stays in ⋯ behind the PIN then.
 struct SubscriptionsAddButton: View {
     let addLocked: Bool
+    let selecting: Bool
     let action: () -> Void
-    @Environment(\.editMode) private var editMode
 
     static func isVisible(addLocked: Bool, selecting: Bool) -> Bool {
         !addLocked && !selecting
     }
 
     var body: some View {
-        if Self.isVisible(addLocked: addLocked, selecting: editMode?.wrappedValue.isEditing == true) {
+        if Self.isVisible(addLocked: addLocked, selecting: selecting) {
             Button(action: action) {
                 Image(systemName: "plus")
                     .font(.title2.weight(.semibold))
