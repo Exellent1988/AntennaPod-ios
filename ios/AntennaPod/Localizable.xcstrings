@@ -205,6 +205,23 @@
         }
       }
     },
+    "Episode type": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode type"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodentyp"
+          }
+        }
+      }
+    },
     "Exported from AntennaPod iOS · local folder podcasts omitted · metadata only when provided by each feed · ": {
       "extractionState": "manual",
       "localizations": {

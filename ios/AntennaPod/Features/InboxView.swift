@@ -434,6 +434,9 @@ struct InboxView: View {
                         .padding(.vertical, 4)
                     }
                     .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                } header: {
+                    // Android filter dialogs label every chip group (FilterDialog group titles).
+                    Text("Episode type")
                 }
             }
 
