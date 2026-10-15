@@ -130,8 +130,15 @@ struct RootSidebarView: View {
 }
 
 extension SubscriptionsCounterMode {
-    /// Sum of the Subscriptions per-feed counters for this mode (Android NavDrawerFragment getFeedCounterSum).
-    /// Same rules as the per-feed badge: unplayed = !played && !archived; downloaded = completed downloads.
+    /// Sum of the Subscriptions per-feed counters for this mode (Android NavDrawerFragment.getFeedCounterSum,
+    /// app/.../ui/screen/drawer/NavDrawerFragment.java:342-351, sums `navDrawerData.feedCounters`).
+    /// Android scope, followed here: those counters come from PodDBAdapter.getFeedCounters
+    /// (storage/database/.../PodDBAdapter.java:1339) over EVERY subscribed feed (SELECT_WHERE_FEED_IS_SUBSCRIBED,
+    /// :1381), taken in DBReader.getNavDrawerData (DBReader.java:677) BEFORE the subscriptions filter is applied
+    /// to the feed list (:688). So the badge ignores the Subscriptions filters/search; archived (non-subscribed)
+    /// feeds don't exist on iOS. iOS parental controls hide no feeds (PIN gates Add/Discover only), so `store.feeds`
+    /// is exactly the subscribed set. Rules as the per-feed badge: unplayed = !played && !archived;
+    /// downloaded = completed downloads (Android also counts local-folder items as downloaded).
     @MainActor
     func badgeSum(store: PodcastStore, downloads: DownloadService) -> Int {
         switch self {
