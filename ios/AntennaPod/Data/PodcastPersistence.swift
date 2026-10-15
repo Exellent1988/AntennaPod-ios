@@ -9,6 +9,12 @@ enum PodcastPersistence {
     }
 
     private static var feedsURL: URL { directory.appendingPathComponent("feeds.json") }
+    /// True once at least one podcast has been saved on this device (used to tell new installs apart).
+    /// A first launch already writes an empty `[]` feeds.json, so only a non-empty file counts.
+    static var hasStoredFeeds: Bool {
+        let size = (try? FileManager.default.attributesOfItem(atPath: feedsURL.path)[.size] as? NSNumber)?.intValue ?? 0
+        return size > 2
+    }
     private static var queueURL: URL { directory.appendingPathComponent("queue.json") }
     private static var playbackURL: URL { directory.appendingPathComponent("playback.json") }
     private static var downloadsURL: URL { directory.appendingPathComponent("downloads.json") }

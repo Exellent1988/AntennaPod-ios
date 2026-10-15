@@ -2465,6 +2465,7 @@ final class AppSettings: ObservableObject {
     }
 
     init() {
+        let isFreshInstall = Self.isFreshInstall()
         let themeRaw = UserDefaults.standard.string(forKey: Keys.theme) ?? AppTheme.system.rawValue
         theme = AppTheme(rawValue: themeRaw) ?? .system
         let accentRaw = UserDefaults.standard.string(forKey: Keys.accentColor) ?? AppAccentColor.system.rawValue
@@ -2802,7 +2803,38 @@ final class AppSettings: ObservableObject {
         let cols = ud.object(forKey: Keys.subscriptionsGridColumns) as? Int ?? 3
         subscriptionsGridColumns = min(max(cols, 2), 5)
         subscriptionsCounterMode = SubscriptionsCounterMode(rawValue: ud.string(forKey: Keys.subscriptionsCounterMode) ?? "") ?? .unplayed
-        swipeActions = ud.dictionary(forKey: Keys.swipeActions) as? [String: String] ?? [:]
+        let storedSwipes = ud.dictionary(forKey: Keys.swipeActions) as? [String: String]
+        swipeActions = Self.initialSwipeActions(stored: storedSwipes, isFreshInstall: isFreshInstall)
+        if (storedSwipes ?? [:]).isEmpty, !swipeActions.isEmpty {
+            ud.set(swipeActions, forKey: Keys.swipeActions)
+        }
+    }
+
+    /// Android SwipeActions.getPrefsWithDefaults pairs as stored swipe settings.
+    static var androidDefaultSwipeActions: [String: String] {
+        var d: [String: String] = [:]
+        for list in SwipeList.allCases {
+            let pair = EpisodeSwipeAction.androidDefault(for: list)
+            d[list.key(.leading)] = pair.leading.rawValue
+            d[list.key(.trailing)] = pair.trailing.rawValue
+        }
+        return d
+    }
+
+    /// New installs start with Android's per-screen swipe pairs; anyone who already used the app keeps
+    /// what they had (saved choices, or the iOS "Default for this list" buttons when nothing was saved).
+    static func initialSwipeActions(stored: [String: String]?, isFreshInstall: Bool) -> [String: String] {
+        // The one-time @AppStorage migration writes an empty dictionary, so empty counts as unset here.
+        if let stored, !stored.isEmpty { return stored }
+        return isFreshInstall ? androidDefaultSwipeActions : (stored ?? [:])
+    }
+
+    /// First launch after installing: no saved library and AppSettings has never run (its one-time
+    /// view-prefs migration marker is written on every launch path). Other services may already have
+    /// written their own keys (proxy, gpodder device id) before AppSettings exists, so those don't count.
+    private static func isFreshInstall() -> Bool {
+        if PodcastPersistence.hasStoredFeeds { return false }
+        return UserDefaults.standard.object(forKey: "settings.migratedViewPrefsFromAppStorage") == nil
     }
 
     /// One-time move of the NAV-10 / NAV-17 values that were stored with `@AppStorage`
