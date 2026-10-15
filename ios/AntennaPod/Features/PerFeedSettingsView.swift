@@ -11,6 +11,7 @@ struct PerFeedSettingsView: View {
     let feedId: UUID
     let feedTitle: String
 
+    @State private var customSkipIntroOutro: CustomSkipIntroOutroSheet.Kind?
     @State private var newTagDraft = ""
     @State private var renameFrom: String?
     @State private var renameDraft = ""
@@ -182,10 +183,7 @@ struct PerFeedSettingsView: View {
                 .accessibilityHint(String(localized: "Use global, On, or Off for this podcast. When on, silent parts play faster and normal speed resumes when sound returns. Applies immediately if an episode from this podcast is playing."))
 
                 Picker("Skip intro", selection: skipIntroBinding) {
-                    Text("Use global").tag(Optional<Int>.none)
-                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
-                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(Optional(secs))
-                    }
+                    feedSkipIntroOutroOptions(current: current.skipIntroSeconds, global: appSettings.skipIntroSeconds)
                 }
                 .accessibilityLabel(String(localized: "Skip intro"))
                 .accessibilityHint(String(localized: "Use global or a per-podcast override. Applied on a fresh start (position near 0). Changing this does not seek now, start playback, or download. Distinct from Skip outro, Rewind, and Fast-forward."))
@@ -194,16 +192,25 @@ struct PerFeedSettingsView: View {
                     .foregroundStyle(.secondary)
 
                 Picker("Skip outro", selection: skipOutroBinding) {
-                    Text("Use global").tag(Optional<Int>.none)
-                    ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
-                        Text(AppSettings.skipIntroOutroLabel(secs)).tag(Optional(secs))
-                    }
+                    feedSkipIntroOutroOptions(current: current.skipOutroSeconds, global: appSettings.skipOutroSeconds)
                 }
                 .accessibilityLabel(String(localized: "Skip outro"))
                 .accessibilityHint(String(localized: "Use global or a per-podcast override. Near end, remaining within the value finishes the episode like a natural end when duration is known. Changing this does not mark played now, seek, or download. Distinct from Skip intro and Smart mark as played."))
                 Text(skipOutroHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .sheet(item: $customSkipIntroOutro) { kind in
+                        CustomSkipIntroOutroSheet(
+                            kind: kind,
+                            initialSeconds: kind == .intro
+                                ? current.resolvedSkipIntroSeconds(global: appSettings.skipIntroSeconds)
+                                : current.resolvedSkipOutroSeconds(global: appSettings.skipOutroSeconds)
+                        ) { seconds in
+                            store.updateFeedSettings(for: feedId) {
+                                if kind == .intro { $0.skipIntroSeconds = seconds } else { $0.skipOutroSeconds = seconds }
+                            }
+                        }
+                    }
             } header: {
                 Text("Playback")
             }
@@ -789,6 +796,7 @@ struct PerFeedSettingsView: View {
         Binding(
             get: { current.skipIntroSeconds },
             set: { value in
+                if value == CustomSkipIntroOutroSheet.customTag { customSkipIntroOutro = .intro; return }
                 store.updateFeedSettings(for: feedId) { $0.skipIntroSeconds = value }
             }
         )
@@ -798,6 +806,7 @@ struct PerFeedSettingsView: View {
         Binding(
             get: { current.skipOutroSeconds },
             set: { value in
+                if value == CustomSkipIntroOutroSheet.customTag { customSkipIntroOutro = .outro; return }
                 store.updateFeedSettings(for: feedId) { $0.skipOutroSeconds = value }
             }
         )
@@ -900,6 +909,20 @@ struct PerFeedSettingsView: View {
             format: String(localized: "Using global default (%@). Change here or via Feed detail Sort to override for this podcast only."),
             global
         )
+    }
+
+    /// "Use global (value)", presets, the current custom value, and Custom… (opens the seconds sheet).
+    @ViewBuilder
+    private func feedSkipIntroOutroOptions(current: Int?, global: Int) -> some View {
+        Text(String(format: String(localized: "Use global (%@)"), AppSettings.skipIntroOutroLabel(global)))
+            .tag(Optional<Int>.none)
+        ForEach(AppSettings.skipIntroOutroPresets, id: \.self) { secs in
+            Text(AppSettings.skipIntroOutroLabel(secs)).tag(Optional(secs))
+        }
+        if let current, !AppSettings.skipIntroOutroPresets.contains(current) {
+            Text(AppSettings.skipIntroOutroLabel(current)).tag(Optional(current))
+        }
+        Text(String(localized: "Custom…")).tag(Optional(CustomSkipIntroOutroSheet.customTag))
     }
 
     private var skipIntroHelp: String {

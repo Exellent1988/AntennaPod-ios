@@ -1,4 +1,5 @@
 import AudioDSP
+import PodcastCore
 import Foundation
 import SwiftUI
 
@@ -2778,8 +2779,7 @@ final class AppSettings: ObservableObject {
         guard UserDefaults.standard.object(forKey: key) != nil else {
             return defaultSkipIntroOutroSeconds
         }
-        let stored = UserDefaults.standard.integer(forKey: key)
-        return skipIntroOutroPresets.contains(stored) ? stored : defaultSkipIntroOutroSeconds
+        return SkipIntroOutro.normalized(UserDefaults.standard.integer(forKey: key)) ?? defaultSkipIntroOutroSeconds
     }
 
     /// Label for Settings pickers (`Off` when 0). Presets 5/10/15/30/60 use existing catalog keys.
@@ -2798,7 +2798,7 @@ final class AppSettings: ObservableObject {
         case 60:
             return String(localized: "60 seconds")
         default:
-            return "\(seconds) seconds"
+            return String(format: String(localized: "%lld seconds"), seconds)
         }
     }
 
@@ -3093,11 +3093,11 @@ final class AppSettings: ObservableObject {
         autoDeleteAfterPlaying = snap.autoDeleteAfterPlaying
         rewindSeconds = Self.clampSkipSeconds(snap.rewindSeconds, defaultValue: Self.defaultRewindSeconds)
         fastForwardSeconds = Self.clampSkipSeconds(snap.fastForwardSeconds, defaultValue: Self.defaultFastForwardSeconds)
-        if AppSettings.skipIntroOutroPresets.contains(snap.skipIntroSeconds) {
-            skipIntroSeconds = snap.skipIntroSeconds
+        if let intro = SkipIntroOutro.normalized(snap.skipIntroSeconds) {
+            skipIntroSeconds = intro
         }
-        if AppSettings.skipIntroOutroPresets.contains(snap.skipOutroSeconds) {
-            skipOutroSeconds = snap.skipOutroSeconds
+        if let outro = SkipIntroOutro.normalized(snap.skipOutroSeconds) {
+            skipOutroSeconds = outro
         }
         notifyOnNewEpisodes = snap.notifyOnNewEpisodes
         notifyOnDownloadErrors = snap.notifyOnDownloadErrors

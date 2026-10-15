@@ -41,5 +41,24 @@ final class PlayerDebugLaunch: ObservableObject {
             }
         }
     }
+
+    /// Screenshots: scroll the list in the topmost presented sheet by `-APDebugScrollY <points>`.
+    static func scrollPresentedList() {
+        let args = ProcessInfo.processInfo.arguments
+        guard let i = args.firstIndex(of: "-APDebugScrollY"), i + 1 < args.count,
+              let y = Double(args[i + 1]) else { return }
+        let window = UIApplication.shared.connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.keyWindow }.first
+        var top = window?.rootViewController
+        while let next = top?.presentedViewController { top = next }
+        func firstScroll(_ view: UIView) -> UIScrollView? {
+            if let s = view as? UICollectionView ?? view as? UITableView { return s }
+            for sub in view.subviews { if let s = firstScroll(sub) { return s } }
+            return nil
+        }
+        guard let root = top?.view, let list = firstScroll(root) else { return }
+        let maxY = max(0, list.contentSize.height - list.bounds.height + list.adjustedContentInset.bottom)
+        list.setContentOffset(CGPoint(x: 0, y: min(y, maxY) - list.adjustedContentInset.top), animated: false)
+    }
 }
 #endif

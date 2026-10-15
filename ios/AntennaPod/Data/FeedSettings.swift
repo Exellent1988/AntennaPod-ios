@@ -210,12 +210,12 @@ struct FeedSettings: Hashable, Codable, Equatable {
 
     /// Skip intro for this feed: override if set, else global.
     func resolvedSkipIntroSeconds(global: Int) -> Int {
-        skipIntroSeconds ?? global
+        SkipIntroOutro.resolved(feed: skipIntroSeconds, global: global)
     }
 
     /// Skip outro for this feed: override if set, else global.
     func resolvedSkipOutroSeconds(global: Int) -> Int {
-        skipOutroSeconds ?? global
+        SkipIntroOutro.resolved(feed: skipOutroSeconds, global: global)
     }
 
     /// Playback speed for this feed: override if set, else global default.
@@ -252,8 +252,6 @@ struct FeedSettings: Hashable, Codable, Equatable {
         self == .default
     }
 
-    /// Mirrors `AppSettings.skipIntroOutroPresets` (kept local so Codable stays nonisolated).
-    private static let skipIntroOutroPresets: Set<Int> = [0, 5, 10, 15, 30, 60]
     /// Mirrors `AppSettings.speedPresets`.
     private static let speedPresets: Set<Float> = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
     /// Mirrors `PlaybackService.customPlaybackSpeedRange` / step (local so Codable stays nonisolated).
@@ -261,8 +259,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
     private static let customSpeedStep: Float = 0.05
 
     private static func normalizedSkipIntroOutro(_ value: Int?) -> Int? {
-        guard let value else { return nil }
-        return skipIntroOutroPresets.contains(value) ? value : nil
+        // Presets or any custom value 0…3600 s (Android accepts free seconds).
+        SkipIntroOutro.normalized(value)
     }
 
     private static func normalizedSpeed(_ value: Float?) -> Float? {

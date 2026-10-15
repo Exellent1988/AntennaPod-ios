@@ -7070,19 +7070,19 @@
         }
       }
     },
-    "Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Override per podcast via Feed detail → gear → Playback.": {
+    "Global default for every podcast without its own value. Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). Off = 0; Custom… takes any number of seconds up to 3600. Override per podcast in its settings → Playback.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). 0 = off. Override per podcast via Feed detail → gear → Playback."
+            "value": "Global default for every podcast without its own value. Skip intro seeks forward once on a fresh start (position near 0). Skip outro treats the episode as finished when remaining time is within the chosen window (mark played + continuous next). Off = 0; Custom… takes any number of seconds up to 3600. Override per podcast in its settings → Playback."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Intro überspringen springt bei frischem Start einmal vor (Position nahe 0). Outro überspringen wertet die Episode als beendet, wenn die Restzeit im gewählten Fenster liegt (als gehört + nächste). 0 = aus. Pro Podcast unter Feed → Zahnrad → Wiedergabe überschreibbar."
+            "value": "Globaler Standard für jeden Podcast ohne eigenen Wert. „Intro überspringen“ springt bei einem frischen Start (Position nahe 0) einmal vor. „Outro überspringen“ behandelt die Folge als beendet, sobald die Restzeit im gewählten Fenster liegt (als gespielt markieren + nächste Folge bei fortlaufender Wiedergabe). Aus = 0; „Benutzerdefiniert…“ nimmt beliebige Sekunden bis 3600. Pro Podcast in dessen Einstellungen → Wiedergabe überschreibbar."
           }
         }
       }
@@ -51856,6 +51856,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Download-Protokoll"
+          }
+        }
+      }
+    },
+    "Seconds skipped at the start of an episode (0 to 3600). 0 turns it off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seconds skipped at the start of an episode (0 to 3600). 0 turns it off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sekunden, die am Anfang einer Folge übersprungen werden (0 bis 3600). 0 schaltet es aus."
+          }
+        }
+      }
+    },
+    "Seconds skipped at the end of an episode, then the next episode plays (0 to 3600). 0 turns it off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seconds skipped at the end of an episode, then the next episode plays (0 to 3600). 0 turns it off."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sekunden, die am Ende einer Folge übersprungen werden; danach startet die nächste Folge (0 bis 3600). 0 schaltet es aus."
           }
         }
       }

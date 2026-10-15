@@ -989,14 +989,11 @@ final class PlaybackService: ObservableObject {
     /// False when a fresh-start intro seek would land at the end or inside the outro window.
     /// Unknown duration still allows the seek.
     private func skipIntroSeekFits(episode: PodcastEpisode, intro: Double) -> Bool {
-        let duration = knownDurationSeconds(for: episode)
-        guard duration > 0 else { return true }
-        if intro >= duration { return false }
-        let outro = Double(resolvedSkipOutroSeconds(for: episode))
-        if outro > 0, outro < duration, duration - intro <= outro {
-            return false
-        }
-        return true
+        SkipIntroOutro.introSeekFits(
+            intro: intro,
+            outro: Double(resolvedSkipOutroSeconds(for: episode)),
+            duration: knownDurationSeconds(for: episode)
+        )
     }
 
     /// Feed override skip-intro when set; otherwise AppSettings global.
@@ -1362,14 +1359,10 @@ final class PlaybackService: ObservableObject {
         guard !didTriggerSkipOutroForSession else { return }
         guard let episode = currentEpisode else { return }
         let outro = Double(resolvedSkipOutroSeconds(for: episode))
-        guard outro > 0 else { return }
-        guard durationSeconds.isFinite, durationSeconds > 0 else { return }
-        // Android SkipUtils: skip ending only when skipEnd < duration.
-        guard outro < durationSeconds else { return }
-        // Avoid firing at t≈0 before any real progress.
-        guard positionSeconds > 1 else { return }
-        let remaining = durationSeconds - positionSeconds
-        guard remaining.isFinite, remaining <= outro else { return }
+        // Android: skip the ending only when it is shorter than the episode, past the first second.
+        guard SkipIntroOutro.shouldSkipEnding(outro: outro, position: positionSeconds, duration: durationSeconds) else {
+            return
+        }
         didTriggerSkipOutroForSession = true
         handlePlaybackEnded()
     }
