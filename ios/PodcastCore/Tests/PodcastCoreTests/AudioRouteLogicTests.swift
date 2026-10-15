@@ -41,3 +41,12 @@ final class AudioRouteLogicTests: XCTestCase {
                                                           newRoute: .wired, resumeOnHeadphones: true, resumeOnBluetooth: true))
     }
 }
+
+final class DisconnectPausePolicyTests: XCTestCase {
+    func testPauseOnlyWhenOnAndPlaying() {
+        XCTAssertTrue(DisconnectPausePolicy.defaultPauseOnDisconnect)
+        XCTAssertTrue(DisconnectPausePolicy.shouldPause(pauseOnDisconnect: true, isPlaying: true))
+        XCTAssertFalse(DisconnectPausePolicy.shouldPause(pauseOnDisconnect: false, isPlaying: true))
+        XCTAssertFalse(DisconnectPausePolicy.shouldPause(pauseOnDisconnect: true, isPlaying: false))
+    }
+}

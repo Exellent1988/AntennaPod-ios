@@ -52572,6 +52572,26 @@
         }
       }
     },
+    "Headphones or Bluetooth disconnect": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopfhörer oder Bluetooth getrennt"
+          }
+        }
+      }
+    },
+    "Pauses playback when headphones or a Bluetooth device disconnect. Off keeps playing on the speaker. Default on.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pausiert die Wiedergabe, wenn Kopfhörer oder ein Bluetooth-Gerät getrennt werden. Aus spielt über den Lautsprecher weiter. Standard: an."
+          }
+        }
+      }
+    },
     "gpodder.net rejected the login (HTTP 401) — check the username and password.": {
       "extractionState": "manual",
       "localizations": {
