@@ -12,6 +12,7 @@ struct RootTabView: View {
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var parental: ParentalControls
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @ObservedObject private var notificationDeepLink = NewEpisodeNotificationCoordinator.deepLink
     @ObservedObject private var subscribeLink = SubscribeLinkRouter.shared
     /// Restores the last selected tab on relaunch, like Android `saveLastNavFragment`; defaults to Home.
@@ -106,7 +107,16 @@ struct RootTabView: View {
     }
 
     // Split into stages: one modifier chain this long exceeds the CI type-checker time limit.
+    @ViewBuilder
     private var rootTabs: some View {
+        if horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom == .pad {
+            RootSidebarView(selectedTab: $selectedTab, showSettings: $showSettings)
+        } else {
+            phoneTabs
+        }
+    }
+
+    private var phoneTabs: some View {
         TabView(selection: tabSelection) {
             HomeView(selectedTab: $selectedTab)
                 .id(tabRootResets[.home, default: 0])
