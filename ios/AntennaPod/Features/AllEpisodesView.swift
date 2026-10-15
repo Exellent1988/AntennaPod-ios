@@ -558,6 +558,10 @@ struct AllEpisodesView: View {
         }
         // Android multi_select_options.xml: shared Select + batch actions bar.
         .episodeMultiSelect(selection: $multiSelection, episodes: items.map(\.episode))
+        // Android SwipeRefreshLayout (QueueFragment / AllEpisodesFragment): pull to refresh all feeds.
+        .refreshable {
+            await store.refreshAllFeeds()
+        }
     }
 
     // Toolbar split from the body chain: together they exceed the CI type-checker time limit.
@@ -582,6 +586,14 @@ struct AllEpisodesView: View {
         }
         ToolbarItem(placement: .primaryAction) {
             Menu {
+                // Android menu refresh_item: refresh every subscribed feed from the toolbar.
+                Button {
+                    Task { await store.refreshAllFeeds() }
+                } label: {
+                    Label("Refresh", systemImage: "arrow.clockwise")
+                }
+                .accessibilityHint(String(localized: "Refreshes all subscribed podcasts, same as pull to refresh."))
+
                 Button {
                     copyAllEpisodes()
                 } label: {
