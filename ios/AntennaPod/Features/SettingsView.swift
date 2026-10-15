@@ -1185,6 +1185,18 @@ struct SettingsView: View {
             Text("Where Add to queue (and bulk add, auto-add of new episodes) puts episodes. Start of queue and After current episode skip past episodes that are still downloading, so a batch keeps its order. Play Next is unchanged. Default End of queue.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            // Android Settings → Playback → Queue → Enqueue downloaded episodes.
+            Toggle("Enqueue downloaded episodes", isOn: $settings.enqueueDownloaded)
+                .accessibilityHint(String(localized: "When on, downloading an episode adds it to the queue at the Enqueue location. Cancelling that download removes it again. Default on."))
+            Text("Downloading an episode (manually or by auto-download) adds it to the queue at the Enqueue location, unless it is already queued. Cancelling the download removes it again. Default on.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            // Android Settings → Downloads → Delete removes from queue.
+            Toggle("Delete removes from queue", isOn: $settings.deleteRemovesFromQueue)
+                .accessibilityHint(String(localized: "When on, deleting a downloaded episode also removes it from the queue. Default off."))
+            Text("Deleting a download (swipe, menu, Downloads, delete after playing) also removes the episode from the queue. Default off.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
             Toggle("Lock queue", isOn: $settings.queueLocked)
                 .accessibilityHint(String(localized: "When on, disables Queue drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom. Enqueue, Play Next, Remove, Remove played, and Clear queue still work. Default off."))
             Text("When on, the Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Remove played, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.")

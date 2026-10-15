@@ -53025,6 +53025,108 @@
           }
         }
       }
+    },
+    "Delete removes from queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löschen entfernt aus Warteschlange"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete removes from queue"
+          }
+        }
+      }
+    },
+    "Deleting a download (swipe, menu, Downloads, delete after playing) also removes the episode from the queue. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Löschen eines Downloads (Wischen, Menü, Downloads, Löschen nach dem Abspielen) entfernt die Episode auch aus der Warteschlange. Standard: aus."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deleting a download (swipe, menu, Downloads, delete after playing) also removes the episode from the queue. Default off."
+          }
+        }
+      }
+    },
+    "Downloading an episode (manually or by auto-download) adds it to the queue at the Enqueue location, unless it is already queued. Cancelling the download removes it again. Default on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Herunterladen einer Episode (manuell oder per automatischem Download) fügt sie an der Einreihungsposition zur Warteschlange hinzu, sofern sie noch nicht eingereiht ist. Ein Abbruch des Downloads entfernt sie wieder. Standard: an."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloading an episode (manually or by auto-download) adds it to the queue at the Enqueue location, unless it is already queued. Cancelling the download removes it again. Default on."
+          }
+        }
+      }
+    },
+    "Enqueue downloaded episodes": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heruntergeladene Episoden einreihen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enqueue downloaded episodes"
+          }
+        }
+      }
+    },
+    "When on, deleting a downloaded episode also removes it from the queue. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, entfernt das Löschen einer heruntergeladenen Episode sie auch aus der Warteschlange. Standard: aus."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, deleting a downloaded episode also removes it from the queue. Default off."
+          }
+        }
+      }
+    },
+    "When on, downloading an episode adds it to the queue at the Enqueue location. Cancelling that download removes it again. Default on.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, fügt das Herunterladen einer Episode sie an der Einreihungsposition zur Warteschlange hinzu. Wird der Download abgebrochen, wird sie wieder entfernt. Standard: an."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When on, downloading an episode adds it to the queue at the Enqueue location. Cancelling that download removes it again. Default on."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

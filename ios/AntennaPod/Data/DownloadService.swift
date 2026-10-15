@@ -1,5 +1,6 @@
 import CryptoKit
 import Foundation
+import PodcastCore
 
 struct DownloadedEpisode: Identifiable, Hashable, Codable {
     let episode: PodcastEpisode
@@ -495,6 +496,17 @@ final class DownloadService: ObservableObject {
             }
         }
         lastError = nil
+        // Android prefEnqueueDownloaded: enqueue at request time (before this item counts as
+        // downloading for the Enqueue location), remember it so Cancel can undo it.
+        if let store, QueueAutoPolicy.enqueueOnDownloadRequest(
+            enabled: settings?.enqueueDownloaded ?? QueueAutoPolicy.defaultEnqueueDownloaded,
+            alreadyQueued: store.isInQueue(episode.id), alreadyDownloaded: false) {
+            store.enqueue(episode)
+            queuedByDownloadIds.insert(episode.id)
+        } else {
+            // A retry of a download that already queued it is not `was_queued` (Android tags per request).
+            queuedByDownloadIds.remove(episode.id)
+        }
         inProgress.insert(episode.id)
         waitingQueue.append(WaitingDownload(episode: episode, source: source))
         pumpWaitingQueue()
@@ -728,8 +740,19 @@ final class DownloadService: ObservableObject {
         return merged
     }
 
+    /// Episodes this service added to the queue for a download request (Android `was_queued` tag).
+    /// In memory only: after a relaunch a cancel keeps the queue entry.
+    private(set) var queuedByDownloadIds: Set<String> = []
+
     func delete(_ episode: PodcastEpisode) {
+        queuedByDownloadIds.remove(episode.id)
         cancelTask(for: episode.id)
+        // Android prefDeleteRemovesFromQueue (DBWriter.deleteFeedMediaOfItem).
+        if let store, QueueAutoPolicy.removeOnDelete(
+            enabled: settings?.deleteRemovesFromQueue ?? QueueAutoPolicy.defaultDeleteRemovesFromQueue,
+            isQueued: store.isInQueue(episode.id)) {
+            store.removeFromQueue(episode)
+        }
         if let existing = downloads.first(where: { $0.id == episode.id }) {
             try? FileManager.default.removeItem(at: existing.localFileURL)
             downloads.removeAll { $0.id == episode.id }
@@ -748,6 +771,15 @@ final class DownloadService: ObservableObject {
     /// Does not remove a completed offline file (use `delete`).
     func cancelDownload(_ episode: PodcastEpisode) {
         cancelTask(for: episode.id)
+        undoEnqueueForCancelledDownload(episode.id)
+    }
+
+    /// Android `cancel`: a download that added the episode to the queue takes it out again.
+    private func undoEnqueueForCancelledDownload(_ episodeId: String) {
+        let was = queuedByDownloadIds.remove(episodeId) != nil
+        guard let store, QueueAutoPolicy.removeOnCancel(wasQueuedByDownload: was, stillQueued: store.isInQueue(episodeId)),
+              let queued = store.queue.first(where: { $0.id == episodeId }) else { return }
+        store.removeFromQueue(queued)
     }
 
     /// True while the episode is accepted but not yet a live `URLSession` task (waiting FIFO).
@@ -768,6 +800,7 @@ final class DownloadService: ObservableObject {
     @discardableResult
     func cancelAllInFlightDownloads() -> Int {
         let count = inProgress.count
+        for id in inProgress { undoEnqueueForCancelledDownload(id) }
         // Snapshot task ids before clearing maps so async cancel still targets the right tasks.
         let taskIds = Array(pendingByTaskId.keys)
         waitingQueue.removeAll()

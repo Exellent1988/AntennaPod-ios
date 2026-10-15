@@ -1379,6 +1379,8 @@ final class AppSettings: ObservableObject {
         static let rewindAfterPauseSeconds = "settings.rewindAfterPauseSeconds"
         static let enqueueLocation = "settings.enqueueLocation"
         static let keepSkippedEpisodes = "settings.keepSkippedEpisodes"
+        static let enqueueDownloaded = "settings.enqueueDownloaded"
+        static let deleteRemovesFromQueue = "settings.deleteRemovesFromQueue"
         static let pauseOnDisconnect = "settings.pauseOnDisconnect"
         static let hardwarePreviousButton = "settings.hardwarePreviousButton"
         static let hardwareForwardButton = "settings.hardwareForwardButton"
@@ -1997,6 +1999,18 @@ final class AppSettings: ObservableObject {
     }
 
     /// Android prefEnqueueLocation: where Add to queue inserts (default Back).
+    /// Android `prefEnqueueDownloaded` (global, default on): a requested download adds the episode
+    /// to the queue at the Enqueue location; cancelling that download removes it again.
+    @Published var enqueueDownloaded: Bool {
+        didSet { UserDefaults.standard.set(enqueueDownloaded, forKey: Keys.enqueueDownloaded) }
+    }
+
+    /// Android `prefDeleteRemovesFromQueue` (global, default off): deleting a download removes the
+    /// episode from the queue.
+    @Published var deleteRemovesFromQueue: Bool {
+        didSet { UserDefaults.standard.set(deleteRemovesFromQueue, forKey: Keys.deleteRemovesFromQueue) }
+    }
+
     @Published var enqueueLocation: EnqueueLocation {
         didSet { UserDefaults.standard.set(enqueueLocation.rawValue, forKey: Keys.enqueueLocation) }
     }
@@ -2694,6 +2708,8 @@ final class AppSettings: ObservableObject {
         rewindAfterPauseSeconds = Self.loadRewindAfterPauseSeconds()
         enqueueLocation = EnqueueLocation(storedValue: UserDefaults.standard.string(forKey: Keys.enqueueLocation))
         keepSkippedEpisodes = UserDefaults.standard.object(forKey: Keys.keepSkippedEpisodes) as? Bool ?? SkipKeepPolicy.defaultKeepSkippedEpisodes
+        enqueueDownloaded = UserDefaults.standard.object(forKey: Keys.enqueueDownloaded) as? Bool ?? QueueAutoPolicy.defaultEnqueueDownloaded
+        deleteRemovesFromQueue = UserDefaults.standard.object(forKey: Keys.deleteRemovesFromQueue) as? Bool ?? QueueAutoPolicy.defaultDeleteRemovesFromQueue
         pauseOnDisconnect = UserDefaults.standard.object(forKey: Keys.pauseOnDisconnect) as? Bool ?? DisconnectPausePolicy.defaultPauseOnDisconnect
         hardwarePreviousButton = HardwareButtonAction.resolve(UserDefaults.standard.string(forKey: Keys.hardwarePreviousButton), default: .defaultPrevious)
         hardwareForwardButton = HardwareButtonAction.resolve(UserDefaults.standard.string(forKey: Keys.hardwareForwardButton), default: .defaultForward)
@@ -3175,6 +3191,8 @@ final class AppSettings: ObservableObject {
             rewindAfterPauseSeconds: rewindAfterPauseSeconds,
             enqueueLocation: enqueueLocation.rawValue,
             keepSkippedEpisodes: keepSkippedEpisodes,
+            enqueueDownloaded: enqueueDownloaded,
+            deleteRemovesFromQueue: deleteRemovesFromQueue,
             pauseOnDisconnect: pauseOnDisconnect,
             hardwarePreviousButton: hardwarePreviousButton.rawValue,
             hardwareForwardButton: hardwareForwardButton.rawValue,
@@ -3333,6 +3351,8 @@ final class AppSettings: ObservableObject {
         hardwarePreviousButton = HardwareButtonAction.resolve(snap.hardwarePreviousButton, default: .defaultPrevious)
         pauseOnDisconnect = snap.pauseOnDisconnect ?? DisconnectPausePolicy.defaultPauseOnDisconnect
         keepSkippedEpisodes = snap.keepSkippedEpisodes ?? SkipKeepPolicy.defaultKeepSkippedEpisodes
+        enqueueDownloaded = snap.enqueueDownloaded ?? QueueAutoPolicy.defaultEnqueueDownloaded
+        deleteRemovesFromQueue = snap.deleteRemovesFromQueue ?? QueueAutoPolicy.defaultDeleteRemovesFromQueue
         enqueueLocation = EnqueueLocation(storedValue: snap.enqueueLocation)
         let rewindAfter = snap.rewindAfterPauseSeconds ?? Self.defaultRewindAfterPauseSeconds
         rewindAfterPauseSeconds = Self.rewindAfterPausePresets.contains(rewindAfter)
@@ -3584,6 +3604,10 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var enqueueLocation: String? = nil
     /// Absent in older backups → default.
     var keepSkippedEpisodes: Bool? = nil
+    /// Absent in older backups → default (on).
+    var enqueueDownloaded: Bool? = nil
+    /// Absent in older backups → default (off).
+    var deleteRemovesFromQueue: Bool? = nil
     /// Absent in older backups → default.
     var pauseOnDisconnect: Bool? = nil
     /// Absent in older backups → default.
