@@ -113,7 +113,7 @@ enum CarPlayBrowseModel {
         return CarPlayRow(
             title: ep.title,
             detail: parts.isEmpty ? nil : parts.joined(separator: " · "),
-            imageUrl: artworkURL(ep.preferredPodcastImagesArtworkURL, feedArtwork),
+            imageUrl: artworkURL(ep.preferredPodcastImagesArtworkURL, ep.imageUrl, feedArtwork),
             target: .episode(ep.id)
         )
     }
