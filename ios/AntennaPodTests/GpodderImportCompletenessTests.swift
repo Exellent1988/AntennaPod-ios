@@ -88,6 +88,24 @@ final class GpodderImportCompletenessTests: XCTestCase {
         XCTAssertTrue(lnp?.urlKeys.contains("logbuch-netzpolitik.de/feed/mp3") == true, "redirect source and target fold into one podcast")
     }
 
+    /// Both completion orders of a redirect pair (source first / target first) end as one podcast
+    /// that knows both URLs, without the test calling mergeDuplicateFeeds itself.
+    func testRedirectPairFoldsInEitherOrder() async {
+        for sourceFirst in [true, false] {
+            store.feeds = []
+            let source = "https://logbuch-netzpolitik.de/feed/mp3", target = "https://feeds.metaebene.me/lnp/mp3"
+            let inner = fakeSubscribe(redirects: [source: target])
+            let late = sourceFirst ? target : source
+            let result = await GpodderSyncService().subscribeMissing([source, target], store: store, subscribe: { url in
+                if url == late { try await Task.sleep(nanoseconds: 150_000_000) }
+                try await inner(url)
+            })
+            XCTAssertTrue(result.failures.isEmpty)
+            XCTAssertEqual(store.feeds.count, 1, "sourceFirst=\(sourceFirst): \(store.feeds.map(\.allUrls))")
+            XCTAssertEqual(store.feeds.first?.urlKeys.isSuperset(of: ["logbuch-netzpolitik.de/feed/mp3", "feeds.metaebene.me/lnp/mp3"]), true)
+        }
+    }
+
     func testSecondImportAddsNothing() async {
         let sync = GpodderSyncService()
         let sub = fakeSubscribe(redirects: ["https://logbuch-netzpolitik.de/feed/mp3": "https://feeds.metaebene.me/lnp/mp3"],

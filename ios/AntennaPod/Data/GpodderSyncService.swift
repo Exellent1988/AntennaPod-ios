@@ -384,6 +384,10 @@ final class GpodderSyncService: ObservableObject {
         for failure in failures {
             store.addPlaceholderFeed(url: failure.url, error: failure.message)
         }
+        // Parallel fetches finish in any order: a redirect pair may be stored under either URL,
+        // and a placeholder may land next to an entry that learned its alias later. Fold any
+        // same-podcast entries now, so an import never leaves duplicate subscriptions.
+        store.mergeDuplicateFeeds()
         subscribed = todo.count - failures.count
         importProgress = nil
         importFailures = failures
