@@ -451,10 +451,12 @@ final class GpodderSyncService: ObservableObject {
             _ = localNormalized
             var removedLocally = 0
             if since > 0 {
-                let urls = Set(GpodderSyncLogic.feedsToUnsubscribe(
-                    remove: changes.remove, add: changes.add, localFeedURLs: store.feeds.flatMap(\.allUrls)
-                ).map(Self.normalizeFeedURL))
-                for feed in store.feeds where !feed.urlKeys.isDisjoint(with: urls) {
+                // Per podcast: one the server re-adds under another of its URLs (feed URL
+                // changed) is kept instead of being unsubscribed.
+                let feeds = store.feeds
+                let indexes = SubscriptionSyncPlan.podcastsToUnsubscribe(
+                    remove: changes.remove, add: changes.add, localPodcasts: feeds.map(\.allUrls))
+                for feed in indexes.map({ feeds[$0] }) {
                     store.unsubscribe(feed)
                     removedLocally += 1
                 }

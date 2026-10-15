@@ -84,10 +84,16 @@ public enum SubscriptionSyncPlan {
         return localFeedURLs.filter { removeKeys.contains(FeedURLEquality.key($0)) }
     }
 
-    /// Indexes of local podcasts whose any URL the server removed (incremental sync).
+    /// Indexes of local podcasts whose any URL the server removed (incremental sync). A podcast
+    /// the same window also adds under another of its URLs (feed URL changed / redirect rewrite:
+    /// server removes the old address and adds the new one) is kept.
     public static func podcastsToUnsubscribe(remove: [String], add: [String], localPodcasts: [[String]]) -> [Int] {
-        let removeKeys = FeedURLEquality.keys(remove).subtracting(FeedURLEquality.keys(add))
-        return localPodcasts.indices.filter { !FeedURLEquality.keys(localPodcasts[$0]).isDisjoint(with: removeKeys) }
+        let addKeys = FeedURLEquality.keys(add)
+        let removeKeys = FeedURLEquality.keys(remove).subtracting(addKeys)
+        return localPodcasts.indices.filter {
+            let keys = FeedURLEquality.keys(localPodcasts[$0])
+            return !keys.isDisjoint(with: removeKeys) && keys.isDisjoint(with: addKeys)
+        }
     }
 
     /// Feed URLs to upload: http(s) podcasts the server knows under none of their URLs, one per
