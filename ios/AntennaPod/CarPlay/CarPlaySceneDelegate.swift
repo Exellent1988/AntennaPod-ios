@@ -1,5 +1,6 @@
 import CarPlay
 import Combine
+import PodcastCore
 import UIKit
 
 /// CarPlay audio app mirroring the Android Auto browse tree (`PlaybackService.loadChildrenSynchronous`):
@@ -204,7 +205,12 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             switch kind {
             case .rate:
                 return CPNowPlayingPlaybackRateButton { _ in
-                    Task { @MainActor in AppServices.playback?.cycleToNextSpeedPreset() }
+                    Task { @MainActor in
+                        guard let pb = AppServices.playback,
+                              let next = NowPlayingLogic.nextSpeedPreset(presets: AppSettings.speedPresets, current: pb.rate)
+                        else { return }
+                        pb.setRate(next)
+                    }
                 }
             case .sleepTimer:
                 let active = pb?.isSleepTimerActive ?? false
@@ -215,7 +221,13 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
                         if pb.isSleepTimerActive {
                             pb.disableSleepTimer()
                         } else {
-                            pb.setSleepTimer(minutes: NowPlayingLogic.sleepToggleMinutes(presets: PlaybackService.clockPresetsMinutes))
+                            switch NowPlayingLogic.sleepToggleTarget(
+                                episodesKind: pb.settings?.sleepTimerKind == .episodes,
+                                lastMinutes: pb.settings?.lastSleepTimerMinutes ?? 15,
+                                lastEpisodes: pb.settings?.lastSleepTimerEpisodes ?? 1) {
+                            case .minutes(let m): pb.setSleepTimer(minutes: m, remember: false)
+                            case .episodes(let e): pb.setSleepTimer(episodes: e, remember: false)
+                            }
                         }
                     }
                 }

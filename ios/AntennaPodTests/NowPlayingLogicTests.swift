@@ -118,3 +118,22 @@ final class AndroidAutoSkipParityTests: XCTestCase {
         XCTAssertLessThanOrEqual(NowPlayingLogic.nowPlayingButtons(hasChapters: true).count, 5)
     }
 }
+
+/// Android Auto Now Playing parity: speed custom action and sleep-timer toggle (mirrors the Linux harness).
+final class NowPlayingParityTests: XCTestCase {
+    func testSpeedCycleMatchesAndroidCustomAction() {
+        let p: [Float] = [1.0, 1.25, 1.5]
+        XCTAssertEqual(NowPlayingLogic.nextSpeedPreset(presets: p, current: 1.0), 1.25)
+        XCTAssertEqual(NowPlayingLogic.nextSpeedPreset(presets: p, current: 1.5), 1.0)
+        XCTAssertEqual(NowPlayingLogic.nextSpeedPreset(presets: p, current: 2.0), 1.0)
+        XCTAssertNil(NowPlayingLogic.nextSpeedPreset(presets: [1.5], current: 1.0))
+        XCTAssertNil(NowPlayingLogic.nextSpeedPreset(presets: [], current: 1.0))
+    }
+
+    func testSleepToggleUsesLastUsedTimer() {
+        XCTAssertEqual(NowPlayingLogic.sleepToggleTarget(episodesKind: false, lastMinutes: 40, lastEpisodes: 3), .minutes(40))
+        XCTAssertEqual(NowPlayingLogic.sleepToggleTarget(episodesKind: true, lastMinutes: 40, lastEpisodes: 3), .episodes(3))
+        XCTAssertEqual(NowPlayingLogic.sleepToggleTarget(episodesKind: false, lastMinutes: 0, lastEpisodes: 0), .minutes(15))
+        XCTAssertEqual(NowPlayingLogic.sleepToggleTarget(episodesKind: true, lastMinutes: 0, lastEpisodes: 0), .episodes(1))
+    }
+}

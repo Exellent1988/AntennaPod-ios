@@ -116,6 +116,22 @@ enum NowPlayingLogic {
         presets.contains(15) ? 15 : (presets.first(where: { $0 > 0 }) ?? 15)
     }
 
+    enum SleepToggleTarget: Equatable { case minutes(Int), episodes(Int) }
+
+    /// Android `CUSTOM_ACTION_TOGGLE_SLEEP_TIMER` when off: `SleepTimerPreferences.timerMillisOrEpisodes()`,
+    /// i.e. the last-used timer of the selected type (defaults 15 min / 1 episode).
+    static func sleepToggleTarget(episodesKind: Bool, lastMinutes: Int, lastEpisodes: Int) -> SleepToggleTarget {
+        episodesKind ? .episodes(lastEpisodes > 0 ? lastEpisodes : 1) : .minutes(lastMinutes > 0 ? lastMinutes : 15)
+    }
+
+    /// Android `CUSTOM_ACTION_CHANGE_PLAYBACK_SPEED`: next preset after the current one, wrapping; first preset
+    /// when the current rate is not a preset; `nil` (no change) with fewer than two presets.
+    static func nextSpeedPreset(presets: [Float], current: Float) -> Float? {
+        guard presets.count > 1 else { return nil }
+        guard let idx = presets.firstIndex(where: { abs($0 - current) < 0.001 }) else { return presets[0] }
+        return idx + 1 < presets.count ? presets[idx + 1] : presets[0]
+    }
+
     enum NowPlayingButton: Equatable { case rate, sleepTimer, nextChapter, skipEpisode }
 
     /// Android Auto custom-action order (rewind/FF are system skip buttons on CarPlay):
