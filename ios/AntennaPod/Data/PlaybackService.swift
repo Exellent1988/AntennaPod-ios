@@ -95,6 +95,10 @@ final class PlaybackService: ObservableObject {
             if isPlaying, !oldValue, let id = currentEpisode?.id {
                 store?.notePlayStarted(id, atSeconds: positionSeconds)
             }
+            // Android onPlaybackPause / stop → enqueueEpisodePlayed: one queued action per session.
+            if !isPlaying, oldValue, let id = currentEpisode?.id {
+                store?.recordGpodderPlayAction(id, positionSeconds: positionSeconds, durationSeconds: durationSeconds)
+            }
         }
     }
     @Published var positionSeconds: Double = 0
@@ -916,6 +920,8 @@ final class PlaybackService: ObservableObject {
         // a mid-episode skip uploads the real position, not total.
         if !nearEnd {
             store?.notePlayActionPosition(skippedId, seconds: skippedAt)
+            // Same session → replaces the "completed" entry queued by handlePlaybackEnded.
+            store?.recordGpodderPlayAction(skippedId)
         }
     }
 
@@ -1507,6 +1513,8 @@ final class PlaybackService: ObservableObject {
                   almostEnded(position: positionSeconds, duration: durationSeconds) {
             store.markPlayed(episode.id, removeFromQueue: true)
         }
+        // Android onPostPlayback → enqueueEpisodePlayed(completed): replaces this session's pause entry.
+        store.recordGpodderPlayAction(episode.id, positionSeconds: positionSeconds, durationSeconds: durationSeconds)
     }
 
     /// Explicit Mark unplayed on the loaded episode: skip smart mark when leaving it

@@ -125,6 +125,7 @@ final class GpodderSyncService: ObservableObject {
         knownRemoteURLs = []
         episodeActionsTimestamp = 0
         episodeUploadCursorMs = 0
+        GpodderActionQueue.shared.clear()
     }
 
     private var knownRemoteURLs: Set<String> {
@@ -535,10 +536,15 @@ final class GpodderSyncService: ObservableObject {
             actions: remote.actions, refs: refs, localStates: store.playbackStates
         )
         let updatedIds = Set(updates.map(\.episodeId))
-        let outgoing = GpodderSyncLogic.localActions(
+        let snapshot = GpodderSyncLogic.localActions(
             refs: refs, localStates: store.playbackStates,
             sinceMs: episodeUploadCursorMs, deviceId: deviceId
-        ).filter { !updatedIds.contains($0.guid ?? "") }
+        )
+        // Android SyncService: upload the persistent queue; it is cleared only after success.
+        let queued = store.gpodderActionQueue.snapshot
+        let outgoing = GpodderSyncLogic.outgoingActions(
+            queued: queued, snapshot: snapshot, remotelyUpdatedIds: updatedIds
+        )
 
         for update in updates {
             if update.isPlayed, !store.isPlayed(update.episodeId) {
@@ -556,8 +562,11 @@ final class GpodderSyncService: ObservableObject {
         }
 
         var timestamp = remote.timestamp
-        if !outgoing.isEmpty, let ts = try await client.uploadEpisodeActions(outgoing) {
-            timestamp = max(timestamp, ts)
+        if !outgoing.isEmpty {
+            if let ts = try await client.uploadEpisodeActions(outgoing) {
+                timestamp = max(timestamp, ts)
+            }
+            store.gpodderActionQueue.remove(queued)
         }
         episodeActionsTimestamp = timestamp
         episodeUploadCursorMs = started

@@ -1013,6 +1013,36 @@ final class PodcastStore: ObservableObject {
         playbackStates[episodeId] = state
     }
 
+    /// Persistent gpodder outbox (Android `SynchronizationQueueStorage`).
+    var gpodderActionQueue: GpodderActionQueue = .shared
+    /// Android `SynchronizationSettings.isProviderConnected()`: record only while logged in.
+    var isGpodderActionRecordingEnabled: () -> Bool = {
+        UserDefaults.standard.bool(forKey: "gpodder.isLoggedIn")
+    }
+
+    /// One gpodder `play` action for the play session that just paused / stopped / ended
+    /// (Android `enqueueEpisodePlayed`). Same rules as the sync snapshot: subscribed http(s)
+    /// feed + media, known duration, progress made (or completed). `positionSeconds` overrides
+    /// a not-yet-persisted playhead.
+    func recordGpodderPlayAction(_ episodeId: String, positionSeconds: Double? = nil, durationSeconds: Double? = nil) {
+        guard isGpodderActionRecordingEnabled() else { return }
+        guard !episodeId.hasPrefix("podcast-trailer:"),
+              let feed = feed(containingEpisodeId: episodeId),
+              !LocalFolderFeed.isLocalFolderFeed(feed),
+              let episode = episode(id: episodeId) else { return }
+        var state = playbackState(for: episodeId)
+        if let p = positionSeconds, p.isFinite, !state.isPlayed { state.positionSeconds = max(0, p) }
+        if let d = durationSeconds, d.isFinite, d > 0 { state.durationSeconds = d }
+        let now = Date()
+        state.updatedAtEpochMs = Int64(now.timeIntervalSince1970 * 1000)
+        let deviceId = UserDefaults.standard.string(forKey: "gpodder.deviceId") ?? ""
+        let ref = GpodderSyncLogic.EpisodeRef(episodeId: episodeId, feedUrl: feed.feedUrl, mediaUrl: episode.downloadUrl)
+        guard let action = GpodderSyncLogic.localActions(
+            refs: [ref], localStates: [episodeId: state], sinceMs: Int64.min, deviceId: deviceId
+        ).first else { return }
+        gpodderActionQueue.enqueue(action)
+    }
+
     /// Skip before the smart-mark window: keep the real position for the gpodder play action.
     func notePlayActionPosition(_ episodeId: String, seconds: Double) {
         guard seconds.isFinite, var state = playbackStates[episodeId], state.isPlayed else { return }
