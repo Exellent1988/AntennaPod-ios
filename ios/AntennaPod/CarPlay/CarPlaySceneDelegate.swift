@@ -78,104 +78,25 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
 
     @MainActor private var limit: Int { CarPlayParity.itemLimit(templateMax: Int(CPListTemplate.maximumItemCount)) }
 
-    @MainActor private func reloadAll() {
-        guard let store = AppServices.store else { return }
-        let settings = AppServices.settings
-        let all = allEpisodeInfos()
-        let byId = Dictionary(all.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
-        let playingId = AppServices.playback?.currentEpisode?.id
+    @MainActor private func builder() -> CarPlayListBuilder? {
+        guard let store = AppServices.store else { return nil }
+        return CarPlayListBuilder(store: store, downloads: AppServices.downloads, settings: AppServices.settings,
+                                  currentEpisode: AppServices.playback?.currentEpisode, limit: limit)
+    }
 
-        if let t = tabs[.queue] {
-            var sections: [(String?, [CarPlayRow])] = []
-            if let pid = playingId, let cur = byId[pid] ?? AppServices.playback?.currentEpisode.map({ info($0, feed: store.feed(containingEpisodeId: $0.id)) }) {
-                sections.append((String(localized: "Currently playing"), [row(cur)]))
-            }
-            let q = store.queue.prefix(limit).map { byId[$0.id] ?? info($0, feed: store.feed(containingEpisodeId: $0.id)) }
-            sections.append((sections.isEmpty ? nil : String(localized: "Queue"), q.map { row($0) }))
-            apply(sections, to: t)
-        }
-        if let t = tabs[.downloads] {
-            let rows = CarPlayParity.downloads(all, sort: settings?.downloadsSort ?? .newestFirst, limit: limit).map { row($0) }
-            apply([(nil, rows)], to: t)
-        }
-        if let t = tabs[.episodes] {
-            let rows = CarPlayParity.episodes(
-                all, filter: settings?.allEpisodesFilter ?? .all, sort: settings?.allEpisodesSort ?? .newestFirst, limit: limit
-            ).map { row($0) }
-            apply([(nil, rows)], to: t)
-        }
-        if let t = tabs[.subscriptions] {
-            let unplayed = store.unplayedCountsByFeedId()
-            let infos = store.feeds.map {
-                CarPlayParity.FeedInfo(id: $0.id, title: store.displayTitle(for: $0), author: $0.author,
-                                       unplayedCount: unplayed[$0.id] ?? 0, lastRefreshedEpochMs: $0.lastRefreshedAtEpochMs)
-            }
-            let feedsById = Dictionary(store.feeds.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
-            let rows = CarPlayParity.feeds(infos, sort: settings?.subscriptionsSort ?? .alphabetical, limit: limit).map { f in
-                let feed = feedsById[f.id]
-                return CarPlayRow(
-                    title: f.title,
-                    detail: f.unplayedCount > 0 ? String(localized: "\(f.unplayedCount) unplayed") : f.author,
-                    imageUrl: feed.flatMap { CarPlayBrowseModel.artworkURL($0.preferredDisplayArtworkURL, $0.imageUrl) },
-                    target: .feed(f.id)
-                )
-            }
-            apply([(nil, rows)], to: t)
-        }
+    @MainActor private func reloadAll() {
+        guard let b = builder() else { return }
+        let all = b.allEpisodeInfos()
+        if let t = tabs[.queue] { apply(b.queueSections(), to: t) }
+        if let t = tabs[.downloads] { apply([(nil, b.downloadRows(all))], to: t) }
+        if let t = tabs[.episodes] { apply([(nil, b.episodeRows(all))], to: t) }
+        if let t = tabs[.subscriptions] { apply([(nil, b.subscriptionRows())], to: t) }
         let stack = interfaceController?.templates ?? []
         episodeLists.removeAll { entry in !stack.contains { $0 === entry.template } }
-        for entry in episodeLists { apply([(nil, feedEpisodeRows(entry.feedId, byId: byId))], to: entry.template) }
+        for entry in episodeLists { apply([(nil, b.feedEpisodeRows(entry.feedId))], to: entry.template) }
         if let t = upNextTemplate {
-            if stack.contains(where: { $0 === t }) { apply([(nil, upNextRows(byId: byId))], to: t) } else { upNextTemplate = nil }
+            if stack.contains(where: { $0 === t }) { apply([(nil, b.upNextRows())], to: t) } else { upNextTemplate = nil }
         }
-    }
-
-    // MARK: Building
-
-    @MainActor private func info(_ ep: PodcastEpisode, feed: PodcastFeed?) -> CarPlayEpisodeInfo {
-        let store = AppServices.store
-        let dl = AppServices.downloads
-        let item = dl?.downloads.first { $0.id == ep.id }
-        return CarPlayEpisodeInfo(
-            id: ep.id,
-            title: ep.title,
-            feedTitle: feed.map { store?.displayTitle(for: $0) ?? $0.title } ?? "",
-            // Same rule as in-app rows (`PodcastEpisode.artworkURL(feed:)`), then classic feed image.
-            artwork: CarPlayBrowseModel.artworkURL(ep.artworkURL(feed: feed), feed?.imageUrl),
-            pubDateEpochMs: ep.pubDateEpochMs,
-            durationSeconds: ep.durationSeconds,
-            positionSeconds: store?.positionSeconds(for: ep.id) ?? 0,
-            isPlayed: store?.isPlayed(ep.id) ?? false,
-            isArchived: store?.isArchived(ep.id) ?? false,
-            isFavorite: store?.isFavorite(ep.id) ?? false,
-            isDownloaded: dl?.isDownloaded(ep) ?? false,
-            downloadedAtEpochMs: item?.downloadedAtEpochMs,
-            byteSize: item?.knownByteSize()
-        )
-    }
-
-    @MainActor private func allEpisodeInfos() -> [CarPlayEpisodeInfo] {
-        var seen = Set<String>()
-        var out: [CarPlayEpisodeInfo] = []
-        for feed in AppServices.store?.feeds ?? [] {
-            for ep in feed.episodes where seen.insert(ep.id).inserted { out.append(info(ep, feed: feed)) }
-        }
-        return out
-    }
-
-    @MainActor private func feedEpisodeRows(_ feedId: UUID, byId: [String: CarPlayEpisodeInfo]) -> [CarPlayRow] {
-        let feed = AppServices.store?.feeds.first { $0.id == feedId }
-        let infos = (feed?.episodes ?? []).map { byId[$0.id] ?? info($0, feed: feed) }
-        let settings = AppServices.settings
-        let global = settings?.feedEpisodeSort ?? .newestFirst
-        let sort = AppServices.store?.feedSettings(for: feedId).resolvedEpisodeSort(global: global) ?? global
-        return CarPlayParity.feedEpisodes(infos, sort: sort, filter: settings?.feedEpisodeFilter ?? .all, limit: limit)
-            .map { row($0, showFeed: false) }
-    }
-
-    private func row(_ e: CarPlayEpisodeInfo, showFeed: Bool = true) -> CarPlayRow {
-        CarPlayRow(title: e.title, detail: CarPlayParity.detail(e, showFeed: showFeed), imageUrl: e.artwork,
-                   target: .episode(e.id), progress: CarPlayParity.progress(e))
     }
 
     @MainActor private func apply(_ sections: [(String?, [CarPlayRow])], to template: CPListTemplate) {
@@ -217,7 +138,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
         let title = store?.displayTitle(forFeedId: feedId) ?? ""
         let t = CPListTemplate(title: title, sections: [])
         t.emptyViewTitleVariants = [String(localized: "No episodes")]
-        apply([(nil, feedEpisodeRows(feedId, byId: [:]))], to: t)
+        apply([(nil, builder()?.feedEpisodeRows(feedId) ?? [])], to: t)
         episodeLists.append((feedId, t))
         interfaceController?.pushTemplate(t, animated: true, completion: nil)
     }
@@ -246,7 +167,7 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             item.playbackProgress = CGFloat(row.progress)
             item.handler = { [weak self] _, completion in
                 Task { @MainActor in
-                    self?.play(episodeId: id)
+                    self?.play(episodeId: id, feedId: row.feedId)
                     completion()
                 }
             }
@@ -320,32 +241,20 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             guard AppServices.store != nil else { return }
             let t = CPListTemplate(title: String(localized: "Up Next"), sections: [])
             t.emptyViewTitleVariants = [String(localized: "Queue is empty")]
-            let rows = self.upNextRows(byId: [:])
+            let rows = self.builder()?.upNextRows() ?? []
             self.apply([(nil, rows)], to: t)
             self.upNextTemplate = t
             self.interfaceController?.pushTemplate(t, animated: true, completion: nil)
         }
     }
 
-    @MainActor private func upNextRows(byId: [String: CarPlayEpisodeInfo]) -> [CarPlayRow] {
-        guard let store = AppServices.store else { return [] }
-        let currentId = AppServices.playback?.currentEpisode?.id
-        let queued = Dictionary(store.queue.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
-        return CarPlayParity.upNext(queueIds: store.queue.map(\.id), currentId: currentId)
-            .prefix(limit).compactMap { queued[$0] }
-            .map { row(byId[$0.id] ?? info($0, feed: store.feed(containingEpisodeId: $0.id))) }
-    }
-
     func nowPlayingTemplateAlbumArtistButtonTapped(_ nowPlayingTemplate: CPNowPlayingTemplate) {}
 
     // MARK: Playback
 
-    @MainActor private func play(episodeId: String) {
-        guard let store = AppServices.store, let playback = AppServices.playback else { return }
-        let episode = (playback.currentEpisode?.id == episodeId ? playback.currentEpisode : nil)
-            ?? store.queue.first { $0.id == episodeId }
-            ?? store.feeds.lazy.flatMap(\.episodes).first { $0.id == episodeId }
-        guard let episode else { return }
+    @MainActor private func play(episodeId: String, feedId: UUID?) {
+        guard let playback = AppServices.playback, let episode = builder()?.episodeToPlay(id: episodeId, feedId: feedId)
+        else { return }
         let fileURL = AppServices.downloads?.localURL(for: episode)
         guard playback.play(episode: episode, fileURL: fileURL) else { return }
         // System Now Playing is already fed by PlaybackService (MPNowPlayingInfoCenter + remotes).

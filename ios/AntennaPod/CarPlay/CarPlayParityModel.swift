@@ -16,6 +16,8 @@ struct CarPlayEpisodeInfo: Equatable {
     var isDownloaded = false
     var downloadedAtEpochMs: Int64?
     var byteSize: Int64?
+    /// Feed this row was built from (duplicate GUIDs across URL-twin feeds stay distinct).
+    var feedId: UUID? = nil
 }
 
 /// Root tabs in Android Auto order (Queue, Downloads, Episodes, Subscriptions). CarPlay audio apps
