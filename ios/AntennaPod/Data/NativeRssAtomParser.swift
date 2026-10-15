@@ -156,6 +156,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
     private var pendingLicenseUrl: String?
     /// Item podcast:images / podcast:image — feed-provided only; store URL+width; prefer one for artwork.
     private var itemImages: [PodcastImageVariant] = []
+    /// First item-level image href (`itunes:image` / `podcast:image`), Android `FeedItem.imageUrl`.
+    private var itemImageUrl: String?
     /// Capturing podcast:alternateEnclosure attributes + nested sources.
     private var capturingAlternateEnclosure = false
     private var pendingAltType: String?
@@ -339,6 +341,7 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
             capturingLicense = false
             pendingLicenseUrl = nil
             itemImages = []
+            itemImageUrl = nil
             capturingAlternateEnclosure = false
             pendingAltType = nil
             pendingAltLength = nil
@@ -403,6 +406,10 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                 // itunes:image / podcast:image → seed classic imageUrl when unset (channel only).
                 if !inItem, imageUrl == nil {
                     imageUrl = href
+                }
+                // Item-level: keep the first image href as classic episode artwork.
+                if inItem, itemImageUrl == nil {
+                    itemImageUrl = href
                 }
             } else if !inItem {
                 inImage = true
@@ -991,7 +998,8 @@ private final class XMLFeedParser: NSObject, XMLParserDelegate {
                     soundbites: itemSoundbites,
                     texts: itemTexts,
                     licenses: itemLicenses,
-                    images: itemImages
+                    images: itemImages,
+                    imageUrl: itemImageUrl
                 )
                 episodes.append(episode)
                 inItem = false

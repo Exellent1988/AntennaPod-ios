@@ -1823,6 +1823,9 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
     /// Item-level Podcast Index `podcast:images` / `podcast:image` variants when the feed provides them.
     /// Empty when absent — never invent; UI hides when empty. Prefer one higher-res http(s) for artwork; Open/Copy list — do **not** download all eagerly.
     var images: [PodcastImageVariant]
+    /// Item-level classic artwork (`itunes:image href` inside `<item>`), like Android `FeedItem.imageUrl`.
+    /// Nil when absent — never invent. Older saved feeds decode as nil until the next refresh.
+    var imageUrl: String?
 
     /// Feed provides a remote transcript URL (no on-device STT).
     var hasTranscriptURL: Bool {
@@ -1924,7 +1927,8 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         soundbites: [PodcastSoundbite] = [],
         texts: [PodcastTxt] = [],
         licenses: [PodcastLicense] = [],
-        images: [PodcastImageVariant] = []
+        images: [PodcastImageVariant] = [],
+        imageUrl: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -1955,6 +1959,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         self.texts = texts
         self.licenses = licenses
         self.images = images
+        self.imageUrl = imageUrl
     }
 
     init(from decoder: Decoder) throws {
@@ -1993,6 +1998,7 @@ struct PodcastEpisode: Identifiable, Hashable, Codable {
         texts = try c.decodeIfPresent([PodcastTxt].self, forKey: .texts) ?? []
         licenses = try c.decodeIfPresent([PodcastLicense].self, forKey: .licenses) ?? []
         images = try c.decodeIfPresent([PodcastImageVariant].self, forKey: .images) ?? []
+        imageUrl = try c.decodeIfPresent(String.self, forKey: .imageUrl)
     }
 
     /// Trimmed non-empty item `podcast:medium` from the feed. Hidden when missing — never invent / never remap.

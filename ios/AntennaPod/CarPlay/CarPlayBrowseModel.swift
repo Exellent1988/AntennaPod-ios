@@ -97,6 +97,12 @@ enum CarPlayBrowseModel {
         return nil
     }
 
+    /// Episode row artwork, Android `FeedMedia.getMediaItem` order (item image → feed image), with
+    /// Podcast Index item images preferred first. Same rule for Queue, Downloads, Currently playing.
+    static func episodeArtworkURL(podcastImages: String?, itemImage: String?, feedDisplay: String?, feedImage: String?) -> String? {
+        artworkURL(podcastImages, itemImage, feedDisplay, feedImage)
+    }
+
     /// Pixel size to decode artwork at: CarPlay max item image size (points) × screen scale, ≥1.
     static func artworkPixelSize(maxPoints: Double, scale: Double) -> Int {
         max(1, Int((maxPoints * max(scale, 1)).rounded(.up)))
@@ -113,7 +119,7 @@ enum CarPlayBrowseModel {
         return CarPlayRow(
             title: ep.title,
             detail: parts.isEmpty ? nil : parts.joined(separator: " · "),
-            imageUrl: artworkURL(ep.preferredPodcastImagesArtworkURL, feedArtwork),
+            imageUrl: artworkURL(ep.preferredPodcastImagesArtworkURL, ep.imageUrl, feedArtwork),
             target: .episode(ep.id)
         )
     }

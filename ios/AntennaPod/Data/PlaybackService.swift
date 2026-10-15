@@ -2346,6 +2346,7 @@ final class PlaybackService: ObservableObject {
         let feed = store?.feed(containingEpisodeId: episode.id)
         let resolved = store?.episode(id: episode.id) ?? episode
         let imageUrl = resolved.preferredPodcastImagesArtworkURL
+            ?? resolved.imageUrl
             ?? feed?.preferredDisplayArtworkURL
         guard let imageUrl, !imageUrl.isEmpty, imageUrl != cachedArtworkURL else {
             if imageUrl == nil || imageUrl?.isEmpty == true {

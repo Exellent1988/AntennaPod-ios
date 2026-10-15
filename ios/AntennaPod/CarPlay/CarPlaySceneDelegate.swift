@@ -87,10 +87,10 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
 
         if let t = tabs[.queue] {
             var sections: [(String?, [CarPlayRow])] = []
-            if let pid = playingId, let cur = byId[pid] ?? AppServices.playback?.currentEpisode.map({ info($0, feed: nil) }) {
+            if let pid = playingId, let cur = byId[pid] ?? AppServices.playback?.currentEpisode.map({ info($0, feed: store.feed(containingEpisodeId: $0.id)) }) {
                 sections.append((String(localized: "Currently playing"), [row(cur)]))
             }
-            let q = store.queue.prefix(limit).map { byId[$0.id] ?? info($0, feed: nil) }
+            let q = store.queue.prefix(limit).map { byId[$0.id] ?? info($0, feed: store.feed(containingEpisodeId: $0.id)) }
             sections.append((sections.isEmpty ? nil : String(localized: "Queue"), q.map { row($0) }))
             apply(sections, to: t)
         }
@@ -140,8 +140,9 @@ final class CarPlaySceneDelegate: UIResponder, CPTemplateApplicationSceneDelegat
             id: ep.id,
             title: ep.title,
             feedTitle: feed.map { store?.displayTitle(for: $0) ?? $0.title } ?? "",
-            artwork: CarPlayBrowseModel.artworkURL(
-                ep.preferredPodcastImagesArtworkURL, feed?.preferredDisplayArtworkURL, feed?.imageUrl),
+            artwork: CarPlayBrowseModel.episodeArtworkURL(
+                podcastImages: ep.preferredPodcastImagesArtworkURL, itemImage: ep.imageUrl,
+                feedDisplay: feed?.preferredDisplayArtworkURL, feedImage: feed?.imageUrl),
             pubDateEpochMs: ep.pubDateEpochMs,
             durationSeconds: ep.durationSeconds,
             positionSeconds: store?.positionSeconds(for: ep.id) ?? 0,
