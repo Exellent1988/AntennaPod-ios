@@ -619,6 +619,39 @@ struct FeedDetailView: View {
     @ViewBuilder
     private var feedChannelInfoRows: some View {
         Group {
+            // Android FeedItemlistFragment header (feeditemlist_header.xml): cover + title; tapping the cover or
+            // description opens FeedInfoFragment, butShowSettings opens FeedSettingsFragment. iOS shows the
+            // feed info inline below, so the header opens Podcast settings in one tap.
+            Section {
+                Button {
+                    showPerFeedSettings = true
+                } label: {
+                    HStack(spacing: 12) {
+                        SubscriptionGridCell.feedArtwork(liveFeed)
+                            .frame(width: 64, height: 64)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(feedDisplayTitle)
+                                .font(.headline)
+                                .foregroundStyle(.primary)
+                                .lineLimit(2)
+                            Text("Podcast settings")
+                                .font(.subheadline)
+                                .foregroundStyle(.tint)
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "gearshape")
+                            .font(.title3)
+                            .foregroundStyle(.tint)
+                            .accessibilityHidden(true)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text(feedDisplayTitle))
+                .accessibilityHint(String(localized: "Opens the settings for this podcast"))
+            }
             if LocalFolderFeed.isLocalFolderFeed(liveFeed) {
                 Section {
                     Label("Local folder feed", systemImage: "folder.fill")
@@ -1744,6 +1777,11 @@ struct FeedDetailView: View {
         .toolbar {
             feedDetailToolbar
         }
+        #if DEBUG
+        .onAppear {
+            if ProcessInfo.processInfo.arguments.contains("-APDebugOpenFeedSettings") { showPerFeedSettings = true }
+        }
+        #endif
     }
 
     private func feedConfirmDialogsStageA<Content: View>(_ content: Content) -> some View {

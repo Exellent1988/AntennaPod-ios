@@ -22,6 +22,8 @@ struct RootTabView: View {
     @State private var showSettings = false
     /// DEBUG `-APDebugEpisodeDetail` only.
     @State private var debugEpisodeDetail: PodcastEpisode?
+    /// DEBUG `-APDebugOpenFeed` only.
+    @State private var debugFeed: PodcastFeed?
     /// Bumped when the active tab is tapped again; a new id pops that tab back to its root screen.
     @State private var tabRootResets: [RootTab: Int] = [:]
     @StateObject private var tabReselect = TabReselectCenter()
@@ -45,6 +47,9 @@ struct RootTabView: View {
                 // A pre-change SceneStorage value can still hold the old Settings tab.
                 if selectedTab == .settings { selectedTab = .home }
                 applyDebugLaunchArguments()
+            }
+            .sheet(item: $debugFeed) { feed in
+                NavigationStack { FeedDetailView(feed: feed) }
             }
             .sheet(item: $debugEpisodeDetail) { ep in
             NavigationStack { EpisodeDetailPager(episode: ep) }
@@ -279,6 +284,10 @@ struct RootTabView: View {
         // (the persisted setting stays `settings.subscriptionsDisplayMode`).
         if args.contains("-APDebugSubscriptionsGrid") {
             selectedTab = .subscriptions
+        }
+        // -APDebugOpenFeed opens the first podcast's page (add -APDebugOpenFeedSettings for its settings sheet).
+        if args.contains("-APDebugOpenFeed"), let feed = store.feeds.first {
+            debugFeed = feed
         }
         // Opens the episode detail pager on the newest episode of the first podcast.
         if args.contains("-APDebugEpisodeDetail"),
