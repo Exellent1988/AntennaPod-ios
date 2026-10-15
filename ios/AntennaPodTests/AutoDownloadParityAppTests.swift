@@ -92,8 +92,32 @@ final class AutoDownloadParityAppTests: PlaybackFixtureTestCase {
             let dup = await store.changeFeedUrl(feedId: feed.id, to: other.feedUrl, refresh: false)
             XCTAssertEqual(dup, .duplicate)
         }
+        XCTAssertTrue(moved?.urlKeys.contains(FeedURLKey.key(feed.feedUrl)) == true, "old URL kept as alias")
         let bad = await store.changeFeedUrl(feedId: feed.id, to: "ftp://x/rss", refresh: false)
         XCTAssertEqual(bad, .invalid)
         XCTAssertEqual(store.feeds.first { $0.id == feed.id }?.feedUrl, newUrl)
+    }
+
+    /// Feed URL edited while the gpodder server still lists the old address: the next pull imports
+    /// nothing (no second podcast) and the push uploads nothing (old URL already on the server).
+    func testChangedFeedUrlDoesNotDuplicateOrDoublePushWithGpodder() async {
+        let oldUrl = feed.feedUrl
+        let newUrl = "https://adp-new.invalid/\(UUID().uuidString.prefix(6))/rss"
+        _ = await store.changeFeedUrl(feedId: feed.id, to: newUrl, refresh: false)
+        let local = store.feeds.flatMap(\.allUrls)
+        XCTAssertEqual(GpodderSyncLogic.urlsToImport(remote: [oldUrl], localFeedURLs: local), [],
+                       "old URL on the server is not re-imported")
+        XCTAssertEqual(SubscriptionSyncPlan.urlsToUpload(localPodcasts: store.feeds.filter { $0.id == feed.id }.map(\.allUrls),
+                                                          remoteKeys: FeedURLEquality.keys([oldUrl])), [],
+                       "new URL not pushed next to the old one")
+        XCTAssertEqual(SubscriptionSyncPlan.podcastsToUnsubscribe(remove: [oldUrl], add: [newUrl],
+                                                                  localPodcasts: [store.feeds.first { $0.id == feed.id }!.allUrls]), [],
+                       "server-side rename (remove old + add new) keeps the podcast")
+        // Changing back makes the old URL primary again, no stale alias of itself.
+        _ = await store.changeFeedUrl(feedId: feed.id, to: oldUrl, refresh: false)
+        let back = store.feeds.first { $0.id == feed.id }
+        XCTAssertEqual(back?.feedUrl, oldUrl)
+        XCTAssertEqual(back?.alternateUrls?.map(FeedURLKey.key).contains(FeedURLKey.key(oldUrl)), false)
+        XCTAssertTrue(back?.urlKeys.contains(FeedURLKey.key(newUrl)) == true)
     }
 }

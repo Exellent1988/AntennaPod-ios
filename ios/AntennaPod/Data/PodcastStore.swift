@@ -186,8 +186,8 @@ final class PodcastStore: ObservableObject {
         return report
     }
 
-    /// Android Feed info → "Edit feed URL": replace this podcast's address (Android replaces the
-    /// download URL; the old one is not kept), then refresh from the new URL. Episodes, progress,
+    /// Android Feed info → "Edit feed URL": the new address becomes the podcast's feed URL, the old
+    /// one is kept as an alias (gpodder / OPML matching), then refresh from the new URL. Episodes, progress,
     /// feed settings and the Keychain login (stored per podcast id) stay. Returns the validation
     /// outcome; `.ok` also when the refresh fails (the new URL is kept, the error shows as usual).
     @discardableResult
@@ -197,9 +197,16 @@ final class PodcastStore: ObservableObject {
                                            otherFeedURLs: feeds.filter { $0.id != feedId }.flatMap(\.allUrls))
         guard case .ok(let newUrl) = outcome else { return outcome }
         let old = feeds[i].feedUrl
+        // Unlike Android, the old address stays as an alias: the gpodder server (and OPML files)
+        // may still list it, and gpodder sync / import match a podcast by any of its URLs. Dropping
+        // it would re-import the old URL as a second podcast and push the new URL as well.
+        let newKey = FeedURLKey.key(newUrl)
+        var aliases = (feeds[i].alternateUrls ?? []).filter { FeedURLKey.key($0) != newKey }
+        if FeedURLKey.key(old) != newKey, !aliases.contains(where: { FeedURLKey.key($0) == FeedURLKey.key(old) }) {
+            aliases.insert(old, at: 0)
+        }
         feeds[i].feedUrl = newUrl
-        feeds[i].alternateUrls = (feeds[i].alternateUrls ?? []).filter { FeedURLKey.key($0) != FeedURLKey.key(old) }
-        if feeds[i].alternateUrls?.isEmpty == true { feeds[i].alternateUrls = nil }
+        feeds[i].alternateUrls = aliases.isEmpty ? nil : aliases
         AppMaintenanceLog.record("feed url changed (podcast \(feedId.uuidString.prefix(8)))")
         if refresh {
             _ = try? await subscribeQuietly(feedUrl: newUrl, onlyIfSubscribed: true)
