@@ -95,13 +95,13 @@ enum NowPlayingLogic {
 
     // MARK: Android Auto skip parity
 
-    enum TrackAction: Equatable { case skipEpisode, hardwareButton }
+    enum TrackAction: Equatable { case skipEpisode, rewind, hardwareButton }
 
-    /// Android `onSkipToNext`: in a car skip to the next episode, else the reassigned hardware
-    /// Forward button (`prefHardwareForwardButton`, default fast-forward).
-    /// Previous track always uses the reassigned hardware Previous button (default rewind).
+    /// Android PlaybackService: car-mode `onSkipToNext` → skip episode; `onSkipToPrevious` → rewind
+    /// (no remap). Outside the car, iOS next/previous are headset keys → Android `handleKeycode`
+    /// with `prefHardwareForwardButton` / `prefHardwarePreviousButton`.
     static func nextTrackAction(inCar: Bool) -> TrackAction { inCar ? .skipEpisode : .hardwareButton }
-    static func previousTrackAction() -> TrackAction { .hardwareButton }
+    static func previousTrackAction(inCar: Bool) -> TrackAction { inCar ? .rewind : .hardwareButton }
 
     /// Android `onNextChapter`: next chapter start, or `nil` → fall back to skipping the episode.
     static func nextChapterStart(starts: [Double], at seconds: Double) -> Double? {

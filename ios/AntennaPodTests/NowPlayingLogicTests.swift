@@ -93,7 +93,8 @@ final class AndroidAutoSkipParityTests: XCTestCase {
     func testNextTrackMatchesAndroidCarMode() {
         XCTAssertEqual(NowPlayingLogic.nextTrackAction(inCar: true), .skipEpisode)
         XCTAssertEqual(NowPlayingLogic.nextTrackAction(inCar: false), .hardwareButton)
-        XCTAssertEqual(NowPlayingLogic.previousTrackAction(), .hardwareButton)
+        XCTAssertEqual(NowPlayingLogic.previousTrackAction(inCar: true), .rewind)
+        XCTAssertEqual(NowPlayingLogic.previousTrackAction(inCar: false), .hardwareButton)
     }
 
     func testNextChapterStart() {
