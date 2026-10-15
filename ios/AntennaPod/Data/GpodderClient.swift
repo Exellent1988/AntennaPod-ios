@@ -425,6 +425,7 @@ struct GpodderClient {
 typealias SubscriptionChanges = SubscriptionDelta
 typealias UploadChangesResponse = PushResult
 
+// Restored: bf2c19d96 dropped these app DTOs without moving them to PodcastCore.
 struct GpodderDevice: Decodable, Identifiable, Hashable {
     let id: String
     let caption: String
