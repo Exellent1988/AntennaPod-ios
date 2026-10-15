@@ -53615,6 +53615,16 @@
           }
         }
       }
+    },
+    "Only common tags from all selected subscriptions are shown. Other tags stay unaffected.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es werden nur die gemeinsamen Tags aller ausgewählten Abonnements angezeigt. Andere Tags bleiben unverändert."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
