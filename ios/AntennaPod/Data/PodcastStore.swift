@@ -1043,7 +1043,7 @@ final class PodcastStore: ObservableObject {
     func totalSkipSilenceSavedSeconds() -> Double {
         let resetAt = settings?.statisticsResetAtEpochMs ?? 0
         return playbackStates.values.reduce(0) { sum, state in
-            let stamp = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
+            let stamp = episode.lastPlayedAtEpochMs
             guard resetAt == 0 || stamp >= resetAt else { return sum }
             return sum + (state.skipSilenceSavedSeconds ?? 0)
         }
@@ -2832,6 +2832,21 @@ final class PodcastStore: ObservableObject {
     /// Coarse episode-level stamps — not per-session listen windows; older rows may only have `updatedAt`.
     /// **Wall-clock** duration/position estimates — **not** speed-adjusted. Streaming with no saved
     /// progress is excluded. Played with unknown duration contribute 0 time.
+    /// Android Statistics → Years: listening time per calendar year over the History catalog
+    /// (Reset baseline + Include marked as played apply; the time-range picker does not).
+    func yearlyListening(calendar: Calendar = .current) -> [StatisticsParity.YearTotal] {
+        let resetAt = settings?.statisticsResetAtEpochMs ?? 0
+        let includeMarked = settings?.statisticsIncludeMarkedPlayed ?? true
+        let items: [(epochMs: Int64, seconds: Double)] = historyEpisodes.compactMap { episode in
+            let state = playbackState(for: episode.id)
+            guard ListeningTimeEstimate.hasMeaningfulData(state) else { return nil }
+            let stamp = state.lastPlayedAtEpochMs ?? state.updatedAtEpochMs
+            if resetAt > 0, stamp < resetAt { return nil }
+            return (stamp, ListeningTimeEstimate.seconds(for: state, includeMarkedPlayed: includeMarked))
+        }
+        return StatisticsParity.yearTotals(items, calendar: calendar)
+    }
+
     func listeningStatistics(
         in range: StatisticsTimeRange = .allTime,
         calendar: Calendar = .current,
@@ -2842,6 +2857,7 @@ final class PodcastStore: ObservableObject {
         var totalSeconds: Double = 0
         var perFeed: [UUID: (title: String, played: Int, inProgress: Int, seconds: Double)] = [:]
         let resetAt = settings?.statisticsResetAtEpochMs ?? 0
+        let includeMarked = settings?.statisticsIncludeMarkedPlayed ?? true
 
         func include(_ state: EpisodePlaybackState) -> Bool {
             guard ListeningTimeEstimate.hasMeaningfulData(state) else { return false }
@@ -2857,7 +2873,7 @@ final class PodcastStore: ObservableObject {
             for episode in feed.episodes {
                 let state = playbackState(for: episode.id)
                 guard include(state) else { continue }
-                let secs = ListeningTimeEstimate.seconds(for: state)
+                let secs = ListeningTimeEstimate.seconds(for: state, includeMarkedPlayed: includeMarked)
                 if state.isPlayed {
                     played += 1
                     feedPlayed += 1
@@ -2878,7 +2894,7 @@ final class PodcastStore: ObservableObject {
         for episode in queue where !knownEpisodeIds.contains(episode.id) {
             let state = playbackState(for: episode.id)
             guard include(state) else { continue }
-            let secs = ListeningTimeEstimate.seconds(for: state)
+            let secs = ListeningTimeEstimate.seconds(for: state, includeMarkedPlayed: includeMarked)
             if state.isPlayed {
                 played += 1
             } else {
@@ -2908,7 +2924,7 @@ final class PodcastStore: ObservableObject {
             guard include(state) else { continue }
             guard trailerEpisodeForHistory(id: episodeId) != nil else { continue }
             guard let feed = feed(containingEpisodeId: episodeId) else { continue }
-            let secs = ListeningTimeEstimate.seconds(for: state)
+            let secs = ListeningTimeEstimate.seconds(for: state, includeMarkedPlayed: includeMarked)
             if state.isPlayed {
                 played += 1
             } else {

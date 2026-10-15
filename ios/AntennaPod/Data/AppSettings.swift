@@ -1479,6 +1479,7 @@ final class AppSettings: ObservableObject {
         static let queueFilter = "settings.queueFilter"
         static let queuePodcastFilter = "settings.queuePodcastFilter"
         static let statisticsTimeRange = "settings.statisticsTimeRange"
+        static let statisticsIncludeMarkedPlayed = "settings.statisticsIncludeMarkedPlayed"
         /// Epoch ms baseline after Reset statistics; 0 = count all (default).
         static let statisticsResetAtEpochMs = "settings.statisticsResetAtEpochMs"
         static let subscriptionsDisplayMode = "settings.subscriptionsDisplayMode"
@@ -2516,6 +2517,12 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    /// Android Statistics "Include marked as played" (`countAll`). Off (Android default, new
+    /// installs): only recorded listening counts. Existing installs keep on (the previous iOS totals).
+    @Published var statisticsIncludeMarkedPlayed: Bool {
+        didSet { UserDefaults.standard.set(statisticsIncludeMarkedPlayed, forKey: Keys.statisticsIncludeMarkedPlayed) }
+    }
+
     @Published var statisticsTimeRange: StatisticsTimeRange {
         didSet {
             UserDefaults.standard.set(statisticsTimeRange.rawValue, forKey: Keys.statisticsTimeRange)
@@ -2675,6 +2682,8 @@ final class AppSettings: ObservableObject {
         autoDownloadOnBattery = UserDefaults.standard.object(forKey: Keys.autoDownloadOnBattery) as? Bool
             ?? AutoDownloadParity.defaultDownloadOnBattery
         mobileUpdateTypes = Self.loadMobileUpdateTypes()
+        statisticsIncludeMarkedPlayed = UserDefaults.standard.object(forKey: Keys.statisticsIncludeMarkedPlayed) as? Bool
+            ?? hasExistingData
         let imageCacheMB = CoverCachePolicy.normalizedSizeMB(UserDefaults.standard.object(forKey: CoverCachePolicy.defaultsKey) as? Int)
         imageCacheSizeMB = imageCacheMB
         CoverDiskCache.shared.limitBytes = Int64(imageCacheMB) * 1_048_576
@@ -3458,6 +3467,7 @@ final class AppSettings: ObservableObject {
             queueFilter: queueFilter.rawValue,
             queuePodcastFilter: queuePodcastFilter,
             statisticsTimeRange: statisticsTimeRange.rawValue,
+            statisticsIncludeMarkedPlayed: statisticsIncludeMarkedPlayed,
             statisticsResetAtEpochMs: statisticsResetAtEpochMs,
             subscriptionsDisplayMode: subscriptionsDisplayMode.rawValue,
             subscriptionsGridColumns: subscriptionsGridColumns,
@@ -3716,6 +3726,7 @@ final class AppSettings: ObservableObject {
         if let queuePodcastFilterRaw = snap.queuePodcastFilter {
             queuePodcastFilter = QueuePodcastFilter.fromStorage(queuePodcastFilterRaw).storageValue
         }
+        if let include = snap.statisticsIncludeMarkedPlayed { statisticsIncludeMarkedPlayed = include }
         if let statsRangeRaw = snap.statisticsTimeRange {
             statisticsTimeRange = StatisticsTimeRange(rawValue: statsRangeRaw) ?? .allTime
         }
@@ -3943,6 +3954,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var queuePodcastFilter: String? = nil
     /// Absent in older backups → allTime (default).
     var statisticsTimeRange: String? = nil
+    /// Android "Include marked as played". Absent in older backups → unchanged.
+    var statisticsIncludeMarkedPlayed: Bool? = nil
     /// Absent in older backups → 0 (no reset baseline).
     var statisticsResetAtEpochMs: Int64? = nil
     /// Absent in older backups → list.

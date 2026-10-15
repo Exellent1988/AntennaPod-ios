@@ -54306,6 +54306,76 @@
         }
       }
     },
+    "Include marked as played": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als gespielt markierte einbeziehen"
+          }
+        }
+      }
+    },
+    "When on, episodes marked as played count their full duration even if you did not listen to them.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wenn aktiv, zählen als gespielt markierte Episoden mit ihrer vollen Dauer, auch wenn du sie nicht gehört hast."
+          }
+        }
+      }
+    },
+    "Years": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jahre"
+          }
+        }
+      }
+    },
+    "Listening time per calendar year. The time range does not apply here; Reset and Include marked as played do.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hörzeit pro Kalenderjahr. Der Zeitraum gilt hier nicht; Zurücksetzen und „Als gespielt markierte einbeziehen“ schon."
+          }
+        }
+      }
+    },
+    "No downloaded episodes": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine heruntergeladenen Episoden"
+          }
+        }
+      }
+    },
+    "Total": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesamt"
+          }
+        }
+      }
+    },
+    "%lld episodes · %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Episoden · %@"
+          }
+        }
+      }
+    },
     "Last refresh failed": {
       "extractionState": "manual",
       "localizations": {
