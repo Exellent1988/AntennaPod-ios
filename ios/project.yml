@@ -1,3 +1,6 @@
+# `xcodegen generate` must leave git clean: every target that has `entitlements:` / `info:` lists
+# `properties:` matching the committed file (XcodeGen rewrites those files from properties).
+# The generated AntennaPod.xcodeproj is ignored (ios/.gitignore).
 name: AntennaPod
 options:
   bundleIdPrefix: de.danoeh
