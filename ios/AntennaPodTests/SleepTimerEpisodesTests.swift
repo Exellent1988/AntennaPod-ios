@@ -20,6 +20,7 @@ final class SleepTimerEpisodesTests: XCTestCase {
     override func tearDown() async throws {
         playback.disableSleepTimer()
         settings.applyBackupSnapshot(original)
+        SettingsLeakObserver.restoreToTestStart()
     }
 
     func testStartingRemembersCountAndType() {

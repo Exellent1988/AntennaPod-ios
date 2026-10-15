@@ -20,6 +20,7 @@ final class SleepTimerParityTests: XCTestCase {
     override func tearDown() async throws {
         playback.disableSleepTimer()
         settings.applyBackupSnapshot(original)
+        SettingsLeakObserver.restoreToTestStart()
     }
 
     func testStartingAClockTimerRemembersMinutesButAutoAndExtendDoNot() {
@@ -109,6 +110,7 @@ final class SleepTimerParityTests: XCTestCase {
         let snap = try JSONDecoder().decode(AppSettingsBackupSnapshot.self,
                                             from: JSONEncoder().encode(settings.backupSnapshot()))
         settings.applyBackupSnapshot(original)
+        SettingsLeakObserver.restoreToTestStart()
         settings.applyBackupSnapshot(snap)
         XCTAssertTrue(settings.sleepTimerVibrate)
         XCTAssertFalse(settings.sleepTimerShakeToReset)

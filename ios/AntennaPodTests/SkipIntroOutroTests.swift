@@ -31,7 +31,7 @@ final class SkipIntroOutroResolutionTests: XCTestCase {
     func testGlobalCustomSecondsSurviveBackupAndUserDefaults() throws {
         let settings = AppSettings()
         let original = settings.backupSnapshot()
-        defer { settings.applyBackupSnapshot(original) }
+        defer { settings.applyBackupSnapshot(original); SettingsLeakObserver.restoreToTestStart() }
         settings.skipIntroSeconds = 47
         settings.skipOutroSeconds = 90
         XCTAssertEqual(AppSettings().skipIntroSeconds, 47, "UserDefaults keeps a custom value")
@@ -48,7 +48,7 @@ final class SkipIntroOutroResolutionTests: XCTestCase {
     func testBackupWithOutOfRangeValueKeepsCurrent() throws {
         let settings = AppSettings()
         let original = settings.backupSnapshot()
-        defer { settings.applyBackupSnapshot(original) }
+        defer { settings.applyBackupSnapshot(original); SettingsLeakObserver.restoreToTestStart() }
         settings.skipIntroSeconds = 10
         var snap = settings.backupSnapshot()
         snap.skipIntroSeconds = -5

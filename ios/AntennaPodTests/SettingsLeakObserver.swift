@@ -8,6 +8,7 @@ final class SettingsLeakObserver: NSObject, XCTestObservation {
     static let watchedPrefixes = ["settings.", "AppSettings", "feedSettings", "playback."]
 
     private var before: [String: NSObject] = [:]
+    static private(set) var current: SettingsLeakObserver?
     /// Every leak seen in this run ("test: key: old → new"); `ZZZSettingsLeakSentinelTests` fails on it.
     static private(set) var leaks: [String] = []
     private var pending: String?
@@ -22,6 +23,7 @@ final class SettingsLeakObserver: NSObject, XCTestObservation {
     override init() {
         super.init()
         XCTestObservationCenter.shared.addTestObserver(self)
+        Self.current = self
         Self.recoverFromKilledTest()
     }
 
@@ -37,6 +39,14 @@ final class SettingsLeakObserver: NSObject, XCTestObservation {
         }
         try? FileManager.default.removeItem(at: journalURL)
         return restored
+    }
+
+    /// Puts persisted settings back exactly as they were when the running test started. Use it
+    /// after `applyBackupSnapshot(original)`: a backup restore writes defaults for keys that were
+    /// never set, which this check would report as a leak.
+    static func restoreToTestStart() {
+        guard let before = current?.before else { return }
+        restore(before, over: snapshot())
     }
 
     @discardableResult

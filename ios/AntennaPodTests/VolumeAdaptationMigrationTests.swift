@@ -72,7 +72,7 @@ final class VolumeAdaptationMigrationTests: XCTestCase {
     func testOldBackupWithSwitchOnRestoresAsLightBoost() throws {
         let settings = AppSettings()
         let original = settings.backupSnapshot()
-        defer { settings.applyBackupSnapshot(original) }
+        defer { settings.applyBackupSnapshot(original); SettingsLeakObserver.restoreToTestStart() }
         settings.applyBackupSnapshot(try oldBackup(legacyEnabled: true, mode: nil))
         XCTAssertEqual(settings.volumeAdaptationMode, .lightBoost)
         settings.applyBackupSnapshot(try oldBackup(legacyEnabled: true, mode: "off"))
@@ -82,7 +82,7 @@ final class VolumeAdaptationMigrationTests: XCTestCase {
     func testOldBackupModeWinsAndSwitchOffKeepsOff() throws {
         let settings = AppSettings()
         let original = settings.backupSnapshot()
-        defer { settings.applyBackupSnapshot(original) }
+        defer { settings.applyBackupSnapshot(original); SettingsLeakObserver.restoreToTestStart() }
         settings.applyBackupSnapshot(try oldBackup(legacyEnabled: true, mode: "lightReduction"))
         XCTAssertEqual(settings.volumeAdaptationMode, .lightReduction)
         settings.applyBackupSnapshot(try oldBackup(legacyEnabled: false, mode: nil))
@@ -92,7 +92,7 @@ final class VolumeAdaptationMigrationTests: XCTestCase {
     func testNewBackupNoLongerWritesTheOldSwitch() throws {
         let settings = AppSettings()
         let original = settings.backupSnapshot()
-        defer { settings.applyBackupSnapshot(original) }
+        defer { settings.applyBackupSnapshot(original); SettingsLeakObserver.restoreToTestStart() }
         settings.volumeAdaptationMode = .mediumBoost
         let json = try JSONSerialization.jsonObject(with: JSONEncoder().encode(settings.backupSnapshot())) as? [String: Any]
         XCTAssertNil(json?["volumeAdaptationEnabled"])

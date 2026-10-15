@@ -18,8 +18,10 @@ class PlaybackFixtureTestCase: XCTestCase {
 
     /// Fixture length; long enough for the 0.5 s time observer to tick a few times.
     static let fixtureSeconds = 3.0
+    private var rawSettings: [String: NSObject] = [:]
 
     override func setUp() async throws {
+        rawSettings = SettingsLeakObserver.snapshot()
         settings = AppSettings()
         settingsSnapshot = settings.backupSnapshot()
         settings.continuousPlaybackMode = .queue
@@ -59,6 +61,10 @@ class PlaybackFixtureTestCase: XCTestCase {
         store.queue = savedQueue
         store.playbackStates = savedStates
         settings.applyBackupSnapshot(settingsSnapshot)
+        SettingsLeakObserver.restoreToTestStart()
+        // A backup restore writes defaults for keys that were never set; put the raw values back
+        // (and remove keys that did not exist) so the test leaves persisted settings untouched.
+        SettingsLeakObserver.restore(rawSettings, over: SettingsLeakObserver.snapshot())
         try? FileManager.default.removeItem(at: fixtureDir)
     }
 

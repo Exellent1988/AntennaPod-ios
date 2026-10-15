@@ -8,7 +8,7 @@ final class ViewPrefsBackupTests: XCTestCase {
     func testBackupRoundTripKeepsSubscriptionsDisplayAndSwipeActions() throws {
         let settings = AppSettings()
         let original = settings.backupSnapshot()
-        defer { settings.applyBackupSnapshot(original) }
+        defer { settings.applyBackupSnapshot(original); SettingsLeakObserver.restoreToTestStart() }
         settings.subscriptionsDisplayMode = .grid
         settings.subscriptionsGridColumns = 4
         settings.subscriptionsCounterMode = .downloaded
@@ -41,7 +41,7 @@ final class ViewPrefsBackupTests: XCTestCase {
     func testOlderBackupWithoutViewPrefsKeepsCurrentValues() throws {
         let settings = AppSettings()
         let original = settings.backupSnapshot()
-        defer { settings.applyBackupSnapshot(original) }
+        defer { settings.applyBackupSnapshot(original); SettingsLeakObserver.restoreToTestStart() }
         settings.subscriptionsDisplayMode = .grid
         var snap = settings.backupSnapshot()
         snap.subscriptionsDisplayMode = nil
