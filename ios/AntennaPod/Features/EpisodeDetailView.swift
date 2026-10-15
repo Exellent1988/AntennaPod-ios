@@ -148,6 +148,11 @@ struct EpisodeDetailActionsMenu: View {
                     ? Label("Remove from favorites", systemImage: "star.slash")
                     : Label("Add to favorites", systemImage: "star")
             }
+            if store.canResetPosition(episode.id) {
+                Button { store.resetPosition(episode.id) } label: {
+                    Label("Reset playback position", systemImage: "gobackward")
+                }
+            }
             Divider()
             if let url = episode.shareURL(feed: feed) {
                 ShareLink(item: url, subject: Text(episode.title),
