@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+@testable import AntennaPod
 
 /// Fails any test that leaves persisted app settings (`UserDefaults.standard`, keys under
 /// `settings.` and the other app-owned prefixes) different from how it found them. Registered as
