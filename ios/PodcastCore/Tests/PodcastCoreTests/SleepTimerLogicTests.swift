@@ -70,3 +70,43 @@ final class SleepTimerLogicTests: XCTestCase {
         XCTAssertTrue(SleepTimerLogic.isShake(x: 2, y: 1, z: 1))
     }
 }
+
+final class EpisodeSleepCounterTests: XCTestCase {
+    func testCountsDownAndStopsAfterN() {
+        var c = EpisodeSleepCounter(episodes: 3)
+        XCTAssertFalse(c.isOnLastEpisode)
+        XCTAssertTrue(c.episodeFinished())
+        XCTAssertTrue(c.episodeFinished())
+        XCTAssertTrue(c.isOnLastEpisode)
+        XCTAssertFalse(c.episodeFinished(), "Third finished episode stops playback")
+        XCTAssertEqual(c.remaining, 0)
+        XCTAssertFalse(c.episodeFinished())
+        XCTAssertEqual(c.remaining, 0, "Never negative")
+    }
+
+    func testSingleEpisodeIsLastImmediately() {
+        var c = EpisodeSleepCounter(episodes: 1)
+        XCTAssertTrue(c.isOnLastEpisode)
+        XCTAssertFalse(c.episodeFinished())
+    }
+
+    func testClampExtendReset() {
+        XCTAssertEqual(EpisodeSleepCounter(episodes: 0).remaining, 1)
+        XCTAssertEqual(EpisodeSleepCounter(episodes: 99).remaining, 20)
+        var c = EpisodeSleepCounter(episodes: 2)
+        c.episodeFinished()
+        c.extend(by: 3)
+        XCTAssertEqual(c.remaining, 4)
+        c.extend(by: 0)
+        XCTAssertEqual(c.remaining, 4)
+        c.reset()
+        XCTAssertEqual(c.remaining, 2)
+    }
+
+    func testLastEpisodeRemainingSeconds() {
+        let last = EpisodeSleepCounter(episodes: 1)
+        XCTAssertEqual(last.lastEpisodeRemainingSeconds(position: 1790, duration: 1800), 10)
+        XCTAssertNil(last.lastEpisodeRemainingSeconds(position: 10, duration: 0))
+        XCTAssertNil(EpisodeSleepCounter(episodes: 2).lastEpisodeRemainingSeconds(position: 1790, duration: 1800))
+    }
+}

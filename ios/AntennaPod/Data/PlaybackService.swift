@@ -15,6 +15,8 @@ enum SleepTimerMode: Equatable {
     case endOfChapter
     /// Advance through Queue via `nextQueueEpisode` until empty / play fails, then stop (no Same-podcast / Off fallback).
     case endOfQueue
+    /// Android `SleepTimerType.EPISODES`: stop after N finished episodes (`sleepTimerEpisodeCounter`).
+    case episodes
 }
 
 @MainActor
@@ -95,6 +97,8 @@ final class PlaybackService: ObservableObject {
     /// Remaining seconds when a clock timer is active; `nil` when inactive or end-of-episode mode.
     @Published private(set) var sleepTimerRemainingSeconds: Double?
     @Published private(set) var sleepTimerMode: SleepTimerMode?
+    /// Episodes-left counter while `sleepTimerMode == .episodes`.
+    @Published private(set) var sleepTimerEpisodeCounter: EpisodeSleepCounter?
     @Published private(set) var isSleepTimerActive = false
     /// `true` when the current AVPlayer item is a local file URL (offline); `false` when streaming.
     @Published private(set) var isPlayingFromLocalFile = false
@@ -805,7 +809,10 @@ final class PlaybackService: ObservableObject {
     func setSleepTimer(minutes: Int, remember: Bool = true) {
         guard minutes > 0 else { return }
         clearSleepTimerState(restoreVolume: true)
-        if remember { settings?.lastSleepTimerMinutes = AppSettings.clampSleepMinutes(minutes) }
+        if remember {
+            settings?.lastSleepTimerMinutes = AppSettings.clampSleepMinutes(minutes)
+            settings?.sleepTimerKind = .clock
+        }
         sleepTimerInitialSeconds = Double(minutes * 60)
         sleepTimerMode = .clock(minutes: minutes)
         isSleepTimerActive = true
@@ -822,6 +829,63 @@ final class PlaybackService: ObservableObject {
             sleepTimerPausedRemaining = total
             sleepTimerRemainingSeconds = total
         }
+    }
+
+    /// Android episode sleep timer: keep playing (continuous playback rules) until `episodes`
+    /// episodes have ended or been skipped, then stop like End of episode.
+    func setSleepTimer(episodes: Int, remember: Bool = true) {
+        clearSleepTimerState(restoreVolume: true)
+        let counter = EpisodeSleepCounter(episodes: episodes)
+        if remember {
+            settings?.lastSleepTimerEpisodes = counter.initial
+            settings?.sleepTimerKind = .episodes
+        }
+        sleepTimerEpisodeCounter = counter
+        sleepTimerMode = .episodes
+        isSleepTimerActive = true
+        sleepTimerRemainingSeconds = nil
+        sleepTimerEndDate = nil
+        sleepTimerPausedRemaining = nil
+        sleepTimerDidFade = false
+        sleepVolume = 1.0
+        player?.volume = 1.0
+    }
+
+    /// Android extend for the episode type (+1 / +2 / +3). Other modes become an episode timer.
+    func extendSleepTimer(byEpisodes episodes: Int) {
+        guard episodes > 0, isSleepTimerActive else { return }
+        guard case .episodes = sleepTimerMode, var counter = sleepTimerEpisodeCounter else {
+            setSleepTimer(episodes: episodes, remember: false)
+            return
+        }
+        counter.extend(by: episodes)
+        sleepTimerEpisodeCounter = counter
+        cancelSleepTimerFade(restoreVolume: true)
+        sleepTimerDidVibrate = false
+        sleepTimerDevice.stopShakeDetection()
+    }
+
+    /// Episode sleep timer bookkeeping for one finished episode (ended, Skip ending, manual skip).
+    /// Returns `true` when playback should continue to the next episode. Internal for tests.
+    @discardableResult
+    func recordSleepTimerEpisodeFinished() -> Bool {
+        guard isSleepTimerActive, case .episodes = sleepTimerMode else { return true }
+        var counter = sleepTimerEpisodeCounter ?? EpisodeSleepCounter(episodes: 1)
+        let keepGoing = counter.episodeFinished()
+        sleepTimerEpisodeCounter = counter
+        if keepGoing {
+            cancelSleepTimerFade(restoreVolume: true)
+            sleepTimerDidVibrate = false
+            sleepTimerDevice.stopShakeDetection()
+        }
+        return keepGoing
+    }
+
+    /// Manual skip to the next episode (player menu). Counts as a finished episode for the
+    /// episode sleep timer like Android's skip; same path as natural end / Skip ending.
+    func skipToNextEpisode() {
+        guard currentEpisode != nil else { return }
+        handlePlaybackEnded()
     }
 
     /// Pause when the current episode ends (no clock countdown UI).
@@ -901,7 +965,7 @@ final class PlaybackService: ObservableObject {
                 sleepTimerPausedRemaining = next
             }
             sleepTimerRemainingSeconds = next
-        case .endOfEpisode, .endOfChapter, .endOfQueue, .none:
+        case .endOfEpisode, .endOfChapter, .endOfQueue, .episodes, .none:
             setSleepTimer(minutes: minutes, remember: false)
         }
     }
@@ -920,12 +984,23 @@ final class PlaybackService: ObservableObject {
             fromHour: settings.sleepTimerAutoEnableFromHour, toHour: settings.sleepTimerAutoEnableToHour,
             hour: hour
         ) else { return }
-        setSleepTimer(minutes: settings.lastSleepTimerMinutes, remember: false)
+        switch settings.sleepTimerKind {
+        case .clock: setSleepTimer(minutes: settings.lastSleepTimerMinutes, remember: false)
+        case .episodes: setSleepTimer(episodes: settings.lastSleepTimerEpisodes, remember: false)
+        }
         sleepTimerWasAutoEnabled = true
     }
 
     /// Android `ClockSleepTimer.reset` (shake): back to the initial length, fade undone.
     func resetSleepTimerToInitial() {
+        if isSleepTimerActive, case .episodes = sleepTimerMode, var counter = sleepTimerEpisodeCounter {
+            counter.reset()
+            sleepTimerEpisodeCounter = counter
+            cancelSleepTimerFade(restoreVolume: true)
+            sleepTimerDidVibrate = false
+            sleepTimerDevice.stopShakeDetection()
+            return
+        }
         guard isSleepTimerActive, case .clock = sleepTimerMode, let initial = sleepTimerInitialSeconds else { return }
         cancelSleepTimerFade(restoreVolume: true)
         sleepTimerDidVibrate = false
@@ -949,6 +1024,9 @@ final class PlaybackService: ObservableObject {
             return String(localized: "End of ch.")
         case .endOfQueue:
             return String(localized: "End of q.")
+        case .episodes:
+            let left = sleepTimerEpisodeCounter?.remaining ?? 0
+            return String(localized: "\(left) ep.")
         case .clock:
             if let remaining = sleepTimerRemainingSeconds {
                 return formatCountdown(remaining)
@@ -972,6 +1050,9 @@ final class PlaybackService: ObservableObject {
             return String(localized: "Sleep timer, end of chapter")
         case .endOfQueue:
             return String(localized: "Sleep timer, end of queue")
+        case .episodes:
+            let left = sleepTimerEpisodeCounter?.remaining ?? 0
+            return String(localized: "Sleep timer, \(left) episodes remaining")
         case .clock:
             guard let remaining = sleepTimerRemainingSeconds else {
                 return String(localized: "Sleep timer")
@@ -1255,6 +1336,14 @@ final class PlaybackService: ObservableObject {
                 }
                 expireSleepTimer()
                 return
+            case .episodes:
+                // Ended, Skip ending, or manual skip: one episode done.
+                if recordSleepTimerEpisodeFinished() {
+                    break   // continuous-playback path below; stops + expires if nothing is next
+                }
+                // Last episode done: stop like End of episode. No rewind — the episode is finished.
+                sleepTimerDidFade = false
+                fallthrough
             case .endOfEpisode:
                 let finishedId = currentEpisode?.id
                 finishCurrentEpisode(ended: true)
@@ -1338,6 +1427,10 @@ final class PlaybackService: ObservableObject {
             startedNext = play(episode: next)
         }
         if !startedNext {
+            if isSleepTimerActive, case .episodes = sleepTimerMode {
+                // Queue / continuous playback ran out before N episodes: the timer is done too.
+                expireSleepTimer()
+            }
             isPlaying = false
             pauseSleepTimerCountdown()
             tearDownPlayer(clearSleepTimer: false)
@@ -1528,6 +1621,10 @@ final class PlaybackService: ObservableObject {
     }
 
     private func tickSleepTimer() {
+        if isSleepTimerActive, case .episodes = sleepTimerMode {
+            tickEpisodeSleepTimer()
+            return
+        }
         guard isSleepTimerActive, case .clock = sleepTimerMode else { return }
         guard isPlaying, let endDate = sleepTimerEndDate else { return }
 
@@ -1639,12 +1736,45 @@ final class PlaybackService: ObservableObject {
         )
     }
 
+    /// Android `EpisodeSleepTimer`: fade / vibrate / shake inside the last seconds of the last episode
+    /// (end = duration minus Skip ending, when set).
+    private func tickEpisodeSleepTimer() {
+        guard isPlaying, let counter = sleepTimerEpisodeCounter, let episode = currentEpisode else { return }
+        let outro = Double(resolvedSkipOutroSeconds(for: episode))
+        let end = outro > 0 && durationSeconds > outro ? durationSeconds - outro : durationSeconds
+        guard let remaining = counter.lastEpisodeRemainingSeconds(position: positionSeconds, duration: end) else {
+            if sleepTimerDidFade { cancelSleepTimerFade(restoreVolume: true) }
+            return
+        }
+        let fadeOn = settings?.sleepTimerFadeEnabled ?? true
+        if fadeOn, remaining < Self.fadeThresholdSeconds {
+            applyFade(remaining: remaining)
+        } else if sleepTimerDidFade {
+            cancelSleepTimerFade(restoreVolume: true)
+        }
+        if SleepTimerLogic.isInWarningWindow(remaining: remaining) {
+            if settings?.sleepTimerVibrate == true, !sleepTimerDidVibrate {
+                sleepTimerDidVibrate = true
+                sleepTimerDevice.vibrate()
+            }
+            if settings?.sleepTimerShakeToReset ?? true, !sleepTimerDevice.isListeningForShake {
+                sleepTimerDevice.startShakeDetection { [weak self] in
+                    guard let self else { return }
+                    self.resetSleepTimerToInitial()
+                    self.sleepTimerDevice.vibrate()
+                }
+            }
+        } else if sleepTimerDevice.isListeningForShake {
+            sleepTimerDevice.stopShakeDetection()
+        }
+    }
+
     private func expireSleepTimer() {
         // Sleep-timer fire cancels pending soundbite end (user-equivalent stop).
         clearSoundbiteEndMarker()
         let notificationKind: SleepTimerEndNotificationCoordinator.Kind
         switch sleepTimerMode {
-        case .endOfEpisode:
+        case .endOfEpisode, .episodes:
             notificationKind = .endOfEpisode
         case .endOfChapter:
             notificationKind = .endOfChapter
@@ -1710,6 +1840,7 @@ final class PlaybackService: ObservableObject {
 
     private func clearSleepTimerState(restoreVolume: Bool) {
         sleepTimerMode = nil
+        sleepTimerEpisodeCounter = nil
         isSleepTimerActive = false
         sleepTimerRemainingSeconds = nil
         sleepTimerEndDate = nil
