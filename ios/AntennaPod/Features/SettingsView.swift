@@ -660,6 +660,17 @@ struct SettingsView: View {
         }
         Section {
             settingsLink(.integrations, "Discovery & integrations", "puzzlepiece.extension")
+        }
+        // preferences.xml "project" category: prefViewForum, prefSendBugReport, prefAbout.
+        Section {
+            Link(destination: URL(string: "https://forum.antennapod.org/")!) {
+                Label("Visit user forum", systemImage: "bubble.left.and.bubble.right")
+            }
+            NavigationLink {
+                BugReportView()
+            } label: {
+                Label("Report bug", systemImage: "ladybug")
+            }
             settingsLink(.about, "About", "info.circle")
         }
     }
