@@ -89,7 +89,14 @@ final class PlaybackService: ObservableObject {
     /// stays nil until Play, which goes through `play(episode:)`.
     @Published private(set) var restoredEpisode: PodcastEpisode?
 
-    @Published var isPlaying = false
+    @Published var isPlaying = false {
+        didSet {
+            // Android onPlaybackStart sets FeedMedia.startPosition → gpodder `started`.
+            if isPlaying, !oldValue, let id = currentEpisode?.id {
+                store?.notePlayStarted(id, atSeconds: positionSeconds)
+            }
+        }
+    }
     @Published var positionSeconds: Double = 0
     @Published var durationSeconds: Double = 0
     @Published var rate: Float = 1.0
@@ -901,7 +908,15 @@ final class PlaybackService: ObservableObject {
                 durationSeconds = episode.durationSeconds
             }
         }
+        let skippedId = episode.id
+        let skippedAt = positionSeconds
+        let nearEnd = almostEnded(position: skippedAt, duration: durationSeconds)
         handlePlaybackEnded()
+        // Android onPostPlayback(skipped): enqueueEpisodePlayed(media, ended || almostEnded) —
+        // a mid-episode skip uploads the real position, not total.
+        if !nearEnd {
+            store?.notePlayActionPosition(skippedId, seconds: skippedAt)
+        }
     }
 
     /// Pause when the current episode ends (no clock countdown UI).

@@ -958,6 +958,7 @@ final class PodcastStore: ObservableObject {
         let wasPlayed = isPlayed(episodeId)
         var state = playbackState(for: episodeId)
         state.isPlayed = true
+        state.playActionPositionSeconds = nil
         let resetPosition = settings?.resetPositionWhenMarkedPlayed ?? true
         if resetPosition {
             state.positionSeconds = 0
@@ -985,6 +986,7 @@ final class PodcastStore: ObservableObject {
     func markUnplayed(_ episodeId: String) {
         var state = playbackState(for: episodeId)
         state.isPlayed = false
+        state.playActionPositionSeconds = nil
         state.updatedAtEpochMs = Int64(Date().timeIntervalSince1970 * 1000)
         playbackStates[episodeId] = state
         pendingAutoDeleteIds.remove(episodeId)
@@ -1001,6 +1003,21 @@ final class PodcastStore: ObservableObject {
         } else {
             markPlayed(episodeId)
         }
+    }
+
+    /// gpodder `started` for the next play action (Android `onPlaybackStart` → `startPosition`).
+    func notePlayStarted(_ episodeId: String, atSeconds seconds: Double) {
+        guard seconds.isFinite else { return }
+        var state = playbackState(for: episodeId)
+        state.playStartedSeconds = max(0, seconds)
+        playbackStates[episodeId] = state
+    }
+
+    /// Skip before the smart-mark window: keep the real position for the gpodder play action.
+    func notePlayActionPosition(_ episodeId: String, seconds: Double) {
+        guard seconds.isFinite, var state = playbackStates[episodeId], state.isPlayed else { return }
+        state.playActionPositionSeconds = max(0, seconds)
+        playbackStates[episodeId] = state
     }
 
     /// Stamp History sort key when playback starts (even before first progress persist).
