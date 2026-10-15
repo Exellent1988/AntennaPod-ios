@@ -52512,6 +52512,66 @@
         }
       }
     },
+    "Forward button": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorwärtstaste"
+          }
+        }
+      }
+    },
+    "Previous button": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurücktaste"
+          }
+        }
+      }
+    },
+    "Restart episode": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode erneut wiedergeben"
+          }
+        }
+      }
+    },
+    "Action for the next button on headphones, the lock screen and Control Center.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktion der Vorwärtstaste an Kopfhörern, auf dem Sperrbildschirm und im Kontrollzentrum."
+          }
+        }
+      }
+    },
+    "Action for the previous button on headphones, the lock screen and Control Center.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktion der Zurücktaste an Kopfhörern, auf dem Sperrbildschirm und im Kontrollzentrum."
+          }
+        }
+      }
+    },
+    "What the next and previous buttons on headphones, the lock screen and Control Center do. Default: Fast-forward and Rewind by the intervals above.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Was die Vorwärts- und Zurücktasten an Kopfhörern, auf dem Sperrbildschirm und im Kontrollzentrum tun. Standard: Vorspulen und Zurückspulen um die Intervalle oben."
+          }
+        }
+      }
+    },
     "gpodder.net rejected the login (HTTP 401) — check the username and password.": {
       "extractionState": "manual",
       "localizations": {
