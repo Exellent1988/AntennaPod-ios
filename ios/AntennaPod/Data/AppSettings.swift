@@ -1377,6 +1377,7 @@ final class AppSettings: ObservableObject {
         static let showRemainingTime = "settings.showRemainingTime"
         static let remainingTimeRespectsSpeed = "settings.remainingTimeRespectsSpeed"
         static let rewindAfterPauseSeconds = "settings.rewindAfterPauseSeconds"
+        static let enqueueLocation = "settings.enqueueLocation"
         static let keepSkippedEpisodes = "settings.keepSkippedEpisodes"
         static let pauseOnDisconnect = "settings.pauseOnDisconnect"
         static let hardwarePreviousButton = "settings.hardwarePreviousButton"
@@ -1993,6 +1994,11 @@ final class AppSettings: ObservableObject {
     /// Android `prefSkipKeepsEpisode` (default on): a skipped episode stays unplayed in the queue.
     @Published var keepSkippedEpisodes: Bool {
         didSet { UserDefaults.standard.set(keepSkippedEpisodes, forKey: Keys.keepSkippedEpisodes) }
+    }
+
+    /// Android prefEnqueueLocation: where Add to queue inserts (default Back).
+    @Published var enqueueLocation: EnqueueLocation {
+        didSet { UserDefaults.standard.set(enqueueLocation.rawValue, forKey: Keys.enqueueLocation) }
     }
 
     @Published var rewindAfterPauseSeconds: Int {
@@ -2685,6 +2691,7 @@ final class AppSettings: ObservableObject {
             remainingTimeRespectsSpeed = false
         }
         rewindAfterPauseSeconds = Self.loadRewindAfterPauseSeconds()
+        enqueueLocation = EnqueueLocation(storedValue: UserDefaults.standard.string(forKey: Keys.enqueueLocation))
         keepSkippedEpisodes = UserDefaults.standard.object(forKey: Keys.keepSkippedEpisodes) as? Bool ?? SkipKeepPolicy.defaultKeepSkippedEpisodes
         pauseOnDisconnect = UserDefaults.standard.object(forKey: Keys.pauseOnDisconnect) as? Bool ?? DisconnectPausePolicy.defaultPauseOnDisconnect
         hardwarePreviousButton = HardwareButtonAction.resolve(UserDefaults.standard.string(forKey: Keys.hardwarePreviousButton), default: .defaultPrevious)
@@ -3134,6 +3141,7 @@ final class AppSettings: ObservableObject {
             showRemainingTime: showRemainingTime,
             remainingTimeRespectsSpeed: remainingTimeRespectsSpeed,
             rewindAfterPauseSeconds: rewindAfterPauseSeconds,
+            enqueueLocation: enqueueLocation.rawValue,
             keepSkippedEpisodes: keepSkippedEpisodes,
             pauseOnDisconnect: pauseOnDisconnect,
             hardwarePreviousButton: hardwarePreviousButton.rawValue,
@@ -3293,6 +3301,7 @@ final class AppSettings: ObservableObject {
         hardwarePreviousButton = HardwareButtonAction.resolve(snap.hardwarePreviousButton, default: .defaultPrevious)
         pauseOnDisconnect = snap.pauseOnDisconnect ?? DisconnectPausePolicy.defaultPauseOnDisconnect
         keepSkippedEpisodes = snap.keepSkippedEpisodes ?? SkipKeepPolicy.defaultKeepSkippedEpisodes
+        enqueueLocation = EnqueueLocation(storedValue: snap.enqueueLocation)
         let rewindAfter = snap.rewindAfterPauseSeconds ?? Self.defaultRewindAfterPauseSeconds
         rewindAfterPauseSeconds = Self.rewindAfterPausePresets.contains(rewindAfter)
             ? rewindAfter
@@ -3539,6 +3548,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var remainingTimeRespectsSpeed: Bool? = false
     /// Absent in older backups → treated as 2 (honest beta default).
     var rewindAfterPauseSeconds: Int? = 2
+    /// Absent in older backups → default.
+    var enqueueLocation: String? = nil
     /// Absent in older backups → default.
     var keepSkippedEpisodes: Bool? = nil
     /// Absent in older backups → default.

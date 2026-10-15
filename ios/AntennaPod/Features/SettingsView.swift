@@ -1171,6 +1171,17 @@ struct SettingsView: View {
     @ViewBuilder
     private var queueSettingsSection: some View {
         Section("Queue") {
+            // Android Settings → Playback → Queue → Enqueue location.
+            Picker("Enqueue location", selection: $settings.enqueueLocation) {
+                Text("End of queue").tag(EnqueueLocation.back)
+                Text("Start of queue").tag(EnqueueLocation.front)
+                Text("After current episode").tag(EnqueueLocation.afterCurrentlyPlaying)
+                Text("Random position").tag(EnqueueLocation.random)
+            }
+            .accessibilityHint(String(localized: "Where Add to queue puts episodes. Play Next always inserts after the current episode. Default End of queue."))
+            Text("Where Add to queue (and bulk add, auto-add of new episodes) puts episodes. Start of queue and After current episode skip past episodes that are still downloading, so a batch keeps its order. Play Next is unchanged. Default End of queue.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
             Toggle("Lock queue", isOn: $settings.queueLocked)
                 .accessibilityHint(String(localized: "When on, disables Queue drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and Move to top or bottom. Enqueue, Play Next, Remove, Remove played, and Clear queue still work. Default off."))
             Text("When on, the Queue tab disables Edit drag reorder, Shuffle, Shuffle (keep playing first), Reverse order, Sort by date, Sort by duration, Sort by title, Move playing to top, Move playing to bottom, and hides EpisodeRow Move to top / Move to bottom. Enqueue, Play Next, Remove, Remove played, Archive swipe, and Clear queue stay available (reorder lock only — same idea as AntennaPod Android queue lock). Same preference as the Queue toolbar lock button. Default off.")

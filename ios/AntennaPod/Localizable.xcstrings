@@ -32274,12 +32274,6 @@
     },
     "End of queue": {
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "End of queue"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
@@ -52781,6 +52775,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zu viele Umleitungen vom Sync-Server – bitte die Server-Adresse prüfen."
+          }
+        }
+      }
+    },
+    "Enqueue location": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einreihungsposition"
+          }
+        }
+      }
+    },
+    "After current episode": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach der aktuellen Episode"
+          }
+        }
+      }
+    },
+    "Start of queue": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anfang der Warteschlange"
+          }
+        }
+      }
+    },
+    "Random position": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zufällige Position"
+          }
+        }
+      }
+    },
+    "Where Add to queue puts episodes. Play Next always inserts after the current episode. Default End of queue.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wo „Zur Warteschlange hinzufügen“ Episoden einreiht. „Als Nächstes abspielen“ fügt immer nach der aktuellen Episode ein. Standard: Ende der Warteschlange."
+          }
+        }
+      }
+    },
+    "Where Add to queue (and bulk add, auto-add of new episodes) puts episodes. Start of queue and After current episode skip past episodes that are still downloading, so a batch keeps its order. Play Next is unchanged. Default End of queue.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wo „Zur Warteschlange hinzufügen“ (auch Mehrfach-Hinzufügen und automatisches Einreihen neuer Episoden) Episoden einreiht. „Anfang der Warteschlange“ und „Nach der aktuellen Episode“ überspringen Episoden, die noch geladen werden, damit die Reihenfolge erhalten bleibt. „Als Nächstes abspielen“ bleibt unverändert. Standard: Ende der Warteschlange."
           }
         }
       }

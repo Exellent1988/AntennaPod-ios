@@ -1,4 +1,5 @@
 import Foundation
+import PodcastCore
 
 @MainActor
 final class PodcastStore: ObservableObject {
@@ -571,8 +572,35 @@ final class PodcastStore: ObservableObject {
         if episode.id == playback?.currentEpisode?.id {
             queue.insert(episode, at: 0)
         } else {
-            queue.append(episode)
+            queue.insert(episode, at: enqueueIndex())
         }
+    }
+
+    /// Bulk Add to queue: one insert position for the batch (Android addQueueItem increments it),
+    /// so Front / After current keep the batch order instead of reversing it.
+    func enqueue(_ episodes: [PodcastEpisode]) {
+        var index = enqueueIndex()
+        var newQueue = queue
+        for episode in episodes where !newQueue.contains(where: { $0.id == episode.id }) {
+            if episode.id == playback?.currentEpisode?.id {
+                newQueue.insert(episode, at: 0)
+                index += 1
+            } else {
+                newQueue.insert(episode, at: min(index, newQueue.count))
+                index += 1
+            }
+        }
+        queue = newQueue
+    }
+
+    /// Insert position for Settings → Queue → Enqueue location (Android `prefEnqueueLocation`).
+    func enqueueIndex() -> Int {
+        EnqueuePosition.index(
+            location: settings?.enqueueLocation ?? .defaultLocation,
+            queueIds: queue.map(\.id),
+            currentlyPlayingId: playback?.currentEpisode?.id,
+            isDownloading: { [weak downloads] id in downloads?.inProgress.contains(id) ?? false }
+        )
     }
 
     /// AntennaPod-style **Play Next**: place `episode` immediately after the currently
@@ -1450,9 +1478,7 @@ final class PodcastStore: ObservableObject {
     @discardableResult
     func enqueueAllEpisodes() -> Int {
         let candidates = allEpisodes.map(\.episode).filter { !isInQueue($0.id) }
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
@@ -1467,9 +1493,7 @@ final class PodcastStore: ObservableObject {
     @discardableResult
     func enqueueAllUnplayedEpisodes() -> Int {
         let candidates = enqueueAllUnplayedEpisodesCandidates()
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
@@ -1797,9 +1821,7 @@ final class PodcastStore: ObservableObject {
     @discardableResult
     func enqueueAllArchived() -> Int {
         let candidates = archivedEpisodes.map(\.episode).filter { !isInQueue($0.id) }
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
@@ -1869,9 +1891,7 @@ final class PodcastStore: ObservableObject {
     @discardableResult
     func enqueueAllInbox() -> Int {
         let candidates = inboxEpisodes.map(\.episode).filter { !isInQueue($0.id) }
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
@@ -1883,9 +1903,7 @@ final class PodcastStore: ObservableObject {
     @discardableResult
     func enqueueAllUnplayedInbox() -> Int {
         let candidates = enqueueAllUnplayedInboxCandidates()
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
@@ -1978,9 +1996,7 @@ final class PodcastStore: ObservableObject {
             return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
         }
         let candidates = sorted.filter { !isInQueue($0.id) }
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
@@ -1999,9 +2015,7 @@ final class PodcastStore: ObservableObject {
     @discardableResult
     func enqueueAllUnplayedFromFeed(_ feed: PodcastFeed) -> Int {
         let candidates = enqueueAllUnplayedFromFeedCandidates(feed)
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
@@ -2287,9 +2301,7 @@ final class PodcastStore: ObservableObject {
     @discardableResult
     func enqueueAllFavorites() -> Int {
         let candidates = favoriteEpisodes.map(\.episode).filter { !isInQueue($0.id) }
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
@@ -2303,9 +2315,7 @@ final class PodcastStore: ObservableObject {
     @discardableResult
     func enqueueAllUnplayedFavorites() -> Int {
         let candidates = enqueueAllUnplayedFavoritesCandidates()
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
@@ -2332,9 +2342,7 @@ final class PodcastStore: ObservableObject {
     func enqueueAllDownloads() -> Int {
         guard let downloads else { return 0 }
         let candidates = downloads.downloads.map(\.episode).filter { !isInQueue($0.id) }
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
@@ -2347,9 +2355,7 @@ final class PodcastStore: ObservableObject {
     @discardableResult
     func enqueueAllUnplayedDownloads() -> Int {
         let candidates = enqueueAllUnplayedDownloadsCandidates()
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
@@ -2606,9 +2612,7 @@ final class PodcastStore: ObservableObject {
     @discardableResult
     func enqueueAllHistory() -> Int {
         let candidates = historyEpisodes.map(\.episode).filter { !isInQueue($0.id) }
-        for episode in candidates {
-            enqueue(episode)
-        }
+        enqueue(candidates)
         return candidates.count
     }
 
