@@ -136,17 +136,16 @@ struct RootSidebarView: View {
         }
     }
 
-    /// Feeds with `tag` (nil = untagged), in display-title order like Android's drawer default.
+    /// Feeds with `tag` (nil = untagged) in the Subscriptions sort order (incl. Keep at top first).
+    /// Android: the drawer sorts by UserPreferences.getFeedOrder(), the same setting as the subscriptions
+    /// screen (DBReader.getNavDrawerData comparator, DBReader.java:690).
     private func sidebarFeeds(tagged tag: String?) -> [PodcastFeed] {
-        store.feeds
-            .filter { feed in
-                let tags = store.tags(for: feed.id)
-                if let tag { return tags.contains { FeedTags.equal($0, tag) } }
-                return tags.isEmpty
-            }
-            .sorted {
-                store.displayTitle(for: $0).localizedCaseInsensitiveCompare(store.displayTitle(for: $1)) == .orderedAscending
-            }
+        let feeds = store.feeds.filter { feed in
+            let tags = store.tags(for: feed.id)
+            if let tag { return tags.contains { FeedTags.equal($0, tag) } }
+            return tags.isEmpty
+        }
+        return SubscriptionsFeedOrder.sorted(feeds, by: settings.subscriptionsSort, store: store)
     }
 
     private func feedRow(_ feed: PodcastFeed) -> some View {
