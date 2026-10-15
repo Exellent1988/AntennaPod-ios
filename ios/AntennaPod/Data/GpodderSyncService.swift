@@ -1,4 +1,5 @@
 import Foundation
+import PodcastCore
 
 /// gpodder.net / Nextcloud Gpodder Sync prefs + orchestration.
 /// **Honest coverage (beta):** syncs **http(s) subscription feed URLs** (additive pull/push,
@@ -353,12 +354,14 @@ final class GpodderSyncService: ObservableObject {
     }
 
     /// Subscribe every not-yet-local http(s) URL; updates `importProgress` / `importFailures`.
-    private func subscribeMissing(
+    /// `subscribe` fetches and stores one feed (tests pass a fake; default is the real fetch).
+    func subscribeMissing(
         _ remote: [String],
-        store: PodcastStore
+        store: PodcastStore,
+        subscribe: (@Sendable (String) async throws -> Void)? = nil
     ) async -> (subscribed: Int, skipped: Int, failures: [GpodderImportFailure]) {
         let todo = GpodderSyncLogic.urlsToImport(remote: remote, localFeedURLs: store.feeds.flatMap(\.allUrls))
-        let distinctRemote = Set(remote.filter { Self.syncFeedURL($0).lowercased().hasPrefix("http") }.map(Self.normalizeFeedURL)).count
+        let distinctRemote = SubscriptionSyncPlan.distinctRemoteCount(remote)
         var failures: [GpodderImportFailure] = []
         var subscribed = 0
         importFailures = []
@@ -368,7 +371,7 @@ final class GpodderSyncService: ObservableObject {
         let errors = await GpodderSyncLogic.runBounded(
             todo,
             maxConcurrent: Self.importConcurrency,
-            operation: { url in
+            operation: subscribe ?? { url in
                 _ = try await store.subscribeQuietly(feedUrl: url)
             },
             progress: { [weak self] done in
@@ -466,19 +469,9 @@ final class GpodderSyncService: ObservableObject {
 
             // Push: local http(s) URLs not known on server. Upload the original
             // path/query case (`syncFeedURL`); `remote` stays a lowercased equality set.
-            var toUpload: [String] = []
-            var seenUploadKeys = Set<String>()
-            for feed in store.feeds {
-                let fetchURL = Self.syncFeedURL(feed.feedUrl)
-                let key = Self.normalizeFeedURL(fetchURL)
-                guard !key.isEmpty, fetchURL.lowercased().hasPrefix("http") else { continue }
-                guard !remote.contains(key) else { continue }
-                // Known on the server under another address (pre-redirect URL, http/https
-                // variant): uploading this one too is what filled the account with duplicates.
-                guard feed.urlKeys.isDisjoint(with: remote) else { continue }
-                guard seenUploadKeys.insert(key).inserted else { continue }
-                toUpload.append(fetchURL)
-            }
+            // Known on the server under another address (pre-redirect URL, http/https variant):
+            // not uploaded again (that is what filled the account with duplicates).
+            let toUpload = SubscriptionSyncPlan.urlsToUpload(localPodcasts: store.feeds.map(\.allUrls), remoteKeys: remote)
             var uploadTimestamp = changes.timestamp
             if !toUpload.isEmpty {
                 let upload = try await client.uploadSubscriptionChanges(add: toUpload, remove: [])
@@ -639,15 +632,7 @@ final class GpodderSyncService: ObservableObject {
 
     /// Feed URL to fetch or upload: trim, drop trailing slashes, lowercase the scheme only.
     /// Path, host, and query keep their original case so case-sensitive paths and tokens survive sync.
-    nonisolated static func syncFeedURL(_ raw: String) -> String {
-        var s = raw.trimmingCharacters(in: .whitespacesAndNewlines)
-        while s.hasSuffix("/") { s.removeLast() }
-        if let schemeSep = s.range(of: "://") {
-            let scheme = s[..<schemeSep.lowerBound].lowercased()
-            s = scheme + s[schemeSep.lowerBound...]
-        }
-        return s
-    }
+    nonisolated static func syncFeedURL(_ raw: String) -> String { FeedURLEquality.requestURL(raw) }
 
     /// Equality key only (trim, strip trailing slashes, lowercase the whole URL).
     /// Never pass this to subscribe or upload — use `syncFeedURL` for the real request.

@@ -1,33 +1,19 @@
 import Foundation
+import PodcastCore
 
 /// Pure gpodder merge helpers (no I/O, no MainActor) so import dedupe and
 /// episode-action mapping can be unit tested without a server or PodcastStore.
 enum GpodderSyncLogic {
-    /// Remote URLs to subscribe: http(s) only, not already local, deduped by
-    /// `GpodderSyncService.normalizeFeedURL` (case/trailing-slash insensitive).
-    /// Keeps the first spelling seen (via `syncFeedURL`) and remote order.
+    /// Remote URLs to subscribe (PodcastCore `SubscriptionSyncPlan`: http(s) only, not local
+    /// under any alias, one per Android-equality key, first spelling and remote order kept).
     static func urlsToImport(remote: [String], localFeedURLs: [String]) -> [String] {
-        var seen = Set(localFeedURLs.map(GpodderSyncService.normalizeFeedURL).filter { !$0.isEmpty })
-        var result: [String] = []
-        for raw in remote {
-            let fetchURL = GpodderSyncService.syncFeedURL(raw)
-            let key = GpodderSyncService.normalizeFeedURL(fetchURL)
-            // The key has no scheme (http ≡ https); check the real URL.
-            let scheme = fetchURL.lowercased()
-            guard !key.isEmpty, scheme.hasPrefix("http://") || scheme.hasPrefix("https://") else { continue }
-            guard seen.insert(key).inserted else { continue }
-            result.append(fetchURL)
-        }
-        return result
+        SubscriptionSyncPlan.urlsToImport(remote: remote, localFeedURLs: localFeedURLs)
     }
 
     /// Local feed URLs to unsubscribe for a server `remove` list (incremental sync only).
     /// A URL that is also in `add` is kept (re-subscribed on another device in the same window).
     static func feedsToUnsubscribe(remove: [String], add: [String], localFeedURLs: [String]) -> [String] {
-        let addKeys = Set(add.map(GpodderSyncService.normalizeFeedURL))
-        let removeKeys = Set(remove.map(GpodderSyncService.normalizeFeedURL).filter { !$0.isEmpty })
-            .subtracting(addKeys)
-        return localFeedURLs.filter { removeKeys.contains(GpodderSyncService.normalizeFeedURL($0)) }
+        SubscriptionSyncPlan.feedsToUnsubscribe(remove: remove, add: add, localFeedURLs: localFeedURLs)
     }
 
     /// Runs `operation` for every item with at most `maxConcurrent` in flight.
