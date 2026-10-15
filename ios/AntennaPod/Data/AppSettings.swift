@@ -1377,6 +1377,7 @@ final class AppSettings: ObservableObject {
         static let showRemainingTime = "settings.showRemainingTime"
         static let remainingTimeRespectsSpeed = "settings.remainingTimeRespectsSpeed"
         static let rewindAfterPauseSeconds = "settings.rewindAfterPauseSeconds"
+        static let pauseForInterruptions = "settings.pauseForInterruptions"
         static let resumeOnBluetoothReconnect = "settings.resumeOnBluetoothReconnect"
         static let resumeOnHeadphonesReconnect = "settings.resumeOnHeadphonesReconnect"
         static let smartMarkAsPlayedSeconds = "settings.smartMarkAsPlayedSeconds"
@@ -1963,6 +1964,11 @@ final class AppSettings: ObservableObject {
     /// Android `prefUnpauseOnBluetoothReconnect` (default off): resume when the Bluetooth device that paused playback reconnects.
     @Published var resumeOnBluetoothReconnect: Bool {
         didSet { UserDefaults.standard.set(resumeOnBluetoothReconnect, forKey: Keys.resumeOnBluetoothReconnect) }
+    }
+
+    /// Android `prefPauseForFocusLoss` (default on): pause for spoken prompts and resume after; off → they duck playback (session mode).
+    @Published var pauseForInterruptions: Bool {
+        didSet { UserDefaults.standard.set(pauseForInterruptions, forKey: Keys.pauseForInterruptions) }
     }
 
     @Published var rewindAfterPauseSeconds: Int {
@@ -2655,6 +2661,7 @@ final class AppSettings: ObservableObject {
             remainingTimeRespectsSpeed = false
         }
         rewindAfterPauseSeconds = Self.loadRewindAfterPauseSeconds()
+        pauseForInterruptions = UserDefaults.standard.object(forKey: Keys.pauseForInterruptions) as? Bool ?? InterruptionPolicy.defaultPauseForInterruptions
         resumeOnBluetoothReconnect = UserDefaults.standard.object(forKey: Keys.resumeOnBluetoothReconnect) as? Bool ?? ReconnectResumePolicy.defaultResumeOnBluetooth
         resumeOnHeadphonesReconnect = UserDefaults.standard.object(forKey: Keys.resumeOnHeadphonesReconnect) as? Bool ?? ReconnectResumePolicy.defaultResumeOnHeadphones
         smartMarkAsPlayedSeconds = Self.loadSmartMarkAsPlayedSeconds()
@@ -3099,6 +3106,7 @@ final class AppSettings: ObservableObject {
             showRemainingTime: showRemainingTime,
             remainingTimeRespectsSpeed: remainingTimeRespectsSpeed,
             rewindAfterPauseSeconds: rewindAfterPauseSeconds,
+            pauseForInterruptions: pauseForInterruptions,
             resumeOnBluetoothReconnect: resumeOnBluetoothReconnect,
             resumeOnHeadphonesReconnect: resumeOnHeadphonesReconnect,
             smartMarkAsPlayedSeconds: smartMarkAsPlayedSeconds,
@@ -3248,6 +3256,7 @@ final class AppSettings: ObservableObject {
         remainingTimeRespectsSpeed = snap.remainingTimeRespectsSpeed ?? false
         resumeOnHeadphonesReconnect = snap.resumeOnHeadphonesReconnect ?? ReconnectResumePolicy.defaultResumeOnHeadphones
         resumeOnBluetoothReconnect = snap.resumeOnBluetoothReconnect ?? ReconnectResumePolicy.defaultResumeOnBluetooth
+        pauseForInterruptions = snap.pauseForInterruptions ?? InterruptionPolicy.defaultPauseForInterruptions
         let rewindAfter = snap.rewindAfterPauseSeconds ?? Self.defaultRewindAfterPauseSeconds
         rewindAfterPauseSeconds = Self.rewindAfterPausePresets.contains(rewindAfter)
             ? rewindAfter
@@ -3494,6 +3503,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var remainingTimeRespectsSpeed: Bool? = false
     /// Absent in older backups → treated as 2 (honest beta default).
     var rewindAfterPauseSeconds: Int? = 2
+    /// Absent in older backups → default.
+    var pauseForInterruptions: Bool? = nil
     /// Absent in older backups → default.
     var resumeOnBluetoothReconnect: Bool? = nil
     /// Absent in older backups → default.

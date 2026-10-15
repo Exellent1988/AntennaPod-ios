@@ -52482,6 +52482,36 @@
         }
       }
     },
+    "Pause for interruptions": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bei Unterbrechungen pausieren"
+          }
+        }
+      }
+    },
+    "On pauses for spoken prompts and resumes after them. Off lowers the volume instead. Default on.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An pausiert bei gesprochenen Hinweisen und setzt danach fort. Aus senkt stattdessen die Lautstärke. Standard: an."
+          }
+        }
+      }
+    },
+    "On: spoken prompts such as navigation or Siri pause the episode, and it resumes when they finish. Off: they lower the volume instead. Calls and alarms always pause; playback resumes afterwards when iOS allows it and you did not press play or pause meanwhile. Default on.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An: Gesprochene Hinweise wie Navigation oder Siri pausieren die Episode, danach geht es weiter. Aus: Sie senken stattdessen die Lautstärke. Anrufe und Wecker pausieren immer; danach wird fortgesetzt, wenn iOS das erlaubt und du zwischendurch nicht Wiedergabe oder Pause gedrückt hast. Standard: an."
+          }
+        }
+      }
+    },
     "gpodder.net rejected the login (HTTP 401) — check the username and password.": {
       "extractionState": "manual",
       "localizations": {

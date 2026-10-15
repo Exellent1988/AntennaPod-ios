@@ -887,6 +887,7 @@ struct SettingsView: View {
             || matchesPlaybackRemaining
             || matchesPlaybackRewindPause
             || matchesPlaybackReconnect
+            || matchesPlaybackPauseForInterruptions
             || matchesPlaybackSmartMark
     }
 
@@ -1005,6 +1006,14 @@ struct SettingsView: View {
             "When on, the mini and full player show remaining time (−m:ss) on the right instead of total duration. Left stays current position. Tap the full-player duration/remaining label to toggle. Default off.",
             "Remaining time respects speed",
             "When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining and chapter list current remaining use the live session rate (fallback feed/default, 0.5…3.0). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue stay wall-clock."
+        )
+    }
+
+    private var matchesPlaybackPauseForInterruptions: Bool {
+        matchesSearch(
+            "Pause for interruptions",
+            "Interruptions",
+            "On: spoken prompts such as navigation or Siri pause the episode, and it resumes when they finish. Off: they lower the volume instead. Calls and alarms always pause; playback resumes afterwards when iOS allows it and you did not press play or pause meanwhile. Default on."
         )
     }
 
@@ -1558,6 +1567,14 @@ struct SettingsView: View {
                     .accessibilityValue(remainingTimeRespectsSpeedAccessibilityValue)
                     .accessibilityHint(remainingTimeRespectsSpeedAccessibilityHint)
                 Text("When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining and chapter list current remaining use the live session rate (fallback feed/default, 0.5…3.0). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue stay wall-clock.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackPauseForInterruptions {
+                Toggle("Pause for interruptions", isOn: $settings.pauseForInterruptions)
+                    .onChange(of: settings.pauseForInterruptions) { _, _ in playback.refreshAudioPipelineParameters() }
+                    .accessibilityHint(String(localized: "On pauses for spoken prompts and resumes after them. Off lowers the volume instead. Default on."))
+                Text("On: spoken prompts such as navigation or Siri pause the episode, and it resumes when they finish. Off: they lower the volume instead. Calls and alarms always pause; playback resumes afterwards when iOS allows it and you did not press play or pause meanwhile. Default on.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

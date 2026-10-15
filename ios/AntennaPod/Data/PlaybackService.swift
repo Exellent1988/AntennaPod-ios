@@ -438,6 +438,7 @@ final class PlaybackService: ObservableObject {
 
     func togglePlayPause() {
         pausedByUnplugAt = nil
+        interruptionUserActed = true
         guard let player else {
             // Cold launch: the restored placeholder starts through the normal play path.
             if currentEpisode == nil, restoredEpisode != nil {
@@ -1990,8 +1991,8 @@ final class PlaybackService: ObservableObject {
         let level = resolvedSkipSilenceLevel()
         audioPipeline?.silence.configure(level.detector)
         audioPipeline?.silence.isEnabled = level != .off
-        // Volume adaptation also selects the spoken-audio session mode; re-activate only on a change.
-        if lastSessionUsedSpokenAudio != nil, lastSessionUsedSpokenAudio != (resolvedVolumeAdaptation() != .off) {
+        // Volume adaptation / Pause for interruptions select the session mode; re-activate only on a change.
+        if lastSessionUsedSpokenAudio != nil, lastSessionUsedSpokenAudio != (preferredAudioSessionMode() == .spokenAudio) {
             applyAudioSessionConfiguration()
         }
     }
@@ -2158,14 +2159,19 @@ final class PlaybackService: ObservableObject {
     /// - Volume adaptation (global or this podcast's override) not off → `.spokenAudio` (speech-oriented)
     /// - Off + video surface path → `.moviePlayback`
     /// - Off + audio / audio-only video → `.default`
-    private func preferredAudioSessionMode() -> AVAudioSession.Mode {
-        if resolvedVolumeAdaptation() != .off {
-            return .spokenAudio
+    /// - Pause for interruptions (Android `prefPauseForFocusLoss`, default on) also picks `.spokenAudio`
+    ///   so spoken prompts pause and resume us; off → never spoken audio, so prompts duck instead.
+    func preferredAudioSessionMode() -> AVAudioSession.Mode {
+        let videoSurface = currentEpisode.map { $0.isVideo && settings?.playVideoAsAudioOnly != true } ?? false
+        switch InterruptionPolicy.sessionMode(
+            pauseForInterruptions: settings?.pauseForInterruptions ?? InterruptionPolicy.defaultPauseForInterruptions,
+            volumeAdaptationOn: resolvedVolumeAdaptation() != .off,
+            videoSurface: videoSurface
+        ) {
+        case .spokenAudio: return .spokenAudio
+        case .moviePlayback: return .moviePlayback
+        case .standard: return .default
         }
-        if let episode = currentEpisode, episode.isVideo, settings?.playVideoAsAudioOnly != true {
-            return .moviePlayback
-        }
-        return .default
     }
 
     private func activateSession() {
@@ -2256,6 +2262,9 @@ final class PlaybackService: ObservableObject {
         }
     }
 
+    /// A user play / pause during an interruption: their choice wins over `.shouldResume`.
+    private var interruptionUserActed = false
+
     private func handleAudioInterruption(_ notification: Notification) {
         guard
             let info = notification.userInfo,
@@ -2265,19 +2274,28 @@ final class PlaybackService: ObservableObject {
             return
         }
 
+        let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
+        handleInterruption(type, systemShouldResume: AVAudioSession.InterruptionOptions(rawValue: optionsValue).contains(.shouldResume))
+    }
+
+    /// Interruption began / ended (internal so tests can drive it without a phone call).
+    func handleInterruption(_ type: AVAudioSession.InterruptionType, systemShouldResume: Bool) {
         switch type {
         case .began:
             // Capture play intent before system-driven pause races the status publisher.
             let wasPlaying = isPlaying || (player?.rate ?? 0) > 0
             resumeAfterInterruption = wasPlaying
+            interruptionUserActed = false
             if wasPlaying {
                 pauseForAudioSessionEvent()
             }
         case .ended:
-            let optionsValue = info[AVAudioSessionInterruptionOptionKey] as? UInt ?? 0
-            let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
-            let shouldResume = options.contains(.shouldResume)
-            if shouldResume, resumeAfterInterruption, currentEpisode != nil, player != nil, !isPlaying {
+            let shouldResume = InterruptionPolicy.shouldResume(
+                wasPlayingWhenBegan: resumeAfterInterruption,
+                systemShouldResume: systemShouldResume,
+                userActedSince: interruptionUserActed
+            )
+            if shouldResume, currentEpisode != nil, player != nil, !isPlaying {
                 resumeAfterInterruption = false
                 resumeAfterAudioSessionEvent()
             } else {
