@@ -72,9 +72,6 @@ struct RootTabView: View {
         .sheet(isPresented: $showSettings) {
                 SettingsView()
             }
-            .safeAreaInset(edge: .bottom) {
-                MiniPlayerView()
-            }
             .task {
                 // Launch: refresh subscribed feeds if the global interval is due.
                 await FeedRefreshCoordinator.refreshAllFeedsIfDue(store: store, settings: settings)
@@ -119,6 +116,9 @@ struct RootTabView: View {
     private var rootTabs: some View {
         if horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom == .pad {
             RootSidebarView(selectedTab: $selectedTab, showSettings: $showSettings)
+                .safeAreaInset(edge: .bottom) {
+                    MiniPlayerView()
+                }
         } else {
             phoneTabs
         }
@@ -132,12 +132,14 @@ struct RootTabView: View {
                     Label("Home", systemImage: "house.fill")
                 }
                 .tag(RootTab.home)
+                .modifier(TabMiniPlayerInset(tab: .home, selectedTab: selectedTab))
             InboxView()
                 .id(tabRootResets[.inbox, default: 0])
                 .tabItem {
                     Label("Inbox", systemImage: "tray.fill")
                 }
                 .tag(RootTab.inbox)
+                .modifier(TabMiniPlayerInset(tab: .inbox, selectedTab: selectedTab))
                 // Same source as Inbox list (`PodcastStore.inboxEpisodes`).
                 // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
                 .badge(store.inboxEpisodes.count)
@@ -147,12 +149,14 @@ struct RootTabView: View {
                     Label("Subscriptions", systemImage: "square.stack.fill")
                 }
                 .tag(RootTab.subscriptions)
+                .modifier(TabMiniPlayerInset(tab: .subscriptions, selectedTab: selectedTab))
             QueueView()
                 .id(tabRootResets[.queue, default: 0])
                 .tabItem {
                     Label("Queue", systemImage: "list.bullet")
                 }
                 .tag(RootTab.queue)
+                .modifier(TabMiniPlayerInset(tab: .queue, selectedTab: selectedTab))
                 // Full persisted queue (`PodcastStore.queue`), not chip/search filtered view.
                 // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
                 .badge(store.queue.count)
@@ -162,6 +166,7 @@ struct RootTabView: View {
                     Label("Downloads", systemImage: "arrow.down.circle")
                 }
                 .tag(RootTab.downloads)
+                .modifier(TabMiniPlayerInset(tab: .downloads, selectedTab: selectedTab))
                 // Full completed catalog (`DownloadService.downloads`), not chip/search or in-progress.
                 // SwiftUI hides the badge when the count is 0; VoiceOver includes it.
                 .badge(downloads.downloads.count)
@@ -312,7 +317,7 @@ struct RootTabView: View {
     }
 
     /// Simulator screenshots: `-APDebugTab <home|inbox|subscriptions|queue|downloads>` picks the start
-    /// tab, `-APDebugOpenSettings` opens the Settings sheet. Compiled out of release builds.
+    /// tab, `-APDebugOpenSettings` opens the Settings sheet, `-APDebugOpenURL <url>` routes a deep link. Compiled out of release builds.
     private func applyDebugLaunchArguments() {
         #if DEBUG
         let args = ProcessInfo.processInfo.arguments
@@ -339,6 +344,44 @@ struct RootTabView: View {
            let ep = feed.episodes.max(by: { ($0.pubDateEpochMs ?? 0) < ($1.pubDateEpochMs ?? 0) }) {
             debugEpisodeDetail = ep
         }
+        // `-APDebugOpenURL <url>` routes a link 2.5 s (or `-APDebugOpenURLDelay <s>`) after launch, exactly like onOpenURL, so deep links can be
+        // checked over an open sheet/player without the simulator's "Open in AntennaPod?" prompt.
+        if let i = args.firstIndex(of: "-APDebugOpenURL"), i + 1 < args.count, let url = URL(string: args[i + 1]) {
+            let customDelay = UserDefaults.standard.double(forKey: "APDebugOpenURLDelay")
+            let delay = customDelay > 0 ? customDelay : 2.5
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                if !SubscribeLinkRouter.shared.handle(url: url) {
+                    _ = PlaybackDeepLinkRouter.shared.handle(url: url)
+                }
+            }
+        }
+        // `-APDebugClosePlayer <s>` closes the full player after <s> seconds (same request deep links use), so
+        // the tab layout under a live mini player can be screenshotted.
+        let closePlayerAfter = UserDefaults.standard.double(forKey: "APDebugClosePlayer")
+        if closePlayerAfter > 0 {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: UInt64(closePlayerAfter * 1_000_000_000))
+                subscribeLink.requestFullPlayerClose()
+            }
+        }
         #endif
+    }
+}
+
+/// Mini player above the tab bar, like Android's PlayerFragment sitting over the BottomNavigationView.
+/// On the TabView itself the inset was drawn over the tab bar: the compact row hid the tab labels and a
+/// live mini player (progress + controls) covered the whole bar, so you could not switch tabs while listening.
+/// Only the selected tab hosts it, so there is one MiniPlayerView (and one full-player sheet) at a time.
+private struct TabMiniPlayerInset: ViewModifier {
+    let tab: RootTab
+    let selectedTab: RootTab
+
+    func body(content: Content) -> some View {
+        content.safeAreaInset(edge: .bottom, spacing: 0) {
+            if tab == selectedTab {
+                MiniPlayerView()
+            }
+        }
     }
 }
