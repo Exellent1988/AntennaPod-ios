@@ -77,6 +77,7 @@ final class PlaybackService: ObservableObject {
             } else if oldValue != nil {
                 // Player unloaded (ended with nothing next, stop, backup import): nothing to restore.
                 UserDefaults.standard.removeObject(forKey: Self.lastEpisodeIdKey)
+                SessionPlaybackSpeed.clear()
             }
         }
     }
@@ -342,8 +343,16 @@ final class PlaybackService: ObservableObject {
         // Session rate from player tap/Custom… is intentionally replaced on episode change
         // (same spirit as Android temporary speed scoped to the playing item). Feed settings
         // own the persistent override; player controls never write FeedSettings.playbackSpeed.
+        // A session speed picked for this same episode in a previous run (crash / kill included)
+        // is persisted in UserDefaults and restored here; any other episode drops it.
         if isFreshEpisode {
-            rate = Self.clampPlaybackSpeed(resolvedPlaybackSpeed(for: episode))
+            let saved = SessionPlaybackSpeed.load()
+            if let saved, saved.episodeId == episode.id {
+                rate = Self.clampPlaybackSpeed(saved.speed)
+            } else {
+                if saved != nil { SessionPlaybackSpeed.clear() }
+                rate = Self.clampPlaybackSpeed(resolvedPlaybackSpeed(for: episode))
+            }
         }
 
         // Keep an active sleep timer across episode changes (clock continues; EOE/EOC/EOQ stay armed).
@@ -505,6 +514,12 @@ final class PlaybackService: ObservableObject {
             return
         }
         restoredEpisode = episode
+        // Mini player shows the speed Play will use (saved session speed or feed ?? global).
+        let saved = SessionPlaybackSpeed.load()
+        rate = Self.clampPlaybackSpeed(SessionPlaybackSpeed.resolve(
+            episodeId: episode.id, saved: saved,
+            feedOverride: store.feed(containingEpisodeId: episode.id).flatMap { store.feedSettings(for: $0.id).playbackSpeed },
+            global: settings?.defaultPlaybackSpeed ?? 1.0))
     }
 
     /// Restored placeholder while it still exists and is unplayed (mark played, unsubscribe,
@@ -590,6 +605,11 @@ final class PlaybackService: ObservableObject {
     func setRate(_ newRate: Float) {
         let clamped = Self.clampPlaybackSpeed(newRate)
         rate = clamped
+        // Persist immediately: a crash or kill never runs willTerminate / background hooks.
+        // Session speed only — never the global default or the feed override.
+        if let id = currentEpisode?.id {
+            SessionPlaybackSpeed(episodeId: id, speed: clamped).save()
+        }
         if isPlaying {
             player?.rate = clamped
         }
@@ -605,6 +625,8 @@ final class PlaybackService: ObservableObject {
               let feed = store.feed(containingEpisodeId: episode.id),
               feed.id == feedId else { return }
         setRate(resolvedPlaybackSpeed(for: episode))
+        // The feed override now owns the speed again; no session speed to restore.
+        SessionPlaybackSpeed.clear()
     }
 
     /// Custom title is the Now Playing artist. The progress tick is throttled and
