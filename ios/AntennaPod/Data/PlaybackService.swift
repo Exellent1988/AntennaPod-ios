@@ -144,6 +144,8 @@ final class PlaybackService: ObservableObject {
     }
 
     private var player: AVPlayer?
+    /// Test hygiene check only: whether the current player's output is muted.
+    var isOutputMutedForTests: Bool? { player?.isMuted }
     /// Shared player for the full-player video surface (`AVPlayerLayer` / `EpisodeVideoSurface`).
     /// Nil when nothing is loaded. Lockscreen / Now Playing stays metadata-only (no video).
     var avPlayer: AVPlayer? { player }
@@ -390,6 +392,9 @@ final class PlaybackService: ObservableObject {
         newPlayer.rate = rate
         // Sleep-timer fade uses player.volume (0…1). Soft boost (>100%) uses AVAudioMix on the item.
         newPlayer.volume = sleepVolume
+        // Test runs: mute only the output stage (the tap and Skip silence still see the samples,
+        // and `volume` stays free for the sleep fade).
+        newPlayer.isMuted = Self.silentOutputForTests
         player = newPlayer
         installAudioPipeline(on: item)
         applyVideoAsAudioOnlyPolicy(to: item)
@@ -2238,8 +2243,20 @@ final class PlaybackService: ObservableObject {
         }
     }
 
+    /// Set by the test bundle (`SettingsLeakObserver`, principal class) before any test: players
+    /// start muted and the audio session is `.ambient` + `.mixWithOthers`, so test runs make no
+    /// sound and never interrupt the Mac's or simulator's other audio. Never set by the app.
+    nonisolated(unsafe) static var silentOutputForTests = false
+
     private func activateSession() {
         let session = AVAudioSession.sharedInstance()
+        if Self.silentOutputForTests {
+            lastSessionUsedSpokenAudio = preferredAudioSessionMode() == .spokenAudio
+            try? session.setCategory(.ambient, mode: .default, options: [.mixWithOthers])
+            try? session.setActive(true)
+            setupAudioSessionObserversIfNeeded()
+            return
+        }
         let mode = preferredAudioSessionMode()
         lastSessionUsedSpokenAudio = mode == .spokenAudio
         do {

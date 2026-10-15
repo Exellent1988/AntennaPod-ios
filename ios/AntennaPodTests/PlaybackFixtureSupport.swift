@@ -15,12 +15,17 @@ class PlaybackFixtureTestCase: XCTestCase {
     var savedStates: [String: EpisodePlaybackState] = [:]
     var fixtureDir: URL!
     var episodes: [PodcastEpisode] = []
+    /// Players dropped by kill/relaunch simulations. Kept alive until tearDown and stopped there,
+    /// so no AVPlayer time observer or Task outlives the test into a deallocated service.
+    var retiredPlaybacks: [PlaybackService] = []
 
     /// Fixture length; long enough for the 0.5 s time observer to tick a few times.
     static let fixtureSeconds = 3.0
     private var rawSettings: [String: NSObject] = [:]
 
     override func setUp() async throws {
+        // No audible output from fixture playback (also set by the principal class).
+        PlaybackService.silentOutputForTests = true
         rawSettings = SettingsLeakObserver.snapshot()
         settings = AppSettings()
         settingsSnapshot = settings.backupSnapshot()
@@ -56,6 +61,11 @@ class PlaybackFixtureTestCase: XCTestCase {
     }
 
     override func tearDown() async throws {
+        for old in retiredPlaybacks {
+            old.disableSleepTimer()
+            old.stop()
+        }
+        retiredPlaybacks.removeAll()
         playback.disableSleepTimer()
         playback.stop()
         store.queue = savedQueue

@@ -3,22 +3,21 @@ import XCTest
 
 /// Android UserPreferences.getFeedCounterSetting default FeedCounter.SHOW_NEW: new installs and users who
 /// never picked a mode (old implicit iOS default) move to Neu once; an explicit choice is kept.
+@MainActor
 final class CounterModeMigrationTests: XCTestCase {
     private let modeKey = "settings.subscriptionsCounterMode"
     private let flagKey = "settings.subscriptionsCounterModeDefaultMigrated"
     private var suiteName = ""
     private var ud: UserDefaults!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
         suiteName = "CounterModeMigrationTests-\(UUID().uuidString)"
         ud = UserDefaults(suiteName: suiteName)
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         ud.removePersistentDomain(forName: suiteName)
         ud = nil
-        super.tearDown()
     }
 
     func testNewInstallGetsNew() {

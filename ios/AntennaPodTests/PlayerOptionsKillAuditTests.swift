@@ -14,6 +14,7 @@ final class PlayerOptionsKillAuditTests: PlaybackFixtureTestCase {
         store = PodcastStore()
         store.settings = settings
         store.queue = episodes
+        retiredPlaybacks.append(playback)
         playback = PlaybackService()
         playback.settings = settings
         playback.store = store
