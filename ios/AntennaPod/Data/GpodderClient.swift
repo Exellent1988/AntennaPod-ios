@@ -425,6 +425,66 @@ struct GpodderClient {
 typealias SubscriptionChanges = SubscriptionDelta
 typealias UploadChangesResponse = PushResult
 
+// Restored from before bf2c19d96, which removed these app types without moving them to PodcastCore.
+struct GpodderDevice: Decodable, Identifiable, Hashable {
+    let id: String
+    let caption: String
+    let type: String
+    let subscriptions: Int
+
+    enum CodingKeys: String, CodingKey { case id, caption, type, subscriptions }
+
+    init(id: String, caption: String, type: String = "mobile", subscriptions: Int = 0) {
+        self.id = id
+        self.caption = caption
+        self.type = type
+        self.subscriptions = subscriptions
+    }
+
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        caption = try c.decodeIfPresent(String.self, forKey: .caption) ?? ""
+        type = try c.decodeIfPresent(String.self, forKey: .type) ?? ""
+        subscriptions = try c.decodeIfPresent(Int.self, forKey: .subscriptions) ?? 0
+    }
+}
+
+/// One gpodder episode action (`play` carries started/position/total seconds).
+/// Timestamps are UTC `yyyy-MM-dd'T'HH:mm:ss` on the wire.
+struct GpodderEpisodeAction: Codable, Equatable {
+    var podcast: String
+    var episode: String
+    var guid: String?
+    var action: String
+    var timestamp: String?
+    var started: Int?
+    var position: Int?
+    var total: Int?
+    var device: String?
+
+    var date: Date? { timestamp.flatMap(Self.parseTimestamp) }
+
+    static func parseTimestamp(_ raw: String) -> Date? {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(identifier: "UTC")
+        var s = raw
+        if s.hasSuffix("Z") { s.removeLast() }
+        if let dot = s.firstIndex(of: ".") { s = String(s[..<dot]) }
+        f.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        return f.date(from: s)
+    }
+
+    static func formatTimestamp(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = TimeZone(identifier: "UTC")
+        f.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        return f.string(from: date)
+    }
+}
+
 struct EpisodeActionChanges: Decodable {
     let actions: [GpodderEpisodeAction]
     let timestamp: Int64
