@@ -15,6 +15,7 @@ struct FeedDetailView: View {
     @State private var showMarkAllPlayedConfirm = false
     @State private var showMarkAllUnplayedConfirm = false
     @State private var showArchiveAllConfirm = false
+    @State private var showRemoveAllInboxConfirm = false
     @State private var showEnqueueAllConfirm = false
     @State private var showEnqueueAllUnplayedConfirm = false
     @State private var showDeleteDownloadsConfirm = false
@@ -1753,6 +1754,14 @@ struct FeedDetailView: View {
                     .disabled(markAllUnplayedCandidates.isEmpty)
                     .accessibilityHint(String(localized: "Asks for confirmation, then marks played episodes in this podcast’s full feed catalog as unplayed, including archived. Ignores status, episode type, search, and sort filters. Does not delete downloads, remove from queue, stop playback, or unarchive."))
 
+                    // Android feedlist.xml remove_all_inbox_item (FeedItemlistFragment → removeFeedNewFlag).
+                    Button {
+                        showRemoveAllInboxConfirm = true
+                    } label: {
+                        Label("Remove all from inbox", systemImage: "tray.and.arrow.up")
+                    }
+                    .disabled(store.inboxEpisodeIds(inFeed: liveFeed.id).isEmpty)
+
                     Button {
                         showArchiveAllConfirm = true
                     } label: {
@@ -1885,6 +1894,18 @@ struct FeedDetailView: View {
             Text(
                 "Marks \(markAllUnplayedCandidates.count) played episodes in this podcast as unplayed (including archived). Uses the full feed catalog — not the status, episode type, search, or sort filter. Does not delete downloads, remove from queue, stop playback, or unarchive."
             )
+        }
+        .confirmationDialog(
+            "Remove all from inbox?",
+            isPresented: $showRemoveAllInboxConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Remove all from inbox", role: .destructive) {
+                store.archiveAllInbox(inFeed: liveFeed.id)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Archives the \(store.inboxEpisodeIds(inFeed: liveFeed.id).count) Inbox episodes of this podcast. Does not mark them played, delete downloads, or change the queue.")
         }
         .confirmationDialog(
             "Archive all?",
