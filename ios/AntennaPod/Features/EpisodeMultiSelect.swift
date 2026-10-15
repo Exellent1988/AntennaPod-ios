@@ -9,9 +9,13 @@ import SwiftUI
 struct EpisodeMultiSelectModifier: ViewModifier {
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var downloads: DownloadService
+    @EnvironmentObject private var settings: AppSettings
     @Binding var selection: Set<String>
     /// Episodes the list currently shows; selection is resolved against these.
     let episodes: [PodcastEpisode]
+    /// Queue only: Move to top / Move to bottom (Android episodes_apply_action_speeddial move_to_top_item /
+    /// move_to_bottom_item, shown by QueueFragment).
+    var queueActions = false
     @State private var editMode: EditMode = .inactive
     @State private var confirmDelete = false
 
@@ -88,6 +92,23 @@ struct EpisodeMultiSelectModifier: ViewModifier {
 
     @ViewBuilder
     private var batchActions: some View {
+        if queueActions, !settings.queueLocked {
+            Button {
+                Self.queueMoveOrder(selection: selection, queue: store.queue, toTop: true)
+                    .forEach { store.moveQueueItemToTop($0) }
+                finish()
+            } label: {
+                Label("Move to top", systemImage: "arrow.up.to.line")
+            }
+            Button {
+                Self.queueMoveOrder(selection: selection, queue: store.queue, toTop: false)
+                    .forEach { store.moveQueueItemToBottom($0) }
+                finish()
+            } label: {
+                Label("Move to bottom", systemImage: "arrow.down.to.line")
+            }
+            Divider()
+        }
         Button {
             // One batch so Front / After current keep the selection order (Android addQueueItem).
             store.enqueue(selected.filter { !store.isInQueue($0.id) })
@@ -136,6 +157,13 @@ struct EpisodeMultiSelectModifier: ViewModifier {
         }
     }
 
+    /// Order to apply one-by-one moves so the selected episodes keep their queue order at the top or bottom
+    /// (Android DBWriter.moveQueueItemsToTop/Bottom keep the relative order too).
+    static func queueMoveOrder(selection: Set<String>, queue: [PodcastEpisode], toTop: Bool) -> [PodcastEpisode] {
+        let picked = queue.filter { selection.contains($0.id) }
+        return toTop ? picked.reversed() : picked
+    }
+
     private func finish() {
         selection.removeAll()
         editMode = .inactive
@@ -143,8 +171,8 @@ struct EpisodeMultiSelectModifier: ViewModifier {
 }
 
 extension View {
-    func episodeMultiSelect(selection: Binding<Set<String>>, episodes: [PodcastEpisode]) -> some View {
-        modifier(EpisodeMultiSelectModifier(selection: selection, episodes: episodes))
+    func episodeMultiSelect(selection: Binding<Set<String>>, episodes: [PodcastEpisode], queueActions: Bool = false) -> some View {
+        modifier(EpisodeMultiSelectModifier(selection: selection, episodes: episodes, queueActions: queueActions))
     }
 }
 
