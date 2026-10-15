@@ -3,6 +3,7 @@ import XCTest
 
 /// Android UserPreferences.getFeedCounterSetting default FeedCounter.SHOW_NEW: new installs and users who
 /// never picked a mode (old implicit iOS default) move to Neu once; an explicit choice is kept.
+@MainActor
 final class CounterModeMigrationTests: XCTestCase {
     private let modeKey = "settings.subscriptionsCounterMode"
     private let flagKey = "settings.subscriptionsCounterModeDefaultMigrated"

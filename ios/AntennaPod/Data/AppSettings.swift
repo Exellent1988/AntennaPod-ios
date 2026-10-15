@@ -2857,10 +2857,12 @@ final class AppSettings: ObservableObject {
         let cols = ud.object(forKey: Keys.subscriptionsGridColumns) as? Int ?? 3
         subscriptionsGridColumns = min(max(cols, 2), 5)
         let storedGridTitles = ud.object(forKey: Keys.subscriptionsGridShowTitles) as? Bool
-        subscriptionsGridShowTitles = Self.initialGridShowTitles(stored: storedGridTitles, isFreshInstall: isFreshInstall)
+        let gridShowTitles = Self.initialGridShowTitles(stored: storedGridTitles, isFreshInstall: isFreshInstall)
+        subscriptionsGridShowTitles = gridShowTitles
         if storedGridTitles == nil {
             // Pin the first-launch choice: the fresh-install check is false from the second launch on.
-            ud.set(subscriptionsGridShowTitles, forKey: Keys.subscriptionsGridShowTitles)
+            // Use the local value — reading the property here is still before all stored props init.
+            ud.set(gridShowTitles, forKey: Keys.subscriptionsGridShowTitles)
         }
         subscriptionsCounterMode = Self.migrateCounterModeDefaultOnce(ud)
         let storedSwipes = ud.dictionary(forKey: Keys.swipeActions) as? [String: String]

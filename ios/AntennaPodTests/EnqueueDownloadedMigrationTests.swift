@@ -4,6 +4,7 @@ import XCTest
 
 /// Enqueue downloaded default: on for new installs, off for existing installs, stored value kept.
 /// Runs on a private UserDefaults suite, so `UserDefaults.standard` (leak check) is untouched.
+@MainActor
 final class EnqueueDownloadedMigrationTests: XCTestCase {
     private var suiteName = ""
     private var ud: UserDefaults!
