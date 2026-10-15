@@ -901,7 +901,20 @@ final class PlaybackService: ObservableObject {
                 durationSeconds = episode.durationSeconds
             }
         }
+        // Android Keep skipped episodes: a kept skip saves progress but does not mark played /
+        // leave the queue (Smart mark as played still applies near the end).
+        endingIsKeptSkip = resolvedKeepSkippedEpisodes(for: episode)
+        defer { endingIsKeptSkip = false }
         handlePlaybackEnded()
+    }
+
+    /// True only while `skipToNextEpisode` runs `handlePlaybackEnded` for a kept skip.
+    private var endingIsKeptSkip = false
+
+    func resolvedKeepSkippedEpisodes(for episode: PodcastEpisode) -> Bool {
+        let global = settings?.keepSkippedEpisodes ?? SkipKeepPolicy.defaultKeepSkippedEpisodes
+        guard let store, let feed = store.feed(containingEpisodeId: episode.id) else { return global }
+        return store.feedSettings(for: feed.id).resolvedKeepSkippedEpisodes(global: global)
     }
 
     /// Pause when the current episode ends (no clock countdown UI).
@@ -1362,7 +1375,7 @@ final class PlaybackService: ObservableObject {
                 fallthrough
             case .endOfEpisode:
                 let finishedId = currentEpisode?.id
-                finishCurrentEpisode(ended: true)
+                finishCurrentEpisode(ended: !endingIsKeptSkip)
                 expireSleepTimer()
                 tearDownPlayer(clearSleepTimer: false)
                 deactivateSessionAfterPlaybackStopped()
@@ -1381,7 +1394,7 @@ final class PlaybackService: ObservableObject {
                 let finishedId = currentEpisode?.id
                 // Snapshot next before markPlayed removes the finished item from the queue.
                 let next = finishedId.flatMap { store?.nextQueueEpisode(after: $0) }
-                finishCurrentEpisode(ended: true)
+                finishCurrentEpisode(ended: !endingIsKeptSkip)
                 // play(next) persists the live playhead for the episode it leaves.
                 // That would put the skip/end position back after markPlayed cleared it.
                 if let finishedId {
@@ -1431,7 +1444,7 @@ final class PlaybackService: ObservableObject {
         case .samePodcast:
             next = finishedId.flatMap { store?.nextSamePodcastEpisode(after: $0) }
         }
-        finishCurrentEpisode(ended: true)
+        finishCurrentEpisode(ended: !endingIsKeptSkip)
         // Same handoff as end-of-queue: do not let play(next) restore the pre-reset playhead.
         if let finishedId {
             adoptSavedPlaybackPosition(episodeId: finishedId)

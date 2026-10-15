@@ -78,6 +78,9 @@ struct FeedSettings: Hashable, Codable, Equatable {
     /// iOS JSON backup already includes FeedSettings — no side map.
     var isPinned: Bool
 
+    /// Keep skipped episodes override (iOS addition; Android is global only). Use global / On / Off.
+    var keepSkippedEpisodes: PerFeedOverride
+
     /// Max stored length for `customTitle` (trim first; empty → nil).
     static let customTitleMaxLength = 100
 
@@ -100,7 +103,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
         episodeSort: nil,
         customTitle: nil,
         privateNote: nil,
-        isPinned: false
+        isPinned: false,
+        keepSkippedEpisodes: .useGlobal
     )
 
     init(
@@ -119,7 +123,8 @@ struct FeedSettings: Hashable, Codable, Equatable {
         episodeSort: FeedEpisodeSort? = nil,
         customTitle: String? = nil,
         privateNote: String? = nil,
-        isPinned: Bool = false
+        isPinned: Bool = false,
+        keepSkippedEpisodes: PerFeedOverride = .useGlobal
     ) {
         self.autoDownload = autoDownload
         self.keepUpdated = keepUpdated
@@ -137,6 +142,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         self.customTitle = Self.normalizedCustomTitle(customTitle)
         self.privateNote = Self.normalizedPrivateNote(privateNote)
         self.isPinned = isPinned
+        self.keepSkippedEpisodes = keepSkippedEpisodes
     }
 
     init(from decoder: Decoder) throws {
@@ -146,6 +152,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         notifyOnNewEpisodes = try c.decodeIfPresent(PerFeedOverride.self, forKey: .notifyOnNewEpisodes) ?? .useGlobal
         autoDeleteAfterPlaying = try c.decodeIfPresent(PerFeedOverride.self, forKey: .autoDeleteAfterPlaying) ?? .useGlobal
         newEpisodeAction = try c.decodeIfPresent(PerFeedNewEpisodeAction.self, forKey: .newEpisodeAction) ?? .useGlobal
+        keepSkippedEpisodes = (try? c.decodeIfPresent(PerFeedOverride.self, forKey: .keepSkippedEpisodes)) ?? .useGlobal
         skipIntroSeconds = Self.normalizedSkipIntroOutro(
             try c.decodeIfPresent(Int.self, forKey: .skipIntroSeconds)
         )
@@ -211,6 +218,17 @@ struct FeedSettings: Hashable, Codable, Equatable {
     /// Skip intro for this feed: override if set, else global.
     func resolvedSkipIntroSeconds(global: Int) -> Int {
         SkipIntroOutro.resolved(feed: skipIntroSeconds, global: global)
+    }
+
+    /// Keep skipped episodes for this feed: On / Off override, else global.
+    func resolvedKeepSkippedEpisodes(global: Bool) -> Bool {
+        let feed: Bool?
+        switch keepSkippedEpisodes {
+        case .useGlobal: feed = nil
+        case .always: feed = true
+        case .never: feed = false
+        }
+        return SkipKeepPolicy.resolved(feed: feed, global: global)
     }
 
     /// Skip outro for this feed: override if set, else global.
@@ -280,6 +298,7 @@ struct FeedSettings: Hashable, Codable, Equatable {
         case volumeAdaptation, skipSilence, skipSilenceLevel, episodeFilter
         case autoDownload, keepUpdated, notifyOnNewEpisodes, autoDeleteAfterPlaying, newEpisodeAction
         case skipIntroSeconds, skipOutroSeconds, playbackSpeed, episodeSort, customTitle, privateNote, isPinned
+        case keepSkippedEpisodes
     }
 
     /// Trim, empty → nil, cap at `customTitleMaxLength` (grapheme-aware via String count).

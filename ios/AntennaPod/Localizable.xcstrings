@@ -52557,6 +52557,46 @@
           }
         }
       }
+    },
+    "Keep skipped episodes": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übersprungene Episoden behalten"
+          }
+        }
+      }
+    },
+    "On: Skip episode keeps the episode unplayed in the queue and saves the position. Off: a skipped episode is marked played and leaves the queue. Default on.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An: „Episode überspringen“ lässt die Episode ungehört in der Warteschlange und speichert die Position. Aus: Eine übersprungene Episode wird als gehört markiert und verlässt die Warteschlange. Standard: an."
+          }
+        }
+      }
+    },
+    "Keep episodes when they are skipped (Skip episode in the player, Forward button, CarPlay). Off marks them played and removes them from the queue. An episode within the Smart mark as played window is always marked played. Default on.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episoden behalten, wenn sie übersprungen werden („Episode überspringen“ im Player, Vorwärtstaste, CarPlay). Aus markiert sie als gehört und entfernt sie aus der Warteschlange. Eine Episode im Fenster von „Intelligent als gehört markieren“ wird immer als gehört markiert. Standard: an."
+          }
+        }
+      }
+    },
+    "Use global, On, or Off for whether Skip episode keeps this podcast's episodes unplayed in the queue.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Global, An oder Aus: ob „Episode überspringen“ die Episoden dieses Podcasts ungehört in der Warteschlange lässt."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
