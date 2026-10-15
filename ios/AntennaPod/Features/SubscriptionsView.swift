@@ -502,9 +502,10 @@ struct SubscriptionsView: View {
             }
         }
         .tabRootList(.subscriptions)
-        // Android fragment_subscriptions.xml subscriptions_add FAB. Laid out inside the List's safe area,
-        // so it sits above the mini player (TabMiniPlayerInset safeAreaInset) and the tab bar.
-        .overlay(alignment: .bottomTrailing) {
+        // Android fragment_subscriptions.xml subscriptions_add FAB. A bottom safe-area inset (not an overlay:
+        // the List frame runs under the mini player) keeps it above the mini player (TabMiniPlayerInset) and
+        // the tab bar, and lets the last row scroll clear of it.
+        .safeAreaInset(edge: .bottom, alignment: .trailing, spacing: 0) {
             SubscriptionsAddButton(addLocked: parental.needsPINForAddDiscover) { showAdd = true }
         }
         // Android FeedMultiSelectActionHandler: Select + Actions menu, in list and grid mode.
