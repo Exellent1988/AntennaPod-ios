@@ -886,6 +886,7 @@ struct SettingsView: View {
             || matchesPlaybackResetPosition
             || matchesPlaybackRemaining
             || matchesPlaybackRewindPause
+            || matchesPlaybackReconnect
             || matchesPlaybackSmartMark
     }
 
@@ -1004,6 +1005,15 @@ struct SettingsView: View {
             "When on, the mini and full player show remaining time (−m:ss) on the right instead of total duration. Left stays current position. Tap the full-player duration/remaining label to toggle. Default off.",
             "Remaining time respects speed",
             "When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining and chapter list current remaining use the live session rate (fallback feed/default, 0.5…3.0). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue stay wall-clock."
+        )
+    }
+
+    private var matchesPlaybackReconnect: Bool {
+        matchesSearch(
+            "Headphones reconnect",
+            "Bluetooth reconnect",
+            "Interruptions",
+            "Resume playback when the headphones or Bluetooth device that paused it reconnects within 30 minutes. Only after an unplug pause; a pause you made yourself never resumes on its own."
         )
     }
 
@@ -1548,6 +1558,15 @@ struct SettingsView: View {
                     .accessibilityValue(remainingTimeRespectsSpeedAccessibilityValue)
                     .accessibilityHint(remainingTimeRespectsSpeedAccessibilityHint)
                 Text("When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining and chapter list current remaining use the live session rate (fallback feed/default, 0.5…3.0). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue stay wall-clock.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackReconnect {
+                Toggle("Headphones reconnect", isOn: $settings.resumeOnHeadphonesReconnect)
+                    .accessibilityHint(String(localized: "Resumes playback when wired headphones that paused it are plugged back in. Default on."))
+                Toggle("Bluetooth reconnect", isOn: $settings.resumeOnBluetoothReconnect)
+                    .accessibilityHint(String(localized: "Resumes playback when the Bluetooth device that paused it reconnects. Default off."))
+                Text("Resume playback when the headphones or Bluetooth device that paused it reconnects within 30 minutes. Only after an unplug pause; a pause you made yourself never resumes on its own.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
