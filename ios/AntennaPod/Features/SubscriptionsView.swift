@@ -13,6 +13,7 @@ struct SubscriptionsView: View {
     @State private var lastHandledFeedOpenToken: UUID?
     @State private var showAdd = false
     @State private var showOpmlSheet = false
+    @State private var showManageTags = false
     /// Podcast whose per-podcast settings sheet is open (Android FeedSettingsFragment from the subscription list).
     @State private var feedForSettings: PodcastFeed?
     @State private var showAddPINGate = false
@@ -588,30 +589,6 @@ struct SubscriptionsView: View {
             )
         }
         ToolbarItem(placement: .primaryAction) {
-            Button {
-                if parental.needsPINForAddDiscover {
-                    showAddPINGate = true
-                } else {
-                    showAdd = true
-                }
-            } label: {
-                Image(systemName: parental.needsPINForAddDiscover ? "plus.circle" : "plus")
-            }
-            .accessibilityLabel(
-                parental.needsPINForAddDiscover
-                    ? String(localized: "Add podcast (PIN required)")
-                    : String(localized: "Add podcast")
-            )
-        }
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
-                showOpmlSheet = true
-            } label: {
-                Image(systemName: "arrow.up.arrow.down.square")
-            }
-            .accessibilityLabel(String(localized: "Import or export OPML"))
-        }
-        ToolbarItem(placement: .topBarLeading) {
             Menu {
                 Picker(selection: $settings.subscriptionsSort) {
                     ForEach(SubscriptionsSort.allCases) { sort in
@@ -652,8 +629,36 @@ struct SubscriptionsView: View {
             .accessibilityValue(subscriptionsSortAccessibilityValue)
             .accessibilityHint(subscriptionsSortAccessibilityHint)
         }
-        ToolbarItem(placement: .topBarLeading) {
+        // Android subscriptions.xml: only search (the .searchable field), refresh, sort and the
+        // overflow stay visible; Add, OPML and Manage tags move into ⋯ with the export actions.
+        ToolbarItem(placement: .primaryAction) {
             Menu {
+                Button {
+                    if parental.needsPINForAddDiscover {
+                        showAddPINGate = true
+                    } else {
+                        showAdd = true
+                    }
+                } label: {
+                    Label(
+                        parental.needsPINForAddDiscover
+                            ? String(localized: "Add podcast (PIN required)")
+                            : String(localized: "Add podcast"),
+                        systemImage: parental.needsPINForAddDiscover ? "lock" : "plus"
+                    )
+                }
+                Button {
+                    showOpmlSheet = true
+                } label: {
+                    Label("Import or export OPML", systemImage: "arrow.up.arrow.down.square")
+                }
+                Button {
+                    showManageTags = true
+                } label: {
+                    Label("Manage tags", systemImage: "tag")
+                }
+                .accessibilityHint(String(localized: "Opens Manage tags to rename or delete tag labels across all podcasts. Rename updates every podcast using that name. Delete removes the tag from those podcasts but does not unsubscribe or delete downloads. Does not export OPML, start sync, or change playback."))
+                Divider()
                 Button {
                     copySubscriptions()
                 } label: {
@@ -692,18 +697,8 @@ struct SubscriptionsView: View {
             }
             .accessibilityLabel(String(localized: "Subscriptions actions"))
             .accessibilityHint(
-                String(localized: "Copy subscriptions, share subscriptions, or unpin all")
+                String(localized: "Add podcast, import or export OPML, manage tags, copy or share subscriptions, or unpin all")
             )
-            .disabled(store.feeds.isEmpty)
-        }
-        ToolbarItem(placement: .topBarLeading) {
-            NavigationLink {
-                ManageTagsView()
-            } label: {
-                Image(systemName: "tag")
-            }
-            .accessibilityLabel(String(localized: "Manage tags"))
-            .accessibilityHint(String(localized: "Opens Manage tags to rename or delete tag labels across all podcasts. Rename updates every podcast using that name. Delete removes the tag from those podcasts but does not unsubscribe or delete downloads. Does not export OPML, start sync, or change playback."))
         }
     }
 
@@ -738,6 +733,7 @@ struct SubscriptionsView: View {
                 await store.refreshAllFeeds()
             }
             .toolbar { subscriptionsToolbar }
+            .navigationDestination(isPresented: $showManageTags) { ManageTagsView() }
             .sheet(isPresented: $showAdd) {
                 AddFeedView()
             }

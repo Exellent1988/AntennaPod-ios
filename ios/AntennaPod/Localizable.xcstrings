@@ -120,6 +120,23 @@
         }
       }
     },
+    "Add podcast, import or export OPML, manage tags, copy or share subscriptions, or unpin all": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add podcast, import or export OPML, manage tags, copy or share subscriptions, or unpin all"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podcast hinzufügen, OPML importieren oder exportieren, Tags verwalten, Abos kopieren oder teilen oder alle lösen"
+          }
+        }
+      }
+    },
     "AntennaPod Subscriptions": {
       "extractionState": "manual",
       "localizations": {
