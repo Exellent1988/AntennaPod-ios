@@ -3083,6 +3083,14 @@ final class PodcastStore: ObservableObject {
             message
         )
         lastErrorFeedId = feed.id
+        markRefreshFailed(feedId: feed.id, message: message)
+    }
+
+    /// Android FeedDatabaseWriter / FeedUpdateWorker: feed.setLastUpdateFailed(true) on a failed refresh.
+    /// Cleared implicitly: a successful refresh stores the freshly parsed feed (lastRefreshError nil).
+    func markRefreshFailed(feedId: UUID, message: String) {
+        guard let i = feeds.firstIndex(where: { $0.id == feedId }), feeds[i].lastRefreshError != message else { return }
+        feeds[i].lastRefreshError = message
     }
 
     /// Drop the Home/Inbox banner only when this podcast is the one it names.

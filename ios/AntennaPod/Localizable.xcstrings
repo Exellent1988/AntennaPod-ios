@@ -54238,6 +54238,23 @@
         }
       }
     },
+    "Last refresh failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last refresh failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letzte Aktualisierung fehlgeschlagen"
+          }
+        }
+      }
+    },
     "When on, the mini and full player show remaining time (−m:ss) on the right instead of total duration, and episode lists show −remaining for started episodes (like Android). Left stays current position. Tap the full-player duration/remaining label to toggle. Default off.": {
       "extractionState": "manual",
       "localizations": {

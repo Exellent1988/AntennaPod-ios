@@ -2371,6 +2371,10 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
     /// Last fetch / parse error for a subscription that never loaded (gpodder import keeps the
     /// podcast with an error state instead of dropping it, like Android's "Unknown podcast").
     var loadError: String? = nil
+    /// Last refresh failure of a subscribed podcast (Android Feed.hasLastUpdateFailed / lastUpdateFailed).
+    /// Set when a refresh throws, gone after the next successful refresh (the freshly parsed feed replaces
+    /// this one). Separate from `loadError`, which dedupe and gpodder import use. Persisted in feeds.json.
+    var lastRefreshError: String? = nil
 
     /// Non-empty feed description (may still contain HTML).
     var hasDescriptionText: Bool {
@@ -2723,10 +2727,11 @@ struct PodcastFeed: Identifiable, Hashable, Codable {
         lastRefreshedAtEpochMs = try c.decodeIfPresent(Int64.self, forKey: .lastRefreshedAtEpochMs)
         alternateUrls = try c.decodeIfPresent([String].self, forKey: .alternateUrls)
         loadError = try c.decodeIfPresent(String.self, forKey: .loadError)
+        lastRefreshError = try c.decodeIfPresent(String.self, forKey: .lastRefreshError)
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, isBlocked, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, licenses, images, podrollItems, publisherItems, episodes, lastRefreshedAtEpochMs, alternateUrls, loadError
+        case id, title, feedUrl, siteLink, imageUrl, descriptionText, author, isExplicit, language, medium, itunesType, updateFrequency, isItunesComplete, fundingUrl, fundingLabel, categories, isLocked, lockedOwner, isBlocked, podcastGuid, people, trailers, locations, socialInteracts, values, liveItems, texts, licenses, images, podrollItems, publisherItems, episodes, lastRefreshedAtEpochMs, alternateUrls, loadError, lastRefreshError
     }
 }
 
