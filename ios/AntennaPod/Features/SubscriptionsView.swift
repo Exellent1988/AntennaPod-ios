@@ -397,6 +397,7 @@ struct SubscriptionsView: View {
                 .listRowInsets(EdgeInsets(top: 2, leading: 16, bottom: 2, trailing: 16))
             }
 
+            if !Self.debugHideLibrary {
             Section("Library") {
                 NavigationLink {
                     AllEpisodesView()
@@ -454,6 +455,7 @@ struct SubscriptionsView: View {
                     }
                 }
                 .tint(.primary)
+            }
             }
 
             if !store.feeds.isEmpty, !libraryCategories.isEmpty || isCategoryFiltering {
@@ -703,6 +705,14 @@ struct SubscriptionsView: View {
             .accessibilityHint(String(localized: "Opens Manage tags to rename or delete tag labels across all podcasts. Rename updates every podcast using that name. Delete removes the tag from those podcasts but does not unsubscribe or delete downloads. Does not export OPML, start sync, or change playback."))
         }
     }
+
+    /// DEBUG screenshots: `-APDebugSubscriptionsGrid` hides the Library section so the subscription list/grid
+    /// starts at the top (RootTabView also switches to the Subscriptions tab and grid mode).
+    #if DEBUG
+    static let debugHideLibrary = ProcessInfo.processInfo.arguments.contains("-APDebugSubscriptionsGrid")
+    #else
+    static let debugHideLibrary = false
+    #endif
 
     var body: some View {
         NavigationStack(path: $path) {

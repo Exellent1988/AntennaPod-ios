@@ -20,6 +20,8 @@ struct RootTabView: View {
     @State private var subscribeLinkPreview: FeedPreviewRequest?
     /// `.settings` is not a tab: selecting it (Home gear, sync deep link) opens Settings as a sheet.
     @State private var showSettings = false
+    /// DEBUG `-APDebugEpisodeDetail` only.
+    @State private var debugEpisodeDetail: PodcastEpisode?
     /// Bumped when the active tab is tapped again; a new id pops that tab back to its root screen.
     @State private var tabRootResets: [RootTab: Int] = [:]
 
@@ -42,7 +44,10 @@ struct RootTabView: View {
                 if selectedTab == .settings { selectedTab = .home }
                 applyDebugLaunchArguments()
             }
-            .sheet(isPresented: $showSettings) {
+            .sheet(item: $debugEpisodeDetail) { ep in
+            NavigationStack { EpisodeDetailPager(episode: ep) }
+        }
+        .sheet(isPresented: $showSettings) {
                 SettingsView()
             }
             .safeAreaInset(edge: .bottom) {
@@ -261,6 +266,17 @@ struct RootTabView: View {
         }
         if args.contains("-APDebugOpenSettings") {
             showSettings = true
+        }
+        // Grid mode lives in AppSettings (`settings.subscriptionsDisplayMode` = "grid"); this flag sets it too.
+        if args.contains("-APDebugSubscriptionsGrid") {
+            settings.subscriptionsDisplayMode = .grid
+            selectedTab = .subscriptions
+        }
+        // Opens the episode detail pager on the newest episode of the first podcast.
+        if args.contains("-APDebugEpisodeDetail"),
+           let feed = store.feeds.first(where: { !$0.episodes.isEmpty }),
+           let ep = feed.episodes.max(by: { ($0.pubDateEpochMs ?? 0) < ($1.pubDateEpochMs ?? 0) }) {
+            debugEpisodeDetail = ep
         }
         #endif
     }
