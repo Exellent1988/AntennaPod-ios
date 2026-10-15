@@ -290,6 +290,23 @@
         }
       }
     },
+    "Search download log": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search download log"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-Log durchsuchen"
+          }
+        }
+      }
+    },
     "Subscription list exported from AntennaPod iOS. Local folder podcasts are omitted. Author, language, categories, and funding appear only when provided by each feed.": {
       "extractionState": "manual",
       "localizations": {

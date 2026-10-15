@@ -640,7 +640,7 @@ struct DownloadsView: View {
             NavigationLink {
                 DownloadErrorsView()
             } label: {
-                Label("Download log", systemImage: "exclamationmark.bubble")
+                Label("Download log", systemImage: "list.bullet.rectangle")
             }
             .accessibilityLabel(String(localized: "Download errors"))
         }
@@ -1118,7 +1118,11 @@ struct DownloadErrorsView: View {
 
     var body: some View {
         List {
-            if allErrors.isEmpty {
+            if allErrors.isEmpty && !downloads.history.isEmpty {
+                // History below already shows the downloads; a full-height empty card would push it off screen.
+                Label("No download errors", systemImage: "checkmark.circle")
+                    .foregroundStyle(.secondary)
+            } else if allErrors.isEmpty {
                 ContentUnavailableView(
                     "No download errors",
                     systemImage: "checkmark.circle",
@@ -1165,7 +1169,7 @@ struct DownloadErrorsView: View {
         }
         .navigationTitle("Download log")
         .navigationBarTitleDisplayMode(.inline)
-        .searchable(text: $searchText, prompt: "Search download errors")
+        .searchable(text: $searchText, prompt: "Search download log")
         .onChange(of: searchText) { _, newValue in
             scheduleFilter(for: newValue)
         }
@@ -1173,15 +1177,6 @@ struct DownloadErrorsView: View {
             debounceTask?.cancel()
         }
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Clear", role: .destructive) {
-                    showClearConfirmation = true
-                }
-                // Clear always targets the full persisted log (not the filtered subset).
-                .disabled(allErrors.isEmpty && downloads.lastError == nil)
-                .accessibilityLabel(String(localized: "Clear download errors"))
-                .accessibilityHint(String(localized: "Asks for confirmation, then clears the full persisted download error log and the Downloads banner — ignores the search filter. Offline downloaded files are kept. Does not cancel active downloads or delete episode media."))
-            }
             ToolbarItem(placement: .primaryAction) {
                 Menu {
                     Button {
@@ -1206,6 +1201,17 @@ struct DownloadErrorsView: View {
                     .accessibilityHint(
                         String(localized: "Opens the system share sheet with the full persisted download error log as plain text; ignores the search filter and is not OPML")
                     )
+                    // Moved from the toolbar so the "Download log" title is not truncated (DE).
+                    Divider()
+                    Button(role: .destructive) {
+                        showClearConfirmation = true
+                    } label: {
+                        Label("Clear download errors", systemImage: "trash")
+                    }
+                    // Clear always targets the full persisted log (not the filtered subset).
+                    .disabled(allErrors.isEmpty && downloads.lastError == nil)
+                    .accessibilityLabel(String(localized: "Clear download errors"))
+                    .accessibilityHint(String(localized: "Asks for confirmation, then clears the full persisted download error log and the Downloads banner — ignores the search filter. Offline downloaded files are kept. Does not cancel active downloads or delete episode media."))
                 } label: {
                     Label("Download errors actions", systemImage: "ellipsis.circle")
                 }
