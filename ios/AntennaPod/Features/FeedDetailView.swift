@@ -1261,6 +1261,15 @@ struct FeedDetailView: View {
                         .accessibilityElement(children: .combine)
                         .accessibilityLabel(String(localized: "No audio files"))
                         .accessibilityValue(feedEpisodesEmptyStateAccessibilityValue)
+                    } else if let loadError = liveFeed.loadError {
+                        // gpodder import kept a subscription whose feed did not load (Android
+                        // "Unknown podcast"): show why instead of dropping it.
+                        ContentUnavailableView(
+                            "Feed could not be loaded",
+                            systemImage: "exclamationmark.triangle",
+                            description: Text("\(loadError)\n\(liveFeed.feedUrl)\nPull to refresh on Subscriptions to try again.")
+                        )
+                        .accessibilityElement(children: .combine)
                     } else {
                         ContentUnavailableView(
                             "No episodes",

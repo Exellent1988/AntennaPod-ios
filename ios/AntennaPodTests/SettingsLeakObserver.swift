@@ -11,7 +11,6 @@ final class SettingsLeakObserver: NSObject, XCTestObservation {
     static private(set) var current: SettingsLeakObserver?
     /// Every leak seen in this run ("test: key: old → new"); `ZZZSettingsLeakSentinelTests` fails on it.
     static private(set) var leaks: [String] = []
-    private var pending: String?
 
     /// Crash-safe journal: the settings as they were before the running test. A test host that is
     /// killed between setUp and tearDown (another build reinstalling the app, a watchdog, Xcode
@@ -53,7 +52,13 @@ final class SettingsLeakObserver: NSObject, XCTestObservation {
     static func restore(_ saved: [String: NSObject], over current: [String: NSObject]) -> [String] {
         let keys = leakedKeys(before: saved, after: current)
         for key in keys {
-            if let v = saved[key] { UserDefaults.standard.set(v, forKey: key) } else { UserDefaults.standard.removeObject(forKey: key) }
+            // Only property-list values: UserDefaults raises an Objective-C exception for anything
+            // else, and inside an XCTestObservation callback that aborts the whole test host.
+            if let v = saved[key], PropertyListSerialization.propertyList(v, isValidFor: .binary) {
+                UserDefaults.standard.set(v, forKey: key)
+            } else if saved[key] == nil {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
         }
         return keys
     }
@@ -77,12 +82,10 @@ final class SettingsLeakObserver: NSObject, XCTestObservation {
                                                           format: .binary, options: 0) {
             try? data.write(to: Self.journalURL, options: .atomic)
         }
-        // XCTest cannot record a failure once a test has finished, so the leak is reported by the
-        // next test (naming the culprit) and by the sentinel test at the end of the bundle.
-        if let message = pending {
-            pending = nil
-            testCase.addTeardownBlock { XCTFail(message) }
-        }
+        // Never record failures or add teardown blocks from an observer callback: XCTest raises
+        // for that outside a running test, and an exception thrown inside XCTestObservationCenter
+        // ends in std::terminate (SIGABRT of the whole test host in _testCaseDidStop). Leaks are
+        // reported by `ZZZSettingsLeakSentinelTests`, a normal test at the end of the bundle.
     }
 
     func testCaseDidFinish(_ testCase: XCTestCase) {
@@ -94,7 +97,6 @@ final class SettingsLeakObserver: NSObject, XCTestObservation {
         print("SETTINGS LEAK in \(testCase.name): \(detail.joined(separator: ", "))")
         let message = "\(testCase.name) leaked persisted settings: \(detail.joined(separator: ", "))"
         Self.leaks.append(message)
-        pending = message
         // Put them back so one leak does not cascade into later tests.
         Self.restore(before, over: after)
     }

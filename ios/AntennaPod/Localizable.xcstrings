@@ -52906,6 +52906,125 @@
           }
         }
       }
+    },
+    "Reset app data": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset app data"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App-Daten zurücksetzen"
+          }
+        }
+      }
+    },
+    "Reset app data?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset app data?"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App-Daten zurücksetzen?"
+          }
+        }
+      }
+    },
+    "Deletes subscriptions, episodes, queue, downloads and playback progress. Your sync login is kept.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes subscriptions, episodes, queue, downloads and playback progress. Your sync login is kept."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht Abonnements, Episoden, Warteschlange, Downloads und Wiedergabefortschritt. Deine Sync-Anmeldung bleibt erhalten."
+          }
+        }
+      }
+    },
+    "Deletes subscriptions, episodes, queue, downloads, playback progress and caches. Your sync login is kept and your subscriptions are downloaded again from the sync server.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes subscriptions, episodes, queue, downloads, playback progress and caches. Your sync login is kept and your subscriptions are downloaded again from the sync server."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht Abonnements, Episoden, Warteschlange, Downloads, Wiedergabefortschritt und Caches. Deine Sync-Anmeldung bleibt erhalten und die Abonnements werden erneut vom Sync-Server geladen."
+          }
+        }
+      }
+    },
+    "Deletes subscriptions, episodes, queue, downloads, playback progress and caches. Settings are kept. This cannot be undone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes subscriptions, episodes, queue, downloads, playback progress and caches. Settings are kept. This cannot be undone."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Löscht Abonnements, Episoden, Warteschlange, Downloads, Wiedergabefortschritt und Caches. Einstellungen bleiben erhalten. Das kann nicht rückgängig gemacht werden."
+          }
+        }
+      }
+    },
+    "Feed could not be loaded": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed could not be loaded"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed konnte nicht geladen werden"
+          }
+        }
+      }
+    },
+    "%@\n%@\nPull to refresh on Subscriptions to try again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@\n%2$@\nPull to refresh on Subscriptions to try again."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@\n%2$@\nIn Abonnements nach unten ziehen, um es erneut zu versuchen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -120,6 +120,14 @@ final class GpodderSyncService: ObservableObject {
         set { UserDefaults.standard.set(Double(newValue), forKey: Keys.episodeUploadCursorMs) }
     }
 
+    /// After Reset app data: forget the sync cursors (the server list is the full list again,
+    /// like a first sync) and pull the subscriptions when logged in. Login stays.
+    func reimportAfterReset(store: PodcastStore) async {
+        resetCursors()
+        guard isLoggedIn else { return }
+        await syncNow(store: store)
+    }
+
     private func resetCursors() {
         subscriptionTimestamp = 0
         knownRemoteURLs = []
@@ -131,7 +139,8 @@ final class GpodderSyncService: ObservableObject {
     private var knownRemoteURLs: Set<String> {
         get {
             let arr = UserDefaults.standard.stringArray(forKey: Keys.knownRemoteURLs) ?? []
-            return Set(arr)
+            // Older builds stored a lowercased URL; re-key so http/https variants compare equal.
+            return Set(arr.map(Self.normalizeFeedURL).filter { !$0.isEmpty })
         }
         set {
             UserDefaults.standard.set(Array(newValue).sorted(), forKey: Keys.knownRemoteURLs)
@@ -348,7 +357,7 @@ final class GpodderSyncService: ObservableObject {
         _ remote: [String],
         store: PodcastStore
     ) async -> (subscribed: Int, skipped: Int, failures: [GpodderImportFailure]) {
-        let todo = GpodderSyncLogic.urlsToImport(remote: remote, localFeedURLs: store.feeds.map(\.feedUrl))
+        let todo = GpodderSyncLogic.urlsToImport(remote: remote, localFeedURLs: store.feeds.flatMap(\.allUrls))
         let distinctRemote = Set(remote.map(Self.normalizeFeedURL).filter { $0.hasPrefix("http") }).count
         var failures: [GpodderImportFailure] = []
         var subscribed = 0
@@ -367,6 +376,11 @@ final class GpodderSyncService: ObservableObject {
             }
         )
         failures = errors.map { GpodderImportFailure(url: $0.0, message: $0.1) }
+        // Android keeps a subscription whose feed fails ("Unknown podcast") and retries it on
+        // refresh; dropping it made podcasts from the gpodder list silently go missing.
+        for failure in failures {
+            store.addPlaceholderFeed(url: failure.url, error: failure.message)
+        }
         subscribed = todo.count - failures.count
         importProgress = nil
         importFailures = failures
@@ -441,14 +455,12 @@ final class GpodderSyncService: ObservableObject {
             _ = localNormalized
             var removedLocally = 0
             if since > 0 {
-                let urls = GpodderSyncLogic.feedsToUnsubscribe(
-                    remove: changes.remove, add: changes.add, localFeedURLs: store.feeds.map(\.feedUrl)
-                )
-                for url in urls {
-                    if let feed = store.feeds.first(where: { $0.feedUrl == url }) {
-                        store.unsubscribe(feed)
-                        removedLocally += 1
-                    }
+                let urls = Set(GpodderSyncLogic.feedsToUnsubscribe(
+                    remove: changes.remove, add: changes.add, localFeedURLs: store.feeds.flatMap(\.allUrls)
+                ).map(Self.normalizeFeedURL))
+                for feed in store.feeds where !feed.urlKeys.isDisjoint(with: urls) {
+                    store.unsubscribe(feed)
+                    removedLocally += 1
                 }
             }
 
@@ -461,6 +473,9 @@ final class GpodderSyncService: ObservableObject {
                 let key = Self.normalizeFeedURL(fetchURL)
                 guard !key.isEmpty, key.hasPrefix("http") else { continue }
                 guard !remote.contains(key) else { continue }
+                // Known on the server under another address (pre-redirect URL, http/https
+                // variant): uploading this one too is what filled the account with duplicates.
+                guard feed.urlKeys.isDisjoint(with: remote) else { continue }
                 guard seenUploadKeys.insert(key).inserted else { continue }
                 toUpload.append(fetchURL)
             }
@@ -636,8 +651,9 @@ final class GpodderSyncService: ObservableObject {
 
     /// Equality key only (trim, strip trailing slashes, lowercase the whole URL).
     /// Never pass this to subscribe or upload — use `syncFeedURL` for the real request.
+    /// Same rules as Android `UrlChecker.urlEquals` (http ≡ https, host case, trailing /, port).
     nonisolated static func normalizeFeedURL(_ raw: String) -> String {
-        syncFeedURL(raw).lowercased()
+        FeedURLKey.key(raw)
     }
 
     // MARK: - Data backup
