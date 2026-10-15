@@ -8,6 +8,8 @@ enum EpisodeSwipeAction: String, CaseIterable, Identifiable {
     case standard, none, toggleQueue, togglePlayed, toggleFavorite, download, deleteDownload, archive
     // Android RemoveFromHistorySwipeAction, MoveToTopSwipeAction, MoveToBottomSwipeAction.
     case removeFromHistory, moveToTop, moveToBottom
+    // Android ShareSwipeAction (opens ShareDialog: episode / podcast link).
+    case share
     var id: String { rawValue }
 
     /// Choices for one list, following SwipeActionsDialog: Queue gets move to top/bottom + remove,
@@ -23,6 +25,7 @@ enum EpisodeSwipeAction: String, CaseIterable, Identifiable {
         a.append(.toggleFavorite)
         if list == .history { a.append(.removeFromHistory) }
         if list != .inbox { a.append(.togglePlayed) }
+        a.append(.share)
         return a
     }
 
@@ -52,6 +55,7 @@ enum EpisodeSwipeAction: String, CaseIterable, Identifiable {
         case .removeFromHistory: return String(localized: "Remove from History")
         case .moveToTop: return String(localized: "Move to top")
         case .moveToBottom: return String(localized: "Move to bottom")
+        case .share: return String(localized: "Share")
         }
     }
 }
@@ -162,6 +166,19 @@ struct SwipeSlot<Standard: View>: View {
                 store.removeFromHistory(episode.id)
             } label: {
                 Label("Remove from History", systemImage: "clock.badge.xmark")
+            }
+        case .share:
+            // Same link and text as the episode long-press Share (episode page, else media/feed link).
+            let feed = store.feed(containingEpisodeId: episode.id)
+            if let url = episode.shareURL(feed: feed) {
+                ShareLink(
+                    item: url,
+                    subject: Text(episode.title),
+                    message: Text(episode.shareMessage(feedTitle: feed.map { store.displayTitle(for: $0) }))
+                ) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+                .tint(.blue)
             }
         case .moveToTop, .moveToBottom:
             if store.isInQueue(episode.id), !settings.queueLocked {

@@ -39,4 +39,11 @@ final class SwipeDefaultsTests: XCTestCase {
             XCTAssertTrue(offered.contains(pair.trailing), "\(list) trailing")
         }
     }
+
+    /// SwipeActionsDialog adds ShareSwipeAction on every screen.
+    func testShareOfferedOnEveryList() {
+        for list in SwipeList.allCases {
+            XCTAssertTrue(EpisodeSwipeAction.available(for: list).contains(.share), "\(list)")
+        }
+    }
 }
