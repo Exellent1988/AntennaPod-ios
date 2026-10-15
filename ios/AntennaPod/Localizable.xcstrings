@@ -53086,6 +53086,26 @@
         }
       }
     },
+    "Unsubscribes from %lld podcasts. Downloaded files are kept.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beendet das Abo von %lld Podcasts. Heruntergeladene Dateien bleiben erhalten."
+          }
+        }
+      }
+    },
+    "Remove tag": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tag entfernen"
+          }
+        }
+      }
+    },
     "Delete removes from queue": {
       "extractionState": "manual",
       "localizations": {

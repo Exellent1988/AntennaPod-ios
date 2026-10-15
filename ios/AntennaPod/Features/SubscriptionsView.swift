@@ -29,6 +29,8 @@ struct SubscriptionsView: View {
     @State private var feedPendingInboxRemoval: PodcastFeed?
     /// Android nav_feed_context edit_tags -> TagSettingsDialog.
     @State private var feedForTags: PodcastFeed?
+    /// Android FeedMultiSelectActionHandler selection (list mode only).
+    @State private var feedSelection = Set<UUID>()
     @State private var showUnpinAllConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
@@ -295,7 +297,7 @@ struct SubscriptionsView: View {
 
     // List split from the modifier chain: together they exceed the CI type-checker time limit.
     private var subscriptionsList: some View {
-        List {
+        List(selection: $feedSelection) {
             // One pass over every feed's episodes per body (the body reruns on each 0.5s
             // playback tick); the info bar and every row read this same map.
             let remainingByFeedId = unplayedRemainingByFeedId
@@ -478,6 +480,7 @@ struct SubscriptionsView: View {
                         } else {
                             ForEach(section.feeds) { feed in
                                 feedRow(feed, summary: remainingByFeedId[feed.id])
+                                    .tag(feed.id)
                             }
                         }
                     }
@@ -485,6 +488,8 @@ struct SubscriptionsView: View {
             }
         }
         .tabRootList(.subscriptions)
+        // Android FeedMultiSelectActionHandler: Select + Actions menu (grid mode has no selection).
+        .feedMultiSelect(selection: $feedSelection, feeds: effectiveDisplayMode == .grid ? [] : tagFilteredFeeds)
     }
 
     // Toolbar split from the body chain: together they exceed the CI type-checker time limit.

@@ -1,0 +1,165 @@
+import SwiftUI
+
+/// Multi-select for the Subscriptions list (list mode). Same pattern as EpisodeMultiSelect (QMS-02):
+/// Select/Done in the toolbar, one leading "Actions" menu with Select all and the batch actions.
+/// Android: ui/screen/subscriptions/FeedMultiSelectActionHandler.java with nav_feed_action_speeddial.xml
+/// (remove_archive_feed, keep_updated, notify_new_episodes, autodownload, autoDeleteDownload,
+/// playback_speed, edit_tags, remove_all_inbox_item, share_feed). Per-feed values go through
+/// PodcastStore.updateFeedSettings, the same store path podcast settings use.
+struct FeedMultiSelectModifier: ViewModifier {
+    @EnvironmentObject private var store: PodcastStore
+    @Binding var selection: Set<UUID>
+    /// Feeds the list currently shows; selection is resolved against these.
+    let feeds: [PodcastFeed]
+    @State private var editMode: EditMode = .inactive
+    @State private var confirmUnsubscribe = false
+    @State private var confirmInboxRemoval = false
+    @State private var showAddTag = false
+    @State private var newTag = ""
+
+    private var isSelecting: Bool { editMode.isEditing }
+
+    private var selected: [PodcastFeed] {
+        feeds.filter { selection.contains($0.id) }
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .environment(\.editMode, $editMode)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(isSelecting ? String(localized: "Done") : String(localized: "Select")) {
+                        withAnimation {
+                            editMode = isSelecting ? .inactive : .active
+                            if !isSelecting { selection.removeAll() }
+                        }
+                    }
+                    .disabled(feeds.isEmpty && !isSelecting)
+                }
+                if isSelecting {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Menu {
+                            Button(selection.count == feeds.count ? String(localized: "Deselect all") : String(localized: "Select all")) {
+                                if selection.count == feeds.count {
+                                    selection.removeAll()
+                                } else {
+                                    selection = Set(feeds.map(\.id))
+                                }
+                            }
+                            Section(String(format: String(localized: "%lld selected"), selection.count)) {
+                                batchActions
+                            }
+                            .disabled(selection.isEmpty)
+                        } label: {
+                            Label("Actions", systemImage: "checklist")
+                        }
+                        .accessibilityValue(String(format: String(localized: "%lld selected"), selection.count))
+                    }
+                }
+            }
+            .confirmationDialog("Unsubscribe?", isPresented: $confirmUnsubscribe, titleVisibility: .visible) {
+                Button("Unsubscribe", role: .destructive) {
+                    // Same per-feed path as the swipe / long-press Unsubscribe; downloaded files are kept.
+                    selected.forEach { store.unsubscribe($0) }
+                    finish()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Unsubscribes from \(selected.count) podcasts. Downloaded files are kept.")
+            }
+            .confirmationDialog("Remove all from inbox?", isPresented: $confirmInboxRemoval, titleVisibility: .visible) {
+                Button("Remove all from inbox", role: .destructive) {
+                    selected.forEach { store.archiveAllInbox(inFeed: $0.id) }
+                    finish()
+                }
+                Button("Cancel", role: .cancel) {}
+            }
+            .alert("Add tag", isPresented: $showAddTag) {
+                TextField("New tag", text: $newTag)
+                Button("Add") {
+                    selected.forEach { store.addTag(newTag, to: $0.id) }
+                    newTag = ""
+                    finish()
+                }
+                Button("Cancel", role: .cancel) { newTag = "" }
+            }
+    }
+
+    @ViewBuilder
+    private var batchActions: some View {
+        overrideMenu("Keep updated", systemImage: "arrow.clockwise") { $0.keepUpdated = $1 }
+        overrideMenu("Auto-download", systemImage: "arrow.down.circle") { $0.autoDownload = $1 }
+        overrideMenu("Auto-delete", systemImage: "trash.circle") { $0.autoDeleteAfterPlaying = $1 }
+        overrideMenu("Notify on new episodes", systemImage: "bell") { $0.notifyOnNewEpisodes = $1 }
+        Menu {
+            Button("Use global") { apply { $0.playbackSpeed = nil } }
+            ForEach(AppSettings.speedPresets, id: \.self) { speed in
+                Button(String(format: "%.2gx", speed)) { apply { $0.playbackSpeed = speed } }
+            }
+        } label: {
+            Label("Playback speed", systemImage: "speedometer")
+        }
+        Button {
+            showAddTag = true
+        } label: {
+            Label("Add tag", systemImage: "tag")
+        }
+        let tagsOnSelection = FeedTags.uniqueSorted(selected.flatMap { store.tags(for: $0.id) })
+        if !tagsOnSelection.isEmpty {
+            Menu {
+                ForEach(tagsOnSelection, id: \.self) { tag in
+                    Button(tag) {
+                        selected.forEach { store.removeTag(tag, from: $0.id) }
+                        finish()
+                    }
+                }
+            } label: {
+                Label("Remove tag", systemImage: "tag.slash")
+            }
+        }
+        Button {
+            confirmInboxRemoval = true
+        } label: {
+            Label("Remove all from inbox", systemImage: "tray.and.arrow.up")
+        }
+        Divider()
+        Button(role: .destructive) {
+            confirmUnsubscribe = true
+        } label: {
+            Label("Unsubscribe", systemImage: "trash")
+        }
+    }
+
+    private func overrideMenu(
+        _ title: LocalizedStringKey,
+        systemImage: String,
+        set: @escaping (inout FeedSettings, PerFeedOverride) -> Void
+    ) -> some View {
+        Menu {
+            ForEach(PerFeedOverride.allCases) { value in
+                Button(value.label) { apply { set(&$0, value) } }
+            }
+        } label: {
+            Label(title, systemImage: systemImage)
+        }
+    }
+
+    private func apply(_ mutate: (inout FeedSettings) -> Void) {
+        for feed in selected {
+            store.updateFeedSettings(for: feed.id, mutate)
+        }
+        finish()
+    }
+
+    private func finish() {
+        selection.removeAll()
+        editMode = .inactive
+    }
+}
+
+extension View {
+    /// Android FeedMultiSelectActionHandler for the Subscriptions list.
+    func feedMultiSelect(selection: Binding<Set<UUID>>, feeds: [PodcastFeed]) -> some View {
+        modifier(FeedMultiSelectModifier(selection: selection, feeds: feeds))
+    }
+}
