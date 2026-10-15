@@ -875,6 +875,35 @@ final class DownloadService: ObservableObject {
         return count
     }
 
+    /// Reset app data: cancel everything, then wait (bounded) until the background session has no
+    /// running download task left and no proxy rebuild is pending, so nothing finishes into the
+    /// deleted catalog. Returns the number cancelled and whether the session drained in time.
+    func cancelAllInFlightDownloadsAndWait(timeout: TimeInterval = 5) async -> (cancelled: Int, drained: Bool) {
+        let cancelled = cancelAllInFlightDownloads()
+        let deadline = Date().addingTimeInterval(timeout)
+        while true {
+            if !isReplacingSession {
+                let live = await liveDownloadTaskCount()
+                if live == 0 { return (cancelled, true) }
+            }
+            if Date() >= deadline { return (cancelled, false) }
+            try? await Task.sleep(nanoseconds: 50_000_000)
+        }
+    }
+
+    /// Download tasks of the background session that are still running or suspended.
+    /// Cancels any it finds (a reset keeps nothing in flight).
+    private func liveDownloadTaskCount() async -> Int {
+        guard let session else { return 0 }
+        return await withCheckedContinuation { continuation in
+            session.getTasksWithCompletionHandler { _, _, downloadTasks in
+                let live = downloadTasks.filter { $0.state == .running || $0.state == .suspended }
+                live.forEach { $0.cancel() }
+                continuation.resume(returning: live.count)
+            }
+        }
+    }
+
     /// Completed downloads marked **played**, excluding favorited / starred episodes.
     /// Matches auto-delete-after-playing favorite protection (`PodcastStore.isFavorite`).
     /// Does **not** skip queue membership — queued played files can be deleted (membership stays).

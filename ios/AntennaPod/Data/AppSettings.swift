@@ -1261,7 +1261,44 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 /// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, sleep timer volume fade, skip intro/outro, volume adaptation, volume boost (100–300%), skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / download-complete / sync-error / sleep-timer-end notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, Remaining time respects speed, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes podcast filter, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Feed/All Episodes/Inbox itunes:episodeType filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
 @MainActor
 final class AppSettings: ObservableObject {
-    static let speedPresets: [Float] = [0.8, 1.0, 1.1, 1.2, 1.3, 1.5, 2.0]
+    /// Fixed preset list of iOS builds before the editor (validation of stored speeds only).
+    static let legacySpeedPresets: [Float] = SpeedPresets.legacyIOSDefault
+
+    /// Android `prefPlaybackSpeedArray`: the current editable preset chips (UserDefaults, no store).
+    static func storedSpeedPresets(_ ud: UserDefaults = .standard) -> [Float] {
+        SpeedPresets.load(from: ud, hasExistingData: true)
+    }
+
+    /// Editable speed chips (Android prefPlaybackSpeedArray): sorted, no duplicates, ≥ 1 entry.
+    /// Used by the player speed menus, tap-to-cycle, Default speed and per-podcast speed pickers.
+    @Published var speedPresets: [Float] {
+        didSet {
+            let clean = SpeedPresets.sanitized(speedPresets)
+            if clean.isEmpty { speedPresets = oldValue; return }
+            if clean != speedPresets { speedPresets = clean; return }
+            SpeedPresets.save(speedPresets)
+        }
+    }
+
+    /// Android "+" chip: add `speed` (rounded to 0.05). False when it already exists or is invalid.
+    @discardableResult
+    func addSpeedPreset(_ speed: Float) -> Bool {
+        let r = SpeedPresets.adding(speed, to: speedPresets)
+        if r.added { speedPresets = r.list }
+        return r.added
+    }
+
+    /// Android long-press on a chip. The last chip cannot be removed.
+    @discardableResult
+    func removeSpeedPreset(_ speed: Float) -> Bool {
+        let r = SpeedPresets.removing(speed, from: speedPresets)
+        if r.removed { speedPresets = r.list }
+        return r.removed
+    }
+
+    func resetSpeedPresetsToAndroidDefault() {
+        speedPresets = SpeedPresets.androidDefault
+    }
 
     /// Volume boost percents (100 = unity / no boost). Soft gain via AVAudioMix; may clip above 100%.
     static let volumeBoostPresets: [Int] = [100, 125, 150, 175, 200, 250, 300]
@@ -2532,7 +2569,7 @@ final class AppSettings: ObservableObject {
         if UserDefaults.standard.object(forKey: Keys.defaultPlaybackSpeed) != nil {
             let stored = UserDefaults.standard.float(forKey: Keys.defaultPlaybackSpeed)
             // Presets or Custom… (0.5–3.0); out-of-range → 1.0.
-            if Self.speedPresets.contains(stored) {
+            if Self.legacySpeedPresets.contains(stored) {
                 defaultPlaybackSpeed = stored
             } else if PlaybackService.customPlaybackSpeedRange.contains(stored) {
                 defaultPlaybackSpeed = PlaybackService.clampPlaybackSpeed(stored)
@@ -2543,6 +2580,7 @@ final class AppSettings: ObservableObject {
             defaultPlaybackSpeed = 1.0
         }
         downloadStorageLimit = Self.loadStorageLimit()
+        speedPresets = SpeedPresets.load(hasExistingData: hasExistingData)
         let intervalRaw = UserDefaults.standard.string(forKey: Keys.refreshInterval)
             ?? FeedRefreshInterval.manual.rawValue
         refreshInterval = FeedRefreshInterval(rawValue: intervalRaw) ?? .manual
@@ -3260,6 +3298,7 @@ final class AppSettings: ObservableObject {
             theme: theme.rawValue,
             accentColor: accentColor.rawValue,
             defaultPlaybackSpeed: defaultPlaybackSpeed,
+            playbackSpeedPresets: speedPresets,
             storageLimitKind: storageKind,
             storageLimitValue: storageValue,
             refreshInterval: refreshInterval.rawValue,
@@ -3378,7 +3417,10 @@ final class AppSettings: ObservableObject {
             accentColor = AppAccentColor(rawValue: accentRaw) ?? .system
         }
         let snapSpeed = snap.defaultPlaybackSpeed
-        if AppSettings.speedPresets.contains(snapSpeed) {
+        if let presets = snap.playbackSpeedPresets.flatMap({ SpeedPresets.sanitized($0) }), !presets.isEmpty {
+            speedPresets = presets
+        }
+        if AppSettings.legacySpeedPresets.contains(snapSpeed) {
             defaultPlaybackSpeed = snapSpeed
         } else if PlaybackService.customPlaybackSpeedRange.contains(snapSpeed) {
             defaultPlaybackSpeed = PlaybackService.clampPlaybackSpeed(snapSpeed)
@@ -3646,6 +3688,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     /// Absent in older backups → System (no tint override).
     var accentColor: String? = nil
     var defaultPlaybackSpeed: Float
+    /// Android prefPlaybackSpeedArray. Absent in older backups → presets unchanged.
+    var playbackSpeedPresets: [Float]? = nil
     var storageLimitKind: String
     var storageLimitValue: Int?
     var refreshInterval: String

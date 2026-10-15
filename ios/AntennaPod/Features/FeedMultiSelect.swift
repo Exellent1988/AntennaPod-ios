@@ -105,7 +105,7 @@ struct FeedMultiSelectModifier: ViewModifier {
         overrideMenu("Notify on new episodes", systemImage: "bell") { $0.notifyOnNewEpisodes = $1 }
         Menu {
             Button("Use global") { apply { $0.playbackSpeed = nil } }
-            ForEach(AppSettings.speedPresets, id: \.self) { speed in
+            ForEach(AppSettings.storedSpeedPresets(), id: \.self) { speed in
                 Button(String(format: "%.2gx", speed)) { apply { $0.playbackSpeed = speed } }
             }
         } label: {

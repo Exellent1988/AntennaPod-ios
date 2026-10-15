@@ -3330,7 +3330,7 @@ struct EpisodeRow: View {
                 if seasonEpisodeCaptionText != nil
                     || dateOverride != nil
                     || episode.pubDateEpochMs != nil
-                    || formattedKnownDuration != nil
+                    || rowDurationCaption != nil
                     || formattedKnownByteSize != nil {
                     HStack(spacing: 6) {
                         if let seasonEpisodeCaptionText {
@@ -3352,21 +3352,21 @@ struct EpisodeRow: View {
                             }
                             Text(caption)
                         }
-                        if let formattedKnownDuration {
+                        if let rowDurationCaption {
                             if seasonEpisodeCaptionText != nil
                                 || dateOverride != nil
                                 || episode.pubDateEpochMs != nil {
                                 Text("·")
                                     .accessibilityHidden(true)
                             }
-                            Text(formattedKnownDuration)
+                            Text(rowDurationCaption)
                                 .monospacedDigit()
                         }
                         if let formattedKnownByteSize {
                             if seasonEpisodeCaptionText != nil
                                 || dateOverride != nil
                                 || episode.pubDateEpochMs != nil
-                                || formattedKnownDuration != nil {
+                                || rowDurationCaption != nil {
                                 Text("·")
                                     .accessibilityHidden(true)
                             }
@@ -4069,6 +4069,22 @@ struct EpisodeRow: View {
             for: episode,
             savedDurationSeconds: state.durationSeconds
         )
+    }
+
+    /// Row time label (Android EpisodeItemViewHolder): `−remaining` for a started episode when
+    /// Show remaining time is on, all times ÷ the podcast / default speed when Remaining time
+    /// respects speed is on; otherwise the unchanged duration caption.
+    private var rowDurationCaption: String? {
+        guard settings.showRemainingTime || settings.remainingTimeRespectsSpeed else { return formattedKnownDuration }
+        guard let value = EpisodeListTimeCaption.value(
+            durationSeconds: progressBarDurationSeconds,
+            positionSeconds: displayPositionSeconds,
+            isPlayed: state.isPlayed,
+            showRemaining: settings.showRemainingTime,
+            respectsSpeed: settings.remainingTimeRespectsSpeed,
+            speed: store.resolvedPlaybackSpeedForRemaining(for: episode)
+        ) else { return formattedKnownDuration }
+        return EpisodeListTimeCaption.format(value)
     }
 
     /// Same `m:ss` / `h:mm:ss` caption shown on episode metadata surfaces.

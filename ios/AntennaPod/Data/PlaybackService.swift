@@ -613,6 +613,19 @@ final class PlaybackService: ObservableObject {
         applyIdleTimerPolicy()
     }
 
+    /// Settings → Reset app data: unload the episode (same as backup import) and release the
+    /// audio session before the catalog is deleted. Player options (speed etc.) are kept.
+    /// Returns whether a player or episode was loaded.
+    @discardableResult
+    func stopForAppDataReset() -> Bool {
+        let hadEpisode = currentEpisode != nil || restoredEpisode != nil || player != nil
+        discardLoadedEpisodeForBackupImport()
+        deactivateSessionAfterPlaybackStopped()
+        return hadEpisode
+    }
+
+    var hasLoadedPlayerForTests: Bool { player != nil }
+
     func setRate(_ newRate: Float) {
         let clamped = Self.clampPlaybackSpeed(newRate)
         rate = clamped
@@ -651,21 +664,14 @@ final class PlaybackService: ObservableObject {
         updateNowPlayingInfo(force: true)
     }
 
-    /// AntennaPod-style: advance session rate to the next `AppSettings.speedPresets` value (wraps).
+    /// AntennaPod-style: advance session rate to the next editable preset (`AppSettings.speedPresets`, Android prefPlaybackSpeedArray; wraps, between presets → next higher).
     /// If the current rate is not a preset, jumps to the first preset (same as Android `setNextPlaybackSpeed`).
     /// Match with a small tolerance: `clampPlaybackSpeed` snaps 1.3 in Float so
     /// `1.3 / 0.05` is 25.999998 and the stored rate is not bit-identical to the
     /// preset literal. Exact equality then wraps a visible 1.3× tap to 0.8×.
     func cycleToNextSpeedPreset() {
-        let presets = AppSettings.speedPresets
-        guard !presets.isEmpty else { return }
-        let idx = presets.firstIndex { abs($0 - rate) < 0.001 }
-        if let idx {
-            let next = idx + 1
-            setRate(next < presets.count ? presets[next] : presets[0])
-        } else {
-            setRate(presets[0])
-        }
+        let presets = settings?.speedPresets ?? AppSettings.storedSpeedPresets()
+        if let next = SpeedPresets.next(after: rate, in: presets) { setRate(next) }
     }
 
     func seek(bySeconds delta: Double) {

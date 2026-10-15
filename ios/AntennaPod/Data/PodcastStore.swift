@@ -167,6 +167,25 @@ final class PodcastStore: ObservableObject {
         return feed
     }
 
+    /// Settings → Reset app data, in order: stop playback and release the audio session, cancel
+    /// downloads and wait (bounded) for the background session to drain, then delete local data
+    /// (`resetAppData`). Each step is written to `AppMaintenanceLog`.
+    @discardableResult
+    func resetAppDataSafely(downloadDrainTimeout: TimeInterval = 5) async -> AppDataResetReport {
+        var report = AppDataResetReport(feedsBefore: feeds.count, queueBefore: queue.count)
+        AppMaintenanceLog.record("reset: start (feeds \(report.feedsBefore), queue \(report.queueBefore))")
+        report.stoppedPlayback = playback?.stopForAppDataReset() ?? false
+        if let downloads {
+            let r = await downloads.cancelAllInFlightDownloadsAndWait(timeout: downloadDrainTimeout)
+            report.cancelledDownloads = r.cancelled
+            report.downloadsDrained = r.drained
+        }
+        AppMaintenanceLog.record("reset: playback stopped \(report.stoppedPlayback), downloads cancelled \(report.cancelledDownloads), session drained \(report.downloadsDrained)")
+        resetAppData()
+        AppMaintenanceLog.record("reset: local data deleted (login and settings kept)")
+        return report
+    }
+
     /// Settings → Reset app data: subscriptions, episodes, queue, downloads, playback state,
     /// favorites / archive / bookmarks / notes / tags, the gpodder action outbox and caches.
     /// App settings and the Keychain (gpodder login, feed passwords) are kept.
