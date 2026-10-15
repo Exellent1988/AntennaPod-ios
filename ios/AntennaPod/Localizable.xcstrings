@@ -53127,6 +53127,142 @@
           }
         }
       }
+    },
+    "Continuous playback is disabled in the settings. Always stopping at the end of the episode.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuous playback is disabled in the settings. Always stopping at the end of the episode."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kontinuierliche Wiedergabe ist in den Einstellungen deaktiviert. Die Wiedergabe wird immer am Ende der Episode beendet."
+          }
+        }
+      }
+    },
+    "There is only 1 episode left in your queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There is only 1 episode left in your queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es ist nur noch 1 Folge in der Warteschlange vorhanden"
+          }
+        }
+      }
+    },
+    "There are only %lld episodes left in your queue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "There are only %lld episodes left in your queue"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es sind nur noch %lld Folgen in der Warteschlange vorhanden"
+          }
+        }
+      }
+    },
+    "Continuous playback is disabled and the current episode has only 1 minute left": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuous playback is disabled and the current episode has only 1 minute left"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kontinuierliche Wiedergabe ist deaktiviert und die aktuelle Episode dauert nur noch 1 Minute"
+          }
+        }
+      }
+    },
+    "Continuous playback is disabled and the current episode has only %lld minutes left": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuous playback is disabled and the current episode has only %lld minutes left"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kontinuierliche Wiedergabe ist deaktiviert und die aktuelle Episode dauert nur noch %lld Minuten"
+          }
+        }
+      }
+    },
+    "Disable continuous playback": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disable continuous playback"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kontinuierliche Wiedergabe deaktivieren"
+          }
+        }
+      }
+    },
+    "Change hours": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change hours"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stunden ändern"
+          }
+        }
+      }
+    },
+    "Instead of always automatically enabling the sleep timer with one episode, please instead disable \"continuous playback\" in the settings.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instead of always automatically enabling the sleep timer with one episode, please instead disable \"continuous playback\" in the settings."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anstatt die Schlummerfunktion immer automatisch für eine Episode zu aktivieren, deaktiviere bitte stattdessen die „kontinuierliche Wiedergabe“ in den Einstellungen."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -113,10 +113,16 @@ struct SleepTimerSheet: View {
                 Text(String(localized: "Episodes")).tag(SleepTimerKind.episodes)
             }
             .pickerStyle(.segmented)
+            .onChange(of: kind) { _, newKind in settings.sleepTimerKind = newKind }
             if kind == .episodes {
                 episodesStartRows
             } else {
                 clockStartRows
+            }
+            if let hint = playback.sleepTimerHint(kind: kind, episodes: episodes, minutes: parsedMinutes) {
+                Text(PlaybackService.sleepTimerHintText(hint))
+                    .font(.caption).foregroundStyle(.orange)
+                    .accessibilityIdentifier("sleepTimerHint")
             }
             Button(String(localized: "End of episode")) { playback.setSleepTimerEndOfEpisode(); dismiss() }
             Button(String(localized: "End of chapter")) { playback.setSleepTimerEndOfChapter(); dismiss() }
@@ -137,11 +143,15 @@ struct SleepTimerSheet: View {
                     .monospacedDigit()
             }
             .accessibilityHint(String(localized: "Playback stops after this many episodes have finished or been skipped."))
+            .disabled(!canStartEpisodes)
             Button(String(localized: "Start")) { playback.setSleepTimer(episodes: episodes); dismiss() }
                 .buttonStyle(.borderedProminent)
+                .disabled(!canStartEpisodes)
         }
-        Text(String(localized: "Keeps playing the next episode (continuous playback) and stops after the last one."))
-            .font(.caption).foregroundStyle(.secondary)
+        if canStartEpisodes {
+            Text(String(localized: "Keeps playing the next episode (continuous playback) and stops after the last one."))
+                .font(.caption).foregroundStyle(.secondary)
+        }
     }
 
     @ViewBuilder private var clockStartRows: some View {
@@ -171,6 +181,11 @@ struct SleepTimerSheet: View {
             }
     }
 
+    /// Android: no episode timer while continuous playback is off (End of episode instead).
+    private var canStartEpisodes: Bool {
+        SleepTimerHints.canStart(kind: .episodes, continuousPlayback: playback.sleepTimerContinuousPlayback)
+    }
+
     private var canEndOfQueue: Bool {
         guard let id = playback.currentEpisode?.id else { return false }
         return store.nextQueueEpisode(after: id) != nil
@@ -180,7 +195,9 @@ struct SleepTimerSheet: View {
 
     private var optionsSection: some View {
         Section {
-            SleepTimerOptionRows()
+            if SleepTimerHints.showsOptions(kind: kind, continuousPlayback: playback.sleepTimerContinuousPlayback) {
+                SleepTimerOptionRows()
+            }
         } header: {
             Text(String(localized: "Options"))
         }
@@ -192,10 +209,13 @@ struct SleepTimerOptionRows: View {
     @EnvironmentObject private var settings: AppSettings
     /// Settings already shows the fade toggle with its own caption.
     var includeFade = true
+    @State private var confirmAlwaysEpisodes = false
 
     var body: some View {
-        Toggle(String(localized: "Shake to reset"), isOn: $settings.sleepTimerShakeToReset)
-            .accessibilityHint(String(localized: "During the last 10 seconds, shaking the phone restarts the timer."))
+        if SleepTimerHints.showsShakeToReset(kind: settings.sleepTimerKind) {
+            Toggle(String(localized: "Shake to reset"), isOn: $settings.sleepTimerShakeToReset)
+                .accessibilityHint(String(localized: "During the last 10 seconds, shaking the phone restarts the timer."))
+        }
         Toggle(String(localized: "Vibrate before the end"), isOn: $settings.sleepTimerVibrate)
             .accessibilityHint(String(localized: "Vibrates once about 10 seconds before the timer ends."))
         if includeFade {
@@ -211,6 +231,29 @@ struct SleepTimerOptionRows: View {
                 ForEach(0..<24, id: \.self) { Text(Self.hourLabel($0)).tag($0) }
             }
             Text(autoEnableSummary).font(.caption).foregroundStyle(.secondary)
+        }
+        Color.clear.frame(height: 0)
+            .onChange(of: settings.sleepTimerAutoEnable) { _, _ in checkAlwaysEpisodes() }
+            .onChange(of: settings.sleepTimerAutoEnableFromHour) { _, _ in checkAlwaysEpisodes() }
+            .onChange(of: settings.sleepTimerAutoEnableToHour) { _, _ in checkAlwaysEpisodes() }
+            .alert(String(localized: "Disable continuous playback"), isPresented: $confirmAlwaysEpisodes) {
+                Button(String(localized: "Disable continuous playback"), role: .destructive) {
+                    settings.continuousPlaybackMode = .off
+                    settings.sleepTimerAutoEnable = false
+                }
+                Button(String(localized: "Change hours")) {}
+                Button(String(localized: "Cancel"), role: .cancel) { settings.sleepTimerAutoEnable = false }
+            } message: {
+                Text(String(localized: "Instead of always automatically enabling the sleep timer with one episode, please instead disable \"continuous playback\" in the settings."))
+            }
+    }
+
+    /// Android `confirmAlwaysSleepTimerDialog`: an episode timer auto-enabled for most of the day.
+    private func checkAlwaysEpisodes() {
+        if SleepTimerHints.needsAlwaysEpisodeConfirmation(
+            autoEnable: settings.sleepTimerAutoEnable, kind: settings.sleepTimerKind,
+            fromHour: settings.sleepTimerAutoEnableFromHour, toHour: settings.sleepTimerAutoEnableToHour) {
+            confirmAlwaysEpisodes = true
         }
     }
 
