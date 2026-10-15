@@ -36,7 +36,7 @@ struct AppAsyncImage<Content: View>: View {
         guard let url else { return }
         do {
             // Mobile updates: images off on mobile data → cache only (MobileDataGate).
-            let (data, _) = try await AppURLSession.shared.data(for: MobileDataGate.imageRequest(for: url))
+            let data = try await CoverDiskCache.shared.data(for: url)
             try Task.checkCancellation()
             guard let uiImage = UIImage(data: data) else {
                 phase = .failure(URLError(.cannotDecodeContentData))

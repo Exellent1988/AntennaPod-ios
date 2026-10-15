@@ -2685,6 +2685,7 @@ struct SettingsView: View {
     @ViewBuilder
     private var storageSection: some View {
         Section {
+            ImageCacheSettingsRows()
             Toggle("Delete episode after playing", isOn: $settings.autoDeleteAfterPlaying)
                 .accessibilityLabel(String(localized: "Delete episode after playing"))
                 .accessibilityValue(autoDeleteAfterPlayingAccessibilityValue)

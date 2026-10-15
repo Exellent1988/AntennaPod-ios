@@ -1615,6 +1615,17 @@ final class AppSettings: ObservableObject {
 
     func allowsOnMobile(_ type: MobileUpdateType) -> Bool { mobileUpdateTypes.contains(type) }
 
+    /// Android `prefImageCacheSize` (MiB): 20 / 50 / 100 (default) / 250 / 500. Applied to `CoverDiskCache`.
+    @Published var imageCacheSizeMB: Int {
+        didSet {
+            let n = CoverCachePolicy.normalizedSizeMB(imageCacheSizeMB)
+            if n != imageCacheSizeMB { imageCacheSizeMB = n; return }
+            UserDefaults.standard.set(imageCacheSizeMB, forKey: CoverCachePolicy.defaultsKey)
+            CoverDiskCache.shared.limitBytes = Int64(imageCacheSizeMB) * 1_048_576
+            CoverDiskCache.shared.trim()
+        }
+    }
+
     func setAllowedOnMobile(_ type: MobileUpdateType, _ allowed: Bool) {
         if allowed { mobileUpdateTypes.insert(type) } else { mobileUpdateTypes.remove(type) }
     }
@@ -2664,6 +2675,8 @@ final class AppSettings: ObservableObject {
         autoDownloadOnBattery = UserDefaults.standard.object(forKey: Keys.autoDownloadOnBattery) as? Bool
             ?? AutoDownloadParity.defaultDownloadOnBattery
         mobileUpdateTypes = Self.loadMobileUpdateTypes()
+        imageCacheSizeMB = CoverCachePolicy.normalizedSizeMB(UserDefaults.standard.object(forKey: CoverCachePolicy.defaultsKey) as? Int)
+        CoverDiskCache.shared.limitBytes = Int64(imageCacheSizeMB) * 1_048_576
         let sourceRaw = UserDefaults.standard.string(forKey: Keys.playbackSourcePreference)
             ?? PlaybackSourcePreference.automatic.rawValue
         playbackSourcePreference = PlaybackSourcePreference(rawValue: sourceRaw) ?? .automatic
@@ -3357,6 +3370,7 @@ final class AppSettings: ObservableObject {
             manualDownloadWifiOnly: manualDownloadWifiOnly,
             streamWifiOnly: streamWifiOnly,
             mobileUpdateTypes: MobileUpdateTypes.encode(mobileUpdateTypes),
+            imageCacheSizeMB: imageCacheSizeMB,
             playbackSourcePreference: playbackSourcePreference.rawValue,
             autoDeleteAfterPlaying: autoDeleteAfterPlaying,
             rewindSeconds: rewindSeconds,
@@ -3507,6 +3521,7 @@ final class AppSettings: ObservableObject {
         manualDownloadWifiOnly = snap.manualDownloadWifiOnly
         streamWifiOnly = snap.streamWifiOnly
         if let types = snap.mobileUpdateTypes { mobileUpdateTypes = MobileUpdateTypes.decode(types) }
+        if let mb = snap.imageCacheSizeMB { imageCacheSizeMB = CoverCachePolicy.normalizedSizeMB(mb) }
         playbackSourcePreference =
             PlaybackSourcePreference(rawValue: snap.playbackSourcePreference) ?? .automatic
         autoDeleteAfterPlaying = snap.autoDeleteAfterPlaying
@@ -3758,6 +3773,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     /// Android prefMobileUpdateTypes raw values. Absent in older backups → the three Wi‑Fi-only
     /// flags above apply and feed refresh / images stay as they are.
     var mobileUpdateTypes: [String]? = nil
+    /// Android prefImageCacheSize (MiB). Absent in older backups → unchanged.
+    var imageCacheSizeMB: Int? = nil
     var playbackSourcePreference: String
     var autoDeleteAfterPlaying: Bool
     var rewindSeconds: Int

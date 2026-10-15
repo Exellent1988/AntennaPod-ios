@@ -234,6 +234,7 @@ final class PodcastStore: ObservableObject {
         feeds = []
         gpodderActionQueue.clear()
         URLCache.shared.removeAllCachedResponses()
+        CoverDiskCache.shared.clear()
         lastError = nil
         publishWidgetSnapshot()
     }

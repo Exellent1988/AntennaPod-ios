@@ -54238,6 +54238,74 @@
         }
       }
     },
+    "Image cache size": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Größe des Bildzwischenspeichers"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Image cache size"
+          }
+        }
+      }
+    },
+    "Clear image cache": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bildzwischenspeicher leeren"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear image cache"
+          }
+        }
+      }
+    },
+    "%lld MB": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld MB"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld MB"
+          }
+        }
+      }
+    },
+    "Cover images are kept on this device up to this size. With Images Wi‑Fi only, mobile data shows cached covers only.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titelbilder werden bis zu dieser Größe auf dem Gerät gespeichert. Mit „Bilder nur über WLAN“ werden über mobile Daten nur gespeicherte Titelbilder angezeigt."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cover images are kept on this device up to this size. With Images Wi‑Fi only, mobile data shows cached covers only."
+          }
+        }
+      }
+    },
     "Last refresh failed": {
       "extractionState": "manual",
       "localizations": {
