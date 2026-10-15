@@ -617,16 +617,6 @@ final class PlaybackService: ObservableObject {
         }
     }
 
-    /// Android `mediaPlayer.skip()` for CarPlay / Android Auto parity: play the next Queue episode.
-    /// `play(next)` runs the usual leave-episode handling (progress persist, smart mark played).
-    /// Returns `false` when nothing is queued after the current episode.
-    @discardableResult
-    func skipToNextEpisode() -> Bool {
-        guard let current = currentEpisode, let next = store?.nextQueueEpisode(after: current.id),
-              next.id != current.id else { return false }
-        return play(episode: next, fileURL: downloads?.localURL(for: next))
-    }
-
     /// Android `onNextChapter`: jump to the next chapter; on the last chapter / no chapters skip the episode.
     func skipToNextChapter() {
         let starts = resolvedSleepTimerChapters.map(\.startTimeSeconds)
@@ -2463,7 +2453,8 @@ final class PlaybackService: ObservableObject {
                 // Android onSkipToNext: in the car, next = skip to next queued episode.
                 switch NowPlayingLogic.nextTrackAction(inCar: AppServices.isCarPlayConnected) {
                 case .skipEpisode:
-                    if !self.skipToNextEpisode() { self.seek(bySeconds: self.fastForwardSeconds) }
+                    // Same manual skip as the player menu (Android mediaPlayer.skip()).
+                    self.skipToNextEpisode()
                 default:
                     self.seek(bySeconds: self.fastForwardSeconds)
                 }
