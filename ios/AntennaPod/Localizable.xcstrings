@@ -36477,7 +36477,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Explizit-Badge der Episode kopieren"
+            "value": "Explizit-Hinweis kopieren"
           }
         }
       }
@@ -36495,7 +36495,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Explizit-Badge der Episode teilen"
+            "value": "Explizit-Hinweis teilen"
           }
         }
       }
@@ -36693,7 +36693,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dateigröße der Episode kopieren"
+            "value": "Dateigröße kopieren"
           }
         }
       }
@@ -36711,7 +36711,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dateigröße der Episode teilen"
+            "value": "Dateigröße teilen"
           }
         }
       }
@@ -36729,7 +36729,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Episodenveröffentlichungsdatum kopieren"
+            "value": "Erscheinungsdatum kopieren"
           }
         }
       }
@@ -36747,7 +36747,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Episodenveröffentlichungsdatum teilen"
+            "value": "Erscheinungsdatum teilen"
           }
         }
       }
