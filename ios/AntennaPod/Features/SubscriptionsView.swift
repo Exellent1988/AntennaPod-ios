@@ -670,6 +670,10 @@ struct SubscriptionsView: View {
             .safeAreaInset(edge: .bottom, alignment: .trailing, spacing: 0) {
                 if path.isEmpty {
                     SubscriptionsAddButton(addLocked: parental.needsPINForAddDiscover, selecting: isSelectingFeeds) { showAdd = true }
+                        // iPad sidebar layout: RootTabView puts the mini player inset outside the
+                        // NavigationSplitView, which does not pass it into the detail column.
+                        .padding(.bottom, SubscriptionsAddButton.extraBottomClearance(
+                            isPadSidebar: horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom == .pad))
                 }
             }
     }
@@ -1588,6 +1592,9 @@ struct SubscriptionsAddButton: View {
     let addLocked: Bool
     let selecting: Bool
     let action: () -> Void
+
+    /// Height of the iPad mini player bar the split view does not report as safe area.
+    static func extraBottomClearance(isPadSidebar: Bool) -> CGFloat { isPadSidebar ? 72 : 0 }
 
     static func isVisible(addLocked: Bool, selecting: Bool) -> Bool {
         !addLocked && !selecting
