@@ -27,6 +27,8 @@ struct SubscriptionsView: View {
     @State private var feedPendingUnsubscribe: PodcastFeed?
     /// Android nav_feed_context remove_all_inbox_item confirmation.
     @State private var feedPendingInboxRemoval: PodcastFeed?
+    /// Android nav_feed_context edit_tags -> TagSettingsDialog.
+    @State private var feedForTags: PodcastFeed?
     @State private var showUnpinAllConfirm = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
@@ -855,6 +857,9 @@ struct SubscriptionsView: View {
             } message: {
                 Text("Clears Keep at top for every pinned podcast. Does not unsubscribe, change tags, or change sort preference.")
             }
+            .sheet(item: $feedForTags) { feed in
+                FeedTagsSheet(feedId: feed.id, feedTitle: feedDisplayTitle(feed))
+            }
             .confirmationDialog(
                 "Remove all from inbox?",
                 isPresented: Binding<Bool>(
@@ -1333,6 +1338,7 @@ struct SubscriptionsView: View {
             onTogglePin: { store.togglePinned(feedId: feed.id) },
             onOpenSettings: { feedForSettings = feed },
             onUnsubscribe: { feedPendingUnsubscribe = feed },
+            onEditTags: { feedForTags = feed },
             onRemoveAllFromInbox: store.inboxEpisodeIds(inFeed: feed.id).isEmpty ? nil : { feedPendingInboxRemoval = feed },
             onCopyPodcastTitle: { title in
                 copiedAlertMessage = EpisodeCopyLinks.copyPodcastTitle(title)
@@ -1469,6 +1475,7 @@ private struct SubscriptionRowContextMenu: ViewModifier {
     let onOpenSettings: () -> Void
     /// Opens the same confirmation as the Unsubscribe swipe (no new delete path).
     let onUnsubscribe: () -> Void
+    let onEditTags: () -> Void
     /// Nil when this podcast has nothing in the Inbox (hides the entry).
     let onRemoveAllFromInbox: (() -> Void)?
     let onCopyPodcastTitle: (String) -> Void
@@ -1521,6 +1528,13 @@ private struct SubscriptionRowContextMenu: ViewModifier {
                 }
                 .accessibilityLabel(String(localized: "Open podcast website"))
                 .accessibilityHint(String(localized: "Opens the feed-provided podcast website http(s) link in the system browser — not an in-app WebView. No confirmation. Never uses the feed RSS URL or an episode webpage. Distinct from Open episode website, Copy podcast website, and Share podcast website. Does not subscribe, download, or change playback."))
+            }
+
+            // Android nav_feed_context edit_tags (TagSettingsDialog).
+            Button {
+                onEditTags()
+            } label: {
+                Label("Edit tags", systemImage: "tag")
             }
 
             // Android nav_feed_context remove_all_inbox_item (asks for confirmation first).
