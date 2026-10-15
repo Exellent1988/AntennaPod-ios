@@ -1432,10 +1432,10 @@ struct SettingsView: View {
         Section("Playback") {
             if matchesPlaybackSpeed {
                 Picker("Default speed", selection: $settings.defaultPlaybackSpeed) {
-                    ForEach(AppSettings.speedPresets, id: \.self) { speed in
+                    ForEach(settings.speedPresets, id: \.self) { speed in
                         Text(PlaybackService.formatPlaybackSpeed(speed)).tag(speed)
                     }
-                    if !AppSettings.speedPresets.contains(settings.defaultPlaybackSpeed) {
+                    if !settings.speedPresets.contains(settings.defaultPlaybackSpeed) {
                         Text(PlaybackService.formatPlaybackSpeed(settings.defaultPlaybackSpeed))
                             .tag(settings.defaultPlaybackSpeed)
                     }
@@ -1445,6 +1445,12 @@ struct SettingsView: View {
                 .accessibilityHint(defaultSpeedAccessibilityHint)
                 Button(String(localized: "Custom…")) {
                     showCustomDefaultSpeed = true
+                }
+                NavigationLink {
+                    SpeedPresetsEditorView()
+                } label: {
+                    LabeledContent(String(localized: "Speed presets"),
+                                   value: settings.speedPresets.map { PlaybackService.formatPlaybackSpeed($0) }.joined(separator: ", "))
                 }
                 .accessibilityHint(String(localized: "Opens a sheet to set a custom Default speed from 0.50× to 3.00× in 0.05 steps. Speed applies only after you confirm. New episodes start at this speed. Does not change the rate already playing or rewrite a per-podcast speed override. Distinct from player session Custom…. Not Volume boost or Preserve pitch."))
                 Text(String(localized: "New episodes start at this speed. In the mini/full player, tap cycles presets; long-press opens the full list and Custom…. Custom… also available in Settings (0.50×–3.00×)."))
@@ -2046,7 +2052,7 @@ struct SettingsView: View {
         let label = PlaybackService.formatPlaybackSpeed(settings.defaultPlaybackSpeed)
         let speed = settings.defaultPlaybackSpeed
         let isDefault = abs(speed - 1.0) < 0.001
-        let isPreset = AppSettings.speedPresets.contains(speed)
+        let isPreset = settings.speedPresets.contains(speed)
         let headFormat: String
         if isDefault {
             headFormat = String(localized: "%@. This is the default.")

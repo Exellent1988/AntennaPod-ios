@@ -1,3 +1,4 @@
+import PodcastCore
 import SwiftUI
 
 struct MiniPlayerView: View {
@@ -89,7 +90,7 @@ struct MiniPlayerView: View {
                     .accessibilityLabel(String(localized: "Forward \(settings.fastForwardSeconds) seconds"))
                     sleepTimerMenu
                     Menu {
-                        ForEach(AppSettings.speedPresets, id: \.self) { speed in
+                        ForEach(settings.speedPresets, id: \.self) { speed in
                             Button {
                                 playback.setRate(speed)
                             } label: {
@@ -103,6 +104,14 @@ struct MiniPlayerView: View {
                                 }
                             }
                             .accessibilityHint(String(localized: "Sets this preset as the session playback speed immediately. No confirmation. Does not change Default speed or this podcast’s speed override. Not Volume boost or Preserve pitch."))
+                        }
+                        if !SpeedPresets.contains(playback.rate, in: settings.speedPresets) {
+                            Button {
+                                settings.addSpeedPreset(playback.rate)
+                            } label: {
+                                Label(String(localized: "Add \(PlaybackService.formatPlaybackSpeed(playback.rate)) as preset"), systemImage: "plus")
+                            }
+                            .accessibilityHint(String(localized: "Adds the current speed to the speed presets. Edit presets in Settings → Playback."))
                         }
                         Divider()
                         Button(String(localized: "Custom…")) {

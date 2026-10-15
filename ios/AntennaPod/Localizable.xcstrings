@@ -53625,6 +53625,142 @@
           }
         }
       }
+    },
+    "Add %@ as preset": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ als Voreinstellung hinzufügen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add %@ as preset"
+          }
+        }
+      }
+    },
+    "Adds the current speed to the speed presets. Edit presets in Settings → Playback.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fügt die aktuelle Geschwindigkeit zu den Geschwindigkeits-Voreinstellungen hinzu. Bearbeiten unter Einstellungen → Wiedergabe."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adds the current speed to the speed presets. Edit presets in Settings → Playback."
+          }
+        }
+      }
+    },
+    "Speed presets": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geschwindigkeits-Voreinstellungen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speed presets"
+          }
+        }
+      }
+    },
+    "Tap on the speed button in the player cycles through these presets; long-press lists them. Swipe to remove. At least one preset stays.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippen auf die Geschwindigkeitstaste im Player wechselt durch diese Voreinstellungen, langes Drücken listet sie auf. Zum Entfernen wischen. Mindestens eine Voreinstellung bleibt erhalten."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap on the speed button in the player cycles through these presets; long-press lists them. Swipe to remove. At least one preset stays."
+          }
+        }
+      }
+    },
+    "Add preset": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voreinstellung hinzufügen"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add preset"
+          }
+        }
+      }
+    },
+    "This preset already exists.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Voreinstellung gibt es bereits."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This preset already exists."
+          }
+        }
+      }
+    },
+    "At least one preset must remain.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mindestens eine Voreinstellung muss bleiben."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "At least one preset must remain."
+          }
+        }
+      }
+    },
+    "Reset to defaults (1.00×, 1.25×, 1.50×)": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf Standard zurücksetzen (1,00×, 1,25×, 1,50×)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset to defaults (1.00×, 1.25×, 1.50×)"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

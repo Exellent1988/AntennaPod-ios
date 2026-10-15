@@ -146,10 +146,10 @@ struct PerFeedSettingsView: View {
             Section {
                 Picker("Playback speed", selection: playbackSpeedBinding) {
                     Text("Use global").tag(Optional<Float>.none)
-                    ForEach(AppSettings.speedPresets, id: \.self) { speed in
+                    ForEach(appSettings.speedPresets, id: \.self) { speed in
                         Text(PlaybackService.formatPlaybackSpeed(speed)).tag(Optional(speed))
                     }
-                    if let override = current.playbackSpeed, !AppSettings.speedPresets.contains(override) {
+                    if let override = current.playbackSpeed, !appSettings.speedPresets.contains(override) {
                         Text(PlaybackService.formatPlaybackSpeed(override))
                             .tag(Optional(override))
                     }
