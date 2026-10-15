@@ -27,8 +27,18 @@ struct PodcastChapter: Identifiable, Hashable, Codable {
         let trimmed = imageUrl.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, let url = URL(string: trimmed) else { return nil }
         let scheme = url.scheme?.lowercased()
+        if scheme == "file" { return Self.embeddedChapterImageURL(named: url.lastPathComponent) }
         guard scheme == "http" || scheme == "https" else { return nil }
         return url
+    }
+
+    /// ID3 APIC chapter image extracted to Caches/chapter-images (only that folder; re-resolved
+    /// by file name because the app container path can change between installs). Nil when gone.
+    static func embeddedChapterImageURL(named name: String) -> URL? {
+        guard !name.isEmpty, !name.contains("/"),
+              let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else { return nil }
+        let url = caches.appendingPathComponent("chapter-images", isDirectory: true).appendingPathComponent(name)
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
 
     /// http(s) chapter link from feed PSC `href`/`url` or Podcast Index JSON `url` only.

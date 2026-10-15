@@ -1,5 +1,7 @@
 import AVFoundation
+import CryptoKit
 import Foundation
+import PodcastCore
 
 /// Best-effort chapter markers embedded in a **local** media file, via AVFoundation only
 /// (no third-party ID3/M4A/Vorbis parsers).
@@ -10,9 +12,8 @@ import Foundation
 /// - Chapter titles from `.commonIdentifierTitle` (string-value fallback on group items).
 ///
 /// ## What does **not** work reliably (documented honestly)
-/// - **ID3v2 CHAP** frames (typical MP3 podcasts): AVFoundation does **not** surface them as
-///   chapter metadata groups on iOS. Android uses a dedicated `ChapterReader`; that path is not
-///   implemented here and would need a custom ID3 parser (out of beta scope / no third-party libs).
+/// - **ID3v2 CHAP** frames (typical MP3 podcasts): AVFoundation does **not** surface them, so
+///   `ID3ChapterParser` (PodcastCore, Android `ChapterReader` parity) reads them first.
 /// - **Vorbis comment** chapters (Ogg/FLAC): same limitation without a custom parser.
 /// - **Nero `chpl` atoms**: not walked manually; only appear if AVFoundation maps them into
 ///   chapter groups (best-effort, not guaranteed).
@@ -26,6 +27,9 @@ enum MediaFileChapterReader {
               FileManager.default.fileExists(atPath: fileURL.path) else {
             return []
         }
+        // MP3: ID3v2 CHAP (Android ChapterReader). AVFoundation does not expose these on iOS.
+        let id3 = id3Chapters(fromFileURL: fileURL)
+        if !id3.isEmpty { return id3 }
         let asset = AVURLAsset(url: fileURL)
         do {
             // Load chapter locales first (Apple guidance before chapterMetadataGroups).
@@ -40,6 +44,37 @@ enum MediaFileChapterReader {
         } catch {
             return []
         }
+    }
+
+    /// ID3v2 CHAP chapters (title, WXXX link, APIC image). Embedded images are written to
+    /// Caches/chapter-images and referenced by `file://` URL. `[]` when the file has no ID3 tag.
+    static func id3Chapters(fromFileURL fileURL: URL) -> [PodcastChapter] {
+        guard let handle = try? FileHandle(forReadingFrom: fileURL) else { return [] }
+        defer { try? handle.close() }
+        guard let header = try? handle.read(upToCount: 10),
+              let length = ID3ChapterParser.tagLength(header: header),
+              length <= 32 * 1024 * 1024 else { return [] }
+        try? handle.seek(toOffset: 0)
+        guard let tag = try? handle.read(upToCount: length) else { return [] }
+        let parsed = ID3ChapterParser.chapters(in: tag)
+        let key = SHA256.hash(data: Data(fileURL.lastPathComponent.utf8)).prefix(8).map { String(format: "%02x", $0) }.joined()
+        return parsed.enumerated().map { i, c in
+            var image = c.imageURL
+            if let data = c.imageData {
+                image = writeChapterImage(data, mime: c.imageMimeType, name: "\(key)-\(i)")?.absoluteString
+            }
+            return PodcastChapter(title: c.title ?? String(localized: "Chapter"), startTimeSeconds: c.startSeconds,
+                                  href: c.url, imageUrl: image)
+        }
+    }
+
+    private static func writeChapterImage(_ data: Data, mime: String?, name: String) -> URL? {
+        guard let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else { return nil }
+        let dir = caches.appendingPathComponent("chapter-images", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let ext = mime?.contains("png") == true ? "png" : "jpg"
+        let url = dir.appendingPathComponent("\(name).\(ext)")
+        do { try data.write(to: url, options: .atomic); return url } catch { return nil }
     }
 
     private static func mapGroups(_ groups: [AVTimedMetadataGroup]) -> [PodcastChapter] {

@@ -65,6 +65,11 @@ final class PlaybackService: ObservableObject {
 
     /// Throttle lock-screen elapsed updates (system interpolates via rate + timestamp).
     private static let nowPlayingUpdateIntervalSeconds: Double = 5
+    /// Chapter index last written to Now Playing (boundary crossings bypass the throttle).
+    private var lastNowPlayingChapterIndex: Int?
+    /// Last dictionary handed to `MPNowPlayingInfoCenter` (tests read it; the center is not
+    /// reliably readable back in a test host).
+    private(set) var lastNowPlayingInfo: [String: Any]?
 
     @Published var currentEpisode: PodcastEpisode? {
         didSet {
@@ -2595,9 +2600,13 @@ final class PlaybackService: ObservableObject {
             return
         }
         let now = Date()
-        if !force, now.timeIntervalSince(lastNowPlayingUpdateAt) < Self.nowPlayingUpdateIntervalSeconds {
+        // A chapter boundary refreshes the lock screen at once (chapter title / number), like a seek.
+        let chapterFields = Self.nowPlayingChapterFields(chapters: currentEpisode?.chapters ?? [], at: positionSeconds)
+        let chapterChanged = chapterFields?.index != lastNowPlayingChapterIndex
+        if !force, !chapterChanged, now.timeIntervalSince(lastNowPlayingUpdateAt) < Self.nowPlayingUpdateIntervalSeconds {
             return
         }
+        lastNowPlayingChapterIndex = chapterFields?.index
         lastNowPlayingUpdateAt = now
         applyRemoteSkipIntervals()
 
@@ -2609,6 +2618,14 @@ final class PlaybackService: ObservableObject {
         info[MPMediaItemPropertyTitle] = episode.title
         info[MPMediaItemPropertyArtist] = feedName
         info[MPMediaItemPropertyAlbumTitle] = feedName
+        if let chapterFields {
+            // iOS has no chapter-title field; the album line shows the current chapter (Android
+            // shows it under the cover in the player). Number/count feed CarPlay / AirPlay UIs.
+            info[MPNowPlayingInfoPropertyChapterNumber] = chapterFields.index
+            info[MPNowPlayingInfoPropertyChapterCount] = chapterFields.count
+            if let title = chapterFields.title { info[MPMediaItemPropertyAlbumTitle] = title }
+        }
+        lastNowPlayingInfo = info
         info[MPNowPlayingInfoPropertyMediaType] = MPNowPlayingInfoMediaType.audio.rawValue
         info[MPNowPlayingInfoPropertyIsLiveStream] = false
         if durationSeconds.isFinite, durationSeconds > 0 {
@@ -2623,7 +2640,19 @@ final class PlaybackService: ObservableObject {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
     }
 
+    /// Chapter active at `position` (0-based), chapter count and title; nil without chapters or
+    /// before the first chapter start.
+    static func nowPlayingChapterFields(chapters: [PodcastChapter], at position: Double)
+        -> (index: Int, count: Int, title: String?)? {
+        let sorted = chapters.sorted { $0.startTimeSeconds < $1.startTimeSeconds }
+        guard let i = ChapterNowPlaying.index(starts: sorted.map(\.startTimeSeconds), at: position) else { return nil }
+        let title = sorted[i].title.trimmingCharacters(in: .whitespacesAndNewlines)
+        return (i, sorted.count, title.isEmpty ? nil : title)
+    }
+
     private func clearNowPlayingInfo() {
+        lastNowPlayingInfo = nil
+        lastNowPlayingChapterIndex = nil
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
         cachedArtwork = nil
         cachedArtworkURL = nil
