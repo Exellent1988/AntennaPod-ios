@@ -6,7 +6,38 @@ import SwiftUI
 /// `.standard` keeps each list's built-in swipe buttons, so defaults match the previous behaviour.
 enum EpisodeSwipeAction: String, CaseIterable, Identifiable {
     case standard, none, toggleQueue, togglePlayed, toggleFavorite, download, deleteDownload, archive
+    // Android RemoveFromHistorySwipeAction, MoveToTopSwipeAction, MoveToBottomSwipeAction.
+    case removeFromHistory, moveToTop, moveToBottom
     var id: String { rawValue }
+
+    /// Choices for one list, following SwipeActionsDialog: Queue gets move to top/bottom + remove,
+    /// others add to queue; no download in Downloads; remove from inbox (iOS: Archive) not in
+    /// Downloads/Queue/History; no delete or played toggle in Inbox; remove from history only in History.
+    static func available(for list: SwipeList) -> [EpisodeSwipeAction] {
+        var a: [EpisodeSwipeAction] = [.standard, .none]
+        if list == .queue { a += [.moveToTop, .moveToBottom] }
+        a.append(.toggleQueue)
+        if list != .downloads { a.append(.download) }
+        if ![.downloads, .queue, .history].contains(list) { a.append(.archive) }
+        if list != .inbox { a.append(.deleteDownload) }
+        a.append(.toggleFavorite)
+        if list == .history { a.append(.removeFromHistory) }
+        if list != .inbox { a.append(.togglePlayed) }
+        return a
+    }
+
+    /// Android SwipeActions.getPrefsWithDefaults (first value = swipe right = iOS leading edge).
+    /// FeedItemlistFragment has no case there and falls through to the All episodes default.
+    static func androidDefault(for list: SwipeList) -> (leading: EpisodeSwipeAction, trailing: EpisodeSwipeAction) {
+        switch list {
+        case .inbox: return (.toggleQueue, .archive)
+        case .queue: return (.toggleQueue, .toggleQueue)
+        case .downloads: return (.deleteDownload, .deleteDownload)
+        case .history: return (.removeFromHistory, .removeFromHistory)
+        case .favorites: return (.toggleFavorite, .toggleFavorite)
+        case .episodes, .feed: return (.toggleFavorite, .download)
+        }
+    }
 
     var label: String {
         switch self {
@@ -18,6 +49,9 @@ enum EpisodeSwipeAction: String, CaseIterable, Identifiable {
         case .download: return String(localized: "Download")
         case .deleteDownload: return String(localized: "Delete download")
         case .archive: return String(localized: "Archive / restore")
+        case .removeFromHistory: return String(localized: "Remove from History")
+        case .moveToTop: return String(localized: "Move to top")
+        case .moveToBottom: return String(localized: "Move to bottom")
         }
     }
 }
@@ -123,25 +157,59 @@ struct SwipeSlot<Standard: View>: View {
                       systemImage: archived ? "arrow.uturn.backward" : "archivebox")
             }
             .tint(.orange)
+        case .removeFromHistory:
+            Button(role: .destructive) {
+                store.removeFromHistory(episode.id)
+            } label: {
+                Label("Remove from History", systemImage: "clock.badge.xmark")
+            }
+        case .moveToTop, .moveToBottom:
+            if store.isInQueue(episode.id), !settings.queueLocked {
+                let top = action == .moveToTop
+                Button {
+                    if top { store.moveQueueItemToTop(episode) } else { store.moveQueueItemToBottom(episode) }
+                } label: {
+                    Label(top ? String(localized: "Move to top") : String(localized: "Move to bottom"),
+                          systemImage: top ? "arrow.up.to.line" : "arrow.down.to.line")
+                }
+                .tint(.indigo)
+            }
         }
     }
 }
 
 /// Settings → User interface → Swipe actions (Android SwipeActionsDialog per screen).
+/// `lists` narrows it to one screen when opened from that list's ⋯ menu.
 struct SwipeActionsSettingsView: View {
     @EnvironmentObject private var settings: AppSettings
+    var lists: [SwipeList] = SwipeList.allCases
 
     var body: some View {
         Form {
-            ForEach(SwipeList.allCases) { list in
+            ForEach(lists) { list in
                 Section(list.label) {
                     picker(String(localized: "Swipe right"), list, .leading)
                     picker(String(localized: "Swipe left"), list, .trailing)
                 }
             }
             Section {
+                Button("Use AntennaPod defaults") {
+                    for list in lists {
+                        let d = EpisodeSwipeAction.androidDefault(for: list)
+                        settings.setSwipeAction(d.leading, list, .leading)
+                        settings.setSwipeAction(d.trailing, list, .trailing)
+                    }
+                }
+                .accessibilityHint(String(localized: "Sets the swipe actions AntennaPod for Android uses on these lists."))
                 Button("Reset to defaults", role: .destructive) {
-                    settings.swipeActions = [:]
+                    if lists.count == SwipeList.allCases.count {
+                        settings.swipeActions = [:]
+                    } else {
+                        for list in lists {
+                            settings.setSwipeAction(.standard, list, .leading)
+                            settings.setSwipeAction(.standard, list, .trailing)
+                        }
+                    }
                 }
             }
         }
@@ -149,13 +217,47 @@ struct SwipeActionsSettingsView: View {
     }
 
     private func picker(_ title: String, _ list: SwipeList, _ edge: HorizontalEdge) -> some View {
-        Picker(title, selection: Binding(
+        let current = settings.swipeAction(list, edge)
+        var options = EpisodeSwipeAction.available(for: list)
+        if !options.contains(current) { options.append(current) }
+        return Picker(title, selection: Binding(
             get: { settings.swipeAction(list, edge) },
             set: { settings.setSwipeAction($0, list, edge) }
         )) {
-            ForEach(EpisodeSwipeAction.allCases) { action in
+            ForEach(options) { action in
                 Text(action.label).tag(action)
             }
         }
+    }
+}
+
+/// One list's swipe settings as a sheet, opened from that list's ⋯ menu.
+struct SwipeActionsSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    let list: SwipeList
+
+    var body: some View {
+        NavigationStack {
+            SwipeActionsSettingsView(lists: [list])
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { dismiss() }
+                    }
+                }
+        }
+    }
+}
+
+/// ⋯ menu entry "Swipe actions" for a list.
+struct SwipeActionsMenuButton: View {
+    @Binding var isPresented: Bool
+
+    var body: some View {
+        Button {
+            isPresented = true
+        } label: {
+            Label("Swipe actions", systemImage: "hand.draw")
+        }
+        .accessibilityHint(String(localized: "Choose what swiping an episode left or right does in this list."))
     }
 }
