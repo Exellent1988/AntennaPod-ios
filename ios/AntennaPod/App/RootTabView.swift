@@ -27,6 +27,8 @@ struct RootTabView: View {
     @State private var debugFeed: PodcastFeed?
     /// DEBUG `-APDebugOpenDownloadLog` only.
     @State private var debugDownloadLog = false
+    /// DEBUG `-APDebugOpenSwipeActions <list>` only.
+    @State private var debugSwipeList: SwipeList?
     /// Bumped when the active tab is tapped again; a new id pops that tab back to its root screen.
     @State private var tabRootResets: [RootTab: Int] = [:]
     @StateObject private var tabReselect = TabReselectCenter()
@@ -68,6 +70,9 @@ struct RootTabView: View {
                 EpisodeDetailPager(episode: ep)
                     .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { debugEpisodeDetail = nil } } }
             }
+        }
+        .sheet(item: $debugSwipeList) { list in
+            SwipeActionsSheet(list: list)
         }
         .sheet(isPresented: $showSettings) {
                 SettingsView()
@@ -334,6 +339,10 @@ struct RootTabView: View {
             selectedTab = .subscriptions
         }
         if args.contains("-APDebugOpenDownloadLog") { debugDownloadLog = true }
+        // -APDebugOpenSwipeActions <inbox|queue|episodes|downloads|history|favorites|feed>: that list's swipe sheet.
+        if let i = args.firstIndex(of: "-APDebugOpenSwipeActions"), i + 1 < args.count {
+            debugSwipeList = SwipeList(rawValue: args[i + 1])
+        }
         // -APDebugOpenFeed opens the first podcast's page (add -APDebugOpenFeedSettings for its settings sheet).
         if args.contains("-APDebugOpenFeed"), let feed = store.feeds.first {
             debugFeed = feed
