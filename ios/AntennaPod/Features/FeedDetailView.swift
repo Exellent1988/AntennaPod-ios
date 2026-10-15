@@ -8,6 +8,7 @@ struct FeedDetailView: View {
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.openURL) private var openURL
     let feed: PodcastFeed
+    @State private var showSwipeActionsSheet = false
     @State private var showPerFeedSettings = false
     @State private var showDownloadAllConfirm = false
     @State private var showMarkAllPlayedConfirm = false
@@ -1782,9 +1783,13 @@ struct FeedDetailView: View {
                         Label("Unsubscribe", systemImage: "trash")
                     }
                     .accessibilityHint(String(localized: "Asks for confirmation, then removes this podcast from Subscriptions, its feed settings and tags, queue items from this feed, and favorites, archive, playback history, bookmarks, and private notes for its episodes. When this feed has offline downloads, you can keep them or delete only this feed’s files including favorites. Does not clear other podcasts’ downloads."))
+                    Divider()
+                    // Android SwipeActionsDialog for this screen (SwipeActions tag feed).
+                    SwipeActionsMenuButton(isPresented: $showSwipeActionsSheet)
                 } label: {
                     Label("Feed actions", systemImage: "ellipsis.circle")
                 }
+                .sheet(isPresented: $showSwipeActionsSheet) { SwipeActionsSheet(list: .feed) }
                 Button {
                     showPerFeedSettings = true
                 } label: {

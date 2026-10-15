@@ -3,6 +3,7 @@ import UIKit
 
 struct FavoritesView: View {
     /// Episode ids picked in Select mode (`EpisodeMultiSelectModifier`).
+    @State private var showSwipeActionsSheet = false
     @State private var multiSelection = Set<String>()
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
@@ -584,9 +585,13 @@ struct FavoritesView: View {
                 .accessibilityHint(
                     String(localized: "Asks for confirmation, then removes every episode from the full Favorites catalog. Ignores podcast, search, and sort filters. Does not delete downloads, archive, mark played, or clear the queue.")
                 )
+                Divider()
+                // Android SwipeActionsDialog for this screen (SwipeActions tag favorites).
+                SwipeActionsMenuButton(isPresented: $showSwipeActionsSheet)
             } label: {
                 Label("Favorites actions", systemImage: "ellipsis.circle")
             }
+            .sheet(isPresented: $showSwipeActionsSheet) { SwipeActionsSheet(list: .favorites) }
             // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
             .disabled(items.isEmpty)
             .accessibilityLabel(String(localized: "Favorites actions"))

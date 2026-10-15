@@ -8,6 +8,7 @@ struct QueueView: View {
     @EnvironmentObject private var settings: AppSettings
     @Environment(\.editMode) private var editMode
 
+    @State private var showSwipeActionsSheet = false
     @State private var searchText = ""
     @State private var debouncedQuery = ""
     @State private var debounceTask: Task<Void, Never>?
@@ -832,9 +833,13 @@ struct QueueView: View {
                 .accessibilityHint(
                     String(localized: "Asks for confirmation, then removes every episode from the entire queue, not only the current filter. Does not stop playback, change progress, mark played, or delete downloads.")
                 )
+                Divider()
+                // Android SwipeActionsDialog for this screen (SwipeActions tag queue).
+                SwipeActionsMenuButton(isPresented: $showSwipeActionsSheet)
             } label: {
                 Label("Queue actions", systemImage: "ellipsis.circle")
             }
+            .sheet(isPresented: $showSwipeActionsSheet) { SwipeActionsSheet(list: .queue) }
             .disabled(store.queue.isEmpty)
             .accessibilityLabel(String(localized: "Queue actions"))
             .accessibilityHint(

@@ -3,6 +3,7 @@ import UIKit
 
 struct InboxView: View {
     /// Episode ids picked in Select mode (`EpisodeMultiSelectModifier`).
+    @State private var showSwipeActionsSheet = false
     @State private var multiSelection = Set<String>()
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
@@ -664,9 +665,13 @@ struct InboxView: View {
                 .accessibilityHint(
                     String(localized: "Asks for confirmation, then archives non-archived episodes in the full Inbox catalog, newest first. Ignores podcast, episode type, search, and sort filters. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
                 )
+                Divider()
+                // Android SwipeActionsDialog for this screen (SwipeActions tag inbox).
+                SwipeActionsMenuButton(isPresented: $showSwipeActionsSheet)
             } label: {
                 Label("Inbox actions", systemImage: "ellipsis.circle")
             }
+            .sheet(isPresented: $showSwipeActionsSheet) { SwipeActionsSheet(list: .inbox) }
             // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
             // Disabled while library search replaces Inbox rows (full-catalog actions only).
             .disabled((store.inboxEpisodes.isEmpty && markAllInboxUnplayedCandidatesCount == 0) || isSearching)
