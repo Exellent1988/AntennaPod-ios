@@ -10,16 +10,16 @@ final class CounterModeMigrationTests: XCTestCase {
     private var suiteName = ""
     private var ud: UserDefaults!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         suiteName = "CounterModeMigrationTests-\(UUID().uuidString)"
         ud = UserDefaults(suiteName: suiteName)
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         ud.removePersistentDomain(forName: suiteName)
         ud = nil
-        super.tearDown()
+        try await super.tearDown()
     }
 
     func testNewInstallGetsNew() {
