@@ -13,6 +13,29 @@ enum SubscriptionsDisplayMode: String, CaseIterable, Identifiable {
         case .grid: return String(localized: "Grid")
         }
     }
+
+    /// Android subscriptions.xml subscription_num_columns: List (1), 2, 3, 4, 5.
+    static let columnChoices = [1, 2, 3, 4, 5]
+
+    static func columnChoiceLabel(_ n: Int) -> String {
+        n <= 1 ? String(localized: "List") : "\(n)"
+    }
+
+    static func columnChoice(mode: SubscriptionsDisplayMode, gridColumns: Int) -> Int {
+        mode == .list ? 1 : min(max(gridColumns, 2), 5)
+    }
+
+    /// Choosing List keeps the saved grid column count for the next switch back to the grid.
+    static func apply(columnChoice n: Int, gridColumns: Int) -> (SubscriptionsDisplayMode, Int) {
+        n <= 1 ? (.list, min(max(gridColumns, 2), 5)) : (.grid, min(n, 5))
+    }
+
+    /// Android default: getDefaultNumOfColumns() = 3 on phones (5 on sw600dp), i.e. a grid. New installs
+    /// start in the grid; existing users keep their saved (or the old list) mode.
+    static func initial(stored: String?, isFreshInstall: Bool) -> SubscriptionsDisplayMode {
+        if let stored, let mode = SubscriptionsDisplayMode(rawValue: stored) { return mode }
+        return isFreshInstall ? .grid : .list
+    }
 }
 
 /// Android UserPreferences.PREF_DRAWER_FEED_COUNTER (none / unplayed / downloaded). Default

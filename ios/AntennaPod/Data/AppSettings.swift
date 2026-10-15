@@ -2902,7 +2902,13 @@ final class AppSettings: ObservableObject {
         }
         AppSettings.migrateViewPrefsFromAppStorageOnce()
         let ud = UserDefaults.standard
-        subscriptionsDisplayMode = SubscriptionsDisplayMode(rawValue: ud.string(forKey: Keys.subscriptionsDisplayMode) ?? "") ?? .list
+        let storedDisplayMode = ud.string(forKey: Keys.subscriptionsDisplayMode)
+        let displayMode = SubscriptionsDisplayMode.initial(stored: storedDisplayMode, isFreshInstall: isFreshInstall)
+        subscriptionsDisplayMode = displayMode
+        if storedDisplayMode == nil {
+            // Pin the first-launch choice (the fresh-install check is false from the second launch on).
+            ud.set(displayMode.rawValue, forKey: Keys.subscriptionsDisplayMode)
+        }
         let cols = ud.object(forKey: Keys.subscriptionsGridColumns) as? Int ?? 3
         subscriptionsGridColumns = min(max(cols, 2), 5)
         let storedGridTitles = ud.object(forKey: Keys.subscriptionsGridShowTitles) as? Bool
