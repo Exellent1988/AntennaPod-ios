@@ -1111,6 +1111,27 @@ final class PodcastStore: ObservableObject {
         publishWidgetSnapshot()
     }
 
+    /// Android `FeedItemMenuHandler` `reset_position`: shown when the saved position is not 0.
+    func canResetPosition(_ episodeId: String) -> Bool {
+        (playbackStates[episodeId]?.positionSeconds ?? 0) != 0
+    }
+
+    /// Android `reset_position`: position → 0, mark unplayed; stops playback when it is the
+    /// current episode (Android `writeNoMediaPlaying` + controller stop).
+    func resetPosition(_ episodeId: String) {
+        if playback?.currentEpisode?.id == episodeId {
+            playback?.stop()
+        }
+        var state = playbackState(for: episodeId)
+        state.positionSeconds = 0
+        state.isPlayed = false
+        state.playActionPositionSeconds = nil
+        state.updatedAtEpochMs = Int64(Date().timeIntervalSince1970 * 1000)
+        playbackStates[episodeId] = state
+        pendingAutoDeleteIds.remove(episodeId)
+        publishWidgetSnapshot()
+    }
+
     func togglePlayed(_ episodeId: String) {
         if isPlayed(episodeId) {
             markUnplayed(episodeId)
