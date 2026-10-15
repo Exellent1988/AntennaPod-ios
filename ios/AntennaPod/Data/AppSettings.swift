@@ -2664,8 +2664,9 @@ final class AppSettings: ObservableObject {
         autoDownloadOnBattery = UserDefaults.standard.object(forKey: Keys.autoDownloadOnBattery) as? Bool
             ?? AutoDownloadParity.defaultDownloadOnBattery
         mobileUpdateTypes = Self.loadMobileUpdateTypes()
-        imageCacheSizeMB = CoverCachePolicy.normalizedSizeMB(UserDefaults.standard.object(forKey: CoverCachePolicy.defaultsKey) as? Int)
-        CoverDiskCache.shared.limitBytes = Int64(imageCacheSizeMB) * 1_048_576
+        let imageCacheMB = CoverCachePolicy.normalizedSizeMB(UserDefaults.standard.object(forKey: CoverCachePolicy.defaultsKey) as? Int)
+        imageCacheSizeMB = imageCacheMB
+        CoverDiskCache.shared.limitBytes = Int64(imageCacheMB) * 1_048_576
         let sourceRaw = UserDefaults.standard.string(forKey: Keys.playbackSourcePreference)
             ?? PlaybackSourcePreference.automatic.rawValue
         playbackSourcePreference = PlaybackSourcePreference(rawValue: sourceRaw) ?? .automatic
