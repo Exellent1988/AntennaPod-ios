@@ -54254,6 +54254,23 @@
           }
         }
       }
+    },
+    "Last refresh failed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last refresh failed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letzte Aktualisierung fehlgeschlagen"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

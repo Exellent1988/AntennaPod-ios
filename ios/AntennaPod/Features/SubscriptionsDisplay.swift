@@ -106,6 +106,13 @@ struct SubscriptionGridCell: View {
                         .padding(8)
                 }
             }
+            // Android subscription_grid_item errorIcon: 24dp ic_error bottom-right, 8dp margin, when the last
+            // refresh failed (SubscriptionViewHolder.bind: feed.hasLastUpdateFailed()).
+            .overlay(alignment: .bottomTrailing) {
+                if feed.lastRefreshError != nil {
+                    SubscriptionRefreshFailedIcon().padding(8)
+                }
+            }
             .aspectRatio(1, contentMode: .fit)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             if showTitle {
@@ -122,7 +129,7 @@ struct SubscriptionGridCell: View {
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .shadow(color: .black.opacity(0.12), radius: 1, y: 0.5)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(count > 0 ? "\(title), \(count)" : title)
+        .accessibilityLabel(SubscriptionRefreshFailedIcon.accessibilityLabel(title: title, count: count, failed: feed.lastRefreshError != nil))
         .accessibilityAddTraits(.isButton)
     }
 
@@ -186,5 +193,23 @@ struct SubscriptionGridCell: View {
                     .padding(Self.titlePadding(columns: columns))
             }
         }
+    }
+}
+
+/// Android ic_error with contentDescription refresh_failed_msg ("Last refresh failed").
+struct SubscriptionRefreshFailedIcon: View {
+    var body: some View {
+        Image(systemName: "exclamationmark.circle.fill")
+            .font(.system(size: 20))
+            .symbolRenderingMode(.palette)
+            .foregroundStyle(.white, .red)
+            .accessibilityLabel(String(localized: "Last refresh failed"))
+    }
+
+    static func accessibilityLabel(title: String, count: Int, failed: Bool) -> String {
+        var parts = [title]
+        if count > 0 { parts.append("\(count)") }
+        if failed { parts.append(String(localized: "Last refresh failed")) }
+        return parts.joined(separator: ", ")
     }
 }

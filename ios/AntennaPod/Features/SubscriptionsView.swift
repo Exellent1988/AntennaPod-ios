@@ -1071,6 +1071,10 @@ struct SubscriptionsView: View {
                     HStack(spacing: 6) {
                         Text(feedDisplayTitle(feed))
                             .font(.headline)
+                        // Android subscription_list_item errorIcon (feed.hasLastUpdateFailed()).
+                        if feed.lastRefreshError != nil {
+                            SubscriptionRefreshFailedIcon()
+                        }
                         if LocalFolderFeed.isLocalFolderFeed(feed) {
                             Text("Folder")
                                 .font(.caption2.weight(.semibold))
