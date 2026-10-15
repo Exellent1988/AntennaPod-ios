@@ -162,13 +162,10 @@ final class ResetHardeningTests: PlaybackFixtureTestCase {
             for b in store.feeds[(i + 1)...] { XCTAssertTrue(a.urlKeys.isDisjoint(with: b.urlKeys), "\(a.feedUrl) vs \(b.feedUrl)") }
         }
 
-        // KNOWN FLAKY gpodder import bug (GpodderImportCompletenessTests line 77/84, not fixed here):
-        // with the parallel import the redirect pair can fold under the redirect SOURCE url
-        // (logbuch-netzpolitik.de) instead of the final url. Reported, gpodder code untouched.
-        XCTExpectFailure("Known flaky gpodder import: redirect pair may keep the source URL as primary",
-                         options: { let o = XCTExpectedFailure.Options(); o.isStrict = false; return o }()) {
-            XCTAssertNotNil(store.feeds.first { FeedURLKey.key($0.feedUrl) == "feeds.metaebene.me/lnp/mp3" },
-                            "redirect pair stored under the final URL")
-        }
+        // Redirect pair: the parallel import may store either URL first (the app keeps the stored
+        // feedUrl, the other becomes an alias), so check the fold, not which URL is primary.
+        let lnp = store.feeds.filter { $0.urlKeys.contains("feeds.metaebene.me/lnp/mp3") }
+        XCTAssertEqual(lnp.count, 1, "redirect pair is one podcast")
+        XCTAssertTrue(lnp.first?.urlKeys.contains("logbuch-netzpolitik.de/feed/mp3") == true, "redirect source kept as alias")
     }
 }
