@@ -527,6 +527,36 @@ struct DownloadsView: View {
                         }
                         .tag(item.episode.id)
                         .contextMenu {
+                            // Android CompletedDownloadsFragment uses feeditemlist_context.xml (FeedItemMenuHandler):
+                            // mark played/unplayed, add/remove queue, delete, favorite, reset position, details.
+                            Section {
+                                Button {
+                                    store.togglePlayed(item.episode.id)
+                                } label: {
+                                    Label(
+                                        store.isPlayed(item.episode.id) ? String(localized: "Mark unplayed") : String(localized: "Mark played"),
+                                        systemImage: store.isPlayed(item.episode.id) ? "circle" : "checkmark.circle"
+                                    )
+                                }
+                                if !store.isInQueue(item.episode.id) {
+                                    Button {
+                                        store.enqueue(item.episode)
+                                    } label: {
+                                        Label("Add to queue", systemImage: "text.append")
+                                    }
+                                }
+                                EpisodeContextMenu(episode: item.episode, part: .removeFromQueue)
+                                EpisodeContextMenu(episode: item.episode, part: .download)
+                                Button {
+                                    store.toggleFavorite(item.episode.id)
+                                } label: {
+                                    Label(
+                                        store.isFavorite(item.episode.id) ? String(localized: "Unfavorite") : String(localized: "Favorite"),
+                                        systemImage: store.isFavorite(item.episode.id) ? "star.slash" : "star"
+                                    )
+                                }
+                                EpisodeContextMenu(episode: item.episode, part: .resetPosition)
+                            }
                             Button { detailEpisode = item.episode } label: {
                                 Label("Episode details", systemImage: "info.circle")
                             }
