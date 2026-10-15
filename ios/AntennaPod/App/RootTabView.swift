@@ -49,10 +49,16 @@ struct RootTabView: View {
                 applyDebugLaunchArguments()
             }
             .sheet(item: $debugFeed) { feed in
-                NavigationStack { FeedDetailView(feed: feed) }
+                NavigationStack {
+                    FeedDetailView(feed: feed)
+                        .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { debugFeed = nil } } }
+                }
             }
             .sheet(item: $debugEpisodeDetail) { ep in
-            NavigationStack { EpisodeDetailPager(episode: ep) }
+            NavigationStack {
+                EpisodeDetailPager(episode: ep)
+                    .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { debugEpisodeDetail = nil } } }
+            }
         }
         .sheet(isPresented: $showSettings) {
                 SettingsView()
