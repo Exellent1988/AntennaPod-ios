@@ -2,22 +2,21 @@ import PodcastCore
 import XCTest
 @testable import AntennaPod
 
-/// Android prefEnqueueDownloaded / prefDeleteRemovesFromQueue on the real DownloadService.
-/// Uses the app's DownloadService (one background URLSession per identifier), pointed at the
-/// fixture store/settings for the test and restored afterwards. Downloads target an unroutable
-/// host and are cancelled at once, so nothing is fetched.
+/// Android prefEnqueueDownloaded / prefDeleteRemovesFromQueue on a real DownloadService.
+/// Each test gets its own service on an ephemeral session whose URLProtocol never answers, so
+/// downloads stay "in progress" (needed for the Enqueue location rules) and nothing touches the
+/// app's shared background session. (The earlier version drove the shared background
+/// DownloadService from async tests and aborted the test host in swift_task_dealloc_specific.)
 @MainActor
 final class QueueAutoParityTests: PlaybackFixtureTestCase {
     private var downloads: DownloadService!
-    private var savedStore: PodcastStore?
-    private var savedSettings: AppSettings?
     private var remoteEpisodes: [PodcastEpisode] = []
 
     override func setUp() async throws {
         try await super.setUp()
-        downloads = try XCTUnwrap(AppServices.downloads, "test host app creates the DownloadService")
-        savedStore = downloads.store
-        savedSettings = downloads.settings
+        let config = URLSessionConfiguration.ephemeral
+        config.protocolClasses = [PendingForeverURLProtocol.self]
+        downloads = DownloadService(testSessionConfiguration: config)
         downloads.store = store
         downloads.settings = settings
         store.downloads = downloads
@@ -30,15 +29,12 @@ final class QueueAutoParityTests: PlaybackFixtureTestCase {
     }
 
     override func tearDown() async throws {
-        // Shared background URLSession: per-episode cancel left pending maps that made the
-        // next download() test abort in swift concurrency. Wipe all in-flight work.
-        downloads.cancelAllInFlightDownloads()
+        downloads.tearDownTestSession()
+        store.downloads = nil
+        downloads = nil
         remoteEpisodes = []
-        downloads.store = savedStore
-        downloads.settings = savedSettings
         try await super.tearDown()
     }
-
 
     func testDefaultsMatchAndroid() {
         var probe = settings.backupSnapshot()
@@ -60,9 +56,7 @@ final class QueueAutoParityTests: PlaybackFixtureTestCase {
         XCTAssertFalse(AppSettings().enqueueDownloaded, "persisted immediately")
     }
 
-    func testDownloadRequestEnqueuesAtEnqueueLocation() async throws {
-        throw XCTSkip("Shared background URLSession aborts the test host when several download tests run in one process (swift::_swift_task_dealloc_specific). QueueAutoPolicy unit tests cover the rules; re-enable when DownloadService has a test session.")
-
+    func testDownloadRequestEnqueuesAtEnqueueLocation() async {
         settings.enqueueDownloaded = true
         settings.enqueueLocation = .front
         store.queue = [episodes[0], episodes[1]]
@@ -71,9 +65,7 @@ final class QueueAutoParityTests: PlaybackFixtureTestCase {
         XCTAssertEqual(store.queue.count, 3)
     }
 
-    func testFrontKeepsOrderForSeveralDownloads() async throws {
-        throw XCTSkip("Shared background URLSession aborts the test host when several download tests run in one process (swift::_swift_task_dealloc_specific). QueueAutoPolicy unit tests cover the rules; re-enable when DownloadService has a test session.")
-
+    func testFrontKeepsOrderForSeveralDownloads() async {
         settings.enqueueDownloaded = true
         settings.enqueueLocation = .front
         store.queue = [episodes[0]]
@@ -82,17 +74,13 @@ final class QueueAutoParityTests: PlaybackFixtureTestCase {
                        "skips items still downloading, like Android ItemEnqueuePositionCalculator")
     }
 
-    func testDisabledDoesNotEnqueue() async throws {
-        throw XCTSkip("Shared background URLSession aborts the test host when several download tests run in one process (swift::_swift_task_dealloc_specific). QueueAutoPolicy unit tests cover the rules; re-enable when DownloadService has a test session.")
-
+    func testDisabledDoesNotEnqueue() async {
         settings.enqueueDownloaded = false
         await downloads.download(remoteEpisodes[0])
         XCTAssertFalse(store.isInQueue(remoteEpisodes[0].id))
     }
 
-    func testCancelRemovesOnlyWhatTheDownloadAdded() async throws {
-        throw XCTSkip("Shared background URLSession aborts the test host when several download tests run in one process (swift::_swift_task_dealloc_specific). QueueAutoPolicy unit tests cover the rules; re-enable when DownloadService has a test session.")
-
+    func testCancelRemovesOnlyWhatTheDownloadAdded() async {
         settings.enqueueDownloaded = true
         store.queue = [remoteEpisodes[1]]
         await downloads.download(remoteEpisodes[0])
@@ -116,4 +104,12 @@ final class QueueAutoParityTests: PlaybackFixtureTestCase {
         downloads.delete(episodes[0])
         XCTAssertTrue(store.isInQueue(episodes[0].id))
     }
+}
+
+/// Accepts every request and never answers: a download stays in flight until cancelled.
+final class PendingForeverURLProtocol: URLProtocol {
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func startLoading() {}
+    override func stopLoading() {}
 }

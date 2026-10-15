@@ -261,6 +261,8 @@ final class DownloadService: ObservableObject {
     private var session: URLSession!
     /// Retains block-based observer for `AppHTTPProxy.didChangeNotification`.
     private var proxyChangeObserver: NSObjectProtocol?
+    /// Test instance (`init(testSessionConfiguration:)`): own session, no disk / global state.
+    private var isTestInstance = false
     /// Live task id → episode (+ destination file name).
     private var pendingByTaskId: [Int: PendingDownloadMapping] = [:]
     /// Task ids omitted by `getTasks`. A finished background transfer is absent from
@@ -329,10 +331,28 @@ final class DownloadService: ObservableObject {
         }
     }
 
+    /// Tests only: a service on an injected (ephemeral, stubbed) session instead of the shared
+    /// background session. It loads nothing from disk, persists no pending tasks and installs no
+    /// global hooks (active instance, network-path callback, proxy observer), so tests never
+    /// touch the app's real `DownloadService` or `nsurlsessiond`.
+    init(testSessionConfiguration config: URLSessionConfiguration) {
+        isTestInstance = true
+        sessionDelegate.owner = self
+        session = URLSession(configuration: config, delegate: sessionDelegate, delegateQueue: nil)
+    }
+
+    /// Tests: cancel everything and invalidate the injected session.
+    func tearDownTestSession() {
+        guard isTestInstance else { return }
+        cancelAllInFlightDownloads()
+        session.invalidateAndCancel()
+    }
+
     /// Background sessions cannot mutate `connectionProxyDictionary` in place.
     /// When idle (no live tasks / waiting queue), invalidate and recreate so the new proxy applies.
     /// If downloads are active, the next cold start / idle recreate picks it up — honest beta limit.
     private func recreateSessionIfIdleForProxyChange() {
+        guard !isTestInstance else { return }
         guard pendingByTaskId.isEmpty, waitingQueue.isEmpty else { return }
         let old = session
         old?.finishTasksAndInvalidate()
@@ -1189,6 +1209,7 @@ final class DownloadService: ObservableObject {
     /// Clears the persisted error ring buffer and the banner `lastError`.
     private func recordHistory(_ entry: DownloadHistoryEntry) {
         history = DownloadHistoryLog.appending(entry, to: history)
+        guard !isTestInstance else { return }
         DownloadHistoryLog.save(history)
     }
 
@@ -1281,6 +1302,7 @@ final class DownloadService: ObservableObject {
         }
         recentErrors = next
         lastError = message
+        guard !isTestInstance else { return }
         PodcastPersistence.saveDownloadErrors(next)
         Task {
             await DownloadErrorNotificationCoordinator.notifyIfNeeded(
@@ -1409,10 +1431,12 @@ final class DownloadService: ObservableObject {
     }
 
     private func persistCompleted() {
+        guard !isTestInstance else { return }
         PodcastPersistence.saveDownloadedEpisodes(downloads)
     }
 
     private func persistPending() {
+        guard !isTestInstance else { return }
         PodcastPersistence.savePendingDownloads(Array(pendingByTaskId.values))
     }
 
