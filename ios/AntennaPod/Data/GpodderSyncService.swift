@@ -432,20 +432,9 @@ final class GpodderSyncService: ObservableObject {
             let since = subscriptionTimestamp
             let changes = try await client.getSubscriptionChanges(since: since)
 
-            var remote = knownRemoteURLs
-            if since == 0 {
-                // Fresh device / first sync: `add` is the full current list.
-                remote = Set(changes.add.map { Self.normalizeFeedURL($0) }.filter { !$0.isEmpty })
-            } else {
-                for url in changes.add {
-                    let n = Self.normalizeFeedURL(url)
-                    if !n.isEmpty { remote.insert(n) }
-                }
-                for url in changes.remove {
-                    let n = Self.normalizeFeedURL(url)
-                    if !n.isEmpty { remote.remove(n) }
-                }
-            }
+            // since == 0 (fresh device / first sync / after reset): `add` is the full list.
+            let cursor = SubscriptionSyncCursor(since: since, remoteKeys: knownRemoteURLs)
+            var remote = cursor.applyingPull(changes)
 
             // Pull: subscribe missing (deduped, per-feed progress + errors).
             let localNormalized = Set(store.feeds.map { Self.normalizeFeedURL($0.feedUrl) }.filter { !$0.isEmpty })
@@ -472,26 +461,17 @@ final class GpodderSyncService: ObservableObject {
             // Known on the server under another address (pre-redirect URL, http/https variant):
             // not uploaded again (that is what filled the account with duplicates).
             let toUpload = SubscriptionSyncPlan.urlsToUpload(localPodcasts: store.feeds.map(\.allUrls), remoteKeys: remote)
-            var uploadTimestamp = changes.timestamp
+            var pushResult: PushResult?
             if !toUpload.isEmpty {
                 let upload = try await client.uploadSubscriptionChanges(add: toUpload, remove: [])
-                if let ts = upload.timestamp {
-                    uploadTimestamp = ts
-                }
-                // Apply server URL rewrites if present.
-                if let pairs = upload.updateUrls {
-                    for pair in pairs where pair.count >= 2 {
-                        let from = Self.normalizeFeedURL(pair[0])
-                        let to = Self.normalizeFeedURL(pair[1])
-                        if !from.isEmpty { remote.remove(from) }
-                        if !to.isEmpty { remote.insert(to) }
-                    }
-                }
-                for u in toUpload { remote.insert(Self.normalizeFeedURL(u)) }
+                remote = SubscriptionSyncCursor.applyingPush(remote, uploaded: toUpload, result: upload)
+                pushResult = upload
             }
+            // Committed only after pull + push succeeded; a failed round repeats the same delta.
+            let committed = SubscriptionSyncCursor.committed(pull: changes, keys: remote, push: pushResult)
 
-            knownRemoteURLs = remote
-            subscriptionTimestamp = uploadTimestamp
+            knownRemoteURLs = committed.remoteKeys
+            subscriptionTimestamp = committed.since
 
             let episodeResult = try await syncEpisodeActions(client: client, store: store)
             lastSyncAt = Date()

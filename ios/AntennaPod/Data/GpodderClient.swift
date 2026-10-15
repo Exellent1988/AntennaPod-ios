@@ -1,4 +1,5 @@
 import Foundation
+import PodcastCore
 
 /// Sync backend: gpodder.net API2 vs Nextcloud Gpodder Sync app paths.
 enum GpodderProvider: String, CaseIterable, Identifiable {
@@ -24,6 +25,10 @@ enum GpodderProvider: String, CaseIterable, Identifiable {
 /// gpodder.net API v2 + Nextcloud Gpodder Sync client (URLSession + HTTP Basic).
 /// gpodder shapes: https://gpoddernet.readthedocs.io/en/latest/api/reference/
 /// Nextcloud paths: https://github.com/thrillfall/nextcloud-gpodder (subscriptions MVP).
+extension GpodderProvider {
+    var apiFlavor: GpodderSubscriptionAPI.Flavor { self == .nextcloud ? .nextcloud : .gpodderNet }
+}
+
 struct GpodderClient {
     var baseURL: URL
     var username: String
@@ -144,18 +149,12 @@ struct GpodderClient {
     /// gpodder.net: GET /api/2/subscriptions/{username}/{deviceid}.json?since=
     /// Nextcloud: GET {apiRoot}/subscriptions?since=
     func getSubscriptionChanges(since: Int64) async throws -> SubscriptionChanges {
-        let path: String
-        switch provider {
-        case .gpodderNet:
-            path = "api/2/subscriptions/\(pathEncoded(username))/\(pathEncoded(deviceId)).json"
-        case .nextcloud:
-            path = "subscriptions"
-        }
+        let path = GpodderSubscriptionAPI.pullPath(provider.apiFlavor, username: username, deviceId: deviceId)
         var components = URLComponents(
             url: try apiURL(path),
             resolvingAgainstBaseURL: false
         )!
-        components.queryItems = [URLQueryItem(name: "since", value: String(since))]
+        components.queryItems = GpodderSubscriptionAPI.pullQuery(since: since)
         guard let url = components.url else { throw GpodderError.invalidHost }
         let request = authorizedRequest(url: url, method: "GET")
         let data = try await perform(request, expectBody: true)
@@ -165,24 +164,18 @@ struct GpodderClient {
     /// gpodder.net: POST /api/2/subscriptions/{username}/{deviceid}.json
     /// Nextcloud: POST {apiRoot}/subscription_change/create
     func uploadSubscriptionChanges(add: [String], remove: [String]) async throws -> UploadChangesResponse {
-        let path: String
-        switch provider {
-        case .gpodderNet:
-            path = "api/2/subscriptions/\(pathEncoded(username))/\(pathEncoded(deviceId)).json"
-        case .nextcloud:
-            path = "subscription_change/create"
-        }
+        let path = GpodderSubscriptionAPI.pushPath(provider.apiFlavor, username: username, deviceId: deviceId)
         let url = try apiURL(path)
         var request = authorizedRequest(url: url, method: "POST")
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        let body = SubscriptionChangeBody(add: add, remove: remove)
-        request.httpBody = try encoder.encode(body)
+        request.httpBody = try GpodderSubscriptionAPI.pushBody(add: add, remove: remove)
         let data = try await perform(request, expectBody: true)
-        if data.isEmpty {
-            return UploadChangesResponse(timestamp: nil, updateUrls: nil)
+        // Nextcloud may return only `{ "timestamp": … }` without update_urls, or an empty body.
+        do {
+            return try GpodderSubscriptionAPI.parsePush(data)
+        } catch {
+            throw GpodderError.invalidResponse
         }
-        // Nextcloud may return only `{ "timestamp": … }` without update_urls.
-        return try decode(UploadChangesResponse.self, from: data)
     }
 
     // MARK: - Episode actions
@@ -356,11 +349,7 @@ struct GpodderClient {
         return url
     }
 
-    private func pathEncoded(_ value: String) -> String {
-        var allowed = CharacterSet.alphanumerics
-        allowed.insert(charactersIn: "-._~")
-        return value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
-    }
+    private func pathEncoded(_ value: String) -> String { GpodderSubscriptionAPI.pathEncoded(value) }
 
     static func normalizeBaseURL(_ host: String, provider: GpodderProvider = .gpodderNet) -> URL? {
         var s = host.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -432,89 +421,13 @@ struct GpodderClient {
 
 // MARK: - DTOs
 
-struct SubscriptionChanges: Decodable {
-    let add: [String]
-    let remove: [String]
-    let timestamp: Int64
-}
-
-struct UploadChangesResponse: Decodable {
-    let timestamp: Int64?
-    let updateUrls: [[String]]?
-
-    enum CodingKeys: String, CodingKey {
-        case timestamp
-        case updateUrls = "update_urls"
-    }
-}
-
-struct GpodderDevice: Decodable, Identifiable, Hashable {
-    let id: String
-    let caption: String
-    let type: String
-    let subscriptions: Int
-
-    enum CodingKeys: String, CodingKey { case id, caption, type, subscriptions }
-
-    init(id: String, caption: String, type: String = "mobile", subscriptions: Int = 0) {
-        self.id = id
-        self.caption = caption
-        self.type = type
-        self.subscriptions = subscriptions
-    }
-
-    init(from decoder: Decoder) throws {
-        let c = try decoder.container(keyedBy: CodingKeys.self)
-        id = try c.decode(String.self, forKey: .id)
-        caption = try c.decodeIfPresent(String.self, forKey: .caption) ?? ""
-        type = try c.decodeIfPresent(String.self, forKey: .type) ?? ""
-        subscriptions = try c.decodeIfPresent(Int.self, forKey: .subscriptions) ?? 0
-    }
-}
-
-/// One gpodder episode action (`play` carries started/position/total seconds).
-/// Timestamps are UTC `yyyy-MM-dd'T'HH:mm:ss` on the wire.
-struct GpodderEpisodeAction: Codable, Equatable {
-    var podcast: String
-    var episode: String
-    var guid: String?
-    var action: String
-    var timestamp: String?
-    var started: Int?
-    var position: Int?
-    var total: Int?
-    var device: String?
-
-    var date: Date? { timestamp.flatMap(Self.parseTimestamp) }
-
-    static func parseTimestamp(_ raw: String) -> Date? {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.timeZone = TimeZone(identifier: "UTC")
-        var s = raw
-        if s.hasSuffix("Z") { s.removeLast() }
-        if let dot = s.firstIndex(of: ".") { s = String(s[..<dot]) }
-        f.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        return f.date(from: s)
-    }
-
-    static func formatTimestamp(_ date: Date) -> String {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "en_US_POSIX")
-        f.timeZone = TimeZone(identifier: "UTC")
-        f.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        return f.string(from: date)
-    }
-}
+/// Pull / push reply shapes live in PodcastCore (Linux-tested).
+typealias SubscriptionChanges = SubscriptionDelta
+typealias UploadChangesResponse = PushResult
 
 struct EpisodeActionChanges: Decodable {
     let actions: [GpodderEpisodeAction]
     let timestamp: Int64
-}
-
-private struct SubscriptionChangeBody: Encodable {
-    let add: [String]
-    let remove: [String]
 }
 
 private struct DeviceUpdateBody: Encodable {
