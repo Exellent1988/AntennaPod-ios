@@ -259,6 +259,8 @@ final class DownloadService: ObservableObject {
 
     private let sessionDelegate = DownloadSessionDelegate()
     private var session: URLSession!
+    /// True between `finishTasksAndInvalidate` and `didBecomeInvalidWithError` of a proxy rebuild.
+    private(set) var isReplacingSession = false
     /// Retains block-based observer for `AppHTTPProxy.didChangeNotification`.
     private var proxyChangeObserver: NSObjectProtocol?
     /// Test instance (`init(testSessionConfiguration:)`): own session, no disk / global state.
@@ -351,17 +353,36 @@ final class DownloadService: ObservableObject {
     /// Background sessions cannot mutate `connectionProxyDictionary` in place.
     /// When idle (no live tasks / waiting queue), invalidate and recreate so the new proxy applies.
     /// If downloads are active, the next cold start / idle recreate picks it up — honest beta limit.
+    ///
+    /// A background session with the same identifier must not be created until the old one
+    /// reports `didBecomeInvalidWithError`. Creating it at once returned an already-invalidated
+    /// session: the next `downloadTask(with:)` raised an Objective-C exception ("attempted to
+    /// create a NSURLSessionDownloadTask in a session that has been invalidated") and the app
+    /// aborted (swift_task_dealloc_specific "freed pointer was not the last allocation").
+    /// Waiting downloads stay queued until the new session exists.
     private func recreateSessionIfIdleForProxyChange() {
         guard !isTestInstance else { return }
         guard pendingByTaskId.isEmpty, waitingQueue.isEmpty else { return }
-        let old = session
-        old?.finishTasksAndInvalidate()
-        let config = URLSessionConfiguration.background(withIdentifier: Self.backgroundSessionIdentifier)
+        guard !isReplacingSession, let old = session else { return }
+        isReplacingSession = true
+        old.finishTasksAndInvalidate()
+    }
+
+    /// Delegate callback (main actor): the old background session is gone, build the new one.
+    func backgroundSessionDidBecomeInvalid(_ invalidated: URLSession) {
+        guard isReplacingSession, invalidated === session else { return }
+        session = Self.makeBackgroundSession(delegate: sessionDelegate)
+        isReplacingSession = false
+        pumpWaitingQueue()
+    }
+
+    private static func makeBackgroundSession(delegate: DownloadSessionDelegate) -> URLSession {
+        let config = URLSessionConfiguration.background(withIdentifier: backgroundSessionIdentifier)
         config.sessionSendsLaunchEvents = true
         config.isDiscretionary = false
         config.allowsCellularAccess = true
         AppURLSession.applyProxy(to: config)
-        session = URLSession(configuration: config, delegate: sessionDelegate, delegateQueue: nil)
+        return URLSession(configuration: config, delegate: delegate, delegateQueue: nil)
     }
 
     /// Called from `AppDelegate` when iOS relaunches / wakes the app for this background session.
@@ -537,7 +558,7 @@ final class DownloadService: ObservableObject {
     func pumpWaitingQueue() {
         let limit = settings?.maxParallelDownloads.rawValue ?? MaxParallelDownloads.three.rawValue
         var heldForWifi: [WaitingDownload] = []
-        while !waitingQueue.isEmpty && activeDownloadSlotCount < limit {
+        while !isReplacingSession && !waitingQueue.isEmpty && activeDownloadSlotCount < limit {
             let next = waitingQueue.removeFirst()
             // Re-check manual Wi‑Fi gate when a waiting item finally starts (path may have changed).
             if next.source == .manual, settings?.manualDownloadWifiOnly == true {
@@ -1545,6 +1566,12 @@ final class DownloadSessionDelegate: NSObject, URLSessionDownloadDelegate {
             Task { @MainActor in
                 self.owner?.reportError(error.localizedDescription, episode: mapping.episode)
             }
+        }
+    }
+
+    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+        Task { @MainActor in
+            self.owner?.backgroundSessionDidBecomeInvalid(session)
         }
     }
 

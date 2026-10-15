@@ -104,6 +104,21 @@ final class QueueAutoParityTests: PlaybackFixtureTestCase {
         downloads.delete(episodes[0])
         XCTAssertTrue(store.isInQueue(episodes[0].id))
     }
+
+    /// A proxy change rebuilds the idle background session. The new session used to be created
+    /// before the old one was invalid, so the next download raised "session has been
+    /// invalidated" and aborted the app. The rebuild now waits for didBecomeInvalidWithError.
+    func testProxyChangeRebuildKeepsDownloadsWorking() async throws {
+        AppHTTPProxy.notifyDidChange()
+        await downloads.download(remoteEpisodes[0])
+        for _ in 0..<100 where downloads.isReplacingSession {
+            try await Task.sleep(nanoseconds: 50_000_000)
+        }
+        XCTAssertFalse(downloads.isReplacingSession, "new session built after the old one became invalid")
+        await downloads.download(remoteEpisodes[1])
+        XCTAssertTrue(downloads.inProgress.contains(remoteEpisodes[1].id), "started or waiting, no abort")
+    }
+
 }
 
 /// Accepts every request and never answers: a download stays in flight until cancelled.
