@@ -1014,15 +1014,17 @@ struct SubscriptionsView: View {
     /// Android grid mode (subscription_num_columns): cover cells, same tap/long-press targets as rows.
     private func feedGrid(_ feeds: [PodcastFeed], remaining: [UUID: FeedUnplayedRemainingSummary]) -> some View {
         LazyVGrid(
-            columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: min(max(settings.subscriptionsGridColumns, 2), 5)),
-            spacing: 12
+            // Android subscription_grid_item.xml: 4dp padding around every card -> 8 between cards.
+            columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: min(max(settings.subscriptionsGridColumns, 2), 5)),
+            spacing: 8
         ) {
             ForEach(feeds) { feed in
                 SubscriptionGridCell(
                     feed: feed,
                     title: feedDisplayTitle(feed),
                     count: counterValue(feed, unplayed: remaining[feed.id]?.unplayedCount ?? 0),
-                    showTitle: settings.subscriptionsGridShowTitles
+                    showTitle: settings.subscriptionsGridShowTitles,
+                    columns: min(max(settings.subscriptionsGridColumns, 2), 5)
                 )
                 // Invisible link over the cell: a visible NavigationLink in a List row adds a chevron per cell.
                 .overlay {
