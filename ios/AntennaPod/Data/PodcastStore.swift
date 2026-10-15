@@ -2840,6 +2840,16 @@ final class PodcastStore: ObservableObject {
     /// Android Statistics → Years: listening time per calendar year over the History catalog
     /// (Reset baseline + Include marked as played apply; the time-range picker does not).
     func yearlyListening(calendar: Calendar = .current) -> [StatisticsParity.YearTotal] {
+        StatisticsParity.yearTotals(datedListening(), calendar: calendar)
+    }
+
+    /// Statistics chart: listening seconds per month (Jan…Dec) of `year`.
+    func monthlyListening(year: Int, calendar: Calendar = .current) -> [Double] {
+        StatisticsChartData.monthTotals(datedListening(), year: year, calendar: calendar)
+    }
+
+    /// (History timestamp, listening seconds) per History episode, Reset + include-marked applied.
+    func datedListening() -> [(epochMs: Int64, seconds: Double)] {
         let resetAt = settings?.statisticsResetAtEpochMs ?? 0
         let includeMarked = settings?.statisticsIncludeMarkedPlayed ?? true
         let items: [(epochMs: Int64, seconds: Double)] = historyEpisodes.compactMap { episode in
@@ -2849,7 +2859,7 @@ final class PodcastStore: ObservableObject {
             if resetAt > 0, stamp < resetAt { return nil }
             return (stamp, ListeningTimeEstimate.seconds(for: state, includeMarkedPlayed: includeMarked))
         }
-        return StatisticsParity.yearTotals(items, calendar: calendar)
+        return items
     }
 
     func listeningStatistics(
