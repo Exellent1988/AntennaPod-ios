@@ -1,3 +1,4 @@
+import PodcastCore
 import AudioDSP
 import SwiftUI
 import UIKit
@@ -887,6 +888,7 @@ struct SettingsView: View {
             || matchesPlaybackRemaining
             || matchesPlaybackRewindPause
             || matchesPlaybackReconnect
+            || matchesPlaybackHardwareButtons
             || matchesPlaybackPauseForInterruptions
             || matchesPlaybackSmartMark
     }
@@ -1015,6 +1017,24 @@ struct SettingsView: View {
             "Interruptions",
             "On: spoken prompts such as navigation or Siri pause the episode, and it resumes when they finish. Off: they lower the volume instead. Calls and alarms always pause; playback resumes afterwards when iOS allows it and you did not press play or pause meanwhile. Default on."
         )
+    }
+
+    private var matchesPlaybackHardwareButtons: Bool {
+        matchesSearch(
+            "Reassign hardware buttons",
+            "Forward button",
+            "Previous button",
+            "What the next and previous buttons on headphones, the lock screen and Control Center do. Default: Fast-forward and Rewind by the intervals above."
+        )
+    }
+
+    static func hardwareButtonLabel(_ action: HardwareButtonAction) -> String {
+        switch action {
+        case .fastForward: return String(localized: "Fast-forward")
+        case .rewind: return String(localized: "Rewind")
+        case .skipEpisode: return String(localized: "Skip episode")
+        case .restartEpisode: return String(localized: "Restart episode")
+        }
     }
 
     private var matchesPlaybackReconnect: Bool {
@@ -1567,6 +1587,19 @@ struct SettingsView: View {
                     .accessibilityValue(remainingTimeRespectsSpeedAccessibilityValue)
                     .accessibilityHint(remainingTimeRespectsSpeedAccessibilityHint)
                 Text("When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining and chapter list current remaining use the live session rate (fallback feed/default, 0.5…3.0). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue stay wall-clock.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackHardwareButtons {
+                Picker("Forward button", selection: $settings.hardwareForwardButton) {
+                    ForEach(HardwareButtonAction.allCases, id: \.self) { Text(Self.hardwareButtonLabel($0)).tag($0) }
+                }
+                .accessibilityHint(String(localized: "Action for the next button on headphones, the lock screen and Control Center."))
+                Picker("Previous button", selection: $settings.hardwarePreviousButton) {
+                    ForEach(HardwareButtonAction.allCases, id: \.self) { Text(Self.hardwareButtonLabel($0)).tag($0) }
+                }
+                .accessibilityHint(String(localized: "Action for the previous button on headphones, the lock screen and Control Center."))
+                Text("What the next and previous buttons on headphones, the lock screen and Control Center do. Default: Fast-forward and Rewind by the intervals above.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

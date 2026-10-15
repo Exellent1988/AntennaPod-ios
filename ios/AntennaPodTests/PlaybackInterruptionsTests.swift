@@ -139,3 +139,47 @@ final class PauseForInterruptionsTests: PlaybackFixtureTestCase {
         XCTAssertFalse(playback.isPlaying, "The user's pause wins")
     }
 }
+
+@MainActor
+final class HardwareButtonTests: PlaybackFixtureTestCase {
+    func testDefaultsAndBackup() throws {
+        var old = settings.backupSnapshot()
+        old.hardwareForwardButton = nil
+        old.hardwarePreviousButton = "bogus"
+        settings.applyBackupSnapshot(old)
+        XCTAssertEqual(settings.hardwareForwardButton, .fastForward)
+        XCTAssertEqual(settings.hardwarePreviousButton, .rewind)
+        settings.hardwareForwardButton = .skipEpisode
+        settings.hardwarePreviousButton = .restartEpisode
+        let snap = try JSONDecoder().decode(AppSettingsBackupSnapshot.self, from: JSONEncoder().encode(settings.backupSnapshot()))
+        XCTAssertEqual(snap.hardwareForwardButton, "skipEpisode")
+        settings.hardwareForwardButton = .fastForward
+        settings.applyBackupSnapshot(snap)
+        XCTAssertEqual(settings.hardwareForwardButton, .skipEpisode)
+        XCTAssertEqual(AppSettings().hardwarePreviousButton, .restartEpisode, "Persists in UserDefaults")
+    }
+
+    func testActionsOnRealPlayback() async throws {
+        let long = PodcastEpisode(id: "e2e-hw-\(UUID().uuidString.prefix(6))", title: "Long",
+                                  downloadUrl: fixtureDir.appendingPathComponent("hw.caf").absoluteString,
+                                  mimeType: "audio/x-caf", durationSeconds: 40)
+        try Self.writeFixture(to: fixtureDir.appendingPathComponent("hw.caf"), seconds: 40, frequency: 500)
+        store.queue.insert(long, at: 0)
+        settings.fastForwardSeconds = 10
+        settings.rewindSeconds = 5
+        XCTAssertTrue(playback.play(episode: long))
+        try await waitFor("playing", timeout: 8) { self.playback.isPlaying && self.playback.positionSeconds > 0.5 }
+        let start = playback.positionSeconds
+        playback.performHardwareButton(.fastForward)
+        try await waitFor("ff", timeout: 4) { self.playback.positionSeconds >= start + 9 }
+        let afterFF = playback.positionSeconds
+        playback.performHardwareButton(.rewind)
+        try await waitFor("rewind", timeout: 4) { self.playback.positionSeconds <= afterFF - 4 }
+        playback.performHardwareButton(.restartEpisode)
+        try await waitFor("restart", timeout: 4) { self.playback.positionSeconds < 1 }
+        XCTAssertEqual(playback.currentEpisode?.id, long.id)
+        playback.performHardwareButton(.skipEpisode)
+        XCTAssertEqual(playback.currentEpisode?.id, episodes[0].id, "Skip episode → next in queue")
+        XCTAssertTrue(store.isPlayed(long.id))
+    }
+}

@@ -2471,12 +2471,13 @@ final class PlaybackService: ObservableObject {
 
         applyRemoteSkipIntervals()
 
-        // Steering-wheel next/previous often fire these instead of skip+/-; map to Settings intervals.
+        // Headset / steering-wheel / lock-screen next & previous: Android "Reassign hardware buttons"
+        // (Settings → Forward button / Previous button; defaults fast-forward / rewind).
         center.nextTrackCommand.isEnabled = true
         center.nextTrackCommand.addTarget { [weak self] _ in
             Task { @MainActor in
                 guard let self else { return }
-                self.seek(bySeconds: self.fastForwardSeconds)
+                self.performHardwareButton(self.settings?.hardwareForwardButton ?? HardwareButtonAction.defaultForward)
             }
             return .success
         }
@@ -2485,7 +2486,7 @@ final class PlaybackService: ObservableObject {
         center.previousTrackCommand.addTarget { [weak self] _ in
             Task { @MainActor in
                 guard let self else { return }
-                self.seek(bySeconds: -self.rewindSeconds)
+                self.performHardwareButton(self.settings?.hardwarePreviousButton ?? HardwareButtonAction.defaultPrevious)
             }
             return .success
         }
@@ -2504,6 +2505,17 @@ final class PlaybackService: ObservableObject {
     }
 
     /// Refresh Lockscreen / Control Center skip button intervals from `AppSettings`.
+    /// Android `handleKeycode` for a remapped hardware button.
+    func performHardwareButton(_ action: HardwareButtonAction) {
+        guard currentEpisode != nil else { return }
+        switch action {
+        case .fastForward: seek(bySeconds: fastForwardSeconds)
+        case .rewind: seek(bySeconds: -rewindSeconds)
+        case .skipEpisode: skipToNextEpisode()
+        case .restartEpisode: seek(toSeconds: 0)
+        }
+    }
+
     func applyRemoteSkipIntervals() {
         let center = MPRemoteCommandCenter.shared()
         center.skipForwardCommand.preferredIntervals = [NSNumber(value: fastForwardSeconds)]
