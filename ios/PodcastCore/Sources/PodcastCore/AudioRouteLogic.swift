@@ -48,3 +48,14 @@ public enum ReconnectResumePolicy {
         }
     }
 }
+
+/// Android `prefPauseOnHeadsetDisconnect` (default on, global only): pause when headphones or a
+/// Bluetooth device go away. Off → playback continues on the speaker, and nothing is armed for
+/// the reconnect resume (Android only resumes after its own disconnect pause).
+public enum DisconnectPausePolicy {
+    public static let defaultPauseOnDisconnect = true
+
+    public static func shouldPause(pauseOnDisconnect: Bool, isPlaying: Bool) -> Bool {
+        pauseOnDisconnect && isPlaying
+    }
+}

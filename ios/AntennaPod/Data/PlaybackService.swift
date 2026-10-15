@@ -2318,9 +2318,17 @@ final class PlaybackService: ObservableObject {
         case .oldDeviceUnavailable:
             // Headphones / wireless audio device became unavailable — standard pause.
             resumeAfterInterruption = false
-            if isPlaying || (player?.rate ?? 0) > 0 {
+            let playing = isPlaying || (player?.rate ?? 0) > 0
+            if DisconnectPausePolicy.shouldPause(
+                pauseOnDisconnect: settings?.pauseOnDisconnect ?? DisconnectPausePolicy.defaultPauseOnDisconnect,
+                isPlaying: playing
+            ) {
                 pauseForAudioSessionEvent()
                 pausedByUnplugAt = now
+            } else if playing, let player {
+                // AVPlayer stops itself when the output disappears; keep going on the new route.
+                player.play()
+                player.rate = rate
             }
             return true
         case .newDeviceAvailable:

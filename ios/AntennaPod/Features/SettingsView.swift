@@ -1039,6 +1039,7 @@ struct SettingsView: View {
 
     private var matchesPlaybackReconnect: Bool {
         matchesSearch(
+            "Headphones or Bluetooth disconnect",
             "Headphones reconnect",
             "Bluetooth reconnect",
             "Interruptions",
@@ -1612,9 +1613,13 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             }
             if matchesPlaybackReconnect {
+                Toggle("Headphones or Bluetooth disconnect", isOn: $settings.pauseOnDisconnect)
+                    .accessibilityHint(String(localized: "Pauses playback when headphones or a Bluetooth device disconnect. Off keeps playing on the speaker. Default on."))
                 Toggle("Headphones reconnect", isOn: $settings.resumeOnHeadphonesReconnect)
+                    .disabled(!settings.pauseOnDisconnect)
                     .accessibilityHint(String(localized: "Resumes playback when wired headphones that paused it are plugged back in. Default on."))
                 Toggle("Bluetooth reconnect", isOn: $settings.resumeOnBluetoothReconnect)
+                    .disabled(!settings.pauseOnDisconnect)
                     .accessibilityHint(String(localized: "Resumes playback when the Bluetooth device that paused it reconnects. Default off."))
                 Text("Resume playback when the headphones or Bluetooth device that paused it reconnects within 30 minutes. Only after an unplug pause; a pause you made yourself never resumes on its own.")
                     .font(.caption)

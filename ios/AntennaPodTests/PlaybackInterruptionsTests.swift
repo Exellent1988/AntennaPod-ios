@@ -183,3 +183,34 @@ final class HardwareButtonTests: PlaybackFixtureTestCase {
         XCTAssertTrue(store.isPlayed(long.id))
     }
 }
+
+@MainActor
+final class PauseOnDisconnectTests: PlaybackFixtureTestCase {
+    func testDefaultAndBackup() throws {
+        var old = settings.backupSnapshot()
+        old.pauseOnDisconnect = nil
+        settings.applyBackupSnapshot(old)
+        XCTAssertTrue(settings.pauseOnDisconnect, "Android default on")
+        settings.pauseOnDisconnect = false
+        let snap = try JSONDecoder().decode(AppSettingsBackupSnapshot.self, from: JSONEncoder().encode(settings.backupSnapshot()))
+        settings.pauseOnDisconnect = true
+        settings.applyBackupSnapshot(snap)
+        XCTAssertFalse(settings.pauseOnDisconnect)
+    }
+
+    func testOffKeepsPlayingAndDoesNotArmReconnect() async throws {
+        settings.pauseOnDisconnect = false
+        XCTAssertTrue(playback.play(episode: episodes[0]))
+        try await waitFor("playing", timeout: 8) { self.playback.isPlaying }
+        playback.handleRouteChange(reason: .oldDeviceUnavailable, currentOutputPorts: ["Speaker"])
+        XCTAssertTrue(playback.isPlaying, "Off: keeps playing on the speaker")
+        XCTAssertNil(playback.pausedByUnplugAt)
+    }
+
+    func testOnPauses() async throws {
+        XCTAssertTrue(playback.play(episode: episodes[0]))
+        try await waitFor("playing", timeout: 8) { self.playback.isPlaying }
+        playback.handleRouteChange(reason: .oldDeviceUnavailable, currentOutputPorts: ["Speaker"])
+        XCTAssertFalse(playback.isPlaying)
+    }
+}

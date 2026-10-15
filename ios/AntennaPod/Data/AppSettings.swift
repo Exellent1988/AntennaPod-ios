@@ -1377,6 +1377,7 @@ final class AppSettings: ObservableObject {
         static let showRemainingTime = "settings.showRemainingTime"
         static let remainingTimeRespectsSpeed = "settings.remainingTimeRespectsSpeed"
         static let rewindAfterPauseSeconds = "settings.rewindAfterPauseSeconds"
+        static let pauseOnDisconnect = "settings.pauseOnDisconnect"
         static let hardwarePreviousButton = "settings.hardwarePreviousButton"
         static let hardwareForwardButton = "settings.hardwareForwardButton"
         static let pauseForInterruptions = "settings.pauseForInterruptions"
@@ -1981,6 +1982,11 @@ final class AppSettings: ObservableObject {
     /// Android `prefHardwarePreviousButton`: remote previous-track action (default rewind).
     @Published var hardwarePreviousButton: HardwareButtonAction {
         didSet { UserDefaults.standard.set(hardwarePreviousButton.rawValue, forKey: Keys.hardwarePreviousButton) }
+    }
+
+    /// Android `prefPauseOnHeadsetDisconnect` (default on, global): pause when headphones / Bluetooth disconnect.
+    @Published var pauseOnDisconnect: Bool {
+        didSet { UserDefaults.standard.set(pauseOnDisconnect, forKey: Keys.pauseOnDisconnect) }
     }
 
     @Published var rewindAfterPauseSeconds: Int {
@@ -2673,6 +2679,7 @@ final class AppSettings: ObservableObject {
             remainingTimeRespectsSpeed = false
         }
         rewindAfterPauseSeconds = Self.loadRewindAfterPauseSeconds()
+        pauseOnDisconnect = UserDefaults.standard.object(forKey: Keys.pauseOnDisconnect) as? Bool ?? DisconnectPausePolicy.defaultPauseOnDisconnect
         hardwarePreviousButton = HardwareButtonAction.resolve(UserDefaults.standard.string(forKey: Keys.hardwarePreviousButton), default: .defaultPrevious)
         hardwareForwardButton = HardwareButtonAction.resolve(UserDefaults.standard.string(forKey: Keys.hardwareForwardButton), default: .defaultForward)
         pauseForInterruptions = UserDefaults.standard.object(forKey: Keys.pauseForInterruptions) as? Bool ?? InterruptionPolicy.defaultPauseForInterruptions
@@ -3120,6 +3127,7 @@ final class AppSettings: ObservableObject {
             showRemainingTime: showRemainingTime,
             remainingTimeRespectsSpeed: remainingTimeRespectsSpeed,
             rewindAfterPauseSeconds: rewindAfterPauseSeconds,
+            pauseOnDisconnect: pauseOnDisconnect,
             hardwarePreviousButton: hardwarePreviousButton.rawValue,
             hardwareForwardButton: hardwareForwardButton.rawValue,
             pauseForInterruptions: pauseForInterruptions,
@@ -3275,6 +3283,7 @@ final class AppSettings: ObservableObject {
         pauseForInterruptions = snap.pauseForInterruptions ?? InterruptionPolicy.defaultPauseForInterruptions
         hardwareForwardButton = HardwareButtonAction.resolve(snap.hardwareForwardButton, default: .defaultForward)
         hardwarePreviousButton = HardwareButtonAction.resolve(snap.hardwarePreviousButton, default: .defaultPrevious)
+        pauseOnDisconnect = snap.pauseOnDisconnect ?? DisconnectPausePolicy.defaultPauseOnDisconnect
         let rewindAfter = snap.rewindAfterPauseSeconds ?? Self.defaultRewindAfterPauseSeconds
         rewindAfterPauseSeconds = Self.rewindAfterPausePresets.contains(rewindAfter)
             ? rewindAfter
@@ -3521,6 +3530,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var remainingTimeRespectsSpeed: Bool? = false
     /// Absent in older backups → treated as 2 (honest beta default).
     var rewindAfterPauseSeconds: Int? = 2
+    /// Absent in older backups → default.
+    var pauseOnDisconnect: Bool? = nil
     /// Absent in older backups → default.
     var hardwarePreviousButton: String? = nil
     /// Absent in older backups → default.
