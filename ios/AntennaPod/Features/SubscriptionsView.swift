@@ -1040,18 +1040,8 @@ struct SubscriptionsView: View {
                 }
                 // Android SubscriptionsRecyclerAdapter action mode: tap toggles while Select is on.
                 .feedGridSelectable(selection: $feedSelection, feedId: feed.id)
-                .contextMenu {
-                    Button {
-                        feedForSettings = feed
-                    } label: {
-                        Label("Podcast settings", systemImage: "gearshape")
-                    }
-                    Button {
-                        store.togglePinned(feedId: feed.id)
-                    } label: {
-                        Label(store.isPinned(feedId: feed.id) ? String(localized: "Don’t keep at top") : String(localized: "Keep at top"), systemImage: "pin")
-                    }
-                }
+                // Android: grid and list share nav_feed_context (SubscriptionFragment.onContextItemSelected).
+                .modifier(feedContextMenu(feed))
             }
         }
         .padding(.vertical, 4)
@@ -1259,7 +1249,14 @@ struct SubscriptionsView: View {
                     : String(localized: "Fetches this podcast’s feed from the network, including when Keep updated is Never. Not Refresh all. Feed refresh is not limited by the Wi‑Fi-only toggles and may use cellular. Does not invent episodes; Auto-download may enqueue newly appeared ones after a successful refresh. Distinct from Rescan folder for local-folder podcasts.")
             )
         }
-        .modifier(SubscriptionRowContextMenu(
+        .modifier(feedContextMenu(feed))
+    }
+
+
+
+    /// Long-press menu for list rows and grid cells (Android nav_feed_context.xml).
+    private func feedContextMenu(_ feed: PodcastFeed) -> SubscriptionRowContextMenu {
+        SubscriptionRowContextMenu(
             feedId: feed.id,
             podcastTitle: EpisodeCopyLinks.trimmedFeedTitle(feedDisplayTitle(feed)),
             websiteURL: feed.websiteURL,
@@ -1276,9 +1273,8 @@ struct SubscriptionsView: View {
                 copyFeedbackTick += 1
                 showCopiedAlert = true
             }
-        ))
+        )
     }
-
 
     /// VoiceOver for last successful network refresh. Nil for local-folder / never refreshed (never invent).
     private func lastRefreshedAccessibility(_ feed: PodcastFeed) -> String? {
