@@ -2362,8 +2362,8 @@ final class AppSettings: ObservableObject {
     @Published var subscriptionsGridColumns: Int {
         didSet { UserDefaults.standard.set(subscriptionsGridColumns, forKey: Keys.subscriptionsGridColumns) }
     }
-    /// Grid: show the podcast title under the cover (Android pref_show_subscription_title, default on).
-    /// Persisted; not in the JSON backup yet.
+    /// Grid: show the podcast title under the cover (Android pref_show_subscription_title).
+    /// New installs start off like Android; existing users keep titles on. Persisted (+ backup).
     @Published var subscriptionsGridShowTitles: Bool {
         didSet { UserDefaults.standard.set(subscriptionsGridShowTitles, forKey: Keys.subscriptionsGridShowTitles) }
     }
@@ -2831,13 +2831,24 @@ final class AppSettings: ObservableObject {
         subscriptionsDisplayMode = SubscriptionsDisplayMode(rawValue: ud.string(forKey: Keys.subscriptionsDisplayMode) ?? "") ?? .list
         let cols = ud.object(forKey: Keys.subscriptionsGridColumns) as? Int ?? 3
         subscriptionsGridColumns = min(max(cols, 2), 5)
-        subscriptionsGridShowTitles = ud.object(forKey: Keys.subscriptionsGridShowTitles) as? Bool ?? true
+        let storedGridTitles = ud.object(forKey: Keys.subscriptionsGridShowTitles) as? Bool
+        subscriptionsGridShowTitles = Self.initialGridShowTitles(stored: storedGridTitles, isFreshInstall: isFreshInstall)
+        if storedGridTitles == nil {
+            // Pin the first-launch choice: the fresh-install check is false from the second launch on.
+            ud.set(subscriptionsGridShowTitles, forKey: Keys.subscriptionsGridShowTitles)
+        }
         subscriptionsCounterMode = SubscriptionsCounterMode(rawValue: ud.string(forKey: Keys.subscriptionsCounterMode) ?? "") ?? .unplayed
         let storedSwipes = ud.dictionary(forKey: Keys.swipeActions) as? [String: String]
         swipeActions = Self.initialSwipeActions(stored: storedSwipes, isFreshInstall: isFreshInstall)
         if (storedSwipes ?? [:]).isEmpty, !swipeActions.isEmpty {
             ud.set(swipeActions, forKey: Keys.swipeActions)
         }
+    }
+
+    /// Android pref_show_subscription_title defaults to false (UserPreferences.shouldShowSubscriptionTitle).
+    /// New installs follow that; existing users keep the titles iOS always showed.
+    static func initialGridShowTitles(stored: Bool?, isFreshInstall: Bool) -> Bool {
+        stored ?? !isFreshInstall
     }
 
     /// Android SwipeActions.getPrefsWithDefaults pairs as stored swipe settings.
@@ -3270,7 +3281,8 @@ final class AppSettings: ObservableObject {
             subscriptionsDisplayMode: subscriptionsDisplayMode.rawValue,
             subscriptionsGridColumns: subscriptionsGridColumns,
             subscriptionsCounterMode: subscriptionsCounterMode.rawValue,
-            swipeActions: swipeActions
+            swipeActions: swipeActions,
+            subscriptionsGridShowTitles: subscriptionsGridShowTitles
         )
     }
 
@@ -3522,6 +3534,9 @@ final class AppSettings: ObservableObject {
         if let cols = snap.subscriptionsGridColumns {
             subscriptionsGridColumns = min(max(cols, 2), 5)
         }
+        if let showTitles = snap.subscriptionsGridShowTitles {
+            subscriptionsGridShowTitles = showTitles
+        }
         if let raw = snap.subscriptionsCounterMode {
             subscriptionsCounterMode = SubscriptionsCounterMode(rawValue: raw) ?? .unplayed
         }
@@ -3733,6 +3748,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var subscriptionsCounterMode: String? = nil
     /// Absent in older backups → every list uses its default swipe buttons.
     var swipeActions: [String: String]? = nil
+    /// Android pref_show_subscription_title. Absent in older backups → unchanged.
+    var subscriptionsGridShowTitles: Bool? = nil
 }
 
 extension VolumeAdaptationMode {
