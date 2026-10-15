@@ -26,6 +26,16 @@ struct FeedMultiSelectModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .environment(\.editMode, $editMode)
+            #if DEBUG
+            // Screenshots: -APDebugSelectFirstFeed enters selection with the first podcast selected.
+            .task {
+                guard ProcessInfo.processInfo.arguments.contains("-APDebugSelectFirstFeed"), let first = feeds.first else { return }
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
+                editMode = .active
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                selection = [first.id]
+            }
+            #endif
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(isSelecting ? String(localized: "Done") : String(localized: "Select")) {
