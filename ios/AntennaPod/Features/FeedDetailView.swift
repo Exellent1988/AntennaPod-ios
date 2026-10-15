@@ -1242,6 +1242,7 @@ struct FeedDetailView: View {
                     ForEach(visibleEpisodes) { episode in
                         EpisodeRow(episode: episode, feedTitle: feedDisplayTitle)
                         .episodePagerList(visibleEpisodes)
+                        .environment(\.episodeListContext, .feed)
                             .swipeActions(edge: .leading, allowsFullSwipe: true) {
                                 // Android SwipeActions: user-configurable; Default keeps these buttons.
                                 SwipeSlot(.feed, .leading, episode: episode) {
@@ -3031,6 +3032,8 @@ struct EpisodeRow: View {
     /// `ItemPagerFragment.newInstance(allItems, item)` from EpisodeItemListAdapter / FeedItemlistFragment.
     @Environment(\.episodePagerList) private var pagerList
     @Environment(\.editMode) private var editMode
+    @Environment(\.episodeListContext) private var listContext
+    @State private var showPodcast = false
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyURLFeedbackTick = 0
@@ -3064,6 +3067,9 @@ struct EpisodeRow: View {
         }
         .navigationDestination(isPresented: $showEpisodeDetail) {
             EpisodeDetailPager(episode: episode, list: pagerList)
+        }
+        .navigationDestination(isPresented: $showPodcast) {
+            if let feed = store.feed(containingEpisodeId: episode.id) { FeedDetailView(feed: feed) }
         }
         .sheet(isPresented: $showDescription) {
             EpisodeDescriptionSheetView(episode: episode, feedTitle: feedTitle)
@@ -3324,324 +3330,350 @@ struct EpisodeRow: View {
     /// Long-press menu items. Split out of `body` so CI type-checks the row in time.
     @ViewBuilder
     private var episodeContextMenuItems: some View {
+        // Android: app/src/main/res/menu/feeditemlist_context.xml (+ queue_context.xml in QueueFragment only),
+        // visibility from FeedItemMenuHandler.onPrepareMenu. Order: remove from inbox (iOS Archive), mark
+        // played/unplayed, add/remove queue, [move to top/bottom: Queue only], download/delete, add/remove
+        // favorite, reset position | share, visit website, go to podcast, episode details | iOS extras.
         Group {
-            Button {
-                playback.playFromBeginning(episode: episode)
-            } label: {
-                Label("Play from beginning", systemImage: "backward.end.fill")
-            }
-            .accessibilityLabel(String(localized: "Play from beginning"))
-            .accessibilityHint(String(localized: "Seeks to the start of this episode and plays immediately. No confirmation. Does not skip intro, mark unplayed, change the queue, or delete downloads."))
-
-            if let url = episode.websiteURL {
+            Section {
                 Button {
-                    openURL(url)
+                    store.toggleArchived(episode.id)
                 } label: {
-                    Label("Open episode website", systemImage: "safari")
-                }
-                .accessibilityLabel(String(localized: "Open episode website"))
-                .accessibilityHint(String(localized: "Opens the feed-provided episode webpage http(s) link in the system browser — not an in-app WebView. No confirmation. Never uses the enclosure or podcast website URL. Distinct from Copy episode link, Copy media URL, and Share episode. Does not download, play, mark played, or change the queue."))
-
-                Button {
-                    copyEpisodeLink(url)
-                } label: {
-                    Label("Copy episode link", systemImage: "doc.on.doc")
-                }
-                .accessibilityLabel(String(localized: "Copy episode link"))
-                .accessibilityHint(String(localized: "Copies the feed-provided episode webpage http(s) link to the pasteboard. No confirmation. Never silently copies the enclosure as the episode link. Distinct from Copy media URL and Share episode. Does not open the browser, download, play, mark played, or change the queue."))
-            }
-            EpisodeShareLinks.episodeLinkLabelStyle(episode: episode)
-            if let rawMediaURL = episode.mediaURLString {
-                Button {
-                    copyMediaURL(rawMediaURL)
-                } label: {
-                    Label("Copy media URL", systemImage: "link")
-                }
-                .accessibilityLabel(String(localized: "Copy media URL"))
-                .accessibilityHint(String(localized: "Copies the feed-provided episode media / enclosure http(s) URL to the pasteboard. No confirmation. Hidden for local file or local-folder URLs. Distinct from Copy episode link and Share episode. Does not download, play, mark played, or change the queue."))
-
-                EpisodeShareLinks.mediaURLLabelStyle(episode: episode)
-            }
-            if let seasonEpisodeCaption = episode.seasonEpisodeCaption {
-                Button {
-                    copyEpisodeMetadata(
-                        seasonEpisodeCaption,
-                        message: String(localized: "Season and episode copied to the pasteboard.")
+                    Label(
+                        store.isArchived(episode.id) ? String(localized: "Restore") : String(localized: "Archive"),
+                        systemImage: store.isArchived(episode.id) ? "arrow.uturn.backward" : "archivebox"
                     )
-                } label: {
-                    Label("Copy season and episode", systemImage: "doc.on.doc")
                 }
-                .accessibilityLabel(String(localized: "Copy season and episode"))
-                .accessibilityHint(String(localized: "Copies the same season and episode caption shown above to the pasteboard; item metadata only; no numbers invented"))
-
-                ShareLink(item: seasonEpisodeCaption, subject: Text(episode.title)) {
-                    Label("Share season and episode", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share season and episode"))
-                .accessibilityHint(String(localized: "Shares the same season and episode caption shown above as plain text; item metadata only; no numbers invented"))
-            }
-            if episode.isExplicit {
-                let explicit = String(localized: "Explicit")
                 Button {
-                    copyEpisodeMetadata(
-                        explicit,
-                        message: String(localized: "Episode explicit badge copied to the pasteboard.")
+                    store.togglePlayed(episode.id)
+                } label: {
+                    Label(
+                        state.isPlayed ? String(localized: "Mark unplayed") : String(localized: "Mark played"),
+                        systemImage: state.isPlayed ? "circle" : "checkmark.circle"
                     )
-                } label: {
-                    Label("Copy episode explicit badge", systemImage: "doc.on.doc")
                 }
-                .accessibilityLabel(String(localized: "Copy episode explicit badge"))
-                .accessibilityHint(String(localized: "Copies the localized Explicit badge shown above for this episode to the pasteboard; display-only; does not enforce content restrictions"))
-
-                ShareLink(item: explicit, subject: Text(episode.title)) {
-                    Label("Share episode explicit badge", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share episode explicit badge"))
-                .accessibilityHint(String(localized: "Shares the localized Explicit badge shown above for this episode as plain text; display-only; does not enforce content restrictions"))
-            }
-            if let medium = episode.displayMedium {
-                Button {
-                    copyEpisodeMetadata(
-                        medium,
-                        message: String(localized: "Episode medium copied to the pasteboard.")
-                    )
-                } label: {
-                    Label("Copy episode medium", systemImage: "doc.on.doc")
-                }
-                .accessibilityLabel(String(localized: "Copy episode medium"))
-                .accessibilityHint(String(localized: "Copies the same item-provided medium string shown above to the pasteboard; display-only; no playback change or remapping"))
-
-                ShareLink(item: medium, subject: Text(episode.title)) {
-                    Label("Share episode medium", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share episode medium"))
-                .accessibilityHint(String(localized: "Shares the same item-provided medium string shown above as plain text; display-only; no playback change or remapping"))
-            }
-            if let episodeType = episode.displayEpisodeType {
-                Button {
-                    copyEpisodeMetadata(
-                        episodeType,
-                        message: String(localized: "Episode type copied to the pasteboard.")
-                    )
-                } label: {
-                    Label("Copy episode type", systemImage: "doc.on.doc")
-                }
-                .accessibilityLabel(String(localized: "Copy episode type"))
-                .accessibilityHint(String(localized: "Copies the same item itunes:episodeType label shown above to the pasteboard; distinct from channel podcast:trailer"))
-
-                ShareLink(item: episodeType, subject: Text(episode.title)) {
-                    Label("Share episode type", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share episode type"))
-                .accessibilityHint(String(localized: "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"))
-            }
-            if dateOverride == nil, let publishDate = formattedPubDateCaption {
-                Button {
-                    copyEpisodeMetadata(
-                        publishDate,
-                        message: String(localized: "Episode publish date copied to the pasteboard.")
-                    )
-                } label: {
-                    Label("Copy episode publish date", systemImage: "doc.on.doc")
-                }
-                .accessibilityLabel(String(localized: "Copy episode publish date"))
-                .accessibilityHint(String(localized: "Copies the same publish-date caption shown in this episode row to the pasteboard; known feed metadata only; no date invented"))
-
-                ShareLink(item: publishDate, subject: Text(episode.title)) {
-                    Label("Share episode publish date", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share episode publish date"))
-                .accessibilityHint(String(localized: "Shares the same publish-date caption shown in this episode row as plain text; known feed metadata only; no date invented"))
-            }
-            if let duration = formattedKnownDuration {
-                Button {
-                    copyEpisodeMetadata(
-                        duration,
-                        message: String(localized: "Episode duration copied to the pasteboard.")
-                    )
-                } label: {
-                    Label("Copy episode duration", systemImage: "doc.on.doc")
-                }
-                .accessibilityLabel(String(localized: "Copy episode duration"))
-                .accessibilityHint(String(localized: "Copies the same duration caption shown in this episode row to the pasteboard; feed or known playback metadata only; no length invented"))
-
-                ShareLink(item: duration, subject: Text(episode.title)) {
-                    Label("Share episode duration", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share episode duration"))
-                .accessibilityHint(String(localized: "Shares the same duration caption shown in this episode row as plain text; feed or known playback metadata only; no length invented"))
-            }
-            if let size = formattedKnownByteSize {
-                Button {
-                    copyEpisodeMetadata(
-                        size,
-                        message: String(localized: "Episode file size copied to the pasteboard.")
-                    )
-                } label: {
-                    Label("Copy episode file size", systemImage: "doc.on.doc")
-                }
-                .accessibilityLabel(String(localized: "Copy episode file size"))
-                .accessibilityHint(String(localized: "Copies the same file-size caption shown in this episode row to the pasteboard; on-disk or feed enclosure metadata only; no size invented"))
-
-                ShareLink(item: size, subject: Text(episode.title)) {
-                    Label("Share episode file size", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share episode file size"))
-                .accessibilityHint(String(localized: "Shares the same file-size caption shown in this episode row as plain text; on-disk or feed enclosure metadata only; no size invented"))
-            }
-            if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(feedTitle) {
-                Button {
-                    copiedAlertMessage = EpisodeCopyLinks.copyPodcastTitle(podcastTitle)
-                    copyURLFeedbackTick += 1
-                    showCopiedAlert = true
-                } label: {
-                    Label("Copy podcast title", systemImage: "doc.on.doc")
-                }
-                .accessibilityLabel(String(localized: "Copy podcast title"))
-                .accessibilityHint(String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"))
-
-                ShareLink(item: podcastTitle, subject: Text(podcastTitle)) {
-                    Label("Share podcast title", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share podcast title"))
-                .accessibilityHint(String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"))
-            }
-            if let title = EpisodeCopyLinks.trimmedTitle(for: episode) {
-                Button {
-                    copiedAlertMessage = EpisodeCopyLinks.copyEpisodeTitle(title)
-                    copyURLFeedbackTick += 1
-                    showCopiedAlert = true
-                } label: {
-                    Label("Copy episode title", systemImage: "doc.on.doc")
-                }
-                .accessibilityLabel(String(localized: "Copy episode title"))
-                .accessibilityHint(String(localized: "Copies the trimmed episode title to the pasteboard; hidden when the title is empty; no title invented"))
-
-                ShareLink(item: title, subject: Text(title)) {
-                    Label("Share episode title", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share episode title"))
-                .accessibilityHint(String(localized: "Shares the trimmed episode title as plain text; hidden when the title is empty; no title invented"))
-            }
-            if let titleAndPodcast = EpisodeCopyLinks.trimmedTitleAndPodcast(
-                episode: episode,
-                feedTitle: feedTitle
-            ) {
-                Button {
-                    copiedAlertMessage = EpisodeCopyLinks.copyTitleAndPodcast(titleAndPodcast)
-                    copyURLFeedbackTick += 1
-                    showCopiedAlert = true
-                } label: {
-                    Label("Copy title and podcast", systemImage: "doc.on.doc")
-                }
-                .accessibilityLabel(String(localized: "Copy title and podcast"))
-                .accessibilityHint(String(localized: "Copies the trimmed episode title and podcast display title as `title — podcast`; hidden unless both are present; no title invented"))
-
-                ShareLink(item: titleAndPodcast, subject: Text(titleAndPodcast)) {
-                    Label("Share title and podcast", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share title and podcast"))
-                .accessibilityHint(String(localized: "Shares the trimmed episode title and podcast display title as `title — podcast` plain text; hidden unless both are present; no title invented"))
-            }
-            if let url = episodeShareURL {
-                ShareLink(
-                    item: url,
-                    subject: Text(episode.title),
-                    message: Text(episodeShareMessage)
-                ) {
-                    Label("Share", systemImage: "square.and.arrow.up")
-                }
-                .accessibilityLabel(String(localized: "Share episode"))
-            }
-            Button {
-                store.toggleFavorite(episode.id)
-            } label: {
-                Label(
-                    store.isFavorite(episode.id) ? String(localized: "Unfavorite") : String(localized: "Favorite"),
-                    systemImage: store.isFavorite(episode.id) ? "star.slash" : "star"
-                )
-            }
-            .accessibilityLabel(
-                store.isFavorite(episode.id)
-                    ? String(localized: "Remove from favorites")
-                    : String(localized: "Add to favorites")
-            )
-            Button {
-                store.toggleArchived(episode.id)
-            } label: {
-                Label(
-                    store.isArchived(episode.id) ? String(localized: "Restore") : String(localized: "Archive"),
-                    systemImage: store.isArchived(episode.id) ? "arrow.uturn.backward" : "archivebox"
-                )
-            }
-            Button {
-                store.togglePlayed(episode.id)
-            } label: {
-                Label(
-                    state.isPlayed ? String(localized: "Mark unplayed") : String(localized: "Mark played"),
-                    systemImage: state.isPlayed ? "circle" : "checkmark.circle"
-                )
-            }
-            Button {
-                store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
-            } label: {
-                Label("Play Next", systemImage: "text.insert")
-            }
-            .accessibilityHint(
-                String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
-            )
-            Button {
-                store.enqueue(episode)
-            } label: {
-                Label("Add to queue", systemImage: "text.append")
-            }
-            .accessibilityHint(
-                String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
-            )
-            // Move to top/bottom = manual reorder; hidden when Queue lock is on (Play Next / enqueue stay).
-            if let qi = queueIndex, !settings.queueLocked {
-                if qi > 0 {
+                if !store.isInQueue(episode.id) {
                     Button {
-                        store.moveQueueItemToTop(episode)
+                        store.enqueue(episode)
                     } label: {
-                        Label("Move to top", systemImage: "arrow.up.to.line")
+                        Label("Add to queue", systemImage: "text.append")
                     }
-                    .accessibilityLabel(String(localized: "Move to top"))
-                    .accessibilityHint(String(localized: "Places this episode at the start of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."))
+                    .accessibilityHint(
+                        String(localized: "Adds this episode to the end of the queue. No confirmation. Queue lock does not block enqueue. Does not start download or mark played.")
+                    )
                 }
-                if qi < store.queue.count - 1 {
-                    Button {
-                        store.moveQueueItemToBottom(episode)
-                    } label: {
-                        Label("Move to bottom", systemImage: "arrow.down.to.line")
-                    }
-                    .accessibilityLabel(String(localized: "Move to bottom"))
-                    .accessibilityHint(String(localized: "Places this episode at the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."))
+                Button {
+                    store.playNext(episode, currentlyPlayingId: playback.currentEpisode?.id)
+                } label: {
+                    Label("Play Next", systemImage: "text.insert")
                 }
-            }
-            // Android ItemFragment: open the episode page (swipe for neighbouring episodes).
-            Button {
-                showEpisodeDetail = true
-            } label: {
-                Label("Episode details", systemImage: "info.circle")
-            }
-            .accessibilityHint(String(localized: "Opens the episode page. Swipe left or right there for the neighbouring episodes of this podcast."))
-            // Android feeditemlist_context.xml extras shared by every list (remove from queue, delete, reset).
-            EpisodeContextMenu(episode: episode)
-            Button {
-                showEpisodePrivateNote = true
-            } label: {
-                Label(
-                    String(localized: "Private note…"),
-                    systemImage: store.hasEpisodePrivateNote(for: episode.id) ? "note.text" : "square.and.pencil"
+                .accessibilityHint(
+                    String(localized: "Places this episode immediately after the currently playing queue item, or at the head if nothing is playing or current is not queued. Moves it if already queued — no duplicate. No confirmation. Queue lock does not block Play Next. Does not start playback, download, or mark played.")
                 )
+                EpisodeContextMenu(episode: episode, part: .removeFromQueue)
+                if listContext == .queue {
+                    // Move to top/bottom = manual reorder; hidden when Queue lock is on (Play Next / enqueue stay).
+                    if let qi = queueIndex, !settings.queueLocked {
+                        if qi > 0 {
+                            Button {
+                                store.moveQueueItemToTop(episode)
+                            } label: {
+                                Label("Move to top", systemImage: "arrow.up.to.line")
+                            }
+                            .accessibilityLabel(String(localized: "Move to top"))
+                            .accessibilityHint(String(localized: "Places this episode at the start of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."))
+                        }
+                        if qi < store.queue.count - 1 {
+                            Button {
+                                store.moveQueueItemToBottom(episode)
+                            } label: {
+                                Label("Move to bottom", systemImage: "arrow.down.to.line")
+                            }
+                            .accessibilityLabel(String(localized: "Move to bottom"))
+                            .accessibilityHint(String(localized: "Places this episode at the end of the queue. Does not seek or stop playback, change progress, mark played, or delete downloads. No confirmation."))
+                        }
+                    }
+                }
+                EpisodeContextMenu(episode: episode, part: .download)
+                Button {
+                    store.toggleFavorite(episode.id)
+                } label: {
+                    Label(
+                        store.isFavorite(episode.id) ? String(localized: "Unfavorite") : String(localized: "Favorite"),
+                        systemImage: store.isFavorite(episode.id) ? "star.slash" : "star"
+                    )
+                }
+                .accessibilityLabel(
+                    store.isFavorite(episode.id)
+                        ? String(localized: "Remove from favorites")
+                        : String(localized: "Add to favorites")
+                )
+                EpisodeContextMenu(episode: episode, part: .resetPosition)
             }
-            .accessibilityLabel(String(localized: "Private note"))
-            .accessibilityHint(String(localized: "Opens the private note editor for this episode"))
-            Button {
-                showDescription = true
-            } label: {
-                Label("Shownotes", systemImage: "doc.text")
+            Section {
+                if let url = episodeShareURL {
+                    ShareLink(
+                        item: url,
+                        subject: Text(episode.title),
+                        message: Text(episodeShareMessage)
+                    ) {
+                        Label("Share", systemImage: "square.and.arrow.up")
+                    }
+                    .accessibilityLabel(String(localized: "Share episode"))
+                }
+                if let url = episode.websiteURL {
+                    Button {
+                        openURL(url)
+                    } label: {
+                        Label("Open episode website", systemImage: "safari")
+                    }
+                    .accessibilityLabel(String(localized: "Open episode website"))
+                    .accessibilityHint(String(localized: "Opens the feed-provided episode webpage http(s) link in the system browser — not an in-app WebView. No confirmation. Never uses the enclosure or podcast website URL. Distinct from Copy episode link, Copy media URL, and Share episode. Does not download, play, mark played, or change the queue."))
+
+                    Button {
+                        copyEpisodeLink(url)
+                    } label: {
+                        Label("Copy episode link", systemImage: "doc.on.doc")
+                    }
+                    .accessibilityLabel(String(localized: "Copy episode link"))
+                    .accessibilityHint(String(localized: "Copies the feed-provided episode webpage http(s) link to the pasteboard. No confirmation. Never silently copies the enclosure as the episode link. Distinct from Copy media URL and Share episode. Does not open the browser, download, play, mark played, or change the queue."))
+                }
+                if listContext != .feed, store.feed(containingEpisodeId: episode.id) != nil {
+                    // Android FeedItemMenuHandler open_feed / ItemFragment podcast title tap.
+                    Button {
+                        showPodcast = true
+                    } label: {
+                        Label("Go to podcast", systemImage: "square.stack")
+                    }
+                }
+                // Android ItemFragment: open the episode page (swipe for neighbouring episodes).
+                Button {
+                    showEpisodeDetail = true
+                } label: {
+                    Label("Episode details", systemImage: "info.circle")
+                }
+                .accessibilityHint(String(localized: "Opens the episode page. Swipe left or right there for the neighbouring episodes of this podcast."))
+            }
+            Section {
+                Button {
+                    playback.playFromBeginning(episode: episode)
+                } label: {
+                    Label("Play from beginning", systemImage: "backward.end.fill")
+                }
+                .accessibilityLabel(String(localized: "Play from beginning"))
+                .accessibilityHint(String(localized: "Seeks to the start of this episode and plays immediately. No confirmation. Does not skip intro, mark unplayed, change the queue, or delete downloads."))
+                Button {
+                    showEpisodePrivateNote = true
+                } label: {
+                    Label(
+                        String(localized: "Private note…"),
+                        systemImage: store.hasEpisodePrivateNote(for: episode.id) ? "note.text" : "square.and.pencil"
+                    )
+                }
+                .accessibilityLabel(String(localized: "Private note"))
+                .accessibilityHint(String(localized: "Opens the private note editor for this episode"))
+                Button {
+                    showDescription = true
+                } label: {
+                    Label("Shownotes", systemImage: "doc.text")
+                }
+                Menu {
+                    EpisodeShareLinks.episodeLinkLabelStyle(episode: episode)
+                    if let rawMediaURL = episode.mediaURLString {
+                        Button {
+                            copyMediaURL(rawMediaURL)
+                        } label: {
+                            Label("Copy media URL", systemImage: "link")
+                        }
+                        .accessibilityLabel(String(localized: "Copy media URL"))
+                        .accessibilityHint(String(localized: "Copies the feed-provided episode media / enclosure http(s) URL to the pasteboard. No confirmation. Hidden for local file or local-folder URLs. Distinct from Copy episode link and Share episode. Does not download, play, mark played, or change the queue."))
+
+                        EpisodeShareLinks.mediaURLLabelStyle(episode: episode)
+                    }
+                    if let seasonEpisodeCaption = episode.seasonEpisodeCaption {
+                        Button {
+                            copyEpisodeMetadata(
+                                seasonEpisodeCaption,
+                                message: String(localized: "Season and episode copied to the pasteboard.")
+                            )
+                        } label: {
+                            Label("Copy season and episode", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy season and episode"))
+                        .accessibilityHint(String(localized: "Copies the same season and episode caption shown above to the pasteboard; item metadata only; no numbers invented"))
+
+                        ShareLink(item: seasonEpisodeCaption, subject: Text(episode.title)) {
+                            Label("Share season and episode", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share season and episode"))
+                        .accessibilityHint(String(localized: "Shares the same season and episode caption shown above as plain text; item metadata only; no numbers invented"))
+                    }
+                    if episode.isExplicit {
+                        let explicit = String(localized: "Explicit")
+                        Button {
+                            copyEpisodeMetadata(
+                                explicit,
+                                message: String(localized: "Episode explicit badge copied to the pasteboard.")
+                            )
+                        } label: {
+                            Label("Copy episode explicit badge", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy episode explicit badge"))
+                        .accessibilityHint(String(localized: "Copies the localized Explicit badge shown above for this episode to the pasteboard; display-only; does not enforce content restrictions"))
+
+                        ShareLink(item: explicit, subject: Text(episode.title)) {
+                            Label("Share episode explicit badge", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share episode explicit badge"))
+                        .accessibilityHint(String(localized: "Shares the localized Explicit badge shown above for this episode as plain text; display-only; does not enforce content restrictions"))
+                    }
+                    if let medium = episode.displayMedium {
+                        Button {
+                            copyEpisodeMetadata(
+                                medium,
+                                message: String(localized: "Episode medium copied to the pasteboard.")
+                            )
+                        } label: {
+                            Label("Copy episode medium", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy episode medium"))
+                        .accessibilityHint(String(localized: "Copies the same item-provided medium string shown above to the pasteboard; display-only; no playback change or remapping"))
+
+                        ShareLink(item: medium, subject: Text(episode.title)) {
+                            Label("Share episode medium", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share episode medium"))
+                        .accessibilityHint(String(localized: "Shares the same item-provided medium string shown above as plain text; display-only; no playback change or remapping"))
+                    }
+                    if let episodeType = episode.displayEpisodeType {
+                        Button {
+                            copyEpisodeMetadata(
+                                episodeType,
+                                message: String(localized: "Episode type copied to the pasteboard.")
+                            )
+                        } label: {
+                            Label("Copy episode type", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy episode type"))
+                        .accessibilityHint(String(localized: "Copies the same item itunes:episodeType label shown above to the pasteboard; distinct from channel podcast:trailer"))
+
+                        ShareLink(item: episodeType, subject: Text(episode.title)) {
+                            Label("Share episode type", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share episode type"))
+                        .accessibilityHint(String(localized: "Shares the same item itunes:episodeType label shown above as plain text; distinct from channel podcast:trailer"))
+                    }
+                    if dateOverride == nil, let publishDate = formattedPubDateCaption {
+                        Button {
+                            copyEpisodeMetadata(
+                                publishDate,
+                                message: String(localized: "Episode publish date copied to the pasteboard.")
+                            )
+                        } label: {
+                            Label("Copy episode publish date", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy episode publish date"))
+                        .accessibilityHint(String(localized: "Copies the same publish-date caption shown in this episode row to the pasteboard; known feed metadata only; no date invented"))
+
+                        ShareLink(item: publishDate, subject: Text(episode.title)) {
+                            Label("Share episode publish date", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share episode publish date"))
+                        .accessibilityHint(String(localized: "Shares the same publish-date caption shown in this episode row as plain text; known feed metadata only; no date invented"))
+                    }
+                    if let duration = formattedKnownDuration {
+                        Button {
+                            copyEpisodeMetadata(
+                                duration,
+                                message: String(localized: "Episode duration copied to the pasteboard.")
+                            )
+                        } label: {
+                            Label("Copy episode duration", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy episode duration"))
+                        .accessibilityHint(String(localized: "Copies the same duration caption shown in this episode row to the pasteboard; feed or known playback metadata only; no length invented"))
+
+                        ShareLink(item: duration, subject: Text(episode.title)) {
+                            Label("Share episode duration", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share episode duration"))
+                        .accessibilityHint(String(localized: "Shares the same duration caption shown in this episode row as plain text; feed or known playback metadata only; no length invented"))
+                    }
+                    if let size = formattedKnownByteSize {
+                        Button {
+                            copyEpisodeMetadata(
+                                size,
+                                message: String(localized: "Episode file size copied to the pasteboard.")
+                            )
+                        } label: {
+                            Label("Copy episode file size", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy episode file size"))
+                        .accessibilityHint(String(localized: "Copies the same file-size caption shown in this episode row to the pasteboard; on-disk or feed enclosure metadata only; no size invented"))
+
+                        ShareLink(item: size, subject: Text(episode.title)) {
+                            Label("Share episode file size", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share episode file size"))
+                        .accessibilityHint(String(localized: "Shares the same file-size caption shown in this episode row as plain text; on-disk or feed enclosure metadata only; no size invented"))
+                    }
+                    if let podcastTitle = EpisodeCopyLinks.trimmedFeedTitle(feedTitle) {
+                        Button {
+                            copiedAlertMessage = EpisodeCopyLinks.copyPodcastTitle(podcastTitle)
+                            copyURLFeedbackTick += 1
+                            showCopiedAlert = true
+                        } label: {
+                            Label("Copy podcast title", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy podcast title"))
+                        .accessibilityHint(String(localized: "Copies the trimmed podcast display title to the pasteboard; hidden when the title is empty; no title invented"))
+
+                        ShareLink(item: podcastTitle, subject: Text(podcastTitle)) {
+                            Label("Share podcast title", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share podcast title"))
+                        .accessibilityHint(String(localized: "Shares the trimmed podcast display title as plain text; hidden when the title is empty; no title invented"))
+                    }
+                    if let title = EpisodeCopyLinks.trimmedTitle(for: episode) {
+                        Button {
+                            copiedAlertMessage = EpisodeCopyLinks.copyEpisodeTitle(title)
+                            copyURLFeedbackTick += 1
+                            showCopiedAlert = true
+                        } label: {
+                            Label("Copy episode title", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy episode title"))
+                        .accessibilityHint(String(localized: "Copies the trimmed episode title to the pasteboard; hidden when the title is empty; no title invented"))
+
+                        ShareLink(item: title, subject: Text(title)) {
+                            Label("Share episode title", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share episode title"))
+                        .accessibilityHint(String(localized: "Shares the trimmed episode title as plain text; hidden when the title is empty; no title invented"))
+                    }
+                    if let titleAndPodcast = EpisodeCopyLinks.trimmedTitleAndPodcast(
+                        episode: episode,
+                        feedTitle: feedTitle
+                    ) {
+                        Button {
+                            copiedAlertMessage = EpisodeCopyLinks.copyTitleAndPodcast(titleAndPodcast)
+                            copyURLFeedbackTick += 1
+                            showCopiedAlert = true
+                        } label: {
+                            Label("Copy title and podcast", systemImage: "doc.on.doc")
+                        }
+                        .accessibilityLabel(String(localized: "Copy title and podcast"))
+                        .accessibilityHint(String(localized: "Copies the trimmed episode title and podcast display title as `title — podcast`; hidden unless both are present; no title invented"))
+
+                        ShareLink(item: titleAndPodcast, subject: Text(titleAndPodcast)) {
+                            Label("Share title and podcast", systemImage: "square.and.arrow.up")
+                        }
+                        .accessibilityLabel(String(localized: "Share title and podcast"))
+                        .accessibilityHint(String(localized: "Shares the trimmed episode title and podcast display title as `title — podcast` plain text; hidden unless both are present; no title invented"))
+                    }
+                } label: {
+                    Label("Copy & share details", systemImage: "doc.on.doc")
+                }
             }
         }
     }

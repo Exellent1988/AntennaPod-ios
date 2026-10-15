@@ -137,6 +137,23 @@
         }
       }
     },
+    "Copy & share details": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy & share details"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Details kopieren & teilen"
+          }
+        }
+      }
+    },
     "Episode %lld of %lld": {
       "extractionState": "manual",
       "localizations": {
