@@ -39,11 +39,16 @@ struct CarPlayListBuilder {
         var seen = Set<String>()
         var out: [CarPlayEpisodeInfo] = []
         for feed in store.feeds {
-            for ep in feed.episodes where seen.insert(feed.id.uuidString + "|" + ep.id).inserted {
+            for ep in feed.episodes where hasMedia(ep) && seen.insert(feed.id.uuidString + "|" + ep.id).inserted {
                 out.append(info(ep, feed: feed))
             }
         }
         return out
+    }
+
+    /// Android `loadChildrenSynchronous` lists only items with media; a media-less entry cannot play.
+    func hasMedia(_ ep: PodcastEpisode) -> Bool {
+        CarPlayParity.hasMedia(downloadUrl: ep.downloadUrl, isDownloaded: downloads?.isDownloaded(ep) ?? false)
     }
 
     private func queueInfo(_ ep: PodcastEpisode) -> CarPlayEpisodeInfo {
@@ -60,7 +65,7 @@ struct CarPlayListBuilder {
         if let cur = currentEpisode {
             sections.append((String(localized: "Currently playing"), [row(queueInfo(cur))]))
         }
-        let q = store.queue.prefix(limit).map { row(queueInfo($0)) }
+        let q = store.queue.filter(hasMedia).prefix(limit).map { row(queueInfo($0)) }
         sections.append((sections.isEmpty ? nil : String(localized: "Queue"), q))
         return sections
     }
@@ -96,7 +101,7 @@ struct CarPlayListBuilder {
     func feedEpisodeRows(_ feedId: UUID) -> [CarPlayRow] {
         guard let feed = store.feeds.first(where: { $0.id == feedId }) else { return [] }
         var seen = Set<String>()
-        let infos = feed.episodes.filter { seen.insert($0.id).inserted }.map { info($0, feed: feed) }
+        let infos = feed.episodes.filter { hasMedia($0) && seen.insert($0.id).inserted }.map { info($0, feed: feed) }
         let global = settings?.feedEpisodeSort ?? .newestFirst
         let sort = store.feedSettings(for: feedId).resolvedEpisodeSort(global: global)
         return CarPlayParity.feedEpisodes(infos, sort: sort, filter: settings?.feedEpisodeFilter ?? .all, limit: limit)
@@ -106,7 +111,7 @@ struct CarPlayListBuilder {
     func upNextRows() -> [CarPlayRow] {
         // Same rule as CarPlayParity.upNext, but on the queue entries themselves so duplicate ids
         // keep their own episode (no id → episode lookup that collapses twins).
-        let queue = store.queue
+        let queue = store.queue.filter(hasMedia)
         let rest = CarPlayParity.upNext(queueIds: queue.map(\.id), currentId: currentEpisode?.id).count
         return queue.suffix(rest).prefix(limit).map { row(queueInfo($0)) }
     }

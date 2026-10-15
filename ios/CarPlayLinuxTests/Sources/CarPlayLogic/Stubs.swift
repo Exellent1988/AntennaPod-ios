@@ -18,7 +18,7 @@ struct PodcastEpisode: Hashable {
     var imageUrl: String? = nil
     /// Stub: app derives this from podcast:images; tests set it directly.
     var preferredPodcastImagesArtworkURL: String? = nil
-    var mediaUrl: String = ""
+    var downloadUrl: String? = "https://media.example.com/ep.mp3"
     /// Same order as app `PodcastEpisode.artworkURL(feed:)`.
     func artworkURL(feed: PodcastFeed?) -> String? {
         [preferredPodcastImagesArtworkURL, imageUrl, feed?.preferredDisplayArtworkURL]
