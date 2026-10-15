@@ -40,7 +40,9 @@ extension PodcastFeed {
 enum FeedLibraryDedupe {
     /// Merge feeds that are the same podcast (shared URL key). The survivor is the first
     /// loaded https entry (else the first loaded, else the first); its id, settings and title
-    /// stay. Episodes are unioned by id; the other URLs become alternates. Returns survivors in
+    /// stay. Episodes are unioned by id; the other URLs become alternates. The survivor keeps its
+    /// own `lastRefreshError` (its address is the one refreshed from now on); a dropped duplicate's
+    /// refresh error is not carried over. Returns survivors in
     /// library order and the dropped id → survivor id map (to move per-feed side data).
     static func merge(_ feeds: [PodcastFeed]) -> (feeds: [PodcastFeed], merged: [UUID: UUID]) {
         let entries = feeds.map { FeedDuplicateGrouping.Entry(urls: $0.allUrls, loaded: $0.loadError == nil) }

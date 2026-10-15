@@ -158,4 +158,23 @@ final class FeedDedupeTests: XCTestCase {
         XCTAssertTrue(store.playbackStates.isEmpty)
         XCTAssertTrue(store.gpodderActionQueue.isEmpty)
     }
+
+    /// Refresh-failed flag (lastRefreshError) through the duplicate merge: the survivor's own state
+    /// wins, a dropped duplicate's error does not mark the merged podcast as failed.
+    func testMergeKeepsSurvivorRefreshErrorOnly() {
+        var ok = feed("https://a.example/rss", episodes: ["1"])
+        var failedDup = feed("http://a.example/rss/", episodes: ["2"])
+        failedDup.lastRefreshError = "HTTP 500"
+        let clean = FeedLibraryDedupe.merge([ok, failedDup])
+        XCTAssertEqual(clean.feeds.count, 1)
+        XCTAssertNil(clean.feeds[0].lastRefreshError, "dropped duplicate's error not carried over")
+        XCTAssertEqual(Set(clean.feeds[0].episodes.map(\.title)), ["1", "2"])
+
+        ok.lastRefreshError = "timeout"
+        failedDup.lastRefreshError = nil
+        let failed = FeedLibraryDedupe.merge([ok, failedDup])
+        XCTAssertEqual(failed.feeds.count, 1)
+        XCTAssertEqual(failed.feeds[0].feedUrl, "https://a.example/rss")
+        XCTAssertEqual(failed.feeds[0].lastRefreshError, "timeout", "survivor keeps its own refresh state")
+    }
 }
