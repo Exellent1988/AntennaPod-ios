@@ -154,6 +154,23 @@
         }
       }
     },
+    "Choose what swiping an episode left or right does in this list.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose what swiping an episode left or right does in this list."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lege fest, was Wischen nach links oder rechts in dieser Liste bewirkt."
+          }
+        }
+      }
+    },
     "Copy & share details": {
       "extractionState": "manual",
       "localizations": {
@@ -337,6 +354,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Download-Protokoll durchsuchen"
+          }
+        }
+      }
+    },
+    "Sets the swipe actions AntennaPod for Android uses on these lists.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sets the swipe actions AntennaPod for Android uses on these lists."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setzt die Wischaktionen, die AntennaPod für Android in diesen Listen verwendet."
           }
         }
       }
@@ -2575,6 +2609,23 @@
         }
       },
       "comment": "VoiceOver hint for the All Episodes remaining bar when Remaining time respects speed is on."
+    },
+    "Use AntennaPod defaults": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use AntennaPod defaults"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod-Standard verwenden"
+          }
+        }
+      }
     },
     "Visit website": {
       "extractionState": "manual",
