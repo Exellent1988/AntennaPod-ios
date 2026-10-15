@@ -339,6 +339,12 @@ struct RootTabView: View {
             selectedTab = .subscriptions
         }
         if args.contains("-APDebugOpenDownloadLog") { debugDownloadLog = true }
+        // -APDebugFillQueue <n>: enqueue the n newest episodes of the first podcast (empty queue only).
+        if let i = args.firstIndex(of: "-APDebugFillQueue"), i + 1 < args.count, let n = Int(args[i + 1]),
+           store.queue.isEmpty, let feed = store.feeds.first(where: { !$0.episodes.isEmpty }) {
+            let newest = feed.episodes.sorted { ($0.pubDateEpochMs ?? 0) > ($1.pubDateEpochMs ?? 0) }.prefix(n)
+            store.enqueue(Array(newest))
+        }
         // -APDebugOpenSwipeActions <inbox|queue|episodes|downloads|history|favorites|feed>: that list's swipe sheet.
         if let i = args.firstIndex(of: "-APDebugOpenSwipeActions"), i + 1 < args.count {
             debugSwipeList = SwipeList(rawValue: args[i + 1])
