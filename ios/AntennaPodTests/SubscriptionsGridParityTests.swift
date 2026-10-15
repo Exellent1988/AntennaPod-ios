@@ -46,4 +46,11 @@ final class SubscriptionsGridParityTests: XCTestCase {
         XCTAssertEqual(SubscriptionsDisplayMode.listColumns(isRegularWidth: true), 2)
         XCTAssertEqual(SubscriptionsDisplayMode.listColumns(isRegularWidth: false), 1)
     }
+
+    func testAddButtonOnlyOnSubscriptionsRoot() {
+        XCTAssertTrue(SubscriptionsAddButton.isOnSubscriptionsRoot(pathIsEmpty: true, showsManageTags: false, showsDiscover: false))
+        XCTAssertFalse(SubscriptionsAddButton.isOnSubscriptionsRoot(pathIsEmpty: false, showsManageTags: false, showsDiscover: false), "feed page")
+        XCTAssertFalse(SubscriptionsAddButton.isOnSubscriptionsRoot(pathIsEmpty: true, showsManageTags: true, showsDiscover: false), "Manage tags")
+        XCTAssertFalse(SubscriptionsAddButton.isOnSubscriptionsRoot(pathIsEmpty: true, showsManageTags: false, showsDiscover: true), "Discover")
+    }
 }

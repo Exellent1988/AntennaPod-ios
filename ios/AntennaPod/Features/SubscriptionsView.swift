@@ -668,7 +668,8 @@ struct SubscriptionsView: View {
             // layout) so it sits above the mini player (TabMiniPlayerInset) and the tab bar; an inset or
             // overlay on the List itself ended up under the mini player. Only on the Subscriptions root.
             .safeAreaInset(edge: .bottom, alignment: .trailing, spacing: 0) {
-                if path.isEmpty {
+                if SubscriptionsAddButton.isOnSubscriptionsRoot(pathIsEmpty: path.isEmpty, showsManageTags: showManageTags,
+                                                                showsDiscover: navigateToDiscover) {
                     SubscriptionsAddButton(addLocked: parental.needsPINForAddDiscover, selecting: isSelectingFeeds) { showAdd = true }
                         // iPad sidebar layout: RootTabView puts the mini player inset outside the
                         // NavigationSplitView, which does not pass it into the detail column.
@@ -1595,6 +1596,12 @@ struct SubscriptionsAddButton: View {
 
     /// Height of the iPad mini player bar the split view does not report as safe area.
     static func extraBottomClearance(isPadSidebar: Bool) -> CGFloat { isPadSidebar ? 72 : 0 }
+
+    /// Android: the FAB belongs to SubscriptionFragment only; pushed pages (feed, Manage tags, Discover, which
+    /// open via navigationDestination(isPresented:) outside the path) never show it.
+    static func isOnSubscriptionsRoot(pathIsEmpty: Bool, showsManageTags: Bool, showsDiscover: Bool) -> Bool {
+        pathIsEmpty && !showsManageTags && !showsDiscover
+    }
 
     static func isVisible(addLocked: Bool, selecting: Bool) -> Bool {
         !addLocked && !selecting
