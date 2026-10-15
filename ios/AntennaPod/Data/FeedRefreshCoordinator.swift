@@ -67,6 +67,6 @@ enum FeedRefreshCoordinator {
         guard !store.feeds.isEmpty else { return }
         isAutoRefreshInFlight = true
         defer { isAutoRefreshInFlight = false }
-        await store.refreshAllFeeds()
+        await store.refreshAllFeeds(userInitiated: false)
     }
 }

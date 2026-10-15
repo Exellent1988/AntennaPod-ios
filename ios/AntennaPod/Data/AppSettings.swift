@@ -1261,6 +1261,17 @@ enum StatisticsTimeRange: String, CaseIterable, Identifiable {
 /// User preferences for P0 Settings (theme, accent tint, default playback speed, download storage limit, max downloaded episodes (episode cache), max parallel downloads, refresh, new-episode action, auto-download, network/Wi‑Fi policy, playback source, auto-delete, skip intervals (presets + Custom… 5–60s), smart mark (presets + Custom… 1–600s), Custom… sleep last minutes, sleep timer volume fade, skip intro/outro, volume adaptation, volume boost (100–300%), skip silence preference, Stereo to mono, Preserve pitch, new-episode / download-error / download-complete / sync-error / sleep-timer-end notifications, App Store rating prompt, play video as audio only, Keep screen on, Continuous playback, Show remaining time, Remaining time respects speed, rewind after pause, smart mark as played, Home section order/visibility, subscriptions list sort (incl. author / language A–Z), subscriptions category filter, subscriptions language filter, feed episode list sort (global default + per-feed `FeedSettings.episodeSort`), Inbox sort, Downloads sort, History sort, History podcast filter, History size limit, Favorites sort, Favorites podcast filter, Archived sort, All Episodes filter chips, All Episodes podcast filter, All Episodes sort, Downloads filter chips, Downloads podcast filter, Feed detail episode filter chips, Feed/All Episodes/Inbox itunes:episodeType filter chips, Queue filter chips, queue lock, Statistics/Echo time range, Statistics reset baseline).
 @MainActor
 final class AppSettings: ObservableObject {
+    /// Stored Android-style list, else migrated from the legacy Wi‑Fi-only keys (unchanged behaviour).
+    static func loadMobileUpdateTypes(_ ud: UserDefaults = .standard) -> Set<MobileUpdateType> {
+        if let raw = ud.stringArray(forKey: MobileUpdateTypes.defaultsKey) {
+            return MobileUpdateTypes.decode(raw)
+        }
+        return MobileUpdateTypes.migrated(
+            autoDownloadWifiOnly: ud.object(forKey: Keys.autoDownloadWifiOnly) as? Bool,
+            manualDownloadWifiOnly: ud.object(forKey: Keys.manualDownloadWifiOnly) as? Bool,
+            streamWifiOnly: ud.object(forKey: Keys.streamWifiOnly) as? Bool)
+    }
+
     /// Fixed preset list of iOS builds before the editor (validation of stored speeds only).
     static let legacySpeedPresets: [Float] = SpeedPresets.legacyIOSDefault
 
@@ -1588,24 +1599,53 @@ final class AppSettings: ObservableObject {
         didSet { UserDefaults.standard.set(autoDownloadOnBattery, forKey: Keys.autoDownloadOnBattery) }
     }
 
-    @Published var autoDownloadWifiOnly: Bool {
+    /// Android `prefMobileUpdateTypes` ("Mobile updates"): what may use mobile data. Source of truth
+    /// for the Wi‑Fi-only toggles below (each is "type not in this set"). Stored under
+    /// `settings.mobileUpdateTypes`; the legacy Wi‑Fi-only keys are still written so an older build
+    /// reading them keeps the same behaviour.
+    @Published var mobileUpdateTypes: Set<MobileUpdateType> {
         didSet {
-            UserDefaults.standard.set(autoDownloadWifiOnly, forKey: Keys.autoDownloadWifiOnly)
+            UserDefaults.standard.set(MobileUpdateTypes.encode(mobileUpdateTypes), forKey: MobileUpdateTypes.defaultsKey)
+            UserDefaults.standard.set(!mobileUpdateTypes.contains(.autoDownload), forKey: Keys.autoDownloadWifiOnly)
+            UserDefaults.standard.set(!mobileUpdateTypes.contains(.episodeDownload), forKey: Keys.manualDownloadWifiOnly)
+            UserDefaults.standard.set(!mobileUpdateTypes.contains(.streaming), forKey: Keys.streamWifiOnly)
         }
+    }
+
+    func allowsOnMobile(_ type: MobileUpdateType) -> Bool { mobileUpdateTypes.contains(type) }
+
+    func setAllowedOnMobile(_ type: MobileUpdateType, _ allowed: Bool) {
+        if allowed { mobileUpdateTypes.insert(type) } else { mobileUpdateTypes.remove(type) }
+    }
+
+    /// Auto-download needs Wi‑Fi / Ethernet (mobile type `auto_download` not allowed). iOS default on.
+    var autoDownloadWifiOnly: Bool {
+        get { !mobileUpdateTypes.contains(.autoDownload) }
+        set { setAllowedOnMobile(.autoDownload, !newValue) }
     }
 
     /// When true, manual downloads are refused on cellular (error recorded; default off).
-    @Published var manualDownloadWifiOnly: Bool {
-        didSet {
-            UserDefaults.standard.set(manualDownloadWifiOnly, forKey: Keys.manualDownloadWifiOnly)
-        }
+    var manualDownloadWifiOnly: Bool {
+        get { !mobileUpdateTypes.contains(.episodeDownload) }
+        set { setAllowedOnMobile(.episodeDownload, !newValue) }
     }
 
     /// When true, `PlaybackService` refuses stream URLs on cellular; local files still play (default off).
-    @Published var streamWifiOnly: Bool {
-        didSet {
-            UserDefaults.standard.set(streamWifiOnly, forKey: Keys.streamWifiOnly)
-        }
+    var streamWifiOnly: Bool {
+        get { !mobileUpdateTypes.contains(.streaming) }
+        set { setAllowedOnMobile(.streaming, !newValue) }
+    }
+
+    /// Android `feed_refresh` not allowed: refresh on mobile data is skipped (manual refresh asks).
+    var feedRefreshWifiOnly: Bool {
+        get { !mobileUpdateTypes.contains(.feedRefresh) }
+        set { setAllowedOnMobile(.feedRefresh, !newValue) }
+    }
+
+    /// Android `images` not allowed: on mobile data covers come from the cache only.
+    var imagesWifiOnly: Bool {
+        get { !mobileUpdateTypes.contains(.images) }
+        set { setAllowedOnMobile(.images, !newValue) }
     }
 
     /// Prefer local download, always stream, or automatic (local if present).
@@ -2612,21 +2652,7 @@ final class AppSettings: ObservableObject {
         feedDownloadUnplayedSoftCap = FeedDownloadUnplayedSoftCap(rawValue: feedDlSoftCapRaw) ?? .fifty
         autoDownloadOnBattery = UserDefaults.standard.object(forKey: Keys.autoDownloadOnBattery) as? Bool
             ?? AutoDownloadParity.defaultDownloadOnBattery
-        if UserDefaults.standard.object(forKey: Keys.autoDownloadWifiOnly) != nil {
-            autoDownloadWifiOnly = UserDefaults.standard.bool(forKey: Keys.autoDownloadWifiOnly)
-        } else {
-            autoDownloadWifiOnly = true
-        }
-        if UserDefaults.standard.object(forKey: Keys.manualDownloadWifiOnly) != nil {
-            manualDownloadWifiOnly = UserDefaults.standard.bool(forKey: Keys.manualDownloadWifiOnly)
-        } else {
-            manualDownloadWifiOnly = false
-        }
-        if UserDefaults.standard.object(forKey: Keys.streamWifiOnly) != nil {
-            streamWifiOnly = UserDefaults.standard.bool(forKey: Keys.streamWifiOnly)
-        } else {
-            streamWifiOnly = false
-        }
+        mobileUpdateTypes = Self.loadMobileUpdateTypes()
         let sourceRaw = UserDefaults.standard.string(forKey: Keys.playbackSourcePreference)
             ?? PlaybackSourcePreference.automatic.rawValue
         playbackSourcePreference = PlaybackSourcePreference(rawValue: sourceRaw) ?? .automatic
@@ -3307,6 +3333,7 @@ final class AppSettings: ObservableObject {
             autoDownloadOnBattery: autoDownloadOnBattery,
             manualDownloadWifiOnly: manualDownloadWifiOnly,
             streamWifiOnly: streamWifiOnly,
+            mobileUpdateTypes: MobileUpdateTypes.encode(mobileUpdateTypes),
             playbackSourcePreference: playbackSourcePreference.rawValue,
             autoDeleteAfterPlaying: autoDeleteAfterPlaying,
             rewindSeconds: rewindSeconds,
@@ -3455,6 +3482,7 @@ final class AppSettings: ObservableObject {
         if let onBattery = snap.autoDownloadOnBattery { autoDownloadOnBattery = onBattery }
         manualDownloadWifiOnly = snap.manualDownloadWifiOnly
         streamWifiOnly = snap.streamWifiOnly
+        if let types = snap.mobileUpdateTypes { mobileUpdateTypes = MobileUpdateTypes.decode(types) }
         playbackSourcePreference =
             PlaybackSourcePreference(rawValue: snap.playbackSourcePreference) ?? .automatic
         autoDeleteAfterPlaying = snap.autoDeleteAfterPlaying
@@ -3700,6 +3728,9 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     var autoDownloadOnBattery: Bool? = nil
     var manualDownloadWifiOnly: Bool
     var streamWifiOnly: Bool
+    /// Android prefMobileUpdateTypes raw values. Absent in older backups → the three Wi‑Fi-only
+    /// flags above apply and feed refresh / images stay as they are.
+    var mobileUpdateTypes: [String]? = nil
     var playbackSourcePreference: String
     var autoDeleteAfterPlaying: Bool
     var rewindSeconds: Int

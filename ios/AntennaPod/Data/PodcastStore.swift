@@ -3118,7 +3118,25 @@ final class PodcastStore: ObservableObject {
 
     /// Refresh every subscribed feed (Inbox pull-to-refresh + auto Keep updated). Continues on per-feed errors.
     /// Publishes honest per-feed completion counts (`refreshCompletedCount` / `refreshTotalCount`) for UI.
-    func refreshAllFeeds() async {
+    /// Set when a user-started refresh is blocked by Mobile updates (Android asks first).
+    @Published var mobileRefreshPrompt = false
+
+    /// - Parameters:
+    ///   - userInitiated: toolbar / pull-to-refresh (asks when blocked) vs automatic (skips silently).
+    ///   - allowMobileOnce: "Refresh anyway" from the mobile-data prompt.
+    func refreshAllFeeds(userInitiated: Bool = true, allowMobileOnce: Bool = false) async {
+        // Android prefMobileUpdateTypes `feed_refresh` (FeedUpdateManager.runOnceOrAsk).
+        switch FeedRefreshNetworkDecision.decide(
+            userInitiated: userInitiated, allowOnceOnMobile: allowMobileOnce,
+            allowed: MobileDataGate.allowsIgnoringOffline(.feedRefresh, settings: settings)) {
+        case .run: break
+        case .askUser:
+            mobileRefreshPrompt = true
+            return
+        case .skip:
+            AppMaintenanceLog.record("feed refresh: skipped on mobile data (Mobile updates)")
+            return
+        }
         // Second call while one runs (toolbar Refresh tapped twice, pull-to-refresh during the
         // launch auto-refresh) waits for it instead of starting another pass: both passes
         // snapshotted the same old episode ids, so new episodes were announced, queued, and

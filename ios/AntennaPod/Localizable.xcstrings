@@ -53931,6 +53931,142 @@
           }
         }
       }
+    },
+    "Feed refresh Wi‑Fi only": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed-Aktualisierung nur über WLAN"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed refresh Wi‑Fi only"
+          }
+        }
+      }
+    },
+    "Images Wi‑Fi only": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bilder nur über WLAN"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Images Wi‑Fi only"
+          }
+        }
+      }
+    },
+    "Android Mobile updates: when on, feeds are not refreshed over mobile data. Automatic refresh is skipped; a refresh you start asks first. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wie Android „Mobile Aktualisierungen“: Wenn aktiv, werden Feeds nicht über mobile Daten aktualisiert. Die automatische Aktualisierung wird übersprungen, eine selbst gestartete fragt vorher. Standardmäßig aus."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Android Mobile updates: when on, feeds are not refreshed over mobile data. Automatic refresh is skipped; a refresh you start asks first. Default off."
+          }
+        }
+      }
+    },
+    "Android Mobile updates: when on, cover images are not downloaded over mobile data; images already in the cache still show. Default off.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wie Android „Mobile Aktualisierungen“: Wenn aktiv, werden Titelbilder nicht über mobile Daten geladen; bereits zwischengespeicherte Bilder werden weiter angezeigt. Standardmäßig aus."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Android Mobile updates: when on, cover images are not downloaded over mobile data; images already in the cache still show. Default off."
+          }
+        }
+      }
+    },
+    "Refresh over mobile data?": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Über mobile Daten aktualisieren?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh over mobile data?"
+          }
+        }
+      }
+    },
+    "Refresh anyway": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trotzdem aktualisieren"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh anyway"
+          }
+        }
+      }
+    },
+    "Always allow": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Immer erlauben"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Always allow"
+          }
+        }
+      }
+    },
+    "Feed refresh Wi‑Fi only is on in Settings → Network / Downloads, so feeds are not refreshed over mobile data.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Feed-Aktualisierung nur über WLAN“ ist in Einstellungen → Netzwerk / Downloads aktiv, deshalb werden Feeds nicht über mobile Daten aktualisiert."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Feed refresh Wi‑Fi only is on in Settings → Network / Downloads, so feeds are not refreshed over mobile data."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
