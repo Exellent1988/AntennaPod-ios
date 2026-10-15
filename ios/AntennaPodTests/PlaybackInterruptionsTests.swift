@@ -98,3 +98,44 @@ final class PlaybackInterruptionsTests: PlaybackFixtureTestCase {
         return ep
     }
 }
+
+@MainActor
+final class PauseForInterruptionsTests: PlaybackFixtureTestCase {
+    func testDefaultBackupAndSessionMode() throws {
+        var old = settings.backupSnapshot()
+        old.pauseForInterruptions = nil
+        settings.applyBackupSnapshot(old)
+        XCTAssertTrue(settings.pauseForInterruptions, "Android prefPauseForFocusLoss default on")
+        XCTAssertEqual(playback.preferredAudioSessionMode(), .spokenAudio)
+        settings.pauseForInterruptions = false
+        XCTAssertEqual(playback.preferredAudioSessionMode(), .default, "Off → prompts duck us")
+        let snap = try JSONDecoder().decode(AppSettingsBackupSnapshot.self, from: JSONEncoder().encode(settings.backupSnapshot()))
+        settings.pauseForInterruptions = true
+        settings.applyBackupSnapshot(snap)
+        XCTAssertFalse(settings.pauseForInterruptions)
+    }
+
+    func testInterruptionPausesAndResumesWhenSystemAllows() async throws {
+        XCTAssertTrue(playback.play(episode: episodes[0]))
+        try await waitFor("playing", timeout: 8) { self.playback.isPlaying }
+        playback.handleInterruption(.began, systemShouldResume: false)
+        XCTAssertFalse(playback.isPlaying)
+        playback.handleInterruption(.ended, systemShouldResume: true)
+        XCTAssertTrue(playback.isPlaying)
+    }
+
+    func testNoResumeWithoutShouldResumeOrAfterUserAction() async throws {
+        XCTAssertTrue(playback.play(episode: episodes[0]))
+        try await waitFor("playing", timeout: 8) { self.playback.isPlaying }
+        playback.handleInterruption(.began, systemShouldResume: false)
+        playback.handleInterruption(.ended, systemShouldResume: false)
+        XCTAssertFalse(playback.isPlaying)
+        playback.togglePlayPause()
+        XCTAssertTrue(playback.isPlaying)
+        playback.handleInterruption(.began, systemShouldResume: false)
+        playback.togglePlayPause()   // user presses play during the interruption…
+        playback.togglePlayPause()   // …and pause again
+        playback.handleInterruption(.ended, systemShouldResume: true)
+        XCTAssertFalse(playback.isPlaying, "The user's pause wins")
+    }
+}
