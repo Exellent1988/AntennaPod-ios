@@ -265,6 +265,8 @@ final class DownloadService: ObservableObject {
     private var proxyChangeObserver: NSObjectProtocol?
     /// Test instance (`init(testSessionConfiguration:)`): own session, no disk / global state.
     private var isTestInstance = false
+    /// Test instance only: configuration used again when a proxy change rebuilds the session.
+    private var testSessionConfiguration: URLSessionConfiguration?
     /// Live task id → episode (+ destination file name).
     private var pendingByTaskId: [Int: PendingDownloadMapping] = [:]
     /// Task ids omitted by `getTasks`. A finished background transfer is absent from
@@ -335,17 +337,26 @@ final class DownloadService: ObservableObject {
 
     /// Tests only: a service on an injected (ephemeral, stubbed) session instead of the shared
     /// background session. It loads nothing from disk, persists no pending tasks and installs no
-    /// global hooks (active instance, network-path callback, proxy observer), so tests never
-    /// touch the app's real `DownloadService` or `nsurlsessiond`.
+    /// global hooks (active instance, network-path callback), so tests never touch the app's real
+    /// `DownloadService` or `nsurlsessiond`. It does observe proxy changes, so the session rebuild
+    /// (invalidate, wait for didBecomeInvalidWithError, recreate) runs in tests too.
     init(testSessionConfiguration config: URLSessionConfiguration) {
         isTestInstance = true
+        testSessionConfiguration = config
         sessionDelegate.owner = self
         session = URLSession(configuration: config, delegate: sessionDelegate, delegateQueue: nil)
+        proxyChangeObserver = NotificationCenter.default.addObserver(
+            forName: AppHTTPProxy.didChangeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.recreateSessionIfIdleForProxyChange()
+        }
     }
 
     /// Tests: cancel everything and invalidate the injected session.
     func tearDownTestSession() {
         guard isTestInstance else { return }
+        if let proxyChangeObserver { NotificationCenter.default.removeObserver(proxyChangeObserver) }
+        proxyChangeObserver = nil
         cancelAllInFlightDownloads()
         session.invalidateAndCancel()
     }
@@ -361,7 +372,6 @@ final class DownloadService: ObservableObject {
     /// aborted (swift_task_dealloc_specific "freed pointer was not the last allocation").
     /// Waiting downloads stay queued until the new session exists.
     private func recreateSessionIfIdleForProxyChange() {
-        guard !isTestInstance else { return }
         guard pendingByTaskId.isEmpty, waitingQueue.isEmpty else { return }
         guard !isReplacingSession, let old = session else { return }
         isReplacingSession = true
@@ -371,7 +381,11 @@ final class DownloadService: ObservableObject {
     /// Delegate callback (main actor): the old background session is gone, build the new one.
     func backgroundSessionDidBecomeInvalid(_ invalidated: URLSession) {
         guard isReplacingSession, invalidated === session else { return }
-        session = Self.makeBackgroundSession(delegate: sessionDelegate)
+        if let testSessionConfiguration {
+            session = URLSession(configuration: testSessionConfiguration, delegate: sessionDelegate, delegateQueue: nil)
+        } else {
+            session = Self.makeBackgroundSession(delegate: sessionDelegate)
+        }
         isReplacingSession = false
         pumpWaitingQueue()
     }
