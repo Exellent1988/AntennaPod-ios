@@ -1,6 +1,8 @@
 import Combine
 import Foundation
 import Network
+import PodcastCore
+import UIKit
 
 /// Enqueues auto-downloads after feed refresh (global + per-feed overrides).
 ///
@@ -39,7 +41,16 @@ enum AutoDownloadCoordinator {
     ) async {
         guard let downloads, let settings else { return }
         let flat = newBatches.filter { !$0.episodes.isEmpty }
-        guard !flat.isEmpty else { return }
+        // Android AutomaticDownloadAlgorithm also takes the queue as candidates, so a refresh
+        // without newcomers still downloads queued episodes when auto-download allows it.
+        let queueCandidates = queuedAutoDownloadCandidates(store: store, downloads: downloads, settings: settings)
+        guard !flat.isEmpty || !queueCandidates.isEmpty else { return }
+        // Android "Download when not charging" off: nothing automatic on battery.
+        guard AutoDownloadParity.powerAllows(downloadOnBattery: settings.autoDownloadOnBattery,
+                                             power: currentPowerState()) else {
+            AppMaintenanceLog.record("auto-download: skipped on battery (Download when not charging is off)")
+            return
+        }
         guard !isEnqueueInFlight else { return }
         isEnqueueInFlight = true
         defer { isEnqueueInFlight = false }
@@ -77,11 +88,47 @@ enum AutoDownloadCoordinator {
                 )
             )
         }
+        // Queue first (queue order), then newcomers (Android candidate order).
+        let byId = Dictionary((queueCandidates + candidates).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        candidates = AutoDownloadParity.candidateOrder(queue: queueCandidates.map(\.id), newcomers: candidates.map(\.id))
+            .compactMap { byId[$0] }
         // Android AutomaticDownloadAlgorithm: make room per Delete before auto download, then
         // only fill what is left under the Episode limit.
         let spaceLeft = downloads.makeRoomForAutoDownload(wanted: candidates.count)
         for episode in candidates.prefix(spaceLeft) {
             await downloads.download(episode, source: .automatic)
+        }
+    }
+
+    /// Android: queued episodes are auto-download candidates when their podcast allows
+    /// auto-download (global on / per-podcast Always, not Never): not downloaded or in flight,
+    /// not played, remote media, not a local folder feed. No per-feed cap (the queue is the list
+    /// the user built); the Episode limit still applies through `makeRoomForAutoDownload`.
+    static func queuedAutoDownloadCandidates(store: PodcastStore, downloads: DownloadService,
+                                             settings: AppSettings) -> [PodcastEpisode] {
+        let globalOn = settings.autoDownloadEnabled
+        return store.queue.filter { episode in
+            guard let feed = store.feed(containingEpisodeId: episode.id),
+                  !LocalFolderFeed.isLocalFolderFeed(feed),
+                  store.feedSettings(for: feed.id).allowsAutoDownload(globalEnabled: globalOn) else { return false }
+            guard let url = episode.downloadUrl, !url.isEmpty, !LocalFolderFeed.isLocalFileDownloadURL(url) else { return false }
+            return !store.isPlayed(episode.id) && !downloads.isDownloaded(episode)
+                && !downloads.inProgress.contains(episode.id)
+        }
+    }
+
+    /// Test seam for the power state (nil → the device).
+    static var powerStateOverrideForTests: AutoDownloadParity.PowerState?
+
+    static func currentPowerState() -> AutoDownloadParity.PowerState {
+        if let o = powerStateOverrideForTests { return o }
+        let device = UIDevice.current
+        if !device.isBatteryMonitoringEnabled { device.isBatteryMonitoringEnabled = true }
+        switch device.batteryState {
+        case .charging: return .charging
+        case .full: return .full
+        case .unplugged: return .unplugged
+        default: return .unknown
         }
     }
 

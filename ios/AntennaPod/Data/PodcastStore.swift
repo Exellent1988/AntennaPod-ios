@@ -186,6 +186,27 @@ final class PodcastStore: ObservableObject {
         return report
     }
 
+    /// Android Feed info → "Edit feed URL": replace this podcast's address (Android replaces the
+    /// download URL; the old one is not kept), then refresh from the new URL. Episodes, progress,
+    /// feed settings and the Keychain login (stored per podcast id) stay. Returns the validation
+    /// outcome; `.ok` also when the refresh fails (the new URL is kept, the error shows as usual).
+    @discardableResult
+    func changeFeedUrl(feedId: UUID, to raw: String, refresh: Bool = true) async -> FeedURLEdit.Outcome {
+        guard let i = feeds.firstIndex(where: { $0.id == feedId }) else { return .invalid }
+        let outcome = FeedURLEdit.validate(raw, currentURLs: [feeds[i].feedUrl],
+                                           otherFeedURLs: feeds.filter { $0.id != feedId }.flatMap(\.allUrls))
+        guard case .ok(let newUrl) = outcome else { return outcome }
+        let old = feeds[i].feedUrl
+        feeds[i].feedUrl = newUrl
+        feeds[i].alternateUrls = (feeds[i].alternateUrls ?? []).filter { FeedURLKey.key($0) != FeedURLKey.key(old) }
+        if feeds[i].alternateUrls?.isEmpty == true { feeds[i].alternateUrls = nil }
+        AppMaintenanceLog.record("feed url changed (podcast \(feedId.uuidString.prefix(8)))")
+        if refresh {
+            _ = try? await subscribeQuietly(feedUrl: newUrl, onlyIfSubscribed: true)
+        }
+        return outcome
+    }
+
     /// Settings → Reset app data: subscriptions, episodes, queue, downloads, playback state,
     /// favorites / archive / bookmarks / notes / tags, the gpodder action outbox and caches.
     /// App settings and the Keychain (gpodder login, feed passwords) are kept.

@@ -1375,6 +1375,7 @@ final class AppSettings: ObservableObject {
         static let streamOverDownload = "settings.streamOverDownload"
         static let feedDownloadUnplayedSoftCap = "settings.feedDownloadUnplayedSoftCap"
         static let autoDownloadWifiOnly = "settings.autoDownload.wifiOnly"
+        static let autoDownloadOnBattery = "settings.autoDownload.onBattery"
         static let manualDownloadWifiOnly = "settings.manualDownload.wifiOnly"
         static let streamWifiOnly = "settings.stream.wifiOnly"
         static let playbackSourcePreference = "settings.playbackSourcePreference"
@@ -1581,6 +1582,13 @@ final class AppSettings: ObservableObject {
     }
 
     /// When true, auto-download enqueues only on Wi‑Fi / Ethernet (`NWPathMonitor`).
+    /// Android `prefEnableAutoDownloadOnBattery` "Download when not charging" (default on).
+    /// Off → automatic downloads start only while the device is charging or full. Checked when
+    /// automatic downloads are queued / started; a transfer already running is not stopped.
+    @Published var autoDownloadOnBattery: Bool {
+        didSet { UserDefaults.standard.set(autoDownloadOnBattery, forKey: Keys.autoDownloadOnBattery) }
+    }
+
     @Published var autoDownloadWifiOnly: Bool {
         didSet {
             UserDefaults.standard.set(autoDownloadWifiOnly, forKey: Keys.autoDownloadWifiOnly)
@@ -2613,6 +2621,8 @@ final class AppSettings: ObservableObject {
         let feedDlSoftCapRaw = UserDefaults.standard.object(forKey: Keys.feedDownloadUnplayedSoftCap) as? Int
             ?? FeedDownloadUnplayedSoftCap.fifty.rawValue
         feedDownloadUnplayedSoftCap = FeedDownloadUnplayedSoftCap(rawValue: feedDlSoftCapRaw) ?? .fifty
+        autoDownloadOnBattery = UserDefaults.standard.object(forKey: Keys.autoDownloadOnBattery) as? Bool
+            ?? AutoDownloadParity.defaultDownloadOnBattery
         if UserDefaults.standard.object(forKey: Keys.autoDownloadWifiOnly) != nil {
             autoDownloadWifiOnly = UserDefaults.standard.bool(forKey: Keys.autoDownloadWifiOnly)
         } else {
@@ -3312,6 +3322,7 @@ final class AppSettings: ObservableObject {
             streamOverDownload: streamOverDownload,
             feedDownloadUnplayedSoftCap: feedDownloadUnplayedSoftCap.rawValue,
             autoDownloadWifiOnly: autoDownloadWifiOnly,
+            autoDownloadOnBattery: autoDownloadOnBattery,
             manualDownloadWifiOnly: manualDownloadWifiOnly,
             streamWifiOnly: streamWifiOnly,
             playbackSourcePreference: playbackSourcePreference.rawValue,
@@ -3460,6 +3471,7 @@ final class AppSettings: ObservableObject {
                 rawValue: snap.feedDownloadUnplayedSoftCap ?? FeedDownloadUnplayedSoftCap.fifty.rawValue
             ) ?? .fifty
         autoDownloadWifiOnly = snap.autoDownloadWifiOnly
+        if let onBattery = snap.autoDownloadOnBattery { autoDownloadOnBattery = onBattery }
         manualDownloadWifiOnly = snap.manualDownloadWifiOnly
         streamWifiOnly = snap.streamWifiOnly
         playbackSourcePreference =
@@ -3706,6 +3718,8 @@ struct AppSettingsBackupSnapshot: Codable, Equatable {
     /// Absent in older backups → 50 (prior hard soft-cap). Raw `FeedDownloadUnplayedSoftCap` value.
     var feedDownloadUnplayedSoftCap: Int? = 50
     var autoDownloadWifiOnly: Bool
+    /// Android prefEnableAutoDownloadOnBattery. Absent in older backups → unchanged.
+    var autoDownloadOnBattery: Bool? = nil
     var manualDownloadWifiOnly: Bool
     var streamWifiOnly: Bool
     var playbackSourcePreference: String
