@@ -66,6 +66,8 @@ struct RootSidebarView: View {
     @Binding var showSettings: Bool
     @State private var selection: SidebarDestination? = .home
     @State private var showAddFeed = false
+    /// Podcast picked from the sidebar's subscription list (Android drawer feed rows); nil = show `selection`.
+    @State private var selectedFeedId: UUID?
 
     var body: some View {
         NavigationSplitView {
@@ -76,6 +78,20 @@ struct RootSidebarView: View {
                             Label(dest.title, systemImage: dest.systemImage)
                                 .badge(badge(for: dest))
                         }
+                    }
+                }
+                // Android NavDrawerFragment / NavListAdapter: below the nav items the drawer lists the
+                // subscriptions, grouped into tag folders (makeFlatDrawerData), each with its feed counter.
+                if !store.feeds.isEmpty {
+                    Section("Subscriptions") {
+                        ForEach(store.allTags, id: \.self) { tag in
+                            DisclosureGroup {
+                                ForEach(sidebarFeeds(tagged: tag)) { feed in feedRow(feed) }
+                            } label: {
+                                Label(tag, systemImage: "folder")
+                            }
+                        }
+                        ForEach(sidebarFeeds(tagged: nil)) { feed in feedRow(feed) }
                     }
                 }
                 Section {
@@ -89,8 +105,13 @@ struct RootSidebarView: View {
             }
             .navigationTitle("AntennaPod")
         } detail: {
-            detail(for: selection ?? .home)
-                .id(selection)
+            if let feedId = selectedFeedId, let feed = store.feeds.first(where: { $0.id == feedId }) {
+                NavigationStack { FeedDetailView(feed: feed) }
+                    .id(feedId)
+            } else {
+                detail(for: selection ?? .home)
+                    .id(selection)
+            }
         }
         .onAppear { selection = SidebarDestination(tab: selectedTab) ?? .home }
         // Deep links set selectedTab; mirror them into the sidebar.
@@ -98,6 +119,7 @@ struct RootSidebarView: View {
             if let dest = SidebarDestination(tab: tab) { selection = dest }
         }
         .onChange(of: selection) { _, dest in
+            if dest != nil { selectedFeedId = nil }
             if let tab = dest?.tab, tab != selectedTab { selectedTab = tab }
         }
         .sheet(isPresented: $showAddFeed) { AddFeedView() }
@@ -112,6 +134,30 @@ struct RootSidebarView: View {
         case .subscriptions: settings.subscriptionsCounterMode.badgeSum(store: store, downloads: downloads)
         default: 0
         }
+    }
+
+    /// Feeds with `tag` (nil = untagged), in display-title order like Android's drawer default.
+    private func sidebarFeeds(tagged tag: String?) -> [PodcastFeed] {
+        store.feeds
+            .filter { feed in
+                let tags = store.tags(for: feed.id)
+                if let tag { return tags.contains { FeedTags.equal($0, tag) } }
+                return tags.isEmpty
+            }
+            .sorted {
+                store.displayTitle(for: $0).localizedCaseInsensitiveCompare(store.displayTitle(for: $1)) == .orderedAscending
+            }
+    }
+
+    private func feedRow(_ feed: PodcastFeed) -> some View {
+        Button {
+            selection = nil
+            selectedFeedId = feed.id
+        } label: {
+            Label(store.displayTitle(for: feed), systemImage: "dot.radiowaves.left.and.right")
+                .badge(settings.subscriptionsCounterMode.counter(for: feed, store: store, downloads: downloads))
+        }
+        .foregroundStyle(selectedFeedId == feed.id ? Color.accentColor : Color.primary)
     }
 
     @ViewBuilder
@@ -130,6 +176,20 @@ struct RootSidebarView: View {
 }
 
 extension SubscriptionsCounterMode {
+    /// One podcast's counter (Android NavListAdapter bindFeedView `item.getCounter()`).
+    @MainActor
+    func counter(for feed: PodcastFeed, store: PodcastStore, downloads: DownloadService) -> Int {
+        switch self {
+        case .none:
+            return 0
+        case .unplayed:
+            return feed.episodes.filter { !store.isPlayed($0.id) && !store.isArchived($0.id) }.count
+        case .downloaded:
+            let ids = Set(feed.episodes.map(\.id))
+            return downloads.downloads.filter { ids.contains($0.episode.id) }.count
+        }
+    }
+
     /// Sum of the Subscriptions per-feed counters for this mode (Android NavDrawerFragment.getFeedCounterSum,
     /// app/.../ui/screen/drawer/NavDrawerFragment.java:342-351, sums `navDrawerData.feedCounters`).
     /// Android scope, followed here: those counters come from PodDBAdapter.getFeedCounters
