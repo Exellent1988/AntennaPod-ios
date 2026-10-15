@@ -92,3 +92,41 @@ final class CarPlayParityTests: XCTestCase {
         XCTAssertEqual(ids(.byAuthor), [u1, u2, u3])
     }
 }
+
+final class CarPlayFeedEpisodeParityTests: XCTestCase {
+    private func ep(_ id: String, date: Int64?, dur: Double = 0, played: Bool = false, archived: Bool = false) -> CarPlayEpisodeInfo {
+        CarPlayEpisodeInfo(id: id, title: id, feedTitle: "F", artwork: nil, pubDateEpochMs: date,
+                           durationSeconds: dur, isPlayed: played, isArchived: archived)
+    }
+
+    func testSortMappingCoversAllCases() {
+        for s in FeedEpisodeSort.allCases {
+            XCTAssertEqual(CarPlayParity.allEpisodesSort(s).rawValue, s.rawValue)
+        }
+    }
+
+    func testPerPodcastSortAndFilter() {
+        let list = [ep("a", date: 1, dur: 30), ep("b", date: 3, played: true), ep("c", date: 2, dur: 10, archived: true)]
+        func ids(_ s: FeedEpisodeSort, _ f: FeedEpisodeFilter) -> [String] {
+            CarPlayParity.feedEpisodes(list, sort: s, filter: f, limit: 100).map(\.id)
+        }
+        XCTAssertEqual(ids(.newestFirst, .all), ["b", "c", "a"])
+        XCTAssertEqual(ids(.oldestFirst, .all), ["a", "c", "b"])
+        XCTAssertEqual(ids(.shortestFirst, .all), ["c", "a", "b"])
+        XCTAssertEqual(ids(.newestFirst, .unplayed), ["a"])
+        XCTAssertEqual(ids(.newestFirst, .played), ["b"])
+    }
+
+    func testPerPodcastOverrideBeatsGlobal() {
+        var fs = FeedSettings.default
+        XCTAssertEqual(fs.resolvedEpisodeSort(global: .newestFirst), .newestFirst)
+        fs.episodeSort = .oldestFirst
+        XCTAssertEqual(fs.resolvedEpisodeSort(global: .newestFirst), .oldestFirst)
+    }
+
+    func testLimit() {
+        let list = (0..<120).map { ep("e\($0)", date: Int64($0)) }
+        XCTAssertEqual(CarPlayParity.feedEpisodes(list, sort: .newestFirst, filter: .all, limit: 100).first?.id, "e119")
+        XCTAssertEqual(CarPlayParity.feedEpisodes(list, sort: .newestFirst, filter: .all, limit: 100).count, 100)
+    }
+}

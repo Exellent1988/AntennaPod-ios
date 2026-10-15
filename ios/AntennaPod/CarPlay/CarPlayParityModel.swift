@@ -99,6 +99,32 @@ enum CarPlayParity {
         }
     }
 
+    // MARK: Podcast episode list — Android getFeed(feedId) uses the feed's own sort + filter
+
+    /// Same cases as All Episodes; Feed detail and All Episodes share the comparator rules.
+    static func allEpisodesSort(_ s: FeedEpisodeSort) -> AllEpisodesSort {
+        switch s {
+        case .newestFirst: return .newestFirst
+        case .oldestFirst: return .oldestFirst
+        case .shortestFirst: return .shortestFirst
+        case .longestFirst: return .longestFirst
+        case .titleAscending: return .titleAscending
+        case .titleDescending: return .titleDescending
+        }
+    }
+
+    /// Feed detail parity: per-podcast sort (`FeedSettings.episodeSort` ?? global) and the global
+    /// Feed detail status filter (Unplayed also hides archived, like FeedDetailView).
+    static func feedEpisodes(_ list: [CarPlayEpisodeInfo], sort: FeedEpisodeSort, filter: FeedEpisodeFilter, limit: Int) -> [CarPlayEpisodeInfo] {
+        let filtered: [CarPlayEpisodeInfo]
+        switch filter {
+        case .all: filtered = list
+        case .unplayed: filtered = list.filter { !$0.isPlayed && !$0.isArchived }
+        case .played: filtered = list.filter(\.isPlayed)
+        }
+        return Array(sorted(filtered, by: allEpisodesSort(sort)).prefix(limit))
+    }
+
     // MARK: Downloads tab — Downloads sort (Android: getDownloadsSortedOrder)
 
     static func downloads(_ all: [CarPlayEpisodeInfo], sort: DownloadsSort, limit: Int) -> [CarPlayEpisodeInfo] {
