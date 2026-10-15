@@ -199,6 +199,10 @@ struct PerFeedSettingsView: View {
                 Text(skipOutroHelp)
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                Picker("Keep skipped episodes", selection: keepSkippedBinding) {
+                    ForEach(PerFeedOverride.allCases) { Text($0.notifyLabel).tag($0) }
+                }
+                .accessibilityHint(String(localized: "Use global, On, or Off for whether Skip episode keeps this podcast's episodes unplayed in the queue."))
                     .sheet(item: $customSkipIntroOutro) { kind in
                         CustomSkipIntroOutroSheet(
                             kind: kind,
@@ -688,6 +692,13 @@ struct PerFeedSettingsView: View {
             set: { value in
                 store.updateFeedSettings(for: feedId) { $0.keepUpdated = value }
             }
+        )
+    }
+
+    private var keepSkippedBinding: Binding<PerFeedOverride> {
+        Binding(
+            get: { current.keepSkippedEpisodes },
+            set: { value in store.updateFeedSettings(for: feedId) { $0.keepSkippedEpisodes = value } }
         )
     }
 

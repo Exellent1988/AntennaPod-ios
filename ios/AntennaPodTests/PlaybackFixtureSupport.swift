@@ -28,6 +28,8 @@ class PlaybackFixtureTestCase: XCTestCase {
         settings.sleepTimerAutoEnable = false
         settings.resetPositionWhenMarkedPlayed = true
         settings.playbackSourcePreference = .automatic
+        // Older finish-path tests expect a skip to mark played; KeepSkippedEpisodesTests covers the default.
+        settings.keepSkippedEpisodes = false
 
         store = PodcastStore()
         savedQueue = store.queue

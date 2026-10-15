@@ -889,6 +889,7 @@ struct SettingsView: View {
             || matchesPlaybackRewindPause
             || matchesPlaybackReconnect
             || matchesPlaybackHardwareButtons
+            || matchesPlaybackKeepSkipped
             || matchesPlaybackPauseForInterruptions
             || matchesPlaybackSmartMark
     }
@@ -1016,6 +1017,13 @@ struct SettingsView: View {
             "Pause for interruptions",
             "Interruptions",
             "On: spoken prompts such as navigation or Siri pause the episode, and it resumes when they finish. Off: they lower the volume instead. Calls and alarms always pause; playback resumes afterwards when iOS allows it and you did not press play or pause meanwhile. Default on."
+        )
+    }
+
+    private var matchesPlaybackKeepSkipped: Bool {
+        matchesSearch(
+            "Keep skipped episodes",
+            "Keep episodes when they are skipped (Skip episode in the player, Forward button, CarPlay). Off marks them played and removes them from the queue. An episode within the Smart mark as played window is always marked played. Default on."
         )
     }
 
@@ -1588,6 +1596,13 @@ struct SettingsView: View {
                     .accessibilityValue(remainingTimeRespectsSpeedAccessibilityValue)
                     .accessibilityHint(remainingTimeRespectsSpeedAccessibilityHint)
                 Text("When on, list and Home remaining-time info bars divide each episode’s remaining by that podcast’s effective playback speed (per-feed override or Default speed, clamped ≥ 0.5). Estimate only — not a live ETA. Does not use the current player session rate for list totals. Mini/full player −remaining and chapter list current remaining use the live session rate (fallback feed/default, 0.5…3.0). Volume boost is not speed. Default off (wall-clock). Widget / Watch Continue stay wall-clock.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            if matchesPlaybackKeepSkipped {
+                Toggle("Keep skipped episodes", isOn: $settings.keepSkippedEpisodes)
+                    .accessibilityHint(String(localized: "On: Skip episode keeps the episode unplayed in the queue and saves the position. Off: a skipped episode is marked played and leaves the queue. Default on."))
+                Text("Keep episodes when they are skipped (Skip episode in the player, Forward button, CarPlay). Off marks them played and removes them from the queue. An episode within the Smart mark as played window is always marked played. Default on.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
