@@ -27,6 +27,8 @@ struct RootTabView: View {
     @State private var debugFeed: PodcastFeed?
     /// DEBUG `-APDebugOpenDownloadLog` only.
     @State private var debugDownloadLog = false
+    /// DEBUG `-APDebugOpenBugReport` only.
+    @State private var debugBugReport = false
     /// DEBUG `-APDebugOpenSwipeActions <list>` only.
     @State private var debugSwipeList: SwipeList?
     /// Bumped when the active tab is tapped again; a new id pops that tab back to its root screen.
@@ -52,6 +54,9 @@ struct RootTabView: View {
                 // A pre-change SceneStorage value can still hold the old Settings tab.
                 if selectedTab == .settings { selectedTab = .home }
                 applyDebugLaunchArguments()
+            }
+            .sheet(isPresented: $debugBugReport) {
+                NavigationStack { BugReportView() }
             }
             .sheet(isPresented: $debugDownloadLog) {
                 NavigationStack {
@@ -347,6 +352,7 @@ struct RootTabView: View {
             selectedTab = .subscriptions
         }
         if args.contains("-APDebugOpenDownloadLog") { debugDownloadLog = true }
+        if args.contains("-APDebugOpenBugReport") { debugBugReport = true }
         // -APDebugFillQueue <n>: enqueue the n newest episodes of the first podcast (empty queue only).
         if let i = args.firstIndex(of: "-APDebugFillQueue"), i + 1 < args.count, let n = Int(args[i + 1]),
            store.queue.isEmpty, let feed = store.feeds.first(where: { !$0.episodes.isEmpty }) {

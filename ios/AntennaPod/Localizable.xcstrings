@@ -324,6 +324,142 @@
         }
       }
     },
+    "Visit user forum": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visit user forum"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nutzerforum"
+          }
+        }
+      }
+    },
+    "Report bug": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report bug"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fehler melden"
+          }
+        }
+      }
+    },
+    "Copy to clipboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy to clipboard"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In die Zwischenablage kopieren"
+          }
+        }
+      }
+    },
+    "Export logs": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export logs"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protokolle exportieren"
+          }
+        }
+      }
+    },
+    "Open issue tracker": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open issue tracker"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Issue-Tracker öffnen"
+          }
+        }
+      }
+    },
+    "Report preview": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report preview"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorschau des Berichts"
+          }
+        }
+      }
+    },
+    "AntennaPod iOS bug report": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod iOS bug report"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AntennaPod-iOS-Fehlerbericht"
+          }
+        }
+      }
+    },
+    "Please describe the problem in the issue tracker and attach this report. Passwords, tokens, gpodder credentials, auth headers and secrets in URLs are removed below.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please describe the problem in the issue tracker and attach this report. Passwords, tokens, gpodder credentials, auth headers and secrets in URLs are removed below."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bitte beschreibe das Problem im Issue-Tracker und hänge diesen Bericht an. Passwörter, Tokens, gpodder-Zugangsdaten, Auth-Header und Geheimnisse in URLs wurden unten entfernt."
+          }
+        }
+      }
+    },
     "Remove from inbox": {
       "extractionState": "manual",
       "localizations": {
