@@ -47,7 +47,8 @@ final class CoverDiskCache {
         if let fetchOverride {
             data = try await fetchOverride(url)
         } else {
-            (data, _) = try await AppURLSession.shared.data(for: MobileDataGate.imageRequest(for: url, settings: settings))
+            let (fetched, _) = try await AppURLSession.shared.data(for: MobileDataGate.imageRequest(for: url, settings: settings))
+            data = fetched
         }
         store(data, for: url)
         return data
