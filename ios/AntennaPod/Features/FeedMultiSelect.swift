@@ -14,8 +14,13 @@ struct FeedMultiSelectModifier: ViewModifier {
     @State private var editMode: EditMode = .inactive
     @State private var confirmUnsubscribe = false
     @State private var confirmInboxRemoval = false
-    @State private var showAddTag = false
-    @State private var newTag = ""
+    /// Android edit_tags for the selection (TagSettingsDialog with several FeedPreferences).
+    @State private var tagsFeedIds: TagSelection?
+
+    struct TagSelection: Identifiable {
+        let id = UUID()
+        let feedIds: [UUID]
+    }
 
     private var isSelecting: Bool { editMode.isEditing }
 
@@ -84,14 +89,11 @@ struct FeedMultiSelectModifier: ViewModifier {
                 }
                 Button("Cancel", role: .cancel) {}
             }
-            .alert("Add tag", isPresented: $showAddTag) {
-                TextField("New tag", text: $newTag)
-                Button("Add") {
-                    selected.forEach { store.addTag(newTag, to: $0.id) }
-                    newTag = ""
-                    finish()
-                }
-                Button("Cancel", role: .cancel) { newTag = "" }
+            .sheet(item: $tagsFeedIds, onDismiss: finish) { pick in
+                FeedTagsSheet(
+                    feedIds: pick.feedIds,
+                    title: String(format: String(localized: "%lld selected"), pick.feedIds.count)
+                )
             }
     }
 
@@ -110,21 +112,14 @@ struct FeedMultiSelectModifier: ViewModifier {
             Label("Playback speed", systemImage: "speedometer")
         }
         Button {
-            showAddTag = true
+            tagsFeedIds = TagSelection(feedIds: selected.map(\.id))
         } label: {
-            Label("Add tag", systemImage: "tag")
+            Label("Edit tags", systemImage: "tag")
         }
-        let tagsOnSelection = FeedTags.uniqueSorted(selected.flatMap { store.tags(for: $0.id) })
-        if !tagsOnSelection.isEmpty {
-            Menu {
-                ForEach(tagsOnSelection, id: \.self) { tag in
-                    Button(tag) {
-                        selected.forEach { store.removeTag(tag, from: $0.id) }
-                        finish()
-                    }
-                }
-            } label: {
-                Label("Remove tag", systemImage: "tag.slash")
+        // Android FeedMenuHandler.java:40: share_feed only when exactly one non-local podcast is selected.
+        if selected.count == 1, let url = Self.shareableFeedURL(selected[0]) {
+            ShareLink(item: url) {
+                Label("Share feed URL", systemImage: "square.and.arrow.up")
             }
         }
         Button {
@@ -159,6 +154,12 @@ struct FeedMultiSelectModifier: ViewModifier {
             store.updateFeedSettings(for: feed.id, mutate)
         }
         finish()
+    }
+
+    /// http(s) feed URL, nil for local folders (Android: !isLocalFeed()).
+    static func shareableFeedURL(_ feed: PodcastFeed) -> URL? {
+        guard let url = URL(string: feed.feedUrl), ["http", "https"].contains(url.scheme?.lowercased() ?? "") else { return nil }
+        return url
     }
 
     private func finish() {
