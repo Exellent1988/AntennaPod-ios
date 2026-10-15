@@ -1,3 +1,4 @@
+import PodcastCore
 import SwiftUI
 
 /// iPad (regular width) navigation: a sidebar listing every Android drawer destination.
@@ -175,18 +176,29 @@ struct RootSidebarView: View {
 }
 
 extension SubscriptionsCounterMode {
-    /// One podcast's counter (Android NavListAdapter bindFeedView `item.getCounter()`).
+    /// One podcast's counter (Android NavListAdapter bindFeedView `item.getCounter()`), using the
+    /// PodcastCore FeedCounterRule (Android PodDBAdapter.getFeedCounters, PodDBAdapter.java:1339).
     @MainActor
     func counter(for feed: PodcastFeed, store: PodcastStore, downloads: DownloadService) -> Int {
-        switch self {
-        case .none:
-            return 0
-        case .unplayed:
-            return feed.episodes.filter { !store.isPlayed($0.id) && !store.isArchived($0.id) }.count
-        case .downloaded:
-            let ids = Set(feed.episodes.map(\.id))
-            return downloads.downloads.filter { ids.contains($0.episode.id) }.count
+        counter(for: feed, store: store, downloadedIds: Self.downloadedIds(downloads))
+    }
+
+    @MainActor
+    static func downloadedIds(_ downloads: DownloadService) -> Set<String> {
+        Set(downloads.downloads.map(\.episode.id))
+    }
+
+    @MainActor
+    func counter(for feed: PodcastFeed, store: PodcastStore, downloadedIds: Set<String>) -> Int {
+        if self == .none { return 0 }
+        let facts = feed.episodes.map {
+            FeedCounterEpisode(
+                isPlayed: store.isPlayed($0.id),
+                isArchived: store.isArchived($0.id),
+                isDownloaded: downloadedIds.contains($0.id)
+            )
         }
+        return FeedCounterRule.count(coreKind, episodes: facts, isLocalFolderFeed: LocalFolderFeed.isLocalFolderFeed(feed))
     }
 
     /// Sum of the Subscriptions per-feed counters for this mode (Android NavDrawerFragment.getFeedCounterSum,
@@ -196,18 +208,11 @@ extension SubscriptionsCounterMode {
     /// :1381), taken in DBReader.getNavDrawerData (DBReader.java:677) BEFORE the subscriptions filter is applied
     /// to the feed list (:688). So the badge ignores the Subscriptions filters/search; archived (non-subscribed)
     /// feeds don't exist on iOS. iOS parental controls hide no feeds (PIN gates Add/Discover only), so `store.feeds`
-    /// is exactly the subscribed set. Rules as the per-feed badge: unplayed = !played && !archived;
-    /// downloaded = completed downloads (Android also counts local-folder items as downloaded).
+    /// is exactly the subscribed set.
     @MainActor
     func badgeSum(store: PodcastStore, downloads: DownloadService) -> Int {
-        switch self {
-        case .none:
-            return 0
-        case .unplayed:
-            return store.unplayedCountsByFeedId().values.reduce(0, +)
-        case .downloaded:
-            let ids = Set(store.feeds.flatMap { $0.episodes.map(\.id) })
-            return downloads.downloads.filter { ids.contains($0.episode.id) }.count
-        }
+        if self == .none { return 0 }
+        let ids = Self.downloadedIds(downloads)
+        return store.feeds.reduce(0) { $0 + counter(for: $1, store: store, downloadedIds: ids) }
     }
 }

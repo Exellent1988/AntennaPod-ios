@@ -53076,6 +53076,16 @@
         }
       }
     },
+    "Downloaded unplayed episodes": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heruntergeladene ungespielte Episoden"
+          }
+        }
+      }
+    },
     "Delete removes from queue": {
       "extractionState": "manual",
       "localizations": {

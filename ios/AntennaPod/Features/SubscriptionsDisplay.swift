@@ -1,3 +1,4 @@
+import PodcastCore
 import SwiftUI
 
 /// Subscriptions View options, modelled on Android's subscriptions menu:
@@ -17,13 +18,28 @@ enum SubscriptionsDisplayMode: String, CaseIterable, Identifiable {
 /// Android UserPreferences.PREF_DRAWER_FEED_COUNTER (none / unplayed / downloaded). Default
 /// unplayed matches the badge iOS has always shown.
 enum SubscriptionsCounterMode: String, CaseIterable, Identifiable {
-    case none, unplayed, downloaded
+    // Android FeedCounter order (pref_nav_drawer_feed_counter values): new, unplayed, downloaded,
+    // downloaded unplayed, none. Raw values of the original three stay unchanged for saved prefs/backups.
+    case new, unplayed, downloaded, downloadedUnplayed, none
     var id: String { rawValue }
     var label: String {
         switch self {
         case .none: return String(localized: "No counter")
+        case .new: return String(localized: "New episodes")
         case .unplayed: return String(localized: "Unplayed episodes")
         case .downloaded: return String(localized: "Downloaded episodes")
+        case .downloadedUnplayed: return String(localized: "Downloaded unplayed episodes")
+        }
+    }
+
+    /// Rules shared with PodcastCore (Android PodDBAdapter.getFeedCounters).
+    var coreKind: FeedCounterKind {
+        switch self {
+        case .none: return .none
+        case .new: return .new
+        case .unplayed: return .unplayed
+        case .downloaded: return .downloaded
+        case .downloadedUnplayed: return .downloadedUnplayed
         }
     }
 }

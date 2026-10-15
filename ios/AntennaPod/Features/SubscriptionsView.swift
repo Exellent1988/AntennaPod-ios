@@ -998,14 +998,9 @@ struct SubscriptionsView: View {
     }
 
     /// Badge number for the chosen counter mode (Android subscriptions_counter).
-    private func counterValue(_ feed: PodcastFeed, unplayed: Int) -> Int {
-        switch settings.subscriptionsCounterMode {
-        case .none: return 0
-        case .unplayed: return unplayed
-        case .downloaded:
-            let ids = Set(feed.episodes.map(\.id))
-            return downloads.downloads.filter { ids.contains($0.episode.id) }.count
-        }
+    /// Android FeedCounter rules via PodcastCore FeedCounterRule (PodDBAdapter.getFeedCounters).
+    private func counterValue(_ feed: PodcastFeed, unplayed _: Int) -> Int {
+        settings.subscriptionsCounterMode.counter(for: feed, store: store, downloads: downloads)
     }
 
     /// Android grid mode (subscription_num_columns): cover cells, same tap/long-press targets as rows.
