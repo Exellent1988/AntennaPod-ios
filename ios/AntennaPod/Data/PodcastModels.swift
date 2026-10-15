@@ -2754,6 +2754,11 @@ struct EpisodePlaybackState: Hashable, Codable {
     var listenedMediaSeconds: Double?
     /// Wall-clock seconds saved by Skip silence for this episode. `nil` in older files.
     var skipSilenceSavedSeconds: Double?
+    /// gpodder `started`: playhead when the latest play session began (Android `FeedMedia.startPosition`).
+    var playStartedSeconds: Double?
+    /// gpodder `position` for a played episode that was skipped before the smart-mark window
+    /// (Android `enqueueEpisodePlayed(media, completed: false)` sends the real position, not total).
+    var playActionPositionSeconds: Double?
 
     static func empty(nowMs: Int64 = Int64(Date().timeIntervalSince1970 * 1000)) -> EpisodePlaybackState {
         EpisodePlaybackState(
@@ -2794,6 +2799,8 @@ struct EpisodePlaybackState: Hashable, Codable {
         listenedWallSeconds = try c.decodeIfPresent(Double.self, forKey: .listenedWallSeconds)
         listenedMediaSeconds = try c.decodeIfPresent(Double.self, forKey: .listenedMediaSeconds)
         skipSilenceSavedSeconds = try c.decodeIfPresent(Double.self, forKey: .skipSilenceSavedSeconds)
+        playStartedSeconds = try c.decodeIfPresent(Double.self, forKey: .playStartedSeconds)
+        playActionPositionSeconds = try c.decodeIfPresent(Double.self, forKey: .playActionPositionSeconds)
         // Migrate older `playback.json` without `lastPlayedAtEpochMs`.
         if lastPlayedAtEpochMs == nil, isPlayed || positionSeconds > 0 {
             lastPlayedAtEpochMs = updatedAtEpochMs
@@ -2808,6 +2815,7 @@ struct EpisodePlaybackState: Hashable, Codable {
     private enum CodingKeys: String, CodingKey {
         case positionSeconds, durationSeconds, isPlayed, updatedAtEpochMs, lastPlayedAtEpochMs
         case listenedWallSeconds, listenedMediaSeconds, skipSilenceSavedSeconds
+        case playStartedSeconds, playActionPositionSeconds
     }
 }
 

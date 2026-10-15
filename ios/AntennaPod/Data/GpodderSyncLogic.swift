@@ -139,7 +139,15 @@ enum GpodderSyncLogic {
             let total = Int(state.durationSeconds.rounded())
             guard total > 0 else { continue }
             guard state.isPlayed || state.positionSeconds > 1 else { continue }
-            let position = state.isPlayed ? total : min(total, Int(state.positionSeconds.rounded()))
+            // Android SynchronizationQueueImpl.enqueueEpisodePlayed: position = total when completed,
+            // else the real position (also for a skip before the smart-mark window); started = the
+            // session start; no action when an incomplete session made no progress.
+            let completed = state.isPlayed && state.playActionPositionSeconds == nil
+            let rawPosition = completed ? Double(total)
+                : (state.isPlayed ? state.playActionPositionSeconds ?? 0 : state.positionSeconds)
+            let position = min(total, max(0, Int(rawPosition.rounded())))
+            let started = min(position, max(0, Int((state.playStartedSeconds ?? 0).rounded())))
+            if !completed, state.playStartedSeconds != nil, started >= position { continue }
             let date = Date(timeIntervalSince1970: Double(state.updatedAtEpochMs) / 1000)
             result.append(GpodderEpisodeAction(
                 podcast: GpodderSyncService.syncFeedURL(ref.feedUrl),
@@ -147,7 +155,7 @@ enum GpodderSyncLogic {
                 guid: ref.episodeId,
                 action: "play",
                 timestamp: GpodderEpisodeAction.formatTimestamp(date),
-                started: 0,
+                started: started,
                 position: position,
                 total: total,
                 device: deviceId
