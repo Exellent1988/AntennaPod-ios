@@ -8,6 +8,6 @@ for j in range(i,len(src)):
     elif src[j]=='}':
         d-=1
         if d==0: break
-head=open('GpodderEpisodeAction.generated.swift').read().split('struct GpodderEpisodeAction')[0]
+head=open('GpodderEpisodeAction.generated.swift').read().split('\nstruct GpodderEpisodeAction')[0]+'\n'
 open('GpodderEpisodeAction.generated.swift','w').write(head+src[i:j+1]+'\n')
 PY
