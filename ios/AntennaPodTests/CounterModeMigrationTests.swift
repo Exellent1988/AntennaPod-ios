@@ -22,24 +22,24 @@ final class CounterModeMigrationTests: XCTestCase {
         try await super.tearDown()
     }
 
-    func testNewInstallGetsNew() {
+    @MainActor func testNewInstallGetsNew() {
         XCTAssertEqual(AppSettings.migrateCounterModeDefaultOnce(ud), .new)
         XCTAssertEqual(ud.string(forKey: modeKey), "new")
     }
 
-    func testImplicitOldDefaultMovesToNew() {
+    @MainActor func testImplicitOldDefaultMovesToNew() {
         // Existing user who never touched the picker: nothing stored, old code showed .unplayed.
         ud.set("x", forKey: "settings.someOtherKey")
         XCTAssertEqual(AppSettings.migrateCounterModeDefaultOnce(ud), .new)
     }
 
-    func testExplicitUnplayedStays() {
+    @MainActor func testExplicitUnplayedStays() {
         ud.set("unplayed", forKey: modeKey)
         XCTAssertEqual(AppSettings.migrateCounterModeDefaultOnce(ud), .unplayed)
         XCTAssertEqual(ud.string(forKey: modeKey), "unplayed")
     }
 
-    func testExplicitOtherModesStay() {
+    @MainActor func testExplicitOtherModesStay() {
         for mode in ["none", "downloaded"] {
             ud.removeObject(forKey: flagKey)
             ud.set(mode, forKey: modeKey)
@@ -47,7 +47,7 @@ final class CounterModeMigrationTests: XCTestCase {
         }
     }
 
-    func testRunsOnlyOnce() {
+    @MainActor func testRunsOnlyOnce() {
         XCTAssertEqual(AppSettings.migrateCounterModeDefaultOnce(ud), .new)
         XCTAssertTrue(ud.bool(forKey: flagKey))
         // Later explicit choice, then a relaunch: not touched again.
