@@ -46,6 +46,9 @@ struct StatisticsView: View {
                 .accessibilityValue(settings.statisticsTimeRange.label)
                 .accessibilityHint(String(localized: "Chooses which period Statistics and Echo show together. Shared setting. Uses the device calendar. Optional Reset baseline still applies."))
                 .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+
+                Toggle("Include marked as played", isOn: $settings.statisticsIncludeMarkedPlayed)
+                    .accessibilityHint(String(localized: "When on, episodes marked as played count their full duration even if you did not listen to them."))
             } footer: {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(Self.rangeFootnote(for: settings.statisticsTimeRange))
@@ -142,6 +145,8 @@ struct StatisticsView: View {
                     }
                 }
             }
+
+            StatisticsParitySections()
         }
     }
 

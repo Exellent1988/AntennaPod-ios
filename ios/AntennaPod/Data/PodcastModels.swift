@@ -2994,6 +2994,13 @@ enum ChapterIndexing {
 /// Played → `durationSeconds` when known (else 0); in-progress → `positionSeconds` when > 1.
 enum ListeningTimeEstimate {
     /// Recorded listened wall time (speed-adjusted) when available, else the legacy estimate.
+    /// Statistics with Android "Include marked as played" (`StatisticsParity`).
+    static func seconds(for state: EpisodePlaybackState, includeMarkedPlayed: Bool) -> Double {
+        StatisticsParity.seconds(recordedWall: state.listenedWallSeconds, isPlayed: state.isPlayed,
+                                 durationSeconds: state.durationSeconds, positionSeconds: state.positionSeconds,
+                                 includeMarkedPlayed: includeMarkedPlayed)
+    }
+
     static func seconds(for state: EpisodePlaybackState) -> Double {
         ListeningTimeRule.seconds(
             recordedWall: state.listenedWallSeconds,

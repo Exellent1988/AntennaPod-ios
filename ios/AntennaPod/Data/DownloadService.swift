@@ -904,6 +904,18 @@ final class DownloadService: ObservableObject {
         }
     }
 
+    /// Android Statistics → Downloads: completed downloads and bytes on disk per podcast.
+    func storageByPodcast(store: PodcastStore? = nil) -> [StatisticsParity.DownloadTotal] {
+        let s = store ?? self.store
+        let items: [(key: String, title: String, bytes: Int64)] = downloads.map { item in
+            let feed = s?.feed(containingEpisodeId: item.id)
+            let key = feed?.id.uuidString ?? item.feedId?.uuidString ?? "?"
+            let title = feed.map { s?.displayTitle(for: $0) ?? $0.title } ?? item.feedTitle ?? String(localized: "Unknown podcast")
+            return (key, title, item.localFileByteSize() ?? 0)
+        }
+        return StatisticsParity.downloadTotals(items)
+    }
+
     /// Completed downloads marked **played**, excluding favorited / starred episodes.
     /// Matches auto-delete-after-playing favorite protection (`PodcastStore.isFavorite`).
     /// Does **not** skip queue membership — queued played files can be deleted (membership stays).
