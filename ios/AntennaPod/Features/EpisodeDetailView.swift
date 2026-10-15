@@ -185,6 +185,31 @@ struct EpisodeDetailView: View {
         return HTMLTextStripping.plainText(from: raw).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    @ViewBuilder private var downloadButton: some View {
+        if downloads.isWaitingDownload(episodeId: episode.id) {
+            EpisodeDetailActionButton("episodeDetail.waiting", systemImage: "clock",
+                                      accessibility: String(localized: "Cancel download")) {
+                downloads.cancelDownload(episode)
+            }
+        } else if downloads.inProgress.contains(episode.id) {
+            EpisodeDetailActionButton("episodeDetail.cancel", systemImage: "xmark.circle",
+                                      accessibility: String(localized: "Cancel download")) {
+                downloads.cancelDownload(episode)
+            }
+        } else if downloads.isDownloaded(episode) {
+            EpisodeDetailActionButton("episodeDetail.delete", systemImage: "trash",
+                                      accessibility: String(localized: "Delete download")) {
+                confirmDeleteDownload = true
+            }
+            .tint(.red)
+        } else {
+            EpisodeDetailActionButton("episodeDetail.download", systemImage: "arrow.down.circle",
+                                      accessibility: String(localized: "Download")) {
+                Task { await downloads.download(episode) }
+            }
+        }
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
@@ -201,35 +226,37 @@ struct EpisodeDetailView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                HStack {
-                    Button {
+                // Android ItemFragment: a row of equal-width buttons, icon above a short one-line label.
+                HStack(spacing: 8) {
+                    EpisodeDetailActionButton(
+                        "episodeDetail.play", systemImage: "play.fill",
+                        accessibility: String(localized: "Play"), prominent: true
+                    ) {
                         _ = playback.play(episode: episode)
-                    } label: {
-                        Label("Play", systemImage: "play.fill")
                     }
-                    .buttonStyle(.borderedProminent)
                     .accessibilityAddTraits(.startsMediaSession)
-                    EpisodeDownloadActions.button(episode: episode, downloads: downloads) { _ in
-                        confirmDeleteDownload = true
+                    if EpisodeDownloadActions.canManageDownload(for: episode) {
+                        downloadButton
                     }
-                    .buttonStyle(.bordered)
                     if store.isInQueue(episode.id) {
-                        Button {
+                        EpisodeDetailActionButton(
+                            "episodeDetail.queued", systemImage: "text.badge.checkmark",
+                            accessibility: String(localized: "Remove from queue")
+                        ) {
                             store.removeFromQueue(episode)
-                        } label: {
-                            Label("Remove from queue", systemImage: "text.badge.minus")
                         }
-                        .buttonStyle(.bordered)
                     } else {
-                        Button {
+                        EpisodeDetailActionButton(
+                            "episodeDetail.queue", systemImage: "text.append",
+                            accessibility: String(localized: "Add to queue")
+                        ) {
                             store.enqueue(episode)
-                        } label: {
-                            Label("Add to queue", systemImage: "text.append")
                         }
-                        .buttonStyle(.bordered)
                     }
                 }
-                .labelStyle(.titleAndIcon)
+                // Icons + one-line labels stay legible up to AX3; beyond that the labels only scale.
+                .dynamicTypeSize(...DynamicTypeSize.accessibility3)
+                .fixedSize(horizontal: false, vertical: true)
                 Divider()
                 if plainDescription.isEmpty {
                     Text("No shownotes")
@@ -257,6 +284,49 @@ struct EpisodeDetailView: View {
         .confirmationDialog("Delete download?", isPresented: $confirmDeleteDownload, titleVisibility: .visible) {
             Button("Delete download", role: .destructive) { downloads.delete(episode) }
             Button("Cancel", role: .cancel) {}
+        }
+    }
+}
+
+/// Equal-width episode detail button: icon above a short one-line label that scales down instead of
+/// hyphenating (Android ItemFragment butAction1/butAction2). Full action text is the accessibility label.
+struct EpisodeDetailActionButton: View {
+    let titleKey: LocalizedStringKey
+    let systemImage: String
+    let accessibility: String
+    var prominent = false
+    let action: () -> Void
+
+    init(_ titleKey: LocalizedStringKey, systemImage: String, accessibility: String,
+         prominent: Bool = false, action: @escaping () -> Void) {
+        self.titleKey = titleKey
+        self.systemImage = systemImage
+        self.accessibility = accessibility
+        self.prominent = prominent
+        self.action = action
+    }
+
+    var body: some View {
+        let button = Button(action: action) {
+            VStack(spacing: 4) {
+                Image(systemName: systemImage)
+                    .font(.title3)
+                    .imageScale(.medium)
+                Text(titleKey)
+                    .font(.caption.weight(.semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.4)
+                    .allowsTightening(true)
+                    // Label text caps at xxxLarge so "Warteschlange" stays whole; the icon keeps growing.
+                    .dynamicTypeSize(...DynamicTypeSize.xxxLarge)
+            }
+            .frame(maxWidth: .infinity, minHeight: 44, maxHeight: .infinity)
+            .padding(.vertical, 4)
+        }
+        .buttonBorderShape(.roundedRectangle(radius: 12))
+        .accessibilityLabel(accessibility)
+        Group {
+            if prominent { button.buttonStyle(.borderedProminent) } else { button.buttonStyle(.bordered) }
         }
     }
 }
