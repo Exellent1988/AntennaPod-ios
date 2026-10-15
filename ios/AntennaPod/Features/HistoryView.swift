@@ -418,6 +418,7 @@ struct HistoryView: View {
                         dateOverride: Date(timeIntervalSince1970: Double(item.lastPlayedAtEpochMs) / 1000),
                         dateAccessibilityLabel: String(localized: "Last played")
                     )
+                    .episodePagerList(visibleItems.map(\.episode))
                     .tag(item.episode.id)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         // Android SwipeActions: user-configurable; Default keeps these buttons.

@@ -1241,6 +1241,7 @@ struct FeedDetailView: View {
                 } else {
                     ForEach(visibleEpisodes) { episode in
                         EpisodeRow(episode: episode, feedTitle: feedDisplayTitle)
+                        .episodePagerList(visibleEpisodes)
                             .swipeActions(edge: .leading, allowsFullSwipe: true) {
                                 // Android SwipeActions: user-configurable; Default keeps these buttons.
                                 SwipeSlot(.feed, .leading, episode: episode) {
@@ -3026,6 +3027,10 @@ struct EpisodeRow: View {
     @State private var showDescription = false
     @State private var showEpisodePrivateNote = false
     @State private var showEpisodeDetail = false
+    /// List the row lives in (set by each episode list); the detail pager swipes through it like Android's
+    /// `ItemPagerFragment.newInstance(allItems, item)` from EpisodeItemListAdapter / FeedItemlistFragment.
+    @Environment(\.episodePagerList) private var pagerList
+    @Environment(\.editMode) private var editMode
     @State private var showCopiedAlert = false
     @State private var copiedAlertMessage = ""
     @State private var copyURLFeedbackTick = 0
@@ -3042,6 +3047,10 @@ struct EpisodeRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             episodeInfoBlock
+                // Android EpisodeItemListAdapter: tapping the row opens ItemPagerFragment; buttons keep their own taps.
+                .contentShape(Rectangle())
+                .onTapGesture { if editMode?.wrappedValue.isEditing != true { showEpisodeDetail = true } }
+                .accessibilityAction(named: Text("Episode details")) { showEpisodeDetail = true }
 
             episodeActionBar
         }
@@ -3051,7 +3060,7 @@ struct EpisodeRow: View {
             episodeContextMenuItems
         }
         .navigationDestination(isPresented: $showEpisodeDetail) {
-            EpisodeDetailPager(episode: episode)
+            EpisodeDetailPager(episode: episode, list: pagerList)
         }
         .sheet(isPresented: $showDescription) {
             EpisodeDescriptionSheetView(episode: episode, feedTitle: feedTitle)

@@ -406,6 +406,7 @@ struct FavoritesView: View {
                         dateOverride: Date(timeIntervalSince1970: Double(item.favoritedAtEpochMs) / 1000),
                         dateAccessibilityLabel: String(localized: "Favorited")
                     )
+                    .episodePagerList(filteredItems.map(\.episode))
                     .tag(item.episode.id)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         // Android SwipeActions: user-configurable; Default keeps these buttons.

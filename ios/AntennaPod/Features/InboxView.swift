@@ -481,6 +481,7 @@ struct InboxView: View {
             } else {
                 ForEach(visibleItems) { item in
                     EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
+                    .episodePagerList(visibleItems.map(\.episode))
                     .tag(item.episode.id)
                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                             // Android SwipeActions: user-configurable; Default keeps these buttons.

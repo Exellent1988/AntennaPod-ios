@@ -475,6 +475,7 @@ struct QueueView: View {
                         episode: episode,
                         feedTitle: store.displayTitle(containingEpisodeId: episode.id)
                     )
+                    .episodePagerList(filteredQueue)
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         // Android SwipeActions: user-configurable; Default keeps these buttons.
                         SwipeSlot(.queue, .trailing, episode: episode) {

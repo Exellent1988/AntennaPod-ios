@@ -512,6 +512,7 @@ struct AllEpisodesView: View {
             } else {
                 ForEach(items) { item in
                     EpisodeRow(episode: item.episode, feedTitle: item.feedTitle)
+                    .episodePagerList(items.map(\.episode))
                     .tag(item.episode.id)
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             // Android SwipeActions: user-configurable; Default keeps these buttons.

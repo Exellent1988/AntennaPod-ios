@@ -69,6 +69,23 @@
         }
       }
     },
+    "%lld of %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld of %2$lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld von %2$lld"
+          }
+        }
+      }
+    },
     "%lld subscription · exported %@": {
       "extractionState": "manual",
       "localizations": {
@@ -120,6 +137,40 @@
         }
       }
     },
+    "Episode %lld of %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode %1$lld of %2$lld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode %1$lld von %2$lld"
+          }
+        }
+      }
+    },
+    "Episode actions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episode actions"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Episodenaktionen"
+          }
+        }
+      }
+    },
     "Exported from AntennaPod iOS · local folder podcasts omitted · metadata only when provided by each feed · ": {
       "extractionState": "manual",
       "localizations": {
@@ -133,6 +184,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Exportiert aus AntennaPod iOS · lokale Ordner-Podcasts ausgelassen · Metadaten nur wenn vom Feed geliefert · "
+          }
+        }
+      }
+    },
+    "Mark as played": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark as played"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als gespielt markieren"
+          }
+        }
+      }
+    },
+    "Mark as unplayed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mark as unplayed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Als ungespielt markieren"
           }
         }
       }
@@ -767,6 +852,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "In der Sicherung fehlt manifest.json"
+          }
+        }
+      }
+    },
+    "Swipe left or right to open the neighbouring episode": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipe left or right to open the neighbouring episode"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach links oder rechts wischen, um die benachbarte Episode zu öffnen"
           }
         }
       }
@@ -2354,6 +2456,23 @@
         }
       },
       "comment": "VoiceOver hint for the All Episodes remaining bar when Remaining time respects speed is on."
+    },
+    "Visit website": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visit website"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Website besuchen"
+          }
+        }
+      }
     },
     "Wall-clock remaining. Remaining time respects speed is off, so playback speed does not change this total. The All Episodes bar is the visible list after the newest-500 cap, then sort, status chip (All, Unplayed, Downloaded, or Favorites), podcast filter, episode type, and search. Sort changes order only and does not pull older episodes beyond that cap. Played episodes that are not currently playing count as zero. It is not the newest-500 catalog behind Add all to queue, Add all unplayed to queue, Mark all as played, Mark all as unplayed, Archive all, Play random, Copy all episodes, or Share all episodes. Unknown durations are left out and no time is invented. The episode that is playing uses the live position. This is not the Queue remaining bar, the Inbox remaining bar, the Subscriptions unplayed remaining bar, a Home preview remaining bar, the mini player, or Lock Screen. It does not play, download, or mark episodes played.": {
       "extractionState": "manual",

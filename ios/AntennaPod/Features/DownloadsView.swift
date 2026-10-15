@@ -4,6 +4,9 @@ import UIKit
 struct DownloadsView: View {
     /// Episode ids picked in Select mode (`EpisodeMultiSelectModifier`).
     @State private var multiSelection = Set<String>()
+    /// Android DownloadsFragment rows open ItemPagerFragment over the downloads list.
+    @State private var detailEpisode: PodcastEpisode?
+    @Environment(\.editMode) private var editMode
     @EnvironmentObject private var downloads: DownloadService
     @EnvironmentObject private var playback: PlaybackService
     @EnvironmentObject private var store: PodcastStore
@@ -505,6 +508,9 @@ struct DownloadsView: View {
                             }
                             .accessibilityElement(children: .ignore)
                             .accessibilityLabel(downloadsRowAccessibilityLabel(for: item))
+                            .accessibilityAction(named: Text("Episode details")) { detailEpisode = item.episode }
+                            .contentShape(Rectangle())
+                            .onTapGesture { if editMode?.wrappedValue.isEditing != true { detailEpisode = item.episode } }
                             Spacer()
                             Button {
                                 playback.play(
@@ -518,6 +524,11 @@ struct DownloadsView: View {
                             .accessibilityLabel(String(localized: "Play"))
                         }
                         .tag(item.episode.id)
+                        .contextMenu {
+                            Button { detailEpisode = item.episode } label: {
+                                Label("Episode details", systemImage: "info.circle")
+                            }
+                        }
                         .swipeActions(edge: .leading, allowsFullSwipe: true) {
                             // Android SwipeActions: user-configurable; Default keeps these buttons.
                             SwipeSlot(.downloads, .leading, episode: item.episode) {
@@ -933,6 +944,9 @@ struct DownloadsView: View {
             downloadsDialogsStageB(downloadsDialogsStageA(
                 downloadsList
                 .navigationTitle("Downloads")
+                .navigationDestination(item: $detailEpisode) { episode in
+                    EpisodeDetailPager(episode: episode, list: filteredDownloads.map(\.episode))
+                }
                 .searchable(text: $searchText, prompt: "Search downloads")
                 .onChange(of: searchText) { _, newValue in
                     scheduleFilter(for: newValue)

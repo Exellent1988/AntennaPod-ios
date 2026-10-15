@@ -385,6 +385,7 @@ struct ArchivedView: View {
                         dateOverride: Date(timeIntervalSince1970: Double(item.archivedAtEpochMs) / 1000),
                         dateAccessibilityLabel: String(localized: "Archived")
                     )
+                    .episodePagerList(filteredItems.map(\.episode))
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         Button {
                             store.restore(item.episode.id)
