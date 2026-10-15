@@ -20,16 +20,6 @@ struct BugReportView: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
-            Section("Report preview") {
-                if let report {
-                    Text(report)
-                        .font(.system(.caption2, design: .monospaced))
-                        .textSelection(.enabled)
-                        .accessibilityIdentifier("bugReport.preview")
-                } else {
-                    ProgressView()
-                }
-            }
             Section {
                 Button {
                     UIPasteboard.general.string = report
@@ -45,6 +35,16 @@ struct BugReportView: View {
                 }
                 Link(destination: Self.issueTrackerURL) {
                     Label("Open issue tracker", systemImage: "ladybug")
+                }
+            }
+            Section("Report preview") {
+                if let report {
+                    Text(report)
+                        .font(.system(.caption2, design: .monospaced))
+                        .textSelection(.enabled)
+                        .accessibilityIdentifier("bugReport.preview")
+                } else {
+                    ProgressView()
                 }
             }
         }
