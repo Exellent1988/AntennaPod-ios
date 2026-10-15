@@ -3,6 +3,7 @@ import UIKit
 
 struct DownloadsView: View {
     /// Episode ids picked in Select mode (`EpisodeMultiSelectModifier`).
+    @State private var showSwipeActionsSheet = false
     @State private var multiSelection = Set<String>()
     /// Android DownloadsFragment rows open ItemPagerFragment over the downloads list.
     @State private var detailEpisode: PodcastEpisode?
@@ -758,9 +759,13 @@ struct DownloadsView: View {
                 .accessibilityHint(
                     String(localized: "Asks for confirmation, then deletes every completed offline file in the full Downloads catalog, including favorites. Ignores chip and search filters. Queued episodes and the playing download can lose their file while queue membership stays and playback continues from the stream. Local files only — keeps played status, queue, favorites, archive state, and history. Distinct from Delete played downloads and from Clear queue.")
                 )
+                Divider()
+                // Android SwipeActionsDialog for this screen (SwipeActions tag downloads).
+                SwipeActionsMenuButton(isPresented: $showSwipeActionsSheet)
             } label: {
                 Label("Downloads actions", systemImage: "ellipsis.circle")
             }
+            .sheet(isPresented: $showSwipeActionsSheet) { SwipeActionsSheet(list: .downloads) }
             // Menu available when completed catalog is non-empty **or** anything is in-flight /
             // waiting (Cancel all). Copy / Share / Play random / Add all / Cancel all / Delete
             // played / Mark all as played / Mark all as unplayed / Delete all downloads each disable independently — same honesty as Favorites /

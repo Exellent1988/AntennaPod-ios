@@ -3,6 +3,7 @@ import UIKit
 
 struct HistoryView: View {
     /// Episode ids picked in Select mode (`EpisodeMultiSelectModifier`).
+    @State private var showSwipeActionsSheet = false
     @State private var multiSelection = Set<String>()
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
@@ -579,9 +580,13 @@ struct HistoryView: View {
                 .accessibilityHint(
                     String(localized: "Asks for confirmation, then removes every episode from the full History catalog and clears their played status and saved playback positions so they count as unplayed again. Ignores podcast, search, and sort filters. Does not unsubscribe, delete downloads, or clear the queue.")
                 )
+                Divider()
+                // Android SwipeActionsDialog for this screen (SwipeActions tag history).
+                SwipeActionsMenuButton(isPresented: $showSwipeActionsSheet)
             } label: {
                 Label("History actions", systemImage: "ellipsis.circle")
             }
+            .sheet(isPresented: $showSwipeActionsSheet) { SwipeActionsSheet(list: .history) }
             // Menu stays available when catalog non-empty so Play random / Add all can disable per eligibility.
             .disabled(items.isEmpty)
             .accessibilityLabel(String(localized: "History actions"))

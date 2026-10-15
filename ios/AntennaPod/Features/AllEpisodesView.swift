@@ -3,6 +3,7 @@ import UIKit
 
 struct AllEpisodesView: View {
     /// Episode ids picked in Select mode (`EpisodeMultiSelectModifier`).
+    @State private var showSwipeActionsSheet = false
     @State private var multiSelection = Set<String>()
     @EnvironmentObject private var store: PodcastStore
     @EnvironmentObject private var playback: PlaybackService
@@ -663,9 +664,13 @@ struct AllEpisodesView: View {
                 .accessibilityHint(
                     String(localized: "Asks for confirmation, then archives non-archived episodes in the newest-500 All Episodes catalog. Ignores status, podcast, type, sort, and search filters; older episodes beyond the soft cap are not included. Archived does not mean played. Does not mark played, delete downloads, or clear the queue.")
                 )
+                Divider()
+                // Android SwipeActionsDialog for this screen (SwipeActions tag episodes).
+                SwipeActionsMenuButton(isPresented: $showSwipeActionsSheet)
             } label: {
                 Label("Episodes actions", systemImage: "ellipsis.circle")
             }
+            .sheet(isPresented: $showSwipeActionsSheet) { SwipeActionsSheet(list: .episodes) }
             // Menu stays available when soft-capped catalog non-empty so each action can disable per eligibility.
             .disabled(catalogItems.isEmpty)
             .accessibilityLabel(String(localized: "Episodes actions"))
