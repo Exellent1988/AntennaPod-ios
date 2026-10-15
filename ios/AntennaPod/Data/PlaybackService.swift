@@ -884,7 +884,16 @@ final class PlaybackService: ObservableObject {
     /// Manual skip to the next episode (player menu). Counts as a finished episode for the
     /// episode sleep timer like Android's skip; same path as natural end / Skip ending.
     func skipToNextEpisode() {
-        guard currentEpisode != nil else { return }
+        guard let episode = currentEpisode else { return }
+        // A skip right after start can come before the periodic observer learned the duration.
+        // Without it the saved state has duration 0 and gpodder sync drops the played action.
+        if !(durationSeconds.isFinite && durationSeconds > 0) {
+            if let itemDuration = player?.currentItem?.duration.seconds, itemDuration.isFinite, itemDuration > 0 {
+                durationSeconds = itemDuration
+            } else if episode.durationSeconds.isFinite, episode.durationSeconds > 0 {
+                durationSeconds = episode.durationSeconds
+            }
+        }
         handlePlaybackEnded()
     }
 
