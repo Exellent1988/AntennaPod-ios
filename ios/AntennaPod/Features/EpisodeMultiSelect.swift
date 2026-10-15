@@ -38,9 +38,10 @@ struct EpisodeMultiSelectModifier: ViewModifier {
             // Screenshots: `-APDebugSelectFirst` does what long-press > Select does on the first episode.
             .task {
                 guard ProcessInfo.processInfo.arguments.contains("-APDebugSelectFirst"), let first = episodes.first else { return }
-                try? await Task.sleep(nanoseconds: 1_500_000_000)
-                selection = [first.id]
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
                 editMode = .active
+                try? await Task.sleep(nanoseconds: 500_000_000)
+                selection = [first.id]
             }
             #endif
             .toolbar {
@@ -54,8 +55,22 @@ struct EpisodeMultiSelectModifier: ViewModifier {
                     .disabled(episodes.isEmpty && !isSelecting)
                     .accessibilityHint(String(localized: "Selects several episodes to apply one action to all of them."))
                 }
+                // Batch controls in the navigation bar. A `.bottomBar` toolbar item (and anything pinned to the
+                // list's bottom) ends up under the tab bar and mini player inside a TabView tab, so selecting
+                // showed no actions. Android shows its SpeedDial (floatingSelectMenu) over the list.
                 if isSelecting {
-                    ToolbarItemGroup(placement: .bottomBar) {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Menu {
+                            Section(String(format: String(localized: "%lld selected"), selection.count)) {
+                                batchActions
+                            }
+                        } label: {
+                            Label("Actions", systemImage: "checklist")
+                        }
+                        .disabled(selection.isEmpty)
+                        .accessibilityValue(String(format: String(localized: "%lld selected"), selection.count))
+                    }
+                    ToolbarItem(placement: .topBarLeading) {
                         Button(selection.count == episodes.count ? String(localized: "Deselect all") : String(localized: "Select all")) {
                             if selection.count == episodes.count {
                                 selection.removeAll()
@@ -63,17 +78,6 @@ struct EpisodeMultiSelectModifier: ViewModifier {
                                 selection = Set(episodes.map(\.id))
                             }
                         }
-                        Spacer()
-                        Text(String(format: String(localized: "%lld selected"), selection.count))
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Menu {
-                            batchActions
-                        } label: {
-                            Label("Actions", systemImage: "ellipsis.circle")
-                        }
-                        .disabled(selection.isEmpty)
                     }
                 }
             }
