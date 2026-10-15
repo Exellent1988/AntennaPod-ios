@@ -324,6 +324,23 @@
         }
       }
     },
+    "Remove from inbox": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove from inbox"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus dem Posteingang entfernen"
+          }
+        }
+      }
+    },
     "Refresh complete": {
       "extractionState": "manual",
       "localizations": {
