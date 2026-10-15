@@ -54495,6 +54495,96 @@
           }
         }
       }
+    },
+    "Other podcasts": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Andere Podcasts"
+          }
+        }
+      }
+    },
+    "Listening time per podcast": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hörzeit pro Podcast"
+          }
+        }
+      }
+    },
+    "Selected time range. Same estimate as Totals.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gewählter Zeitraum. Gleiche Schätzung wie bei den Summen."
+          }
+        }
+      }
+    },
+    "Chart": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagramm"
+          }
+        }
+      }
+    },
+    "Months": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Monate"
+          }
+        }
+      }
+    },
+    "Listening time over time": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hörzeit im Verlauf"
+          }
+        }
+      }
+    },
+    "Hours per year or per month. The time range does not apply here; Reset and Include marked as played do.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stunden pro Jahr oder Monat. Der Zeitraum gilt hier nicht; Zurücksetzen und „Als gespielt markierte einbeziehen“ schon."
+          }
+        }
+      }
+    },
+    "Time": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zeit"
+          }
+        }
+      }
+    },
+    "Hours": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stunden"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

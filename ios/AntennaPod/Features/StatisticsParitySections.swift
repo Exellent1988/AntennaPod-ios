@@ -8,6 +8,7 @@ struct StatisticsParitySections: View {
     @EnvironmentObject private var downloads: DownloadService
 
     var body: some View {
+        StatisticsChartsSection()
         let years = store.yearlyListening()
         if !years.isEmpty {
             Section {
