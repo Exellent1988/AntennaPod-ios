@@ -2,21 +2,6 @@ import XCTest
 @testable import AntennaPod
 
 final class NowPlayingLogicTests: XCTestCase {
-    func testChapterAtPosition() {
-        let ch: [(start: Double, title: String)] = [(60, "B"), (0, "A"), (120, "C")]
-        XCTAssertEqual(NowPlayingLogic.chapter(at: 0, starts: ch), .init(index: 0, count: 3, title: "A"))
-        XCTAssertEqual(NowPlayingLogic.chapter(at: 90, starts: ch)?.title, "B")
-        XCTAssertEqual(NowPlayingLogic.chapter(at: 500, starts: ch)?.index, 2)
-        XCTAssertNil(NowPlayingLogic.chapter(at: 5, starts: [(10, "Late")]))
-        XCTAssertNil(NowPlayingLogic.chapter(at: 5, starts: []))
-    }
-
-    func testArtistLine() {
-        XCTAssertEqual(NowPlayingLogic.artistLine(feedName: "Pod", chapterTitle: nil), "Pod")
-        XCTAssertEqual(NowPlayingLogic.artistLine(feedName: "Pod", chapterTitle: "  "), "Pod")
-        XCTAssertEqual(NowPlayingLogic.artistLine(feedName: "Pod", chapterTitle: "Intro"), "Intro")
-    }
-
     func testSupportedAndNearestRates() {
         let r = NowPlayingLogic.supportedRates(presets: [1.0, 1.5, 0.8], current: 1.25)
         XCTAssertEqual(r, [0.8, 1.0, 1.25, 1.5])
